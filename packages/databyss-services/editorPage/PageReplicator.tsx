@@ -3,6 +3,7 @@ import PouchDB from 'pouchdb'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { getPouchSecret } from '@databyss-org/services/session/clientStorage'
 import { LoadingFallback } from '@databyss-org/ui/components'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { validateGroupCredentials, createDatabaseCredentials } from './index'
 import { ResourceNotFoundError, NotAuthorizedError } from '../interfaces/Errors'
 import { dbRef, REMOTE_CLOUDANT_URL } from '../../databyss-data/pouchdb/db'
@@ -23,6 +24,8 @@ export const PageReplicator = ({
   // get the groups from react-query
   const groupsRes = useGroups()
 
+  const sessionDispatch = useSessionContext((c) => c && c.dispatch)
+
   const startReplication = ({
     groupId,
     dbKey,
@@ -32,6 +35,13 @@ export const PageReplicator = ({
     dbKey: string
     dbPassword: string
   }) => {
+    sessionDispatch({
+      type: 'DB_BUSY',
+      payload: {
+        isBusy: true,
+      },
+    })
+
     // set up page replication
     const opts = {
       live: true,
@@ -42,9 +52,8 @@ export const PageReplicator = ({
         password: dbPassword,
       },
     }
-    const _replication = dbRef.current!.replicate.to(
-      `${REMOTE_CLOUDANT_URL}/${groupId}`,
-      {
+    const _replication = dbRef
+      .current!.replicate.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
         ...opts,
         // do not replciate design docs or documents that dont include the page
         filter: (doc) => {
@@ -57,8 +66,27 @@ export const PageReplicator = ({
           }
           return !doc._id.includes('design/')
         },
-      }
-    )
+      })
+      // keeps track of the loader wheel
+      .on('change', () => {
+        sessionDispatch({
+          type: 'DB_BUSY',
+          payload: {
+            isBusy: true,
+          },
+        })
+      })
+      .on('paused', (err) => {
+        if (!err) {
+          sessionDispatch({
+            type: 'DB_BUSY',
+            payload: {
+              isBusy: false,
+            },
+          })
+        }
+      })
+
     replicationsRef.current.push(_replication)
   }
 

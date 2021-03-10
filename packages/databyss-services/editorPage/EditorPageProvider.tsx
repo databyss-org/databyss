@@ -42,7 +42,6 @@ interface ContextType {
   getPublicAccount: (id: string) => string | string[]
   archivePage: (id: string, boolean: boolean) => Promise<void>
   onPageCached: (id: string, callback: Function) => void
-  patchQueueSize: number
   removePageFromCache: (id: string) => void
 }
 const useReducer = createReducer()
@@ -79,8 +78,6 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
       })
     }
   }, [state.cache])
-
-  const patchQueueSize = state.patchQueueSize
 
   const onPageCached = (id: string, callback: Function) => {
     // add back to dictionary
@@ -177,7 +174,6 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         archivePage,
         onPageCached,
         setPagePublic,
-        patchQueueSize,
         removePageFromCache,
         getPublicAccount,
       }}

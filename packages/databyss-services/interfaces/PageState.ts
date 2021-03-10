@@ -4,5 +4,4 @@ export interface PageState {
   cache: CacheDict<Page>
   headerCache: NullableCache<PageHeader>
   refDict: RefDict
-  patchQueueSize: number
 }

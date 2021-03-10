@@ -191,6 +191,7 @@ const SessionProvider = ({
         getCurrentAccount,
         getUserAccount,
         logout,
+        dispatch,
       }}
     >
       {_children}
