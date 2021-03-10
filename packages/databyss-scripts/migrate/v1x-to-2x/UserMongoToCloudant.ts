@@ -5,22 +5,15 @@ import Page from '@databyss-org/api/src/models/Page'
 import Block from '@databyss-org/api/src/models/Block'
 import Selection from '@databyss-org/api/src/models/Selection'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
-import {
-  Block as BlockInterface,
-  Page as PageInterface,
-} from '@databyss-org/services/interfaces'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { Block as BlockInterface } from '@databyss-org/services/interfaces'
+import { DocumentType, PageDoc } from '@databyss-org/data/pouchdb/interfaces'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import {
   createGroupId,
   createGroupDatabase,
 } from '@databyss-org/api/src/lib/createUserDatabase'
 import { uid, uidlc } from '@databyss-org/data/lib/uid'
-import {
-  PageDoc,
-  Role,
-  User as UserInterface,
-} from '@databyss-org/data/interfaces'
+import { Role, User as UserInterface } from '@databyss-org/data/interfaces'
 import ServerProcess from '../../lib/ServerProcess'
 import { getEnv, EnvDict } from '../../lib/util'
 
