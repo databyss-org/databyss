@@ -48,6 +48,7 @@ const PageMenu = () => {
 
   const getSession = useSessionContext((c) => c && c.getSession)
   const setDefaultPage = useSessionContext((c) => c && c.setDefaultPage)
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   const { defaultPageId } = getSession()
   const [showMenu, setShowMenu] = useState(false)
@@ -314,9 +315,11 @@ const PageMenu = () => {
         data-test-element="archive-dropdown"
         label="Archive Page"
       >
-        <Icon sizeVariant="medium" color="text.1">
-          <MenuSvg />
-        </Icon>
+        {!isPublicAccount() && (
+          <Icon sizeVariant="medium" color="text.1">
+            <MenuSvg />
+          </Icon>
+        )}
       </BaseControl>
       {showMenu && (
         <ClickAwayListener onClickAway={() => setShowMenu(false)}>

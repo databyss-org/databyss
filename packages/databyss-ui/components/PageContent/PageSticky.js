@@ -12,6 +12,7 @@ import PageMenu from './PageMenu'
 
 const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
+
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
   const patchQueueSize = useEditorPageContext((c) => c && c.patchQueueSize)
 
