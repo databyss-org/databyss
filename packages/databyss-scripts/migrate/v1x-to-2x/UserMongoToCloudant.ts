@@ -539,6 +539,11 @@ class UserMongoToCloudant extends ServerProcess {
         _id: _couchUserId,
         email: _mongoUser.email,
         defaultGroupId: _defaultGroupId,
+        ...(_mongoUser.googleId
+          ? {
+              googleId: _mongoUser.googleId,
+            }
+          : {}),
       })
       console.log(`👤 Created User document`)
 
