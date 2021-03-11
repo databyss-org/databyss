@@ -33,7 +33,10 @@ export const joinBlockRelations = ({
     if (pagePredicate) {
       _include =
         _include &&
-        curr.pages.map((_pageId) => pageDict![_pageId]).some(pagePredicate)
+        curr.pages
+          .map((_pageId) => pageDict![_pageId])
+          .filter((_p) => !!_p)
+          .some(pagePredicate)
     }
     if (_include) {
       accum[curr._id] = curr
@@ -73,6 +76,7 @@ const populatePage = ({
   blocks: DocumentDict<Block>
 }) => {
   const _page = page
+
   _page.blocks = page.blocks.map((b) => {
     const _block = { ...blocks[b._id] }
     // check for atomic block closure
@@ -97,9 +101,13 @@ export const addPagesToBlockRelation = ({
   pages: DocumentDict<Page>
   blocks: DocumentDict<Block>
 }) => {
-  const _pages = blockRelation.pages.map((p) =>
-    populatePage({ page: pages[p], blocks })
-  )
+  const _pages: Page[] = []
+  blockRelation.pages.forEach((p) => {
+    if (!pages[p]) {
+      return
+    }
+    _pages.push(populatePage({ page: pages[p], blocks }))
+  })
 
   const relations: IndexPageResult[] = []
   // returns array of all block relations to provided id

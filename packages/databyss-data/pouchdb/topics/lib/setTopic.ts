@@ -29,8 +29,6 @@ const setTopic = async (data: Topic) => {
     },
   })
 
-  console.log(_relation)
-
   if (!_relation) {
     // block has no relations yet
     return

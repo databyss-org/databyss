@@ -1,7 +1,7 @@
 import { JSONSchema4 } from 'json-schema'
 
-export const userPreferenceSchema: JSONSchema4 = {
-  title: 'UserPreferences',
+export const sysGroupSchema: JSONSchema4 = {
+  title: 'Groups',
   type: 'object',
   properties: {
     _rev: {
@@ -21,38 +21,44 @@ export const userPreferenceSchema: JSONSchema4 = {
         },
       },
     },
-    email: {
+    _id: {
       type: 'string',
     },
-    userId: {
+    name: {
       type: 'string',
     },
-    token: {
+    defaultPageId: {
       type: 'string',
     },
-    groups: {
+    belongsToUserId: {
+      type: 'string',
+    },
+    sessions: {
       type: 'array',
       items: {
         type: 'object',
         properties: {
-          groupId: {
-            type: 'string',
-          },
-          role: {
-            type: 'string',
-          },
-          defaultPageId: {
+          userId: {
             type: 'string',
           },
           dbKey: {
             type: 'string',
           },
+          role: {
+            type: 'string',
+          },
+          lastLoginAt: {
+            type: 'number',
+          },
+          clientInfo: {
+            type: 'string',
+          },
         },
       },
+      required: ['userId', 'dbkey', 'lastLoginAt', 'role'],
     },
   },
-  required: ['groups', 'userId'],
-  allOf: [{ $ref: 'pouchDb' }],
+  required: ['_id', 'name', 'sessions', 'belongsToUserId'],
 }
 
-export default userPreferenceSchema
+export default sysGroupSchema

@@ -36,8 +36,17 @@ export const pouchDocSchema: JSONSchema4 = {
     _deleted: {
       type: 'boolean',
     },
+    belongsToGroup: {
+      type: 'string',
+    },
+    sharedWithGroups: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    },
   },
-  required: ['_id', 'doctype', 'createdAt'],
+  required: ['_id', 'doctype', 'createdAt', 'belongsToGroup'],
 }
 
 export default pouchDocSchema

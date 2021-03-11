@@ -23,10 +23,8 @@ const AccountMenu = () => {
   const [menuOpen, setMenuOpen] = useState(false)
   const [authToken, setAuthToken] = useState()
 
-  const navToDefaultPage = (userInfo) => {
-    navigate(`/${userInfo.defaultAccount}/pages/${userInfo.defaultPage}`, {
-      hasAccount: true,
-    })
+  const navToDefaultPage = () => {
+    navigate(`/`, { hasAccount: true })
     // window does not refresh on navigation change
     window.location.reload()
   }

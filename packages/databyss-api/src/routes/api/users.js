@@ -102,8 +102,6 @@ router.post(
       await Users.insert({
         _id: _userId,
         email,
-        // create the default id for user account
-        // defaultGroupId: uid(),
       })
     } else {
       _userId = user.docs[0]._id
@@ -157,14 +155,6 @@ router.post(
         }
 
         return res.json({ data: { ...user } }).status(200)
-        // if (user) {
-        //   let group = await Groups.get(user.defaultGroupId)
-        //   if (group) {
-        //     group = _.pick(group, 'defaultPageId')
-
-        //     return res.json({ data: { ...user, ...group } }).status(200)
-        //   }
-        // }
       }
       return res.status(401).json({ msg: 'Token is not valid' })
     } catch (err) {

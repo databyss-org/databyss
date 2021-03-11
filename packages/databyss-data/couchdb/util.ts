@@ -6,11 +6,12 @@ import {
 import {
   userSchema,
   loginSchema,
-  groupSchema,
+  sysGroupSchema,
   sourceSchema,
   blockRelationSchema,
   selectionSchema,
   pageSchema,
+  groupSchema,
   entrySchema,
   topicSchema,
   textSchema,
@@ -62,6 +63,7 @@ export const updateDesignDoc = async ({
     blockRelationSchema,
     selectionSchema,
     pageSchema,
+    groupSchema,
     entrySchema,
     topicSchema,
     userPreferenceSchema,
@@ -74,7 +76,7 @@ export const updateDesignDocs = async () => {
   const _designDatabaseTuple: [JSONSchema4, DocumentScope<DesignDoc>][] = [
     [userSchema, UsersDesignDoc],
     [loginSchema, LoginsDesignDoc],
-    [groupSchema, GroupsDesignDoc],
+    [sysGroupSchema, GroupsDesignDoc],
   ]
 
   _designDatabaseTuple.forEach((t) =>

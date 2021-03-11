@@ -40,8 +40,9 @@ export const useSearchEntries = (searchQuery: string) => {
       // already subscribed
       return
     }
-    changesRef.current = dbRef.current
-      ?.changes({
+
+    changesRef.current = dbRef
+      .current!.changes({
         since: 'now',
         live: true,
         include_docs: true,

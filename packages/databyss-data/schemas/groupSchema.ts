@@ -1,61 +1,25 @@
 import { JSONSchema4 } from 'json-schema'
 
 export const groupSchema: JSONSchema4 = {
-  title: 'Groups',
+  title: 'Page',
   type: 'object',
   properties: {
-    _rev: {
-      type: 'string',
-    },
-    _revisions: {
-      type: 'object',
-      properties: {
-        start: {
-          type: 'number',
-        },
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
-    _id: {
-      type: 'string',
-    },
     name: {
       type: 'string',
     },
-    defaultPageId: {
-      type: 'string',
-    },
-    sessions: {
+    pages: {
       type: 'array',
       items: {
-        type: 'object',
-        properties: {
-          userId: {
-            type: 'string',
-          },
-          dbKey: {
-            type: 'string',
-          },
-          role: {
-            type: 'string',
-          },
-          lastLoginAt: {
-            type: 'number',
-          },
-          clientInfo: {
-            type: 'string',
-          },
-        },
+        type: 'string',
       },
-      required: ['userId', 'dbkey', 'lastLoginAt', 'role'],
+    },
+    public: {
+      type: 'boolean',
     },
   },
-  required: ['_id', 'name', 'sessions'],
+  // extend pouchdb types
+  allOf: [{ $ref: 'pouchDb' }],
+  required: ['pages'],
 }
 
 export default groupSchema

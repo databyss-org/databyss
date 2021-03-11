@@ -3,6 +3,7 @@ import { Block } from '@databyss-org/services/interfaces'
 import { PageDoc, DocumentType } from '../interfaces'
 import { upsert, addTimeStamp } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
+import { BlockReference } from '../../../databyss-services/interfaces/Block'
 import { dbRef } from '../db'
 
 const applyPatch = (node, path, value) => {
@@ -128,7 +129,7 @@ export const runPatches = (p: Patch) => {
 export const normalizePage = (page: Page): PageDoc => {
   const _pageDoc: PageDoc = {
     blocks: page.blocks.map((b) => ({ _id: b._id, type: b.type })),
-    selection: page.selection._id,
+    selection: page.selection._id!,
     _id: page._id,
     name: page.name,
     archive: page.archive,
@@ -176,3 +177,22 @@ export const addPage = async (page: Page) => {
 
   return page
 }
+
+export const didBlocksChange = ({
+  blocksAfter,
+  blocksBefore,
+}: {
+  blocksBefore: BlockReference[]
+  blocksAfter: BlockReference[]
+}) =>
+  !blocksAfter.reduce((acc, blockAfter, idx) => {
+    const _blockBefore = blocksBefore[idx]
+    if (
+      acc &&
+      blockAfter?.type === _blockBefore?.type &&
+      blockAfter?._id === _blockBefore?._id
+    ) {
+      return true
+    }
+    return false
+  }, true)

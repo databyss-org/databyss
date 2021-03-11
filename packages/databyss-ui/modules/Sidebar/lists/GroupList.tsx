@@ -1,44 +1,54 @@
 import React from 'react'
-import { GroupHeadersLoader } from '@databyss-org/ui/components/Loaders'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
-import { GroupHeader, PageHeader } from '@databyss-org/services/interfaces'
+import { Group } from '@databyss-org/services/interfaces'
+import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
+import { LoadingFallback } from '@databyss-org/ui/components'
 
-const getGroupItems = (groupHeaders) =>
-  Object.values(groupHeaders as GroupHeader[]).map((header) => ({
-    text: header.name,
-    type: 'group',
-    route: `/collections/${header._id}`,
-    data: header,
-  }))
+export const GroupList = (others) => {
+  const groupsRes = useGroups()
+  const pagesRes = usePages()
 
-const getPageItems = (pageHeaders) =>
-  Object.values(pageHeaders as PageHeader[]).map((header) => ({
-    text: header.name,
-    type: 'page',
-    route: `/pages/${header._id}`,
-    data: header,
-  }))
+  const getGroupItems = (groups: Group[]) =>
+    groups.map((group) => ({
+      text: group.name,
+      type: 'group',
+      route: `/collections/${group._id}`,
+      data: group,
+    }))
 
-export const GroupList = (others) => (
-  <GroupHeadersLoader>
-    {([groupHeaders, sharedPageHeaders]) => (
-      <>
-        <SidebarList
-          menuItems={[
-            {
-              text: 'My Collections',
-              type: 'heading',
-            },
-            ...getGroupItems(groupHeaders),
-            {
-              text: 'Shared Pages',
-              type: 'heading',
-            },
-            ...getPageItems(sharedPageHeaders),
-          ]}
-          {...others}
-        />
-      </>
-    )}
-  </GroupHeadersLoader>
-)
+  const getPageItems = (groups: Group[]) =>
+    groups.map((group) => ({
+      text: pagesRes.data![group.pages[0]]?.name,
+      type: 'page',
+      route: `/pages/${group._id.substring(2)}`,
+      data: group,
+    }))
+
+  if (!groupsRes.isSuccess || !pagesRes.isSuccess) {
+    return <LoadingFallback queryObserver={groupsRes} />
+  }
+  const namedGroups = Object.values(groupsRes.data).filter(
+    (group) => !!group.name
+  )
+  const publicPages = Object.values(groupsRes.data).filter(
+    (group) => !group.name
+  )
+
+  return (
+    <SidebarList
+      menuItems={[
+        {
+          text: 'My Collections',
+          type: 'heading',
+        },
+        ...getGroupItems(namedGroups),
+        {
+          text: 'Public Pages',
+          type: 'heading',
+        },
+        ...getPageItems(publicPages),
+      ]}
+      {...others}
+    />
+  )
+}

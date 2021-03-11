@@ -14,7 +14,8 @@ import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { useServiceContext } from '../'
 import { localStorageHasSession } from './clientStorage'
-import { CACHE_SESSION } from './constants'
+import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
+import { replicatePage, hasUnathenticatedAccess } from './actions'
 
 const useReducer = createReducer()
 
@@ -87,14 +88,13 @@ const SessionProvider = ({
   useEffect(() => {
     const _init = async () => {
       const _sesionFromLocalStorage = await localStorageHasSession()
+
       if (_sesionFromLocalStorage) {
         // 2nd pass: load session from local_storage
         // replicate from cloudant
         const groupId = _sesionFromLocalStorage.defaultGroupId
 
         // TODO: connect directly to CouchDB on cloudant while pouch is synching
-        // connect(`g_${groupId}`)
-
         await replicateDbFromRemote({
           groupId,
         })
@@ -111,7 +111,6 @@ const SessionProvider = ({
           dispatch,
         })
 
-        // dispatch
         dispatch({
           type: CACHE_SESSION,
           payload: {
@@ -119,8 +118,20 @@ const SessionProvider = ({
           },
         })
       } else {
-        // pass 1: get session from API
-        getSession({ retry: true, code, email })
+        // check if page has public access
+        const unauthenticatedPageId = await hasUnathenticatedAccess()
+
+        if (unauthenticatedPageId) {
+          // replicate public page to local pouchdb
+          await replicatePage(unauthenticatedPageId)
+          dispatch({
+            type: CACHE_PUBLIC_SESSION,
+            payload: { publicAccount: unauthenticatedPageId },
+          })
+        } else {
+          // pass 1: get session from API
+          getSession({ retry: true, code, email })
+        }
       }
     }
 
@@ -180,6 +191,7 @@ const SessionProvider = ({
         getCurrentAccount,
         getUserAccount,
         logout,
+        dispatch,
       }}
     >
       {_children}

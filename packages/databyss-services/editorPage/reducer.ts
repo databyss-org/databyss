@@ -13,7 +13,6 @@ import {
   CACHE_PAGE,
   DELETE_PAGE,
   ARCHIVE_PAGE,
-  QUEUE_PATCH,
   REMOVE_PAGE_FROM_CACHE,
   PATCH,
   SET_PAGE_PUBLIC,
@@ -25,7 +24,6 @@ export const initialState: PageState = {
   cache: {},
   headerCache: null,
   refDict: {},
-  patchQueueSize: 0,
 }
 
 export default produce((draft: Draft<PageState>, action: FSA) => {
@@ -40,10 +38,6 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
   }
   switch (action.type) {
     case PATCH:
-    case QUEUE_PATCH: {
-      draft.patchQueueSize = action.payload.queueSize
-      break
-    }
     case FETCH_PAGE: {
       draft.cache[action.payload.id] = new ResourcePending()
       break

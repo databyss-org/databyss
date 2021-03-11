@@ -1,5 +1,4 @@
 import React from 'react'
-import { useGroupContext } from '@databyss-org/services/groups/GroupProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import AddPageSvg from '@databyss-org/ui/assets/add_page.svg'
@@ -15,28 +14,23 @@ import {
 import { sidebar } from '@databyss-org/ui/theming/components'
 import { Page, Group } from '@databyss-org/services/interfaces'
 import { savePage } from '@databyss-org/services/editorPage'
-import { addPage } from '@databyss-org/data/pouchdb/pages/util'
+import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 
 const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const { navigate, navigateSidebar, getSidebarPath } = useNavigationContext()
 
-  const setGroup = useGroupContext((c) => c.setGroup)
-
   const sidebarPath = getSidebarPath()
 
   const onNewPageClick = () => {
     if (sidebarPath === 'groups') {
-      setGroup(new Group())
+      const _group = new Group(UNTITLED_NAME)
+      saveGroup(_group).then(() => navigate(`/collections/${_group._id}`))
       return
     }
 
     const _page = new Page()
-    addPage(_page).then(() =>
-      savePage(_page).then(() => {
-        navigate(`/pages/${_page._id}`)
-      })
-    )
+    savePage(_page).then(() => navigate(`/pages/${_page._id}`))
 
     navigateSidebar('/pages')
   }

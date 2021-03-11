@@ -58,5 +58,4 @@ export interface RefDict {
   [key: string]: React.Ref<HTMLInputElement>
 }
 
-export type { GroupHeader } from './Group'
-export { Group, GroupState } from './Group'
+export { Group } from './Group'

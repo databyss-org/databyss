@@ -5,15 +5,14 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { StickyHeader } from '@databyss-org/ui/components'
 import { View, Icon } from '@databyss-org/ui/primitives'
-import { useEditorPageContext } from '@databyss-org/services'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import LoadingSvg from '@databyss-org/ui/assets/loading.svg'
 import PageMenu from './PageMenu'
 
 const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
+
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
-  const patchQueueSize = useEditorPageContext((c) => c && c.patchQueueSize)
 
   const _isDbBusy = isDbBusy()
   const pagesRes = usePages()
@@ -29,8 +28,7 @@ const PageSticky = ({ pagePath, pageId }) => {
       },
       2500,
       {
-        // leading: true,
-        maxWait: 500,
+        leading: true,
       }
     ),
     []
@@ -38,8 +36,8 @@ const PageSticky = ({ pagePath, pageId }) => {
 
   useEffect(() => {
     // check if database is busy or if we have pending patches
-    debounceSavingIcon(!!(_isDbBusy || patchQueueSize))
-  }, [_isDbBusy, patchQueueSize])
+    debounceSavingIcon(!!_isDbBusy)
+  }, [_isDbBusy])
 
   if (!pagesRes.isSuccess) {
     return null

@@ -100,7 +100,7 @@ export interface IndexPageResult {
   blockText: Text
 }
 
-export type BlockRelation = {
+export interface BlockRelation extends Document {
   _id: string
   blockId: string
   blockType: BlockType

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { getDefaultGroup } from '@databyss-org/services/session/clientStorage'
 import { debounce } from 'lodash'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
@@ -122,6 +123,7 @@ const EditorWithProvider = () => {
 
   useEffect(() => {
     // check to see if page exists in DB, if not add page
+
     dbRef.current.find({ selector: { _id: _pageId } }).then((res) => {
       if (!res.docs.length) {
         setPage(_page)

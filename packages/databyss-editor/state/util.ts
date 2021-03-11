@@ -707,13 +707,19 @@ export const getInlineOrAtomicsFromStateSelection = (
 create a selection which includes the whole document
 */
 
-export const selectAllSelection = (state: EditorState) => {
+export const selectAllSelection = ({
+  selection,
+  blocks,
+}: {
+  selection: Selection
+  blocks: Block[]
+}) => {
   const _selectionFromState = {
-    _id: state.selection._id,
+    _id: selection._id,
     anchor: { offset: 0, index: 0 },
     focus: {
-      offset: state.blocks[state.blocks.length - 1].text.textValue.length,
-      index: state.blocks.length,
+      offset: blocks[blocks.length - 1].text.textValue.length,
+      index: blocks.length,
     },
   }
   return _selectionFromState

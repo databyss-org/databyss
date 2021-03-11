@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
+
 import { dbRef } from '../db'
 import { CouchDb } from '../../couchdb-client/couchdb'
 import { DocumentArrayToDict } from './utils'
@@ -35,12 +36,12 @@ export const useDocuments = <T extends Document>(
 
   const queryKey = selectorString
 
-  console.log('useDocuments.selector', selector)
+  // console.log('useDocuments.selector', selector)
   const query = useQuery<DocumentDict<T>>(
     queryKey,
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) => {
-        console.log('useDocuments.fetch', selector)
+        // console.log('useDocuments.fetch', selector)
         dbRef
           .current!.find({ selector })
           .then((res: any) => resolve(DocumentArrayToDict(res.docs)))
@@ -56,6 +57,7 @@ export const useDocuments = <T extends Document>(
       return
     }
     // console.log('useDocuments.subscribe', queryKey, selector)
+
     if (subscriptionDict[selectorString]) {
       return
     }

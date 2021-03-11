@@ -8,6 +8,7 @@ import {
   blockRelationSchema,
   selectionSchema,
   pageSchema,
+  groupSchema,
   textSchema,
   entrySchema,
   topicSchema,
@@ -18,14 +19,15 @@ import {
 import {
   getPouchSecret,
   getDbCredentialsFromLocal,
+  getDefaultGroup,
 } from '@databyss-org/services/session/clientStorage'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
+import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import { DocumentType } from './interfaces'
 import { searchText } from './utils'
-import { CouchDb } from '../couchdb-client/couchdb'
 
-const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
+export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
 // add plugins
 PouchDB.plugin(PouchDBTransform)
@@ -34,7 +36,7 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 
 interface DbRef {
-  current: PouchDB.Database<any> | CouchDb | null
+  current: PouchDB.Database<any> | null
 }
 
 declare global {
@@ -44,7 +46,7 @@ declare global {
 }
 
 const getPouchDb = (groupId: string) =>
-  new PouchDB(`g_${groupId}`, {
+  new PouchDB(groupId, {
     auto_compaction: true,
   })
 
@@ -53,9 +55,15 @@ export const dbRef: DbRef = {
 }
 
 // try to load pouch_secrets from local storage to init db
-const _secrets = getPouchSecret()
-if (_secrets) {
-  dbRef.current = getPouchDb(Object.keys(_secrets)[0])
+// const _secrets = getPouchSecret()
+const defaultGroup = getDefaultGroup()
+const groupIdFromUrl = getAccountFromLocation()
+
+if (
+  defaultGroup &&
+  (!groupIdFromUrl || groupIdFromUrl === defaultGroup || process.env.STORYBOOK)
+) {
+  dbRef.current = getPouchDb(`g_${defaultGroup}`)
 }
 
 export const areIndexBuilt = {
@@ -146,6 +154,44 @@ export const initiatePouchDbIndexes = async () => {
 }
 
 /*
+replicates public remote DB to local
+*/
+
+export const replicatePublicPage = ({ pageId }: { pageId: string }) =>
+  new Promise<boolean>((resolve, reject) => {
+    const opts = {
+      retry: true,
+    }
+    dbRef.current = getPouchDb(pageId)
+
+    dbRef.current.replicate
+      .from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
+        ...opts,
+      })
+      .on('complete', () => {
+        const _opts = {
+          ...opts,
+          live: true,
+          continuous: true,
+        }
+        // when replication is complete, kick off a live sync
+        dbRef
+          .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
+            ..._opts,
+          })
+          .on('error', () => {
+            // USER HAS TURNED OFF SHARING
+            window.location.reload()
+          })
+
+        resolve(true)
+      })
+      .on('error', (err) => {
+        reject(err)
+      })
+  })
+
+/*
 replicates remote DB to local
 */
 
@@ -184,21 +230,19 @@ export const replicateDbFromRemote = ({
         password: _cred.dbPassword,
       },
     }
-    dbRef.current = getPouchDb(groupId)
+    dbRef.current = getPouchDb(`g_${groupId}`)
     dbRef.current.replicate
-      .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
+      .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
+        ...opts,
+      })
       .on('complete', () => resolve())
       .on('error', (err) => reject(err))
   })
 
 export const syncPouchDb = ({
-  // dbKey,
-  // dbPassword,
   groupId,
   dispatch,
 }: {
-  // dbKey: string
-  // dbPassword: string
   groupId: string
   dispatch: Function
 }) => {
@@ -274,6 +318,7 @@ export const pouchDataValidation = (data) => {
     [BlockType.Source]: sourceSchema,
     [BlockType.Entry]: entrySchema,
     [BlockType.Topic]: topicSchema,
+    [DocumentType.Group]: groupSchema,
     [DocumentType.Page]: pageSchema,
     [DocumentType.Selection]: selectionSchema,
     [DocumentType.BlockRelation]: blockRelationSchema,

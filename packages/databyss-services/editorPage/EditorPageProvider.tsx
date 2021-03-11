@@ -1,6 +1,8 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
+import { setPublicPage } from '@databyss-org/data/pouchdb/groups'
+import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -11,7 +13,8 @@ import {
   PatchBatch,
   ResourceResponse,
 } from '../interfaces'
-
+import { PageReplicator } from './PageReplicator'
+import { pageDependencyObserver } from './pageDependencyObserver'
 import * as actions from './actions'
 
 interface PropsType {
@@ -39,7 +42,6 @@ interface ContextType {
   getPublicAccount: (id: string) => string | string[]
   archivePage: (id: string, boolean: boolean) => Promise<void>
   onPageCached: (id: string, callback: Function) => void
-  patchQueueSize: number
   removePageFromCache: (id: string) => void
 }
 const useReducer = createReducer()
@@ -51,8 +53,18 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
 }: PropsType) => {
   const refDictRef = useRef<RefDict>({})
   const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
+  const pageIdParams = useParams()
+  let pageId
+  if (pageIdParams) {
+    pageId = pageIdParams.id
+  }
 
   const [state, dispatch] = useReducer(reducer, initialState)
+
+  //  initiate page listener
+  useEffect(() => {
+    pageDependencyObserver()
+  }, [])
 
   useEffect(() => {
     if (pageCachedHookRef.current) {
@@ -66,8 +78,6 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
       })
     }
   }, [state.cache])
-
-  const patchQueueSize = state.patchQueueSize
 
   const onPageCached = (id: string, callback: Function) => {
     // add back to dictionary
@@ -140,8 +150,8 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(actions.removePageFromCache(id))
   }
 
-  const setPagePublic = (id: string, bool: boolean, accountId: string) => {
-    dispatch(actions.setPagePublic(id, bool, accountId))
+  const setPagePublic = (id: string, bool: boolean) => {
+    setPublicPage(id, bool)
   }
 
   const getPublicAccount = useCallback(
@@ -164,12 +174,11 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         archivePage,
         onPageCached,
         setPagePublic,
-        patchQueueSize,
         removePageFromCache,
         getPublicAccount,
       }}
     >
-      {children}
+      <PageReplicator pageId={pageId}>{children}</PageReplicator>
     </EditorPageContext.Provider>
   )
 }

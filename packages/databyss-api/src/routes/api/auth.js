@@ -19,7 +19,7 @@ router.post('/', auth, async (req, res) => {
       let session = await getSessionFromUserId(req.user.id)
       // TODO: on every re-login attempt we are creating new user credentials, should this happen on the back end or should the user save the credentials in their offline database?
       session = await addCredientialsToSession({
-        groupId: session.user.defaultGroupId,
+        groupId: session.user.belongsToGroup,
         userId: session.user._id,
         session,
       })

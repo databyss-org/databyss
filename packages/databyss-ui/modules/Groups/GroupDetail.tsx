@@ -4,18 +4,17 @@ import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
 import { Group } from '@databyss-org/services/interfaces'
-import { useGroupContext } from '@databyss-org/services/groups/GroupProvider'
 import {
   View,
   Text,
-  TextInput,
   Grid,
   ViewProps,
   ScrollView,
 } from '@databyss-org/ui/primitives'
-
-import { GroupLoader } from '../../components/Loaders'
-import { StickyHeader, TitleInput } from '../../components'
+import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
+import { useGroups } from '@databyss-org/data/pouchdb/hooks'
+import { debounce } from 'lodash'
+import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
@@ -38,49 +37,46 @@ const GroupSection = ({
 
 export const GroupFields = ({ group }: { group: Group }) => {
   const [values, setValues] = useState(group)
-  const { setGroup } = useGroupContext()
+
+  const saveChanges = useCallback(
+    debounce((_values: Group) => saveGroup(_values), 500),
+    [saveGroup]
+  )
 
   const onChange = useCallback(
-    (_values) => {
+    (_values: Group) => {
       // update internal state
       setValues(_values)
       // update database
-      setGroup(group._id, (oldGroup) => {
-        const _updated = Object.assign({}, oldGroup, _values)
-        return _updated
-      })
+      saveChanges(_values)
     },
-    [setGroup]
+    [setValues]
   )
 
+  const _values = { ...values }
+  if (_values.name === UNTITLED_NAME) {
+    _values.name = ''
+  }
+
   return (
-    <ValueListProvider onChange={onChange} values={values}>
+    <ValueListProvider onChange={onChange} values={_values}>
       <View pl="em" pr="medium" pt="none" flexGrow={1}>
         <ValueListItem path="name">
-          <TitleInput placeholder="untitled" />
+          <TitleInput placeholder={UNTITLED_NAME} />
         </ValueListItem>
         <Grid columnGap="large" widthVariant="content" flexGrow={1}>
           <GroupSection title="Pages" flexGrow={1} flexBasis={1}>
             <View theme={darkTheme} flexGrow={1}>
               <ValueListItem path="pages">
-                <PageDropzone bg="background.2" height="100%" />
+                <PageDropzone
+                  bg="background.2"
+                  height="100%"
+                  groupId={_values._id}
+                />
               </ValueListItem>
             </View>
           </GroupSection>
           <View flexGrow={1} flexBasis={1}>
-            <GroupSection title="Description" widthVariant="content">
-              <View borderVariant="thinLight">
-                <ValueListItem path="description">
-                  <TextInput
-                    p="small"
-                    multiline
-                    maxRows={10}
-                    variant="uiTextSmall"
-                    placeholder="Type a description of your shared or public collection"
-                  />
-                </ValueListItem>
-              </View>
-            </GroupSection>
             <GroupSection title="Share with Everyone">
               <ValueListItem path="public">
                 <PublicSharingSettings />
@@ -95,23 +91,23 @@ export const GroupFields = ({ group }: { group: Group }) => {
 
 export const GroupDetail = () => {
   const { id } = useParams()
-
+  const groupsRes = useGroups()
+  const group = groupsRes.data?.[id]
+  if (!groupsRes.isSuccess || !group) {
+    return <LoadingFallback queryObserver={groupsRes} />
+  }
   return (
-    <GroupLoader groupId={id}>
-      {(group: Group) => (
-        <>
-          <StickyHeader path={['Collections', group.name]} />
-          <ScrollView
-            p="medium"
-            pt="small"
-            flexGrow={1}
-            flexShrink={1}
-            shadowOnScroll
-          >
-            <GroupFields group={group} />
-          </ScrollView>
-        </>
-      )}
-    </GroupLoader>
+    <>
+      <StickyHeader path={['Collections', group.name!]} />
+      <ScrollView
+        p="medium"
+        pt="small"
+        flexGrow={1}
+        flexShrink={1}
+        shadowOnScroll
+      >
+        <GroupFields group={group} key={id} />
+      </ScrollView>
+    </>
   )
 }

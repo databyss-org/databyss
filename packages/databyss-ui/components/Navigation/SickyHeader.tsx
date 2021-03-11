@@ -3,7 +3,6 @@ import React, { ReactNode, PropsWithChildren } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { View, Icon, Text } from '@databyss-org/ui/primitives'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import OnlineSvg from '@databyss-org/ui/assets/online.svg'
 import OfflineSvg from '@databyss-org/ui/assets/offline.svg'
@@ -20,7 +19,6 @@ export const StickyHeader = ({
   children,
 }: PropsWithChildren<StickyHeaderProps>) => {
   const { isOnline } = useNotifyContext()
-  const { isPublicAccount } = useSessionContext()
 
   if (isMobile()) {
     return null
@@ -55,7 +53,8 @@ export const StickyHeader = ({
         >
           {isOnline ? <OnlineSvg /> : <OfflineSvg />}
         </Icon>
-        {!isPublicAccount() && <AccountMenu />}
+        <AccountMenu />
+
         {contextMenu && <View ml="em">{contextMenu}</View>}
       </View>
     </View>

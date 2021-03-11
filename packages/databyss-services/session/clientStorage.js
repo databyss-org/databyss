@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import {
   upsert,
   getUserSession,
@@ -38,15 +37,19 @@ export const getAuthToken = () => {
   return _token
 }
 
-// export const getAuthToken = async () => {
-//   const _res = await getUserSession()
-//   return _res?.token
-// }
+export const getDefaultGroup = () => {
+  let groupId
+  try {
+    groupId = localStorage.getItem('default_group')
+  } catch (err) {
+    console.error('no default account found')
+  }
+  return groupId
+}
 
 export const getAccountId = async () => {
-  const _userSession = await getUserSession()
-
-  return _userSession?.defaultGroupId
+  const defaultGroup = getDefaultGroup()
+  return defaultGroup
 }
 
 export const setDefaultPageId = async (value) => {
@@ -100,20 +103,8 @@ export const deletePouchDbs = async () => {
   clearLocalStorage()
 }
 
-export const setUserSession = async (session) => {
-  await upsert({
-    doctype: DocumentType.UserPreferences,
-    _id: 'user_preferences',
-    doc: _.pick(session, [
-      '_id',
-      'token',
-      'doctype',
-      'userId',
-      'email',
-      'defaultGroupId',
-      'groups',
-    ]),
-  })
+export const setDefaultGroup = (groupId) => {
+  localStorage.setItem('default_group', groupId)
 }
 
 export const setPouchSecret = (credentials) => {
@@ -125,8 +116,29 @@ export const setPouchSecret = (credentials) => {
   }
 
   credentials.forEach((g) => {
-    keyMap[g.groupId] = { dbPassword: g.dbPassword, dbKey: g.dbKey }
+    // let defaultAccount = false
+    // if no default account in dictionary, set default account
+    if (!Object.keys(keyMap).length) {
+      setDefaultGroup(g.groupId)
+    }
+
+    keyMap[g.groupId] = {
+      dbPassword: g.dbPassword,
+      dbKey: g.dbKey,
+      // defaultAccount,
+    }
   })
+  localStorage.setItem('pouch_secrets', JSON.stringify(keyMap))
+}
+
+export const deletePouchSecret = (groupId) => {
+  let keyMap = localStorage.getItem('pouch_secrets')
+  if (!keyMap) {
+    return
+  }
+  keyMap = JSON.parse(keyMap)
+
+  delete keyMap[groupId]
   localStorage.setItem('pouch_secrets', JSON.stringify(keyMap))
 }
 
@@ -151,16 +163,33 @@ export const localStorageHasSession = async () => {
 
   const token = getAuthToken()
 
+  const defaultGroup = getDefaultGroup()
+  if (!defaultGroup) {
+    return false
+  }
+
   // get user preferences
   const _userSession = await getUserSession()
+
+  // if we're on a URL with a groupid on it, make sure it matches default group
+  const groupIdFromUrl = getAccountFromLocation()
+
+  if (
+    !process.env.STORYBOOK &&
+    groupIdFromUrl &&
+    groupIdFromUrl !== defaultGroup
+  ) {
+    // TODO: first check it against the user Session default group
+    return false
+  }
 
   if (token && _userSession) {
     session = {
       token,
-      userId: _userSession._id,
+      userId: _userSession.userId,
       email: _userSession.email,
       defaultPageId: _userSession.groups[0].defaultPageId,
-      defaultGroupId: _userSession.defaultGroupId,
+      defaultGroupId: _userSession.belongsToGroup,
     }
   }
 

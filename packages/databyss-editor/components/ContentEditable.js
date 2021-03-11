@@ -162,7 +162,6 @@ const ContentEditable = ({
           page: state.pageHeader?._id,
         }
         setBlockRelations(_payload)
-
         removeEntityFromQueue(entity._id)
       })
     }

@@ -4,7 +4,7 @@ import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
 import { isAtomicInlineType } from '../util'
 
-const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
+export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
   const atomics: BlockReference[] = []
   frag.forEach((b) => {
     if (!isAtomicInlineType(b.type)) {

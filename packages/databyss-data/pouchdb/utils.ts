@@ -1,6 +1,7 @@
 import PouchDB from 'pouchdb'
 import EventEmitter from 'es-event-emitter'
 import { Document } from '@databyss-org/services/interfaces'
+import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
@@ -92,7 +93,7 @@ export const getDocument = async <T extends Document>(
   id: string
 ): Promise<T | null> => {
   try {
-    return await dbRef.current?.get(id)
+    return await dbRef.current!.get(id)
   } catch (err) {
     if (err.name === 'not_found') {
       return null
@@ -147,7 +148,7 @@ _local documents do not appear with `find` so a `get` function must be used
 export const getUserSession = async (): Promise<UserPreference | null> => {
   let response
   try {
-    response = await dbRef.current!?.get('user_preference')
+    response = await dbRef.current!.get('user_preference')
   } catch (err) {
     console.error('user session not found')
   }
@@ -189,6 +190,27 @@ const coallesceQ = (patches: Patch[]) => {
   return _patches
 }
 
+// bypasses upsert queue
+export const upsertImmediate = async ({
+  doctype,
+  _id,
+  doc,
+}: {
+  doctype: DocumentType
+  _id: string
+  doc: any
+}) => {
+  await dbRef.current!.upsert(_id, (oldDoc) => {
+    const _doc = {
+      ...oldDoc,
+      ...addTimeStamp({ ...oldDoc, ...doc, doctype }),
+      belongsToGroup: getAccountFromLocation(),
+    }
+    pouchDataValidation(_doc)
+    return _doc
+  })
+}
+
 export class QueueProcessor extends EventEmitter {
   // on(event: string, listener: Function): this
   // emit(event: string): void
@@ -207,18 +229,9 @@ export class QueueProcessor extends EventEmitter {
         this.isProcessing = true
         const _upQdict = coallesceQ(upQdict.current)
         upQdict.current = []
-        for (const _id of Object.keys(_upQdict)) {
-          await dbRef.current!.upsert(_id, (oldDoc) => {
-            const _doc = {
-              ...oldDoc,
-              ...addTimeStamp({ ...oldDoc, ..._upQdict[_id] }),
-            }
-
-            // validate object before upsert
-            pouchDataValidation(_doc)
-
-            return _doc
-          })
+        for (const _docId of Object.keys(_upQdict)) {
+          const { _id, doctype } = _upQdict[_docId]
+          upsertImmediate({ _id, doctype, doc: _upQdict[_docId] })
         }
         this.isProcessing = false
       }
