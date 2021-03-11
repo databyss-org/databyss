@@ -123,6 +123,7 @@ describe('inline atomic', () => {
     await enterKey(actions)
 
     await sendKeys(actions, '/#')
+    await sleep(1000)
     await isAppInNotesSaved(driver)
 
     topicsSidebarButton = await getElementByTag(
@@ -191,6 +192,7 @@ describe('inline atomic', () => {
     await sleep(1000)
     await enterKey(actions)
     await sleep(1000)
+
     // verify results still appear
 
     topicResults = await await getElementsByTag(
@@ -227,7 +229,8 @@ describe('inline atomic', () => {
     await leftKey(actions)
 
     await backspaceKey(actions)
-    await sleep(500)
+    await sleep(1000)
+    await isAppInNotesSaved(driver)
 
     // check the sidebar for topic and see results
     // only one result should be present

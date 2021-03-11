@@ -81,7 +81,10 @@ const setBlockRelations = async (payload: {
     _payload.pages = _pages
 
     // add sharedWithGroups property to block relations
-    await addGroupToDocument(sharedWithGroups, _payload)
+    await addGroupToDocument(sharedWithGroups, {
+      ..._payload,
+      doctype: DocumentType.BlockRelation,
+    })
 
     upsert({
       doctype: DocumentType.BlockRelation,
