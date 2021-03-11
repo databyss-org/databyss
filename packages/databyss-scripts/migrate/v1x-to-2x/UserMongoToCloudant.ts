@@ -138,27 +138,12 @@ class UserMongoToCloudant extends ServerProcess {
         page.blocks.forEach((block) => {
           // aggregate all blocks into a Map so we don't write orphaned blocks
           _blockToPageMap[block._id] = page._id
-
-          // if this is a topic or source block, also add the page into the related block map
-          if (
-            block.type &&
-            block.type !== 'ENTRY' &&
-            !block.type.match(/^END_/)
-          ) {
-            if (!_relatedBlockMap[block._id]) {
-              _relatedBlockMap[block._id] = {}
-            }
-            _relatedBlockMap[block._id][page._id] = true
-          }
         })
       })
       console.log(
         `ℹ️  Valid (non-orphaned) ENTRY count: ${
           Object.values(_blockToPageMap).length
         }`
-      )
-      console.log(
-        `ℹ️  Block relation count: ${Object.keys(_relatedBlockMap).length}`
       )
 
       // get all Blocks for account
@@ -345,13 +330,21 @@ class UserMongoToCloudant extends ServerProcess {
               if (!_pageBlockId) {
                 return null
               }
-              let _pageBlockType = _mongoBlock.type
-              if (!_pageBlockType) {
-                console.log(
-                  `⚠️  page.block missing type on page: ${_mongoPage.name}`
-                )
-                _pageBlockType = _blockTypeMap[_mongoBlock._id] || 'ENTRY'
+              // use the block type from the block to fix bad data integrity...
+              let _pageBlockType = _blockTypeMap[_mongoBlock._id] || 'ENTRY'
+
+              // ...unless it's an END_xxx type
+              if (_mongoBlock.type?.match(/^END_/)) {
+                _pageBlockType = _mongoBlock.type
+              } else if (_pageBlockType !== 'ENTRY') {
+                // if this is a topic or source block,
+                //   also add the page into the related block map
+                if (!_relatedBlockMap[_mongoBlock._id]) {
+                  _relatedBlockMap[_mongoBlock._id] = {}
+                }
+                _relatedBlockMap[_mongoBlock._id][_mongoPage._id] = true
               }
+
               return {
                 type: _pageBlockType,
                 _id: _pageBlockId,
@@ -395,6 +388,9 @@ class UserMongoToCloudant extends ServerProcess {
       const _couchRelationsByPage: { [couchPageId: string]: string[] } = {}
 
       // generate BlockRelations using the _blockRelationMap
+      console.log(
+        `ℹ️  Migrating ${Object.keys(_relatedBlockMap).length} block relations`
+      )
       let _relationsCount = 0
       for (const _relationBlockMongoId of Object.keys(_relatedBlockMap)) {
         // get the block id
