@@ -9,7 +9,6 @@ import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
 import {
   Block as BlockInterface,
   BlockRelation,
-  Group,
 } from '@databyss-org/services/interfaces'
 import { DocumentType, PageDoc } from '@databyss-org/data/pouchdb/interfaces'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'

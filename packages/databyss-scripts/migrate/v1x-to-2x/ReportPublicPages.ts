@@ -1,5 +1,4 @@
 /* eslint-disable no-await-in-loop */
-import User from '@databyss-org/api/src/models/User'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
 import ServerProcess from '../../lib/ServerProcess'
 import { getEnv } from '../../lib/util'

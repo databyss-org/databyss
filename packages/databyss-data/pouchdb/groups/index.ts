@@ -31,7 +31,7 @@ const addOrRemoveCloudantGroupDatabase = async ({
   return res.data
 }
 
-const addGroupToDocument = (groupIds: string[], document: any) => {
+export const addGroupToDocument = async (groupIds: string[], document: any) => {
   // add groupId to page array
   let _sharedWithGroups = document.sharedWithGroups || []
   _sharedWithGroups = removeDuplicatesFromArray([
@@ -43,7 +43,7 @@ const addGroupToDocument = (groupIds: string[], document: any) => {
     document.sharedWithGroups = _sharedWithGroups
     // add group to page document
 
-    upsertImmediate({
+    await upsertImmediate({
       doctype: document.doctype,
       _id: document._id,
       doc: document,
@@ -51,7 +51,10 @@ const addGroupToDocument = (groupIds: string[], document: any) => {
   }
 }
 
-const removeGroupsFromDocument = (groupIds: string[], document: any) => {
+export const removeGroupsFromDocument = async (
+  groupIds: string[],
+  document: any
+) => {
   // if property doenst exist, bail early
   if (!document?.sharedWithGroups?.length) {
     return
@@ -64,7 +67,8 @@ const removeGroupsFromDocument = (groupIds: string[], document: any) => {
   // if elements were removed, update document
   if (document.sharedWithGroups.length !== _sharedWithGroups.length) {
     document.sharedWithGroups = _sharedWithGroups
-    upsertImmediate({
+
+    await upsertImmediate({
       doctype: document.doctype,
       _id: document._id,
       doc: document,
@@ -73,11 +77,19 @@ const removeGroupsFromDocument = (groupIds: string[], document: any) => {
 }
 
 export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
-  const _sharedWithPages = page.sharedWithGroups || []
+  const _page = page
+
+  const _sharedWithPages = _page.sharedWithGroups || []
+
+  // if page is not shared, bail from function
+  if (!_sharedWithPages.length) {
+    return
+  }
+
   const _blocks: Block[] = []
 
   // add to all blocks associated with page
-  for (const [i, _b] of page.blocks.entries()) {
+  for (const [i, _b] of _page.blocks.entries()) {
     const _block = await findOne<Block>({
       doctype: DocumentType.Block,
       query: { _id: _b._id },
@@ -102,7 +114,7 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
   }
 
   // add to selection
-  const _selectionId = page.selection
+  const _selectionId = _page.selection
   const _selection = await findOne<any>({
     doctype: DocumentType.Selection,
     query: { _id: _selectionId },
@@ -116,12 +128,21 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
   // add groupId to all atomics in pouch
 
   for (const _a of _atomics) {
+    // add sharedToGroup to inline atomics
     const _atomic = await findOne<any>({
-      doctype: DocumentType.BlockRelation,
-      query: { _id: `r_${_a._id}` },
+      doctype: DocumentType.Block,
+      query: { _id: _a._id },
     })
     if (_atomic) {
       addGroupToDocument(_sharedWithPages, _atomic)
+    }
+
+    const _blockRelation = await findOne<any>({
+      doctype: DocumentType.BlockRelation,
+      query: { _id: `r_${_a._id}` },
+    })
+    if (_blockRelation) {
+      addGroupToDocument(_sharedWithPages, _blockRelation)
     }
   }
 }
