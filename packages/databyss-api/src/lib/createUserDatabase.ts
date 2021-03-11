@@ -67,6 +67,7 @@ export const initializeNewPage = async ({
   }))
 }
 
+// TODO: rename to createGroup, because it doesn't just create the id
 export const createGroupId = async ({
   groupId,
   userId,
@@ -78,6 +79,7 @@ export const createGroupId = async ({
   const _id: string = groupId || uidlc()
   const Groups: any = await cloudant.db.use('groups')
   await Groups.insert({
+    // TODO: this should be "belongsToUser" for consistency
     belongsToUserId: userId,
     name: 'untitled',
     sessions: [],

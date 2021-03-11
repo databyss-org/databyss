@@ -3,33 +3,29 @@ import Account from '@databyss-org/api/src/models/Account'
 import User from '@databyss-org/api/src/models/User'
 import Page from '@databyss-org/api/src/models/Page'
 import Block from '@databyss-org/api/src/models/Block'
+import createSharedGroupDatabase from '@databyss-org/api/src/lib/createSharedGroupDatabase'
 import Selection from '@databyss-org/api/src/models/Selection'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
-import { Block as BlockInterface } from '@databyss-org/services/interfaces'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import {
+  Block as BlockInterface,
+  BlockRelation,
+  Group,
+} from '@databyss-org/services/interfaces'
+import { DocumentType, PageDoc } from '@databyss-org/data/pouchdb/interfaces'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import {
   createGroupId,
   createGroupDatabase,
 } from '@databyss-org/api/src/lib/createUserDatabase'
-import { uid } from '@databyss-org/data/lib/uid'
+import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { Role, User as UserInterface } from '@databyss-org/data/interfaces'
-import ServerProcess from '../lib/ServerProcess'
-import { getEnv, EnvDict } from '../lib/util'
+import ServerProcess from '../../lib/ServerProcess'
+import { getEnv, EnvDict } from '../../lib/util'
 
 interface JobArgs {
   envName: string
   email: string
 }
-
-const getTimestamps = (doc) => ({
-  createdAt: doc.createdAt
-    ? new Date(doc.createdAt).getTime()
-    : new Date().getTime(),
-  modifiedAt: doc.updatedAt
-    ? new Date(doc.updatedAt).getTime()
-    : new Date().getTime(),
-})
 
 const fixDetail = (detail: any) => {
   if (!detail) {
@@ -84,11 +80,33 @@ class UserMongoToCloudant extends ServerProcess {
       const _defaultAccountId = _mongoUser.defaultAccount
       console.log(`Mongo accountId to migrate: ${_defaultAccountId}`)
 
+      /**------------------------------------------------------------------
+       * DEFAULT GROUP
+       */
+
+      // generate a userId for the user
+      const _couchUserId = uid()
+
+      // create a defaultGroup
+      const _defaultGroupId = await createGroupId({ userId: _couchUserId })
+
+      /**
+       * Populate fields required on all docs, like timestamps and belongsToGroup
+       */
+      const getDocFields = (doc) => ({
+        belongsToGroup: _defaultGroupId,
+        createdAt: doc.createdAt
+          ? new Date(doc.createdAt).getTime()
+          : new Date().getTime(),
+        modifiedAt: doc.updatedAt
+          ? new Date(doc.updatedAt).getTime()
+          : new Date().getTime(),
+      })
+
       // STEP 2: Create the user's default group database and add design docs
-      const _defaultGroupId = await createGroupId()
       const _couchGroupName = `g_${_defaultGroupId}`
       console.log(`⏳ Create group: ${_couchGroupName}`)
-      await createGroupDatabase(`g_${_defaultGroupId}`)
+      await createGroupDatabase(_couchGroupName)
       console.log(`✅ Group created: ${_defaultGroupId}`)
       const _groupDb = await cloudant.db.use<any>(_couchGroupName)
       const _mongoAccount: any = await Account.findOne({
@@ -99,18 +117,9 @@ class UserMongoToCloudant extends ServerProcess {
       // STEP 3: Copy all Pages, Blocks, Selections and BlockRelations belonging to the user
       //   to the group db
 
-      // get all Blocks for account
-      const _mongoBlocks = await Block.find({
-        account: _defaultAccountId,
-      })
-
-      /**
-       * mongo block id => mongo block
+      /**------------------------------------------------------------------
+       * PREPARE AND FILTER
        */
-      const _mongoBlockDict = {}
-      for (const _mongoBlock of _mongoBlocks) {
-        _mongoBlockDict[_mongoBlock._id] = _mongoBlock
-      }
 
       // get all Pages
       const _mongoPages = await Page.find({
@@ -129,23 +138,6 @@ class UserMongoToCloudant extends ServerProcess {
         page.blocks.forEach((block) => {
           // aggregate all blocks into a Map so we don't write orphaned blocks
           _blockToPageMap[block._id] = page._id
-
-          // if this is a topic or source block, also add the page into the related block map
-          if (block.type && block.type.match(/^END_/)) {
-            return
-          }
-          // lookup block type on block because it might be wrong on the page
-          const _mongoBlock = _mongoBlockDict[block._id]
-          if (!_mongoBlock) {
-            console.log(`⚠️  Mongo block id not found: ${block.id}`)
-            return
-          }
-          if (_mongoBlock.type !== 'ENTRY') {
-            if (!_relatedBlockMap[block._id]) {
-              _relatedBlockMap[block._id] = {}
-            }
-            _relatedBlockMap[block._id][page._id] = true
-          }
         })
       })
       console.log(
@@ -153,11 +145,16 @@ class UserMongoToCloudant extends ServerProcess {
           Object.values(_blockToPageMap).length
         }`
       )
-      console.log(
-        `ℹ️  Block relation count: ${Object.keys(_relatedBlockMap).length}`
-      )
 
-      // insert the blocks in couch, generating new ids and keeping a map
+      // get all Blocks for account
+      const _mongoBlocks = await Block.find({
+        account: _defaultAccountId,
+      })
+
+      /**------------------------------------------------------------------
+       * BLOCKS
+       */
+
       /**
        * mongo blockId => couch blockId
        */
@@ -167,14 +164,7 @@ class UserMongoToCloudant extends ServerProcess {
        */
       const _blockTypeMap = {}
 
-      /**
-       * Dict of couch docs to insert if they are referenced as related blocks
-       * couch doc id => doc
-       */
-      const _maybeInsert = {}
-
-      let _couchBlocksInserted = 0
-
+      // insert the blocks in couch, generating new ids and keeping a map
       for (const _mongoBlock of _mongoBlocks) {
         // skip the block if it's an orphaned ENTRY (not in any pages)
         const _mongoBlockPage = _blockToPageMap[_mongoBlock._id]
@@ -182,12 +172,8 @@ class UserMongoToCloudant extends ServerProcess {
           continue
         }
         const _couchBlockId = uid()
-
-        // map the block id and type for reference later
         _blockIdMap[_mongoBlock._id] = _couchBlockId
-        _blockTypeMap[_mongoBlock._id] = _mongoBlock.type
-
-        const _couchBlock = {
+        await _groupDb.insert({
           doctype: DocumentType.Block,
           _id: _couchBlockId,
           type: _mongoBlock.type,
@@ -200,17 +186,10 @@ class UserMongoToCloudant extends ServerProcess {
             })),
           },
           detail: fixDetail(_mongoBlock.detail),
-          ...getTimestamps(_mongoBlock),
-        }
+          ...getDocFields(_mongoBlock),
+        })
 
-        // if the block isn't orphaned, insert it now
-        if (_mongoBlockPage) {
-          await _groupDb.insert(_couchBlock)
-          _couchBlocksInserted += 1
-        } else {
-          // otherwise, store the couch doc and insert later if it's referenced as a related block
-          _maybeInsert[_couchBlockId] = _couchBlock
-        }
+        _blockTypeMap[_mongoBlock._id] = _mongoBlock.type
 
         // generate INLINE BlockRelations by scanning ranges for inline topics & sources
         for (const _range of _mongoBlock.text.ranges) {
@@ -224,10 +203,7 @@ class UserMongoToCloudant extends ServerProcess {
           }
         }
       }
-      console.log(`➡️  Migrated ${_couchBlocksInserted} Blocks`)
-      console.log(
-        `ℹ️  ${Object.values(_maybeInsert).length} maybe related blocks saved`
-      )
+      console.log(`➡️  Migrated ${Object.keys(_blockIdMap).length} Blocks`)
 
       // update inline block ids
 
@@ -239,7 +215,6 @@ class UserMongoToCloudant extends ServerProcess {
       })
 
       let _inlineIdCount = 0
-      let _deferredInsertCount = 0
       for (const _couchBlock of _couchBlocks.docs as BlockInterface[]) {
         let _hasInline = false
         for (const _range of _couchBlock.text.ranges) {
@@ -247,18 +222,7 @@ class UserMongoToCloudant extends ServerProcess {
             if (Array.isArray(_mark)) {
               _hasInline = true
               let _couchInlineBlockId = _blockIdMap[_mark[1]]
-              if (_couchInlineBlockId) {
-                // save the related block to couch
-                if (_maybeInsert[_couchInlineBlockId]) {
-                  await _groupDb.upsert(
-                    _couchInlineBlockId,
-                    () => _maybeInsert[_couchInlineBlockId]
-                  )
-                  delete _maybeInsert[_couchInlineBlockId]
-                  _deferredInsertCount += 1
-                }
-              } else {
-                // related block missing in mongo, rebuild it
+              if (!_couchInlineBlockId) {
                 _couchInlineBlockId = uid()
                 const _textValue = _couchBlock.text.textValue.substr(
                   _range.offset + 1,
@@ -272,7 +236,7 @@ class UserMongoToCloudant extends ServerProcess {
                     textValue: _textValue,
                     ranges: [],
                   },
-                  ...getTimestamps({}),
+                  ...getDocFields({}),
                 })
                 // map the new block and blockType so it can be used by the block relation step
                 _blockIdMap[_mark[1]] = _couchInlineBlockId
@@ -293,12 +257,24 @@ class UserMongoToCloudant extends ServerProcess {
         }
       }
       console.log(`➡️  Updated ${_inlineIdCount} INLINE ids`)
-      console.log(`➡️  Upserted ${_deferredInsertCount} related blocks`)
+
+      /**------------------------------------------------------------------
+       * PAGES
+       */
+
+      /**
+       * Map of mongo pageId => couchPageId
+       */
+      const _pageIdMap: { [mongoId: string]: string } = {}
+
+      /**
+       * Map of mongo accound id => couch shared group db name
+       */
+      const _sharedAccountMap: { [mongoAccountId: string]: string } = {}
 
       // insert the Pages in couch, generating new ids and keeping a map of old => new id
-      const _pageIdMap: { [mongoId: string]: string } = {}
       for (const _mongoPage of _mongoPages) {
-        const _couchPageId = uid()
+        const _couchPageId = uidlc()
         _pageIdMap[_mongoPage._id] = _couchPageId
 
         // get the Selection from mongo
@@ -321,28 +297,54 @@ class UserMongoToCloudant extends ServerProcess {
               index: _mongoSelection.focus.index,
               offset: _mongoSelection.focus.offset,
             },
-            ...getTimestamps(_mongoPage),
+            ...getDocFields(_mongoPage),
           })
         }
 
-        await _groupDb.insert({
+        // create public group dbs in cloudant for each account in Page.sharedWith
+        //   and store the mapping in _sharedAccountMap
+        if (_mongoPage.sharedWith?.length) {
+          for (const { account } of _mongoPage.sharedWith) {
+            const _sharedGroupName = `p_${_couchPageId}`
+            _sharedAccountMap[account] = _sharedGroupName
+            // add document in system Groups db to register group as public
+            await createSharedGroupDatabase({
+              groupId: _sharedGroupName,
+              userId: _couchUserId,
+            })
+          }
+        }
+
+        // build the page payload
+        const _couchPage = {
           doctype: DocumentType.Page,
           _id: _couchPageId,
           name: _mongoPage.name,
           archive: _mongoPage.archive,
+          sharedWithGroups: _mongoPage.sharedWith.map(
+            ({ account }) => _sharedAccountMap[account]
+          ),
           blocks: _mongoPage.blocks
             .map((_mongoBlock) => {
               const _pageBlockId = _blockIdMap[_mongoBlock._id]
               if (!_pageBlockId) {
                 return null
               }
-              let _pageBlockType = _mongoBlock.type
-              if (!_pageBlockType) {
-                console.log(
-                  `⚠️  page.block missing type on page: ${_mongoPage.name}`
-                )
-                _pageBlockType = _blockTypeMap[_mongoBlock._id] || 'ENTRY'
+              // use the block type from the block to fix bad data integrity...
+              let _pageBlockType = _blockTypeMap[_mongoBlock._id] || 'ENTRY'
+
+              // ...unless it's an END_xxx type
+              if (_mongoBlock.type?.match(/^END_/)) {
+                _pageBlockType = _mongoBlock.type
+              } else if (_pageBlockType !== 'ENTRY') {
+                // if this is a topic or source block,
+                //   also add the page into the related block map
+                if (!_relatedBlockMap[_mongoBlock._id]) {
+                  _relatedBlockMap[_mongoBlock._id] = {}
+                }
+                _relatedBlockMap[_mongoBlock._id][_mongoPage._id] = true
               }
+
               return {
                 type: _pageBlockType,
                 _id: _pageBlockId,
@@ -354,13 +356,41 @@ class UserMongoToCloudant extends ServerProcess {
                 selection: _couchSelectionId,
               }
             : {}),
-          ...getTimestamps(_mongoPage),
-        })
+          ...getDocFields(_mongoPage),
+        }
+
+        // insert the page in the default group db
+        await _groupDb.insert(_couchPage)
+
+        // insert the page into the shared group dbs
+        for (const { account } of _mongoPage.sharedWith) {
+          const _sharedGroupName = _sharedAccountMap[account]
+          const _sharedGroupDb = await cloudant.db.use<any>(_sharedGroupName)
+          _sharedGroupDb.insert(_couchPage)
+        }
       }
 
       console.log(`➡️  Migrated ${Object.keys(_pageIdMap).length} Pages`)
+      console.log(
+        `➡️  Migrated ${
+          Object.keys(_sharedAccountMap).length
+        } Shared Accounts (groups)`
+      )
+
+      /**------------------------------------------------------------------
+       * BLOCK RELATIONS
+       */
+
+      /**
+       * Map of couch pageId => [couch relationId]
+       * (we'll use this to add relations to shared page dbs)
+       */
+      const _couchRelationsByPage: { [couchPageId: string]: string[] } = {}
 
       // generate BlockRelations using the _blockRelationMap
+      console.log(
+        `ℹ️  Migrating ${Object.keys(_relatedBlockMap).length} block relations`
+      )
       let _relationsCount = 0
       for (const _relationBlockMongoId of Object.keys(_relatedBlockMap)) {
         // get the block id
@@ -370,8 +400,10 @@ class UserMongoToCloudant extends ServerProcess {
           continue
         }
 
-        // build the pages list by converting mongo pageId => couch pageId
+        const _couchRelationId = `r_${_relationBlockId}`
         const _relationPageIds: string[] = []
+
+        // build the pages list by converting mongo pageId => couch pageId
         for (const _relationPageMongoId of Object.keys(
           _relatedBlockMap[_relationBlockMongoId]
         )) {
@@ -381,9 +413,13 @@ class UserMongoToCloudant extends ServerProcess {
             continue
           }
           _relationPageIds.push(_relationPageId)
-        }
 
-        const _couchRelationId = `r_${_relationBlockId}`
+          // store the page in the _couchRelationsByPageMap
+          if (!_couchRelationsByPage[_relationPageId]) {
+            _couchRelationsByPage[_relationPageId] = []
+          }
+          _couchRelationsByPage[_relationPageId].push(_couchRelationId)
+        }
 
         await _groupDb.insert({
           doctype: DocumentType.BlockRelation,
@@ -391,24 +427,98 @@ class UserMongoToCloudant extends ServerProcess {
           blockId: _relationBlockId,
           blockType: _blockTypeMap[_relationBlockMongoId],
           pages: _relationPageIds,
-          ...getTimestamps({}),
+          ...getDocFields({}),
         })
         _relationsCount += 1
       }
       console.log(`➡️  Migrated ${_relationsCount} BlockRelations`)
 
+      /**
+       * SHARED PAGE DEPENDENCIES
+       */
+
+      // migrate the Blocks and Relations for shared pages
+      for (const _sharedGroupName of Object.values(_sharedAccountMap)) {
+        console.log(
+          `ℹ️  Migrating shared group dependencies: ${_sharedGroupName}`
+        )
+        const _sharedPageId = _sharedGroupName.substring(2)
+        const _sharedGroupDb = await cloudant.db.use<any>(_sharedGroupName)
+        const _sharedPage: PageDoc = await _sharedGroupDb.get(_sharedPageId)
+
+        const _addSharedWithGroups = async (_docid: string) => {
+          let _doc
+          try {
+            _doc = await _groupDb.get(_docid)
+          } catch (_) {
+            console.log(`⚠️  shared page dependency doc not found: ${_docid}`)
+            return null
+          }
+          if (!_doc.sharedWithGroups) {
+            _doc.sharedWithGroups = []
+          }
+          _doc.sharedWithGroups.push(_sharedGroupName)
+          await _groupDb.insert(_doc)
+          delete _doc._rev
+          try {
+            await _sharedGroupDb.get(_docid)
+          } catch (_) {
+            await _sharedGroupDb.insert(_doc)
+          }
+          return _doc
+        }
+
+        // blocks
+        for (const _pageBlock of _sharedPage.blocks) {
+          await _addSharedWithGroups(_pageBlock._id)
+        }
+
+        // relations
+        if (_couchRelationsByPage[_sharedPageId]) {
+          for (const _couchRelationId of _couchRelationsByPage[_sharedPageId]) {
+            const _couchRelation: BlockRelation = await _addSharedWithGroups(
+              _couchRelationId
+            )
+            if (_couchRelation) {
+              // ensure that the block referenced by the relation is shared
+              //  (if it's inline it may not have already been migrated)
+              await _addSharedWithGroups(_couchRelation.blockId)
+            }
+          }
+        }
+
+        // selection
+        await _addSharedWithGroups(_sharedPage.selection)
+
+        // add group doc
+        const _groupDoc = {
+          doctype: DocumentType.Group,
+          _id: _sharedGroupName,
+          pages: [_sharedPageId],
+          public: true,
+          ...getDocFields({}),
+        }
+        await _groupDb.insert(_groupDoc)
+        // await _sharedGroupDb.insert(_groupDoc)
+      }
+      console.log(
+        `➡️  Migrated Dependencies for ${
+          Object.keys(_sharedAccountMap).length
+        } Shared Pages`
+      )
+
+      /**------------------------------------------------------------------
+       * USER PREFERENCES
+       */
+
       // STEP 4: Add the userPreferences doc to the default group database
       //   with the defaultPageId
-
-      // generate a userId for the user
-      const _couchUserId = uid()
 
       await _groupDb.insert({
         _id: 'user_preference',
         doctype: DocumentType.UserPreferences,
         userId: _couchUserId,
         email: _mongoUser.email,
-        defaultGroupId: _defaultGroupId,
         groups: [
           {
             groupId: _defaultGroupId,
@@ -416,9 +526,13 @@ class UserMongoToCloudant extends ServerProcess {
             defaultPageId: _pageIdMap[_mongoAccount.defaultPage],
           },
         ],
-        ...getTimestamps({}),
+        ...getDocFields({}),
       })
       console.log(`➡️  Migrated userPreferences`)
+
+      /**------------------------------------------------------------------
+       * USER
+       */
 
       // STEP 5: Create document in the Users db for the new user so they can login
       const _usersDb = await cloudant.db.use<UserInterface>('users')
@@ -430,7 +544,7 @@ class UserMongoToCloudant extends ServerProcess {
       console.log(`👤 Created User document`)
 
       // TODO: STEP 6: Migrate pages shared by this user by creating a new group db for each page
-      //   and updating the page.groups array with the new group id
+      //   and updating the page.sharedWithGroups array with the new group id
 
       this.emit('stdout', `✅ User migrated.`)
     } catch (err) {
