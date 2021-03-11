@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Text, Node } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import matchAll from 'string.prototype.matchall'
@@ -38,7 +39,12 @@ const Editor = ({
     []
   )
 
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+
   const onInlineClick = useCallback(({ atomicType, id }) => {
+    if (isPublicAccount) {
+      return
+    }
     onInlineAtomicClick({ type: atomicType, refId: id })
   }, [])
 
