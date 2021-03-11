@@ -39,9 +39,9 @@ jobs:
           paths:
             - ~/.cache/yarn
 
-      # - run:
-      #     name: typescript
-      #     command: yarn tsc
+      - run:
+          name: typescript
+          command: yarn tsc
 
       - run:
           name: start api server
