@@ -60,9 +60,9 @@ function request(uri, options: RequestOptions = {}) {
 
   const _timeoutId = setTimeout(() => {
     _controller.abort()
-    // throw new NetworkUnavailableError(
-    //   `Request timed out after ${_timeoutDuration}ms`
-    // )
+    throw new NetworkUnavailableError(
+      `Request timed out after ${_timeoutDuration}ms`
+    )
   }, _timeoutDuration)
 
   return fetch(uri, { ..._options, signal: _controller.signal })
