@@ -31,7 +31,7 @@ export const pageSchema: JSONSchema4 = {
   },
   // extend pouchdb types
   allOf: [{ $ref: 'pouchDb' }],
-  required: ['blocks', 'name'],
+  required: ['blocks', 'name', 'selection'],
 }
 
 export default pageSchema
