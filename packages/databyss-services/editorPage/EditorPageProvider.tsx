@@ -178,7 +178,9 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         getPublicAccount,
       }}
     >
-      <PageReplicator pageId={pageId}>{children}</PageReplicator>
+      <PageReplicator key={pageId} pageId={pageId}>
+        {children}
+      </PageReplicator>
     </EditorPageContext.Provider>
   )
 }
