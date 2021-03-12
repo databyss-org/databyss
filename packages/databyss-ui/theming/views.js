@@ -81,6 +81,13 @@ export const widthVariants = {
   },
 }
 
+export const heightVariants = {
+  none: {},
+  dropdownMenuItem: {
+    minHeight: pxUnits(34),
+  },
+}
+
 const borderRadiusVariants = {
   none: {
     borderRadius: 0,
@@ -105,6 +112,7 @@ export default {
   paddingVariants,
   borderVariants,
   widthVariants,
+  heightVariants,
   hlineVariants,
   borderRadiusVariants,
   wrapVariants,

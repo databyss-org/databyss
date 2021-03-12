@@ -22,7 +22,7 @@ import {
 } from './constants'
 import {
   getAuthToken,
-  deletePouchDbs,
+  cleanupDefaultGroup,
   setDefaultPageId,
   setAuthToken,
   setPouchSecret,
@@ -137,7 +137,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     }
   } catch (error) {
     try {
-      await deletePouchDbs()
+      await cleanupDefaultGroup()
     } catch (err) {
       console.error(err)
     }
@@ -152,7 +152,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
 }
 
 export const endSession = () => async (dispatch) => {
-  await deletePouchDbs()
+  await cleanupDefaultGroup()
   dispatch({
     type: END_SESSION,
   })
@@ -172,7 +172,7 @@ export const getUserAccount = () => async (dispatch) => {
 
 export const logout = () => async (dispatch) => {
   // deletes databases
-  await deletePouchDbs()
+  await cleanupDefaultGroup()
 
   dispatch({ type: LOGOUT })
   setTimeout(() => (window.location.href = '/'), 50)

@@ -80,9 +80,9 @@ export const clearLocalStorage = () => {
   localStorage.clear()
 }
 
-export const deletePouchDbs = async () => {
+export const deletePouchDbs = async (matchName) => {
   let dbs = await window.indexedDB.databases()
-  dbs = dbs.filter((db) => db.name.includes('_pouch_'))
+  dbs = dbs.filter((db) => db.name.includes(matchName))
 
   // if we don't do this, we get an error that we're accessing
   //  the db while the connection is closing
@@ -194,4 +194,16 @@ export const localStorageHasSession = async () => {
   }
 
   return session
+}
+
+/**
+ * Removes pouch db and secrets for default group
+ */
+export const cleanupDefaultGroup = async () => {
+  const groupId = getDefaultGroup()
+  if (!groupId) {
+    return
+  }
+  await deletePouchDbs(groupId)
+  await deletePouchSecret(groupId)
 }

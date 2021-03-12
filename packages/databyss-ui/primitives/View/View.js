@@ -74,6 +74,15 @@ export const widthVariant = variant({
   },
 })
 
+export const heightVariant = variant({
+  prop: 'heightVariant',
+  scale: 'heightVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
+})
+
 export const wrapVariant = variant({
   prop: 'wrapVariant',
   scale: 'wrapVariants',
@@ -95,6 +104,7 @@ export const styleProps = compose(
   borderVariant,
   hlineVariant,
   shadowVariant,
+  heightVariant,
   widthVariant,
   borderRadiusVariant,
   wrapVariant
@@ -104,6 +114,7 @@ export const defaultProps = {
   paddingVariant: 'none',
   borderVariant: 'none',
   shadowVariant: 'none',
+  heightVariant: 'none',
   widthVariant: 'none',
   wrapVariant: 'wrapAnywhere',
   flexGrow: 0,
