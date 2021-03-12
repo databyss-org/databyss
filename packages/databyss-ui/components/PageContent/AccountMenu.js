@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import {
-  Text,
-  BaseControl,
-  View,
-  Separator,
-  pxUnits,
-} from '@databyss-org/ui/primitives'
+import { Text, BaseControl, View, Separator } from '@databyss-org/ui/primitives'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import LogoutSvg from '@databyss-org/ui/assets/log-out.svg'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
+import { version } from '@databyss-org/services'
 import DropdownContainer from '../Menu/DropdownContainer'
 import DropdownListItem from '../Menu/DropdownListItem'
 import { AccountLoader } from '../Loaders'
@@ -53,6 +48,7 @@ const AccountMenu = () => {
             label: 'Sign out',
             action: () => onLogout(),
             actionType: 'logout',
+            shortcut: `v${version}`,
           },
         ]
 
@@ -62,6 +58,7 @@ const AccountMenu = () => {
             label: 'Back to my Databyss',
             action: () => navToDefaultPage(userInfo),
             actionType: 'backToDatabyss',
+            shortcut: `v${version}`,
           })
         }
 
@@ -105,7 +102,7 @@ const AccountMenu = () => {
                 <DropdownContainer
                   widthVariant="dropdownMenuMedium"
                   open={menuOpen}
-                  mt={pxUnits(34)}
+                  mt="medium"
                   position={{
                     top: 0,
                     right: 0,
@@ -113,7 +110,7 @@ const AccountMenu = () => {
                 >
                   <View
                     ml="small"
-                    height={pxUnits(34)}
+                    heightVariant="dropdownMenuItem"
                     justifyContent="center"
                     key="account-name"
                   >

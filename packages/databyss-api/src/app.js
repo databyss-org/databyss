@@ -11,16 +11,11 @@ import { connectDB } from './lib/db'
 // routes
 import usersRoute from './routes/api/users'
 import authRoute from './routes/api/auth'
-import pagesRoute from './routes/api/pages'
-import accountsRoute from './routes/api/accounts'
 import cloudantRoute from './routes/api/cloudant'
-
+import pingRoute from './routes/api/ping'
 import versionRoute from './routes/api/version'
 import echoRoute from './routes/api/echo'
 import errorRoute from './routes/api/error'
-import entriesRoute from './routes/api/entries'
-import sourcesRoute from './routes/api/sources'
-import topicsRoute from './routes/api/topics'
 
 // middleware
 import { versionChecker } from './middleware/versionCheckMiddleware'
@@ -75,15 +70,10 @@ const run = async () => {
   })
 
   // Define Routes
-  app.use('/api/users', versionChecker, usersRoute)
-  app.use('/api/auth', versionChecker, authRoute)
-  app.use('/api/pages', versionChecker, pagesRoute)
-  app.use('/api/accounts', versionChecker, accountsRoute)
+  app.use('/api/users', usersRoute)
+  app.use('/api/auth', authRoute)
   app.use('/api/cloudant', cloudantRoute)
-
-  app.use('/api/entries', versionChecker, entriesRoute)
-  app.use('/api/sources', versionChecker, sourcesRoute)
-  app.use('/api/topics', versionChecker, topicsRoute)
+  app.use('/api/ping', versionChecker, pingRoute)
   app.use('/api/echo', versionChecker, echoRoute)
   app.use('/api/version', versionRoute)
   app.use('/api/error', errorRoute)
