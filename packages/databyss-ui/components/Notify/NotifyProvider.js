@@ -110,7 +110,6 @@ class NotifyProvider extends React.Component {
   // }
 
   onUnhandledError = (e, info) => {
-    console.log('onUnhandledError', e, info)
     // HACK: ignore ResizeObserver loop limit errors, which are more like warnings
     //   (see https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded)
     if (e === 'ResizeObserver loop limit exceeded') {

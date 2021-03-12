@@ -23,7 +23,6 @@ function checkStatus(response: Response) {
     throw new ResourceNotFoundError()
   }
   if (response.status === 409) {
-    console.log('checkStatus', 'VersionConflictError')
     throw new VersionConflictError()
   }
   throw new UnexpectedServerError(response.statusText, response)
