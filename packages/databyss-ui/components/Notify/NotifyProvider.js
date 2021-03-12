@@ -128,6 +128,15 @@ class NotifyProvider extends React.Component {
       return
     }
 
+    if (e && instanceofAny([e, e.reason, e.error], [NetworkUnavailableError])) {
+      if (this.state.isOnline) {
+        this.setOnlineStatus(false)
+      }
+      return
+    }
+
+    this.setOnlineStatus(true)
+
     if (
       e &&
       instanceofAny(
@@ -153,12 +162,6 @@ class NotifyProvider extends React.Component {
           </Button>
         </>
       )
-      return
-    }
-    if (e && instanceofAny([e, e.reason, e.error], [NetworkUnavailableError])) {
-      if (this.state.isOnline) {
-        this.setOnlineStatus(false)
-      }
       return
     }
 
