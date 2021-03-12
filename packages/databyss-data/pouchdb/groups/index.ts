@@ -1,4 +1,5 @@
 import { Group } from '@databyss-org/services/interfaces/Group'
+import _ from 'lodash'
 import { httpPost } from '@databyss-org/services/lib/requestApi'
 import {
   setPouchSecret,
@@ -39,10 +40,11 @@ export const addGroupToDocument = async (groupIds: string[], document: any) => {
     ...groupIds,
   ])
   // update if ids were added
-  if (document?.sharedWithGroups?.length !== _sharedWithGroups.length) {
+  if (
+    !_.isEqual(document?.sharedWithGroups?.sort(), _sharedWithGroups?.sort())
+  ) {
     document.sharedWithGroups = _sharedWithGroups
     // add group to page document
-
     await upsertImmediate({
       doctype: document.doctype,
       _id: document._id,

@@ -57,6 +57,7 @@ function request(uri, options: RequestOptions = {}) {
   const { timeout, responseAsJson, ..._options } = options
   const _controller = new AbortController()
   const _timeoutDuration = timeout || parseInt(FETCH_TIMEOUT, 10)
+
   const _timeoutId = setTimeout(() => {
     _controller.abort()
     throw new NetworkUnavailableError(

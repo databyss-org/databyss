@@ -5,7 +5,11 @@ import { getPouchSecret } from '@databyss-org/services/session/clientStorage'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { validateGroupCredentials, createDatabaseCredentials } from './index'
-import { ResourceNotFoundError, NotAuthorizedError } from '../interfaces/Errors'
+import {
+  ResourceNotFoundError,
+  NotAuthorizedError,
+  NetworkUnavailableError,
+} from '../interfaces/Errors'
 import { dbRef, REMOTE_CLOUDANT_URL } from '../../databyss-data/pouchdb/db'
 
 const INTERVAL_TIME = 3000
@@ -114,6 +118,11 @@ export const PageReplicator = ({
               await createDatabaseCredentials({
                 groupId: gId,
                 isPublic: group.public,
+              }).catch((err) => {
+                if (err instanceof NetworkUnavailableError) {
+                  // user might be offline
+                  setTimeout(() => validate(), INTERVAL_TIME)
+                }
               })
               setTimeout(() => validate(), INTERVAL_TIME)
             } else {
@@ -133,8 +142,11 @@ export const PageReplicator = ({
                   })
                 })
                 .catch((err) => {
-                  if (err instanceof ResourceNotFoundError) {
-                    // database might not have been created yet
+                  if (
+                    err instanceof ResourceNotFoundError ||
+                    err instanceof NetworkUnavailableError
+                  ) {
+                    // database might not have been created or user might be offline
                     setTimeout(() => validate(), INTERVAL_TIME)
                   }
                   if (err instanceof NotAuthorizedError) {
@@ -150,7 +162,6 @@ export const PageReplicator = ({
     }
 
     return () => {
-      // TODO: if switching pages, this doesnt get called
       replicationStatusRef.current = {}
       replicationsRef.current.forEach((replication) => {
         replication.cancel()

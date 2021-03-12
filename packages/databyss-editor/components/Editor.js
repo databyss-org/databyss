@@ -42,7 +42,7 @@ const Editor = ({
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   const onInlineClick = useCallback(({ atomicType, id }) => {
-    if (isPublicAccount) {
+    if (isPublicAccount()) {
       return
     }
     onInlineAtomicClick({ type: atomicType, refId: id })
