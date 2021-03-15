@@ -3,12 +3,18 @@ import { httpPost } from '@databyss-org/services/lib/requestApi'
 import {
   setPouchSecret,
   deletePouchSecret,
+  getPouchSecret,
 } from '@databyss-org/services/session/clientStorage'
 import { DocumentType, PageDoc } from '../interfaces'
-import { upsertImmediate, findOne } from '../utils'
+import { upsertImmediate, findOne, findAll } from '../utils'
 import { Block } from '../../../databyss-services/interfaces/Block'
 import { getAtomicClosureText } from '../../../databyss-services/blocks/index'
 import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/getAtomicsFromSelection'
+import { dbRef, REMOTE_CLOUDANT_URL } from '../db'
+import {
+  createDatabaseCredentials,
+  validateGroupCredentials,
+} from '../../../databyss-services/editorPage/index'
 
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
@@ -302,5 +308,94 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     })
     // remove credentials from local storage
     deletePouchSecret(pageId)
+  }
+}
+
+const upsertReplication = ({
+  groupId,
+  dbKey,
+  dbPassword,
+}: {
+  groupId: string
+  dbKey: string
+  dbPassword: string
+}) => {
+  const opts = {
+    retry: true,
+    auth: {
+      username: dbKey,
+      password: dbPassword,
+    },
+  }
+
+  // upsert replication
+  dbRef.current!.replicate.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
+    ...opts,
+    // do not replciate design docs or documents that dont include the page
+    filter: (doc) => {
+      if (!doc?.sharedWithGroups) {
+        return false
+      }
+      const _isSharedWithGroup = doc?.sharedWithGroups.includes(groupId)
+      if (!_isSharedWithGroup) {
+        return false
+      }
+      return !doc._id.includes('design/')
+    },
+  })
+}
+
+/*
+one time replication to upsert a group to remote DB 
+*/
+export const replicateSharedPage = async (groupIds: string[]) => {
+  // get all public groups which include page
+  const _groups = await findAll({
+    doctype: DocumentType.Group,
+    query: {
+      pages: {
+        $elemMatch: { $in: groupIds },
+      },
+      // TODO: this wont always be true when we have collaborative collections
+      public: true,
+    },
+  })
+  if (_groups?.length) {
+    for (const group of _groups) {
+      // wrapped in a try catch in case user is not authorized
+      try {
+        // first check if credentials exist
+        const gId = group._id
+        const dbSecretCache = getPouchSecret() || {}
+        let creds = dbSecretCache[gId.substr(2)]
+        if (!creds) {
+          // credentials are not in local storage
+          // creates new user credentials and adds them to local storage
+          await createDatabaseCredentials({
+            groupId: gId,
+            isPublic: group.public,
+          })
+          // credentials should be in local storage now
+          creds = dbSecretCache[gId.substr(2)]
+          if (!creds) {
+            // user is not authorized
+            return
+          }
+        }
+        // confirm credentials work
+        await validateGroupCredentials({
+          groupId: group._id,
+          dbKey: creds.dbKey,
+        })
+
+        upsertReplication({
+          groupId: gId,
+          dbKey: creds.dbKey,
+          dbPassword: creds.dbPassword,
+        })
+      } catch (err) {
+        console.error(err)
+      }
+    }
   }
 }

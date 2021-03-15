@@ -4,6 +4,7 @@ import { Topic, Block, Page } from '@databyss-org/services/interfaces'
 import { BlockRelation } from '@databyss-org/editor/interfaces'
 import { DocumentType } from '../../interfaces'
 import { upsert, getDocument, findOne } from '../../utils'
+import { replicateSharedPage } from '../../groups'
 
 const setTopic = async (data: Topic) => {
   const { text, _id } = data
@@ -73,6 +74,10 @@ const setTopic = async (data: Topic) => {
       }
     }
   }
+
+  // update all replicated pages related to topic
+  const pagesWhereAtomicExists: string[] = _relation.pages
+  replicateSharedPage(pagesWhereAtomicExists)
 }
 
 export default setTopic

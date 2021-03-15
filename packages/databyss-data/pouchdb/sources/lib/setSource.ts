@@ -1,6 +1,8 @@
 import { Source, BlockType } from '@databyss-org/services/interfaces'
 import { DocumentType } from '../../interfaces'
-import { upsert } from '../../utils'
+import { upsert, findOne } from '../../utils'
+import { BlockRelation } from '../../../../databyss-services/interfaces/Block'
+import { replicateSharedPage } from '../../groups/index'
 
 export const setSource = async (data: Source) => {
   const { text, detail, _id } = data
@@ -17,6 +19,23 @@ export const setSource = async (data: Source) => {
     _id,
     doc: blockFields,
   })
+
+  // get block relations to upsert all related documents
+  const _relation = await findOne<BlockRelation>({
+    doctype: DocumentType.BlockRelation,
+    query: {
+      blockId: _id,
+    },
+  })
+
+  if (!_relation) {
+    // block has no relations, remove
+    return
+  }
+
+  // update all replicated pages related to topic
+  const pagesWhereAtomicExists: string[] = _relation.pages
+  replicateSharedPage(pagesWhereAtomicExists)
 }
 
 export default setSource
