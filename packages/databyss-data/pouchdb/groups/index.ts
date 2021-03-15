@@ -348,13 +348,13 @@ const upsertReplication = ({
 /**
  * one time replication to upsert a group to remote DB
  */
-export const replicateSharedPage = async (groupIds: string[]) => {
+export const replicateSharedPage = async (pageIds: string[]) => {
   // get all public groups which include page
   const _groups = await findAll({
     doctype: DocumentType.Group,
     query: {
       pages: {
-        $elemMatch: { $in: groupIds },
+        $elemMatch: { $in: pageIds },
       },
       // TODO: this wont always be true when we have collaborative collections
       public: true,
@@ -366,7 +366,7 @@ export const replicateSharedPage = async (groupIds: string[]) => {
       try {
         // first check if credentials exist
         const gId = group._id
-        const dbSecretCache = getPouchSecret() || {}
+        let dbSecretCache = getPouchSecret() || {}
         let creds = dbSecretCache[gId.substr(2)]
         if (!creds) {
           // credentials are not in local storage
@@ -376,6 +376,7 @@ export const replicateSharedPage = async (groupIds: string[]) => {
             isPublic: group.public,
           })
           // credentials should be in local storage now
+          dbSecretCache = getPouchSecret()
           creds = dbSecretCache[gId.substr(2)]
           if (!creds) {
             // user is not authorized
