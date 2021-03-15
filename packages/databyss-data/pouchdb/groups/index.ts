@@ -345,9 +345,9 @@ const upsertReplication = ({
   })
 }
 
-/*
-one time replication to upsert a group to remote DB 
-*/
+/**
+ * one time replication to upsert a group to remote DB
+ */
 export const replicateSharedPage = async (groupIds: string[]) => {
   // get all public groups which include page
   const _groups = await findAll({
