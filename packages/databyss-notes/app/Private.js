@@ -11,6 +11,8 @@ import {
   GroupDetail,
 } from '@databyss-org/ui'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
+
 import { GestureProvider, View } from '@databyss-org/ui/primitives'
 import { BlockType } from '@databyss-org/services/interfaces'
 import {
@@ -28,6 +30,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       // Never set queries as stale
       staleTime: Infinity,
+      cacheTime: Infinity,
     },
   },
 })
@@ -112,6 +115,7 @@ const Private = () => {
           </GestureProvider>
         </SourceProvider>
       </SearchProvider>
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   )
 }
