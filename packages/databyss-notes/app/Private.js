@@ -115,7 +115,7 @@ const Private = () => {
           </GestureProvider>
         </SourceProvider>
       </SearchProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   )
 }
