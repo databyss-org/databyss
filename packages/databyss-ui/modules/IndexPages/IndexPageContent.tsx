@@ -58,6 +58,8 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const { blockId } = useParams()
   const blocksRes = useBlocks(blockType)
 
+  console.log('INDEX RESULTS', blocksRes)
+
   if (!blocksRes.isSuccess) {
     return <LoadingFallback queryObserver={blocksRes} />
   }

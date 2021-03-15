@@ -79,6 +79,7 @@ const populatePage = ({
 
   _page.blocks = page.blocks.map((b) => {
     const _block = { ...blocks[b._id] }
+    console.log('POPULATING BLOCK', _block)
     // check for atomic block closure
     if (b.type?.match(/^END_/)) {
       _block.type = b.type
@@ -106,6 +107,7 @@ export const addPagesToBlockRelation = ({
     if (!pages[p]) {
       return
     }
+    console.log('INDEX PAGE RESULTS', pages[p])
     _pages.push(populatePage({ page: pages[p], blocks }))
   })
 
