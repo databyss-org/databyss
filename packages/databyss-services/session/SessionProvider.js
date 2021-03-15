@@ -164,17 +164,6 @@ const SessionProvider = ({
     dispatch(actions.logout())
   }
 
-  // TODO: WRAP THIS IN A CALLBACK
-
-  useEffect(() => {
-    setDbPending(state.isDbBusy)
-    // debounceDbBusy(state.isDbBusy)
-  }, [state.isDbBusy])
-
-  const isDbBusy = useCallback(() => dbPending, [dbPending])
-
-  // const isDbBusy = () => dbPending
-
   const setDefaultPage = useCallback((id) => {
     dispatch(actions.onSetDefaultPage(id))
   }, [])
@@ -183,7 +172,6 @@ const SessionProvider = ({
     <SessionContext.Provider
       value={{
         ...state,
-        isDbBusy,
         setDefaultPage,
         getSession,
         endSession,

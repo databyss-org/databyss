@@ -1,4 +1,4 @@
-import {
+import React, {
   PropsWithChildren,
   ForwardRefExoticComponent,
   PropsWithoutRef,
@@ -49,7 +49,8 @@ export interface DropzoneProps {
 }
 
 export interface ViewProps
-  extends SpaceProps,
+  extends React.HTMLAttributes<HTMLDivElement>,
+    SpaceProps,
     LayoutProps,
     FlexboxProps,
     BorderProps,
