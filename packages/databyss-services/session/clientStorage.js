@@ -9,15 +9,15 @@ import { getAccountFromLocation } from './_helpers'
 
 // TODO: Add native versions of these
 
-export const setAuthToken = (token) => {
+export function setAuthToken(token) {
   localStorage.setItem('token', token)
 }
 
-export const setUserId = (userId) => {
+export function setUserId(userId) {
   localStorage.setItem('userId', userId)
 }
 
-export const getUserId = () => {
+export function getUserId() {
   let _id
   try {
     _id = localStorage.getItem('userId')
@@ -27,7 +27,7 @@ export const getUserId = () => {
   return _id
 }
 
-export const getAuthToken = () => {
+export function getAuthToken() {
   let _token
   try {
     _token = localStorage.getItem('token')
@@ -37,7 +37,7 @@ export const getAuthToken = () => {
   return _token
 }
 
-export const getDefaultGroup = () => {
+export function getDefaultGroup() {
   let groupId
   try {
     groupId = localStorage.getItem('default_group')
@@ -47,12 +47,12 @@ export const getDefaultGroup = () => {
   return groupId
 }
 
-export const getAccountId = async () => {
+export async function getAccountId() {
   const defaultGroup = getDefaultGroup()
   return defaultGroup
 }
 
-export const setDefaultPageId = async (value) => {
+export async function setDefaultPageId(value) {
   const _accountFromLocation = getAccountFromLocation()
 
   // replace default page id on correct group for user
@@ -76,13 +76,13 @@ export const setDefaultPageId = async (value) => {
   }
 }
 
-export const clearLocalStorage = () => {
+export function clearLocalStorage() {
   localStorage.clear()
 }
 
-export const deletePouchDbs = async () => {
+export async function deletePouchDbs(matchName) {
   let dbs = await window.indexedDB.databases()
-  dbs = dbs.filter((db) => db.name.includes('_pouch_'))
+  dbs = dbs.filter((db) => db.name.includes(matchName))
 
   // if we don't do this, we get an error that we're accessing
   //  the db while the connection is closing
@@ -103,11 +103,11 @@ export const deletePouchDbs = async () => {
   clearLocalStorage()
 }
 
-export const setDefaultGroup = (groupId) => {
+export function setDefaultGroup(groupId) {
   localStorage.setItem('default_group', groupId)
 }
 
-export const setPouchSecret = (credentials) => {
+export function setPouchSecret(credentials) {
   let keyMap = localStorage.getItem('pouch_secrets')
   if (!keyMap) {
     keyMap = {}
@@ -131,7 +131,7 @@ export const setPouchSecret = (credentials) => {
   localStorage.setItem('pouch_secrets', JSON.stringify(keyMap))
 }
 
-export const deletePouchSecret = (groupId) => {
+export function deletePouchSecret(groupId) {
   let keyMap = localStorage.getItem('pouch_secrets')
   if (!keyMap) {
     return
@@ -142,7 +142,7 @@ export const deletePouchSecret = (groupId) => {
   localStorage.setItem('pouch_secrets', JSON.stringify(keyMap))
 }
 
-export const getDbCredentialsFromLocal = (groupId) => {
+export function getDbCredentialsFromLocal(groupId) {
   let keyMap = localStorage.getItem('pouch_secrets')
 
   if (!keyMap) {
@@ -154,10 +154,11 @@ export const getDbCredentialsFromLocal = (groupId) => {
   return keyMap[groupId]
 }
 
-export const getPouchSecret = () =>
-  JSON.parse(localStorage.getItem('pouch_secrets'))
+export function getPouchSecret() {
+  return JSON.parse(localStorage.getItem('pouch_secrets'))
+}
 
-export const localStorageHasSession = async () => {
+export async function localStorageHasSession() {
   // compose the user session
   let session
 
@@ -194,4 +195,16 @@ export const localStorageHasSession = async () => {
   }
 
   return session
+}
+
+/**
+ * Removes pouch db and secrets for default group
+ */
+export async function cleanupDefaultGroup() {
+  const groupId = getDefaultGroup()
+  if (!groupId) {
+    return
+  }
+  await deletePouchDbs(groupId)
+  await deletePouchSecret(groupId)
 }

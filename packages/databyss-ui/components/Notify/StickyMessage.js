@@ -10,26 +10,22 @@ import {
 } from '@databyss-org/ui/primitives'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 
-const StickyMessage = ({ messageId, html }) => {
+const StickyMessage = ({ messageId, html, children, visible }) => {
   const [dismissed, setDismissed] = useState(
-    localStorage.getItem(`${messageId}_dismissed`)
+    messageId ? localStorage.getItem(`${messageId}_dismissed`) : false
   )
   const dismiss = () => {
-    localStorage.setItem(`${messageId}_dismissed`, '1')
+    if (messageId) {
+      localStorage.setItem(`${messageId}_dismissed`, '1')
+    }
     setDismissed('1')
   }
-  if (dismissed) {
+  if (dismissed || !visible) {
     return null
   }
   return (
     <ThemeProvider theme={darkTheme}>
-      <View
-        bg="background.0"
-        width="100%"
-        alignItems="center"
-        pt="small"
-        pb="em"
-      >
+      <View bg="background.0" width="100%" alignItems="center" py="em">
         <Grid
           widthVariant="content"
           singleRow
@@ -37,7 +33,11 @@ const StickyMessage = ({ messageId, html }) => {
           flexWrap="nowrap"
         >
           <View width="100%" pr="medium">
-            <RawHtml html={html} color="text.0" variant="uiTextNormal" />
+            {html ? (
+              <RawHtml html={html} color="text.0" variant="uiTextNormal" />
+            ) : (
+              children
+            )}
           </View>
           <BaseControl
             onPress={dismiss}
@@ -53,6 +53,10 @@ const StickyMessage = ({ messageId, html }) => {
       </View>
     </ThemeProvider>
   )
+}
+
+StickyMessage.defaultProps = {
+  visible: true,
 }
 
 export default StickyMessage

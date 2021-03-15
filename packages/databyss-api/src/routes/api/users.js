@@ -8,8 +8,9 @@ import { uid } from '@databyss-org/data/lib/uid'
 import { Users, Logins } from '@databyss-org/data/couchdb'
 import { Base64 } from 'js-base64'
 import { send } from '../../lib/postmark'
-import { getTokenFromUserId } from '../../lib/session'
+import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
+import { createUserDatabaseCredentials } from '../../lib/createUserDatabase'
 
 const router = express.Router()
 
@@ -55,17 +56,25 @@ router.post(
           googleId: { $eq: sub },
         },
       }
-      let user = await Users.find(_selector)
+      let user = (await Users.find(_selector)).docs[0]
 
       if (!user) {
-        user = await Users.insert({
+        user = {
           _id: uid(),
           name,
           email,
           googleId: sub,
-        })
+        }
+        await Users.insert(user)
       }
-      res.json({ data: { user } }).status(200)
+
+      const session = await getSessionFromUserId(user._id)
+
+      // give user credentials, if default db does not exist for user, create one
+      const credentials = await createUserDatabaseCredentials(session.user)
+
+      session.groupCredentials = [credentials]
+      res.json({ data: { session } })
     })
   })
 )

@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react'
-import { Dialog, Button } from '@databyss-org/ui/primitives'
+import { Dialog, Button, Text, View } from '@databyss-org/ui/primitives'
 import {
   NotAuthorizedError,
   NetworkUnavailableError,
@@ -10,7 +10,12 @@ import {
 import Bugsnag from '@bugsnag/js'
 import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
+import { requestApi } from '@databyss-org/services/lib/requestApi'
+import { cleanupDefaultGroup } from '@databyss-org/services/session/clientStorage'
 import IS_NATIVE from '../../lib/isNative'
+import StickyMessage from './StickyMessage'
+
+const CHECK_ONLINE_INTERVAL = process.env.FETCH_TIMEOUT
 
 const NotifyContext = createContext()
 
@@ -43,8 +48,6 @@ class NotifyProvider extends React.Component {
   constructor(props) {
     super(props)
     startBugsnag(props.options)
-    // this.shouldCheckOnlineStatus = props.shouldCheckOnlineStatus
-    // TODO: restore online status checking and inspect pouchdb sync state so we can inform the user of sync progress
 
     if (IS_NATIVE) {
       global.ErrorUtils.setGlobalHandler((error) => {
@@ -53,16 +56,32 @@ class NotifyProvider extends React.Component {
         console.error(error)
       })
     } else {
+      window.addEventListener('offline', () => this.setOnlineStatus(false))
+      window.addEventListener('online', () => this.setOnlineStatus(true))
       window.addEventListener('error', this.onUnhandledError)
       window.addEventListener('unhandledrejection', this.onUnhandledError)
+      // window.addEventListener('focus', this.onWindowFocus)
+
+      // kick off ping loop
+      this.checkOnlineStatusTimer = window.setInterval(
+        this.checkOnlineStatus,
+        CHECK_ONLINE_INTERVAL
+      )
     }
   }
   state = {
-    dialogVisible: false,
-    message: null,
+    dialog: {
+      visible: false,
+      message: null,
+      html: false,
+    },
+    sticky: {
+      visible: false,
+      html: false,
+      children: null,
+    },
     isOnline: true,
     hasError: false,
-    html: false,
   }
 
   static getDerivedStateFromError() {
@@ -71,27 +90,7 @@ class NotifyProvider extends React.Component {
   }
 
   componentDidCatch(error, info) {
-    if (error instanceof VersionConflictError) {
-      window.location.reload()
-      return
-    }
-    if (
-      instanceofAny(
-        [error],
-        [NotAuthorizedError, InsufficientPermissionError, ResourceNotFoundError]
-      )
-    ) {
-      // we don't need to notify, we should be showing authwall, 403 or 404
-      return
-    }
-    if (IS_NATIVE) {
-      Bugsnag.notify(error)
-    } else {
-      Bugsnag.notify(error, (event) => {
-        enhanceBugsnagEvent(event, info)
-      })
-    }
-    this.showUnhandledErrorDialog()
+    this.onUnhandledError(error, info)
   }
 
   componentWillUnmount() {
@@ -100,15 +99,43 @@ class NotifyProvider extends React.Component {
       window.removeEventListener('online', this.setOnlineStatus)
       window.removeEventListener('error', this.onUnhandledError)
       window.removeEventListener('unhandledrejection', this.onUnhandledError)
+      // window.removeEventListener('focus', this.onWindowFocus)
+
+      window.clearInterval(this.checkOnlineStatusTimer)
     }
   }
 
-  onUnhandledError = (e) => {
+  // onWindowFocus = () => {
+  //   requestApi('/ping').catch(this.onUnhandledError)
+  // }
+
+  onUnhandledError = (e, info) => {
     // HACK: ignore ResizeObserver loop limit errors, which are more like warnings
     //   (see https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded)
     if (e === 'ResizeObserver loop limit exceeded') {
       return
     }
+
+    // handle pouch "access denied" by deleting pouchdb for default group
+    //   and redirecting to login
+    if (
+      e.reason?.constructor?.name === 'PouchError' &&
+      e.reason?.name === 'forbidden'
+    ) {
+      cleanupDefaultGroup().then(() => {
+        window.location.pathname = '/'
+      })
+      return
+    }
+
+    if (e && instanceofAny([e, e.reason, e.error], [NetworkUnavailableError])) {
+      if (this.state.isOnline) {
+        this.setOnlineStatus(false)
+      }
+      return
+    }
+
+    this.setOnlineStatus(true)
 
     if (
       e &&
@@ -121,57 +148,94 @@ class NotifyProvider extends React.Component {
       return
     }
     if (e && instanceofAny([e, e.reason, e.error], [VersionConflictError])) {
-      window.location.reload(true)
+      this.notifySticky(
+        <>
+          <Text variant="uiTextSmall">There is a new version available!</Text>
+          <Button
+            ml="small"
+            variant="uiLink"
+            textVariant="uiTextSmall"
+            href="/"
+            onPress={() => window.location.reload(true)}
+          >
+            Click here to update
+          </Button>
+        </>
+      )
       return
     }
-    if (
-      e &&
-      instanceofAny([e, e.reason, e.error], [NetworkUnavailableError]) &&
-      this.state.isOnline
-    ) {
-      this.showOfflineMessage()
-      // this.checkOnlineStatus()
+
+    if (IS_NATIVE) {
+      Bugsnag.notify(e)
     } else {
-      this.showUnhandledErrorDialog()
+      Bugsnag.notify(e, (event) => {
+        enhanceBugsnagEvent(event, info)
+      })
     }
+
+    this.showUnhandledErrorDialog()
   }
 
   setOnlineStatus = (isOnline) => {
-    if (!isOnline) {
-      this.showOfflineMessage()
-    } else {
-      this.setState({
-        isOnline,
-        dialogVisible: false,
-      })
-    }
-  }
-
-  showOfflineMessage = () => {
     this.setState({
-      dialogVisible: true,
-      message:
-        "Offline, please reconnect.\n Your changes will be saved when you are back online, so don't reload the page.",
-      isOnline: false,
+      isOnline,
     })
   }
 
   showUnhandledErrorDialog = () => {
-    if (this.state.isOnline) {
-      this.notify('😱 So sorry, but Databyss has encountered an error.', true)
-    }
+    this.notify('😱 So sorry, but Databyss has encountered an error.', true)
+  }
+
+  checkOnlineStatus = () => {
+    requestApi('/ping', { timeout: CHECK_ONLINE_INTERVAL })
+      .then(() => {
+        this.setState({
+          isOnline: true,
+        })
+      })
+      .catch(this.onUnhandledError)
   }
 
   notify = (message, _error, _html) => {
     this.setState({
-      message,
-      html: _html,
-      dialogVisible: true,
+      dialog: {
+        visible: true,
+        message,
+        html: _html,
+      },
       ...(_error
         ? {
             hasError: true,
           }
         : {}),
+    })
+  }
+
+  notifyStickyHtml = (html) => {
+    this.setState({
+      sticky: {
+        visible: true,
+        html,
+      },
+    })
+  }
+
+  notifySticky = (children) => {
+    this.setState({
+      sticky: {
+        visible: true,
+        html: false,
+        children,
+      },
+    })
+  }
+
+  hideDialog = () => {
+    this.setState({
+      dialog: {
+        ...this.state.dialog,
+        visible: false,
+      },
     })
   }
 
@@ -185,7 +249,7 @@ class NotifyProvider extends React.Component {
   }
 
   render() {
-    const { dialogVisible, message, isOnline, html } = this.state
+    const { dialog, sticky, isOnline } = this.state
     const errorConfirmButtons = [
       <Button
         key="help"
@@ -207,17 +271,23 @@ class NotifyProvider extends React.Component {
           notify: this.notify,
           notifyError: this.notifyError,
           notifyHtml: this.notifyHtml,
+          notifySticky: this.notifySticky,
           isOnline,
         }}
       >
+        <StickyMessage visible={sticky.visible}>
+          <View flexDirection="horizontal" alignItems="center">
+            {sticky.children}
+          </View>
+        </StickyMessage>
         {!this.state.hasError && this.props.children}
         <Dialog
-          showConfirmButtons={this.state.isOnline}
+          showConfirmButtons
           confirmButtons={this.state.hasError ? errorConfirmButtons : []}
-          onConfirm={() => this.setState({ dialogVisible: false })}
-          visible={dialogVisible}
-          message={message}
-          html={html}
+          onConfirm={() => this.hideDialog()}
+          visible={dialog.visible}
+          message={dialog.message}
+          html={dialog.html}
           {...(!isOnline && { 'data-test-modal': 'offline' })}
         />
       </NotifyContext.Provider>

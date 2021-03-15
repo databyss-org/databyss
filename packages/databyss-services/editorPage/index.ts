@@ -41,19 +41,20 @@ export const validateGroupCredentials = ({
     },
   })
 
-export const createDatabaseCredentials = ({
+export const createDatabaseCredentials = async ({
   groupId,
   isPublic,
 }: {
   groupId: string
   isPublic?: boolean
-}) =>
-  httpPost(`/cloudant/groups/credentials/${groupId}`, {
+}) => {
+  const _res = await httpPost(`/cloudant/groups/credentials/${groupId}`, {
     data: {
       isPublic,
     },
-  }).then((res) => {
-    // set the credentials to local storage
-    const cred = res.data
-    setPouchSecret(Object.values(cred))
   })
+
+  // set the credentials to local storage
+  const cred = _res.data
+  setPouchSecret(Object.values(cred))
+}

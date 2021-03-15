@@ -19,9 +19,9 @@ const App = () => {
     // eslint-disable-next-line no-empty
   } catch (e) {}
   return (
-    <NotifyProvider>
-      <ServiceProvider>
-        <Viewport p={0}>
+    <Viewport p={0}>
+      <NotifyProvider>
+        <ServiceProvider>
           <FirefoxWarning />
           <SessionProvider
             signUp={location.pathname === '/signup'}
@@ -32,9 +32,9 @@ const App = () => {
             <ReleaseNotes />
             <Private />
           </SessionProvider>
-        </Viewport>
-      </ServiceProvider>
-    </NotifyProvider>
+        </ServiceProvider>
+      </NotifyProvider>
+    </Viewport>
   )
 }
 

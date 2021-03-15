@@ -349,7 +349,7 @@ const PageMenu = () => {
             ) : null}
             {!_page.archive && menuItems.length ? <Separator /> : null}
             <DropdownList />
-            {Object.values(groups).length ? <Separator /> : null}
+            {/* {Object.values(groups).length ? <Separator /> : null}
             {groupsRes.isSuccess && Object.values(groups).length ? (
               collections()
             ) : (
@@ -376,7 +376,7 @@ const PageMenu = () => {
                   action="groups_click"
                 />
               </>
-            )}
+            )} */}
           </DropdownContainer>
         </ClickAwayListener>
       )}
