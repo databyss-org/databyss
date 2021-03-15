@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "1.2.15",
+  "version": "1.2.16",
   "description": "Expressive database management tools for writers and researchers",
   "main": "index.js",
   "repository": {
