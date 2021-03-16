@@ -236,16 +236,18 @@ export const replicateDbFromRemote = ({
     }
     dbRef.current = getPouchDb(`g_${groupId}`)
 
-    checkNetwork()
-      .then(() =>
+    checkNetwork().then((isOnline) => {
+      if (isOnline) {
         dbRef
           .current!.replicate.from(_couchUrl, {
             ...opts,
           })
           .on('complete', () => resolve(true))
           .on('error', (err) => reject(err))
-      )
-      .catch(() => resolve(false))
+      } else {
+        resolve(false)
+      }
+    })
   })
 
 export const syncPouchDb = ({
