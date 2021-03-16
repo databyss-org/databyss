@@ -14,22 +14,19 @@ import {
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { debounce } from 'lodash'
+import {
+  addGroupToDocumentsFromPage,
+  addOrRemoveCloudantGroupDatabase,
+  replicateGroup,
+  addPageToGroup,
+} from '@databyss-org/data/pouchdb/groups/index'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
-import {
-  addGroupToDocumentsFromPage,
-  addOrRemoveCloudantGroupDatabase,
-} from '../../../databyss-data/pouchdb/groups/index'
 import { findOne } from '../../../databyss-data/pouchdb/utils'
-import {
-  replicateGroup,
-  addPageToGroup,
-} from '../../../databyss-data/pouchdb/groups/index'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { PageDoc } from '../../../databyss-data/pouchdb/interfaces'
-import { replicateSharedPage } from '../../../databyss-data/pouchdb/groups/index'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -104,6 +101,13 @@ export const GroupFields = ({ group }: { group: Group }) => {
     [setValues, values]
   )
 
+  const removePageFromGroup = (pageId: string) => {
+    // remove groupId from all documents assosicated with pageId
+
+    // reset shared DB to reflect updated DB
+    console.log('removed', pageId)
+  }
+
   const _values = { ...values }
   if (_values.name === UNTITLED_NAME) {
     _values.name = ''
@@ -122,6 +126,7 @@ export const GroupFields = ({ group }: { group: Group }) => {
                 <PageDropzone
                   bg="background.2"
                   height="100%"
+                  removePageFromGroup={removePageFromGroup}
                   addPageDocumentToGroup={addPageDocumentToGroup}
                 />
               </ValueListItem>
