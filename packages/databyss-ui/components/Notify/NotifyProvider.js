@@ -155,7 +155,7 @@ class NotifyProvider extends React.Component {
             ml="small"
             variant="uiLink"
             textVariant="uiTextSmall"
-            href="/"
+            href={window.location.href}
             onPress={() => window.location.reload(true)}
           >
             Click here to update

@@ -7,7 +7,7 @@ import {
   View,
   Separator,
   pxUnits,
-  Text,
+  // Text,
 } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
@@ -17,8 +17,8 @@ import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
-import { saveGroup } from '@databyss-org/services/groups'
-import { Group } from '@databyss-org/services/interfaces'
+// import { saveGroup } from '@databyss-org/services/groups'
+// import { Group } from '@databyss-org/services/interfaces'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
@@ -53,7 +53,8 @@ const PageMenu = () => {
   const { defaultPageId } = getSession()
   const [showMenu, setShowMenu] = useState(false)
   const [isPagePublic, setIsPagePublic] = useState(false)
-  const [pageInGroups, setPageInGroups] = useState([])
+  // const [pageInGroups, setPageInGroups] = useState([])
+  const [, setPageInGroups] = useState([])
   const [showCopiedCheck, setShowCopiedCheck] = useState(false)
 
   const {
@@ -208,96 +209,96 @@ const PageMenu = () => {
     return <LoadingFallback size="extraTiny" queryObserver={pagesRes} />
   }
 
-  const onGroupClick = (id) => {
-    navigate(`/collections/${id}`)
-    // TODO: should this also navigate to the collections sidebar?
-  }
+  // const onGroupClick = (id) => {
+  //   navigate(`/collections/${id}`)
+  //   // TODO: should this also navigate to the collections sidebar?
+  // }
 
-  const addPageToNewCollection = () => {
-    const _group = new Group('untitled collection')
-    _group.pages = [params]
-    saveGroup(_group, params)
-    navigate(`/collections/${_group._id}`)
-  }
+  // const addPageToNewCollection = () => {
+  //   const _group = new Group('untitled collection')
+  //   _group.pages = [params]
+  //   saveGroup(_group, params)
+  //   navigate(`/collections/${_group._id}`)
+  // }
 
-  const collections = () => {
-    const _pageNotInGroups = Object.values(groups).filter(
-      (group) => !!group.name && !group.pages.includes(params)
-    )
+  // const collections = () => {
+  //   const _pageNotInGroups = Object.values(groups).filter(
+  //     (group) => !!group.name && !group.pages.includes(params)
+  //   )
 
-    // todo: make this singular
-    const addPageToGroups = (groupId) => {
-      const _group = groups[groupId]
-      _group.pages = _group.pages.concat(params)
-      saveGroup(_group, params)
-      navigate(`/collections/${groupId}`)
-    }
+  //   // todo: make this singular
+  //   const addPageToGroups = (groupId) => {
+  //     const _group = groups[groupId]
+  //     _group.pages = _group.pages.concat(params)
+  //     saveGroup(_group, params)
+  //     navigate(`/collections/${groupId}`)
+  //   }
 
-    return (
-      <>
-        {pageInGroups.length && (
-          <>
-            <View
-              ml="small"
-              height={pxUnits(34)}
-              justifyContent="center"
-              key="account-name"
-            >
-              <Text color="text.3" variant="uiTextSmall">
-                In collection(s):
-              </Text>
-            </View>
-            {pageInGroups.map((g) => (
-              <DropdownListItem
-                key={g._id}
-                mx="small"
-                px="small"
-                justifyContent="center"
-                label={g.name}
-                // value={isPagePublic}
-                onPress={() => onGroupClick(g._id)}
-                action="groups_click"
-              />
-            ))}
-          </>
-        )}
-        <>
-          <View
-            ml="small"
-            height={pxUnits(34)}
-            justifyContent="center"
-            key="is-in-groups"
-          >
-            <Text color="text.3" variant="uiTextSmall">
-              Add to Collection:
-            </Text>
-          </View>
-          {_pageNotInGroups.map((g) => (
-            <DropdownListItem
-              key={g._id}
-              mx="small"
-              px="small"
-              justifyContent="center"
-              label={g.name}
-              // value={isPagePublic}
-              onPress={() => addPageToGroups(g._id)}
-              action="groups_click"
-            />
-          ))}
-          <DropdownListItem
-            key="new-collection"
-            mx="small"
-            px="small"
-            justifyContent="center"
-            label="New collection..."
-            // value={isPagePublic}
-            onPress={() => addPageToNewCollection(params)}
-            action="groups_click"
-          />
-        </>
-      </>
-    )
-  }
+  //   return (
+  //     <>
+  //       {pageInGroups.length && (
+  //         <>
+  //           <View
+  //             ml="small"
+  //             height={pxUnits(34)}
+  //             justifyContent="center"
+  //             key="account-name"
+  //           >
+  //             <Text color="text.3" variant="uiTextSmall">
+  //               In collection(s):
+  //             </Text>
+  //           </View>
+  //           {pageInGroups.map((g) => (
+  //             <DropdownListItem
+  //               key={g._id}
+  //               mx="small"
+  //               px="small"
+  //               justifyContent="center"
+  //               label={g.name}
+  //               // value={isPagePublic}
+  //               onPress={() => onGroupClick(g._id)}
+  //               action="groups_click"
+  //             />
+  //           ))}
+  //         </>
+  //       )}
+  //       <>
+  //         <View
+  //           ml="small"
+  //           height={pxUnits(34)}
+  //           justifyContent="center"
+  //           key="is-in-groups"
+  //         >
+  //           <Text color="text.3" variant="uiTextSmall">
+  //             Add to Collection:
+  //           </Text>
+  //         </View>
+  //         {_pageNotInGroups.map((g) => (
+  //           <DropdownListItem
+  //             key={g._id}
+  //             mx="small"
+  //             px="small"
+  //             justifyContent="center"
+  //             label={g.name}
+  //             // value={isPagePublic}
+  //             onPress={() => addPageToGroups(g._id)}
+  //             action="groups_click"
+  //           />
+  //         ))}
+  //         <DropdownListItem
+  //           key="new-collection"
+  //           mx="small"
+  //           px="small"
+  //           justifyContent="center"
+  //           label="New collection..."
+  //           // value={isPagePublic}
+  //           onPress={() => addPageToNewCollection(params)}
+  //           action="groups_click"
+  //         />
+  //       </>
+  //     </>
+  //   )
+  // }
 
   return (
     <View

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 // import { debounce } from 'lodash'
 import Login from '@databyss-org/ui/modules/Login/Login'
@@ -40,7 +40,6 @@ const SessionProvider = ({
     name: 'SessionProvider',
   })
   const { session: actions } = useServiceContext()
-  const [dbPending, setDbPending] = useState(false)
 
   const isPublicAccount = useCallback(() => {
     if (state.session.publicAccount?._id) {
@@ -164,17 +163,6 @@ const SessionProvider = ({
     dispatch(actions.logout())
   }
 
-  // TODO: WRAP THIS IN A CALLBACK
-
-  useEffect(() => {
-    setDbPending(state.isDbBusy)
-    // debounceDbBusy(state.isDbBusy)
-  }, [state.isDbBusy])
-
-  const isDbBusy = useCallback(() => dbPending, [dbPending])
-
-  // const isDbBusy = () => dbPending
-
   const setDefaultPage = useCallback((id) => {
     dispatch(actions.onSetDefaultPage(id))
   }, [])
@@ -183,7 +171,6 @@ const SessionProvider = ({
     <SessionContext.Provider
       value={{
         ...state,
-        isDbBusy,
         setDefaultPage,
         getSession,
         endSession,

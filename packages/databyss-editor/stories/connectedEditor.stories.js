@@ -1,6 +1,5 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { getDefaultGroup } from '@databyss-org/services/session/clientStorage'
 import { debounce } from 'lodash'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
@@ -45,8 +44,7 @@ const Box = ({ children, ...others }) => (
 
 const PageWithAutosave = ({ page }) => {
   // const { setPatches } = usePageContext()
-  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
-  const _isDbBusy = isDbBusy()
+  const { isDbBusy } = useSessionContext()
   const [pageState, setPageState] = useState(null)
   const [showSaving, setShowSaving] = useState(false)
   const setPatches = useEditorPageContext((c) => c.setPatches)
@@ -64,8 +62,8 @@ const PageWithAutosave = ({ page }) => {
   )
 
   useEffect(() => {
-    debounceSavingIcon(_isDbBusy)
-  }, [_isDbBusy])
+    debounceSavingIcon(isDbBusy)
+  }, [isDbBusy])
 
   const onDocumentChange = (val) => {
     setPageState(JSON.stringify(val, null, 2))

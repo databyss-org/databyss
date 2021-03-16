@@ -28,6 +28,8 @@ export const initialState = {
   userInfo: null,
   // monitors pouch db sync
   isDbBusy: false,
+  readsPending: 0,
+  writesPending: 0,
   sessionIsStored: false,
 }
 
@@ -130,6 +132,8 @@ export default (state, action) => {
       return {
         ...state,
         isDbBusy: action.payload.isBusy,
+        readsPending: action.payload.readsPending || 0,
+        writesPending: action.payload.writesPending || 0,
       }
     }
 

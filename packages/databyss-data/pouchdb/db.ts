@@ -271,11 +271,12 @@ export const syncPouchDb = ({
       filter: (doc) => !doc._id.includes('design/'),
     })
     .on('error', (err) => console.log(`REPLICATE.TO ERROR - ${err}`))
-    .on('change', () => {
+    .on('change', (info) => {
       dispatch({
         type: 'DB_BUSY',
         payload: {
           isBusy: true,
+          writesPending: info.docs.length,
         },
       })
     })
@@ -285,6 +286,7 @@ export const syncPouchDb = ({
           type: 'DB_BUSY',
           payload: {
             isBusy: false,
+            writesPending: 0,
           },
         })
       }
@@ -292,7 +294,26 @@ export const syncPouchDb = ({
   ;(dbRef.current as PouchDB.Database).replicate
     .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
-  // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
+    .on('change', (info) => {
+      dispatch({
+        type: 'DB_BUSY',
+        payload: {
+          isBusy: true,
+          readsPending: info.docs.length,
+        },
+      })
+    })
+    .on('paused', (err) => {
+      if (!err) {
+        dispatch({
+          type: 'DB_BUSY',
+          payload: {
+            isBusy: false,
+            readsPending: 0,
+          },
+        })
+      }
+    })
 }
 
 export const resetPouchDb = async () => {

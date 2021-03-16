@@ -1,11 +1,10 @@
 /* eslint-disable react/no-danger */
 import React, { ReactNode, PropsWithChildren } from 'react'
 import { Helmet } from 'react-helmet'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
-import { View, Icon, Text } from '@databyss-org/ui/primitives'
+import { View, Text } from '@databyss-org/ui/primitives'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
-import OnlineSvg from '@databyss-org/ui/assets/online.svg'
-import OfflineSvg from '@databyss-org/ui/assets/offline.svg'
 import { AccountMenu } from '@databyss-org/ui/components'
 
 interface StickyHeaderProps {
@@ -19,9 +18,19 @@ export const StickyHeader = ({
   children,
 }: PropsWithChildren<StickyHeaderProps>) => {
   const { isOnline } = useNotifyContext()
+  const { isDbBusy, readsPending, writesPending } = useSessionContext()
 
   if (isMobile()) {
     return null
+  }
+
+  let statusMessage = `Databyss is ${
+    isOnline
+      ? 'online'
+      : 'offline\nYour changes will be synched when you go back online'
+  }`
+  if (isOnline) {
+    statusMessage += `\n${writesPending} pending local changes\n${readsPending} pending remote changes`
   }
 
   return (
@@ -45,14 +54,21 @@ export const StickyHeader = ({
       </Text>
       <View alignItems="center" justifyContent="flex-end" flexDirection="row">
         {children}
-        <Icon
-          sizeVariant="small"
-          color="gray.5"
-          title={isOnline ? 'Online' : 'Offline'}
-          ml="small"
-        >
-          {isOnline ? <OnlineSvg /> : <OfflineSvg />}
-        </Icon>
+        <View alignItems="center" justifyContent="flex-end" flexDirection="row">
+          {!isDbBusy && (
+            <View id="changes-saved">
+              {' '}
+              &nbsp;
+              {/* this is used in tests to confirm the page has been saved */}
+            </View>
+          )}
+          <View
+            backgroundColor={!isOnline || isDbBusy ? 'orange.2' : 'green.0'}
+            title={statusMessage}
+            p="extraSmall"
+            borderRadius="round"
+          />
+        </View>
         <AccountMenu />
 
         {contextMenu && <View ml="em">{contextMenu}</View>}
