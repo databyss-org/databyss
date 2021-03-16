@@ -24,7 +24,7 @@ const removeDuplicatesFromArray = (array: string[]) =>
   creates or removes a cloudant group database if no database exists
   */
 
-const addOrRemoveCloudantGroupDatabase = async ({
+export const addOrRemoveCloudantGroupDatabase = async ({
   groupId,
   isPublic,
 }: {
@@ -35,7 +35,12 @@ const addOrRemoveCloudantGroupDatabase = async ({
     // TODO: this should not have to be turned to lowercase
     data: { groupId, isPublic },
   })
-  return res.data
+  // if is public, add credentials to localstorage
+  if (isPublic) {
+    setPouchSecret(Object.values(res.data))
+  } else {
+    deletePouchSecret(groupId)
+  }
 }
 
 export const addGroupToDocument = async (groupIds: string[], document: any) => {
@@ -115,7 +120,7 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
           ranges: [],
         }
       } else {
-        addGroupToDocument(_sharedWithPages, _block)
+        await addGroupToDocument(_sharedWithPages, _block)
       }
       _blocks[i] = _populatedBlock
     }
@@ -128,7 +133,7 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
     query: { _id: _selectionId },
   })
   if (_selection) {
-    addGroupToDocument(_sharedWithPages, _selection)
+    await addGroupToDocument(_sharedWithPages, _selection)
   }
 
   // get all atomics associated with page
@@ -142,7 +147,7 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
       query: { _id: _a._id },
     })
     if (_atomic) {
-      addGroupToDocument(_sharedWithPages, _atomic)
+      await addGroupToDocument(_sharedWithPages, _atomic)
     }
 
     const _blockRelation = await findOne<any>({
@@ -150,7 +155,7 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
       query: { _id: `r_${_a._id}` },
     })
     if (_blockRelation) {
-      addGroupToDocument(_sharedWithPages, _blockRelation)
+      await addGroupToDocument(_sharedWithPages, _blockRelation)
     }
   }
 }
@@ -171,7 +176,7 @@ export const addPageToGroup = async ({
   })
   if (_page && !_page?.sharedWithGroups?.includes(groupId)) {
     // add groupId to page array if does not already exist
-    addGroupToDocument([groupId], _page)
+    await addGroupToDocument([groupId], _page)
   }
 }
 
@@ -283,13 +288,10 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     })
 
     // create cloudant db
-    // returns credentials from public page
-    const _credentials = await addOrRemoveCloudantGroupDatabase({
+    await addOrRemoveCloudantGroupDatabase({
       groupId: _data._id,
       isPublic: true,
     })
-    // add credentials to local storage
-    setPouchSecret(Object.values(_credentials))
   } else {
     // if page is removed from sharing
 
@@ -308,8 +310,6 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
       groupId: _data._id,
       isPublic: false,
     })
-    // remove credentials from local storage
-    deletePouchSecret(pageId)
   }
 }
 
@@ -348,6 +348,52 @@ const upsertReplication = ({
 }
 
 /**
+ * one time replication to upsert a @groupId to remote DB
+ */
+export const replicateGroup = async ({
+  groupId,
+  isPublic,
+}: {
+  groupId: string
+  isPublic?: boolean
+}) => {
+  try {
+    // first check if credentials exist
+    let dbSecretCache = getPouchSecret() || {}
+    let creds = dbSecretCache[groupId.substr(2)]
+    if (!creds) {
+      // credentials are not in local storage
+      // creates new user credentials and adds them to local storage
+      await createDatabaseCredentials({
+        groupId,
+        isPublic,
+      })
+
+      // credentials should be in local storage now
+      dbSecretCache = getPouchSecret()
+      creds = dbSecretCache[groupId.substr(2)]
+      if (!creds) {
+        // user is not authorized
+        return
+      }
+    }
+    // confirm credentials work
+    await validateGroupCredentials({
+      groupId,
+      dbKey: creds.dbKey,
+    })
+
+    upsertReplication({
+      groupId,
+      dbKey: creds.dbKey,
+      dbPassword: creds.dbPassword,
+    })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+/**
  * one time replication to upsert a group to remote DB
  */
 export const replicateSharedPage = async (pageIds: string[]) => {
@@ -364,41 +410,7 @@ export const replicateSharedPage = async (pageIds: string[]) => {
   })
   if (_groups?.length) {
     for (const group of _groups) {
-      // wrapped in a try catch in case user is not authorized
-      try {
-        // first check if credentials exist
-        const gId = group._id
-        let dbSecretCache = getPouchSecret() || {}
-        let creds = dbSecretCache[gId.substr(2)]
-        if (!creds) {
-          // credentials are not in local storage
-          // creates new user credentials and adds them to local storage
-          await createDatabaseCredentials({
-            groupId: gId,
-            isPublic: group.public,
-          })
-          // credentials should be in local storage now
-          dbSecretCache = getPouchSecret()
-          creds = dbSecretCache[gId.substr(2)]
-          if (!creds) {
-            // user is not authorized
-            return
-          }
-        }
-        // confirm credentials work
-        await validateGroupCredentials({
-          groupId: group._id,
-          dbKey: creds.dbKey,
-        })
-
-        upsertReplication({
-          groupId: gId,
-          dbKey: creds.dbKey,
-          dbPassword: creds.dbPassword,
-        })
-      } catch (err) {
-        console.error(err)
-      }
+      replicateGroup({ groupId: group._id, isPublic: group.public })
     }
   }
 }

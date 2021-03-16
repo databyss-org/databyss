@@ -55,8 +55,7 @@ export const dbRef: DbRef = {
 }
 
 // try to load pouch_secrets from local storage to init db
-// const _secrets = getPouchSecret()
-console.log('getDefaultGroup', getDefaultGroup)
+
 const defaultGroup = getDefaultGroup()
 const groupIdFromUrl = getAccountFromLocation()
 

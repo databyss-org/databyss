@@ -1,4 +1,4 @@
-import React, { useCallback, PropsWithChildren, useState } from 'react'
+import React, { useCallback, PropsWithChildren, useState, useRef } from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import ValueListProvider, {
   ValueListItem,
@@ -18,6 +18,18 @@ import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
+import {
+  addGroupToDocumentsFromPage,
+  addOrRemoveCloudantGroupDatabase,
+} from '../../../databyss-data/pouchdb/groups/index'
+import { findOne } from '../../../databyss-data/pouchdb/utils'
+import {
+  replicateGroup,
+  addPageToGroup,
+} from '../../../databyss-data/pouchdb/groups/index'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { PageDoc } from '../../../databyss-data/pouchdb/interfaces'
+import { replicateSharedPage } from '../../../databyss-data/pouchdb/groups/index'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -37,20 +49,59 @@ const GroupSection = ({
 
 export const GroupFields = ({ group }: { group: Group }) => {
   const [values, setValues] = useState(group)
+  const groupValue = useRef(group)
 
   const saveChanges = useCallback(
     debounce((_values: Group) => saveGroup(_values), 500),
     [saveGroup]
   )
 
+  const addPageDocumentToGroup = async ({ pageId }: { pageId: string }) => {
+    // add groupId to page document
+    await addPageToGroup({ pageId, groupId: `g_${group._id}` })
+    // get updated pageDoc
+    const _page: PageDoc | null = await findOne({
+      doctype: DocumentType.Page,
+      query: { _id: pageId },
+    })
+    if (_page) {
+      // add propagate sharedWithGroups property to all documents
+      await addGroupToDocumentsFromPage(_page)
+      // get group shared status
+      const { _id: groupId, public: isPublic } = groupValue.current
+      // one time upsert to remote db
+      if (isPublic) {
+        replicateGroup({ groupId: `g_${groupId}`, isPublic })
+      }
+    }
+  }
+
   const onChange = useCallback(
     (_values: Group) => {
+      // if change occured in group public status
+      if (groupValue.current.public !== _values.public) {
+        // create or delete a database
+        addOrRemoveCloudantGroupDatabase({
+          groupId: `g_${group._id}`,
+          isPublic: _values.public!,
+        }).then(() => {
+          // if group was just made public, publish all associated pages
+          if (groupValue.current.public) {
+            replicateGroup({
+              groupId: `g_${group._id}`,
+              isPublic: true,
+            })
+          }
+        })
+      }
       // update internal state
       setValues(_values)
       // update database
       saveChanges(_values)
+      // update ref values
+      groupValue.current = _values
     },
-    [setValues]
+    [setValues, values]
   )
 
   const _values = { ...values }
@@ -71,7 +122,7 @@ export const GroupFields = ({ group }: { group: Group }) => {
                 <PageDropzone
                   bg="background.2"
                   height="100%"
-                  groupId={_values._id}
+                  addPageDocumentToGroup={addPageDocumentToGroup}
                 />
               </ValueListItem>
             </View>
