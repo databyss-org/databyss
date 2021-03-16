@@ -49,7 +49,7 @@ export interface DropzoneProps {
 }
 
 export interface ViewProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
     SpaceProps,
     LayoutProps,
     FlexboxProps,

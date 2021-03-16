@@ -3,10 +3,8 @@ import React, { ReactNode, PropsWithChildren } from 'react'
 import { Helmet } from 'react-helmet'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
-import { View, Icon, Text } from '@databyss-org/ui/primitives'
+import { View, Text } from '@databyss-org/ui/primitives'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
-import OnlineSvg from '@databyss-org/ui/assets/online.svg'
-import OfflineSvg from '@databyss-org/ui/assets/offline.svg'
 import { AccountMenu } from '@databyss-org/ui/components'
 
 interface StickyHeaderProps {
