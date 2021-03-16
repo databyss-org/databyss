@@ -1,16 +1,18 @@
 /* eslint-disable no-restricted-globals */
-import { precacheAndRoute } from 'workbox-precaching'
+import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching'
+import { NavigationRoute, registerRoute } from 'workbox-routing'
 
-/*
-// Detailed logging is very useful during development
-workbox.setConfig({ debug: true })
-
-// Updating SW lifecycle to update the app after user triggered refresh
-workbox.core.skipWaiting()
-workbox.core.clientsClaim()
-
-// We inject manifest here using "workbox-build" in workbox-build-inject.js
-workbox.precaching.precacheAndRoute(self.__WB_MANIFEST)
-*/
+self.addEventListener('install', (event) => {
+  console.log('install')
+  event.waitUntil(self.skipWaiting())
+})
+self.addEventListener('activate', (event) => {
+  console.log('active')
+  event.waitUntil(self.clients.claim())
+})
 
 precacheAndRoute(self.__WB_MANIFEST)
+
+const handler = createHandlerBoundToURL('/index.html')
+const navigationRoute = new NavigationRoute(handler)
+registerRoute(navigationRoute)

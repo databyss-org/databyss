@@ -494,7 +494,8 @@ workbox.precaching.precacheAndRoute([])
       isEnvProduction &&
         new InjectManifest({
           swSrc: path.resolve(__dirname, './service-worker.js'),
-          include: [/favicon\.ico/, /index\.html/, /\.css$/, /\.js$/],
+          include: [/\.(?:html|png|jpg|jpeg|svg|mp4|js|ico)$/],
+          maximumFileSizeToCacheInBytes: 3145728,
         }),
       /*
       isEnvProduction &&

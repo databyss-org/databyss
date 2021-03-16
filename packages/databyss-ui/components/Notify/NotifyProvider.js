@@ -63,10 +63,13 @@ class NotifyProvider extends React.Component {
       // window.addEventListener('focus', this.onWindowFocus)
 
       // kick off ping loop
-      this.checkOnlineStatusTimer = window.setInterval(
-        this.checkOnlineStatus,
-        CHECK_ONLINE_INTERVAL
-      )
+      // this.checkOnlineStatusTimer = window.setInterval(
+      //   this.checkOnlineStatus,
+      //   CHECK_ONLINE_INTERVAL
+      // )
+
+      // check for service worker cache updates
+      this.checkForUpdates()
     }
   }
   state = {
@@ -148,20 +151,6 @@ class NotifyProvider extends React.Component {
       return
     }
     if (e && instanceofAny([e, e.reason, e.error], [VersionConflictError])) {
-      this.notifySticky(
-        <>
-          <Text variant="uiTextSmall">There is a new version available!</Text>
-          <Button
-            ml="small"
-            variant="uiLink"
-            textVariant="uiTextSmall"
-            href={window.location.href}
-            onPress={() => window.location.reload(true)}
-          >
-            Click here to update
-          </Button>
-        </>
-      )
       return
     }
 
@@ -179,6 +168,41 @@ class NotifyProvider extends React.Component {
   setOnlineStatus = (isOnline) => {
     this.setState({
       isOnline,
+    })
+  }
+
+  notifyUpdateAvailable = () => {
+    this.notifySticky(
+      <>
+        <Text variant="uiTextSmall">There is a new version available!</Text>
+        <Button
+          ml="small"
+          variant="uiLink"
+          textVariant="uiTextSmall"
+          href={window.location.href}
+          onPress={() => window.location.reload(true)}
+        >
+          Click here to update
+        </Button>
+      </>
+    )
+  }
+
+  checkForUpdates = () => {
+    if (!('serviceWorker' in navigator)) {
+      return
+    }
+    navigator.serviceWorker.ready.then((reg) => {
+      console.log('Poll for updates on service worker')
+      reg.addEventListener('updatefound', this.notifyUpdateAvailable)
+
+      setInterval(
+        () =>
+          reg.update().catch((err) => {
+            console.log('reg.update error', err)
+          }),
+        10000
+      )
     })
   }
 
