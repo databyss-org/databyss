@@ -9,6 +9,7 @@ import {
 } from '@databyss-org/data/pouchdb/db'
 // import { connect } from '@databyss-org/data/couchdb-client/couchdb'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
@@ -40,6 +41,7 @@ const SessionProvider = ({
     name: 'SessionProvider',
   })
   const { session: actions } = useServiceContext()
+  const { isOnline } = useNotifyContext()
 
   const isPublicAccount = useCallback(() => {
     if (state.session.publicAccount?._id) {

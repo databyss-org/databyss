@@ -205,7 +205,9 @@ export const replicateDbFromRemote = ({
   // dbPassword: string
   groupId: string
 }) =>
-  new Promise<void>((resolve, reject) => {
+  new Promise<Boolean>((resolve, reject) => {
+    const _couchUrl = `${REMOTE_CLOUDANT_URL}/g_${groupId}`
+
     // for now we are getting the first credentials from local storage groups
     const _creds = getPouchSecret()
     // let _dbId
@@ -232,12 +234,23 @@ export const replicateDbFromRemote = ({
       },
     }
     dbRef.current = getPouchDb(`g_${groupId}`)
-    dbRef.current.replicate
-      .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
-        ...opts,
+
+    fetch(_couchUrl, {
+      method: 'HEAD',
+      mode: 'no-cors',
+    })
+      .then((_headres) => {
+        if (!(_headres && (_headres.ok || _headres.type === 'opaque'))) {
+          resolve(false)
+        }
+        dbRef
+          .current!.replicate.from(_couchUrl, {
+            ...opts,
+          })
+          .on('complete', () => resolve(true))
+          .on('error', (err) => reject(err))
       })
-      .on('complete', () => resolve())
-      .on('error', (err) => reject(err))
+      .catch(() => resolve(false))
   })
 
 export const syncPouchDb = ({

@@ -1,31 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link
+      href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i|Source+Sans+Pro:400,600&display=swap"
+      rel="stylesheet"
+    />
+    <title>Databyss</title>
+    <script>
+      ;(function () {
+        // if mobile, replace hostname with mobile hostname
+        var mobileOsAgents = /ios|iphone|android|windows phone/i
+        var isMobile = Math.max(window.innerWidth, window.innerHeight) < 900
+        var isMobileOs = navigator.userAgent.match(mobileOsAgents)
+        if (!'%FORCE_MOBILE%' && '%MOBILE_HOST%' && isMobile && isMobileOs) {
+          var redir = window.location.href.replace(
+            window.location.host,
+            '%MOBILE_HOST%'
+          )
+          window.location.replace(redir)
+        }
 
-<head>
-  <meta charset="utf-8" />
-  <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i|Source+Sans+Pro:400,600&display=swap"
-    rel="stylesheet" />
-  <title>Databyss</title>
-  <script>
-    (function () {
-      // if mobile, replace hostname with mobile hostname
-      var mobileOsAgents = /ios|iphone|android|windows phone/i
-      var isMobile = Math.max(window.innerWidth, window.innerHeight) < 900
-      var isMobileOs = navigator.userAgent.match(mobileOsAgents)
-      if (!'%FORCE_MOBILE%' && '%MOBILE_HOST%' && isMobile && isMobileOs) {
-        var redir = window.location.href.replace(window.location.host, '%MOBILE_HOST%')
-        window.location.replace(redir)
-      }
-    })()
-  </script>
-</head>
+        // if ('serviceWorker' in navigator) {
+        //   window.addEventListener('load', () => {
+        //     navigator.serviceWorker
+        //       .register('/service-worker.js')
+        //       .then((registration) => {
+        //         console.log('SW registered: ', registration)
+        //       })
+        //       .catch((registrationError) => {
+        //         console.log('SW registration failed: ', registrationError)
+        //       })
+        //   })
+        // }
+      })()
+    </script>
+  </head>
 
-<body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
-</body>
-
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
 </html>
