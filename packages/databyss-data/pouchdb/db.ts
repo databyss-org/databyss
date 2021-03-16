@@ -26,6 +26,7 @@ import tv4 from 'tv4'
 import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import { DocumentType } from './interfaces'
 import { searchText } from './utils'
+import { checkNetwork } from '@databyss-org/services/lib/request'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
@@ -235,21 +236,15 @@ export const replicateDbFromRemote = ({
     }
     dbRef.current = getPouchDb(`g_${groupId}`)
 
-    fetch(_couchUrl, {
-      method: 'HEAD',
-      mode: 'no-cors',
-    })
-      .then((_headres) => {
-        if (!(_headres && (_headres.ok || _headres.type === 'opaque'))) {
-          resolve(false)
-        }
+    checkNetwork()
+      .then(() =>
         dbRef
           .current!.replicate.from(_couchUrl, {
             ...opts,
           })
           .on('complete', () => resolve(true))
           .on('error', (err) => reject(err))
-      })
+      )
       .catch(() => resolve(false))
   })
 

@@ -10,12 +10,10 @@ import {
 import Bugsnag from '@bugsnag/js'
 import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
-import { requestApi } from '@databyss-org/services/lib/requestApi'
+import { checkNetwork } from '@databyss-org/services/lib/request'
 import { cleanupDefaultGroup } from '@databyss-org/services/session/clientStorage'
 import IS_NATIVE from '../../lib/isNative'
 import StickyMessage from './StickyMessage'
-
-const CHECK_ONLINE_INTERVAL = process.env.FETCH_TIMEOUT
 
 const NotifyContext = createContext()
 
@@ -62,14 +60,11 @@ class NotifyProvider extends React.Component {
       window.addEventListener('unhandledrejection', this.onUnhandledError)
       // window.addEventListener('focus', this.onWindowFocus)
 
-      // kick off ping loop
-      // this.checkOnlineStatusTimer = window.setInterval(
-      //   this.checkOnlineStatus,
-      //   CHECK_ONLINE_INTERVAL
-      // )
-
       // check for service worker cache updates
       this.checkForUpdates()
+
+      // poll for online status
+      setInterval(this.checkOnlineStatus, process.env.FETCH_TIMEOUT)
     }
   }
   state = {
@@ -189,7 +184,10 @@ class NotifyProvider extends React.Component {
   }
 
   checkForUpdates = () => {
-    if (!('serviceWorker' in navigator)) {
+    if (
+      process.env.NODE_ENV !== 'production' ||
+      !('serviceWorker' in navigator)
+    ) {
       return
     }
     navigator.serviceWorker.ready.then((reg) => {
@@ -201,7 +199,7 @@ class NotifyProvider extends React.Component {
           reg.update().catch((err) => {
             console.log('reg.update error', err)
           }),
-        10000
+        process.env.VERSION_POLL_INTERVAL
       )
     })
   }
@@ -211,13 +209,9 @@ class NotifyProvider extends React.Component {
   }
 
   checkOnlineStatus = () => {
-    requestApi('/ping', { timeout: CHECK_ONLINE_INTERVAL })
-      .then(() => {
-        this.setState({
-          isOnline: true,
-        })
-      })
-      .catch(this.onUnhandledError)
+    checkNetwork().then((isOnline) => {
+      this.setOnlineStatus(isOnline)
+    })
   }
 
   notify = (message, _error, _html) => {

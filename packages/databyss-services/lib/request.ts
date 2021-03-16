@@ -51,10 +51,14 @@ export interface RequestOptions extends RequestInit {
    * Number of MS to wait for a response from the server before timing out
    */
   timeout?: number
+  /**
+   * Return the raw response, no parse
+   */
+  rawResponse?: boolean
 }
 
 function request(uri, options: RequestOptions = {}) {
-  const { timeout, responseAsJson, ..._options } = options
+  const { timeout, responseAsJson, rawResponse, ..._options } = options
   const _controller = new AbortController()
   const _timeoutDuration = timeout || parseInt(FETCH_TIMEOUT, 10)
 
@@ -74,7 +78,28 @@ function request(uri, options: RequestOptions = {}) {
       return response
     })
     .then(checkStatus)
-    .then(parseResponse(responseAsJson))
+    .then((r) => {
+      if (rawResponse) {
+        return r
+      }
+      return parseResponse(responseAsJson)(r)
+    })
+}
+
+export async function checkNetwork() {
+  try {
+    const _res = await request('/', {
+      method: 'HEAD',
+      mode: 'no-cors',
+      rawResponse: true,
+    })
+    if (!(_res && (_res.ok || _res.type === 'opaque'))) {
+      return false
+    }
+  } catch (err) {
+    return false
+  }
+  return true
 }
 
 export function getJson(uri) {
