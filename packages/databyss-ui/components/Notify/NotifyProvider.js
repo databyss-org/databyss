@@ -35,7 +35,6 @@ export const enhanceBugsnagEvent = (event, info) => {
     unhandled: true,
     severityReason: { type: 'unhandledException' },
   }
-  // const event = Bugsnag.Event.create(error, true, handledState, 1)
   if (info && info.componentStack)
     info.componentStack = formatComponentStack(info.componentStack)
   event.addMetadata('react', info)
@@ -58,7 +57,6 @@ class NotifyProvider extends React.Component {
       window.addEventListener('online', () => this.setOnlineStatus(true))
       window.addEventListener('error', this.onUnhandledError)
       window.addEventListener('unhandledrejection', this.onUnhandledError)
-      // window.addEventListener('focus', this.onWindowFocus)
 
       // check for service worker cache updates
       this.checkForUpdates()
@@ -103,10 +101,6 @@ class NotifyProvider extends React.Component {
     }
   }
 
-  // onWindowFocus = () => {
-  //   requestApi('/ping').catch(this.onUnhandledError)
-  // }
-
   onUnhandledError = (e, info) => {
     // HACK: ignore ResizeObserver loop limit errors, which are more like warnings
     //   (see https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded)
@@ -146,6 +140,7 @@ class NotifyProvider extends React.Component {
       return
     }
     if (e && instanceofAny([e, e.reason, e.error], [VersionConflictError])) {
+      this.notifyUpdateAvailable()
       return
     }
 
