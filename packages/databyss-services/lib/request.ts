@@ -87,6 +87,9 @@ function request(uri, options: RequestOptions = {}) {
 }
 
 export async function checkNetwork() {
+  if (process.env.NODE_ENV === 'test') {
+    return true
+  }
   try {
     const _res = await request('/', {
       method: 'HEAD',
