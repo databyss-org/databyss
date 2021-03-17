@@ -86,6 +86,7 @@ export const removeGroupsFromDocument = async (
       _id: document._id,
       doc: document,
     })
+    console.log('AFTER UPSERT')
   }
 }
 
@@ -412,5 +413,78 @@ export const replicateSharedPage = async (pageIds: string[]) => {
     for (const group of _groups) {
       replicateGroup({ groupId: group._id, isPublic: group.public })
     }
+  }
+}
+
+export const updateAndReplicateSharedDatabase = async ({
+  groupId,
+  isPublic,
+}: {
+  groupId: string
+  isPublic: boolean
+}) => {
+  // create or delete a database
+  await addOrRemoveCloudantGroupDatabase({
+    groupId: `g_${groupId}`,
+    isPublic,
+  })
+
+  if (isPublic) {
+    replicateGroup({
+      groupId: `g_${groupId}`,
+      isPublic: true,
+    })
+  }
+}
+
+/**
+ * crawl page and add group to all associated documents
+ */
+export const addPageDocumentToGroup = async ({
+  pageId,
+  group,
+}: {
+  group: Group
+  pageId: string
+}) => {
+  // add groupId to page document
+  await addPageToGroup({ pageId, groupId: `g_${group._id}` })
+  // get updated pageDoc
+  const _page: PageDoc | null = await findOne({
+    doctype: DocumentType.Page,
+    query: { _id: pageId },
+  })
+  if (_page) {
+    // add propagate sharedWithGroups property to all documents
+    await addGroupToDocumentsFromPage(_page)
+    // get group shared status
+    const { _id: groupId, public: isPublic } = group
+    // one time upsert to remote db
+    if (isPublic) {
+      replicateGroup({ groupId: `g_${groupId}`, isPublic })
+    }
+  }
+}
+
+export const removePageFromGroup = async ({
+  pageId,
+  group,
+}: {
+  pageId: string
+  group: Group
+}) => {
+  // HACK, to remove a page, we first delete the shared database, then recreate the shared database
+  // reset shared DB to reflect updated DB
+
+  const { public: isPublic, _id: groupId } = group
+  if (isPublic) {
+    await updateAndReplicateSharedDatabase({ groupId, isPublic: false })
+  }
+  // remove group from all documents associated with pageId
+
+  await removeGroupFromPage({ pageId, groupId: `g_${group._id}` })
+  if (isPublic) {
+    // reshare page
+    await updateAndReplicateSharedDatabase({ groupId, isPublic })
   }
 }

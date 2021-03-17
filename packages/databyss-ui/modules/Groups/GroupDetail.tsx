@@ -14,19 +14,11 @@ import {
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { debounce } from 'lodash'
-import {
-  addGroupToDocumentsFromPage,
-  addOrRemoveCloudantGroupDatabase,
-  replicateGroup,
-  addPageToGroup,
-} from '@databyss-org/data/pouchdb/groups/index'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { updateAndReplicateSharedDatabase } from '@databyss-org/data/pouchdb/groups/index'
 import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
-import { findOne } from '../../../databyss-data/pouchdb/utils'
-import { PageDoc } from '../../../databyss-data/pouchdb/interfaces'
 import { copyToClipboard } from '../../components/PageContent/PageMenu'
 
 interface GroupSectionProps extends ViewProps {
@@ -54,26 +46,6 @@ export const GroupFields = ({ group }: { group: Group }) => {
     [saveGroup]
   )
 
-  const addPageDocumentToGroup = async ({ pageId }: { pageId: string }) => {
-    // add groupId to page document
-    await addPageToGroup({ pageId, groupId: `g_${group._id}` })
-    // get updated pageDoc
-    const _page: PageDoc | null = await findOne({
-      doctype: DocumentType.Page,
-      query: { _id: pageId },
-    })
-    if (_page) {
-      // add propagate sharedWithGroups property to all documents
-      await addGroupToDocumentsFromPage(_page)
-      // get group shared status
-      const { _id: groupId, public: isPublic } = groupValue.current
-      // one time upsert to remote db
-      if (isPublic) {
-        replicateGroup({ groupId: `g_${groupId}`, isPublic })
-      }
-    }
-  }
-
   const copyLink = () => {
     // TODO: collection should only be linkable if page exist
 
@@ -88,18 +60,9 @@ export const GroupFields = ({ group }: { group: Group }) => {
     (_values: Group) => {
       // if change occured in group public status
       if (groupValue.current.public !== _values.public) {
-        // create or delete a database
-        addOrRemoveCloudantGroupDatabase({
-          groupId: `g_${group._id}`,
+        updateAndReplicateSharedDatabase({
+          groupId: group._id,
           isPublic: _values.public!,
-        }).then(() => {
-          // if group was just made public, publish all associated pages
-          if (groupValue.current.public) {
-            replicateGroup({
-              groupId: `g_${group._id}`,
-              isPublic: true,
-            })
-          }
         })
       }
       // update internal state
@@ -111,13 +74,6 @@ export const GroupFields = ({ group }: { group: Group }) => {
     },
     [setValues, values]
   )
-
-  const removePageFromGroup = (pageId: string) => {
-    // remove groupId from all documents assosicated with pageId
-
-    // reset shared DB to reflect updated DB
-    console.log('removed', pageId)
-  }
 
   const _values = { ...values }
   if (_values.name === UNTITLED_NAME) {
@@ -137,8 +93,7 @@ export const GroupFields = ({ group }: { group: Group }) => {
                 <PageDropzone
                   bg="background.2"
                   height="100%"
-                  removePageFromGroup={removePageFromGroup}
-                  addPageDocumentToGroup={addPageDocumentToGroup}
+                  groupRef={groupValue.current}
                 />
               </ValueListItem>
             </View>

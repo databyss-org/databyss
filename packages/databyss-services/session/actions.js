@@ -232,14 +232,14 @@ export const isGroupPublic = async () => {
 }
 
 export const hasUnathenticatedAccess = async () => {
-  const _isPagePublic = await isPagePublic()
-  if (_isPagePublic) {
-    return _isPagePublic
-  }
-
   const _isGroupPublic = await isGroupPublic()
   if (_isGroupPublic) {
     return _isGroupPublic
+  }
+
+  const _isPagePublic = await isPagePublic()
+  if (_isPagePublic) {
+    return _isPagePublic
   }
 
   return false

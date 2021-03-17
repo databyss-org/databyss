@@ -10,6 +10,7 @@ import {
   BaseControl,
   Separator,
 } from '@databyss-org/ui/primitives'
+import { Group } from '@databyss-org/services/interfaces/Group'
 import { PageHeader } from '@databyss-org/services/interfaces'
 import { LoadingFallback, SidebarListRow } from '@databyss-org/ui/components'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
@@ -17,19 +18,21 @@ import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import {
+  addPageDocumentToGroup,
+  removePageFromGroup,
+} from '@databyss-org/data/pouchdb/groups'
 
 interface PageDropzoneProps extends ScrollViewProps {
   value?: string[]
   onChange?: (value: string[]) => void
-  addPageDocumentToGroup: ({ pageId: string }) => void
-  removePageFromGroup: (pageId: string) => void
+  groupRef: Group
 }
 
 export const PageDropzone = ({
   value,
+  groupRef,
   onChange,
-  addPageDocumentToGroup,
-  removePageFromGroup,
   ...others
 }: PageDropzoneProps) => {
   const pagesRes = usePages()
@@ -46,12 +49,12 @@ export const PageDropzone = ({
         _id = _pageHeader._id
       }
       onChange!(value!.concat(_id))
-      addPageDocumentToGroup({ pageId: _id })
+      addPageDocumentToGroup({ pageId: _id, group: groupRef })
     },
     [onChange]
   )
   const onRemove = (_id: string) => {
-    removePageFromGroup(_id)
+    removePageFromGroup({ pageId: _id, group: groupRef })
 
     onChange!(value!.filter((p) => p !== _id))
   }
