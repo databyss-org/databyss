@@ -24,6 +24,7 @@ import {
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
+import { checkNetwork } from '@databyss-org/services/lib/request'
 import { DocumentType } from './interfaces'
 import { searchText } from './utils'
 
@@ -205,7 +206,9 @@ export const replicateDbFromRemote = ({
   // dbPassword: string
   groupId: string
 }) =>
-  new Promise<void>((resolve, reject) => {
+  new Promise<Boolean>((resolve, reject) => {
+    const _couchUrl = `${REMOTE_CLOUDANT_URL}/g_${groupId}`
+
     // for now we are getting the first credentials from local storage groups
     const _creds = getPouchSecret()
     // let _dbId
@@ -232,12 +235,19 @@ export const replicateDbFromRemote = ({
       },
     }
     dbRef.current = getPouchDb(`g_${groupId}`)
-    dbRef.current.replicate
-      .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
-        ...opts,
-      })
-      .on('complete', () => resolve())
-      .on('error', (err) => reject(err))
+
+    checkNetwork().then((isOnline) => {
+      if (isOnline) {
+        dbRef
+          .current!.replicate.from(_couchUrl, {
+            ...opts,
+          })
+          .on('complete', () => resolve(true))
+          .on('error', (err) => reject(err))
+      } else {
+        resolve(false)
+      }
+    })
   })
 
 export const syncPouchDb = ({

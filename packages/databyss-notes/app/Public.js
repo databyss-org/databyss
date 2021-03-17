@@ -23,7 +23,11 @@ const Public = (props) => (
         }}
       >
         <View mr="small">
-          <img width={pxUnits(30)} src="/homepage/logo-thick.png" alt="Logo" />
+          <img
+            width={pxUnits(30)}
+            src={require('@databyss-org/ui/assets/logo-thick.png')}
+            alt="Logo"
+          />
         </View>
         <Text variant="uiTextMediumSemibold" color="text.1">
           Databyss
