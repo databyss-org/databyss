@@ -15,6 +15,4 @@ export function register() {
       registrationRef.current = reg
     })
   }
-
-  console.log('version', version)
 }
