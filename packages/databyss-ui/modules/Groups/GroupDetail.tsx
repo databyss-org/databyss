@@ -27,6 +27,7 @@ import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
 import { findOne } from '../../../databyss-data/pouchdb/utils'
 import { PageDoc } from '../../../databyss-data/pouchdb/interfaces'
+import { copyToClipboard } from '../../components/PageContent/PageMenu'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -71,6 +72,16 @@ export const GroupFields = ({ group }: { group: Group }) => {
         replicateGroup({ groupId: `g_${groupId}`, isPublic })
       }
     }
+  }
+
+  const copyLink = () => {
+    // TODO: collection should only be linkable if page exist
+
+    // compose public link
+    const getUrl = window.location
+    const baseUrl = `${getUrl.protocol}//${getUrl.host}/${group._id}/pages/${group.pages[0]}`
+
+    copyToClipboard(baseUrl)
   }
 
   const onChange = useCallback(
@@ -135,7 +146,7 @@ export const GroupFields = ({ group }: { group: Group }) => {
           <View flexGrow={1} flexBasis={1}>
             <GroupSection title="Share with Everyone">
               <ValueListItem path="public">
-                <PublicSharingSettings />
+                <PublicSharingSettings onClick={copyLink} />
               </ValueListItem>
             </GroupSection>
           </View>

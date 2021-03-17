@@ -157,15 +157,15 @@ export const initiatePouchDbIndexes = async () => {
 replicates public remote DB to local
 */
 
-export const replicatePublicPage = ({ pageId }: { pageId: string }) =>
+export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
   new Promise<boolean>((resolve, reject) => {
     const opts = {
       retry: true,
     }
-    dbRef.current = getPouchDb(pageId)
+    dbRef.current = getPouchDb(groupId)
 
     dbRef.current.replicate
-      .from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
+      .from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
         ...opts,
       })
       .on('complete', () => {
@@ -176,7 +176,7 @@ export const replicatePublicPage = ({ pageId }: { pageId: string }) =>
         }
         // when replication is complete, kick off a live sync
         dbRef
-          .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
+          .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
             ..._opts,
           })
           .on('error', () => {

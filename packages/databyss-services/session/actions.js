@@ -1,6 +1,6 @@
 import {
   replicateDbFromRemote,
-  replicatePublicPage,
+  replicatePublicGroup,
   REMOTE_CLOUDANT_URL,
 } from '@databyss-org/data/pouchdb/db'
 import request from '../lib/request'
@@ -198,8 +198,7 @@ export const setSession = (session) => async (dispatch) => {
 /*
 checks url for public page
 */
-
-export const hasUnathenticatedAccess = async () => {
+export const isPagePublic = async () => {
   const path = window.location.pathname.split('/')
   // get the page id
   const pageId = path?.[3]
@@ -207,7 +206,7 @@ export const hasUnathenticatedAccess = async () => {
     const groupId = `p_${pageId}`
     try {
       await request(`${REMOTE_CLOUDANT_URL}/${groupId}`)
-      return pageId
+      return groupId
     } catch (err) {
       return false
     }
@@ -215,10 +214,40 @@ export const hasUnathenticatedAccess = async () => {
   return false
 }
 
-export const replicatePage = async (pageId) => {
-  const groupId = `p_${pageId}`
-  // attempt page replication
-  await replicatePublicPage({
-    pageId: groupId,
+export const isGroupPublic = async () => {
+  const path = window.location.pathname.split('/')
+  // get the page id
+  console.log(path)
+  const groupId = path?.[1]
+  if (groupId) {
+    const group = `g_${groupId}`
+    try {
+      await request(`${REMOTE_CLOUDANT_URL}/${group}`)
+      return group
+    } catch (err) {
+      return false
+    }
+  }
+  return false
+}
+
+export const hasUnathenticatedAccess = async () => {
+  const _isPagePublic = await isPagePublic()
+  if (_isPagePublic) {
+    return _isPagePublic
+  }
+
+  const _isGroupPublic = await isGroupPublic()
+  if (_isGroupPublic) {
+    return _isGroupPublic
+  }
+
+  return false
+}
+
+export const replicateGroup = async (id) => {
+  // attempt group replication
+  await replicatePublicGroup({
+    groupId: id,
   })
 }

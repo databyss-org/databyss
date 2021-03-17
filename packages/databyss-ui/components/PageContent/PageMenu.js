@@ -26,7 +26,7 @@ import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
 import LoadingFallback from '../Notify/LoadingFallback'
 
-function copyToClipboard(text) {
+export function copyToClipboard(text) {
   const dummy = document.createElement('textarea')
   // to avoid breaking orgain page when copying more words
   // cant copy when adding below this code
@@ -115,8 +115,8 @@ const PageMenu = () => {
   const _page = pages?.[params]
 
   const onCopyLink = () => {
-    getAccountFromLocation()
-    // // generate url and copy to clipboard
+    // getAccountFromLocation()
+    // generate url and copy to clipboard
     const getUrl = window.location
     const baseUrl = `${getUrl.protocol}//${
       getUrl.host
