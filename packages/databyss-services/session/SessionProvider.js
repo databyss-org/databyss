@@ -41,7 +41,6 @@ const SessionProvider = ({
     name: 'SessionProvider',
   })
   const { session: actions } = useServiceContext()
-  const { isOnline } = useNotifyContext()
 
   const isPublicAccount = useCallback(() => {
     if (state.session.publicAccount?._id) {

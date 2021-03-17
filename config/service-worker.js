@@ -3,11 +3,10 @@ import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
 
 self.addEventListener('install', (event) => {
-  console.log('install')
   event.waitUntil(self.skipWaiting())
 })
 self.addEventListener('activate', (event) => {
-  console.log('active')
+  console.log('[sw]: New version ready')
   event.waitUntil(self.clients.claim())
 })
 

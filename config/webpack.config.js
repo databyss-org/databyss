@@ -479,58 +479,12 @@ module.exports = (webpackEnv) => {
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
       // Generate a service worker script that will precache, and keep up to date,
       // the HTML & assets that are part of the Webpack build.
-      /*
-        // Detailed logging is very useful during development
-workbox.setConfig({debug: true})
-
-// Updating SW lifecycle to update the app after user triggered refresh
-workbox.core.skipWaiting()
-workbox.core.clientsClaim()
-
-// We inject manifest here using "workbox-build" in workbox-build-inject.js
-workbox.precaching.precacheAndRoute([])
-
-      */
       isEnvProduction &&
         new InjectManifest({
           swSrc: path.resolve(__dirname, './service-worker.js'),
           include: [/\.(?:html|png|jpg|jpeg|svg|mp4|js|ico)$/],
           maximumFileSizeToCacheInBytes: 3145728,
         }),
-      /*
-      isEnvProduction &&
-        new WorkboxWebpackPlugin.GenerateSW({
-          clientsClaim: true,
-          exclude: [/\.map$/, /asset-manifest\.json$/],
-          navigateFallback: `${publicUrl}/index.html`,
-          navigateFallbackDenylist: [
-            // Exclude URLs starting with /_, as they're likely an API call
-            new RegExp('^/_'),
-            // Exclude URLs containing a dot, as they're likely a resource in
-            // public/ and not a SPA route
-            new RegExp('/[^/]+\\.[^/]+$'),
-          ],
-          // Define runtime caching rules.
-          runtimeCaching: [
-            {
-              urlPattern: /\.(?:html|png|jpg|jpeg|svg|mp4|js|ico)$/,
-
-              // Apply a network-first strategy: try the network and fallback to cache
-              handler: 'NetworkFirst',
-
-              // options: {
-              //   // Use a custom cache name.
-              //   cacheName: 'images',
-
-              //   // Only cache 10 images.
-              //   expiration: {
-              //     maxEntries: 10,
-              //   },
-              // },
-            },
-          ],
-        }),
-        */
       // TypeScript type checking
       // useTypeScript &&
       //   new ForkTsCheckerWebpackPlugin({
