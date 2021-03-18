@@ -6,6 +6,7 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { version } from '@databyss-org/services'
 import DropdownContainer from '../Menu/DropdownContainer'
 import DropdownListItem from '../Menu/DropdownListItem'
@@ -13,7 +14,9 @@ import { AccountLoader } from '../Loaders'
 
 const AccountMenu = () => {
   const { navigate } = useNavigationContext()
+  const { isOnline, notifyConfirm } = useNotifyContext()
   const logout = useSessionContext((c) => c && c.logout)
+  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const [menuOpen, setMenuOpen] = useState(false)
   const [authToken, setAuthToken] = useState()
@@ -25,7 +28,17 @@ const AccountMenu = () => {
   }
 
   const onLogout = () => {
-    logout()
+    if (!isOnline || isDbBusy) {
+      notifyConfirm({
+        message:
+          'You are offline or have unsynched changes. Signing out will remove all local data, so we suggest waiting until you are online and all changes are synched (green dot) before signing out.',
+        okText: '⚠️ Sign out and clear local data',
+        cancelText: 'Cancel',
+        onOk: logout,
+      })
+    } else {
+      logout()
+    }
   }
 
   /*
