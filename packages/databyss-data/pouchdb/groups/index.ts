@@ -250,7 +250,7 @@ export const removeGroupFromPage = async ({
       doctype: DocumentType.Selection,
       query: { _id: _selectionId },
     })
-    if (_selection._sharedWithPages) {
+    if (_selection.sharedWithPages) {
       await removeGroupsFromDocument([groupId], _selection)
     }
 
@@ -432,8 +432,6 @@ export const updateAndReplicateSharedDatabase = async ({
     isPublic,
     reset,
   })
-
-  console.log('resetted', reset)
 
   if (isPublic) {
     replicateGroup({

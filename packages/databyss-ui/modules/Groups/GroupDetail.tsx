@@ -51,7 +51,7 @@ export const GroupFields = ({ group }: { group: Group }) => {
 
     // compose public link
     const getUrl = window.location
-    const baseUrl = `${getUrl.protocol}//${getUrl.host}/${group._id}/pages/${group.pages[0]}`
+    const baseUrl = `${getUrl.protocol}//${getUrl.host}/${group._id}/pages/${groupValue.current.pages[0]}`
 
     copyToClipboard(baseUrl)
   }
@@ -90,11 +90,7 @@ export const GroupFields = ({ group }: { group: Group }) => {
           <GroupSection title="Pages" flexGrow={1} flexBasis={1}>
             <View theme={darkTheme} flexGrow={1}>
               <ValueListItem path="pages">
-                <PageDropzone
-                  bg="background.2"
-                  height="100%"
-                  groupRef={groupValue.current}
-                />
+                <PageDropzone group={values} bg="background.2" height="100%" />
               </ValueListItem>
             </View>
           </GroupSection>

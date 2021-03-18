@@ -26,12 +26,12 @@ import {
 interface PageDropzoneProps extends ScrollViewProps {
   value?: string[]
   onChange?: (value: string[]) => void
-  groupRef: Group
+  group: Group
 }
 
 export const PageDropzone = ({
   value,
-  groupRef,
+  group,
   onChange,
   ...others
 }: PageDropzoneProps) => {
@@ -49,12 +49,12 @@ export const PageDropzone = ({
         _id = _pageHeader._id
       }
       onChange!(value!.concat(_id))
-      addPageDocumentToGroup({ pageId: _id, group: groupRef })
+      addPageDocumentToGroup({ pageId: _id, group })
     },
-    [onChange]
+    [onChange, group]
   )
   const onRemove = (_id: string) => {
-    removePageFromGroup({ pageId: _id, group: groupRef })
+    removePageFromGroup({ pageId: _id, group })
 
     onChange!(value!.filter((p) => p !== _id))
   }
