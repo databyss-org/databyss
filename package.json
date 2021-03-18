@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "2.0.5",
+  "version": "2.0.10",
   "description": "Expressive database management tools for writers and researchers",
   "main": "index.js",
   "repository": {
@@ -37,6 +37,7 @@
     "start:server": "ENV_PREFIX=API_ NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER babel-node --config-file ./packages/databyss-api/babel.config.js --extensions \".js,.ts\" packages/databyss-api/server.js",
     "start:pdf-api": "babel-node --config-file ./packages/databyss-pdf-api/babel.config.js packages/databyss-pdf-api/server.js",
     "start:pdf-api:test": "NODE_ENV=test yarn start:pdf-api",
+    "serve": "serve build -c ../config/serve.json -l 3000 -s",
     "test": "ENV_PREFIX=API_ NPM_BUILD_TARGET=TEST node scripts/test.js --maxWorkers=5",
     "test:local": "LOCAL_ENV=true yarn test",
     "test:selenium": "yarn test seleniumtest",
@@ -221,7 +222,7 @@
     "fetch-mock": "^8.0.1",
     "file-loader": "^4.0.0",
     "focus-trap-react": "^6.0.0",
-    "html-webpack-plugin": "4.0.0-beta.5",
+    "html-webpack-plugin": "4.5.2",
     "imurmurhash": "^0.1.4",
     "is-hotkey": "^0.1.5",
     "is-wsl": "^2.0.0",
@@ -297,7 +298,9 @@
     "webpack-dev-server": "3.2.1",
     "webpack-manifest-plugin": "^2.0.4",
     "whatwg-fetch": "2.0.3",
-    "workbox-webpack-plugin": "^4.3.1",
+    "workbox-precaching": "6.1.2",
+    "workbox-routing": "6.1.2",
+    "workbox-webpack-plugin": "6.1.2",
     "xss": "^1.0.6"
   },
   "browserslist": {}

@@ -106,7 +106,6 @@ export const addPagesToBlockRelation = ({
     if (!pages[p]) {
       return
     }
-    console.log('INDEX PAGE RESULTS', pages[p])
     _pages.push(populatePage({ page: pages[p], blocks }))
   })
 

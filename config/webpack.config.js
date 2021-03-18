@@ -12,7 +12,6 @@ const TerserPlugin = require('terser-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
-// const WorkboxWebpackPlugin = require('workbox-webpack-plugin')
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
 const paths = require('./paths')
@@ -23,6 +22,7 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 // const typescriptFormatter = require('react-dev-utils/typescriptFormatter')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const packageJson = require(paths.appPackageJson)
+const { InjectManifest } = require('workbox-webpack-plugin')
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false'
@@ -479,20 +479,12 @@ module.exports = (webpackEnv) => {
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
       // Generate a service worker script that will precache, and keep up to date,
       // the HTML & assets that are part of the Webpack build.
-      // isEnvProduction &&
-      //   new WorkboxWebpackPlugin.GenerateSW({
-      //     clientsClaim: true,
-      //     exclude: [/\.map$/, /asset-manifest\.json$/],
-      //     importWorkboxFrom: 'cdn',
-      //     navigateFallback: `${publicUrl}/index.html`,
-      //     navigateFallbackBlacklist: [
-      //       // Exclude URLs starting with /_, as they're likely an API call
-      //       new RegExp('^/_'),
-      //       // Exclude URLs containing a dot, as they're likely a resource in
-      //       // public/ and not a SPA route
-      //       new RegExp('/[^/]+\\.[^/]+$'),
-      //     ],
-      //   }),
+      isEnvProduction &&
+        new InjectManifest({
+          swSrc: path.resolve(__dirname, './service-worker.js'),
+          include: [/\.(?:html|png|jpg|jpeg|svg|mp4|js|ico)$/],
+          maximumFileSizeToCacheInBytes: 3145728,
+        }),
       // TypeScript type checking
       // useTypeScript &&
       //   new ForkTsCheckerWebpackPlugin({
