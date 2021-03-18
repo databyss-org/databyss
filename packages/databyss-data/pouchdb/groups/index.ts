@@ -27,13 +27,15 @@ const removeDuplicatesFromArray = (array: string[]) =>
 export const addOrRemoveCloudantGroupDatabase = async ({
   groupId,
   isPublic,
+  reset,
 }: {
   groupId: string
   isPublic: boolean
+  reset?: boolean
 }) => {
   const res = await httpPost(`/cloudant/groups`, {
     // TODO: this should not have to be turned to lowercase
-    data: { groupId, isPublic },
+    data: { groupId, isPublic, reset },
   })
   // if is public, add credentials to localstorage
   if (isPublic) {
@@ -86,7 +88,6 @@ export const removeGroupsFromDocument = async (
       _id: document._id,
       doc: document,
     })
-    console.log('AFTER UPSERT')
   }
 }
 
@@ -419,15 +420,20 @@ export const replicateSharedPage = async (pageIds: string[]) => {
 export const updateAndReplicateSharedDatabase = async ({
   groupId,
   isPublic,
+  reset,
 }: {
   groupId: string
   isPublic: boolean
+  reset?: boolean
 }) => {
   // create or delete a database
   await addOrRemoveCloudantGroupDatabase({
     groupId: `g_${groupId}`,
     isPublic,
+    reset,
   })
+
+  console.log('resetted', reset)
 
   if (isPublic) {
     replicateGroup({
@@ -466,6 +472,9 @@ export const addPageDocumentToGroup = async ({
   }
 }
 
+/**
+ * resets a sharedDB if page was removed
+ */
 export const removePageFromGroup = async ({
   pageId,
   group,
@@ -477,14 +486,11 @@ export const removePageFromGroup = async ({
   // reset shared DB to reflect updated DB
 
   const { public: isPublic, _id: groupId } = group
-  if (isPublic) {
-    await updateAndReplicateSharedDatabase({ groupId, isPublic: false })
-  }
   // remove group from all documents associated with pageId
-
   await removeGroupFromPage({ pageId, groupId: `g_${group._id}` })
+
   if (isPublic) {
     // reshare page
-    await updateAndReplicateSharedDatabase({ groupId, isPublic })
+    await updateAndReplicateSharedDatabase({ groupId, isPublic, reset: true })
   }
 }

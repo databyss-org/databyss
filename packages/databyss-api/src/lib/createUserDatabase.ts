@@ -78,15 +78,24 @@ export const createGroupId = async ({
   // TODO: fix this so its not 'any'
   const _id: string = groupId || uidlc()
   const Groups: any = await cloudant.db.use('groups')
-  await Groups.insert({
-    // TODO: this should be "belongsToUser" for consistency
-    belongsToUserId: userId,
-    name: 'untitled',
-    sessions: [],
-    // TODO: cloudant does not allow uppercase for db names,
-    // will this affect collisions?
-    _id,
-  })
+  try {
+    await Groups.insert({
+      // TODO: this should be "belongsToUser" for consistency
+      belongsToUserId: userId,
+      name: 'untitled',
+      sessions: [],
+      // TODO: cloudant does not allow uppercase for db names,
+      // will this affect collisions?
+      _id,
+    })
+  } catch (err) {
+    // group might already exist
+    if (err.error !== 'conflict') {
+      // TODO: Make sure user owns group
+      throw err
+    }
+  }
+
   return _id
 }
 
@@ -106,14 +115,31 @@ export const deleteGroupId = async ({ groupId }) => {
   }
 }
 
+const resetDB = async (db: any, id: string) => {
+  // clear all documents on DB
+
+  await cloudant.db.destroy(id)
+  await cloudant.db.create(id)
+  // add design docs to sever
+  const _db = await cloudant.db.use<any>(id)
+  await updateDesignDoc({ db: _db })
+  return _db
+}
+
 export const createGroupDatabase = async (
-  id: string
+  id: string,
+  reset?: boolean
 ): Promise<DocumentScope<any>> => {
   // database are not allowed to start with a number
   let _db
   try {
     await cloudant.db.get(id)
     _db = await cloudant.db.use<any>(id)
+    if (reset) {
+      // clear all documents on DB
+      _db = await resetDB(_db, id)
+    }
+
     return _db
   } catch (err) {
     if (err.error !== 'not_found') {

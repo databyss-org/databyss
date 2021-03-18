@@ -76,17 +76,21 @@ router.post('/groups/auth/:id', auth, async (req, res) => {
 })
 
 // @route    POST api/cloudant/groups
-// @desc     creates or removes a database for shared groups
+// @desc     creates, resets or removes a database for shared groups
 // @access   private
 router.post('/groups', auth, async (req, res) => {
   // get user id
   const userId = req.user.id
 
-  const { groupId, isPublic } = req.body.data
+  const { groupId, isPublic, reset } = req.body.data
 
   let credentials
   if (isPublic) {
-    credentials = await createSharedGroupDatabase({ groupId, userId })
+    credentials = await createSharedGroupDatabase({
+      groupId,
+      userId,
+      resetDb: reset,
+    })
   } else {
     // first verify user owns database
     const _userAuthorized = await verifyUserOwnsDatabase({
