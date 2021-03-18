@@ -153,6 +153,14 @@ export const initiatePouchDbIndexes = async () => {
   areIndexBuilt.current = true
 }
 
+export const resetPouchDb = async () => {
+  if (dbRef.current) {
+    await (dbRef.current as PouchDB.Database).destroy()
+  }
+
+  dbRef.current = null
+}
+
 /*
 replicates public remote DB to local
 */
@@ -180,8 +188,14 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
             ..._opts,
           })
           .on('error', () => {
-            // USER HAS TURNED OFF SHARING
-            window.location.reload()
+            // user has turned off sharing
+
+            setTimeout(() => {
+              // first reset DB then reload
+              resetPouchDb().then(() => {
+                window.location.reload()
+              })
+            }, 5000)
           })
 
         resolve(true)
@@ -313,14 +327,6 @@ export const syncPouchDb = ({
         })
       }
     })
-}
-
-export const resetPouchDb = async () => {
-  if (dbRef.current) {
-    await (dbRef.current as PouchDB.Database).destroy()
-  }
-
-  dbRef.current = null
 }
 
 export const pouchDataValidation = (data) => {
