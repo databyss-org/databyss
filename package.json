@@ -38,6 +38,7 @@
     "start:pdf-api": "babel-node --config-file ./packages/databyss-pdf-api/babel.config.js packages/databyss-pdf-api/server.js",
     "start:pdf-api:test": "NODE_ENV=test yarn start:pdf-api",
     "serve:notes": "serve build -c config/serve.json",
+    "serve:homepage": "serve build -c config/serve.json",
     "test": "ENV_PREFIX=API_ NPM_BUILD_TARGET=TEST node scripts/test.js --maxWorkers=5",
     "test:local": "LOCAL_ENV=true yarn test",
     "test:selenium": "yarn test seleniumtest",

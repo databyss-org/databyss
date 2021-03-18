@@ -32,5 +32,11 @@ export const CatalogSearchLoader = ({ query, type, children }) => {
 
 export const AccountLoader = ({ children }) => {
   const getUserAccount = useSessionContext((c) => c && c.getUserAccount)
-  return <MakeLoader resources={getUserAccount()} children={children} />
+  return (
+    <MakeLoader
+      resources={getUserAccount()}
+      children={children}
+      fallbackSize="15"
+    />
+  )
 }
