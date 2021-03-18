@@ -187,7 +187,6 @@ class NotifyProvider extends React.Component {
       return
     }
     navigator.serviceWorker.ready.then((reg) => {
-      console.log('Poll for updates on service worker')
       reg.addEventListener('updatefound', this.notifyUpdateAvailable)
 
       setInterval(
