@@ -70,6 +70,7 @@ class NotifyProvider extends React.Component {
       visible: false,
       message: null,
       html: false,
+      buttons: null,
     },
     sticky: {
       visible: false,
@@ -209,12 +210,13 @@ class NotifyProvider extends React.Component {
     })
   }
 
-  notify = (message, _error, _html) => {
+  notify = (message, _error, _html, _buttons) => {
     this.setState({
       dialog: {
         visible: true,
         message,
         html: _html,
+        buttons: _buttons,
       },
       ...(_error
         ? {
@@ -222,6 +224,35 @@ class NotifyProvider extends React.Component {
           }
         : {}),
     })
+  }
+
+  notifyConfirm = ({ message, okText, cancelText, onOk, onCancel }) => {
+    const _buttons = [
+      <Button
+        key="notifyConfirmOk"
+        onPress={() => {
+          if (onOk) {
+            onOk()
+          }
+          this.hideDialog()
+        }}
+      >
+        {okText}
+      </Button>,
+      <Button
+        variant="secondaryUi"
+        key="notifyConfirmCancel"
+        onPress={() => {
+          if (onCancel) {
+            onCancel()
+          }
+          this.hideDialog()
+        }}
+      >
+        {cancelText}
+      </Button>,
+    ]
+    this.notify(message, false, false, _buttons)
   }
 
   notifyStickyHtml = (html) => {
@@ -285,6 +316,7 @@ class NotifyProvider extends React.Component {
           notifyError: this.notifyError,
           notifyHtml: this.notifyHtml,
           notifySticky: this.notifySticky,
+          notifyConfirm: this.notifyConfirm,
           isOnline,
         }}
       >
@@ -296,7 +328,11 @@ class NotifyProvider extends React.Component {
         {!this.state.hasError && this.props.children}
         <Dialog
           showConfirmButtons
-          confirmButtons={this.state.hasError ? errorConfirmButtons : []}
+          confirmButtons={
+            this.state.hasError
+              ? errorConfirmButtons
+              : this.state.dialog.buttons || []
+          }
           onConfirm={() => this.hideDialog()}
           visible={dialog.visible}
           message={dialog.message}

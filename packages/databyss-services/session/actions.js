@@ -27,6 +27,7 @@ import {
   setAuthToken,
   setPouchSecret,
   getUserId,
+  localStorageHasSession,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
@@ -160,6 +161,14 @@ export const endSession = () => async (dispatch) => {
 
 export const getUserAccount = () => async (dispatch) => {
   dispatch({ type: GET_USER_ACCOUNT })
+  const _sesionFromLocalStorage = await localStorageHasSession()
+  if (_sesionFromLocalStorage) {
+    dispatch({
+      type: CACHE_USER_ACCOUNT,
+      payload: { data: _sesionFromLocalStorage },
+    })
+    return
+  }
   const authToken = getAuthToken()
   if (authToken) {
     const data = { authToken }

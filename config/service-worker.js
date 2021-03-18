@@ -6,7 +6,6 @@ self.addEventListener('install', (event) => {
   event.waitUntil(self.skipWaiting())
 })
 self.addEventListener('activate', (event) => {
-  console.log('[sw]: New version ready')
   event.waitUntil(self.clients.claim())
 })
 
