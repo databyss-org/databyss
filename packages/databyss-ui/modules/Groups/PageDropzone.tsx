@@ -16,7 +16,8 @@ import { LoadingFallback, SidebarListRow } from '@databyss-org/ui/components'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
-import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
+
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import {
   addPageDocumentToGroup,
@@ -26,40 +27,51 @@ import {
 interface PageDropzoneProps extends ScrollViewProps {
   value?: string[]
   onChange?: (value: string[]) => void
-  group: Group
+  groupId: string
 }
 
 export const PageDropzone = ({
   value,
-  group,
+  groupId,
   onChange,
   ...others
 }: PageDropzoneProps) => {
+  const groupsRes = useGroups()
+
   const pagesRes = usePages()
 
-  const onDrop = useCallback(
-    (item: DraggableItem) => {
-      // if item is being dragged from the `PUBLIC PAGES` section, get the public page id
+  const _groups = groupsRes?.data
+  // get most current group value
+  const group = _groups?.[groupId]
 
-      let _id
-      if (item.payload.doctype === DocumentType.Group) {
-        _id = item.payload._id.substring(2)
-      } else {
-        const _pageHeader = item.payload as PageHeader
-        _id = _pageHeader._id
-      }
-      onChange!(value!.concat(_id))
-      addPageDocumentToGroup({ pageId: _id, group })
-    },
-    [onChange, group]
-  )
+  const onDrop = (item: DraggableItem) => {
+    if (!group) {
+      return
+    }
+    // if item is being dragged from the `PUBLIC PAGES` section, get the public page id
+
+    let _id
+    if (item.payload.doctype === DocumentType.Group) {
+      _id = item.payload._id.substring(2)
+    } else {
+      const _pageHeader = item.payload as PageHeader
+      _id = _pageHeader._id
+    }
+    onChange!(value!.concat(_id))
+    addPageDocumentToGroup({ pageId: _id, group })
+  }
+
   const onRemove = (_id: string) => {
+    if (!group) {
+      return
+    }
+
     removePageFromGroup({ pageId: _id, group })
 
     onChange!(value!.filter((p) => p !== _id))
   }
 
-  if (!pagesRes.isSuccess) {
+  if (!pagesRes.isSuccess || !groupsRes.isSuccess) {
     return <LoadingFallback queryObserver={pagesRes} />
   }
 
