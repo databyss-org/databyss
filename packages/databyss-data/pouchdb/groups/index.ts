@@ -20,6 +20,18 @@ import {
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
 
+export const removeIdsFromSharedDb = ({
+  ids,
+  groupId,
+}: {
+  ids: string[]
+  groupId: string
+}) =>
+  httpPost(`/cloudant/groups/delete`, {
+    // TODO: this should not have to be turned to lowercase
+    data: { ids, groupId },
+  })
+
 /*
   creates or removes a cloudant group database if no database exists
   */
@@ -27,15 +39,13 @@ const removeDuplicatesFromArray = (array: string[]) =>
 export const addOrRemoveCloudantGroupDatabase = async ({
   groupId,
   isPublic,
-  reset,
 }: {
   groupId: string
   isPublic: boolean
-  reset?: boolean
 }) => {
   const res = await httpPost(`/cloudant/groups`, {
     // TODO: this should not have to be turned to lowercase
-    data: { groupId, isPublic, reset },
+    data: { groupId, isPublic },
   })
   // if is public, add credentials to localstorage
   if (isPublic) {
@@ -420,17 +430,15 @@ export const replicateSharedPage = async (pageIds: string[]) => {
 export const updateAndReplicateSharedDatabase = async ({
   groupId,
   isPublic,
-  reset,
 }: {
   groupId: string
   isPublic: boolean
-  reset?: boolean
 }) => {
   // create or delete a database
+
   await addOrRemoveCloudantGroupDatabase({
     groupId: `g_${groupId}`,
     isPublic,
-    reset,
   })
 
   if (isPublic) {
@@ -480,6 +488,13 @@ export const removePageFromGroup = async ({
   pageId: string
   group: Group
 }) => {
+  console.log('remove')
+  // TODO: CRAWL PAGE TO GET LIST OF ID'S THAT NEED DELETING
+  await removeIdsFromSharedDb({
+    ids: [pageId],
+    groupId: group._id,
+  })
+
   // HACK, to remove a page, we first delete the shared database, then recreate the shared database
   // reset shared DB to reflect updated DB
 
@@ -488,7 +503,9 @@ export const removePageFromGroup = async ({
   await removeGroupFromPage({ pageId, groupId: `g_${group._id}` })
 
   if (isPublic) {
-    // reshare page
-    await updateAndReplicateSharedDatabase({ groupId, isPublic, reset: true })
+    replicateGroup({
+      groupId: `g_${groupId}`,
+      isPublic: true,
+    })
   }
 }
