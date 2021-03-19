@@ -43,10 +43,8 @@ export const PageDropzone = ({
   const _groups = groupsRes?.data
   // get most current group value
   const group = _groups?.[groupId]
-  console.log('ROOT', group)
 
   const onDrop = (item: DraggableItem) => {
-    console.log('DROP', group)
     if (!group) {
       return
     }
@@ -64,8 +62,6 @@ export const PageDropzone = ({
   }
 
   const onRemove = (_id: string) => {
-    console.log('REMOVE', group)
-
     if (!group) {
       return
     }
