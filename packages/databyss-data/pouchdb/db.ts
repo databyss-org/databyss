@@ -187,17 +187,20 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
           .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
             ..._opts,
           })
-          .on('error', () => {
+          .on('error', (err) => {
             // user has turned off sharing
-
+            console.log(err)
             setTimeout(() => {
               // first reset DB then reload
-              resetPouchDb().then(() => {
-                window.location.reload()
-              })
+              // resetPouchDb().then(() => {
+              //   // window.location.reload()
+              // })
             }, 5000)
           })
-
+          .on('change', (change) => {
+            // user has turned off sharing
+            console.log(change)
+          })
         resolve(true)
       })
       .on('error', (err) => {
