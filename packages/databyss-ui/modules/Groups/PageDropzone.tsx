@@ -15,9 +15,11 @@ import { LoadingFallback, SidebarListRow } from '@databyss-org/ui/components'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
-import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
+import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { Page } from '../../../databyss-services/interfaces/Page'
+import { DocumentDict } from '../../../databyss-services/interfaces/Document'
 import {
   addPageDocumentToGroup,
   removePageFromGroup,
@@ -25,23 +27,22 @@ import {
 
 interface PageDropzoneProps extends ScrollViewProps {
   value?: string[]
+  pages: DocumentDict<Page> | undefined
   onChange?: (value: string[]) => void
   groupId: string
 }
 
 export const PageDropzone = ({
   value,
+  pages,
   groupId,
   onChange,
   ...others
 }: PageDropzoneProps) => {
   const groupsRes = useGroups()
 
-  const pagesRes = usePages()
-
   const _groups = groupsRes?.data
   // get most current group and page value
-  const _pages = pagesRes?.data
   const group = _groups?.[groupId]
 
   const onDrop = (item: DraggableItem) => {
@@ -61,20 +62,20 @@ export const PageDropzone = ({
   }
 
   const onRemove = (_id: string) => {
-    if (!group || !_pages) {
+    if (!group || !pages) {
       return
     }
-    const _pageToRemove = _pages[_id]
+    const _pageToRemove = pages[_id]
     removePageFromGroup({ page: _pageToRemove, group })
 
     onChange!(value!.filter((p) => p !== _id))
   }
 
-  if (!pagesRes.isSuccess || !groupsRes.isSuccess) {
-    return <LoadingFallback queryObserver={pagesRes} />
+  if (!pages || !groupsRes.isSuccess) {
+    return <LoadingFallback queryObserver={groupsRes} />
   }
 
-  const _pageHeaders = value!.map((pageId) => pagesRes.data![pageId])
+  const _pageHeaders = value!.map((pageId) => pages![pageId])
 
   const _sortedItems: PageHeader[] = sortEntriesAtoZ(_pageHeaders, 'name')
 

@@ -1,4 +1,10 @@
-import React, { useCallback, PropsWithChildren, useState, useRef } from 'react'
+import React, {
+  useCallback,
+  PropsWithChildren,
+  useState,
+  useRef,
+  useEffect,
+} from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import ValueListProvider, {
   ValueListItem,
@@ -12,7 +18,7 @@ import {
   ScrollView,
 } from '@databyss-org/ui/primitives'
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
-import { useGroups } from '@databyss-org/data/pouchdb/hooks'
+import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { debounce } from 'lodash'
 import { updateAndReplicateSharedDatabase } from '@databyss-org/data/pouchdb/groups/index'
 import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
@@ -20,6 +26,8 @@ import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
 import { copyToClipboard } from '../../components/PageContent/PageMenu'
+import { Page } from '../../../databyss-services/interfaces/Page'
+import { DocumentDict } from '../../../databyss-services/interfaces/Document'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -37,7 +45,13 @@ const GroupSection = ({
   </View>
 )
 
-export const GroupFields = ({ group }: { group: Group }) => {
+export const GroupFields = ({
+  group,
+  pages,
+}: {
+  group: Group
+  pages: DocumentDict<Page> | undefined
+}) => {
   const [values, setValues] = useState(group)
   const groupValue = useRef(group)
 
@@ -89,8 +103,9 @@ export const GroupFields = ({ group }: { group: Group }) => {
         <Grid columnGap="large" widthVariant="content" flexGrow={1}>
           <GroupSection title="Pages" flexGrow={1} flexBasis={1}>
             <View theme={darkTheme} flexGrow={1}>
-              <ValueListItem path="pages">
+              <ValueListItem path="pages" pages={pages}>
                 <PageDropzone
+                  pages={pages}
                   groupId={values._id}
                   bg="background.2"
                   height="100%"
@@ -114,7 +129,12 @@ export const GroupFields = ({ group }: { group: Group }) => {
 export const GroupDetail = () => {
   const { id } = useParams()
   const groupsRes = useGroups()
+  const pagesRes = usePages()
+
+  const pages = pagesRes?.data
+
   const group = groupsRes.data?.[id]
+
   if (!groupsRes.isSuccess || !group) {
     return <LoadingFallback queryObserver={groupsRes} />
   }
@@ -128,7 +148,7 @@ export const GroupDetail = () => {
         flexShrink={1}
         shadowOnScroll
       >
-        <GroupFields group={group} key={id} />
+        <GroupFields pages={pages} group={group} key={id} />
       </ScrollView>
     </>
   )
