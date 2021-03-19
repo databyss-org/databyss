@@ -21,6 +21,7 @@ export const useDocuments = <T extends Document>(
   selector: PouchDB.Find.Selector,
   options: UseDocumentsOptions = { enabled: true }
 ) => {
+  console.log('SELECTOR', selector)
   const queryClient = useQueryClient()
   const queryOptions: QueryOptions = {
     includeIds: options.includeIds,
@@ -69,6 +70,7 @@ export const useDocuments = <T extends Document>(
         selector,
       })
       .on('change', (change) => {
+        console.log('POUCH CHANGE', change)
         queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {
           if (!oldData) {
             return {}

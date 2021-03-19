@@ -107,38 +107,18 @@ export const deleteGroupId = async ({ groupId }) => {
   const _doc = await Groups.get(groupId)
   if (_doc) {
     const latestRev = _doc._rev
-    await Groups.destroy(groupId, latestRev, (err) => {
-      if (!err) {
-        console.log('Successfully deleted doc', groupId)
-      }
-    })
+    await Groups.destroy(groupId, latestRev)
   }
 }
 
-const resetDB = async (db: any, id: string) => {
-  // clear all documents on DB
-
-  await cloudant.db.destroy(id)
-  await cloudant.db.create(id)
-  // add design docs to sever
-  const _db = await cloudant.db.use<any>(id)
-  await updateDesignDoc({ db: _db })
-  return _db
-}
-
 export const createGroupDatabase = async (
-  id: string,
-  reset?: boolean
+  id: string
 ): Promise<DocumentScope<any>> => {
   // database are not allowed to start with a number
   let _db
   try {
     await cloudant.db.get(id)
     _db = await cloudant.db.use<any>(id)
-    if (reset) {
-      // clear all documents on DB
-      _db = await resetDB(_db, id)
-    }
 
     return _db
   } catch (err) {
@@ -149,6 +129,7 @@ export const createGroupDatabase = async (
     // add design docs to sever
     _db = await cloudant.db.use<any>(id)
     await updateDesignDoc({ db: _db })
+
     return _db
   }
 }
