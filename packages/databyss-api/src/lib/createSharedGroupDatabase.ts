@@ -53,7 +53,7 @@ export const verifyUserOwnsDatabase = async ({
 
 export const getDB = async ({ dbName }: { dbName: string }) => {
   try {
-    const _db = await cloudant.db.use(dbName)
+    const _db = await cloudant.db.use<any>(dbName)
     return _db
   } catch (err) {
     return false
@@ -91,14 +91,19 @@ export const removeIdsFromSharedDb = async ({
   const _db = await getDB({ dbName: `g_${groupId}` })
   if (_db) {
     // get all documents with current revisions
-    const docList = await _db.fetch({ keys: ids })
+    const docList: any = await _db.fetch({ keys: ids })
     // compose list to bulk upsert
-    const _upsertData = docList.rows.map((r) => ({
-      _rev: r.doc._rev,
-      _id: r.doc._id,
-      doctype: r.doc.doctype,
-      _deleted: true,
-    }))
+    const _upsertData: any[] = []
+    docList.rows.forEach((r) => {
+      if (r.doc) {
+        _upsertData.push({
+          _rev: r.doc?._rev,
+          _id: r.doc?._id,
+          doctype: r.doc?.doctype,
+          _deleted: true,
+        })
+      }
+    })
     // bulk upsert
     await _db.bulk({ docs: _upsertData })
   }

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import {
   DraggableItem,
   Text,
@@ -10,7 +10,6 @@ import {
   BaseControl,
   Separator,
 } from '@databyss-org/ui/primitives'
-import { Group } from '@databyss-org/services/interfaces/Group'
 import { PageHeader } from '@databyss-org/services/interfaces'
 import { LoadingFallback, SidebarListRow } from '@databyss-org/ui/components'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
@@ -41,7 +40,8 @@ export const PageDropzone = ({
   const pagesRes = usePages()
 
   const _groups = groupsRes?.data
-  // get most current group value
+  // get most current group and page value
+  const _pages = pagesRes?.data
   const group = _groups?.[groupId]
 
   const onDrop = (item: DraggableItem) => {
@@ -49,7 +49,6 @@ export const PageDropzone = ({
       return
     }
     // if item is being dragged from the `PUBLIC PAGES` section, get the public page id
-
     let _id
     if (item.payload.doctype === DocumentType.Group) {
       _id = item.payload._id.substring(2)
@@ -62,11 +61,11 @@ export const PageDropzone = ({
   }
 
   const onRemove = (_id: string) => {
-    if (!group) {
+    if (!group || !_pages) {
       return
     }
-
-    removePageFromGroup({ pageId: _id, group })
+    const _pageToRemove = _pages[_id]
+    removePageFromGroup({ page: _pageToRemove, group })
 
     onChange!(value!.filter((p) => p !== _id))
   }

@@ -12,6 +12,8 @@ import { Block } from '../../../databyss-services/interfaces/Block'
 import { getAtomicClosureText } from '../../../databyss-services/blocks/index'
 import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/getAtomicsFromSelection'
 import { dbRef, REMOTE_CLOUDANT_URL } from '../db'
+import { isAtomicInlineType } from '../../../databyss-editor/lib/util'
+import { Page } from '../../../databyss-services/interfaces/Page'
 import {
   createDatabaseCredentials,
   validateGroupCredentials,
@@ -482,25 +484,29 @@ export const addPageDocumentToGroup = async ({
  * resets a sharedDB if page was removed
  */
 export const removePageFromGroup = async ({
-  pageId,
+  page,
   group,
 }: {
-  pageId: string
+  page: PageDoc | Page
   group: Group
 }) => {
-  console.log('remove')
-  // TODO: CRAWL PAGE TO GET LIST OF ID'S THAT NEED DELETING
+  // compose list of id's that need deleting
+
+  // TODO: this should check for atomics as well
+  const _ids = [page._id]
+  page.blocks.forEach((b) => {
+    if (!isAtomicInlineType(b.type)) {
+      _ids.push(b._id)
+    }
+  })
   await removeIdsFromSharedDb({
-    ids: [pageId],
+    ids: _ids,
     groupId: group._id,
   })
 
-  // HACK, to remove a page, we first delete the shared database, then recreate the shared database
-  // reset shared DB to reflect updated DB
-
   const { public: isPublic, _id: groupId } = group
   // remove group from all documents associated with pageId
-  await removeGroupFromPage({ pageId, groupId: `g_${group._id}` })
+  await removeGroupFromPage({ pageId: page._id, groupId: `g_${group._id}` })
 
   if (isPublic) {
     replicateGroup({

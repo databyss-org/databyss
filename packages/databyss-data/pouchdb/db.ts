@@ -187,7 +187,7 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
           .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
             ..._opts,
           })
-          .on('error', (err) => {
+          .on('error', () => {
             // user has turned off sharing
             setTimeout(() => {
               // first reset DB then reload
@@ -195,10 +195,6 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
                 window.location.reload()
               })
             }, 1000)
-          })
-          .on('change', (change) => {
-            // user has turned off sharing
-            console.log(change)
           })
         resolve(true)
       })
