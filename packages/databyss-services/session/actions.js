@@ -69,7 +69,6 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         path += '/auth'
         options.headers['x-databyss-as-account'] = _accountId
       } else {
-        console.log('IN THIS ELSE STATMENT')
         // if we have the token, try to use it
         path += '/auth'
         options.headers['x-databyss-account'] = accountId
@@ -226,7 +225,6 @@ export const isPagePublic = async () => {
 export const isGroupPublic = async () => {
   const path = window.location.pathname.split('/')
   // get the page id
-  console.log(path)
   const groupId = path?.[1]
   if (groupId) {
     const group = `g_${groupId}`

@@ -189,13 +189,12 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
           })
           .on('error', () => {
             // user has turned off sharing
-
             setTimeout(() => {
               // first reset DB then reload
               resetPouchDb().then(() => {
                 window.location.reload()
               })
-            }, 5000)
+            }, 1000)
           })
 
         resolve(true)
