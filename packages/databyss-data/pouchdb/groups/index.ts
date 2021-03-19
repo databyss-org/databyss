@@ -65,6 +65,7 @@ export const addGroupToDocument = async (groupIds: string[], document: any) => {
     ...groupIds,
   ])
   // update if ids were added
+
   if (
     !_.isEqual(document?.sharedWithGroups?.sort(), _sharedWithGroups?.sort())
   ) {

@@ -1,15 +1,9 @@
-import React, {
-  useCallback,
-  PropsWithChildren,
-  useState,
-  useRef,
-  useEffect,
-} from 'react'
+import React, { useCallback, PropsWithChildren, useState, useRef } from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
-import { Group } from '@databyss-org/services/interfaces'
+import { Group, DocumentDict, Page } from '@databyss-org/services/interfaces'
 import {
   View,
   Text,
@@ -26,8 +20,6 @@ import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
 import { copyToClipboard } from '../../components/PageContent/PageMenu'
-import { Page } from '../../../databyss-services/interfaces/Page'
-import { DocumentDict } from '../../../databyss-services/interfaces/Document'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -103,10 +95,10 @@ export const GroupFields = ({
         <Grid columnGap="large" widthVariant="content" flexGrow={1}>
           <GroupSection title="Pages" flexGrow={1} flexBasis={1}>
             <View theme={darkTheme} flexGrow={1}>
-              <ValueListItem path="pages" pages={pages}>
+              <ValueListItem path="pages" pages={pages} group={group}>
                 <PageDropzone
                   pages={pages}
-                  groupId={values._id}
+                  group={group}
                   bg="background.2"
                   height="100%"
                 />

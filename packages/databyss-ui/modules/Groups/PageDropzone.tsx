@@ -10,16 +10,18 @@ import {
   BaseControl,
   Separator,
 } from '@databyss-org/ui/primitives'
-import { PageHeader } from '@databyss-org/services/interfaces'
+import {
+  PageHeader,
+  Page,
+  Group,
+  DocumentDict,
+} from '@databyss-org/services/interfaces'
 import { LoadingFallback, SidebarListRow } from '@databyss-org/ui/components'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
-import { useGroups } from '@databyss-org/data/pouchdb/hooks'
-
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
-import { Page } from '../../../databyss-services/interfaces/Page'
-import { DocumentDict } from '../../../databyss-services/interfaces/Document'
+
 import {
   addPageDocumentToGroup,
   removePageFromGroup,
@@ -29,21 +31,17 @@ interface PageDropzoneProps extends ScrollViewProps {
   value?: string[]
   pages: DocumentDict<Page> | undefined
   onChange?: (value: string[]) => void
-  groupId: string
+  group: Group
 }
 
 export const PageDropzone = ({
   value,
   pages,
-  groupId,
+  group,
   onChange,
   ...others
 }: PageDropzoneProps) => {
-  const groupsRes = useGroups()
-
-  const _groups = groupsRes?.data
   // get most current group and page value
-  const group = _groups?.[groupId]
 
   const onDrop = (item: DraggableItem) => {
     if (!group) {
@@ -71,8 +69,8 @@ export const PageDropzone = ({
     onChange!(value!.filter((p) => p !== _id))
   }
 
-  if (!pages || !groupsRes.isSuccess) {
-    return <LoadingFallback queryObserver={groupsRes} />
+  if (!pages || !group) {
+    return <LoadingFallback />
   }
 
   const _pageHeaders = value!.map((pageId) => pages![pageId])
