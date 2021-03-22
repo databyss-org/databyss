@@ -5,8 +5,9 @@ import {
   GOOGLE_BOOKS,
   OPEN_LIBRARY,
 } from '@databyss-org/services/catalog/constants'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { prefixSearchAll } from '@databyss-org/services/blocks'
-import { Separator } from '@databyss-org/ui/primitives'
+import { Separator, Text, View } from '@databyss-org/ui/primitives'
 import { setSource } from '@databyss-org/services/sources'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
@@ -42,6 +43,7 @@ const SuggestSources = ({
   const sourcesRes = useBlocksInPages(BlockType.Source)
   const { replace } = useEditorContext()
   const [suggestions, setSuggestsions] = useState()
+  const { isOnline } = useNotifyContext()
 
   useEffect(() => {
     // reset menu when active state changes
@@ -110,17 +112,25 @@ const SuggestSources = ({
 
   if (_mode === LOCAL_SOURCES) {
     return _composeLocalSources(Object.values(sourcesRes.data)).concat(
-      _menuItems.map((menuItem) => (
-        <DropdownListItem
-          {...menuItem}
-          key={menuItem.action}
-          data-test-element="suggest-dropdown"
-          onPress={() => {
-            setResultsMode(menuItem.action)
-            focusEditor()
-          }}
-        />
-      ))
+      isOnline ? (
+        _menuItems.map((menuItem) => (
+          <DropdownListItem
+            {...menuItem}
+            key={menuItem.action}
+            data-test-element="suggest-dropdown"
+            onPress={() => {
+              setResultsMode(menuItem.action)
+              focusEditor()
+            }}
+          />
+        ))
+      ) : (
+        <View padding="tiny" pl="small">
+          <Text variant="uiTextSmall" color="text.3">
+            Go online to search source catalogs
+          </Text>
+        </View>
+      )
     )
   }
 
