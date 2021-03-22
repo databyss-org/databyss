@@ -201,7 +201,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
                 caretColor: block.__isActive ? 'transparent' : 'currentcolor',
               }}
               {...(block.__isActive &&
-              readOnly &&
+              !readOnly &&
               !isAtomicClosure(element.type)
                 ? { onMouseDown: onAtomicMouseDown }
                 : {})}
