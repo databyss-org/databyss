@@ -86,7 +86,9 @@ const ContentEditable = ({
           editor.children,
           state.selection
         )
+
         Transforms.select(editor, selection)
+
         if (!state.operations.reloadAll) {
           setSelection(state.selection)
         }

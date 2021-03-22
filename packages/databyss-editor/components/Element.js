@@ -200,7 +200,9 @@ const Element = ({ attributes, children, element, readOnly }) => {
                 cursor: selHasRange ? 'text' : 'pointer',
                 caretColor: block.__isActive ? 'transparent' : 'currentcolor',
               }}
-              {...(block.__isActive && !isAtomicClosure(element.type)
+              {...(block.__isActive &&
+              readOnly &&
+              !isAtomicClosure(element.type)
                 ? { onMouseDown: onAtomicMouseDown }
                 : {})}
             >
@@ -211,7 +213,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
               >
                 {children}
               </Text>
-              {block.__isActive && !isAtomicClosure(element.type) && (
+              {block.__isActive && !isAtomicClosure(element.type) && !readOnly && (
                 <View display="inline">
                   <Button variant="editSource" onPress={onAtomicMouseDown}>
                     <Icon sizeVariant="tiny" color="background.5">
