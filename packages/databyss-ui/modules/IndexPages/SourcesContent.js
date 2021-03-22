@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { CitationStyleOptions } from '@databyss-org/services/citations/constants'
 import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
@@ -18,6 +19,7 @@ const CitationStyleDropDown = styled(DropDownControl, () => ({
 }))
 
 export const SourcesContent = () => {
+  const { isOnline } = useNotifyContext()
   const getQueryParams = useNavigationContext((c) => c.getQueryParams)
   const getPreferredCitationStyle = useSourceContext(
     (c) => c.getPreferredCitationStyle
@@ -55,10 +57,22 @@ export const SourcesContent = () => {
       : -1
   )
 
+  let _citationStyleOptions = CitationStyleOptions
+  // if we're offline, only show the current option and a message to go online
+  if (!isOnline) {
+    _citationStyleOptions = _citationStyleOptions.filter(
+      (option) => option.id === citationStyleOption.id
+    )
+    _citationStyleOptions.push({
+      label: 'Please go online to change the citation style',
+      id: -1,
+    })
+  }
+
   return (
     <IndexPageView path={['All Sources']}>
       <CitationStyleDropDown
-        items={CitationStyleOptions}
+        items={_citationStyleOptions}
         value={citationStyleOption}
         onChange={onCitationStyleChange}
       />

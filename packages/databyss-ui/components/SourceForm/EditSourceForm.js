@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { cloneDeep } from 'lodash'
 
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import {
   Button,
   RawHtml,
@@ -96,6 +97,7 @@ const LabeledTextInput = (props) => (
 const EditSourceForm = (props) => {
   const { values, onChange } = props
 
+  const { isOnline } = useNotifyContext()
   const { generateCitation } = useCitationContext()
   const getPreferredCitationStyle = useSourceContext(
     (c) => c.getPreferredCitationStyle
@@ -532,19 +534,34 @@ const EditSourceForm = (props) => {
       return null
     }
 
+    let _citationStyleOptions = CitationStyleOptions
+    // if we're offline, only show the current option and a message to go online
+    if (!isOnline) {
+      _citationStyleOptions = _citationStyleOptions.filter(
+        (option) => option.id === citationStyleOption.id
+      )
+    }
+
     const formatOptions = { styleId: preferredCitationStyle }
+    const _citation = generateCitation(values.detail, formatOptions, isOnline)
 
     return (
       <>
         <FormHeading>Citation</FormHeading>
 
-        <MakeLoader resources={generateCitation(values.detail, formatOptions)}>
-          {(citation) => (
-            <View mb="medium" ml="tiny">
-              <RawHtml html={pruneCitation(citation, formatOptions.styleId)} />
-            </View>
+        <View mb="medium" ml="tiny">
+          {isOnline || _citation ? (
+            <MakeLoader resources={_citation}>
+              {(citation) => (
+                <RawHtml
+                  html={pruneCitation(citation, formatOptions.styleId)}
+                />
+              )}
+            </MakeLoader>
+          ) : (
+            <Text>Please go online to generate citation</Text>
           )}
-        </MakeLoader>
+        </View>
 
         <LabeledDropDownControl
           label="Style"
@@ -555,8 +572,10 @@ const EditSourceForm = (props) => {
           onChange={onCitationStyleOptionChange}
           dropDownProps={{
             concatCss: { width: '75%' },
-            ctaLabel: 'Choose a citation style',
-            items: CitationStyleOptions,
+            ctaLabel: isOnline
+              ? 'Choose a citation style'
+              : 'Please go online to change the citation style',
+            items: _citationStyleOptions,
           }}
         />
       </>
