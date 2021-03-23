@@ -350,6 +350,8 @@ const upsertReplication = ({
 /**
  * one time replication to upsert a group to remote DB
  */
+// TODO: handle offline with a queue of pending one-off replications when the main replication
+//   stream is back online
 export const replicateSharedPage = async (pageIds: string[]) => {
   // get all public groups which include page
   const _groups = await findAll({
