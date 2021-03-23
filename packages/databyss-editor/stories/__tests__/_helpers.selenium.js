@@ -11,7 +11,7 @@ const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 
 export const getEditor = async (driver) => {
-  await sleep(3000)
+  await sleep(1000)
   const el = await driver.wait(
     until.elementLocated(By.tagName('[contenteditable="true"]')),
     waitUntilTime,
@@ -29,7 +29,7 @@ export const getEditor = async (driver) => {
 }
 
 export const getElementsByTag = async (driver, tag) => {
-  await sleep(500)
+  await sleep(1000)
   let el = []
   try {
     el = await driver.wait(
@@ -49,7 +49,7 @@ export const getElementsByTag = async (driver, tag) => {
 }
 
 export const getElementByTag = async (driver, tag) => {
-  await sleep(500)
+  await sleep(1000)
   const el = await driver.wait(
     until.elementLocated(By.tagName(tag)),
     waitUntilTime,
