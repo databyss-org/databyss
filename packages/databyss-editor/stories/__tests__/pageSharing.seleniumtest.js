@@ -150,11 +150,12 @@ describe('page sharing', () => {
     )
 
     await accountDropdown.click()
+    await sleep(1000)
     const logoutButton = await getElementByTag(
       driver,
       '[data-test-block-menu="logout"]'
     )
-
+    await sleep(500)
     await logoutButton.click()
 
     // wait till login screen renders
