@@ -28,6 +28,7 @@ describe('page sharing', () => {
     const random = Math.random().toString(36).substring(7)
     // OSX and chrome are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
+    await sleep(1000)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
