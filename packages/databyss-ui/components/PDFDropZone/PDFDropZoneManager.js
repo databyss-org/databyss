@@ -7,7 +7,7 @@ import { makeText } from '@databyss-org/services/blocks'
 import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
 import { setSource } from '@databyss-org/services/sources'
 import * as services from '@databyss-org/services/pdf'
-
+import { formatSource } from '@databyss-org/editor/components/Suggest/SuggestSources'
 import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
 import { View } from '../../primitives'
 import InfoModal from '../../modules/Modals/InfoModal'
@@ -307,7 +307,7 @@ const PDFDropZoneManager = () => {
 
       let entryBlock
       if (metadata.fromCrossref) {
-        const detailedMetadata = await showMetadataModal(metadata)
+        const detailedMetadata = formatSource(await showMetadataModal(metadata))
         entryBlock = buildEntryBlock(detailedMetadata)
       } else {
         entryBlock = buildEntryBlock(file.name)
