@@ -1,6 +1,6 @@
 import {
   replicateDbFromRemote,
-  replicatePublicPage,
+  replicatePublicGroup,
   REMOTE_CLOUDANT_URL,
 } from '@databyss-org/data/pouchdb/db'
 import request from '../lib/request'
@@ -69,7 +69,6 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         path += '/auth'
         options.headers['x-databyss-as-account'] = _accountId
       } else {
-        console.log('IN THIS ELSE STATMENT')
         // if we have the token, try to use it
         path += '/auth'
         options.headers['x-databyss-account'] = accountId
@@ -207,8 +206,7 @@ export const setSession = (session) => async (dispatch) => {
 /*
 checks url for public page
 */
-
-export const hasUnathenticatedAccess = async () => {
+export const isPagePublic = async () => {
   const path = window.location.pathname.split('/')
   // get the page id
   const pageId = path?.[3]
@@ -216,7 +214,7 @@ export const hasUnathenticatedAccess = async () => {
     const groupId = `p_${pageId}`
     try {
       await request(`${REMOTE_CLOUDANT_URL}/${groupId}`)
-      return pageId
+      return groupId
     } catch (err) {
       return false
     }
@@ -224,10 +222,39 @@ export const hasUnathenticatedAccess = async () => {
   return false
 }
 
-export const replicatePage = async (pageId) => {
-  const groupId = `p_${pageId}`
-  // attempt page replication
-  await replicatePublicPage({
-    pageId: groupId,
+export const isGroupPublic = async () => {
+  const path = window.location.pathname.split('/')
+  // get the page id
+  const groupId = path?.[1]
+  if (groupId) {
+    const group = `g_${groupId}`
+    try {
+      await request(`${REMOTE_CLOUDANT_URL}/${group}`)
+      return group
+    } catch (err) {
+      return false
+    }
+  }
+  return false
+}
+
+export const hasUnathenticatedAccess = async () => {
+  const _isGroupPublic = await isGroupPublic()
+  if (_isGroupPublic) {
+    return _isGroupPublic
+  }
+
+  const _isPagePublic = await isPagePublic()
+  if (_isPagePublic) {
+    return _isPagePublic
+  }
+
+  return false
+}
+
+export const replicateGroup = async (id) => {
+  // attempt group replication
+  await replicatePublicGroup({
+    groupId: id,
   })
 }

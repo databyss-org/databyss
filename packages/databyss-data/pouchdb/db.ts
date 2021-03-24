@@ -56,7 +56,6 @@ export const dbRef: DbRef = {
 }
 
 // try to load pouch_secrets from local storage to init db
-// const _secrets = getPouchSecret()
 const defaultGroup = getDefaultGroup()
 const groupIdFromUrl = getAccountFromLocation()
 
@@ -154,19 +153,28 @@ export const initiatePouchDbIndexes = async () => {
   areIndexBuilt.current = true
 }
 
+export const resetPouchDb = async () => {
+  // console.log(dbRef.current.name)
+  if (dbRef.current) {
+    await (dbRef.current as PouchDB.Database).destroy()
+  }
+
+  dbRef.current = null
+}
+
 /*
 replicates public remote DB to local
 */
 
-export const replicatePublicPage = ({ pageId }: { pageId: string }) =>
+export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
   new Promise<boolean>((resolve, reject) => {
     const opts = {
       retry: true,
     }
-    dbRef.current = getPouchDb(pageId)
+    dbRef.current = getPouchDb(groupId)
 
     dbRef.current.replicate
-      .from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
+      .from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
         ...opts,
       })
       .on('complete', () => {
@@ -177,14 +185,18 @@ export const replicatePublicPage = ({ pageId }: { pageId: string }) =>
         }
         // when replication is complete, kick off a live sync
         dbRef
-          .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
+          .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
             ..._opts,
           })
           .on('error', () => {
-            // USER HAS TURNED OFF SHARING
-            window.location.reload()
+            // user has turned off sharing
+            setTimeout(() => {
+              // first reset DB then reload
+              resetPouchDb().then(() => {
+                window.location.href = '/'
+              })
+            }, 1000)
           })
-
         resolve(true)
       })
       .on('error', (err) => {
@@ -323,14 +335,6 @@ export const syncPouchDb = ({
         })
       }
     })
-}
-
-export const resetPouchDb = async () => {
-  if (dbRef.current) {
-    await (dbRef.current as PouchDB.Database).destroy()
-  }
-
-  dbRef.current = null
 }
 
 export const pouchDataValidation = (data) => {

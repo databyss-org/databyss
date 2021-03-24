@@ -108,7 +108,11 @@ export const PageReplicator = ({
           const validate = async () => {
             // check local storage for credentials
             // get group credentials from local storage
-            const gId = group._id
+
+            // if group ID does not begin with p_ assume its a shared group with g_
+            const gId =
+              group._id.substr(0, 2) === 'p_' ? group._id : `g_${group._id}`
+
             const dbCache = getPouchSecret()
             // id is in cache without the `p_` prefix
             const creds = dbCache[gId.substr(2)]
@@ -129,7 +133,7 @@ export const PageReplicator = ({
               // credentials are in local
               // validate credentials with server
               validateGroupCredentials({
-                groupId: group._id,
+                groupId: gId,
                 dbKey: creds.dbKey,
               })
                 .then(() => {

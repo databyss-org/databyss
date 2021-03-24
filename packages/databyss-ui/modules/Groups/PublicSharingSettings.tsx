@@ -40,11 +40,13 @@ export const IconControl = ({
 
 interface PublicSharingSettingsProps {
   value?: boolean
+  onClick: () => void
   onChange?: (value: boolean) => void
 }
 
 export const PublicSharingSettings = ({
   value,
+  onClick,
   onChange,
   ...others
 }: PublicSharingSettingsProps) => (
@@ -75,7 +77,12 @@ export const PublicSharingSettings = ({
         </Text>
       </View>
     ) : (
-      <IconControl icon={<LinkSvg />} label="Copy link" color="text.2" />
+      <IconControl
+        onClick={onClick}
+        icon={<LinkSvg />}
+        label="Copy link"
+        color="text.2"
+      />
     )}
   </List>
 )

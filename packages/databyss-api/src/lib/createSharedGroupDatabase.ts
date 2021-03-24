@@ -40,6 +40,7 @@ export const verifyUserOwnsDatabase = async ({
 }) => {
   // look up db in our groups DB
   const groupResponse = await Groups.find({ selector: { _id: dbName } })
+
   if (groupResponse.docs.length) {
     const _group = groupResponse.docs[0]
     // verify the user owns this group
@@ -52,7 +53,7 @@ export const verifyUserOwnsDatabase = async ({
 
 export const getDB = async ({ dbName }: { dbName: string }) => {
   try {
-    const _db = await cloudant.db.use(dbName)
+    const _db = await cloudant.db.use<any>(dbName)
     return _db
   } catch (err) {
     return false
@@ -78,6 +79,34 @@ const createSharedGroupDatabase = async ({
   await createGroupDatabase(groupId)
   const credentials = await setSecurity({ groupId, isPublic: true })
   return credentials
+}
+
+export const removeIdsFromSharedDb = async ({
+  ids,
+  groupId,
+}: {
+  ids: string[]
+  groupId: string
+}) => {
+  const _db = await getDB({ dbName: `g_${groupId}` })
+  if (_db) {
+    // get all documents with current revisions
+    const docList: any = await _db.fetch({ keys: ids })
+    // compose list to bulk upsert
+    const _upsertData: any[] = []
+    docList.rows.forEach((r) => {
+      if (r.doc) {
+        _upsertData.push({
+          _rev: r.doc?._rev,
+          _id: r.doc?._id,
+          doctype: r.doc?.doctype,
+          _deleted: true,
+        })
+      }
+    })
+    // bulk upsert
+    await _db.bulk({ docs: _upsertData })
+  }
 }
 
 export default createSharedGroupDatabase
