@@ -122,7 +122,7 @@ const EditorWithProvider = () => {
   useEffect(() => {
     // check to see if page exists in DB, if not add page
 
-    dbRef.current.find({ selector: { _id: _pageId } }).then((res) => {
+    dbRef.current?.find({ selector: { _id: _pageId } }).then((res) => {
       if (!res.docs.length) {
         setPage(_page)
       }

@@ -85,7 +85,11 @@ export const ValueListItem = ({ children, path, ...others }) => {
         'data-test-path': path,
         ...others,
       }),
-    [JSON.stringify(value)]
+    [
+      JSON.stringify(value),
+      //  TODO: an extra prop must be passed in order to cause a rerender in the item
+      ...Object.values(others),
+    ]
   )
 }
 

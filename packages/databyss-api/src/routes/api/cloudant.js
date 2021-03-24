@@ -7,12 +7,40 @@ import createSharedGroupDatabase, {
   verifyUserOwnsDatabase,
   verifyDatabaseCredentials,
   deleteSharedGroupDatabase,
+  removeIdsFromSharedDb,
 } from './../../lib/createSharedGroupDatabase'
 import { setSecurity, deleteGroupId } from '../../lib/createUserDatabase'
 
 const router = express.Router()
 
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
+
+// @route    POST api/cloudant/groups/delete
+// @desc     removes page from shared database
+// @access   private
+router.post('/groups/delete', auth, async (req, res) => {
+  // get user id
+  const { groupId, ids } = req.body.data
+  const userId = req.user.id
+  // check if group exists
+  const _db = await getDB({ dbName: groupId })
+  if (!_db) {
+    return res.status(404).json({ message: 'database does not exist' }).send()
+  }
+  // checks if user is owner of the database
+  const _userAuthorized = await verifyUserOwnsDatabase({
+    userId,
+    dbName: `g_${groupId}`,
+  })
+  if (!_userAuthorized) {
+    return res.status(401).json({ message: 'not authorized' }).send()
+  }
+
+  // remove pageId from shared database
+  await removeIdsFromSharedDb({ ids, groupId })
+
+  return res.status(200).json({}).send()
+})
 
 // @route    POST api/cloudant/groups/credentials/:id
 // @desc     creates database credentials
@@ -86,7 +114,10 @@ router.post('/groups', auth, async (req, res) => {
 
   let credentials
   if (isPublic) {
-    credentials = await createSharedGroupDatabase({ groupId, userId })
+    credentials = await createSharedGroupDatabase({
+      groupId,
+      userId,
+    })
   } else {
     // first verify user owns database
     const _userAuthorized = await verifyUserOwnsDatabase({

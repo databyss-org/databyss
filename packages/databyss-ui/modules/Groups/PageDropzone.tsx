@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import {
   DraggableItem,
   Text,
@@ -10,53 +10,70 @@ import {
   BaseControl,
   Separator,
 } from '@databyss-org/ui/primitives'
-import { PageHeader } from '@databyss-org/services/interfaces'
+import {
+  PageHeader,
+  Page,
+  Group,
+  DocumentDict,
+} from '@databyss-org/services/interfaces'
 import { LoadingFallback, SidebarListRow } from '@databyss-org/ui/components'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
-import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
-import { addPageToGroup } from '@databyss-org/data/pouchdb/groups'
+
+import {
+  addPageDocumentToGroup,
+  removePageFromGroup,
+} from '@databyss-org/data/pouchdb/groups'
 
 interface PageDropzoneProps extends ScrollViewProps {
   value?: string[]
-  groupId: string
+  pages: DocumentDict<Page> | undefined
   onChange?: (value: string[]) => void
+  group: Group
 }
 
 export const PageDropzone = ({
   value,
+  pages,
+  group,
   onChange,
-  groupId,
   ...others
 }: PageDropzoneProps) => {
-  const pagesRes = usePages()
+  // get most current group and page value
 
-  const onDrop = useCallback(
-    (item: DraggableItem) => {
-      // if item is being dragged from the `PUBLIC PAGES` section, get the public page id
-      let _id
-      if (item.payload.doctype === DocumentType.Group) {
-        _id = item.payload._id.substring(2)
-      } else {
-        const _pageHeader = item.payload as PageHeader
-        _id = _pageHeader._id
-      }
-      onChange!(value!.concat(_id))
-      addPageToGroup({ pageId: _id, groupId })
-    },
-    [onChange]
-  )
+  const onDrop = (item: DraggableItem) => {
+    if (!group) {
+      return
+    }
+    // if item is being dragged from the `PUBLIC PAGES` section, get the public page id
+    let _id
+    if (item.payload.doctype === DocumentType.Group) {
+      _id = item.payload._id.substring(2)
+    } else {
+      const _pageHeader = item.payload as PageHeader
+      _id = _pageHeader._id
+    }
+    onChange!(value!.concat(_id))
+    addPageDocumentToGroup({ pageId: _id, group })
+  }
+
   const onRemove = (_id: string) => {
+    if (!group || !pages) {
+      return
+    }
+    const _pageToRemove = pages[_id]
+    removePageFromGroup({ page: _pageToRemove, group })
+
     onChange!(value!.filter((p) => p !== _id))
   }
 
-  if (!pagesRes.isSuccess) {
-    return <LoadingFallback queryObserver={pagesRes} />
+  if (!pages || !group) {
+    return <LoadingFallback />
   }
 
-  const _pageHeaders = value!.map((pageId) => pagesRes.data![pageId])
+  const _pageHeaders = value!.map((pageId) => pages![pageId])
 
   const _sortedItems: PageHeader[] = sortEntriesAtoZ(_pageHeaders, 'name')
 

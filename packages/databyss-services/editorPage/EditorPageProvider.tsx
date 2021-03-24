@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
 import { setPublicPage } from '@databyss-org/data/pouchdb/groups'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
@@ -12,6 +13,7 @@ import {
   RefDict,
   PatchBatch,
   ResourceResponse,
+  ResourceNotFoundError,
 } from '../interfaces'
 import { PageReplicator } from './PageReplicator'
 import { pageDependencyObserver } from './pageDependencyObserver'
@@ -53,6 +55,8 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
 }: PropsType) => {
   const refDictRef = useRef<RefDict>({})
   const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
+  const pagesRes = usePages()
+
   const pageIdParams = useParams()
   let pageId
   if (pageIdParams) {
@@ -102,12 +106,18 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   const getPage = useCallback(
     (id: string): ResourceResponse<Page> => {
       if (state.cache[id]) {
+        const _pouchPage = pagesRes?.data?.[id]
+
+        if (!_pouchPage && pagesRes.isSuccess) {
+          // page was removed from pouch
+          return new ResourceNotFoundError('')
+        }
         return state.cache[id]
       }
       dispatch(actions.fetchPage(id))
       return null
     },
-    [JSON.stringify(state.cache)]
+    [JSON.stringify(state.cache), pagesRes.data]
   )
 
   const registerBlockRefByIndex = useCallback(
