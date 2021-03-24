@@ -1,4 +1,4 @@
-import request, { RequestOptions } from './request'
+import request, { RequestOptions, FETCH_TIMEOUT } from './request'
 import { getAccountId, getAuthToken } from './../session/clientStorage'
 // import { getAccountFromLocation } from '../session/_helpers'
 import { version as databyssVersion } from './../version'
@@ -36,6 +36,7 @@ export const requestApi = async (
       'x-databyss-version': databyssVersion,
       'x-databyss-account': `${_accountId}`,
     },
+    timeout: options.timeout || FETCH_TIMEOUT * 3,
   })
 }
 

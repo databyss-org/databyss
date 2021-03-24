@@ -14,7 +14,7 @@ import { borderRadius, timing } from '../../../theming/theme'
 
 const resetProps = {
   padding: 0,
-  border: 'none',
+  border: 0,
   font: 'inherit',
   color: 'inherit',
   backgroundColor: 'transparent',

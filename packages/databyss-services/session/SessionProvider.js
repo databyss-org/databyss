@@ -9,6 +9,7 @@ import {
 } from '@databyss-org/data/pouchdb/db'
 // import { connect } from '@databyss-org/data/couchdb-client/couchdb'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
@@ -16,6 +17,7 @@ import { useServiceContext } from '../'
 import { localStorageHasSession } from './clientStorage'
 import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
 import { replicateGroup, hasUnathenticatedAccess } from './actions'
+import { NetworkUnavailableError } from '../interfaces'
 
 const useReducer = createReducer()
 
@@ -40,6 +42,7 @@ const SessionProvider = ({
     name: 'SessionProvider',
   })
   const { session: actions } = useServiceContext()
+  const { notify } = useNotifyContext()
 
   const isPublicAccount = useCallback(() => {
     if (state.session.publicAccount?._id) {
@@ -83,6 +86,14 @@ const SessionProvider = ({
   )
 
   const endSession = () => dispatch(actions.endSession())
+
+  useEffect(() => {
+    if (state.session instanceof NetworkUnavailableError) {
+      notify(
+        "We're having trouble reaching the server. Please check your network and try again."
+      )
+    }
+  }, [state.session])
 
   useEffect(() => {
     const _init = async () => {

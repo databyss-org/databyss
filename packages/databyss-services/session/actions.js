@@ -5,7 +5,7 @@ import {
 } from '@databyss-org/data/pouchdb/db'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
-import { NotAuthorizedError } from '../interfaces'
+import { NetworkUnavailableError, NotAuthorizedError } from '../interfaces'
 import { version as databyssVersion } from '../package.json'
 import {
   FETCH_SESSION,
@@ -98,7 +98,11 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       }
     }
 
-    const res = await _request(path, { ...options, responseAsJson: true })
+    const res = await _request(path, {
+      ...options,
+      responseAsJson: true,
+      timeout: 15000,
+    })
     if (res.data && res.data.session) {
       const { session } = res.data
 
@@ -145,7 +149,10 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       type: DENY_ACCESS,
       payload: { error },
     })
-    if (!(error instanceof NotAuthorizedError)) {
+    if (
+      !(error instanceof NotAuthorizedError) &&
+      !(error instanceof NetworkUnavailableError)
+    ) {
       throw error
     }
   }

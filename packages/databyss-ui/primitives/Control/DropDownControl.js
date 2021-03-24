@@ -228,7 +228,7 @@ const DropDownControl = forwardRef((props, ref) => {
 
   const renderItems = (items) =>
     items.map((item) => (
-      <option key={item.id} value={item.id}>
+      <option key={item.id} value={item.id} disabled={item.id < 0}>
         {item.label}
       </option>
     ))

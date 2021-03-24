@@ -6,10 +6,11 @@ import SessionProvider from '@databyss-org/services/session/SessionProvider'
 import { connect, couchDbRef } from '@databyss-org/data/couchdb-client/couchdb'
 import { getPouchSecret } from '@databyss-org/services/session/clientStorage'
 import { SessionInfo } from '../Modules/login.stories'
-import { ViewportDecorator } from '../decorators'
+import { ViewportDecorator, NotifyDecorator } from '../decorators'
 
 storiesOf('Services|Auth', module)
   .addDecorator(ViewportDecorator)
+  .addDecorator(NotifyDecorator)
   .add('Login', () => (
     <View data-test-id="login-page">
       <ServiceProvider>

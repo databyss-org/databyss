@@ -2,7 +2,10 @@ import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
+import {
+  ViewportDecorator,
+  NotifyDecorator,
+} from '@databyss-org/ui/stories/decorators'
 import fetchMock from 'fetch-mock'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {

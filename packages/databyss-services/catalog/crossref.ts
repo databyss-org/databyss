@@ -36,7 +36,9 @@ const crossref: CatalogService = {
     if (process.env.CITEBOT_EMAIL && !getCatalogSearchType(query)) {
       _uri += `&mailto=${process.env.CITEBOT_EMAIL}`
     }
-    const results = await request(_uri)
+    const results = await request(_uri, {
+      timeout: 15000,
+    })
 
     return results
   },

@@ -4,6 +4,7 @@ import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { getPouchSecret } from '@databyss-org/services/session/clientStorage'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { validateGroupCredentials, createDatabaseCredentials } from './index'
 import {
   ResourceNotFoundError,
@@ -12,7 +13,8 @@ import {
 } from '../interfaces/Errors'
 import { dbRef, REMOTE_CLOUDANT_URL } from '../../databyss-data/pouchdb/db'
 
-const INTERVAL_TIME = 3000
+const INTERVAL_TIME = 5000
+const MAX_RETRIES = 10
 
 export const PageReplicator = ({
   children,
@@ -30,6 +32,7 @@ export const PageReplicator = ({
 
   const sessionDispatch = useSessionContext((c) => c && c.dispatch)
 
+  const { isOnline } = useNotifyContext()
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   const startReplication = ({
@@ -98,16 +101,24 @@ export const PageReplicator = ({
 
   // cancel the replications on unmount
   useEffect(() => {
-    if (!isPublicAccount() && groupsRes.isSuccess && pageId) {
+    if (isOnline && !isPublicAccount() && groupsRes.isSuccess && pageId) {
       // find all groups that contain this page
       const groupsWithPage = Object.values(groupsRes.data!).filter((group) =>
         group.pages.includes(pageId)
       )
       groupsWithPage.forEach((group) => {
+        console.log(
+          `[PageReplicator] starting public replication for ${group._id}`
+        )
         // check if group is already replicating
         const _repStatus = replicationStatusRef.current[group._id]
         if (!_repStatus) {
-          const validate = async () => {
+          const validate = async (count: number = 0) => {
+            if (count > MAX_RETRIES) {
+              console.log(
+                `[PageReplicator] retry limit exceeded when trying to replicate to group ${group._id}`
+              )
+            }
             // check local storage for credentials
             // get group credentials from local storage
 
@@ -126,11 +137,16 @@ export const PageReplicator = ({
                 isPublic: group.public,
               }).catch((err) => {
                 if (err instanceof NetworkUnavailableError) {
-                  // user might be offline
-                  setTimeout(() => validate(), INTERVAL_TIME)
+                  // if user is offline, just bail. we shouldn't get here
+                  //   because the "make page public" should be disabled when offline
+                  console.log(
+                    '[PageReplicator] skipping public page replication in offline mode'
+                  )
+                  return
                 }
+                throw err
               })
-              setTimeout(() => validate(), INTERVAL_TIME)
+              setTimeout(() => validate(count + 1), INTERVAL_TIME)
             } else {
               // credentials are in local
               // validate credentials with server
@@ -148,17 +164,23 @@ export const PageReplicator = ({
                   })
                 })
                 .catch((err) => {
-                  if (
-                    err instanceof ResourceNotFoundError ||
-                    err instanceof NetworkUnavailableError
-                  ) {
-                    // database might not have been created or user might be offline
-                    setTimeout(() => validate(), INTERVAL_TIME)
+                  if (err instanceof NetworkUnavailableError) {
+                    console.log(
+                      '[PageReplicator] skipping public page replication in offline mode'
+                    )
+                    return
+                  }
+                  if (err instanceof ResourceNotFoundError) {
+                    // database might not have been created, wait a bit longer
+                    setTimeout(() => validate(count + 1), INTERVAL_TIME)
+                    return
                   }
                   if (err instanceof NotAuthorizedError) {
                     // user does not have permission, do not retry
-                    console.error('NOT AUTHORIZED')
+                    console.error('[PageReplicator] NOT AUTHORIZED')
+                    return
                   }
+                  throw err
                 })
             }
           }
@@ -173,7 +195,7 @@ export const PageReplicator = ({
         replication.cancel()
       })
     }
-  }, [groupsRes.isSuccess, JSON.stringify(groupsRes.data)])
+  }, [groupsRes.isSuccess, JSON.stringify(groupsRes.data), isOnline])
 
   if (!groupsRes.isSuccess) {
     return <LoadingFallback queryObserver={groupsRes} />
