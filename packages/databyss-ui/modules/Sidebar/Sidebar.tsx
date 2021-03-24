@@ -20,6 +20,7 @@ export const Sidebar = () => {
   /*
   if item active in menuItem, SidebarContent will compose a list to pass to SidebarList
   */
+
   return isMenuOpen ? (
     <>
       <SidebarCollapsed />

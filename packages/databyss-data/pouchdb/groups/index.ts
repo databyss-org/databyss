@@ -204,10 +204,16 @@ export const setGroup = async (group: Group, pageId?: string) => {
   // prevent duplicates
   group.pages = removeDuplicatesFromArray(group.pages)
 
+  // append property in order for replicated group to get group metadata
+  await addGroupToDocument([`g_${group._id}`], {
+    ...group,
+    doctype: DocumentType.Group,
+  })
+
   await upsertImmediate({
     doctype: DocumentType.Group,
     _id: group._id,
-    doc: { ...group, doctype: DocumentType.Group },
+    doc: group,
   })
 }
 
@@ -296,6 +302,12 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     // this will kick off `pageDepencencyObserver` which will add the group id to all page document
     await addPageToGroup({ pageId, groupId: _data._id })
 
+    // append property in order for replicated group to get group metadata
+    await addGroupToDocument([_data._id], {
+      ..._data,
+      doctype: DocumentType.Group,
+    })
+
     await upsertImmediate({
       doctype: DocumentType.Group,
       _id: _data._id,
@@ -311,6 +323,7 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     // if page is removed from sharing
 
     // delete group from pouchDb
+
     await upsertImmediate({
       doctype: DocumentType.Group,
       _id: _data._id,

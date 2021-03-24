@@ -4,6 +4,7 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { pxUnits } from '../../primitives'
 
 const Header = () => {
+  console.log('HEADER')
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   return (
