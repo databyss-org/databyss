@@ -12,6 +12,7 @@ import {
   toggleItalic,
   toggleLocation,
   singleHighlight,
+  getElementById,
 } from './_helpers.selenium'
 
 let driver
@@ -59,6 +60,8 @@ describe('format text in editor', () => {
 
     await sleep(3000)
 
+    slateDocument = await getElementById(driver, 'slateDocument')
+
     const actual = JSON.parse(await slateDocument.getText())
 
     const expected = (
@@ -98,6 +101,7 @@ describe('format text in editor', () => {
       .click()
 
     await sleep(300)
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     const actual = JSON.parse(await slateDocument.getText())
 
@@ -132,6 +136,7 @@ describe('format text in editor', () => {
     await actions.sendKeys(Key.ENTER)
     await actions.perform()
     await sleep(500)
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     const actual = JSON.parse(await slateDocument.getText())
 
@@ -169,6 +174,7 @@ describe('format text in editor', () => {
     await actions.sendKeys(Key.ENTER)
     await actions.perform()
     await sleep(500)
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     const actual = JSON.parse(await slateDocument.getText())
 
