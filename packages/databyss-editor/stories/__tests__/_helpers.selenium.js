@@ -62,6 +62,7 @@ export const getElementByTag = async (driver, tag) => {
 }
 
 export const logout = async (driver) => {
+  await sleep(1000)
   const accountDropdown = await getElementByTag(
     driver,
     '[data-test-element="account-menu"]'
@@ -137,6 +138,7 @@ export const singleHighlight = async (actions) => {
 }
 
 const navigationActionsBuilder = async (actions, key) => {
+  await sleep(SLEEP_TIME)
   await actions.sendKeys(key)
   await actions.perform()
   await actions.clear()
