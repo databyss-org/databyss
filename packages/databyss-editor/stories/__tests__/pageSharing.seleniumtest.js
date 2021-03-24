@@ -155,7 +155,6 @@ describe('page sharing', () => {
       driver,
       '[data-test-block-menu="logout"]'
     )
-    await sleep(500)
     await logoutButton.click()
 
     // wait till login screen renders
