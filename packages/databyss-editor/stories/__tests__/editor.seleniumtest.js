@@ -5,7 +5,7 @@ import assert from 'assert'
 import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import { jsx as h } from './hyperscript'
 import { sanitizeEditorChildren } from './__helpers'
-import { getEditor, sleep } from './_helpers.selenium'
+import { getEditor, sleep, getElementById } from './_helpers.selenium'
 
 let driver
 let editor
@@ -51,6 +51,8 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.ENTER)
     await sleep(300)
 
+    slateDocument = await getElementById(driver, 'slateDocument')
+
     let actual = JSON.parse(await slateDocument.getText())
 
     let expected = (
@@ -79,6 +81,8 @@ describe('editor selenium', () => {
     await sleep(300)
     await editor.sendKeys('this text should not be allowed')
     await sleep(300)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     actual = JSON.parse(await slateDocument.getText())
 
@@ -120,6 +124,8 @@ describe('editor selenium', () => {
 
     await sleep(300)
 
+    slateDocument = await getElementById(driver, 'slateDocument')
+
     actual = JSON.parse(await slateDocument.getText())
 
     expected = (
@@ -154,6 +160,8 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.BACK_SPACE)
     await sleep(300)
     await editor.sendKeys('this entry replaces a topic')
+
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     actual = JSON.parse(await slateDocument.getText())
 
@@ -190,6 +198,8 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.BACK_SPACE)
     await sleep(3000)
 
+    slateDocument = await getElementById(driver, 'slateDocument')
+
     actual = JSON.parse(await slateDocument.getText())
 
     expected = (
@@ -222,6 +232,9 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.ENTER)
     await editor.sendKeys('this should #')
     // should toggle inline mark
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
     let actual = JSON.parse(await slateDocument.getText())
     let expected = (
       <editor>
@@ -235,6 +248,8 @@ describe('editor selenium', () => {
     )
 
     await editor.sendKeys(Key.ENTER)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     // should clear inline mark when only hash appears
     actual = JSON.parse(await slateDocument.getText())
@@ -263,6 +278,8 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.ARROW_LEFT)
     await editor.sendKeys(Key.ARROW_LEFT)
     await editor.sendKeys('#')
+
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     // should slurp next word
     actual = JSON.parse(await slateDocument.getText())
@@ -293,6 +310,8 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.ARROW_LEFT)
     await editor.sendKeys('#')
 
+    slateDocument = await getElementById(driver, 'slateDocument')
+
     // should work in the middle of a word
     actual = JSON.parse(await slateDocument.getText())
     expected = (
@@ -316,6 +335,9 @@ describe('editor selenium', () => {
 
     // should test escape removing inline
     await editor.sendKeys(Key.ESCAPE)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
@@ -344,6 +366,9 @@ describe('editor selenium', () => {
     await editor.sendKeys('#')
     await editor.sendKeys(Key.SPACE)
     await editor.sendKeys('plaintext')
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
@@ -370,6 +395,8 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.ARROW_LEFT)
     await editor.sendKeys(Key.BACK_SPACE)
 
+    slateDocument = await getElementById(driver, 'slateDocument')
+
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
@@ -393,6 +420,8 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.ARROW_LEFT)
     await editor.sendKeys('#')
     await editor.sendKeys(Key.ARROW_RIGHT)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     actual = JSON.parse(await slateDocument.getText())
     expected = (
@@ -422,6 +451,8 @@ describe('editor selenium', () => {
     await sleep(1000)
     await editor.sendKeys(Key.ENTER)
     await sleep(500)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     actual = JSON.parse(await slateDocument.getText())
     expected = (
@@ -467,6 +498,8 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.ARROW_LEFT)
     await editor.sendKeys(' add text')
 
+    slateDocument = await getElementById(driver, 'slateDocument')
+
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
@@ -503,6 +536,8 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.ARROW_LEFT)
     await editor.sendKeys(Key.ENTER)
 
+    slateDocument = await getElementById(driver, 'slateDocument')
+
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
@@ -532,6 +567,9 @@ describe('editor selenium', () => {
     // backspace should remove inline
     await editor.sendKeys(Key.BACK_SPACE)
     await editor.sendKeys(Key.BACK_SPACE)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
