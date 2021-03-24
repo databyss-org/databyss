@@ -38,8 +38,6 @@ const generateHash = (source: SourceDetail, options: CitationFormatOptions) => {
 const CitationProvider: React.FunctionComponent<PropsType> = (
   props: PropsType
 ) => {
-  const { isOnline } = useNotifyContext()
-
   const [state, dispatch] = useReducer(
     reducer,
     {
