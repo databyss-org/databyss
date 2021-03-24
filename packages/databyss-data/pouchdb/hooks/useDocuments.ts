@@ -42,8 +42,8 @@ export const useDocuments = <T extends Document>(
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) => {
         // console.log('useDocuments.fetch', selector)
-        dbRef
-          .current!.find({ selector })
+        dbRef.current
+          ?.find({ selector })
           .then((res: any) => resolve(DocumentArrayToDict(res.docs)))
           .catch((err) => reject(err))
       }),

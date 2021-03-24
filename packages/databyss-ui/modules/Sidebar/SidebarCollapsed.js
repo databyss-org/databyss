@@ -41,7 +41,10 @@ const SidebarCollapsed = () => {
       title: 'Collections',
       icon: <img src={GroupsImg} />,
       sizeVariant: 'large',
-      onClick: () => onItemClick('groups'),
+      onClick: () =>
+        !isPublicAccount()
+          ? onItemClick('groups')
+          : (window.location.href = 'https://www.databyss.org'),
     },
     {
       name: 'search',

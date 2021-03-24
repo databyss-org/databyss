@@ -3,6 +3,7 @@ import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import { Group } from '@databyss-org/services/interfaces'
 import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
+import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 
 export const GroupList = (others) => {
   const groupsRes = useGroups()
@@ -16,13 +17,20 @@ export const GroupList = (others) => {
       data: group,
     }))
 
+  // const sorted = sortEntriesAtoZ(mapped, 'text')
+
+  // console.log('SORTED', sorted)
+
   const getPageItems = (groups: Group[]) =>
-    groups.map((group) => ({
-      text: pagesRes.data![group.pages[0]]?.name,
-      type: 'page',
-      route: `/pages/${group._id.substring(2)}`,
-      data: group,
-    }))
+    sortEntriesAtoZ(
+      groups.map((group) => ({
+        text: pagesRes.data![group.pages[0]]?.name,
+        type: 'page',
+        route: `/pages/${group._id.substring(2)}`,
+        data: group,
+      })),
+      'text'
+    )
 
   if (!groupsRes.isSuccess || !pagesRes.isSuccess) {
     return <LoadingFallback queryObserver={groupsRes} />

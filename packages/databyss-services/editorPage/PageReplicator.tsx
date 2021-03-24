@@ -33,6 +33,7 @@ export const PageReplicator = ({
   const sessionDispatch = useSessionContext((c) => c && c.dispatch)
 
   const { isOnline } = useNotifyContext()
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   const startReplication = ({
     groupId,
@@ -100,7 +101,7 @@ export const PageReplicator = ({
 
   // cancel the replications on unmount
   useEffect(() => {
-    if (isOnline && groupsRes.isSuccess && pageId) {
+    if (isOnline && !isPublicAccount() && groupsRes.isSuccess && pageId) {
       // find all groups that contain this page
       const groupsWithPage = Object.values(groupsRes.data!).filter((group) =>
         group.pages.includes(pageId)

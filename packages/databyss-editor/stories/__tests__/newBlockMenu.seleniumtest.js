@@ -5,7 +5,7 @@ import assert from 'assert'
 import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import { jsx as h } from './hyperscript'
 import { sanitizeEditorChildren } from './__helpers'
-import { getEditor, sleep } from './_helpers.selenium'
+import { getEditor, sleep, getElementById } from './_helpers.selenium'
 
 let driver
 let editor
@@ -59,6 +59,8 @@ describe('new block menu actions', () => {
     await actions.sendKeys(Key.ENTER)
     await actions.perform()
     await sleep(300)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     const actual = JSON.parse(await slateDocument.getText())
 
