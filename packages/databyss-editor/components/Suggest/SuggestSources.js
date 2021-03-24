@@ -43,7 +43,7 @@ const SuggestSources = ({
   const sourcesRes = useBlocksInPages(BlockType.Source)
   const { replace } = useEditorContext()
   const [suggestions, setSuggestsions] = useState()
-  const { isOnline } = useNotifyContext()
+  const { isOnline } = useNotifyContext() || { isOnline: false }
 
   useEffect(() => {
     // reset menu when active state changes

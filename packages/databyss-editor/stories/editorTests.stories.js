@@ -82,7 +82,6 @@ const EditorWithModals = ({ initialState }) => (
 
 storiesOf('Selenium//Tests', module)
   .addDecorator(ViewportDecorator)
-  .addDecorator(NotifyDecorator)
   .add('Slate 5', () => {
     fetchMock
       .restore()
