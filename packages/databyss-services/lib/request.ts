@@ -7,7 +7,7 @@ import {
   UnexpectedServerError,
 } from '../interfaces'
 
-const FETCH_TIMEOUT = process.env.FETCH_TIMEOUT!
+export const FETCH_TIMEOUT = parseInt(process.env.FETCH_TIMEOUT!, 10)
 
 function checkStatus(response: Response) {
   if (response.status >= 200 && response.status < 300) {
