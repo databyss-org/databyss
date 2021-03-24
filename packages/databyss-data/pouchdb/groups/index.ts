@@ -195,6 +195,86 @@ export const addPageToGroup = async ({
   }
 }
 
+const upsertReplication = ({
+  groupId,
+  dbKey,
+  dbPassword,
+}: {
+  groupId: string
+  dbKey: string
+  dbPassword: string
+}) => {
+  const opts = {
+    retry: true,
+    auth: {
+      username: dbKey,
+      password: dbPassword,
+    },
+  }
+
+  // upsert replication
+  dbRef.current!.replicate.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
+    ...opts,
+    // do not replciate design docs or documents that dont include the page
+    filter: (doc) => {
+      if (!doc?.sharedWithGroups) {
+        return false
+      }
+      const _isSharedWithGroup = doc?.sharedWithGroups.includes(groupId)
+      if (!_isSharedWithGroup) {
+        return false
+      }
+      return !doc._id.includes('design/')
+    },
+  })
+}
+
+/**
+ * one time replication to upsert a @groupId to remote DB
+ */
+export const replicateGroup = async ({
+  groupId,
+  isPublic,
+}: {
+  groupId: string
+  isPublic?: boolean
+}) => {
+  try {
+    // first check if credentials exist
+    let dbSecretCache = getPouchSecret() || {}
+    let creds = dbSecretCache[groupId.substr(2)]
+    if (!creds) {
+      // credentials are not in local storage
+      // creates new user credentials and adds them to local storage
+      await createDatabaseCredentials({
+        groupId,
+        isPublic,
+      })
+
+      // credentials should be in local storage now
+      dbSecretCache = getPouchSecret()
+      creds = dbSecretCache[groupId.substr(2)]
+      if (!creds) {
+        // user is not authorized
+        return
+      }
+    }
+    // confirm credentials work
+    await validateGroupCredentials({
+      groupId,
+      dbKey: creds.dbKey,
+    })
+
+    upsertReplication({
+      groupId,
+      dbKey: creds.dbKey,
+      dbPassword: creds.dbPassword,
+    })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const setGroup = async (group: Group, pageId?: string) => {
   // if pageId is passed, crawl pageId and append group id to all documents associated with the page
   if (pageId) {
@@ -215,6 +295,14 @@ export const setGroup = async (group: Group, pageId?: string) => {
     _id: group._id,
     doc: group,
   })
+
+  // if group settings were changed, propegate changes to remote db
+  if (group.public) {
+    replicateGroup({
+      groupId: `g_${group._id}`,
+      isPublic: true,
+    })
+  }
 }
 
 /*
@@ -338,86 +426,6 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
       groupId: _data._id,
       isPublic: false,
     })
-  }
-}
-
-const upsertReplication = ({
-  groupId,
-  dbKey,
-  dbPassword,
-}: {
-  groupId: string
-  dbKey: string
-  dbPassword: string
-}) => {
-  const opts = {
-    retry: true,
-    auth: {
-      username: dbKey,
-      password: dbPassword,
-    },
-  }
-
-  // upsert replication
-  dbRef.current!.replicate.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
-    ...opts,
-    // do not replciate design docs or documents that dont include the page
-    filter: (doc) => {
-      if (!doc?.sharedWithGroups) {
-        return false
-      }
-      const _isSharedWithGroup = doc?.sharedWithGroups.includes(groupId)
-      if (!_isSharedWithGroup) {
-        return false
-      }
-      return !doc._id.includes('design/')
-    },
-  })
-}
-
-/**
- * one time replication to upsert a @groupId to remote DB
- */
-export const replicateGroup = async ({
-  groupId,
-  isPublic,
-}: {
-  groupId: string
-  isPublic?: boolean
-}) => {
-  try {
-    // first check if credentials exist
-    let dbSecretCache = getPouchSecret() || {}
-    let creds = dbSecretCache[groupId.substr(2)]
-    if (!creds) {
-      // credentials are not in local storage
-      // creates new user credentials and adds them to local storage
-      await createDatabaseCredentials({
-        groupId,
-        isPublic,
-      })
-
-      // credentials should be in local storage now
-      dbSecretCache = getPouchSecret()
-      creds = dbSecretCache[groupId.substr(2)]
-      if (!creds) {
-        // user is not authorized
-        return
-      }
-    }
-    // confirm credentials work
-    await validateGroupCredentials({
-      groupId,
-      dbKey: creds.dbKey,
-    })
-
-    upsertReplication({
-      groupId,
-      dbKey: creds.dbKey,
-      dbPassword: creds.dbPassword,
-    })
-  } catch (err) {
-    console.error(err)
   }
 }
 
