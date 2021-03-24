@@ -2,7 +2,6 @@ import { createContext, useContextSelector } from 'use-context-selector'
 import { debounce } from 'lodash'
 import MurmurHash3 from 'imurmurhash'
 import React, { useCallback } from 'react'
-import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import createReducer from '@databyss-org/services/lib/createReducer'
 
 import { CitationFormatOptions, SourceDetail } from '../interfaces'
