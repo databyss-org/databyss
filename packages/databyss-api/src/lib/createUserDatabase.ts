@@ -78,15 +78,24 @@ export const createGroupId = async ({
   // TODO: fix this so its not 'any'
   const _id: string = groupId || uidlc()
   const Groups: any = await cloudant.db.use('groups')
-  await Groups.insert({
-    // TODO: this should be "belongsToUser" for consistency
-    belongsToUserId: userId,
-    name: 'untitled',
-    sessions: [],
-    // TODO: cloudant does not allow uppercase for db names,
-    // will this affect collisions?
-    _id,
-  })
+  try {
+    await Groups.insert({
+      // TODO: this should be "belongsToUser" for consistency
+      belongsToUserId: userId,
+      name: 'untitled',
+      sessions: [],
+      // TODO: cloudant does not allow uppercase for db names,
+      // will this affect collisions?
+      _id,
+    })
+  } catch (err) {
+    // group might already exist
+    if (err.error !== 'conflict') {
+      // TODO: Make sure user owns group
+      throw err
+    }
+  }
+
   return _id
 }
 
@@ -98,11 +107,7 @@ export const deleteGroupId = async ({ groupId }) => {
   const _doc = await Groups.get(groupId)
   if (_doc) {
     const latestRev = _doc._rev
-    await Groups.destroy(groupId, latestRev, (err) => {
-      if (!err) {
-        console.log('Successfully deleted doc', groupId)
-      }
-    })
+    await Groups.destroy(groupId, latestRev)
   }
 }
 
@@ -114,6 +119,7 @@ export const createGroupDatabase = async (
   try {
     await cloudant.db.get(id)
     _db = await cloudant.db.use<any>(id)
+
     return _db
   } catch (err) {
     if (err.error !== 'not_found') {
@@ -123,6 +129,7 @@ export const createGroupDatabase = async (
     // add design docs to sever
     _db = await cloudant.db.use<any>(id)
     await updateDesignDoc({ db: _db })
+
     return _db
   }
 }

@@ -16,7 +16,7 @@ import reducer, { initialState } from './reducer'
 import { useServiceContext } from '../'
 import { localStorageHasSession } from './clientStorage'
 import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
-import { replicatePage, hasUnathenticatedAccess } from './actions'
+import { replicateGroup, hasUnathenticatedAccess } from './actions'
 import { NetworkUnavailableError } from '../interfaces'
 
 const useReducer = createReducer()
@@ -129,14 +129,14 @@ const SessionProvider = ({
         })
       } else {
         // check if page has public access
-        const unauthenticatedPageId = await hasUnathenticatedAccess()
+        const unauthenticatedGroupId = await hasUnathenticatedAccess()
 
-        if (unauthenticatedPageId) {
+        if (unauthenticatedGroupId) {
           // replicate public page to local pouchdb
-          await replicatePage(unauthenticatedPageId)
+          await replicateGroup(unauthenticatedGroupId)
           dispatch({
             type: CACHE_PUBLIC_SESSION,
-            payload: { publicAccount: unauthenticatedPageId },
+            payload: { publicAccount: unauthenticatedGroupId },
           })
         } else {
           // pass 1: get session from API

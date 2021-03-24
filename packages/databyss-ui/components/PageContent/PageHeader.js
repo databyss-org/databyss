@@ -19,7 +19,7 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
   useEffect(() => {
     // if text field is focused, do not allow name update from external sources
     if (!focused) {
-      setPageName(pagesRes.data?.[pageId].name)
+      setPageName(pagesRes.data?.[pageId]?.name)
     }
   }, [pagesRes.data?.[pageId]])
 

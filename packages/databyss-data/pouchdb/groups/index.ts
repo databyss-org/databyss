@@ -12,6 +12,8 @@ import { Block } from '../../../databyss-services/interfaces/Block'
 import { getAtomicClosureText } from '../../../databyss-services/blocks/index'
 import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/getAtomicsFromSelection'
 import { dbRef, REMOTE_CLOUDANT_URL } from '../db'
+import { isAtomicInlineType } from '../../../databyss-editor/lib/util'
+import { Page } from '../../../databyss-services/interfaces/Page'
 import {
   createDatabaseCredentials,
   validateGroupCredentials,
@@ -20,11 +22,23 @@ import {
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
 
+export const removeIdsFromSharedDb = ({
+  ids,
+  groupId,
+}: {
+  ids: string[]
+  groupId: string
+}) =>
+  httpPost(`/cloudant/groups/delete`, {
+    // TODO: this should not have to be turned to lowercase
+    data: { ids, groupId },
+  })
+
 /*
   creates or removes a cloudant group database if no database exists
   */
 
-const addOrRemoveCloudantGroupDatabase = async ({
+export const addOrRemoveCloudantGroupDatabase = async ({
   groupId,
   isPublic,
 }: {
@@ -35,7 +49,12 @@ const addOrRemoveCloudantGroupDatabase = async ({
     // TODO: this should not have to be turned to lowercase
     data: { groupId, isPublic },
   })
-  return res.data
+  // if is public, add credentials to localstorage
+  if (isPublic) {
+    setPouchSecret(Object.values(res.data))
+  } else {
+    deletePouchSecret(groupId)
+  }
 }
 
 export const addGroupToDocument = async (groupIds: string[], document: any) => {
@@ -46,6 +65,7 @@ export const addGroupToDocument = async (groupIds: string[], document: any) => {
     ...groupIds,
   ])
   // update if ids were added
+
   if (
     !_.isEqual(document?.sharedWithGroups?.sort(), _sharedWithGroups?.sort())
   ) {
@@ -115,7 +135,7 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
           ranges: [],
         }
       } else {
-        addGroupToDocument(_sharedWithPages, _block)
+        await addGroupToDocument(_sharedWithPages, _block)
       }
       _blocks[i] = _populatedBlock
     }
@@ -128,7 +148,7 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
     query: { _id: _selectionId },
   })
   if (_selection) {
-    addGroupToDocument(_sharedWithPages, _selection)
+    await addGroupToDocument(_sharedWithPages, _selection)
   }
 
   // get all atomics associated with page
@@ -142,7 +162,7 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
       query: { _id: _a._id },
     })
     if (_atomic) {
-      addGroupToDocument(_sharedWithPages, _atomic)
+      await addGroupToDocument(_sharedWithPages, _atomic)
     }
 
     const _blockRelation = await findOne<any>({
@@ -150,7 +170,7 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
       query: { _id: `r_${_a._id}` },
     })
     if (_blockRelation) {
-      addGroupToDocument(_sharedWithPages, _blockRelation)
+      await addGroupToDocument(_sharedWithPages, _blockRelation)
     }
   }
 }
@@ -171,7 +191,7 @@ export const addPageToGroup = async ({
   })
   if (_page && !_page?.sharedWithGroups?.includes(groupId)) {
     // add groupId to page array if does not already exist
-    addGroupToDocument([groupId], _page)
+    await addGroupToDocument([groupId], _page)
   }
 }
 
@@ -243,7 +263,7 @@ export const removeGroupFromPage = async ({
       doctype: DocumentType.Selection,
       query: { _id: _selectionId },
     })
-    if (_selection._sharedWithPages) {
+    if (_selection.sharedWithPages) {
       await removeGroupsFromDocument([groupId], _selection)
     }
 
@@ -283,13 +303,10 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     })
 
     // create cloudant db
-    // returns credentials from public page
-    const _credentials = await addOrRemoveCloudantGroupDatabase({
+    await addOrRemoveCloudantGroupDatabase({
       groupId: _data._id,
       isPublic: true,
     })
-    // add credentials to local storage
-    setPouchSecret(Object.values(_credentials))
   } else {
     // if page is removed from sharing
 
@@ -308,8 +325,6 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
       groupId: _data._id,
       isPublic: false,
     })
-    // remove credentials from local storage
-    deletePouchSecret(pageId)
   }
 }
 
@@ -348,6 +363,52 @@ const upsertReplication = ({
 }
 
 /**
+ * one time replication to upsert a @groupId to remote DB
+ */
+export const replicateGroup = async ({
+  groupId,
+  isPublic,
+}: {
+  groupId: string
+  isPublic?: boolean
+}) => {
+  try {
+    // first check if credentials exist
+    let dbSecretCache = getPouchSecret() || {}
+    let creds = dbSecretCache[groupId.substr(2)]
+    if (!creds) {
+      // credentials are not in local storage
+      // creates new user credentials and adds them to local storage
+      await createDatabaseCredentials({
+        groupId,
+        isPublic,
+      })
+
+      // credentials should be in local storage now
+      dbSecretCache = getPouchSecret()
+      creds = dbSecretCache[groupId.substr(2)]
+      if (!creds) {
+        // user is not authorized
+        return
+      }
+    }
+    // confirm credentials work
+    await validateGroupCredentials({
+      groupId,
+      dbKey: creds.dbKey,
+    })
+
+    upsertReplication({
+      groupId,
+      dbKey: creds.dbKey,
+      dbPassword: creds.dbPassword,
+    })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+/**
  * one time replication to upsert a group to remote DB
  */
 // TODO: handle offline with a queue of pending one-off replications when the main replication
@@ -366,41 +427,94 @@ export const replicateSharedPage = async (pageIds: string[]) => {
   })
   if (_groups?.length) {
     for (const group of _groups) {
-      // wrapped in a try catch in case user is not authorized
-      try {
-        // first check if credentials exist
-        const gId = group._id
-        let dbSecretCache = getPouchSecret() || {}
-        let creds = dbSecretCache[gId.substr(2)]
-        if (!creds) {
-          // credentials are not in local storage
-          // creates new user credentials and adds them to local storage
-          await createDatabaseCredentials({
-            groupId: gId,
-            isPublic: group.public,
-          })
-          // credentials should be in local storage now
-          dbSecretCache = getPouchSecret()
-          creds = dbSecretCache[gId.substr(2)]
-          if (!creds) {
-            // user is not authorized
-            return
-          }
-        }
-        // confirm credentials work
-        await validateGroupCredentials({
-          groupId: group._id,
-          dbKey: creds.dbKey,
-        })
-
-        upsertReplication({
-          groupId: gId,
-          dbKey: creds.dbKey,
-          dbPassword: creds.dbPassword,
-        })
-      } catch (err) {
-        console.error(err)
-      }
+      replicateGroup({ groupId: group._id, isPublic: group.public })
     }
+  }
+}
+
+export const updateAndReplicateSharedDatabase = async ({
+  groupId,
+  isPublic,
+}: {
+  groupId: string
+  isPublic: boolean
+}) => {
+  // create or delete a database
+
+  await addOrRemoveCloudantGroupDatabase({
+    groupId: `g_${groupId}`,
+    isPublic,
+  })
+
+  if (isPublic) {
+    replicateGroup({
+      groupId: `g_${groupId}`,
+      isPublic: true,
+    })
+  }
+}
+
+/**
+ * crawl page and add group to all associated documents
+ */
+export const addPageDocumentToGroup = async ({
+  pageId,
+  group,
+}: {
+  group: Group
+  pageId: string
+}) => {
+  // add groupId to page document
+  await addPageToGroup({ pageId, groupId: `g_${group._id}` })
+  // get updated pageDoc
+  const _page: PageDoc | null = await findOne({
+    doctype: DocumentType.Page,
+    query: { _id: pageId },
+  })
+  if (_page) {
+    // add propagate sharedWithGroups property to all documents
+    await addGroupToDocumentsFromPage(_page)
+    // get group shared status
+    const { _id: groupId, public: isPublic } = group
+    // one time upsert to remote db
+    if (isPublic) {
+      replicateGroup({ groupId: `g_${groupId}`, isPublic })
+    }
+  }
+}
+
+/**
+ * resets a sharedDB if page was removed
+ */
+export const removePageFromGroup = async ({
+  page,
+  group,
+}: {
+  page: PageDoc | Page
+  group: Group
+}) => {
+  // compose list of id's that need deleting
+
+  // TODO: this should check for atomics as well
+  const _ids = [page._id]
+  page.blocks.forEach((b) => {
+    if (!isAtomicInlineType(b.type)) {
+      _ids.push(b._id)
+    }
+  })
+  await removeIdsFromSharedDb({
+    ids: _ids,
+    groupId: group._id,
+  })
+
+  const { public: isPublic, _id: groupId } = group
+  // remove group from all documents associated with pageId
+  await removeGroupFromPage({ pageId: page._id, groupId: `g_${group._id}` })
+
+  if (isPublic) {
+    replicateGroup({
+      groupId: `g_${groupId}`,
+      isPublic: true,
+    })
   }
 }

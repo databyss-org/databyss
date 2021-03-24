@@ -199,8 +199,8 @@ export const upsertImmediate = async ({
   doctype: DocumentType
   _id: string
   doc: any
-}) => {
-  await dbRef.current!.upsert(_id, (oldDoc) => {
+}) =>
+  dbRef.current!.upsert(_id, (oldDoc) => {
     const _doc = {
       ...oldDoc,
       ...addTimeStamp({ ...oldDoc, ...doc, doctype }),
@@ -209,7 +209,6 @@ export const upsertImmediate = async ({
     pouchDataValidation(_doc)
     return _doc
   })
-}
 
 export class QueueProcessor extends EventEmitter {
   // on(event: string, listener: Function): this

@@ -11,7 +11,7 @@ const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 
 export const getEditor = async (driver) => {
-  await sleep(500)
+  await sleep(1000)
   const el = await driver.wait(
     until.elementLocated(By.tagName('[contenteditable="true"]')),
     waitUntilTime,
@@ -29,7 +29,7 @@ export const getEditor = async (driver) => {
 }
 
 export const getElementsByTag = async (driver, tag) => {
-  await sleep(500)
+  await sleep(1000)
   let el = []
   try {
     el = await driver.wait(
@@ -49,7 +49,7 @@ export const getElementsByTag = async (driver, tag) => {
 }
 
 export const getElementByTag = async (driver, tag) => {
-  await sleep(500)
+  await sleep(1000)
   const el = await driver.wait(
     until.elementLocated(By.tagName(tag)),
     waitUntilTime,
@@ -62,6 +62,7 @@ export const getElementByTag = async (driver, tag) => {
 }
 
 export const logout = async (driver) => {
+  await sleep(1000)
   const accountDropdown = await getElementByTag(
     driver,
     '[data-test-element="account-menu"]'
@@ -137,6 +138,7 @@ export const singleHighlight = async (actions) => {
 }
 
 const navigationActionsBuilder = async (actions, key) => {
+  await sleep(SLEEP_TIME)
   await actions.sendKeys(key)
   await actions.perform()
   await actions.clear()
