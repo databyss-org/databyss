@@ -102,6 +102,7 @@ export const isSaved = async (driver) => {
     await getElementById(driver, 'complete')
   } catch (err) {
     if (!err.name !== 'StaleElementReferenceError') {
+      console.log(err)
       throw err
     }
   }
