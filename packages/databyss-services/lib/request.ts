@@ -60,7 +60,7 @@ export interface RequestOptions extends RequestInit {
 function request(uri, options: RequestOptions = {}) {
   const { timeout, responseAsJson, rawResponse, ..._options } = options
   const _controller = new AbortController()
-  const _timeoutDuration = timeout || parseInt(FETCH_TIMEOUT, 10)
+  const _timeoutDuration = timeout || FETCH_TIMEOUT
 
   const _timeoutId = setTimeout(() => {
     _controller.abort()
