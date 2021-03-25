@@ -681,6 +681,7 @@ const ContentEditable = ({
             const _index = state.selection.anchor.index
             const _stateBlock = state.blocks[_index]
             // set the block with a re-render
+
             setContent({
               selection: state.selection,
               operations: [

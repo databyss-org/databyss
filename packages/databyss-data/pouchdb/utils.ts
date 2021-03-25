@@ -112,7 +112,6 @@ export const getDocuments = async (
 ): Promise<{ [docId: string]: any | null }> => {
   const _options = { docs: ids.map((id) => ({ id })) }
   const _res = await dbRef.current?.bulkGet(_options)
-
   return _res!.results.reduce((accum, curr) => {
     const _doc: any = curr.docs[0]
     if (_doc.error) {

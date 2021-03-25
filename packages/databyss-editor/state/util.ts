@@ -556,7 +556,6 @@ export const convertInlineToAtomicBlocks = ({
   /*
     if flag `convertInlineToAtomic` is set, pull out text within range `inlineAtomicMenu`, look up in entityCache and set the markup with appropriate id and range
   */
-  let _pushNewEntity = false
 
   // get the markup data, function returns: offset, length, text
   const inlineMarkupData = getTextOffsetWithRange({
@@ -606,9 +605,6 @@ export const convertInlineToAtomicBlocks = ({
     if (_suggestion?.type === _atomicType) {
       _atomicId = _suggestion._id
       _atomicTextValue = `#${_suggestion.text.textValue}`
-    } else {
-      // set flag to new push atomic entity to appropriate provider
-      _pushNewEntity = true
     }
 
     // get value before offset
@@ -655,18 +651,14 @@ export const convertInlineToAtomicBlocks = ({
       focus: { index, offset: _caretOffest },
     }
 
-    // TODO: confirm this selection gets pushed upstream
     draft.selection = _nextSelection
-
-    if (_pushNewEntity) {
-      const _entity = {
-        type: _atomicType,
-        // remove atomic symbol
-        text: { textValue: _atomicTextValue.substring(1), ranges: [] },
-        _id: _atomicId,
-      }
-      draft.newEntities.push(_entity)
+    const _entity = {
+      type: _atomicType,
+      // remove atomic symbol
+      text: { textValue: _atomicTextValue.substring(1), ranges: [] },
+      _id: _atomicId,
     }
+    draft.newEntities.push(_entity)
   }
 }
 

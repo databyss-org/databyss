@@ -140,7 +140,7 @@ describe('page sharing', () => {
     await isAppInNotesSaved(driver)
 
     // allow the public page to replicate
-    await sleep(5000)
+    await sleep(10000)
     await isAppInNotesSaved(driver)
 
     // log user out to test links
