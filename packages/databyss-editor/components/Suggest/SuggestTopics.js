@@ -143,6 +143,7 @@ const SuggestTopics = ({
     if (state.selection._id) {
       selection._id = state.selection._id
     }
+
     setContent({
       selection,
       operations: [
