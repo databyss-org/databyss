@@ -14,6 +14,7 @@ import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/
 import { dbRef, REMOTE_CLOUDANT_URL } from '../db'
 import { isAtomicInlineType } from '../../../databyss-editor/lib/util'
 import { Page } from '../../../databyss-services/interfaces/Page'
+import { setGroupAction, setGroupPageAction, PageAction } from './utils'
 import {
   createDatabaseCredentials,
   validateGroupCredentials,
@@ -499,7 +500,8 @@ export const addPageDocumentToGroup = async ({
     const { _id: groupId, public: isPublic } = group
     // one time upsert to remote db
     if (isPublic) {
-      replicateGroup({ groupId: `g_${groupId}`, isPublic })
+      // push to queue
+      setGroupPageAction(groupId, _page._id, PageAction.ADD)
     }
   }
 }
@@ -523,6 +525,7 @@ export const removePageFromGroup = async ({
       _ids.push(b._id)
     }
   })
+
   await removeIdsFromSharedDb({
     ids: _ids,
     groupId: group._id,

@@ -27,6 +27,7 @@ import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import { checkNetwork } from '@databyss-org/services/lib/request'
 import { DocumentType } from './interfaces'
 import { searchText } from './utils'
+import { getGroupActionQ, processGroupActionQ } from './groups/utils'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
@@ -310,6 +311,10 @@ export const syncPouchDb = ({
             writesPending: 0,
           },
         })
+        // when replication has paused, sync group queues
+        processGroupActionQ()
+        console.log('PAUSED')
+        // for each page in the groupActionsQ
       }
     })
   ;(dbRef.current as PouchDB.Database).replicate
