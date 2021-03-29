@@ -1,23 +1,13 @@
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { run, ServerProcess } from '@databyss-org/scripts/lib'
 import { updateDesignDocs, initiateDatabases } from '@databyss-org/data/couchdb'
-import ServerProcess from '../../lib/ServerProcess'
-import { getEnv } from '../../lib/util'
 
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 
-interface JobArgs {
-  envName: string
-}
-
 class ResetCloudantInstance extends ServerProcess {
-  args: JobArgs
-
-  constructor(args: JobArgs) {
-    super()
-    this.args = args
-    this.env = getEnv(args.envName)
+  constructor(argv) {
+    super(argv, 'cloudant.reset-instance')
   }
-
   async run() {
     try {
       if (this.args.envName === 'production') {
@@ -47,3 +37,11 @@ class ResetCloudantInstance extends ServerProcess {
 }
 
 export default ResetCloudantInstance
+
+exports.command = 'reset-instance'
+exports.desc = 'Delete all databases on Cloudant and re-initialize'
+exports.builder = {}
+exports.handler = (argv) => {
+  const _job = new ResetCloudantInstance(argv)
+  run(_job)
+}

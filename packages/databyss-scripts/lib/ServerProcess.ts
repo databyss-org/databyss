@@ -1,12 +1,25 @@
+import ResetCloudantInstance from '../cmds/ResetCloudantInstance'
+import { EnvDict } from './util'
+
 const spawnd = require('spawnd')
 const EventEmitter = require('events')
 const { exec } = require('child_process')
 
+export interface ServerProcessArgs {
+  env: EnvDict
+  envName: string
+}
+
 class ServerProcess extends EventEmitter {
-  constructor() {
+  args
+  name: string
+
+  constructor(args: ServerProcessArgs, name: string) {
     super()
     this.exec = this.exec.bind(this)
     this.spawn = this.spawn.bind(this)
+    this.args = args
+    this.name = name
   }
   log(...msgs: any) {
     this.stdOut(...msgs)

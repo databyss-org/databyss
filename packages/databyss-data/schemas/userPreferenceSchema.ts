@@ -4,23 +4,6 @@ export const userPreferenceSchema: JSONSchema4 = {
   title: 'UserPreferences',
   type: 'object',
   properties: {
-    _rev: {
-      type: 'string',
-    },
-    _revisions: {
-      type: 'object',
-      properties: {
-        start: {
-          type: 'number',
-        },
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
     email: {
       type: 'string',
     },
@@ -48,6 +31,12 @@ export const userPreferenceSchema: JSONSchema4 = {
             type: 'string',
           },
         },
+      },
+    },
+    messagesShown: {
+      type: 'array',
+      items: {
+        type: 'string',
       },
     },
   },
