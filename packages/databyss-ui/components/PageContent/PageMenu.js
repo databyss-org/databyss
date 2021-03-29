@@ -146,7 +146,7 @@ const PageMenu = () => {
     })
   }
 
-  if (_page.archive) {
+  if (_page?.archive) {
     // add restore option
     menuItems.push({
       icon: <PageSvg />,

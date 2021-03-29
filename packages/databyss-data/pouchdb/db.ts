@@ -313,8 +313,6 @@ export const syncPouchDb = ({
         })
         // when replication has paused, sync group queues
         processGroupActionQ()
-        console.log('PAUSED')
-        // for each page in the groupActionsQ
       }
     })
   ;(dbRef.current as PouchDB.Database).replicate

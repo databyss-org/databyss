@@ -14,7 +14,12 @@ import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/
 import { dbRef, REMOTE_CLOUDANT_URL } from '../db'
 import { isAtomicInlineType } from '../../../databyss-editor/lib/util'
 import { Page } from '../../../databyss-services/interfaces/Page'
-import { setGroupAction, setGroupPageAction, PageAction } from './utils'
+import {
+  setGroupAction,
+  setGroupPageAction,
+  PageAction,
+  GroupAction,
+} from './utils'
 import {
   createDatabaseCredentials,
   validateGroupCredentials,
@@ -299,10 +304,7 @@ export const setGroup = async (group: Group, pageId?: string) => {
 
   // if group settings were changed, propegate changes to remote db
   if (group.public) {
-    replicateGroup({
-      groupId: `g_${group._id}`,
-      isPublic: true,
-    })
+    setGroupAction(group._id, GroupAction.SHARED)
   }
 }
 

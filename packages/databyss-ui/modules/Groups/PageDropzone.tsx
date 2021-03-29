@@ -25,7 +25,7 @@ import { addPageDocumentToGroup } from '@databyss-org/data/pouchdb/groups'
 import {
   setGroupPageAction,
   PageAction,
-} from '../../../databyss-data/pouchdb/groups/utils'
+} from '@databyss-org/data/pouchdb/groups/utils'
 
 interface PageDropzoneProps extends ScrollViewProps {
   value?: string[]
@@ -66,8 +66,6 @@ export const PageDropzone = ({
     const _pageToRemove = pages[_id]
 
     setGroupPageAction(group._id, _pageToRemove._id, PageAction.REMOVE)
-
-    // removePageFromGroup({ page: _pageToRemove, group })
 
     onChange!(value!.filter((p) => p !== _id))
   }
