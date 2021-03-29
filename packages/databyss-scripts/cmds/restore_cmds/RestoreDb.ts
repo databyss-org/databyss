@@ -1,16 +1,16 @@
 import fs from 'fs'
-import { backup } from '@cloudant/couchbackup'
+import { restore } from '@cloudant/couchbackup'
 import { cloudantUrl, run, ServerProcess } from '@databyss-org/scripts/lib'
 
-export class BackupDb extends ServerProcess {
+export class RestoreDb extends ServerProcess {
   constructor(argv) {
-    super(argv, 'backup.single-database')
+    super(argv, 'restore.single-database')
   }
-  run() {
+  async run() {
     return new Promise((resolve, reject) => {
-      backup(
+      restore(
+        this.args.file ? fs.createReadStream(this.args.file) : process.stdout,
         `${cloudantUrl(this.args.env)}/${this.args.dbName}`,
-        this.args.file ? fs.createWriteStream(this.args.file) : process.stdout,
         { parallelism: 2 },
         (err, data) => {
           if (err) {
@@ -26,18 +26,18 @@ export class BackupDb extends ServerProcess {
 }
 
 exports.command = 'single-database <dbName> [options]'
-exports.desc = 'Backup data from a single couch db'
+exports.desc = 'Restore data to a single couch db'
 exports.builder = (yargs) =>
   yargs
-    .describe('f', 'Output to a file')
+    .describe('f', 'Input from a file')
     .alias('f', 'file')
     .nargs('f', 1)
     .example(
       '$0 users -f users.json',
-      'Backup "users" database to "users.json"'
+      'Restore "users" database from "users.json"'
     )
-    .example('$0 users', 'Stream backup of "users" database to stdout')
+    .example('$0 users', 'Stream restore of "users" database from stdin')
 exports.handler = (argv) => {
-  const _job = new BackupDb(argv)
+  const _job = new RestoreDb(argv)
   run(_job)
 }

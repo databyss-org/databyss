@@ -43,7 +43,7 @@ router.post(
   '/code',
   wrap(async (req, res) => {
     const { code, email } = req.body
-    // const login = await cloudant.db.use('login')
+    // const login = await cloudant.current.db.use('login')
 
     const _selector = {
       selector: {

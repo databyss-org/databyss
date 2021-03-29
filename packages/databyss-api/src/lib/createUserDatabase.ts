@@ -1,4 +1,3 @@
-import { Users, Groups } from '@databyss-org/data/couchdb'
 import { User, Role } from '@databyss-org/data/interfaces'
 import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
 import { uidlc } from '@databyss-org/data/lib/uid'
@@ -42,7 +41,7 @@ export const initializeNewPage = async ({
   pageId: string
 }) => {
   // get user group
-  const groupDb = await cloudant.db.use(`g_${groupId}`)
+  const groupDb = await cloudant.current.db.use(`g_${groupId}`)
   const _page: any = new Page(pageId)
   // upsert selection
   await groupDb.upsert(_page.selection._id, () => ({
@@ -77,7 +76,7 @@ export const createGroupId = async ({
 }) => {
   // TODO: fix this so its not 'any'
   const _id: string = groupId || uidlc()
-  const Groups: any = await cloudant.db.use('groups')
+  const Groups: any = await cloudant.current.db.use('groups')
   try {
     await Groups.insert({
       // TODO: this should be "belongsToUser" for consistency
@@ -103,7 +102,7 @@ export const createGroupId = async ({
 deletes group id from cloudant Groups database, the user should already be verified to have access to this database
 */
 export const deleteGroupId = async ({ groupId }) => {
-  const Groups = await cloudant.db.use('groups')
+  const Groups = await cloudant.current.db.use('groups')
   const _doc = await Groups.get(groupId)
   if (_doc) {
     const latestRev = _doc._rev
@@ -117,17 +116,17 @@ export const createGroupDatabase = async (
   // database are not allowed to start with a number
   let _db
   try {
-    await cloudant.db.get(id)
-    _db = await cloudant.db.use<any>(id)
+    await cloudant.current.db.get(id)
+    _db = await cloudant.current.db.use<any>(id)
 
     return _db
   } catch (err) {
     if (err.error !== 'not_found') {
       throw err
     }
-    await cloudant.db.create(id)
+    await cloudant.current.db.create(id)
     // add design docs to sever
-    _db = await cloudant.db.use<any>(id)
+    _db = await cloudant.current.db.use<any>(id)
     await updateDesignDoc({ db: _db })
 
     return _db
@@ -137,7 +136,7 @@ export const createGroupDatabase = async (
 const getSecurity = (groupId: string): Promise<{ [key: string]: string[] }> =>
   new Promise((resolve, reject) => {
     // get group db
-    const groupDb: any = cloudant.db.use(groupId)
+    const groupDb: any = cloudant.current.db.use(groupId)
     let security: { [key: string]: string[] } = {}
 
     // get security object if it exists
@@ -173,7 +172,7 @@ export const setSecurity = ({
       // gets security dictionary
       const security = await getSecurity(groupId)
       // TODO: use group schema to create typescript interface
-      const groupDb: any = cloudant.db.use(groupId)
+      const groupDb: any = cloudant.current.db.use(groupId)
 
       // define permissions for new credentials
 
@@ -277,7 +276,7 @@ export const createUserDatabaseCredentials = async (
     }))
 
     // add defaultPageId to Userdb
-    await Users.upsert(_userPreferences.userId, (oldDoc) => ({
+    await cloudant.models.Users.upsert(_userPreferences.userId, (oldDoc) => ({
       ...oldDoc,
       defaultGroupId: _userPreferences.belongsToGroup,
     }))

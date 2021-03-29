@@ -2,10 +2,10 @@ import ora from 'ora'
 import ServerProcess from './ServerProcess'
 
 export function run(job: ServerProcess) {
-  const spinner = ora(job.name)
-  job.on('end', () => {
+  const spinner = ora(`[${job.name}] `)
+  job.on('end', (success) => {
     spinner.stop()
-    process.exit()
+    process.exit(success ? 0 : 1)
   })
   job.on('stdout', (msg) => {
     console.log(msg)
@@ -14,5 +14,11 @@ export function run(job: ServerProcess) {
     console.error(msg)
   })
   spinner.start()
-  job.run()
+  job
+    .run()
+    .then(() => process.exit())
+    .catch((err) => {
+      process.exit(1)
+      console.error(err)
+    })
 }
