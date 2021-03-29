@@ -42,9 +42,7 @@ export function setGroupActionQ(_d) {
 }
 
 export function setGroupAction(groupId: string, action: GroupAction) {
-  console.log('SET GROUP ACTIONS', groupId, action)
   const _dict = getGroupActionQ()
-  console.log('DICTIONARY', _dict)
   if (!_dict[groupId]) {
     _dict[groupId] = {}
   }
@@ -77,6 +75,7 @@ export function setGroupPageAction(
     _dict[groupId].pages![pageId] = action
   }
   setGroupActionQ(_dict)
+
   return _dict
 }
 
@@ -85,6 +84,7 @@ export function removeGroupAction(groupId: string, pageId?: string) {
   if (pageId && _dict[groupId].pages) {
     // just remove the page action
     delete _dict[groupId].pages?.[pageId]
+
     // cleanup group if we can
     if (
       !_dict[groupId].action &&
@@ -98,6 +98,7 @@ export function removeGroupAction(groupId: string, pageId?: string) {
     delete _dict[groupId]
   }
   setGroupActionQ(_dict)
+
   return _dict
 }
 
@@ -105,12 +106,11 @@ export async function processGroupActionQ() {
   const _q = getGroupActionQ
   for (const groupId of Object.keys(_q())) {
     const groupPayload: QueuePayload = _q()[groupId]
-    console.log(groupPayload)
 
     const _groupAction = groupPayload?.action
     if (_groupAction) {
+      removeGroupAction(groupId)
       try {
-        removeGroupAction(groupId)
         await updateAndReplicateSharedDatabase({
           groupId,
           isPublic: GroupAction.SHARED === _groupAction,
@@ -122,15 +122,16 @@ export async function processGroupActionQ() {
     }
     // check for add/remove action for page
     if (groupPayload.pages) {
-      for (const pageId of Object.values(groupPayload.pages)) {
+      for (const pageId of Object.keys(groupPayload.pages)) {
         const _pageAction = groupPayload.pages[pageId]
+
         // remove the action from the queue
         removeGroupAction(groupId, pageId)
         try {
           // perform the action
           if (_pageAction === PageAction.REMOVE) {
             // finishing removing page (and related entities) from group
-            console.log('REMOVE THIS PAGE', pageId)
+
             const page: PageDoc | null = await findOne({
               doctype: DocumentType.Page,
               query: { _id: pageId },
@@ -157,64 +158,3 @@ export async function processGroupActionQ() {
     }
   }
 }
-
-// user adds page 'iu2489hrkjhd' to group 'kjf98y234hri'
-// group.pages.push('iu2489hrkjhd')
-// upsert('iu2489hrkjhd', group)
-// page.sharedWithGroups.push('kjf98y234hri')
-// upsert('iu2489hrkjhd', page)
-// record action or nullify previous action
-// setGroupAction('iu2489hrkjhd', 'kjf98y234hri', 'ADD')
-// process the action during the replication 'pause' event
-
-//     .on('pause', () => {
-//     // for each page in the groupActionsQ
-//     const _q = getGroupActionQ
-//     for (const groupId of Object.keys(_q())) {
-//       try {
-//         if (_q()[groupId].action) {
-//           const _groupAction = _q()[groupId].action
-//           removeGroupAction(groupId)
-//           await replicateSharedGroup(groupId, _q()[groupId].action === 'SHARED')
-//         }
-//       } catch (err) {
-//         console.log('groupActionQueue error', err)
-//         setGroupAction(groupId, action)
-//       }
-//       // check for add/remove action for page
-//       for (const pageId of Object.values(_q()[groupId].pages)) {
-//         const _pageAction = _q()[groupId].pages[pageId]
-//         // remove the action from the queue
-//         removeGroupAction(groupId, pageId)
-//         try {
-//           // perform the action
-//           if (_action === 'REMOVE') {
-//             // finishing removing page (and related entities) from group
-//             await replicateRemovePageFromGroup(groupId, pageId)
-//           }
-//           if (_action === 'ADD') {
-//             await upsertReplication(groupId)
-//           }
-//         } catch (err) {
-//           console.log('groupActionQueue error', err)
-//           setGroupAction(groupId, pageId, _action)
-//         }
-//       }
-//     }
-//   })
-
-//   {
-//     //groupId
-//     'kjf98y234hri': {
-//       action: 'SHARED',
-//       pages: {
-//         //pageId
-//         'iu2489hrkjhd': 'REMOVE',
-//         'adklfj98weyu': 'ADD'
-//       }
-//     },
-//     // groupId (went from public -> not public)
-//     'auu89u93j3s3': {
-//       action: 'UNSHARED'
-//     }
-//   }
