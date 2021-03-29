@@ -27,7 +27,7 @@ import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import { checkNetwork } from '@databyss-org/services/lib/request'
 import { DocumentType } from './interfaces'
 import { searchText } from './utils'
-import { getGroupActionQ, processGroupActionQ } from './groups/utils'
+import { processGroupActionQ } from './groups/utils'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 

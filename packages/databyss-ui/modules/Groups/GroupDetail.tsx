@@ -14,7 +14,6 @@ import {
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { debounce } from 'lodash'
-import { updateAndReplicateSharedDatabase } from '@databyss-org/data/pouchdb/groups/index'
 import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
