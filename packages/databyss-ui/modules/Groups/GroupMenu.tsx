@@ -43,7 +43,7 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
     await deleteCollection(groupId)
     navigate(`/`, { hasAccount: true })
     // window does not refresh on navigation change
-    // window.location.reload()
+    window.location.reload()
   }
 
   const menuItems = [

@@ -552,7 +552,6 @@ export const deleteCollection = async (groupId: string) => {
     query: { _id: groupId },
   })
 
-  console.log('GROUP TO BE DELETED', _group)
   if (_group) {
     const { public: isPublic, _id: groupId } = _group
 
@@ -573,7 +572,7 @@ export const deleteCollection = async (groupId: string) => {
     if (isPublic) {
       // TODO: this needs to be merged with the current offline group PR
       // delete group from cloudant
-      updateAndReplicateSharedDatabase({
+      await updateAndReplicateSharedDatabase({
         groupId,
         isPublic: false,
       })
