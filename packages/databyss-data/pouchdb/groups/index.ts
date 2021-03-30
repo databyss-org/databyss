@@ -551,6 +551,8 @@ export const deleteCollection = async (groupId: string) => {
     doctype: DocumentType.Group,
     query: { _id: groupId },
   })
+
+  console.log('GROUP TO BE DELETED', _group)
   if (_group) {
     const { public: isPublic, _id: groupId } = _group
 
