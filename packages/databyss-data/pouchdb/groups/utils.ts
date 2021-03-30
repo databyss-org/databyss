@@ -66,7 +66,6 @@ export function setGroupPageAction(
   }
   // nullify previous action if it's different
   if (
-    // _dict[groupId].pages &&
     _dict![groupId].pages?.[pageId] &&
     _dict[groupId].pages?.[pageId] !== action
   ) {
@@ -75,7 +74,7 @@ export function setGroupPageAction(
     _dict[groupId].pages![pageId] = action
   }
   setGroupActionQ(_dict)
-
+  console.log('GROUP ACTION', _dict)
   return _dict
 }
 
@@ -131,7 +130,6 @@ export async function processGroupActionQ() {
           // perform the action
           if (_pageAction === PageAction.REMOVE) {
             // finishing removing page (and related entities) from group
-
             const page: PageDoc | null = await findOne({
               doctype: DocumentType.Page,
               query: { _id: pageId },
@@ -140,6 +138,10 @@ export async function processGroupActionQ() {
               doctype: DocumentType.Group,
               query: { _id: groupId },
             })
+            console.log('GROUP ID', groupId)
+            console.log('PAGE ID', pageId)
+            console.log('REMOVE PAGE', page)
+            console.log('REMOVE GROUP', group)
             if (page && group) {
               await removePageFromGroup({
                 page,
