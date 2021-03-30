@@ -81,15 +81,15 @@ export function setGroupPageAction(
 
 export function removeGroupAction(groupId: string, pageId?: string) {
   const _dict = getGroupActionQ()
-  if (pageId && _dict[groupId].pages) {
+  if (pageId && _dict[groupId]?.pages) {
     // just remove the page action
     delete _dict[groupId].pages?.[pageId]
 
     // cleanup group if we can
     if (
-      !_dict[groupId].action &&
+      !_dict[groupId]?.action &&
       _dict[groupId].pages &&
-      Object.keys(_dict[groupId].pages!).length === 0
+      Object.keys(_dict[groupId]?.pages!).length === 0
     ) {
       delete _dict[groupId]
     }
