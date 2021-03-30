@@ -20,6 +20,7 @@ import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
 import { copyToClipboard } from '../../components/PageContent/PageMenu'
+import GroupMenu from './GroupMenu'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -130,9 +131,14 @@ export const GroupDetail = () => {
   if (!groupsRes.isSuccess || !group) {
     return <LoadingFallback queryObserver={groupsRes} />
   }
+
   return (
     <>
-      <StickyHeader path={['Collections', group.name!]} />
+      <StickyHeader
+        path={['Collections', group.name!]}
+        contextMenu={<GroupMenu groupId={group._id} />}
+      />
+
       <ScrollView
         p="medium"
         pt="small"
