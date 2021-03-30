@@ -14,12 +14,15 @@ import {
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { debounce } from 'lodash'
-import { updateAndReplicateSharedDatabase } from '@databyss-org/data/pouchdb/groups/index'
 import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
 import { copyToClipboard } from '../../components/PageContent/PageMenu'
+import {
+  setGroupAction,
+  GroupAction,
+} from '../../../databyss-data/pouchdb/groups/utils'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -66,10 +69,10 @@ export const GroupFields = ({
     (_values: Group) => {
       // if change occured in group public status
       if (groupValue.current.public !== _values.public) {
-        updateAndReplicateSharedDatabase({
-          groupId: group._id,
-          isPublic: _values.public!,
-        })
+        setGroupAction(
+          group._id,
+          _values.public ? GroupAction.SHARED : GroupAction.UNSHARED
+        )
       }
       // update internal state
       setValues(_values)
