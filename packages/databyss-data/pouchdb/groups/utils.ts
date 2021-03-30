@@ -74,7 +74,6 @@ export function setGroupPageAction(
     _dict[groupId].pages![pageId] = action
   }
   setGroupActionQ(_dict)
-  console.log('GROUP ACTION', _dict)
   return _dict
 }
 
@@ -138,10 +137,6 @@ export async function processGroupActionQ() {
               doctype: DocumentType.Group,
               query: { _id: groupId },
             })
-            console.log('GROUP ID', groupId)
-            console.log('PAGE ID', pageId)
-            console.log('REMOVE PAGE', page)
-            console.log('REMOVE GROUP', group)
             if (page && group) {
               await removePageFromGroup({
                 page,
