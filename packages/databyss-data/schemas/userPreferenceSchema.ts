@@ -33,10 +33,10 @@ export const userPreferenceSchema: JSONSchema4 = {
         },
       },
     },
-    messagesShown: {
+    notifications: {
       type: 'array',
       items: {
-        type: 'string',
+        $ref: 'notification',
       },
     },
   },

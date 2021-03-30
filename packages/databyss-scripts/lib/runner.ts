@@ -18,7 +18,7 @@ export function run(job: ServerProcess) {
     .run()
     .then(() => process.exit())
     .catch((err) => {
-      process.exit(1)
       console.error(err)
+      process.exit(1)
     })
 }

@@ -1,5 +1,5 @@
 import express from 'express'
-import { Logins } from '@databyss-org/data/couchdb'
+import { cloudant } from '@databyss-org/data/couchdb'
 import auth from '../../middleware/auth'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
@@ -52,15 +52,15 @@ router.post(
       },
     }
 
-    const query = await Logins.find(_selector)
+    const query = await cloudant.models.Logins.find(_selector)
 
     if (query.docs.length) {
       const _login = query.docs[0]
 
       if (_login.date >= Date.now() - 36000000) {
         const token = _login.token
-        const _res = await Logins.get(_login._id, _login._rev)
-        await Logins.destroy(_res._id, _res._rev)
+        const _res = await cloudant.models.Logins.get(_login._id, _login._rev)
+        await cloudant.models.Logins.destroy(_res._id, _res._rev)
         const session = await getSessionFromToken(token)
 
         // give user credentials, if default db does not exist for user, create one

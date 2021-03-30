@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
 import { uid } from '@databyss-org/data/lib/uid'
-import { Users, Logins } from '@databyss-org/data/couchdb'
+import { cloudant } from '@databyss-org/data/couchdb'
 import { Base64 } from 'js-base64'
 import { send } from '../../lib/postmark'
 import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
@@ -56,7 +56,7 @@ router.post(
           googleId: { $eq: sub },
         },
       }
-      let user = (await Users.find(_selector)).docs[0]
+      let user = (await cloudant.models.Users.find(_selector)).docs[0]
 
       if (!user) {
         user = {
@@ -65,7 +65,7 @@ router.post(
           email,
           googleId: sub,
         }
-        await Users.insert(user)
+        await cloudant.models.Users.insert(user)
       }
 
       const session = await getSessionFromUserId(user._id)
@@ -102,13 +102,13 @@ router.post(
       },
     }
 
-    const user = await Users.find(_selector)
+    const user = await cloudant.models.Users.find(_selector)
     let _userId
     if (!user.docs.length) {
       _userId = uid()
       // Creates new user
       emailExists = false
-      await Users.insert({
+      await cloudant.models.Users.insert({
         _id: _userId,
         email,
       })
@@ -158,7 +158,7 @@ router.post(
       const decoded = jwt.verify(authToken, process.env.JWT_SECRET)
       if (decoded) {
         //
-        let user = await Users.get(decoded.user.id)
+        let user = await cloudant.models.Users.get(decoded.user.id)
         if (user) {
           user = { email: user.email }
         }

@@ -209,6 +209,18 @@ export const upsertImmediate = async ({
     return _doc
   })
 
+export const upsertUserPreferences = async (
+  cb: PouchDB.UpsertDiffCallback<UserPreference>
+): Promise<PouchDB.UpsertResponse> =>
+  dbRef.current!.upsert('user_preference', (oldDoc) => {
+    const _doc = addTimeStamp({
+      doctype: DocumentType.UserPreferences,
+      ...cb(oldDoc),
+    })
+    pouchDataValidation(_doc)
+    return _doc
+  })
+
 export class QueueProcessor extends EventEmitter {
   // on(event: string, listener: Function): this
   // emit(event: string): void

@@ -165,7 +165,7 @@ export const setSecurity = ({
       groupId: '',
       role: Role.GroupAdmin,
     }
-    cloudant.generate_api_key(async (err, api) => {
+    cloudant.current.generate_api_key(async (err, api) => {
       if (err) {
         reject(err)
       }
@@ -202,17 +202,20 @@ const addSessionToGroup = async (
   userId: string,
   credentials: CredentialResponse
 ) => {
-  const _res = await Groups.upsert(credentials.groupId, (oldDoc: any) => {
-    const _sessions = oldDoc.sessions || []
-    _sessions.push({
-      userId,
-      clientInfo: 'get client info',
-      // dbKey: credentials.dbKey,
-      lastLoginAt: Date.now(),
-      role: credentials.role,
-    })
-    return { ...oldDoc, sessions: _sessions }
-  })
+  const _res = await cloudant.models.Groups.upsert(
+    credentials.groupId,
+    (oldDoc: any) => {
+      const _sessions = oldDoc.sessions || []
+      _sessions.push({
+        userId,
+        clientInfo: 'get client info',
+        // dbKey: credentials.dbKey,
+        lastLoginAt: Date.now(),
+        role: credentials.role,
+      })
+      return { ...oldDoc, sessions: _sessions }
+    }
+  )
   return _res
 }
 

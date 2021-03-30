@@ -15,6 +15,7 @@ import {
   pouchDocSchema,
   blockSchema,
   userPreferenceSchema,
+  notificationSchema,
 } from '@databyss-org/data/schemas'
 import {
   getPouchSecret,
@@ -364,6 +365,7 @@ export const pouchDataValidation = (data) => {
   tv4.addSchema('text', textSchema)
   tv4.addSchema('pouchDb', pouchDocSchema)
   tv4.addSchema('blockSchema', blockSchema)
+  tv4.addSchema('notification', notificationSchema)
 
   if (data._id.includes('design/')) {
     return

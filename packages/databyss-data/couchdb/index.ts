@@ -1,1 +1,2 @@
-export { updateDesignDocs, initiateDatabases } from './util'
+export { updateDesignDocs, initiateDatabases, updateDesignDoc } from './util'
+export { cloudant } from './cloudant'
