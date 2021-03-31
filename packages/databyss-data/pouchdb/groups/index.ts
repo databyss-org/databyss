@@ -412,9 +412,7 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     })
   } else {
     // if page is removed from sharing
-
     // delete group from pouchDb
-
     await upsertImmediate({
       doctype: DocumentType.Group,
       _id: _data._id,
@@ -542,5 +540,39 @@ export const removePageFromGroup = async ({
       groupId: `g_${groupId}`,
       isPublic: true,
     })
+  }
+}
+
+export const removeAllGroupsFromPage = async (page: PageDoc & Page) => {
+  if (page?.sharedWithGroups?.length) {
+    for (const groupId of page.sharedWithGroups) {
+      const _prefix = groupId.substring(0, 2)
+      // is shared page
+      if (_prefix === 'p_') {
+        console.log('is shared page', groupId)
+      }
+      // is in shared group
+      if (_prefix === 'g_') {
+        const _groupId = groupId.substring(2)
+
+        // remove page from local groupId
+        const _groupDocument: Group | null = await findOne({
+          doctype: DocumentType.Group,
+          query: { _id: _groupId },
+        })
+        if (_groupDocument) {
+          upsertImmediate({
+            doctype: DocumentType.Group,
+            _id: _groupId,
+            doc: {
+              ..._groupDocument,
+              pages: _groupDocument.pages.filter((p) => p !== page._id),
+            },
+          })
+        }
+        // remove group from page documents
+        setGroupPageAction(_groupId, page._id, PageAction.REMOVE)
+      }
+    }
   }
 }
