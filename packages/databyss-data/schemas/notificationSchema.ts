@@ -16,7 +16,13 @@ export const notificationSchema: JSONSchema4 = {
     href: {
       type: 'string',
     },
+    targetVersion: {
+      type: 'string',
+    },
     createdAt: {
+      type: 'number',
+    },
+    viewedAt: {
       type: 'number',
     },
   },

@@ -32,16 +32,18 @@ export interface UserSession {
 }
 
 export enum NotificationType {
-  Dialog = 'DIALIOG',
+  Dialog = 'DIALOG',
+  Sticky = 'STICKY',
 }
 
 export interface Notification {
   id: string
   messageHtml: string
   type: NotificationType
-  href?: string
   createdAt: number
-  viewedAt: number
+  targetVersion?: string
+  href?: string
+  viewedAt?: number
 }
 
 export interface UserPreference {
@@ -51,5 +53,5 @@ export interface UserPreference {
   belongsToGroup: string
   groups?: Array<UserGroup>
   createdAt: number
-  notifications: Notification[]
+  notifications?: Notification[]
 }

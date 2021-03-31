@@ -17,6 +17,7 @@ import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
+import HelpSvg from '@databyss-org/ui/assets/help.svg'
 // import { saveGroup } from '@databyss-org/services/groups'
 // import { Group } from '@databyss-org/services/interfaces'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
@@ -167,20 +168,37 @@ const PageMenu = () => {
     })
   }
 
+  menuItems.push({ separator: true })
+
+  menuItems.push({
+    icon: <HelpSvg />,
+    label: 'Help...',
+    href: '/pg14wtokooze8v/pages/0ifomglhsu17jp',
+    target: '_blank',
+    actionType: 'help',
+    light: true,
+    // TODO: detect platform and render correct modifier key
+    // shortcut: 'Ctrl + Del',
+  })
+
   const togglePublicPage = () => {
     setPagePublic(params, !isPagePublic)
     setIsPagePublic(!isPagePublic)
   }
 
   const DropdownList = () =>
-    menuItems.map((menuItem) => (
-      <DropdownListItem
-        {...menuItem}
-        action={menuItem.actionType}
-        onPress={() => menuItem.action()}
-        key={menuItem.label}
-      />
-    ))
+    menuItems.map((menuItem) =>
+      menuItem.separator ? (
+        <Separator />
+      ) : (
+        <DropdownListItem
+          {...menuItem}
+          action={menuItem.actionType}
+          onPress={() => (menuItem.action ? menuItem.action() : null)}
+          key={menuItem.label}
+        />
+      )
+    )
 
   useEffect(() => {
     if (showCopiedCheck && !showMenu) {
@@ -252,7 +270,6 @@ const PageMenu = () => {
   //             <DropdownListItem
   //               key={g._id}
   //               mx="small"
-  //               px="small"
   //               justifyContent="center"
   //               label={g.name}
   //               // value={isPagePublic}
@@ -277,7 +294,6 @@ const PageMenu = () => {
   //           <DropdownListItem
   //             key={g._id}
   //             mx="small"
-  //             px="small"
   //             justifyContent="center"
   //             label={g.name}
   //             // value={isPagePublic}
@@ -288,7 +304,6 @@ const PageMenu = () => {
   //         <DropdownListItem
   //           key="new-collection"
   //           mx="small"
-  //           px="small"
   //           justifyContent="center"
   //           label="New collection..."
   //           // value={isPagePublic}
@@ -334,7 +349,6 @@ const PageMenu = () => {
           >
             <DropdownListItem
               height={pxUnits(34)}
-              px="small"
               justifyContent="center"
               label={isPagePublic ? 'Page is public' : 'Make page public '}
               value={isPagePublic}
@@ -344,7 +358,7 @@ const PageMenu = () => {
             />
             {isPagePublic ? (
               <>
-                <Separator />
+                <Separator secondary />
                 {publicLinkItem}
               </>
             ) : null}
@@ -369,7 +383,6 @@ const PageMenu = () => {
                 <DropdownListItem
                   key="new-collection"
                   mx="small"
-                  px="small"
                   justifyContent="center"
                   label="New collection..."
                   // value={isPagePublic}

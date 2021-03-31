@@ -291,12 +291,6 @@ class NotifyProvider extends React.Component {
     this.notify(message, null, true)
   }
 
-  notifyOnce = (message, messageId) => {
-    if (localStorage.getItem(`${messageId}_shown`)) {
-      return
-    }
-  }
-
   render() {
     const { dialog, sticky, isOnline } = this.state
     const errorConfirmButtons = [

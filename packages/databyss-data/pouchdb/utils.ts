@@ -210,7 +210,7 @@ export const upsertImmediate = async ({
   })
 
 export const upsertUserPreferences = async (
-  cb: PouchDB.UpsertDiffCallback<UserPreference>
+  cb: PouchDB.UpsertDiffCallback<Partial<UserPreference>>
 ): Promise<PouchDB.UpsertResponse> =>
   dbRef.current!.upsert('user_preference', (oldDoc) => {
     const _doc = addTimeStamp({

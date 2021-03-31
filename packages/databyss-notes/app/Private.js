@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Router } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
-import { SearchProvider } from '@databyss-org/ui/hooks'
+import { SearchProvider, UserPreferencesProvider } from '@databyss-org/ui/hooks'
 import {
   Sidebar,
   useNavigationContext,
@@ -69,11 +69,13 @@ const NotFoundRedirect = () => {
 
 const Providers = ({ children }) => (
   <QueryClientProvider client={queryClient}>
-    <SearchProvider>
-      <SourceProvider>
-        <GestureProvider>{children}</GestureProvider>
-      </SourceProvider>
-    </SearchProvider>
+    <UserPreferencesProvider>
+      <SearchProvider>
+        <SourceProvider>
+          <GestureProvider>{children}</GestureProvider>
+        </SourceProvider>
+      </SearchProvider>
+    </UserPreferencesProvider>
     {/* <ReactQueryDevtools initialIsOpen={false} /> */}
   </QueryClientProvider>
 )
