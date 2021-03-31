@@ -32,7 +32,7 @@ export const UserPreferencesProvider = ({ children }) => {
     const _notification = _prefs.notifications?.find((_n) => _n.id === id)
     if (!_notification) {
       console.error('Notification not found', id)
-      return _prefs
+      return
     }
     _notification.viewedAt = Date.now()
     setUserPreferences(_prefs)
