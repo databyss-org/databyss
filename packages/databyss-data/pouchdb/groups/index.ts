@@ -15,6 +15,12 @@ import { dbRef, REMOTE_CLOUDANT_URL } from '../db'
 import { isAtomicInlineType } from '../../../databyss-editor/lib/util'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import {
+  setGroupAction,
+  setGroupPageAction,
+  PageAction,
+  GroupAction,
+} from './utils'
+import {
   createDatabaseCredentials,
   validateGroupCredentials,
 } from '../../../databyss-services/editorPage/index'
@@ -92,6 +98,7 @@ export const removeGroupsFromDocument = async (
   const _sharedWithGroups = document.sharedWithGroups.filter(
     (g) => !groupIds.includes(g)
   )
+
   // if elements were removed, update document
   if (document.sharedWithGroups.length !== _sharedWithGroups.length) {
     document.sharedWithGroups = _sharedWithGroups
@@ -298,10 +305,7 @@ export const setGroup = async (group: Group, pageId?: string) => {
 
   // if group settings were changed, propegate changes to remote db
   if (group.public) {
-    replicateGroup({
-      groupId: `g_${group._id}`,
-      isPublic: true,
-    })
+    setGroupAction(group._id, GroupAction.SHARED)
   }
 }
 
@@ -320,6 +324,7 @@ export const removeGroupFromPage = async ({
     doctype: DocumentType.Page,
     query: { _id: pageId },
   })
+
   if (_page?.sharedWithGroups) {
     // removes groupId from sharedWithGroups array
     await removeGroupsFromDocument([groupId], _page)
@@ -499,7 +504,8 @@ export const addPageDocumentToGroup = async ({
     const { _id: groupId, public: isPublic } = group
     // one time upsert to remote db
     if (isPublic) {
-      replicateGroup({ groupId: `g_${groupId}`, isPublic })
+      // push to queue
+      setGroupPageAction(groupId, _page._id, PageAction.ADD)
     }
   }
 }
@@ -523,6 +529,7 @@ export const removePageFromGroup = async ({
       _ids.push(b._id)
     }
   })
+
   await removeIdsFromSharedDb({
     ids: _ids,
     groupId: group._id,
@@ -537,5 +544,39 @@ export const removePageFromGroup = async ({
       groupId: `g_${groupId}`,
       isPublic: true,
     })
+  }
+}
+
+/**
+ * deletes a collection
+ */
+export const deleteCollection = async (groupId: string) => {
+  // first remove the group from all associated documents
+  const _group: Group | null = await findOne({
+    doctype: DocumentType.Group,
+    query: { _id: groupId },
+  })
+
+  if (_group) {
+    const { public: isPublic, _id: groupId } = _group
+
+    // get all pages group is associated with
+    const _pageIds = _group.pages
+    for (const pageId of _pageIds) {
+      // remove group from all documents associated with pageId
+      await removeGroupFromPage({ pageId, groupId: `g_${groupId}` })
+    }
+
+    // delete group locally
+    await upsertImmediate({
+      doctype: DocumentType.Group,
+      _id: groupId,
+      doc: { ..._group, _deleted: true },
+    })
+
+    if (isPublic) {
+      // delete group from cloudant
+      setGroupAction(groupId, GroupAction.UNSHARED)
+    }
   }
 }

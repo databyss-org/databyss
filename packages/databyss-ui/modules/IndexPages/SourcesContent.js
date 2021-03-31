@@ -6,11 +6,13 @@ import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvi
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
-import { DropDownControl, pxUnits, styled } from '@databyss-org/ui/primitives'
+import { DropDownControl } from '@databyss-org/ui/primitives'
 import { AuthorsContent } from './AuthorsContent'
 
 import { IndexPageView } from './IndexPageContent'
 import { SourcesResults } from './SourcesResults'
+import { pxUnits } from '../../theming/views'
+import styled from '../../primitives/styled'
 
 // styled components
 const CitationStyleDropDown = styled(DropDownControl, () => ({

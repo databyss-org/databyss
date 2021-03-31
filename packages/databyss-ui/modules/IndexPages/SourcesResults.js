@@ -1,15 +1,10 @@
 import React from 'react'
 
-import {
-  BaseControl,
-  pxUnits,
-  RawHtml,
-  Text,
-  View,
-} from '@databyss-org/ui/primitives'
+import { BaseControl, RawHtml, Text, View } from '@databyss-org/ui/primitives'
 import { stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { Citation, useNavigationContext } from '@databyss-org/ui/components'
+import { pxUnits } from '../../theming/views'
 
 export const SourcesResults = ({ entries }) => {
   const getPreferredCitationStyle = useSourceContext(

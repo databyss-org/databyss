@@ -6,7 +6,6 @@ import {
   Icon,
   View,
   Separator,
-  pxUnits,
   // Text,
 } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -26,6 +25,7 @@ import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListene
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
 import LoadingFallback from '../Notify/LoadingFallback'
+import { pxUnits } from '../../theming/views'
 
 export function copyToClipboard(text) {
   const dummy = document.createElement('textarea')
@@ -147,7 +147,7 @@ const PageMenu = () => {
     })
   }
 
-  if (_page.archive) {
+  if (_page?.archive) {
     // add restore option
     menuItems.push({
       icon: <PageSvg />,

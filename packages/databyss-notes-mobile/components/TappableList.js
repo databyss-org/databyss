@@ -1,8 +1,9 @@
 import React from 'react'
 
-import { styled, View } from '@databyss-org/ui/primitives'
+import { View } from '@databyss-org/ui/primitives'
 
 import IconControl from './IconControl'
+import styled from '@databyss-org/ui/primitives/styled'
 
 // styled components
 const areaStyles = () => ({

@@ -207,6 +207,13 @@ export interface ToggleControlProps
 declare const ToggleControl: FC<PropsWithChildren<ToggleControlProps>>
 declare const SwitchControl: FC<ToggleControlProps>
 
+export interface SwitchProps {
+  value?: boolean
+  disabled?: boolean
+}
+
+declare const Switch: FC<SwitchProps>
+
 export interface ButtonProps extends BaseControlProps {
   variant?: string
   textVariant?: string
@@ -246,6 +253,29 @@ export interface TextControlProps extends BaseControlProps, ControlLabelProps {
 }
 
 declare const TextControl: FC<TextControlProps>
+
+interface DropDownControlItem {
+  label: string
+  id: string
+}
+
+interface DropDownControlGroup {
+  label: string
+  items: DropDownControlItem[]
+}
+
+interface DropDownControlProps extends HTMLSelectElement {
+  concatCss: InterpolationWithTheme<any>
+  ctaLabel?: string
+  items: DropDownControlItem[]
+  itemGroups: DropDownControlGroup[]
+  onBlur: () => void
+  onChange: (item: DropDownControlItem) => void
+  onFocus: () => void
+  value: DropDownControlItem
+}
+
+declare const DropDownControl: RefForwardingFC<DropDownControlProps>
 
 //
 // Modal
@@ -311,3 +341,25 @@ declare const useDrag: <
 >(
   spec: ReactDnd.DragSourceHookSpec<DragObject, DropResult, CollectedProps>
 ) => [CollectedProps, ReactDnd.ConnectDragSource, ReactDnd.ConnectDragPreview]
+
+//
+// COMPONENTS
+// ----------------------------------------------------------------------
+
+//
+// Dropdown
+// ----------------------------------------------------------------------
+
+export interface DropdownContainerProps
+  extends Omit<ViewProps, 'position'>,
+    Omit<ListProps, 'position'> {
+  position: {
+    left?: number
+    top?: number
+    right?: number
+    bottom?: number
+  }
+  open?: boolean
+}
+
+declare const DropdownContainer: FC<PropsWithChildren<DropdownContainerProps>>

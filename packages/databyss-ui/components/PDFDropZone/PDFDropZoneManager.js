@@ -11,7 +11,6 @@ import { formatSource } from '@databyss-org/editor/components/Suggest/SuggestSou
 import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
 import { View } from '../../primitives'
 import InfoModal from '../../modules/Modals/InfoModal'
-import styled from '../../primitives/styled'
 
 import DashedArea from './DashedArea'
 
@@ -28,11 +27,11 @@ const viewStyles = () => ({
   left: '50%',
   marginLeft: '-48%',
   overflow: 'hidden',
-  pointerEvents: 'none',
   width: '96%',
+  css: {
+    pointerEvents: 'none',
+  },
 })
-
-const StyledView = styled(View, viewStyles)
 
 // methods
 const isAcceptableFile = (item) =>
@@ -355,14 +354,14 @@ const PDFDropZoneManager = () => {
   const getLabel = () => (hasParsed ? '' : 'Drop your PDF here')
 
   const render = () => (
-    <StyledView className="pdf-drop-zone-manager">
+    <View {...viewStyles()} className="pdf-drop-zone-manager">
       <DashedArea
         label={getLabel()}
         isVisible={isDropAreaVisible}
         isParsing={isParsing}
       />
       <InfoModal id="pdfDropZoneModal" />
-    </StyledView>
+    </View>
   )
 
   return render()

@@ -21,11 +21,11 @@ import PageSvg from '@databyss-org/ui/assets/page.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
-
+import { addPageDocumentToGroup } from '@databyss-org/data/pouchdb/groups'
 import {
-  addPageDocumentToGroup,
-  removePageFromGroup,
-} from '@databyss-org/data/pouchdb/groups'
+  setGroupPageAction,
+  PageAction,
+} from '@databyss-org/data/pouchdb/groups/utils'
 
 interface PageDropzoneProps extends ScrollViewProps {
   value?: string[]
@@ -64,7 +64,8 @@ export const PageDropzone = ({
       return
     }
     const _pageToRemove = pages[_id]
-    removePageFromGroup({ page: _pageToRemove, group })
+
+    setGroupPageAction(group._id, _pageToRemove._id, PageAction.REMOVE)
 
     onChange!(value!.filter((p) => p !== _id))
   }
