@@ -5,7 +5,6 @@ import { ValueListItem } from '@databyss-org/ui/components/ValueList/ValueListPr
 import ArrowUpSVG from '@databyss-org/ui/assets/arrowUp.svg'
 import ArrowDownSVG from '@databyss-org/ui/assets/arrowDown.svg'
 import CrossSVG from '@databyss-org/ui/assets/close.svg'
-import styled from '../../primitives/styled'
 
 // consts
 const labelProps = { width: '115px' }
@@ -35,12 +34,6 @@ const buttonStyles = () => ({
   position: 'relative',
   textAlign: 'center',
 })
-
-const Container = styled(View, containerStyles)
-const FieldsCol = styled(View, fieldsColStyles)
-const ButtonCol = styled(View, buttonColStyles)
-const DeleteButton = styled(Button, buttonStyles)
-const ArrowButton = styled(Button, buttonStyles)
 
 // components
 const LabeledTextInput = (props) => (
@@ -93,8 +86,8 @@ const EditAuthorFields = (props) => {
   }
 
   const render = () => (
-    <Container className="edit-author-fields">
-      <FieldsCol className="author-fields-col">
+    <View {...containerStyles()} className="edit-author-fields">
+      <View {...fieldsColStyles()} className="author-fields-col">
         <LabeledTextInput
           path={lastNamePath}
           id="lastName" // TODO: figure how to make proper unique id
@@ -107,10 +100,11 @@ const EditAuthorFields = (props) => {
           label="First Name"
           onBlur={onBlur}
         />
-      </FieldsCol>
+      </View>
 
-      <ButtonCol className="author-delete-button-col">
-        <ArrowButton
+      <View {...buttonColStyles()} className="author-delete-button-col">
+        <Button
+          {...buttonStyles()}
           variant="editSource"
           onPress={onPressDown}
           disabled={isDownDisabled}
@@ -118,9 +112,10 @@ const EditAuthorFields = (props) => {
           <Icon sizeVariant="tiny" color="text.2">
             <ArrowDownSVG />
           </Icon>
-        </ArrowButton>
+        </Button>
 
-        <ArrowButton
+        <Button
+          {...buttonStyles()}
           variant="editSource"
           onPress={onPressUp}
           disabled={isUpDisabled}
@@ -128,9 +123,10 @@ const EditAuthorFields = (props) => {
           <Icon sizeVariant="tiny" color="text.2">
             <ArrowUpSVG />
           </Icon>
-        </ArrowButton>
+        </Button>
 
-        <DeleteButton
+        <Button
+          {...buttonStyles()}
           variant="editSource"
           onPress={onPressDelete}
           disabled={isDeleteDisabled}
@@ -138,9 +134,9 @@ const EditAuthorFields = (props) => {
           <Icon sizeVariant="tiny" color="text.2">
             <CrossSVG />
           </Icon>
-        </DeleteButton>
-      </ButtonCol>
-    </Container>
+        </Button>
+      </View>
+    </View>
   )
 
   return render()
