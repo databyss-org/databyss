@@ -71,7 +71,10 @@ export function setGroupPageAction(
   ) {
     delete _dict[groupId].pages?.[pageId]
   } else {
-    _dict[groupId].pages![pageId] = action
+    _dict[groupId].pages = {
+      ..._dict[groupId].pages,
+      [pageId]: action,
+    }
   }
   setGroupActionQ(_dict)
   return _dict
