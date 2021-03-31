@@ -140,7 +140,7 @@ describe('page sharing', () => {
     await isAppInNotesSaved(driver)
 
     // allow the public page to replicate
-    await sleep(15000)
+    await sleep(10000)
     await isAppInNotesSaved(driver)
 
     // log user out to test links
@@ -174,6 +174,8 @@ describe('page sharing', () => {
 
     // navigate to public pageq
     await driver.get(publicPageUrl)
+    // allow sync to occur
+    await sleep(3000)
     // verify topic is in page
     const topicsSidebarButton = await getElementByTag(
       driver,
