@@ -101,7 +101,7 @@ export function onArchivePage(
       archive: bool,
     })
 
-    removeAllGroupsFromPage(page)
+    removeAllGroupsFromPage(page._id)
 
     if (callback) {
       callback()
