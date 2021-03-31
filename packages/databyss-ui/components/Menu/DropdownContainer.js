@@ -25,6 +25,7 @@ const DropdownContainer = forwardRef(
       maxWidth,
       open,
       verticalItemPadding,
+      horizontalItemPadding,
       onActiveIndexChanged,
       orderKey,
       ...others
@@ -52,6 +53,7 @@ const DropdownContainer = forwardRef(
     >
       <List
         verticalItemPadding={verticalItemPadding}
+        horizontalItemPadding={horizontalItemPadding}
         orderKey={orderKey}
         keyboardEventsActive={open}
         onActiveIndexChanged={onActiveIndexChanged}
@@ -66,6 +68,7 @@ const DropdownContainer = forwardRef(
 DropdownContainer.defaultProps = {
   position: { top: 0 },
   widthVariant: 'dropdownMenuMedium',
+  horizontalItemPadding: 'small',
   maxWidth: pxUnits(500),
 }
 

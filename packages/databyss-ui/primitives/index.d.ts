@@ -156,6 +156,7 @@ declare const List: FC<PropsWithChildren<ListProps>>
 
 export interface SeparatorProps extends ViewProps {
   spacing?: ReactText
+  secondary?: boolean
 }
 
 declare const Separator: FC<SeparatorProps>
@@ -178,6 +179,7 @@ export interface BaseControlProps extends ViewProps {
   disabled?: boolean
   onPress?: (e: MouseEvent | KeyboardEvent) => void
   href?: string
+  target?: string
   handle?: MutableRefObject<ControlHandle>
   noFeedback?: boolean
   childViewProps?: ViewProps
