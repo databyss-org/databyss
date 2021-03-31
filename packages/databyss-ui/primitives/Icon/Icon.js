@@ -3,7 +3,7 @@ import { variant } from 'styled-system'
 import css from '@styled-system/css'
 import { get } from '@styled-system/core'
 import { withTheme } from 'emotion-theming'
-import { View } from '../'
+import { View } from '../..'
 import styled from '../styled'
 import IS_NATIVE from '../../lib/isNative'
 

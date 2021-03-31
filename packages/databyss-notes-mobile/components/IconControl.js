@@ -1,14 +1,9 @@
 import React from 'react'
 
-import {
-  BaseControl,
-  Grid,
-  Icon,
-  Text,
-  pxUnits,
-} from '@databyss-org/ui/primitives'
+import { BaseControl, Grid, Icon, Text } from '@databyss-org/ui/primitives'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import colors from '@databyss-org/ui/theming/colors'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 
 /*
 interface Props {

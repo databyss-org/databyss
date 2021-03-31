@@ -2,7 +2,6 @@ import React from 'react'
 
 import { sans } from '../../theming/fonts'
 import { Text, View } from '../../primitives'
-import styled from '../../primitives/styled'
 import theme from '../../theming/theme'
 
 import Loading from '../Notify/LoadingFallback'
@@ -34,9 +33,6 @@ const textStyles = () => ({
   position: 'relative',
 })
 
-const StyledArea = styled(View, areaStyles)
-const StyledText = styled(Text, textStyles)
-
 // component
 const DashedArea = (props) => {
   const getBottom = () => (props.isVisible ? visibleBottom : hiddenBottom)
@@ -44,14 +40,19 @@ const DashedArea = (props) => {
   const getOpacity = () => (props.isVisible ? 1 : 0)
 
   const render = () => (
-    <StyledArea
+    <View
+      {...areaStyles()}
       zIndex="modal"
       className="dashed-area"
       bottom={getBottom()}
       opacity={getOpacity()}
     >
-      {props.isParsing ? <Loading /> : <StyledText>{props.label}</StyledText>}
-    </StyledArea>
+      {props.isParsing ? (
+        <Loading />
+      ) : (
+        <Text {...textStyles()}>{props.label}</Text>
+      )}
+    </View>
   )
 
   return render()

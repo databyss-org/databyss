@@ -98,6 +98,7 @@ export const removeGroupsFromDocument = async (
   const _sharedWithGroups = document.sharedWithGroups.filter(
     (g) => !groupIds.includes(g)
   )
+
   // if elements were removed, update document
   if (document.sharedWithGroups.length !== _sharedWithGroups.length) {
     document.sharedWithGroups = _sharedWithGroups
@@ -323,6 +324,7 @@ export const removeGroupFromPage = async ({
     doctype: DocumentType.Page,
     query: { _id: pageId },
   })
+
   if (_page?.sharedWithGroups) {
     // removes groupId from sharedWithGroups array
     await removeGroupsFromDocument([groupId], _page)
@@ -542,5 +544,39 @@ export const removePageFromGroup = async ({
       groupId: `g_${groupId}`,
       isPublic: true,
     })
+  }
+}
+
+/**
+ * deletes a collection
+ */
+export const deleteCollection = async (groupId: string) => {
+  // first remove the group from all associated documents
+  const _group: Group | null = await findOne({
+    doctype: DocumentType.Group,
+    query: { _id: groupId },
+  })
+
+  if (_group) {
+    const { public: isPublic, _id: groupId } = _group
+
+    // get all pages group is associated with
+    const _pageIds = _group.pages
+    for (const pageId of _pageIds) {
+      // remove group from all documents associated with pageId
+      await removeGroupFromPage({ pageId, groupId: `g_${groupId}` })
+    }
+
+    // delete group locally
+    await upsertImmediate({
+      doctype: DocumentType.Group,
+      _id: groupId,
+      doc: { ..._group, _deleted: true },
+    })
+
+    if (isPublic) {
+      // delete group from cloudant
+      setGroupAction(groupId, GroupAction.UNSHARED)
+    }
   }
 }
