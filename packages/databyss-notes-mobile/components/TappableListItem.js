@@ -1,7 +1,8 @@
 import React from 'react'
 
-import { styled, Text, View } from '@databyss-org/ui/primitives'
+import { Text, View } from '@databyss-org/ui/primitives'
 import ArrowSvg from '@databyss-org/ui/assets/arrowRight.svg'
+import styled from '@databyss-org/ui/primitives/styled'
 
 // styled components
 const areaStyles = () => ({

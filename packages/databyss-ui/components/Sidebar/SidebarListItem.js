@@ -1,12 +1,7 @@
 import React, { useImperativeHandle, useRef } from 'react'
-import {
-  Text,
-  BaseControl,
-  View,
-  Icon,
-  withKeyboardNavigation,
-  pxUnits,
-} from '@databyss-org/ui/primitives'
+import { Text, BaseControl, View, Icon } from '@databyss-org/ui/primitives'
+import { pxUnits } from '../../theming/views'
+import { withKeyboardNavigation } from '../../primitives/List/KeyboardNavigationItem'
 
 export const SidebarListRow = ({
   children,

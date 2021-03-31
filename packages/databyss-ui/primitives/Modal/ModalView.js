@@ -1,6 +1,6 @@
 import React from 'react'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
-import { View, Text, Grid, Button, ScrollView, Icon } from '../'
+import { View, Text, Grid, Button, ScrollView, Icon } from '../..'
 import { isMobileOs } from '../../lib/mediaQuery'
 
 // renders the window controls (title, cancel, ok, etc) for a modal

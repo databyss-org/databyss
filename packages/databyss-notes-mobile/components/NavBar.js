@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { styled, View } from '@databyss-org/ui/primitives'
+import { View } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
@@ -8,6 +8,7 @@ import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconBu
 import { parseLocation } from '../utils/parseLocation'
 import NavBarItems from '../constants/NavBarItems'
 import Tabs from '../constants/Tabs'
+import styled from '@databyss-org/ui/primitives/styled'
 
 export const NavBarHeight = 50
 

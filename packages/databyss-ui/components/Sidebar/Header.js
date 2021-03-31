@@ -2,7 +2,7 @@ import React from 'react'
 import { Text, BaseControl } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
-import { pxUnits } from '../../primitives'
+import { pxUnits } from '../..'
 import LoadingFallback from '../Notify/LoadingFallback'
 
 const Header = () => {
