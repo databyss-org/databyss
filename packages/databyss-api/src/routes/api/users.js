@@ -128,7 +128,10 @@ router.post(
       date: Date.now(),
     }
 
-    Logins.upsert({ email, code: loginObj.code }, () => loginObj)
+    cloudant.models.Logins.upsert(
+      { email, code: loginObj.code },
+      () => loginObj
+    )
 
     const msg = {
       From: process.env.TRANSACTIONAL_EMAIL_SENDER,

@@ -1,4 +1,3 @@
-import ResetCloudantInstance from '../cmds/ResetCloudantInstance'
 import { EnvDict } from './util'
 
 const spawnd = require('spawnd')
