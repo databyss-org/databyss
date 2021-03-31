@@ -1,24 +1,14 @@
-import React, { useState, useEffect, PropsWithChildren } from 'react'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { useEditorPageContext } from '@databyss-org/services'
+import React, { useState, PropsWithChildren } from 'react'
 import { BaseControl, Icon, View, ViewProps } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
-import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
-import PageSvg from '@databyss-org/ui/assets/page.svg'
-import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
-import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
-// import { saveGroup } from '@databyss-org/services/groups'
-// import { Group } from '@databyss-org/services/interfaces'
-import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
-import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
+// import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
+// import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
-import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
-import LoadingFallback from '../Notify/LoadingFallback'
-import { deleteCollection } from '../../../databyss-data/pouchdb/groups/index'
+import { deleteCollection } from '@databyss-org/data/pouchdb/groups/index'
+import { DropdownContainer, DropdownListItem } from '../../components'
 
 interface GroupMenuProps extends ViewProps {
   groupId: string
@@ -46,24 +36,14 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
     setTimeout(() => window.location.reload(), 50)
   }
 
-  const menuItems = [
-    {
-      icon: <TrashSvg />,
-      label: 'Delete group forever',
-      action: deleteGroup,
-      actionType: 'delete-group',
-    },
-  ]
-
-  const DropdownList = () =>
-    menuItems.map((menuItem) => (
-      <DropdownListItem
-        {...menuItem}
-        action={menuItem.actionType}
-        onPress={() => menuItem.action()}
-        key={menuItem.label}
-      />
-    ))
+  const DropdownList = () => (
+    <DropdownListItem
+      icon={<TrashSvg />}
+      label="Delete group forever"
+      action="delete-group"
+      onPress={deleteGroup}
+    />
+  )
 
   return (
     <View
@@ -93,9 +73,8 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
               top: menuLauncherSize + 8,
               right: 0,
             }}
-          >
-            <DropdownList />
-          </DropdownContainer>
+            children={<DropdownList />}
+          />
         </ClickAwayListener>
       )}
     </View>

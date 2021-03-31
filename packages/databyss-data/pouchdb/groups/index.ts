@@ -15,6 +15,12 @@ import { dbRef, REMOTE_CLOUDANT_URL } from '../db'
 import { isAtomicInlineType } from '../../../databyss-editor/lib/util'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import {
+  setGroupAction,
+  setGroupPageAction,
+  PageAction,
+  GroupAction,
+} from './utils'
+import {
   createDatabaseCredentials,
   validateGroupCredentials,
 } from '../../../databyss-services/editorPage/index'
@@ -299,10 +305,7 @@ export const setGroup = async (group: Group, pageId?: string) => {
 
   // if group settings were changed, propegate changes to remote db
   if (group.public) {
-    replicateGroup({
-      groupId: `g_${group._id}`,
-      isPublic: true,
-    })
+    setGroupAction(group._id, GroupAction.SHARED)
   }
 }
 
@@ -501,7 +504,8 @@ export const addPageDocumentToGroup = async ({
     const { _id: groupId, public: isPublic } = group
     // one time upsert to remote db
     if (isPublic) {
-      replicateGroup({ groupId: `g_${groupId}`, isPublic })
+      // push to queue
+      setGroupPageAction(groupId, _page._id, PageAction.ADD)
     }
   }
 }
@@ -525,6 +529,7 @@ export const removePageFromGroup = async ({
       _ids.push(b._id)
     }
   })
+
   await removeIdsFromSharedDb({
     ids: _ids,
     groupId: group._id,
@@ -570,12 +575,8 @@ export const deleteCollection = async (groupId: string) => {
     })
 
     if (isPublic) {
-      // TODO: this needs to be merged with the current offline group PR
       // delete group from cloudant
-      await updateAndReplicateSharedDatabase({
-        groupId,
-        isPublic: false,
-      })
+      setGroupAction(groupId, GroupAction.UNSHARED)
     }
   }
 }
