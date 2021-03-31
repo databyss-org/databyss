@@ -6,9 +6,9 @@ import {
   BaseControl,
   Switch,
   RawHtml,
-  withKeyboardNavigation,
 } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
+import { withKeyboardNavigation } from '../../primitives/List/KeyboardNavigationItem'
 
 const DropdownListItem = ({
   action,

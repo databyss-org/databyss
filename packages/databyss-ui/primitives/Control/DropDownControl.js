@@ -6,20 +6,6 @@ import { sans } from '../../theming/fonts'
 
 import styled from '../styled'
 
-/*
-interface DropDownControlItem {
-  label: string
-  id: string
-}
-
-interface DropDownControlProps {
-  concatCss: object
-  ctaLabel?: string
-  items: DropDownControlItem[]
-  ...others
-}
-*/
-
 // styled components
 const selectStyles = () => ({
   MozAppearance: 'none',

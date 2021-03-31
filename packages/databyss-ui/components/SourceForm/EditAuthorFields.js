@@ -1,16 +1,11 @@
 import React from 'react'
 
-import {
-  Button,
-  Icon,
-  styled,
-  TextControl,
-  View,
-} from '@databyss-org/ui/primitives'
+import { Button, Icon, TextControl, View } from '@databyss-org/ui/primitives'
 import { ValueListItem } from '@databyss-org/ui/components/ValueList/ValueListProvider'
 import ArrowUpSVG from '@databyss-org/ui/assets/arrowUp.svg'
 import ArrowDownSVG from '@databyss-org/ui/assets/arrowDown.svg'
 import CrossSVG from '@databyss-org/ui/assets/close.svg'
+import styled from '../../primitives/styled'
 
 // consts
 const labelProps = { width: '115px' }

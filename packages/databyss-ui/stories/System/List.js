@@ -14,13 +14,13 @@ import {
   ScrollView,
   BaseControl,
   TextInput,
-  withKeyboardNavigation,
 } from '@databyss-org/ui/primitives'
 import { loremIpsum } from 'lorem-ipsum'
 import { getNames } from 'country-list'
 import Alea from 'alea'
 import { Section } from './'
 import { darkTheme } from '../../theming/theme'
+import { withKeyboardNavigation } from '../../primitives/List/KeyboardNavigationItem'
 
 const alea = new Alea('typography')
 const ipsum = () => loremIpsum({ units: 'words', count: 4, random: alea })

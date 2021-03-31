@@ -8,7 +8,10 @@ import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { deleteCollection } from '@databyss-org/data/pouchdb/groups/index'
-import { DropdownContainer, DropdownListItem } from '../../components'
+import {
+  DropdownListItem,
+  DropdownContainer,
+} from '@databyss-org/ui/components'
 
 interface GroupMenuProps extends ViewProps {
   groupId: string

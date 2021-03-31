@@ -1,6 +1,7 @@
 import React from 'react'
-import { View, Text, Grid, pxUnits, Button } from '@databyss-org/ui/primitives'
+import { View, Text, Grid, Button } from '@databyss-org/ui/primitives'
 import Login from '@databyss-org/ui/modules/Login/Login'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 
 const Public = (props) => (
   <React.Fragment>

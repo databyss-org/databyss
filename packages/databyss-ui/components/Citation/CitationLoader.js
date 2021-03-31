@@ -2,11 +2,10 @@ import React from 'react'
 
 import { useCitationContext } from '@databyss-org/services/citations/CitationProvider'
 
-import { pxUnits } from '../../primitives'
-
 import MakeLoader from '../Loaders/MakeLoader'
 
 import Citation from './Citation'
+import { pxUnits } from '../../theming/views'
 
 const CitationLoader = (props) => {
   const { sourceDetail, formatOptions } = props
