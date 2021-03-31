@@ -4,6 +4,9 @@ export const notificationSchema: JSONSchema4 = {
   title: 'Notification',
   type: 'object',
   properties: {
+    id: {
+      type: 'string',
+    },
     messageHtml: {
       type: 'string',
     },
@@ -17,7 +20,7 @@ export const notificationSchema: JSONSchema4 = {
       type: 'number',
     },
   },
-  required: ['messageHtml', 'createdAt'],
+  required: ['id', 'type', 'messageHtml', 'createdAt'],
 }
 
 export default notificationSchema

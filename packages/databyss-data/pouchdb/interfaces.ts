@@ -36,9 +36,12 @@ export enum NotificationType {
 }
 
 export interface Notification {
+  id: string
   messageHtml: string
   type: NotificationType
   href?: string
+  createdAt: number
+  viewedAt: number
 }
 
 export interface UserPreference {
