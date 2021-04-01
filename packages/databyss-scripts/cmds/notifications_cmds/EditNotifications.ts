@@ -8,6 +8,15 @@ import {
 } from '@databyss-org/data/pouchdb/interfaces'
 import { uid } from '@databyss-org/data/lib/uid'
 
+export const DefaultMessageDict: {
+  [notificationType in NotificationType]: string | null
+} = {
+  [NotificationType.ForceUpdate]:
+    "We've made some changes on our servers that require you to update to the latest version. Click OK to update and reload the application. All your changes will be preserved.",
+  [NotificationType.Dialog]: null,
+  [NotificationType.Sticky]: null,
+}
+
 export enum EditAction {
   Add = 'add',
   Update = 'update',
@@ -22,14 +31,68 @@ export class EditNotifications extends ServerProcess {
     this.action = action
   }
 
+  upsertNotification(
+    prefs: UserPreference,
+    notification: Partial<Notification>
+  ) {
+    const _toEdit = prefs.notifications?.find((_n) => _n.id === notification.id)
+    if (!_toEdit) {
+      // insert new notification
+      prefs.notifications!.push({
+        ...notification!,
+        createdAt: Date.now(),
+      } as Notification)
+    } else {
+      // update notification
+      Object.assign(_toEdit, notification)
+    }
+    return prefs
+  }
+
+  removeNotification(prefs: UserPreference, id: string) {
+    if (!prefs.notifications) {
+      return prefs
+    }
+    // if removing, replace notifications with filtered notifications
+    prefs.notifications = prefs.notifications.filter((_n) => _n.id !== id)
+    return prefs
+  }
+
   async run() {
-    let _notification: Partial<Notification>
+    let _notifications: Partial<Notification>[] = []
     if (!(this.action === EditAction.Remove)) {
-      _notification = {
-        id: this.args.id || uid(),
-        ...JSON.parse(fs.readFileSync(this.args.file).toString()),
+      try {
+        _notifications = JSON.parse(fs.readFileSync(this.args.file).toString())
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          throw new Error('Notifications file not found')
+        } else {
+          throw new Error('Notifications file is not properly formed JSON')
+        }
       }
-      this.log(`Notification ID: ${_notification.id}`)
+      if (!Array.isArray(_notifications)) {
+        throw new Error(
+          'Notifications file must be an array of Notification objects'
+        )
+      }
+      _notifications.forEach((_notification) => {
+        // apply notification defaults
+        _notification.id = _notification.id || uid()
+        _notification.type = _notification.type || NotificationType.Dialog
+
+        _notification.messageHtml =
+          _notification.messageHtml ??
+          DefaultMessageDict[_notification.type] ??
+          undefined
+        if (!_notification.messageHtml) {
+          throw new Error(
+            `Notifications of type ${_notification.type} require a messageHtml value`
+          )
+        }
+        this.log(`Notification ID: ${_notification.id}`)
+      })
+      // write notifications back to file to preserve ids
+      fs.writeFileSync(this.args.file, JSON.stringify(_notifications, null, 2))
     }
 
     const _dbs = await cloudant.current.db.list()
@@ -41,37 +104,19 @@ export class EditNotifications extends ServerProcess {
       const _db = cloudant.current.db.use<UserPreference>(_dbName)
 
       const _prefs = await _db.tryGet('user_preference')
-      // console.log(_prefs)
       if (!_prefs) {
         continue
       }
-      if (!_prefs.notifications) {
-        _prefs.notifications = []
-      }
-      const _toEdit = _prefs.notifications.filter((_n) => {
-        if (!this.args.id) {
-          // if no id specified, update/remove all notifications
-          return !(this.action === EditAction.Remove)
-        }
-        return this.action === EditAction.Remove
-          ? _n.id !== this.args.id
-          : _n.id === this.args.id
-      })
+
       if (this.action === EditAction.Remove) {
-        // if removing, replace notifications with filtered notifications
-        _prefs.notifications = _toEdit
-      } else if (!_toEdit.length) {
-        // insert new notification
-        _prefs.notifications.push({
-          type: NotificationType.Dialog,
-          createdAt: Date.now(),
-          ..._notification!,
-        } as Notification)
+        this.removeNotification(_prefs, this.args.id)
       } else {
-        // update notifications
-        _toEdit.forEach((_n) => {
-          Object.assign(_n, _notification)
-        })
+        if (!_prefs.notifications) {
+          _prefs.notifications = []
+        }
+        _notifications.forEach((_notification) =>
+          this.upsertNotification(_prefs, _notification)
+        )
       }
       await _db.insert(_prefs)
       // dont exceed cloudant rate limit
@@ -82,9 +127,9 @@ export class EditNotifications extends ServerProcess {
 }
 
 exports.command = 'add <file>'
-exports.desc = 'Add a notification from a file'
-exports.builder = (yargs) =>
-  yargs.describe('id', 'Specify an id for the notification').nargs('id', 1)
+exports.desc =
+  'Add notification(s) from a file. Must be formatted as a JSON array.'
+exports.builder = {}
 exports.handler = (argv) => {
   const _job = new EditNotifications(argv, EditAction.Add)
   run(_job)

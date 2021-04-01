@@ -34,6 +34,7 @@ export interface UserSession {
 export enum NotificationType {
   Dialog = 'DIALOG',
   Sticky = 'STICKY',
+  ForceUpdate = 'FORCE_UPDATE',
 }
 
 export interface Notification {

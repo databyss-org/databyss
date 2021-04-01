@@ -22,7 +22,7 @@ export const UserPreferencesContext = createContext<NotificationsContextType>(
 
 export const UserPreferencesProvider = ({ children }) => {
   const [queryRes, setUserPreferences] = useUserPreferences()
-  const { notifyHtml } = useNotifyContext()
+  const { notifyHtml, notifyConfirm } = useNotifyContext()
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   if (!isPublicAccount && !queryRes.isSuccess) {
@@ -63,10 +63,27 @@ export const UserPreferencesProvider = ({ children }) => {
   }
 
   // show DIALOG notifications immediately
-  getUnreadNotifications(NotificationType.Dialog).forEach((_notification) => {
-    notifyHtml(_notification.messageHtml)
-    setNotificationRead(_notification.id)
-  })
+  const _notification = getUnreadNotifications()[0]
+  if (_notification) {
+    switch (_notification.type) {
+      case NotificationType.Dialog: {
+        notifyHtml(_notification.messageHtml)
+        setNotificationRead(_notification.id)
+        break
+      }
+      case NotificationType.ForceUpdate: {
+        notifyConfirm({
+          message: _notification.messageHtml,
+          onOk: () => {
+            setNotificationRead(_notification.id)
+            setTimeout(() => window.location.reload(true), 500)
+          },
+          showCancelButton: false,
+        })
+        break
+      }
+    }
+  }
 
   return (
     <UserPreferencesContext.Provider

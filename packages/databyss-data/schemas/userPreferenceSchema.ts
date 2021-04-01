@@ -7,9 +7,6 @@ export const userPreferenceSchema: JSONSchema4 = {
     email: {
       type: 'string',
     },
-    userId: {
-      type: 'string',
-    },
     token: {
       type: 'string',
     },
@@ -33,15 +30,9 @@ export const userPreferenceSchema: JSONSchema4 = {
         },
       },
     },
-    notifications: {
-      type: 'array',
-      items: {
-        $ref: 'notification',
-      },
-    },
   },
-  required: ['groups', 'userId'],
-  allOf: [{ $ref: 'pouchDb' }],
+  required: ['groups'],
+  allOf: [{ $ref: 'pouchDb', 'groupPreference' }],
 }
 
 export default userPreferenceSchema

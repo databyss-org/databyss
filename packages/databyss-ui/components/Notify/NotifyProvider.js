@@ -225,7 +225,14 @@ class NotifyProvider extends React.Component {
     })
   }
 
-  notifyConfirm = ({ message, okText, cancelText, onOk, onCancel }) => {
+  notifyConfirm = ({
+    message,
+    okText = 'Ok',
+    cancelText = 'Cancel',
+    showCancelButton = true,
+    onOk,
+    onCancel,
+  }) => {
     const _buttons = [
       <Button
         key="notifyConfirmOk"
@@ -238,19 +245,23 @@ class NotifyProvider extends React.Component {
       >
         {okText}
       </Button>,
-      <Button
-        variant="secondaryUi"
-        key="notifyConfirmCancel"
-        onPress={() => {
-          if (onCancel) {
-            onCancel()
-          }
-          this.hideDialog()
-        }}
-      >
-        {cancelText}
-      </Button>,
     ]
+    if (showCancelButton) {
+      _buttons.push(
+        <Button
+          variant="secondaryUi"
+          key="notifyConfirmCancel"
+          onPress={() => {
+            if (onCancel) {
+              onCancel()
+            }
+            this.hideDialog()
+          }}
+        >
+          {cancelText}
+        </Button>
+      )
+    }
     this.notify(message, false, false, _buttons)
   }
 
