@@ -174,8 +174,11 @@ describe('page sharing', () => {
     // // confirm private page is not authorized
     // assert.equal(true, pageBody)
 
-    // navigate to public pageq
+    // navigate to public page
     await driver.get(publicPageUrl)
+
+    await getEditor(driver)
+
     // allow sync to occur
     await sleep(3000)
     // verify topic is in page
