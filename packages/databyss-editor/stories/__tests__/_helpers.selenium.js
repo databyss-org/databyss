@@ -28,6 +28,24 @@ export const getEditor = async (driver) => {
   return _driver
 }
 
+export const getSharedPage = async (driver) => {
+  await sleep(1000)
+  const el = await driver.wait(
+    until.elementLocated(By.tagName('[data-test-element="page-header"]')),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
+
+  const _driver = await driver.wait(
+    until.elementIsVisible(el),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
+  return _driver
+}
+
 export const getElementsByTag = async (driver, tag) => {
   await sleep(1000)
   let el = []

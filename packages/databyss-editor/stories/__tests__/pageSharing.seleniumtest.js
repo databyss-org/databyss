@@ -9,6 +9,7 @@ import {
   sendKeys,
   enterKey,
   getEditor,
+  getSharedPage,
   isAppInNotesSaved,
   paste,
   selectAll,
@@ -177,7 +178,7 @@ describe('page sharing', () => {
     // navigate to public page
     await driver.get(publicPageUrl)
 
-    await getEditor(driver)
+    await getSharedPage(driver)
 
     // allow sync to occur
     await sleep(3000)
