@@ -63,19 +63,23 @@ export const getElementByTag = async (driver, tag) => {
 
 export const logout = async (driver) => {
   await sleep(1000)
-  const accountDropdown = await getElementByTag(
-    driver,
-    '[data-test-element="account-menu"]'
-  )
-  await accountDropdown.click()
-  await sleep(500)
-  const logoutButton = await getElementByTag(
-    driver,
-    '[data-test-block-menu="logout"]'
-  )
-  await logoutButton.click()
-  await getElementByTag(driver, '[data-test-path="email"]')
-  await driver.quit()
+  try {
+    const accountDropdown = await getElementByTag(
+      driver,
+      '[data-test-element="account-menu"]'
+    )
+    await accountDropdown.click()
+    await sleep(500)
+    const logoutButton = await getElementByTag(
+      driver,
+      '[data-test-block-menu="logout"]'
+    )
+    await logoutButton.click()
+    await getElementByTag(driver, '[data-test-path="email"]')
+    await driver.quit()
+  } catch (err) {
+    console.log('Logout ERROR - ', err)
+  }
 }
 
 export const getElementById = async (driver, id) => {
