@@ -106,13 +106,16 @@ export function removeGroupAction(groupId: string, pageId?: string) {
 export async function processGroupActionQ(dispatch: Function) {
   const _q = getGroupActionQ
   // update ui element
-  dispatch({
-    type: 'DB_BUSY',
-    payload: {
-      isBusy: true,
-      writesPending: Object.keys(_q()).length,
-    },
-  })
+  if (Object.keys(_q()).length) {
+    dispatch({
+      type: 'DB_BUSY',
+      payload: {
+        isBusy: true,
+        writesPending: Object.keys(_q()).length,
+      },
+    })
+  }
+
   for (const groupId of Object.keys(_q())) {
     const groupPayload: QueuePayload = _q()[groupId]
 
