@@ -6,17 +6,14 @@ import {
 import semver from 'semver'
 import { version } from '@databyss-org/services'
 import { useUserPreferences } from '@databyss-org/data/pouchdb/hooks'
-import {
-  updateGroupPreferences,
-  upsertUserPreferences,
-} from '@databyss-org/data/pouchdb/utils'
+import { upsertUserPreferences } from '@databyss-org/data/pouchdb/utils'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { LoadingFallback } from '../../components'
 import { useNotifyContext } from '../../components/Notify/NotifyProvider'
 
 export interface NotificationsContextType {
-  getUnreadNotifications: () => Notification[]
+  getUnreadNotifications: (type?: NotificationType) => Partial<Notification>[]
   setNotificationRead: (id: string) => void
 }
 
@@ -89,7 +86,7 @@ export const UserPreferencesProvider = ({ children }) => {
             html: true,
             message: _notification.messageHtml,
             onOk: () => {
-              setNotificationRead(_notification.id)
+              setNotificationRead(_notification.id!)
             },
             showCancelButton: false,
           })
@@ -101,7 +98,7 @@ export const UserPreferencesProvider = ({ children }) => {
             html: true,
             message: _notification.messageHtml,
             onOk: () => {
-              setNotificationRead(_notification.id)
+              setNotificationRead(_notification.id!)
               setTimeout(() => window.location.reload(true), 500)
             },
             showCancelButton: false,
