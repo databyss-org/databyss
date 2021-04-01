@@ -7,6 +7,9 @@ import LoadingFallback from '../Notify/LoadingFallback'
 
 const Header = () => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const getSession = useSessionContext((c) => c && c.getSession)
+
+  const { defaultGroupId, defaultPageId } = getSession()
 
   const groupRes = useGroups()
 
@@ -19,7 +22,9 @@ const Header = () => {
   console.log(_groupName)
   return (
     <BaseControl
-      href={isPublicAccount() ? 'https://www.databyss.org' : '/'}
+      href={
+        isPublicAccount() ? `/${defaultGroupId}/pages/${defaultPageId}` : '/'
+      }
       px="em"
       mt={pxUnits(11)}
       mb="extraSmall"

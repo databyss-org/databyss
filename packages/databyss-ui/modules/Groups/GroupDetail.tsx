@@ -61,7 +61,7 @@ export const GroupFields = ({
 
     // compose public link
     const getUrl = window.location
-    const baseUrl = `${getUrl.protocol}//${getUrl.host}/${group._id}/pages/${groupValue.current.pages[0]}`
+    const baseUrl = `${getUrl.protocol}//${getUrl.host}/${group._id}`
 
     copyToClipboard(baseUrl)
   }

@@ -152,6 +152,7 @@ const SessionProvider = ({
           payload: {
             session: {
               defaultPageId: _publicSession.defaultPageId,
+              defaultGroupId: _publicSession._id,
               publicAccount: {
                 _id: _publicSession._id,
               },
