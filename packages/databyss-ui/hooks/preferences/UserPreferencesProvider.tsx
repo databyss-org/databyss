@@ -7,6 +7,7 @@ import { version } from '@databyss-org/services'
 import { useUserPreferences } from '@databyss-org/data/pouchdb/hooks'
 import { upsertUserPreferences } from '@databyss-org/data/pouchdb/utils'
 import React, { createContext, useContext } from 'react'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { LoadingFallback } from '../../components'
 import { useNotifyContext } from '../../components/Notify/NotifyProvider'
 
@@ -22,12 +23,17 @@ export const UserPreferencesContext = createContext<NotificationsContextType>(
 export const UserPreferencesProvider = ({ children }) => {
   const [queryRes, setUserPreferences] = useUserPreferences()
   const { notifyHtml } = useNotifyContext()
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
-  if (!queryRes.isSuccess) {
+  if (!isPublicAccount && !queryRes.isSuccess) {
     return <LoadingFallback queryObserver={queryRes} />
   }
 
   const setNotificationRead = (id: string) => {
+    if (isPublicAccount) {
+      // TODO: save to localstorage
+      return
+    }
     const _prefs = queryRes.data
     const _notification = _prefs.notifications?.find((_n) => _n.id === id)
     if (!_notification) {
@@ -40,6 +46,10 @@ export const UserPreferencesProvider = ({ children }) => {
   }
 
   const getUnreadNotifications = (type?: NotificationType) => {
+    if (isPublicAccount) {
+      // TODO: read from localstorage
+      return []
+    }
     if (!queryRes.data.notifications) {
       return []
     }
