@@ -113,7 +113,7 @@ export const PageReplicator = ({
         // check if group is already replicating
         const _repStatus = replicationStatusRef.current[group._id]
         if (!_repStatus) {
-          const validate = async (count: number = 0) => {
+          const validate = (count: number = 0) => {
             if (count > MAX_RETRIES) {
               console.log(
                 `[PageReplicator] retry limit exceeded when trying to replicate to group ${group._id}`
@@ -132,21 +132,23 @@ export const PageReplicator = ({
             if (!creds) {
               // credentials are not in local storage
               // creates new user credentials and adds them to local storage
-              await createDatabaseCredentials({
+              createDatabaseCredentials({
                 groupId: gId,
                 isPublic: group.public,
-              }).catch((err) => {
-                if (err instanceof NetworkUnavailableError) {
-                  // if user is offline, just bail. we shouldn't get here
-                  //   because the "make page public" should be disabled when offline
-                  console.log(
-                    '[PageReplicator] skipping public page replication in offline mode'
-                  )
-                  return
-                }
-                throw err
               })
-              setTimeout(() => validate(count + 1), INTERVAL_TIME)
+                .catch((err) => {
+                  if (err instanceof NetworkUnavailableError) {
+                    // if user is offline, just bail
+                    console.log(
+                      '[PageReplicator] skipping public page replication in offline mode'
+                    )
+                    return
+                  }
+                  setTimeout(() => validate(count + 1), INTERVAL_TIME)
+                })
+                .then(() =>
+                  setTimeout(() => validate(count + 1), INTERVAL_TIME)
+                )
             } else {
               // credentials are in local
               // validate credentials with server

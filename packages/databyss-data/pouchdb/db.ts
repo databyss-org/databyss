@@ -312,7 +312,7 @@ export const syncPouchDb = ({
           },
         })
         // when replication has paused, sync group queues
-        processGroupActionQ()
+        processGroupActionQ(dispatch)
       }
     })
   ;(dbRef.current as PouchDB.Database).replicate
