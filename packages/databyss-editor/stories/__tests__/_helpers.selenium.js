@@ -105,8 +105,8 @@ export const isSaved = async (driver) => {
   try {
     await getElementById(driver, 'complete')
   } catch (err) {
-    if (!err.name !== 'StaleElementReferenceError') {
-      console.log(err)
+    if (err.name !== 'StaleElementReferenceError') {
+      console.log(err.name)
       throw err
     }
   }
@@ -117,7 +117,7 @@ export const isAppInNotesSaved = async (driver) => {
   try {
     await getElementById(driver, 'changes-saved')
   } catch (err) {
-    if (!err.name !== 'StaleElementReferenceError') {
+    if (err.name !== 'StaleElementReferenceError') {
       throw err
     }
   }
