@@ -490,6 +490,8 @@ export const addPageDocumentToGroup = async ({
   group: Group
   pageId: string
 }) => {
+  // if this is the first page added to the group, make it default
+  group.defaultPageId = pageId
   // add groupId to page document
   await addPageToGroup({ pageId, groupId: `g_${group._id}` })
   // get updated pageDoc

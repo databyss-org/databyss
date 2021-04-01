@@ -8,6 +8,7 @@ import { CouchDb } from '../../couchdb-client/couchdb'
 
 export interface UseDocumentOptions {
   enabled?: boolean
+  initialData?: any
 }
 
 const subscriptionDict: { [_id: string]: PouchDB.Core.Changes<any> } = {}
@@ -19,7 +20,6 @@ export const useDocument = <T extends Document>(
   const queryClient = useQueryClient()
   const queryKey = `useDocument_${_id}`
 
-  console.log('useDocument._id', _id)
   const query = useQuery<T>(
     queryKey,
     () =>
@@ -31,6 +31,7 @@ export const useDocument = <T extends Document>(
       }),
     {
       enabled: options.enabled,
+      initialData: options.initialData,
     }
   )
 
@@ -49,7 +50,6 @@ export const useDocument = <T extends Document>(
         doc_ids: [_id],
       })
       .on('change', (change) => {
-        console.log(`[useDocument] update ${_id}`)
         queryClient.setQueryData<T>(queryKey, change.doc)
       })!
   }, [])

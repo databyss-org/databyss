@@ -127,11 +127,12 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         type: STORE_SESSION_LOCALLY,
       })
     } else if (res.data?.isPublic) {
+      throw new Error('We should never get here')
       // cache public account info in session state
-      dispatch({
-        type: CACHE_PUBLIC_SESSION,
-        payload: { publicAccount: res.data.accountId },
-      })
+      // dispatch({
+      //   type: CACHE_PUBLIC_SESSION,
+      //   payload: { publicAccount: res.data.accountId },
+      // })
     } else {
       // assume TFA, request code
       dispatch({

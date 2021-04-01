@@ -1,6 +1,6 @@
 import PouchDB from 'pouchdb'
 import EventEmitter from 'es-event-emitter'
-import { Document } from '@databyss-org/services/interfaces'
+import { Document, Group } from '@databyss-org/services/interfaces'
 import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
@@ -141,9 +141,6 @@ export const replaceOne = async ({
   await upsert({ doctype, _id, doc })
 }
 
-/*
-_local documents do not appear with `find` so a `get` function must be used
-*/
 export const getUserSession = async (): Promise<UserPreference | null> => {
   let response
   try {
@@ -152,6 +149,24 @@ export const getUserSession = async (): Promise<UserPreference | null> => {
     console.error('user session not found')
   }
   return response
+}
+
+export const getGroupSession = async (): Promise<Group | null> => {
+  if (!dbRef.current) {
+    return null
+  }
+  const _response = await dbRef.current!.find({
+    selector: {
+      doctype: 'GROUP',
+    },
+  })
+  if (!_response.docs.length) {
+    console.error('group doc not found')
+  }
+  if (_response.docs.length > 1) {
+    console.warn('multiple group docs')
+  }
+  return _response.docs[0]
 }
 
 export const searchText = async (query) => {
@@ -220,6 +235,22 @@ export const upsertUserPreferences = async (
     pouchDataValidation(_doc)
     return _doc
   })
+
+export const updateGroupPreferences = async (
+  cb: PouchDB.UpsertDiffCallback<Partial<Group>>
+) => {
+  const _oldDoc = await getGroupSession()
+  if (!_oldDoc) {
+    console.warn('No group doc found')
+    return
+  }
+  const _groupDoc = addTimeStamp({
+    doctype: DocumentType.Group,
+    ...cb(_oldDoc),
+  })
+  pouchDataValidation(_groupDoc)
+  dbRef.current!.put(_groupDoc)
+}
 
 export class QueueProcessor extends EventEmitter {
   // on(event: string, listener: Function): this

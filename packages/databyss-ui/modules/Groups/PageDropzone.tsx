@@ -67,7 +67,14 @@ export const PageDropzone = ({
 
     setGroupPageAction(group._id, _pageToRemove._id, PageAction.REMOVE)
 
-    onChange!(value!.filter((p) => p !== _id))
+    const _nextValue = value!.filter((p) => p !== _id)
+
+    // if page was default for the group, assign a new one
+    if (_id === group.defaultPageId) {
+      group.defaultPageId = _nextValue[0]
+    }
+
+    onChange!(_nextValue)
   }
 
   if (!pages || !group) {

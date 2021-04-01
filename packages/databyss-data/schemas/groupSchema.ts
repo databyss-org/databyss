@@ -16,6 +16,15 @@ export const groupSchema: JSONSchema4 = {
     public: {
       type: 'boolean',
     },
+    defaultPageId: {
+      type: 'string',
+    },
+    notifications: {
+      type: 'array',
+      items: {
+        $ref: 'notification',
+      },
+    },
   },
   // extend pouchdb types
   allOf: [{ $ref: 'pouchDb' }],

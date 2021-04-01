@@ -11,7 +11,7 @@ import {
   GroupDetail,
 } from '@databyss-org/ui'
 import { QueryClient, QueryClientProvider } from 'react-query'
-// import { ReactQueryDevtools } from 'react-query/devtools'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 import { GestureProvider, View } from '@databyss-org/ui/primitives'
 import { BlockType } from '@databyss-org/services/interfaces'

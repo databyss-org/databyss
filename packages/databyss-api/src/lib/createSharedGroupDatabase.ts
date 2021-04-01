@@ -1,4 +1,6 @@
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { DocumentScope } from 'nano'
 import {
   CredentialResponse,
   createGroupId,

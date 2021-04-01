@@ -14,7 +14,10 @@ import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { useServiceContext } from '../'
-import { localStorageHasSession } from './clientStorage'
+import {
+  localStorageHasSession,
+  localStorageHasPublicSession,
+} from './clientStorage'
 import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
 import { replicateGroup, hasUnathenticatedAccess } from './actions'
 import { NetworkUnavailableError } from '../interfaces'
@@ -127,21 +130,38 @@ const SessionProvider = ({
             session: _sesionFromLocalStorage,
           },
         })
-      } else {
-        // check if page has public access
-        const unauthenticatedGroupId = await hasUnathenticatedAccess()
+        return
+      }
 
+      // do we have a public group in localstorage
+      let _publicSession = await localStorageHasPublicSession()
+      if (_publicSession) {
+        // start replication on public group
+        await replicateGroup(_publicSession.belongsToGroup)
+      } else {
+        // try to get public access
+        const unauthenticatedGroupId = await hasUnathenticatedAccess()
         if (unauthenticatedGroupId) {
-          // replicate public page to local pouchdb
           await replicateGroup(unauthenticatedGroupId)
-          dispatch({
-            type: CACHE_PUBLIC_SESSION,
-            payload: { publicAccount: unauthenticatedGroupId },
-          })
-        } else {
-          // pass 1: get session from API
-          getSession({ retry: true, code, email })
+          _publicSession = await localStorageHasPublicSession()
         }
+      }
+      if (_publicSession) {
+        dispatch({
+          type: CACHE_PUBLIC_SESSION,
+          payload: {
+            session: {
+              defaultPageId: _publicSession.defaultPageId,
+              publicAccount: {
+                _id: _publicSession._id,
+              },
+              notifications: _publicSession.notifications ?? [],
+            },
+          },
+        })
+      } else {
+        // pass 1: get session from API
+        getSession({ retry: true, code, email })
       }
     }
 

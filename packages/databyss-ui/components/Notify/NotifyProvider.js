@@ -232,6 +232,7 @@ class NotifyProvider extends React.Component {
     showCancelButton = true,
     onOk,
     onCancel,
+    html,
   }) => {
     const _buttons = [
       <Button
@@ -262,7 +263,7 @@ class NotifyProvider extends React.Component {
         </Button>
       )
     }
-    this.notify(message, false, false, _buttons)
+    this.notify(message, false, html, _buttons)
   }
 
   notifyStickyHtml = (html) => {

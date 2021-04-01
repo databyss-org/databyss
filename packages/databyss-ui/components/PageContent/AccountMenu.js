@@ -65,16 +65,6 @@ const AccountMenu = () => {
           },
         ]
 
-        if (isPublicAccount()) {
-          menuItems.unshift({
-            icon: <LinkSvg />,
-            label: 'Back to my Databyss',
-            action: () => navToDefaultPage(userInfo),
-            actionType: 'backToDatabyss',
-            shortcut: `v${version}`,
-          })
-        }
-
         const DropdownList = () =>
           menuItems.map((menuItem, i) => (
             <View key={`${menuItem.label}-account-${i}`}>
@@ -131,6 +121,7 @@ const AccountMenu = () => {
                       {userInfo.email}
                     </Text>
                   </View>
+
                   <Separator
                     key="account-name-seperator"
                     color="border.3"

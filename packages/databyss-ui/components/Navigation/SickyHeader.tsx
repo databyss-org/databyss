@@ -18,7 +18,9 @@ export const StickyHeader = ({
   children,
 }: PropsWithChildren<StickyHeaderProps>) => {
   const { isOnline } = useNotifyContext()
-  const { isDbBusy, readsPending, writesPending } = useSessionContext()
+  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+  const writesPending = useSessionContext((c) => c && c.writesPending)
+  const readsPending = useSessionContext((c) => c && c.readsPending)
 
   if (isMobile()) {
     return null

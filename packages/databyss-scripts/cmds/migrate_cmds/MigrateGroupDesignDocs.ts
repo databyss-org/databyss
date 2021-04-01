@@ -10,8 +10,8 @@ export class MigrateGroupDesignDocs extends ServerProcess {
   async run() {
     const _dbs = await cloudant.current.db.list()
     for (const _dbName of _dbs) {
-      // only update primary groups (which start with "g_")
-      if (!_dbName.startsWith('g_')) {
+      // only update groups (which start with "g_" or "p_")
+      if (!_dbName.startsWith('g_') && !_dbName.startsWith('p_')) {
         continue
       }
       const _db = cloudant.current.db.use<DesignDoc>(_dbName)
