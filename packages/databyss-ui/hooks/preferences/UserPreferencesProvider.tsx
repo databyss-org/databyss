@@ -34,7 +34,7 @@ export const UserPreferencesProvider = ({ children }) => {
       // TODO: save to localstorage
       return
     }
-    const _prefs = queryRes.data
+    const _prefs = queryRes.data!
     const _notification = _prefs.notifications?.find((_n) => _n.id === id)
     if (!_notification) {
       console.error('Notification not found', id)
@@ -50,10 +50,10 @@ export const UserPreferencesProvider = ({ children }) => {
       // TODO: read from localstorage
       return []
     }
-    if (!queryRes.data.notifications) {
+    if (!queryRes.data!.notifications) {
       return []
     }
-    return queryRes.data.notifications.filter(
+    return queryRes.data!.notifications.filter(
       (_notification) =>
         !_notification.viewedAt &&
         (!type || type === _notification.type) &&
