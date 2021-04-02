@@ -190,6 +190,7 @@ const DropzoneChild = forwardRef(({ children, dropzone, ...others }, ref) => {
     ...dropzoneProps,
   })
   const isActive = canDrop && isOver
+
   return (
     <Styled ref={forkRef(dropRef, ref)} position="relative" {...others}>
       {children}

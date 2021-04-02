@@ -137,7 +137,11 @@ export const PageDropzone = ({
             <Text variant="uiTextSmall" mb="em" color="text.2">
               Drag pages here from the sidebar to add them to this collection.
             </Text>
-            <Text variant="uiTextSmall" color="text.2">
+            <Text
+              data-test-element="drop-zone"
+              variant="uiTextSmall"
+              color="text.2"
+            >
               Note that this does not remove them from their original
               collections.
             </Text>
