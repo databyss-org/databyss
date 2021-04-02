@@ -1,4 +1,3 @@
-import { Groups } from '@databyss-org/data/couchdb'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import {
   CredentialResponse,
@@ -39,7 +38,9 @@ export const verifyUserOwnsDatabase = async ({
   dbName: string
 }) => {
   // look up db in our groups DB
-  const groupResponse = await Groups.find({ selector: { _id: dbName } })
+  const groupResponse = await cloudant.models.Groups.find({
+    selector: { _id: dbName },
+  })
 
   if (groupResponse.docs.length) {
     const _group = groupResponse.docs[0]
@@ -53,7 +54,7 @@ export const verifyUserOwnsDatabase = async ({
 
 export const getDB = async ({ dbName }: { dbName: string }) => {
   try {
-    const _db = await cloudant.db.use<any>(dbName)
+    const _db = await cloudant.current.db.use<any>(dbName)
     return _db
   } catch (err) {
     return false
@@ -62,7 +63,7 @@ export const getDB = async ({ dbName }: { dbName: string }) => {
 
 export const deleteSharedGroupDatabase = async ({ groupId }) => {
   try {
-    await cloudant.db.destroy(groupId)
+    await cloudant.current.db.destroy(groupId)
   } catch (err) {
     console.error(err)
   }

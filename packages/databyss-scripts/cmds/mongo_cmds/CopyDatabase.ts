@@ -1,28 +1,14 @@
 import tmp from 'tmp'
-import ServerProcess from '../lib/ServerProcess'
-import { getEnv } from '../lib/util'
-
-interface EnvDict {
-  [key: string]: string
-}
-
-interface JobArgs {
-  envName: string
-  fromDb: string
-  toDb: string
-}
+import { run, ServerProcess } from '@databyss-org/scripts/lib'
 
 class CopyDatabase extends ServerProcess {
-  args: JobArgs
-  env: EnvDict
   tmpDir: { name: string; removeCallback: Function }
 
-  constructor(args: JobArgs) {
-    super()
-    this.args = args
-    this.env = getEnv(args.envName)
+  constructor(argv) {
+    super(argv, 'mongo.copy-database')
     this.tmpDir = tmp.dirSync({ unsafeCleanup: true })
   }
+
   async run() {
     if (this.args.toDb === 'production') {
       throw new Error('Cannot overwrite production database')
@@ -53,3 +39,11 @@ class CopyDatabase extends ServerProcess {
 }
 
 export default CopyDatabase
+
+exports.command = 'copy-database <fromDb> <toDb>'
+exports.desc = 'Migrate Mongo user to Cloudant'
+exports.builder = {}
+exports.handler = (argv) => {
+  const _job = new CopyDatabase(argv)
+  run(_job)
+}

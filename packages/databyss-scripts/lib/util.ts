@@ -32,3 +32,9 @@ export function getEnv(
   }
   return envObj
 }
+
+export function cloudantUrl(env: EnvDict) {
+  return `https://${env.CLOUDANT_USERNAME}:${env.CLOUDANT_PASSWORD}@${env.REACT_APP_CLOUDANT_HOST}`
+}
+
+export const sleep = (m) => new Promise((r) => setTimeout(r, m))
