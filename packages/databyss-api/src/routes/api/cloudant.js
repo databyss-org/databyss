@@ -143,10 +143,10 @@ router.delete('/', async (req, res) => {
   if (process.env.NODE_ENV !== 'test') {
     return new UnauthorizedError()
   }
-  const _dbs = await cloudant.db.list()
+  const _dbs = await cloudant.current.db.list()
   if (_dbs.length) {
     for (const _db of _dbs) {
-      await cloudant.db.destroy(_db)
+      await cloudant.current.db.destroy(_db)
       // dont exceed cloudant rate limit
       await sleep(100)
       console.log(`destroyed - ${_db}`)

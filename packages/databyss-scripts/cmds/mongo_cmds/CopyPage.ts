@@ -1,40 +1,11 @@
 /* eslint-disable no-await-in-loop */
 import { copyPage } from '@databyss-org/api/src/lib/pages'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
-import ServerProcess from '../lib/ServerProcess'
-import { getEnv } from '../lib/util'
+import { run, ServerProcess } from '@databyss-org/scripts/lib'
 
-interface EnvDict {
-  [key: string]: string
-}
-
-interface JobArgs {
-  /**
-   * The environment to use for the connection string
-   */
-  envName: string
-  /**
-   * The _id of the page to copy
-   */
-  pageId: string
-  /**
-   * The _id of the account to copy the page to
-   */
-  toAccountId: string
-}
-
-/**
- * Copies a page from one account to another
- */
 class CopyPage extends ServerProcess {
-  args: JobArgs
-  fromDb: string | undefined
-  env: EnvDict
-
-  constructor(args: JobArgs) {
-    super()
-    this.args = args
-    this.env = getEnv(args.envName)
+  constructor(argv) {
+    super(argv, 'mongo.copy-page')
   }
   async run() {
     this.emit(
@@ -59,3 +30,11 @@ class CopyPage extends ServerProcess {
 }
 
 export default CopyPage
+
+exports.command = 'copy-page <pageId> <toAccoundId>'
+exports.desc = 'Copies a page from one account to another'
+exports.builder = {}
+exports.handler = (argv) => {
+  const _job = new CopyPage(argv)
+  run(_job)
+}

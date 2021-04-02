@@ -1,32 +1,15 @@
 /* eslint-disable no-await-in-loop */
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
-import ServerProcess from '../../lib/ServerProcess'
-import { getEnv } from '../../lib/util'
+import { run } from '@databyss-org/scripts/lib/runner'
+import ServerProcess from '@databyss-org/scripts/lib/ServerProcess'
 import { getPublicPagePaths } from './getPublicPagePaths'
-
-interface EnvDict {
-  [key: string]: string
-}
-
-interface JobArgs {
-  /**
-   * The environment to use for the connection string
-   */
-  envName: string
-}
 
 /**
  * Generates a report of all public pages
  */
 class ReportPublicPages extends ServerProcess {
-  args: JobArgs
-  fromDb: string | undefined
-  env: EnvDict
-
-  constructor(args: JobArgs) {
-    super()
-    this.args = args
-    this.env = getEnv(args.envName)
+  constructor(argv) {
+    super(argv, 'mongo.public-pages')
   }
   async run() {
     this.emit('stdout', `Generating report of all public pages`)
@@ -53,3 +36,11 @@ class ReportPublicPages extends ServerProcess {
 }
 
 export default ReportPublicPages
+
+exports.command = 'public-pages'
+exports.desc = 'Generate a report of all public pages'
+exports.builder = {}
+exports.handler = (argv) => {
+  const _job = new ReportPublicPages(argv)
+  run(_job)
+}

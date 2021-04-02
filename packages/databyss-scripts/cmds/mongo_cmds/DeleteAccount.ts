@@ -1,21 +1,10 @@
 import Account from '@databyss-org/api/src/models/Account'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
-import ServerProcess from '../lib/ServerProcess'
-import { getEnv, EnvDict } from '../lib/util'
-
-interface JobArgs {
-  envName: string
-  accountId: string
-}
+import { run, ServerProcess } from '@databyss-org/scripts/lib'
 
 class DeleteAccount extends ServerProcess {
-  args: JobArgs
-  env: EnvDict
-
-  constructor(args: JobArgs) {
-    super()
-    this.args = args
-    this.env = getEnv(args.envName)
+  constructor(argv) {
+    super(argv, 'mongo.delete-account')
   }
   async run() {
     this.emit('stdout', `Deleting account with _id: ${this.args.accountId}`)
@@ -37,3 +26,11 @@ class DeleteAccount extends ServerProcess {
 }
 
 export default DeleteAccount
+
+exports.command = 'delete-account <accountId>'
+exports.desc = 'Delete account by ID'
+exports.builder = {}
+exports.handler = (argv) => {
+  const _job = new DeleteAccount(argv)
+  run(_job)
+}

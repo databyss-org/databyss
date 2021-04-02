@@ -1,11 +1,17 @@
-import { User, Group, Login, DesignDoc } from '../interfaces'
-import { cloudant } from './cloudant'
+import * as nano from 'nano'
 
 export { updateDesignDocs, initiateDatabases } from './util'
+export { cloudant } from './cloudant'
 
-export const Users = cloudant.db.use<User>('users')
-export const UsersDesignDoc = cloudant.db.use<DesignDoc>('users')
-export const Logins = cloudant.db.use<Login>('logins')
-export const LoginsDesignDoc = cloudant.db.use<DesignDoc>('logins')
-export const Groups = cloudant.db.use<Group>('groups')
-export const GroupsDesignDoc = cloudant.db.use<DesignDoc>('groups')
+declare module 'nano' {
+  export interface DocumentScope<D> {
+    upsert: (docname: string, callback: (oldDocument: D) => D) => D
+    /**
+     * Wraps db.get in a try/catch so that missing documents return null instead of
+     * throwing an error
+     * @param name Document _id
+     * @returns document or null if not found
+     */
+    tryGet: (name: string) => Promise<(nano.DocumentGetResponse & D) | null>
+  }
+}

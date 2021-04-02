@@ -18,13 +18,7 @@ import {
 } from '@databyss-org/api/src/lib/createUserDatabase'
 import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { Role, User as UserInterface } from '@databyss-org/data/interfaces'
-import ServerProcess from '../../lib/ServerProcess'
-import { getEnv, EnvDict } from '../../lib/util'
-
-interface JobArgs {
-  envName: string
-  email: string
-}
+import { run, ServerProcess } from '@databyss-org/scripts/lib'
 
 const fixDetail = (detail: any) => {
   if (!detail) {
@@ -56,19 +50,14 @@ const fixDetail = (detail: any) => {
 }
 
 class UserMongoToCloudant extends ServerProcess {
-  args: JobArgs
-  env: EnvDict
-
-  constructor(args: JobArgs) {
-    super()
-    this.args = args
-    this.env = getEnv(args.envName)
+  constructor(argv) {
+    super(argv, 'migrate.mongo-to-cloudant')
   }
   async run() {
     this.emit('stdout', `Migrating user "${this.args.email}" to cloudant`)
     try {
       // STEP 1: connect to Mongo
-      connectDB(this.env.API_MONGO_URI)
+      connectDB(this.args.env.API_MONGO_URI)
       // (cloudant connects when the lib functions are called below)
 
       // STEP 1a: Get User record from mongo and save the defaultAccountId
@@ -107,7 +96,7 @@ class UserMongoToCloudant extends ServerProcess {
       console.log(`⏳ Create group: ${_couchGroupName}`)
       await createGroupDatabase(_couchGroupName)
       console.log(`✅ Group created: ${_defaultGroupId}`)
-      const _groupDb = await cloudant.db.use<any>(_couchGroupName)
+      const _groupDb = await cloudant.current.db.use<any>(_couchGroupName)
       const _mongoAccount: any = await Account.findOne({
         _id: _defaultAccountId,
       })
@@ -280,25 +269,23 @@ class UserMongoToCloudant extends ServerProcess {
         const _mongoSelection = await Selection.findOne({
           _id: _mongoPage.selection._id,
         })
-        let _couchSelectionId: string | null = null
-        if (_mongoSelection) {
-          // generate a new id for the Selection
-          _couchSelectionId = uid()
-          // insert the Selection in couch
-          await _groupDb.insert({
-            doctype: DocumentType.Selection,
-            _id: _couchSelectionId,
-            focus: {
-              index: _mongoSelection.focus.index,
-              offset: _mongoSelection.focus.offset,
-            },
-            anchor: {
-              index: _mongoSelection.focus.index,
-              offset: _mongoSelection.focus.offset,
-            },
-            ...getDocFields(_mongoPage),
-          })
-        }
+        // generate a new id for the Selection
+        const _couchSelectionId = uid()
+
+        // insert the Selection in couch
+        await _groupDb.insert({
+          doctype: DocumentType.Selection,
+          _id: _couchSelectionId,
+          focus: {
+            index: _mongoSelection?.focus.index ?? 0,
+            offset: _mongoSelection?.focus.offset ?? 0,
+          },
+          anchor: {
+            index: _mongoSelection?.focus.index ?? 0,
+            offset: _mongoSelection?.focus.offset ?? 0,
+          },
+          ...getDocFields(_mongoPage),
+        })
 
         // create public group dbs in cloudant for each account in Page.sharedWith
         //   and store the mapping in _sharedAccountMap
@@ -364,7 +351,9 @@ class UserMongoToCloudant extends ServerProcess {
         // insert the page into the shared group dbs
         for (const { account } of _mongoPage.sharedWith) {
           const _sharedGroupName = _sharedAccountMap[account]
-          const _sharedGroupDb = await cloudant.db.use<any>(_sharedGroupName)
+          const _sharedGroupDb = await cloudant.current.db.use<any>(
+            _sharedGroupName
+          )
           _sharedGroupDb.insert(_couchPage)
         }
       }
@@ -442,7 +431,9 @@ class UserMongoToCloudant extends ServerProcess {
           `ℹ️  Migrating shared group dependencies: ${_sharedGroupName}`
         )
         const _sharedPageId = _sharedGroupName.substring(2)
-        const _sharedGroupDb = await cloudant.db.use<any>(_sharedGroupName)
+        const _sharedGroupDb = await cloudant.current.db.use<any>(
+          _sharedGroupName
+        )
         const _sharedPage: PageDoc = await _sharedGroupDb.get(_sharedPageId)
 
         const _addSharedWithGroups = async (_docid: string) => {
@@ -534,7 +525,7 @@ class UserMongoToCloudant extends ServerProcess {
        */
 
       // STEP 5: Create document in the Users db for the new user so they can login
-      const _usersDb = await cloudant.db.use<UserInterface>('users')
+      const _usersDb = await cloudant.current.db.use<UserInterface>('users')
       _usersDb.insert({
         _id: _couchUserId,
         email: _mongoUser.email,
@@ -561,3 +552,11 @@ class UserMongoToCloudant extends ServerProcess {
 }
 
 export default UserMongoToCloudant
+
+exports.command = 'mongo-to-cloudant <email>'
+exports.desc = 'Migrate Mongo user to Cloudant'
+exports.builder = {}
+exports.handler = (argv) => {
+  const _job = new UserMongoToCloudant(argv)
+  run(_job)
+}
