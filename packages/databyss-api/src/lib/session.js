@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { Users } from '@databyss-org/data/couchdb'
+import { cloudant } from '@databyss-org/data/couchdb'
 
 export const getTokenFromUserId = (userId) =>
   new Promise((resolve, reject) =>
@@ -17,7 +17,7 @@ export const getTokenFromUserId = (userId) =>
   )
 
 export const getSessionFromUserId = async (userId) => {
-  const user = await Users.get(userId)
+  const user = await cloudant.models.Users.get(userId)
   if (!userId || !user) {
     throw new Error('Bad userId')
   }

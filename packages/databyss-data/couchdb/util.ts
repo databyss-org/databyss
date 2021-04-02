@@ -1,9 +1,4 @@
 import {
-  LoginsDesignDoc,
-  GroupsDesignDoc,
-  UsersDesignDoc,
-} from '@databyss-org/data/couchdb'
-import {
   userSchema,
   loginSchema,
   sysGroupSchema,
@@ -74,9 +69,9 @@ export const updateDesignDoc = async ({
 
 export const updateDesignDocs = async () => {
   const _designDatabaseTuple: [JSONSchema4, DocumentScope<DesignDoc>][] = [
-    [userSchema, UsersDesignDoc],
-    [loginSchema, LoginsDesignDoc],
-    [sysGroupSchema, GroupsDesignDoc],
+    [userSchema, cloudant.models.UsersDesignDoc],
+    [loginSchema, cloudant.models.LoginsDesignDoc],
+    [sysGroupSchema, cloudant.models.GroupsDesignDoc],
   ]
 
   _designDatabaseTuple.forEach((t) =>
@@ -91,20 +86,20 @@ export const initiateDatabases = async () => {
   // initialize databases if not yet created
   for (const d of ['groups', 'logins', 'users']) {
     try {
-      await cloudant.db.get(d)
+      await cloudant.current.db.get(d)
     } catch (err) {
-      await cloudant.db.create(d)
+      await cloudant.current.db.create(d)
     }
   }
   // update index
   for (const d of ['groups', 'logins', 'users']) {
-    const _db = await cloudant.use(d)
+    const _db = await cloudant.current.use(d)
     const _id = { name: '_id', type: 'json', index: { fields: ['_id'] } }
     _db.index(_id)
   }
 
   // add email index to users
-  const _user = await cloudant.use('users')
+  const _user = await cloudant.current.use('users')
   const _id = { name: 'email', type: 'json', index: { fields: ['email'] } }
   _user.index(_id)
 }
