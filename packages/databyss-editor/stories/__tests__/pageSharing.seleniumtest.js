@@ -9,6 +9,7 @@ import {
   sendKeys,
   enterKey,
   getEditor,
+  getSharedPage,
   isAppInNotesSaved,
   paste,
   selectAll,
@@ -58,9 +59,11 @@ describe('page sharing', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
-    driver = null
-    await sleep(100)
+    if (driver) {
+      await driver.quit()
+      driver = null
+      await sleep(100)
+    }
   })
 
   it('should ensure page sharing integrity', async () => {
@@ -160,20 +163,25 @@ describe('page sharing', () => {
     // wait till login screen renders
     await getElementByTag(driver, '[data-test-path="email"]')
 
-    // // navigate to the private page url
-    // await driver.get(privatePageURL)
+    // navigate to the private page url
+    await driver.get(privatePageURL)
 
-    // /*
-    //   unauthorized page on unauthorized user should return the login screen
-    // */
-    // await getElementByTag(driver, '[data-test-path="email"]')
+    /*
+      unauthorized page on unauthorized user should return the login screen
+    */
+    await getElementByTag(driver, '[data-test-path="email"]')
 
     // // const pageBody = body.trim() === 'Not Authorized' || body.trim() === ''
     // // // confirm private page is not authorized
     // // assert.equal(true, pageBody)
 
-    // navigate to public pageq
+    // navigate to public page
     await driver.get(publicPageUrl)
+
+    await getSharedPage(driver)
+
+    // allow sync to occur
+    await sleep(3000)
     // verify topic is in page
     const topicsSidebarButton = await getElementByTag(
       driver,

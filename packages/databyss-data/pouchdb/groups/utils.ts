@@ -103,8 +103,19 @@ export function removeGroupAction(groupId: string, pageId?: string) {
   return _dict
 }
 
-export async function processGroupActionQ() {
+export async function processGroupActionQ(dispatch: Function) {
   const _q = getGroupActionQ
+  // update ui element
+  if (Object.keys(_q()).length) {
+    dispatch({
+      type: 'DB_BUSY',
+      payload: {
+        isBusy: true,
+        writesPending: Object.keys(_q()).length,
+      },
+    })
+  }
+
   for (const groupId of Object.keys(_q())) {
     const groupPayload: QueuePayload = _q()[groupId]
 
@@ -157,4 +168,12 @@ export async function processGroupActionQ() {
       }
     }
   }
+  // set busy to false
+  dispatch({
+    type: 'DB_BUSY',
+    payload: {
+      isBusy: false,
+      writesPending: 0,
+    },
+  })
 }

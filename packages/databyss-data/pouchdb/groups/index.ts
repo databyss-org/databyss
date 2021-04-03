@@ -408,13 +408,9 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     })
 
     // create cloudant db
-    await addOrRemoveCloudantGroupDatabase({
-      groupId: _data._id,
-      isPublic: true,
-    })
+    setGroupAction(_data._id, GroupAction.SHARED)
   } else {
     // if page is removed from sharing
-
     // delete group from pouchDb
 
     await upsertImmediate({
@@ -427,10 +423,7 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     await removeGroupFromPage({ pageId, groupId: _data._id })
 
     // remove database from cloudant
-    await addOrRemoveCloudantGroupDatabase({
-      groupId: _data._id,
-      isPublic: false,
-    })
+    setGroupAction(_data._id, GroupAction.UNSHARED)
   }
 }
 
@@ -467,14 +460,19 @@ export const updateAndReplicateSharedDatabase = async ({
 }) => {
   // create or delete a database
 
+  const _isSharedPage = groupId.substring(0, 2) === 'p_'
+
+  // if shared page is passed, keep group name, else add prefix g_
+  const _groupId = _isSharedPage ? groupId : `g_${groupId}`
+
   await addOrRemoveCloudantGroupDatabase({
-    groupId: `g_${groupId}`,
+    groupId: _groupId,
     isPublic,
   })
 
   if (isPublic) {
     replicateGroup({
-      groupId: `g_${groupId}`,
+      groupId: _groupId,
       isPublic: true,
     })
   }
@@ -546,6 +544,45 @@ export const removePageFromGroup = async ({
       groupId: `g_${groupId}`,
       isPublic: true,
     })
+  }
+}
+
+export const removeAllGroupsFromPage = async (pageId: string) => {
+  const _page = await findOne({
+    doctype: DocumentType.Page,
+    query: { _id: pageId },
+  })
+
+  if (_page?.sharedWithGroups?.length) {
+    for (const groupId of _page.sharedWithGroups) {
+      const _prefix = groupId.substring(0, 2)
+      // is shared page
+      if (_prefix === 'p_') {
+        setPublicPage(_page._id, false)
+      }
+      // is in shared group
+      if (_prefix === 'g_') {
+        const _groupId = groupId.substring(2)
+
+        // remove page from local groupId
+        const _groupDocument: Group | null = await findOne({
+          doctype: DocumentType.Group,
+          query: { _id: _groupId },
+        })
+        if (_groupDocument) {
+          upsertImmediate({
+            doctype: DocumentType.Group,
+            _id: _groupId,
+            doc: {
+              ..._groupDocument,
+              pages: _groupDocument.pages.filter((p) => p !== _page._id),
+            },
+          })
+        }
+        // remove group from page documents
+        setGroupPageAction(_groupId, _page._id, PageAction.REMOVE)
+      }
+    }
   }
 }
 

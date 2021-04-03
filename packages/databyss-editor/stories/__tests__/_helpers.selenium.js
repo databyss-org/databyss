@@ -28,6 +28,24 @@ export const getEditor = async (driver) => {
   return _driver
 }
 
+export const getSharedPage = async (driver) => {
+  await sleep(1000)
+  const el = await driver.wait(
+    until.elementLocated(By.tagName('[data-test-element="page-header"]')),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
+
+  const _driver = await driver.wait(
+    until.elementIsVisible(el),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
+  return _driver
+}
+
 export const getElementsByTag = async (driver, tag) => {
   await sleep(1000)
   let el = []
@@ -63,19 +81,23 @@ export const getElementByTag = async (driver, tag) => {
 
 export const logout = async (driver) => {
   await sleep(1000)
-  const accountDropdown = await getElementByTag(
-    driver,
-    '[data-test-element="account-menu"]'
-  )
-  await accountDropdown.click()
-  await sleep(500)
-  const logoutButton = await getElementByTag(
-    driver,
-    '[data-test-block-menu="logout"]'
-  )
-  await logoutButton.click()
-  await getElementByTag(driver, '[data-test-path="email"]')
-  await driver.quit()
+  try {
+    const accountDropdown = await getElementByTag(
+      driver,
+      '[data-test-element="account-menu"]'
+    )
+    await accountDropdown.click()
+    await sleep(500)
+    const logoutButton = await getElementByTag(
+      driver,
+      '[data-test-block-menu="logout"]'
+    )
+    await logoutButton.click()
+    await getElementByTag(driver, '[data-test-path="email"]')
+    await driver.quit()
+  } catch (err) {
+    console.log('Logout ERROR - ', err)
+  }
 }
 
 export const getElementById = async (driver, id) => {
@@ -101,8 +123,8 @@ export const isSaved = async (driver) => {
   try {
     await getElementById(driver, 'complete')
   } catch (err) {
-    if (!err.name !== 'StaleElementReferenceError') {
-      console.log(err)
+    if (err.name !== 'StaleElementReferenceError') {
+      console.log(err.name)
       throw err
     }
   }
@@ -113,7 +135,7 @@ export const isAppInNotesSaved = async (driver) => {
   try {
     await getElementById(driver, 'changes-saved')
   } catch (err) {
-    if (!err.name !== 'StaleElementReferenceError') {
+    if (err.name !== 'StaleElementReferenceError') {
       throw err
     }
   }
