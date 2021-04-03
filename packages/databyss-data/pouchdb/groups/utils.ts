@@ -3,6 +3,7 @@ import {
   updateAndReplicateSharedDatabase,
   replicateGroup,
   removePageFromGroup,
+  removeSharedDatabase,
 } from './index'
 import { findOne } from '../utils'
 import { DocumentType, PageDoc } from '../interfaces'
@@ -123,10 +124,16 @@ export async function processGroupActionQ(dispatch: Function) {
     if (_groupAction) {
       removeGroupAction(groupId)
       try {
-        await updateAndReplicateSharedDatabase({
-          groupId,
-          isPublic: GroupAction.SHARED === _groupAction,
-        })
+        switch (_groupAction) {
+          case GroupAction.SHARED: {
+            await updateAndReplicateSharedDatabase({ groupId, isPublic: true })
+            break
+          }
+          case GroupAction.UNSHARED: {
+            await removeSharedDatabase(groupId)
+            break
+          }
+        }
       } catch (err) {
         console.log('groupActionQueue error', err)
         setGroupAction(groupId, _groupAction)
@@ -159,7 +166,7 @@ export async function processGroupActionQ(dispatch: Function) {
             }
           }
           if (_pageAction === PageAction.ADD) {
-            await replicateGroup({ groupId: `g_${groupId}`, isPublic: true })
+            await replicateGroup({ groupId, isPublic: true })
           }
         } catch (err) {
           console.log('groupActionQueue error', err)

@@ -8,7 +8,7 @@ export class Group {
   public?: boolean
 
   constructor(name: string) {
-    this._id = uidlc()
+    this._id = `g_${uidlc()}`
     this.name = name
     this.pages = []
     this.public = false

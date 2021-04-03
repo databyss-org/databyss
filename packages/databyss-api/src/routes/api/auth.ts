@@ -1,6 +1,6 @@
 import express from 'express'
 import { cloudant } from '@databyss-org/data/couchdb'
-import auth from '../../middleware/auth'
+import { authMiddleware } from '../../middleware'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
 import {
@@ -13,22 +13,20 @@ const router = express.Router()
 // @route    GET api/auth
 // @desc     verify user
 // @access   Public
-router.post('/', auth, async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   try {
     if (req?.user) {
-      let session = await getSessionFromUserId(req.user.id)
+      let session = await getSessionFromUserId(req.user._id)
       // TODO: on every re-login attempt we are creating new user credentials, should this happen on the back end or should the user save the credentials in their offline database?
       session = await addCredientialsToSession({
-        groupId: session.user.belongsToGroup,
+        groupId: session.user.defaultGroupId!,
         userId: session.user._id,
         session,
       })
 
       return res.json({ data: { session } })
     }
-    return res
-      .json({ data: { isPublic: true, accountId: req.asAccount } })
-      .status(200)
+    return res.json({ data: { isPublic: true } }).status(200)
   } catch (err) {
     console.error(err.message)
     return res.status(500).send('Server Error')
@@ -57,9 +55,9 @@ router.post(
     if (query.docs.length) {
       const _login = query.docs[0]
 
-      if (_login.date >= Date.now() - 36000000) {
+      if (_login.createdAt >= Date.now() - 36000000) {
         const token = _login.token
-        const _res = await cloudant.models.Logins.get(_login._id, _login._rev)
+        const _res = await cloudant.models.Logins.get(_login._id)
         await cloudant.models.Logins.destroy(_res._id, _res._rev)
         const session = await getSessionFromToken(token)
 
