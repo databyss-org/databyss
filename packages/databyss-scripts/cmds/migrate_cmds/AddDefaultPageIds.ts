@@ -23,7 +23,7 @@ export class AddDefaultPageIds extends ServerProcess {
         continue
       }
 
-      _db.upsert(_dbName, (oldDoc) => {
+      await _db.upsert(_dbName, (oldDoc) => {
         if (oldDoc.pages.length) {
           oldDoc.defaultPageId = oldDoc.pages[0]
         } else {

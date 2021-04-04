@@ -47,7 +47,7 @@ router.post(
         return
       }
 
-      const decoded = jwt.decode(tokens.id_token)
+      const decoded = jwt.decode(tokens!.id_token)
       const { name, email: _email, sub } = decoded
 
       const email = _email?.toLowerCase()
@@ -56,19 +56,23 @@ router.post(
           googleId: { $eq: sub },
         },
       }
-      let user = (await cloudant.models.Users.find(_selector)).docs[0]
+      let _userId: string
+      const user = (await cloudant.models.Users.find(_selector)).docs[0]
 
-      if (!user) {
-        user = {
+      if (user) {
+        _userId = user._id
+      } else {
+        const _user = {
           _id: uid(),
           name,
           email,
           googleId: sub,
         }
-        await cloudant.models.Users.insert(user)
+        _userId = _user._id
+        await cloudant.models.Users.insert(_user)
       }
 
-      const session = await getSessionFromUserId(user._id)
+      const session = await getSessionFromUserId(_userId)
 
       // give user credentials, if default db does not exist for user, create one
       const credentials = await createUserDatabaseCredentials(session.user)
@@ -125,13 +129,19 @@ router.post(
           ? 'test-code-42'
           : humanReadableIds.hri.random(),
       token,
-      date: Date.now(),
+      createdAt: Date.now(),
     }
 
-    cloudant.models.Logins.upsert(
-      { email, code: loginObj.code },
-      () => loginObj
-    )
+    const login = await cloudant.models.Logins.find({
+      selector: {
+        email,
+        code: loginObj.code,
+      },
+    })
+
+    if (!login.docs.length) {
+      await cloudant.models.Logins.insert(loginObj)
+    }
 
     const msg = {
       From: process.env.TRANSACTIONAL_EMAIL_SENDER,
@@ -160,13 +170,8 @@ router.post(
     try {
       const decoded = jwt.verify(authToken, process.env.JWT_SECRET)
       if (decoded) {
-        //
-        let user = await cloudant.models.Users.get(decoded.user.id)
-        if (user) {
-          user = { email: user.email }
-        }
-
-        return res.json({ data: { ...user } }).status(200)
+        const user = await cloudant.models.Users.get(decoded.user.id)
+        return res.json({ data: { email: user.email } }).status(200)
       }
       return res.status(401).json({ msg: 'Token is not valid' })
     } catch (err) {

@@ -16,9 +16,8 @@ export const init = async (groupId?: string) => {
   const { dbKey: _username, dbPassword: _password } = _secrets[_groupId]
   console.log('couchdb-client.init.user', _username)
   console.log('couchdb-client.init.pass', _password)
-  const _dbName = `g_${_groupId}`
   const _doc = await request(
-    `https://${process.env.CLOUDANT_HOST}/${_dbName}/user_preference`,
+    `https://${process.env.CLOUDANT_HOST}/${_groupId}/user_preference`,
     {
       headers: {
         Authorization: `Basic ${Base64.btoa(`${_username}:${_password}`)}`,

@@ -1,10 +1,8 @@
 import chokidar from 'chokidar'
 import path from 'path'
 import http from 'http'
-import mongoose from 'mongoose'
-import { onShutdown } from 'node-graceful-shutdown'
+// import { onShutdown } from 'node-graceful-shutdown'
 import '../../config/env'
-import { closeDB } from './src/lib/db'
 
 const watchPaths = [
   path.resolve(process.cwd(), 'packages/databyss-api/src'),
@@ -25,11 +23,8 @@ const start = () =>
 
 const restart = async () => {
   console.log('closing database connections...')
-  await closeDB()
 
   console.log('clearing mongoose caches...')
-  mongoose.connection.models = {}
-  mongoose.models = {}
 
   console.log('Reloading...')
   Object.keys(require.cache).forEach((id) => {
@@ -47,10 +42,9 @@ const restart = async () => {
   })
 }
 
-onShutdown('database', async () => {
-  console.log('closing database connections...')
-  await closeDB()
-})
+// onShutdown('database', async () => {
+//   console.log('closing database connections...')
+// })
 
 start().then(() => {
   // watch for changes

@@ -75,8 +75,9 @@ class UserMongoToCloudant extends ServerProcess {
       // generate a userId for the user
       const _couchUserId = uid()
 
-      // create a defaultGroup
-      const _defaultGroupId = await createGroupId({ userId: _couchUserId })
+      // generate a groupId for the default group
+      const _defaultGroupId = `g_${uidlc()}`
+      await createGroupId({ groupId: _defaultGroupId, userId: _couchUserId })
 
       /**
        * Populate fields required on all docs, like timestamps and belongsToGroup
@@ -92,11 +93,10 @@ class UserMongoToCloudant extends ServerProcess {
       })
 
       // STEP 2: Create the user's default group database and add design docs
-      const _couchGroupName = `g_${_defaultGroupId}`
-      console.log(`⏳ Create group: ${_couchGroupName}`)
-      await createGroupDatabase(_couchGroupName)
+      console.log(`⏳ Create group: ${_defaultGroupId}`)
+      await createGroupDatabase(_defaultGroupId)
       console.log(`✅ Group created: ${_defaultGroupId}`)
-      const _groupDb = await cloudant.current.db.use<any>(_couchGroupName)
+      const _groupDb = await cloudant.current.db.use<any>(_defaultGroupId)
       const _mongoAccount: any = await Account.findOne({
         _id: _defaultAccountId,
       })

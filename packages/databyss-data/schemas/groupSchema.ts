@@ -7,6 +7,9 @@ export const groupSchema: JSONSchema4 = {
     name: {
       type: 'string',
     },
+    dbName: {
+      type: 'string',
+    },
     pages: {
       type: 'array',
       items: {

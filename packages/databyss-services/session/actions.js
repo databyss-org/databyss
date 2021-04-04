@@ -234,10 +234,9 @@ export const isGroupPublic = async () => {
   // get the page id
   const groupId = path?.[1]
   if (groupId) {
-    const group = `g_${groupId}`
     try {
-      await request(`${REMOTE_CLOUDANT_URL}/${group}`)
-      return group
+      await request(`${REMOTE_CLOUDANT_URL}/${groupId}`)
+      return groupId
     } catch (err) {
       return false
     }

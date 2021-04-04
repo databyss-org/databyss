@@ -12,6 +12,6 @@ export interface SysGroup {
   _id: string
   name: string
   sessions: GroupSession[]
-  defaultPageId: string
+  defaultPageId?: string
   belongsToUserId: string
 }
