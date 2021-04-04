@@ -29,7 +29,6 @@ const App = () => {
             email={email}
             code={code}
           >
-            <ReleaseNotes />
             <Private />
           </SessionProvider>
         </ServiceProvider>
