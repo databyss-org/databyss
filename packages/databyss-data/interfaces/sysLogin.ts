@@ -1,4 +1,4 @@
-export interface Login {
+export interface SysLogin {
   _id: string
   email: string
   code: string

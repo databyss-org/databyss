@@ -17,7 +17,7 @@ import {
   createGroupDatabase,
 } from '@databyss-org/api/src/lib/createUserDatabase'
 import { uid, uidlc } from '@databyss-org/data/lib/uid'
-import { Role, User as UserInterface } from '@databyss-org/data/interfaces'
+import { Role, SysUser as UserInterface } from '@databyss-org/data/interfaces'
 import { run, ServerProcess } from '@databyss-org/scripts/lib'
 
 const fixDetail = (detail: any) => {

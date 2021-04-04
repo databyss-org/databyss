@@ -1,4 +1,4 @@
-import { Role } from './user'
+import { Role } from './sysUser'
 
 export interface GroupSession {
   userId: string
@@ -8,7 +8,7 @@ export interface GroupSession {
   role: Role
 }
 
-export interface Group {
+export interface SysGroup {
   _id: string
   name: string
   sessions: GroupSession[]

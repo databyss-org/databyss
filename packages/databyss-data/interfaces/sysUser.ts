@@ -10,7 +10,7 @@ export interface UserGroup {
   groupId: string
 }
 
-export interface User {
+export interface SysUser {
   _id: string
   email: string
   name?: string

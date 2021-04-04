@@ -1,4 +1,4 @@
-import { User, Role } from '@databyss-org/data/interfaces'
+import { SysUser, Role } from '@databyss-org/data/interfaces'
 import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
 import { uidlc } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
@@ -239,7 +239,7 @@ export const addCredentialsToGroupId = async ({
 }
 
 export const createUserDatabaseCredentials = async (
-  user: User
+  user: SysUser
 ): Promise<CredentialResponse> => {
   let groupId = user.defaultGroupId
 
