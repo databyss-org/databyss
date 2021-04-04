@@ -1,6 +1,5 @@
 import { parse } from 'dotenv'
 import { uid } from '@databyss-org/data/lib/uid'
-import { cloudant } from '@databyss-org/data/couchdb'
 
 const fs = require('fs')
 
@@ -39,14 +38,3 @@ export function cloudantUrl(env: EnvDict) {
 }
 
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
-
-// export async function getAllDbsForUser(userId: string) {
-//   const _dbNames = []
-
-//   // get the default group from user doc
-//   const _user = await cloudant.models.Users.get(userId)
-//   const _defaultGroupId = _user.defaultGroupId!
-//   _dbNames.push(_defaultGroupId)
-
-//   // find all groups that belong to this user
-// }
