@@ -526,7 +526,7 @@ class UserMongoToCloudant extends ServerProcess {
 
       // STEP 5: Create document in the Users db for the new user so they can login
       const _usersDb = await cloudant.current.db.use<UserInterface>('users')
-      _usersDb.insert({
+      await _usersDb.insert({
         _id: _couchUserId,
         email: _mongoUser.email,
         defaultGroupId: _defaultGroupId,
