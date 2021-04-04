@@ -56,19 +56,23 @@ router.post(
           googleId: { $eq: sub },
         },
       }
+      let _userId: string
       const user = (await cloudant.models.Users.find(_selector)).docs[0]
 
-      if (!user) {
+      if (user) {
+        _userId = user._id
+      } else {
         const _user = {
           _id: uid(),
           name,
           email,
           googleId: sub,
         }
+        _userId = _user._id
         await cloudant.models.Users.insert(_user)
       }
 
-      const session = await getSessionFromUserId(user._id)
+      const session = await getSessionFromUserId(_userId)
 
       // give user credentials, if default db does not exist for user, create one
       const credentials = await createUserDatabaseCredentials(session.user)
