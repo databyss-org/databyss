@@ -62,7 +62,17 @@ export const SearchContent = () => {
       {searchRes.isSuccess ? (
         composeResults(searchRes.data)
       ) : (
-        <LoadingFallback queryObserver={searchRes} showLongWaitMessage />
+        <LoadingFallback
+          queryObserver={searchRes}
+          showLongWaitMessage
+          longWaitMs={5000}
+          longWaitDialogOptions={{
+            message:
+              "<strong>Databyss is still building your search index, which will allow fast searching within your notes.</strong><p>If it's not done in about a minute...</p><p>&nbsp;&nbsp;&nbsp;...just wait longer.</p>",
+            html: true,
+            dolphins: true,
+          }}
+        />
       )}
     </IndexPageView>
   )

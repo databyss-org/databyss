@@ -12,6 +12,17 @@ export const NotifyMessage = () => {
       >
         Notify Message
       </Button>
+      <Button
+        onPress={() =>
+          notify({
+            message: 'This is a notification message.',
+            dolphins: true,
+            showConfirmButtons: false,
+          })
+        }
+      >
+        Notify no dismiss button (and dolphins)
+      </Button>
     </Section>
   )
 }

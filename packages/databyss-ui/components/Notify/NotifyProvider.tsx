@@ -30,6 +30,7 @@ export interface DialogOptions {
   onOk?: () => void
   onCancel?: () => void
   showConfirmButtons?: boolean
+  dolphins?: boolean
 }
 
 export interface StickyOptions {
@@ -46,7 +47,7 @@ interface NotifyProviderState {
 
 interface ContextType {
   notify: (options: DialogOptions) => void
-  notifyError: (options: DialogOptions) => void
+  notifyError: (error: Error) => void
   notifyHtml: (options: DialogOptions) => void
   notifySticky: (options: StickyOptions) => void
   notifyConfirm: (options: DialogOptions) => void
@@ -391,6 +392,7 @@ class NotifyProvider extends React.Component {
           visible={dialog.visible}
           message={dialog.message}
           html={dialog.html}
+          dolphins={dialog.dolphins}
           {...(!isOnline && { 'data-test-modal': 'offline' })}
         />
       </NotifyContext.Provider>

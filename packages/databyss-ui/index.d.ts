@@ -311,6 +311,7 @@ export interface DialogViewProps extends ViewProps {
   onConfirm?: (e: MouseEvent | KeyboardEvent) => void
   showConfirmButtons?: boolean
   html?: boolean
+  dolphins?: boolean
 }
 
 export interface DialogProps extends DialogViewProps {
