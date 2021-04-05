@@ -62,7 +62,7 @@ export const SearchContent = () => {
       {searchRes.isSuccess ? (
         composeResults(searchRes.data)
       ) : (
-        <LoadingFallback queryObserver={searchRes} />
+        <LoadingFallback queryObserver={searchRes} showLongWaitMessage />
       )}
     </IndexPageView>
   )

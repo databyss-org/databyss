@@ -173,7 +173,7 @@ const Login = ({ pending, signupFlow, navLinks }) => {
                 data-test-id="continueButton"
               >
                 {pending ? (
-                  <Loading size={18} />
+                  <Loading size={20} showLongWaitMessage />
                 ) : (
                   `${signInOrSignUp} with ${
                     showRequestCode ? 'Login Code' : 'Email'

@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, ReactNode, useContext } from 'react'
 import { Dialog, Button, Text, View } from '@databyss-org/ui/primitives'
 import {
   NotAuthorizedError,
@@ -7,7 +7,7 @@ import {
   InsufficientPermissionError,
   ResourceNotFoundError,
 } from '@databyss-org/services/interfaces'
-import Bugsnag from '@bugsnag/js'
+import Bugsnag, { BrowserConfig } from '@bugsnag/js'
 import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
 import { checkNetwork } from '@databyss-org/services/lib/request'
@@ -15,7 +15,47 @@ import { cleanupDefaultGroup } from '@databyss-org/services/session/clientStorag
 import IS_NATIVE from '../../lib/isNative'
 import StickyMessage from './StickyMessage'
 
-const NotifyContext = createContext()
+declare module '@bugsnag/plugin-react' {
+  export const formatComponentStack: (str: string) => string
+}
+
+export interface DialogOptions {
+  message?: string | null
+  visible?: boolean
+  html?: boolean
+  error?: boolean
+  buttons?: ReactNode[] | null
+  okText?: string | null
+  cancelText?: string | null
+  onOk?: () => void
+  onCancel?: () => void
+  showConfirmButtons?: boolean
+}
+
+export interface StickyOptions {
+  visible?: boolean
+  children?: ReactNode | null
+}
+
+interface NotifyProviderState {
+  dialog: DialogOptions
+  sticky: StickyOptions
+  isOnline: boolean
+  hasError: boolean
+}
+
+interface ContextType {
+  notify: (options: DialogOptions) => void
+  notifyError: (options: DialogOptions) => void
+  notifyHtml: (options: DialogOptions) => void
+  notifySticky: (options: StickyOptions) => void
+  notifyConfirm: (options: DialogOptions) => void
+  hideDialog: () => void
+  hideSticky: () => void
+  isOnline: boolean
+}
+
+const NotifyContext = createContext<ContextType>(null!)
 
 const instanceofAny = (objs, types) => {
   for (const obj of objs) {
@@ -40,43 +80,55 @@ export const enhanceBugsnagEvent = (event, info) => {
   event.addMetadata('react', info)
 }
 
+interface NotifyProviderProps {
+  envPrefix?: string
+  bugsnagOptions?: Partial<BrowserConfig>
+}
+
+const initialDialogState: DialogOptions = {
+  visible: false,
+  message: null,
+  html: false,
+  buttons: null,
+  showConfirmButtons: true,
+}
+const initialStickyState: StickyOptions = {
+  visible: false,
+  children: null,
+}
+
 // TODO: update to functional component when `componentDidCatch` hook is added
 class NotifyProvider extends React.Component {
-  constructor(props) {
+  constructor(props: NotifyProviderProps) {
     super(props)
-    startBugsnag(props.options)
+    startBugsnag(props.bugsnagOptions ?? {})
 
-    if (IS_NATIVE) {
-      global.ErrorUtils.setGlobalHandler((error) => {
-        Bugsnag.notify(error)
-        this.showUnhandledErrorDialog()
-        console.error(error)
-      })
-    } else {
-      window.addEventListener('offline', () => this.setOnlineStatus(false))
-      window.addEventListener('online', () => this.setOnlineStatus(true))
-      window.addEventListener('error', this.onUnhandledError)
-      window.addEventListener('unhandledrejection', this.onUnhandledError)
+    // native fails TS
+    // if (IS_NATIVE) {
+    //   global.ErrorUtils.setGlobalHandler((error) => {
+    //     Bugsnag.notify(error)
+    //     this.showUnhandledErrorDialog()
+    //     console.error(error)
+    //   })
+    // } else {
+    window.addEventListener('offline', () => this.setOnlineStatus(false))
+    window.addEventListener('online', () => this.setOnlineStatus(true))
+    window.addEventListener('error', this.onUnhandledError)
+    window.addEventListener('unhandledrejection', this.onUnhandledError)
 
-      // check for service worker cache updates
-      this.checkForUpdates()
+    // check for service worker cache updates
+    this.checkForUpdates()
 
-      // poll for online status
-      setInterval(this.checkOnlineStatus, process.env.FETCH_TIMEOUT)
-    }
+    // poll for online status
+    this.checkOnlineStatusTimer = window.setInterval(
+      this.checkOnlineStatus,
+      parseInt(process.env.FETCH_TIMEOUT!, 10) || 5000
+    )
+    // }
   }
-  state = {
-    dialog: {
-      visible: false,
-      message: null,
-      html: false,
-      buttons: null,
-    },
-    sticky: {
-      visible: false,
-      html: false,
-      children: null,
-    },
+  state: NotifyProviderState = {
+    dialog: initialDialogState,
+    sticky: initialStickyState,
     isOnline: true,
     hasError: false,
   }
@@ -102,7 +154,7 @@ class NotifyProvider extends React.Component {
     }
   }
 
-  onUnhandledError = (e, info) => {
+  onUnhandledError = (e: any, ...info) => {
     // HACK: ignore ResizeObserver loop limit errors, which are more like warnings
     //   (see https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded)
     if (e === 'ResizeObserver loop limit exceeded') {
@@ -162,21 +214,25 @@ class NotifyProvider extends React.Component {
     })
   }
 
+  checkOnlineStatusTimer: number
+
   notifyUpdateAvailable = () => {
-    this.notifySticky(
-      <>
-        <Text variant="uiTextSmall">There is a new version available!</Text>
-        <Button
-          ml="small"
-          variant="uiLink"
-          textVariant="uiTextSmall"
-          href={window.location.href}
-          onPress={() => window.location.reload(true)}
-        >
-          Click here to update
-        </Button>
-      </>
-    )
+    this.notifySticky({
+      children: (
+        <>
+          <Text variant="uiTextSmall">There is a new version available!</Text>
+          <Button
+            ml="small"
+            variant="uiLink"
+            textVariant="uiTextSmall"
+            href={window.location.href}
+            onPress={() => window.location.reload(true)}
+          >
+            Click here to update
+          </Button>
+        </>
+      ),
+    })
   }
 
   checkForUpdates = () => {
@@ -189,18 +245,21 @@ class NotifyProvider extends React.Component {
     navigator.serviceWorker.ready.then((reg) => {
       reg.addEventListener('updatefound', this.notifyUpdateAvailable)
 
-      setInterval(
+      window.setInterval(
         () =>
           reg.update().catch((err) => {
             console.log('reg.update error', err)
           }),
-        process.env.VERSION_POLL_INTERVAL
+        parseInt(process.env.VERSION_POLL_INTERVAL!, 10) || 300000
       )
     })
   }
 
   showUnhandledErrorDialog = () => {
-    this.notify('😱 So sorry, but Databyss has encountered an error.', true)
+    this.notify({
+      message: '😱 So sorry, but Databyss has encountered an error.',
+      error: true,
+    })
   }
 
   checkOnlineStatus = () => {
@@ -209,24 +268,18 @@ class NotifyProvider extends React.Component {
     })
   }
 
-  notify = (message, _error, _html, _buttons) => {
+  notify = (options: DialogOptions) => {
     this.setState({
       dialog: {
+        ...options,
         visible: true,
-        message,
-        html: _html,
-        buttons: _buttons,
       },
-      ...(_error
-        ? {
-            hasError: true,
-          }
-        : {}),
     })
   }
 
-  notifyConfirm = ({ message, okText, cancelText, onOk, onCancel }) => {
-    const _buttons = [
+  notifyConfirm = (options: DialogOptions) => {
+    const { okText, cancelText, onOk, onCancel } = options
+    const buttons = [
       <Button
         key="notifyConfirmOk"
         onPress={() => {
@@ -251,44 +304,46 @@ class NotifyProvider extends React.Component {
         {cancelText}
       </Button>,
     ]
-    this.notify(message, false, false, _buttons)
-  }
-
-  notifyStickyHtml = (html) => {
-    this.setState({
-      sticky: {
-        visible: true,
-        html,
-      },
+    this.notify({
+      buttons,
+      ...options,
     })
   }
 
-  notifySticky = (children) => {
+  notifySticky = (options: StickyOptions) => {
     this.setState({
       sticky: {
+        ...options,
         visible: true,
-        html: false,
-        children,
       },
     })
   }
 
   hideDialog = () => {
     this.setState({
-      dialog: {
-        ...this.state.dialog,
-        visible: false,
-      },
+      dialog: initialDialogState,
     })
   }
 
-  notifyError = (error) => {
-    Bugsnag.notify(error)
-    this.notify(error.message, error)
+  hideSticky = () => {
+    this.setState({
+      sticky: initialStickyState,
+    })
   }
 
-  notifyHtml = (message) => {
-    this.notify(message, null, true)
+  notifyError = (error: Error) => {
+    Bugsnag.notify(error)
+    this.notify({
+      message: error.message,
+      error: true,
+    })
+  }
+
+  notifyHtml = (options: DialogOptions) => {
+    this.notify({
+      ...options,
+      html: true,
+    })
   }
 
   render() {
@@ -316,21 +371,21 @@ class NotifyProvider extends React.Component {
           notifyHtml: this.notifyHtml,
           notifySticky: this.notifySticky,
           notifyConfirm: this.notifyConfirm,
+          hideDialog: this.hideDialog,
+          hideSticky: this.hideSticky,
           isOnline,
         }}
       >
         <StickyMessage visible={sticky.visible}>
-          <View flexDirection="horizontal" alignItems="center">
+          <View flexDirection="row" alignItems="center">
             {sticky.children}
           </View>
         </StickyMessage>
         {!this.state.hasError && this.props.children}
         <Dialog
-          showConfirmButtons
+          showConfirmButtons={dialog.showConfirmButtons}
           confirmButtons={
-            this.state.hasError
-              ? errorConfirmButtons
-              : this.state.dialog.buttons || []
+            this.state.hasError ? errorConfirmButtons : dialog.buttons || []
           }
           onConfirm={() => this.hideDialog()}
           visible={dialog.visible}
@@ -341,10 +396,6 @@ class NotifyProvider extends React.Component {
       </NotifyContext.Provider>
     )
   }
-}
-
-NotifyProvider.defaultProps = {
-  options: {},
 }
 
 export const useNotifyContext = () => useContext(NotifyContext)
