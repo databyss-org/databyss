@@ -125,6 +125,7 @@ class NotifyProvider extends React.Component {
       this.checkOnlineStatus,
       parseInt(process.env.FETCH_TIMEOUT!, 10) || 5000
     )
+    this.checkOnlineStatus()
     // }
   }
   state: NotifyProviderState = {
