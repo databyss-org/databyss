@@ -40,7 +40,7 @@ export const LoadingFallback = ({
   const timerRef = useRef<number | null>(null)
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'TEST' || !showLongWaitMessage) {
+    if (process.env.NODE_ENV === 'test' || !showLongWaitMessage) {
       return () => null
     }
     timerRef.current = setTimeout(() => {
