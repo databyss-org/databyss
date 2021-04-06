@@ -15,7 +15,6 @@ import {
   upKey,
   rightKey,
   getElementsByTag,
-  getElementById,
   getElementByTag,
 } from './_helpers.selenium'
 
