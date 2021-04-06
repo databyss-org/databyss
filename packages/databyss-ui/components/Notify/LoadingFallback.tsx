@@ -36,7 +36,7 @@ export const LoadingFallback = ({
   longWaitDialogOptions,
   ...others
 }: LoadingFallbackProps) => {
-  const { notify, hideDialog } = useNotifyContext()
+  const { notify, hideDialog } = useNotifyContext() ?? {}
   const timerRef = useRef<number | null>(null)
 
   useEffect(() => {
