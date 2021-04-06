@@ -89,7 +89,7 @@ LoadingFallback.defaultProps = {
   longWaitMs: 2500,
   longWaitDialogOptions: {
     message:
-      "<strong>Databyss is synching with the cloud.</strong><p>If it's not done in a few minutes...</p><p>&nbsp;&nbsp;&nbsp;...just wait longer.</p>",
+      "<strong>Databyss is synching with the cloud.</strong><p>If it's not done shortly...</p><p>&nbsp;&nbsp;&nbsp;...just wait longer.</p>",
     html: true,
     dolphins: true,
   },
