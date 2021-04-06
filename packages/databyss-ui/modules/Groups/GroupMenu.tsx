@@ -57,6 +57,7 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
       justifyContent="center"
     >
       <BaseControl
+        data-test-element="group-menu"
         onPress={() => setShowMenu(!showMenu)}
         onKeyDown={handleEscKey}
         hoverColor="background.2"

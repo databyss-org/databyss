@@ -351,7 +351,7 @@ declare const useDrag: <
 export interface DropdownContainerProps
   extends Omit<ViewProps, 'position'>,
     Omit<ListProps, 'position'> {
-  position: {
+  position?: {
     left?: number
     top?: number
     right?: number

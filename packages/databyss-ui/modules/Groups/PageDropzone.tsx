@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import {
   DraggableItem,
   Text,
@@ -16,12 +17,17 @@ import {
   Group,
   DocumentDict,
 } from '@databyss-org/services/interfaces'
-import { LoadingFallback, SidebarListRow } from '@databyss-org/ui/components'
+import {
+  LoadingFallback,
+  SidebarListRow,
+  DropdownContainer,
+} from '@databyss-org/ui/components'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { addPageDocumentToGroup } from '@databyss-org/data/pouchdb/groups'
+import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import {
   setGroupPageAction,
   PageAction,
@@ -41,6 +47,51 @@ export const PageDropzone = ({
   onChange,
   ...others
 }: PageDropzoneProps) => {
+  const _inTestEnv = !!process.env.CI
+  const [showMenu, setShowMenu] = useState(false)
+
+  let _pagesList
+
+  if (pages) {
+    const addPage = (item) => {
+      setShowMenu(false)
+      const _id = item._id
+      onChange!(value!.concat(_id))
+      addPageDocumentToGroup({ pageId: _id, group })
+    }
+
+    const _children = Object.values(pages).map((p: any) => (
+      <DropdownListItem
+        key={p._id}
+        data-test-element="dropdown-pages"
+        px="small"
+        justifyContent="center"
+        label={p.name}
+        onPress={() => addPage(p)}
+        action="addPage"
+      />
+    ))
+
+    _pagesList = (
+      <View pl="small" justifyContent="center" position="relative">
+        <BaseControl
+          onPress={() => setShowMenu(!showMenu)}
+          data-test-element="add-page-to-collection"
+        >
+          <Text>Add Page +</Text>
+        </BaseControl>
+        <DropdownContainer
+          p="tiny"
+          open={showMenu}
+          children={_children}
+          position={{
+            top: menuLauncherSize + 8,
+          }}
+        />
+      </View>
+    )
+  }
+
   // get most current group and page value
 
   const onDrop = (item: DraggableItem) => {
@@ -93,6 +144,8 @@ export const PageDropzone = ({
         }}
         py="small"
       >
+        {_inTestEnv ? _pagesList : null}
+
         {value!.length ? (
           <>
             {_sortedItems.map((page: PageHeader) => (
@@ -104,7 +157,10 @@ export const PageDropzone = ({
                 hoverColor="control.1"
                 p="em"
               >
-                <BaseControl onPress={() => onRemove(page._id)}>
+                <BaseControl
+                  onPress={() => onRemove(page._id)}
+                  data-test-element="remove-page"
+                >
                   <Icon sizeVariant="tiny">
                     <CloseSvg />
                   </Icon>

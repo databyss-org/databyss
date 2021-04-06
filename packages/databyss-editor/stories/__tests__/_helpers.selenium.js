@@ -1,5 +1,8 @@
 import { Key, By, until } from 'selenium-webdriver'
 
+const LOCAL_URL = 'http://localhost:3000'
+const PROXY_URL = 'http://0.0.0.0:3000'
+
 const waitUntilTime = 30000
 
 const SLEEP_TIME = 300
@@ -100,7 +103,32 @@ export const tagButtonClick = async (tag, driver) => {
     if (err.name !== 'StaleElementReferenceError') {
       throw err
     }
-    console.log('extra attempt')
+    console.log('Stale element, retrying')
+    count += 1
+    await clickAction()
+  }
+}
+
+export const tagButtonListClick = async (tag, index, driver) => {
+  const actions = driver.actions({ async: true })
+
+  let count = 0
+  const clickAction = async () => {
+    if (count > MAX_RETRIES) {
+      throw new Error('Stale Element')
+    }
+    const elements = await getElementsByTag(driver, `[${tag}]`)
+    await actions.click(elements[index]).perform()
+    await actions.clear()
+    await sleep(SLEEP_TIME)
+  }
+  try {
+    await clickAction()
+  } catch (err) {
+    if (err.name !== 'StaleElementReferenceError') {
+      throw err
+    }
+    console.log('Stale element, retrying')
     count += 1
     await clickAction()
   }
@@ -113,59 +141,6 @@ export const dragAndDrop = async (item, container, driver) => {
 
   const _containerElement = await getElementByTag(driver, `[${container}]`)
 
-  // await actions
-  //   .clickAndHold(_itemElement)
-  //   .moveToElement(_containerElement)
-  //   .release(_containerElement)
-  //   .perform()
-
-  // const action = driver.actions({ async: true })
-  // await action.dragAndDrop(_itemElement, _containerElement).perform()
-
-  const _itemRect = await _itemElement.getRect()
-
-  const _containerRect = await _containerElement.getRect()
-
-  console.log(_containerRect)
-
-  // const { x, y } = _rect
-
-  // console.log('POSITIONS', x, y)
-
-  //   driver.actions({bridge: true})
-  //   .move({x: 0, y: 0, origin: Origin.POINTER})
-  //   .perform();
-  // driver.actions({bridge: true})
-  //   .move({x: 0, y: 0, origin: someWebElement})
-  //   .perform();
-
-  // .pause(1000)
-  // .move({
-  //   duration: 3000,
-  //   x: _containerRect.x - 50,
-  //   y: _containerRect.x - 50,
-  // })
-  // // .pause(3000)
-  // .release()
-  // // .pause(1000)
-  // .perform()
-
-  // await actions
-  //   .move({
-  //     duration: 1000,
-  //     x: _containerRect.x + 50,
-  //     y: _containerRect.x + 50,
-  //   })
-  //   .perform()
-
-  // await sleep(5000)
-  //   .moveByOffset(x, y)
-  //   .moveToElement(_containerElement)
-  //   .moveByOffset(x, y)
-  //   .pause()
-  //   .release()
-  //   .build()
-  //   .perform()
   await actions.dragAndDrop(_itemElement, _containerElement).perform()
   await actions.clear()
   await sleep(SLEEP_TIME)
@@ -382,11 +357,28 @@ export const redo = async (actions) => {
   await sleep(SLEEP_TIME)
 }
 
-// export const upKey = async actions => {
-//   await actions
-//     .keyUp(Key.ARROW_UP)
-//     .perform()
+export const logIn = async (email, driver) => {
+  await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
-//   await actions.clear()
-//   await sleep(SLEEP_TIME)
-// }
+  const emailField = await getElementByTag(driver, '[data-test-path="email"]')
+  await emailField.sendKeys(email)
+
+  let continueButton = await getElementByTag(
+    driver,
+    '[data-test-id="continueButton"]'
+  )
+  await continueButton.click()
+
+  const codeField = await getElementByTag(driver, '[data-test-path="code"]')
+  await codeField.sendKeys('test-code-42')
+
+  continueButton = await getElementByTag(
+    driver,
+    '[data-test-id="continueButton"]'
+  )
+
+  await continueButton.click()
+
+  // wait for editor to be visible
+  await getEditor(driver)
+}
