@@ -283,13 +283,12 @@ describe('group sharings', () => {
     await enterKey(actions)
     await selectAll(actions)
     await sendKeys(actions, 'New Topic')
-    await enterKey(actions)
+    await tagButtonClick('data-test-dismiss-modal="true"', driver)
+
     // allow sync
     await sleep(4000)
 
     // navigate to third page and archive it
-    await tagButtonClick('data-test-sidebar-element="pages"', driver)
-
     await tagButtonListClick('data-test-element="page-sidebar-item"', 2, driver)
 
     await tagButtonClick('data-test-element="archive-dropdown"', driver)
@@ -341,7 +340,6 @@ describe('group sharings', () => {
     // should  have a page attached to topic
     await tagButtonListClick('data-test-element="atomic-results"', 0, driver)
 
-    await sleep(50000)
     assert.equal(true, true)
   })
 })
