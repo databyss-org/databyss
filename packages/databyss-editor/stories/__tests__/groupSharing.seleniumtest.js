@@ -14,20 +14,15 @@ import {
   logIn,
   upKey,
   rightKey,
+  getElementsByTag,
+  getElementById,
+  getElementByTag,
 } from './_helpers.selenium'
 
 let driver
 let actions
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
-
-// 1) Adding a page adds page to an already public group
-// 2) Taking away a page takes away a page from an already public group
-// 3) Changing a topic name on a page that's not included in the group, but that has the same topic as in the group, updates the topic name in the group
-// 4) Updates to pages get updated in groups
-// 5) Archiving a page removes that page from a group
-// 7) Making a group private makes the shared page inaccessible
-// 8) Deleting a group makes the shared page inaccessible
 
 // TODO: THIS SHOULD BE ON THE PAGE SHARING  TEST
 // 6) Archiving a page removes that page from shared pages
@@ -202,6 +197,8 @@ describe('group sharings', () => {
     const publicCollectionUnshareUrl = await driver.executeScript(
       'return window.getSelection().toString()'
     )
+    // allow pages to sync
+    await sleep(5000)
 
     // logout
     await tagButtonClick('data-test-element="account-menu"', driver)
@@ -261,7 +258,12 @@ describe('group sharings', () => {
     await tagButtonClick('data-test-element="add-page-to-collection"', driver)
     // add second page to collection (will receive an updated atomic)
     await tagButtonListClick('data-test-block-menu="addPage"', 1, driver)
-    await sleep(1000)
+    await sleep(5000)
+
+    // THIRD COLLECTION
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 2, driver)
+    // UNSHARE GROUP
+    await tagButtonClick('data-test-element="group-public"', driver)
 
     // SECOND COLLECTION
     await tagButtonListClick('data-test-element="page-sidebar-item"', 1, driver)
@@ -270,13 +272,7 @@ describe('group sharings', () => {
     await tagButtonClick('data-test-element="delete-group"', driver)
     await sleep(1000)
 
-    // THIRD COLLECTION
-    await tagButtonListClick('data-test-element="page-sidebar-item"', 2, driver)
-    // UNSHARE GROUP
-    await tagButtonClick('data-test-element="group-public"', driver)
-
     // update topic on first page page (it should update on shared page with same topic)
-    await tagButtonClick('data-test-sidebar-element="pages"', driver)
 
     await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
 
@@ -288,6 +284,8 @@ describe('group sharings', () => {
     await selectAll(actions)
     await sendKeys(actions, 'New Topic')
     await enterKey(actions)
+    // allow sync
+    await sleep(4000)
 
     // navigate to third page and archive it
     await tagButtonClick('data-test-sidebar-element="pages"', driver)
@@ -317,6 +315,31 @@ describe('group sharings', () => {
 
     // go to first page and verify atomic has been update
     await driver.get(publicCollectionUrl)
+
+    // page should load, click on topics sidebar
+    await tagButtonClick('data-test-sidebar-element="topics"', driver)
+    // topic should appear on sidebar
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
+    const _topicResults = await getElementsByTag(
+      driver,
+      '[data-test-element="atomic-results"]'
+    )
+
+    // only  one page should appear
+    assert.equal(_topicResults.length, 1)
+
+    let _title = await getElementByTag(
+      driver,
+      '[data-test-element="index-results"]'
+    )
+    _title = await _title.getAttribute('innerText')
+
+    console.log(_title)
+    // should be updated topic
+    assert.equal(_title, 'New Topic')
+
+    // should  have a page attached to topic
+    await tagButtonListClick('data-test-element="atomic-results"', 0, driver)
 
     await sleep(50000)
     assert.equal(true, true)
