@@ -3,30 +3,21 @@ import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
-  getElementByTag,
-  getElementsByTag,
   sleep,
   sendKeys,
   enterKey,
-  getEditor,
-  getSharedPage,
   isAppInNotesSaved,
   paste,
   selectAll,
-  backspaceKey,
   tagButtonClick,
   tagButtonListClick,
-  dragAndDrop,
   logIn,
   upKey,
   rightKey,
 } from './_helpers.selenium'
 
 let driver
-let editor
 let actions
-const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -214,7 +205,9 @@ describe('group sharings', () => {
 
     // logout
     await tagButtonClick('data-test-element="account-menu"', driver)
+    await sleep(1000)
     await tagButtonClick('data-test-block-menu="logout"', driver)
+    await sleep(1000)
 
     // wait for email input to appear
     await tagButtonClick('data-test-path="email"', driver)
@@ -309,6 +302,7 @@ describe('group sharings', () => {
     // log out
     await tagButtonClick('data-test-element="account-menu"', driver)
     await tagButtonClick('data-test-block-menu="logout"', driver)
+    await sleep(1000)
 
     // wait for email input to appear
     await tagButtonClick('data-test-path="email"', driver)

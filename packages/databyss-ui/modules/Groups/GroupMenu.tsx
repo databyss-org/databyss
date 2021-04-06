@@ -43,6 +43,7 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
     <DropdownListItem
       icon={<TrashSvg />}
       label="Delete group forever"
+      data-test-element="delete-group"
       action="delete-group"
       onPress={deleteGroup}
     />
@@ -62,7 +63,6 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
         onKeyDown={handleEscKey}
         hoverColor="background.2"
         p="tiny"
-        data-test-element="collection-dropdown"
       >
         <Icon sizeVariant="medium" color="text.1">
           <MenuSvg />
