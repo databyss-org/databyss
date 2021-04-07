@@ -6,6 +6,7 @@ const PROXY_URL = 'http://0.0.0.0:3000'
 const waitUntilTime = 30000
 
 const SLEEP_TIME = 300
+const MAX_RETRIES = 3
 
 // HACK: saucelabs environment double triggers meta key, use ctrl key instead
 
@@ -82,8 +83,6 @@ export const getElementByTag = async (driver, tag) => {
   return el
 }
 
-const MAX_RETRIES = 3
-
 export const tagButtonClick = async (tag, driver) => {
   const actions = driver.actions({ async: true })
 
@@ -147,23 +146,29 @@ export const dragAndDrop = async (item, container, driver) => {
 }
 
 export const logout = async (driver) => {
-  await sleep(1000)
-  try {
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
-    await accountDropdown.click()
+  let count = 0
+  const logoutAction = async () => {
+    if (count > MAX_RETRIES) {
+      throw new Error('LOGOUT ERROR')
+    }
+
+    await tagButtonClick('data-test-element="account-menu"', driver)
+
     await sleep(500)
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-    await logoutButton.click()
+    await tagButtonClick('data-test-block-menu="logout"', driver)
+
     await getElementByTag(driver, '[data-test-path="email"]')
-    await driver.quit()
+
+    await sleep(SLEEP_TIME)
+
+    // todo: driver.quit on logout actions
+  }
+  try {
+    await logoutAction()
   } catch (err) {
-    console.log('Logout ERROR - ', err)
+    console.log('logout fail - retrying')
+    count += 1
+    await logoutAction()
   }
 }
 

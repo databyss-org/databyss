@@ -57,6 +57,8 @@ describe('entry search', () => {
 
   afterEach(async (done) => {
     await logout(driver)
+    await driver.quit()
+
     done()
   })
 

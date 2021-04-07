@@ -60,7 +60,7 @@ export const PageDropzone = ({
       addPageDocumentToGroup({ pageId: _id, group })
     }
 
-    const _sorted = sortEntriesAtoZ(Object.values(pages), 'text')
+    const _sorted = sortEntriesAtoZ(Object.values(pages), 'name')
 
     const _children = _sorted.map((p: any) => (
       <DropdownListItem

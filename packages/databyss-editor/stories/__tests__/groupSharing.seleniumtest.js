@@ -16,6 +16,7 @@ import {
   rightKey,
   getElementsByTag,
   getElementByTag,
+  logout,
 } from './_helpers.selenium'
 
 let driver
@@ -200,13 +201,8 @@ describe('group sharings', () => {
     await sleep(5000)
 
     // logout
-    await tagButtonClick('data-test-element="account-menu"', driver)
-    await sleep(1000)
-    await tagButtonClick('data-test-block-menu="logout"', driver)
-    await sleep(1000)
 
-    // wait for email input to appear
-    await tagButtonClick('data-test-path="email"', driver)
+    await logout(driver)
 
     // CHECK IF FIRST COLLECTION SHARED
     // go to public collection url
@@ -297,12 +293,7 @@ describe('group sharings', () => {
     await sleep(1000)
 
     // log out
-    await tagButtonClick('data-test-element="account-menu"', driver)
-    await tagButtonClick('data-test-block-menu="logout"', driver)
-    await sleep(1000)
-
-    // wait for email input to appear
-    await tagButtonClick('data-test-path="email"', driver)
+    await logout(driver)
 
     // go to second and third collection (they should redirect to login screen)
     // go to public collection url
