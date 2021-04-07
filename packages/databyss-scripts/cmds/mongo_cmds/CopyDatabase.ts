@@ -1,9 +1,5 @@
 import tmp from 'tmp'
-import {
-  run,
-  ServerProcess,
-  ServerProcessArgs,
-} from '@databyss-org/scripts/lib'
+import { ServerProcess, ServerProcessArgs } from '@databyss-org/scripts/lib'
 
 class CopyDatabase extends ServerProcess {
   tmpDir: { name: string; removeCallback: Function }
@@ -22,8 +18,8 @@ class CopyDatabase extends ServerProcess {
     )
     this.logInfo(`temp dir: ${this.tmpDir.name}`)
 
-    const dumpCmd = `mongodump --ssl --db=${this.args.fromDb} --out=${this.tmpDir.name} ${this.env.API_MONGO_URI}`
-    const restoreCmd = `mongorestore --ssl --drop --nsFrom='${this.args.fromDb}.*' --nsTo='${this.args.toDb}.*' '${this.env.API_MONGO_URI}' '${this.tmpDir.name}'`
+    const dumpCmd = `mongodump --ssl --db=${this.args.fromDb} --out=${this.tmpDir.name} ${this.args.env.API_MONGO_URI}`
+    const restoreCmd = `mongorestore --ssl --drop --nsFrom='${this.args.fromDb}.*' --nsTo='${this.args.toDb}.*' '${this.args.env.API_MONGO_URI}' '${this.tmpDir.name}'`
 
     this.logInfo('🔄', 'DUMPING DATA...')
     await this.exec(dumpCmd)
@@ -40,6 +36,5 @@ exports.command = 'copy-database <fromDb> <toDb>'
 exports.desc = 'Migrate Mongo user to Cloudant'
 exports.builder = {}
 exports.handler = (argv) => {
-  const _job = new CopyDatabase(argv)
-  run(_job)
+  new CopyDatabase(argv).runCli()
 }

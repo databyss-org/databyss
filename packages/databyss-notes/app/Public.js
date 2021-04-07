@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, Grid, Button } from '@databyss-org/ui/primitives'
-import Login from '@databyss-org/ui/modules/Login/Login'
+import { Maintenance, Login } from '@databyss-org/ui/modules'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 
 const Public = (props) => (
@@ -35,7 +35,11 @@ const Public = (props) => (
         </Text>
       </Button>
     </Grid>
-    <Login {...props} />
+    {process.env.MAINTENANCE_MODE?.toLowerCase() === 'true' ? (
+      <Maintenance />
+    ) : (
+      <Login {...props} />
+    )}
   </React.Fragment>
 )
 
