@@ -20,11 +20,14 @@ import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { Role, User as UserInterface } from '@databyss-org/data/interfaces'
 import { ServerProcess, ServerProcessArgs } from '@databyss-org/scripts/lib'
 
-const fixDetail = (detail: any) => {
-  if (!detail) {
-    return detail
+const fixDetail = (block: any) => {
+  if (block.type !== 'SOURCE') {
+    return {}
   }
-  const _detail = cloneDeep(detail)
+  if (!block.detail) {
+    return {}
+  }
+  const _detail = cloneDeep(block.detail)
   // TODO: fix title in source modal
   if (_detail.title === '') {
     _detail.title = {
@@ -35,18 +38,18 @@ const fixDetail = (detail: any) => {
   // TODO: fix year in source modal
   if (_detail.year?.textValue) {
     _detail.year = {
-      textValue: detail.year.textValue.toString(),
-      ranges: detail.year.ranges || [],
+      textValue: _detail.year.textValue.toString(),
+      ranges: _detail.year.ranges || [],
     }
   }
   // TODO: fix journalTitle in source modal
   if (Array.isArray(_detail.journalTitle?.textValue)) {
     _detail.journalTitle = {
-      textValue: detail.journalTitle.textValue[0],
-      ranges: detail.journalTitle.ranges || [],
+      textValue: _detail.journalTitle.textValue[0],
+      ranges: _detail.journalTitle.ranges || [],
     }
   }
-  return _detail
+  return { detail: _detail }
 }
 
 class MongoToCloudant extends ServerProcess {
@@ -206,7 +209,7 @@ class MongoToCloudant extends ServerProcess {
             length: r.length,
           })),
         },
-        detail: fixDetail(_mongoBlock.detail),
+        ...fixDetail(_mongoBlock),
         ...getDocFields(_mongoBlock),
       })
 

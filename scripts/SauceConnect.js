@@ -1,4 +1,4 @@
-const ServerProcess = require('../../databyss-scripts/lib/ServerProcess')
+const ServerProcess = require('../packages/databyss-scripts/lib/ServerProcess')
 require('../config/env')
 const path = require('path')
 const fs = require('fs')
