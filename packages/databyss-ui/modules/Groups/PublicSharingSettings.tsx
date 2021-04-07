@@ -58,6 +58,7 @@ export const PublicSharingSettings = ({
     {...others}
   >
     <SwitchControl
+      data-test-element="group-public"
       label="Public collection"
       alignLabel="left"
       textVariant="uiTextNormal"
@@ -78,6 +79,7 @@ export const PublicSharingSettings = ({
       </View>
     ) : (
       <IconControl
+        data-test-element="copy-link"
         onClick={onClick}
         icon={<LinkSvg />}
         label="Copy link"

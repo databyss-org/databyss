@@ -61,6 +61,8 @@ describe('block indexing', () => {
 
   afterEach(async (done) => {
     await logout(driver)
+    await driver.quit()
+
     done()
   })
 
