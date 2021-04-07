@@ -16,7 +16,6 @@ import {
   rightKey,
   getElementsByTag,
   getElementByTag,
-  getEditor,
 } from './_helpers.selenium'
 
 let driver
