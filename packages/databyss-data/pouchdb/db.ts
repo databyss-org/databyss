@@ -28,6 +28,7 @@ import { checkNetwork } from '@databyss-org/services/lib/request'
 import { DocumentType } from './interfaces'
 import { searchText } from './utils'
 import { processGroupActionQ } from './groups/utils'
+import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
@@ -38,7 +39,7 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 
 interface DbRef {
-  current: PouchDB.Database<any> | null
+  current: Partial<PouchDB.Database<any>> | null
 }
 
 declare global {
@@ -47,11 +48,20 @@ declare global {
   }
 }
 
-const getPouchDb = (groupId: string) =>
-  new PouchDB(groupId, {
+const getPouchDb = (groupId: string) => {
+  if (
+    process.env.FORCE_MOBILE?.toLowerCase() === 'true' ||
+    process.env.COUCH_DIRECT?.toLowerCase() === 'true'
+  ) {
+    if (!couchDbRef.current) {
+      connect(groupId)
+    }
+    return couchDbRef.current
+  }
+  return new PouchDB(groupId, {
     auto_compaction: true,
   })
-
+}
 export const dbRef: DbRef = {
   current: null,
 }
@@ -60,6 +70,8 @@ export const dbRef: DbRef = {
 const defaultGroup = getDefaultGroup()
 const groupIdFromUrl = getAccountFromLocation()
 
+// if you're logged-in but not on your own group's URL (you're on a public group url, eg),
+//   skip initialization of pouchDb - it happens in replicatePublicGroup
 if (
   defaultGroup &&
   (!groupIdFromUrl || groupIdFromUrl === defaultGroup || process.env.STORYBOOK)
@@ -72,6 +84,9 @@ export const areIndexBuilt = {
 }
 
 export const initiatePouchDbIndexes = async () => {
+  if (dbRef.current instanceof CouchDb) {
+    return
+  }
   // await dbRef.current.createIndex({
   //   index: {
   //     fields: ['doctype'],
@@ -219,6 +234,10 @@ export const replicateDbFromRemote = ({
   groupId: string
 }) =>
   new Promise<Boolean>((resolve, reject) => {
+    if (dbRef.current instanceof CouchDb) {
+      resolve(true)
+      return
+    }
     const _couchUrl = `${REMOTE_CLOUDANT_URL}/g_${groupId}`
 
     // for now we are getting the first credentials from local storage groups
@@ -269,6 +288,9 @@ export const syncPouchDb = ({
   groupId: string
   dispatch: Function
 }) => {
+  if (dbRef.current instanceof CouchDb) {
+    return
+  }
   console.log('Start PouchDB <=> Cloudant sync')
   // get credentials from local storage
   const _cred: any = getDbCredentialsFromLocal(groupId)

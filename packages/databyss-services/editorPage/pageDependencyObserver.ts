@@ -1,8 +1,12 @@
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { addGroupToDocumentsFromPage } from '@databyss-org/data/pouchdb/groups'
+import { CouchDb } from '@databyss-org/data/couchdb-client/couchdb'
 import { dbRef } from '../../databyss-data/pouchdb/db'
 
 export const pageDependencyObserver = () => {
+  if (dbRef.current instanceof CouchDb) {
+    return
+  }
   dbRef.current
     ?.changes({
       since: 'now',

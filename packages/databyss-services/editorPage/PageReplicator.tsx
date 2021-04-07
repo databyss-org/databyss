@@ -12,6 +12,7 @@ import {
   NetworkUnavailableError,
 } from '../interfaces/Errors'
 import { dbRef, REMOTE_CLOUDANT_URL } from '../../databyss-data/pouchdb/db'
+import { CouchDb } from '@databyss-org/data/couchdb-client/couchdb'
 
 const INTERVAL_TIME = 5000
 const MAX_RETRIES = 5
@@ -44,6 +45,9 @@ export const PageReplicator = ({
     dbKey: string
     dbPassword: string
   }) => {
+    if (dbRef.current instanceof CouchDb) {
+      return
+    }
     sessionDispatch({
       type: 'DB_BUSY',
       payload: {
