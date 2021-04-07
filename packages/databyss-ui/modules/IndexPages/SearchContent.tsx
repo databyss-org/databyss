@@ -62,7 +62,17 @@ export const SearchContent = () => {
       {searchRes.isSuccess ? (
         composeResults(searchRes.data)
       ) : (
-        <LoadingFallback queryObserver={searchRes} />
+        <LoadingFallback
+          queryObserver={searchRes}
+          showLongWaitMessage
+          longWaitMs={5000}
+          longWaitDialogOptions={{
+            message:
+              "<strong>Databyss is still building your search index, which may take a while but will allow fast once it's done.</strong><p>If it's not done shortly...</p><p>&nbsp;&nbsp;&nbsp;...just wait longer.</p>",
+            html: true,
+            dolphins: true,
+          }}
+        />
       )}
     </IndexPageView>
   )

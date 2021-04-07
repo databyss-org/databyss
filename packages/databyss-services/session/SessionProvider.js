@@ -89,9 +89,10 @@ const SessionProvider = ({
 
   useEffect(() => {
     if (state.session instanceof NetworkUnavailableError) {
-      notify(
-        "We're having trouble reaching the server. Please check your network and try again."
-      )
+      notify({
+        message:
+          "We're having trouble reaching the server. Please check your network and try again.",
+      })
     }
   }, [state.session])
 

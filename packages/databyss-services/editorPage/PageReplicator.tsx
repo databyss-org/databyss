@@ -14,7 +14,7 @@ import {
 import { dbRef, REMOTE_CLOUDANT_URL } from '../../databyss-data/pouchdb/db'
 
 const INTERVAL_TIME = 5000
-const MAX_RETRIES = 10
+const MAX_RETRIES = 5
 
 export const PageReplicator = ({
   children,
@@ -118,6 +118,7 @@ export const PageReplicator = ({
               console.log(
                 `[PageReplicator] retry limit exceeded when trying to replicate to group ${group._id}`
               )
+              return
             }
             // check local storage for credentials
             // get group credentials from local storage
@@ -132,10 +133,14 @@ export const PageReplicator = ({
             if (!creds) {
               // credentials are not in local storage
               // creates new user credentials and adds them to local storage
+              console.log('[PageReplicator] createDatabaseCredentials')
               createDatabaseCredentials({
                 groupId: gId,
                 isPublic: group.public,
               })
+                .then(() => {
+                  setTimeout(() => validate(count + 1), INTERVAL_TIME)
+                })
                 .catch((err) => {
                   if (err instanceof NetworkUnavailableError) {
                     // if user is offline, just bail
@@ -146,9 +151,6 @@ export const PageReplicator = ({
                   }
                   setTimeout(() => validate(count + 1), INTERVAL_TIME)
                 })
-                .then(() =>
-                  setTimeout(() => validate(count + 1), INTERVAL_TIME)
-                )
             } else {
               // credentials are in local
               // validate credentials with server
