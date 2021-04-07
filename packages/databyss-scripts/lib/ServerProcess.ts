@@ -8,6 +8,7 @@ const { exec } = require('child_process')
 export interface ServerProcessArgs {
   env: EnvDict
   envName: string
+  [name: string]: any
 }
 
 export function shortTimeString(date?: Date) {

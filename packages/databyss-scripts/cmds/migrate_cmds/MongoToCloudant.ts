@@ -18,7 +18,7 @@ import {
 } from '@databyss-org/api/src/lib/createUserDatabase'
 import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { Role, User as UserInterface } from '@databyss-org/data/interfaces'
-import { ServerProcess } from '@databyss-org/scripts/lib'
+import { ServerProcess, ServerProcessArgs } from '@databyss-org/scripts/lib'
 
 const fixDetail = (detail: any) => {
   if (!detail) {
@@ -50,7 +50,7 @@ const fixDetail = (detail: any) => {
 }
 
 class MongoToCloudant extends ServerProcess {
-  constructor(argv) {
+  constructor(argv: ServerProcessArgs) {
     super(argv, 'migrate.mongo-to-cloudant')
   }
 
@@ -72,7 +72,7 @@ class MongoToCloudant extends ServerProcess {
 
   async migrateAll() {
     // get all active user accounts in Mongo
-    const _users = await User.find()
+    const _users: any[] = await User.find()
     for (const _user of _users) {
       if (this.args.skip?.includes(_user.email)) {
         continue
@@ -112,7 +112,7 @@ class MongoToCloudant extends ServerProcess {
     /**
      * Populate fields required on all docs, like timestamps and belongsToGroup
      */
-    const getDocFields = (doc) => ({
+    const getDocFields = (doc: any) => ({
       belongsToGroup: _defaultGroupId,
       createdAt: doc.createdAt
         ? new Date(doc.createdAt).getTime()
@@ -148,11 +148,13 @@ class MongoToCloudant extends ServerProcess {
     /**
      * mongo blockId => { mongo pageId => boolean }
      */
-    const _relatedBlockMap = {}
+    const _relatedBlockMap: {
+      [blockId: string]: { [pageId: string]: boolean }
+    } = {}
     /**
      * mongo blockId => mongo pageId
      */
-    const _blockToPageMap = {}
+    const _blockToPageMap: { [blockId: string]: string } = {}
     _mongoPages.forEach((page) => {
       page.blocks.forEach((block) => {
         // aggregate all blocks into a Map so we don't write orphaned blocks
@@ -177,11 +179,11 @@ class MongoToCloudant extends ServerProcess {
     /**
      * mongo blockId => couch blockId
      */
-    const _blockIdMap = {}
+    const _blockIdMap: { [blockId: string]: string } = {}
     /**
      * mongo blockId => block type
      */
-    const _blockTypeMap = {}
+    const _blockTypeMap: { [blockId: string]: string } = {}
 
     // insert the blocks in couch, generating new ids and keeping a map
     for (const _mongoBlock of _mongoBlocks) {
@@ -574,7 +576,7 @@ export default MongoToCloudant
 
 exports.command = 'mongo-to-cloudant [email]'
 exports.desc = 'Migrate Mongo user to Cloudant'
-exports.builder = (yargs) =>
+exports.builder = (yargs: any) =>
   yargs
     .describe('skip', 'List of emails to skip')
     .array('skip')
@@ -583,6 +585,6 @@ exports.builder = (yargs) =>
       'Migrate all users, skip "jreed03@gmail.com" and "paul@hine.works"'
     )
     .example('$0 jreed03@gmail.com', 'Migrate user "jreed03@gmail.com"')
-exports.handler = (argv) => {
+exports.handler = (argv: any) => {
   new MongoToCloudant(argv).runCli()
 }
