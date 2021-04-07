@@ -327,7 +327,6 @@ describe('group sharings', () => {
     )
     _title = await _title.getAttribute('innerText')
 
-    console.log(_title)
     // should be updated topic
     assert.equal(_title, 'New Topic')
 
