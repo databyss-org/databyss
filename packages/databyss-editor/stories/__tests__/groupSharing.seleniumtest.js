@@ -282,8 +282,11 @@ describe('group sharings', () => {
     await tagButtonClick('data-test-dismiss-modal="true"', driver)
 
     // allow sync
-    await sleep(4000)
+    await sleep(5000)
 
+    // click on page B
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 1, driver)
+    await sleep(3000)
     // navigate to third page and archive it
     await tagButtonListClick('data-test-element="page-sidebar-item"', 2, driver)
 
