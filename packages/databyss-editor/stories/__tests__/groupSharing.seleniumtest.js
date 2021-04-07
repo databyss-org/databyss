@@ -16,6 +16,7 @@ import {
   rightKey,
   getElementsByTag,
   getElementByTag,
+  getEditor,
 } from './_helpers.selenium'
 
 let driver
@@ -276,6 +277,7 @@ describe('group sharings', () => {
     await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
 
     // update topic on first page page (it should update on shared page with same topic)    await upKey(actions)
+    await tagButtonClick('contenteditable="true"', driver)
     await upKey(actions)
     await upKey(actions)
     await rightKey(actions)
