@@ -1,7 +1,7 @@
 // inspired by jest-dev-server
 // https://github.com/smooth-code/jest-puppeteer/tree/master/packages/jest-dev-server
 const SauceConnect = require('./SauceConnect.js')
-const ServerProcess = require('../packages/databyss-scripts/lib/ServerProcess')
+const ServerProcess = require('./ServerProcess')
 
 const servers = []
 
