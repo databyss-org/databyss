@@ -75,6 +75,19 @@ export const GroupFields = ({
           _values.public ? GroupAction.SHARED : GroupAction.UNSHARED
         )
       }
+      // if defaultPageId was set for this group, set it now
+      if (!groupValue.current.defaultPageId) {
+        _values.defaultPageId = _values.pages[0]
+      }
+      // if defaultPageId is no longer in pages, re-assign it
+      if (
+        _values.defaultPageId &&
+        !_values.pages.includes(_values.defaultPageId)
+      ) {
+        _values.defaultPageId = _values.pages[0]
+      }
+
+      console.log('onChange', _values)
       // update internal state
       setValues(_values)
       // update database

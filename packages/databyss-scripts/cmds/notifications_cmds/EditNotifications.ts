@@ -7,6 +7,7 @@ import {
   UserPreference,
 } from '@databyss-org/data/pouchdb/interfaces'
 import { uid } from '@databyss-org/data/lib/uid'
+import { Group } from '@databyss-org/services/interfaces'
 
 export const DefaultMessageDict: {
   [notificationType in NotificationType]: string | null
@@ -32,7 +33,7 @@ export class EditNotifications extends ServerProcess {
   }
 
   upsertNotification(
-    prefs: UserPreference,
+    prefs: UserPreference | Group,
     notification: Partial<Notification>
   ) {
     const _toEdit = prefs.notifications?.find((_n) => _n.id === notification.id)
@@ -49,7 +50,7 @@ export class EditNotifications extends ServerProcess {
     return prefs
   }
 
-  removeNotification(prefs: UserPreference, id: string) {
+  removeNotification(prefs: UserPreference | Group, id: string) {
     if (!prefs.notifications) {
       return prefs
     }
@@ -101,10 +102,15 @@ export class EditNotifications extends ServerProcess {
       if (!_dbName.startsWith('g_')) {
         continue
       }
-      const _db = cloudant.current.db.use<UserPreference>(_dbName)
+      const _db = cloudant.current.db.use<UserPreference | Group>(_dbName)
 
-      const _prefs = await _db.tryGet('user_preference')
+      let _prefs = await _db.tryGet('user_preference')
       if (!_prefs) {
+        // if no user_preference doc, try using the GROUP document
+        _prefs = await _db.tryGet(_dbName.substr(2))
+      }
+      if (!_prefs) {
+        this.log('No user_preference or group doc found', _dbName)
         continue
       }
 
@@ -115,7 +121,7 @@ export class EditNotifications extends ServerProcess {
           _prefs.notifications = []
         }
         _notifications.forEach((_notification) =>
-          this.upsertNotification(_prefs, _notification)
+          this.upsertNotification(_prefs!, _notification)
         )
       }
       await _db.insert(_prefs)
