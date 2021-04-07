@@ -9,6 +9,7 @@ import {
   sendKeys,
   enterKey,
   getEditor,
+  getSharedPage,
   isAppInNotesSaved,
   paste,
   selectAll,
@@ -58,9 +59,11 @@ describe('page sharing', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
-    driver = null
-    await sleep(100)
+    if (driver) {
+      await driver.quit()
+      driver = null
+      await sleep(100)
+    }
   })
 
   it('should ensure page sharing integrity', async () => {
@@ -172,8 +175,13 @@ describe('page sharing', () => {
     // // confirm private page is not authorized
     // assert.equal(true, pageBody)
 
-    // navigate to public pageq
+    // navigate to public page
     await driver.get(publicPageUrl)
+
+    await getSharedPage(driver)
+
+    // allow sync to occur
+    await sleep(3000)
     // verify topic is in page
     const topicsSidebarButton = await getElementByTag(
       driver,

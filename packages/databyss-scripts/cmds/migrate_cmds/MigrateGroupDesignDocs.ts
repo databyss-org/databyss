@@ -1,6 +1,7 @@
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import { run, ServerProcess, sleep } from '@databyss-org/scripts/lib'
-import { updateDesignDoc } from '@databyss-org/data/couchdb'
+import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
+import { groupSchema } from '@databyss-org/data/schemas'
 import { DesignDoc } from '@databyss-org/data/interfaces'
 
 export class MigrateGroupDesignDocs extends ServerProcess {
@@ -14,8 +15,8 @@ export class MigrateGroupDesignDocs extends ServerProcess {
       if (!_dbName.startsWith('g_') && !_dbName.startsWith('p_')) {
         continue
       }
-      const _db = cloudant.current.db.use<DesignDoc>(_dbName)
-      await updateDesignDoc({ db: _db })
+      const _db = await cloudant.current.db.use<DesignDoc>(_dbName)
+      await updateDesignDoc({ schema: groupSchema, db: _db })
       // dont exceed cloudant rate limit
       await sleep(100)
       this.log(`⬆️  migrated: ${_dbName}`)

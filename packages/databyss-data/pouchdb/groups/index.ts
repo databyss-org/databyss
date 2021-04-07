@@ -1,6 +1,6 @@
 import { Group } from '@databyss-org/services/interfaces/Group'
 import _ from 'lodash'
-import { httpPost } from '@databyss-org/services/lib/requestApi'
+import { httpDelete, httpPost } from '@databyss-org/services/lib/requestApi'
 import {
   setPouchSecret,
   deletePouchSecret,
@@ -35,32 +35,35 @@ export const removeIdsFromSharedDb = ({
   ids: string[]
   groupId: string
 }) =>
-  httpPost(`/cloudant/groups/delete`, {
-    // TODO: this should not have to be turned to lowercase
+  httpPost(`/cloudant/groups/${groupId}/remove`, {
     data: { ids, groupId },
   })
 
-/*
-  creates or removes a cloudant group database if no database exists
-  */
-
-export const addOrRemoveCloudantGroupDatabase = async ({
+/**
+ * creates a cloudant group database
+ */
+export const addCloudantGroupDatabase = async ({
   groupId,
   isPublic,
 }: {
   groupId: string
   isPublic: boolean
 }) => {
-  const res = await httpPost(`/cloudant/groups`, {
-    // TODO: this should not have to be turned to lowercase
-    data: { groupId, isPublic },
+  const res = await httpPost(`/cloudant/groups/${groupId}`, {
+    data: { isPublic },
   })
   // if is public, add credentials to localstorage
   if (isPublic) {
     setPouchSecret(Object.values(res.data))
-  } else {
-    deletePouchSecret(groupId)
   }
+}
+
+/**
+ * removes a cloudant group database
+ */
+export const removeCloudantGroupDatabase = async (groupId: string) => {
+  await httpDelete(`/cloudant/groups/${groupId}`)
+  deletePouchSecret(groupId)
 }
 
 export const addGroupToDocument = async (groupIds: string[], document: any) => {
@@ -249,7 +252,7 @@ export const replicateGroup = async ({
   try {
     // first check if credentials exist
     let dbSecretCache = getPouchSecret() || {}
-    let creds = dbSecretCache[groupId.substr(2)]
+    let creds = dbSecretCache[groupId]
     if (!creds) {
       // credentials are not in local storage
       // creates new user credentials and adds them to local storage
@@ -260,7 +263,7 @@ export const replicateGroup = async ({
 
       // credentials should be in local storage now
       dbSecretCache = getPouchSecret()
-      creds = dbSecretCache[groupId.substr(2)]
+      creds = dbSecretCache[groupId]
       if (!creds) {
         // user is not authorized
         return
@@ -292,7 +295,7 @@ export const setGroup = async (group: Group, pageId?: string) => {
   group.pages = removeDuplicatesFromArray(group.pages)
 
   // append property in order for replicated group to get group metadata
-  await addGroupToDocument([`g_${group._id}`], {
+  await addGroupToDocument([group._id], {
     ...group,
     doctype: DocumentType.Group,
   })
@@ -408,13 +411,9 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     })
 
     // create cloudant db
-    await addOrRemoveCloudantGroupDatabase({
-      groupId: _data._id,
-      isPublic: true,
-    })
+    setGroupAction(_data._id, GroupAction.SHARED)
   } else {
     // if page is removed from sharing
-
     // delete group from pouchDb
 
     await upsertImmediate({
@@ -427,10 +426,7 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     await removeGroupFromPage({ pageId, groupId: _data._id })
 
     // remove database from cloudant
-    await addOrRemoveCloudantGroupDatabase({
-      groupId: _data._id,
-      isPublic: false,
-    })
+    setGroupAction(_data._id, GroupAction.UNSHARED)
   }
 }
 
@@ -458,6 +454,9 @@ export const replicateSharedPage = async (pageIds: string[]) => {
   }
 }
 
+export const removeSharedDatabase = (groupId: string) =>
+  removeCloudantGroupDatabase(groupId)
+
 export const updateAndReplicateSharedDatabase = async ({
   groupId,
   isPublic,
@@ -465,16 +464,14 @@ export const updateAndReplicateSharedDatabase = async ({
   groupId: string
   isPublic: boolean
 }) => {
-  // create or delete a database
-
-  await addOrRemoveCloudantGroupDatabase({
-    groupId: `g_${groupId}`,
+  await addCloudantGroupDatabase({
+    groupId,
     isPublic,
   })
 
   if (isPublic) {
     replicateGroup({
-      groupId: `g_${groupId}`,
+      groupId,
       isPublic: true,
     })
   }
@@ -493,7 +490,7 @@ export const addPageDocumentToGroup = async ({
   // if this is the first page added to the group, make it default
   group.defaultPageId = pageId
   // add groupId to page document
-  await addPageToGroup({ pageId, groupId: `g_${group._id}` })
+  await addPageToGroup({ pageId, groupId: group._id })
   // get updated pageDoc
   const _page: PageDoc | null = await findOne({
     doctype: DocumentType.Page,
@@ -539,13 +536,52 @@ export const removePageFromGroup = async ({
 
   const { public: isPublic, _id: groupId } = group
   // remove group from all documents associated with pageId
-  await removeGroupFromPage({ pageId: page._id, groupId: `g_${group._id}` })
+  await removeGroupFromPage({ pageId: page._id, groupId: group._id })
 
   if (isPublic) {
     replicateGroup({
-      groupId: `g_${groupId}`,
+      groupId,
       isPublic: true,
     })
+  }
+}
+
+export const removeAllGroupsFromPage = async (pageId: string) => {
+  const _page = await findOne({
+    doctype: DocumentType.Page,
+    query: { _id: pageId },
+  })
+
+  if (_page?.sharedWithGroups?.length) {
+    for (const groupId of _page.sharedWithGroups) {
+      const _prefix = groupId.substring(0, 2)
+      // is shared page
+      if (_prefix === 'p_') {
+        setPublicPage(_page._id, false)
+      }
+      // is in shared group
+      if (_prefix === 'g_') {
+        const _groupId = groupId.substring(2)
+
+        // remove page from local groupId
+        const _groupDocument: Group | null = await findOne({
+          doctype: DocumentType.Group,
+          query: { _id: _groupId },
+        })
+        if (_groupDocument) {
+          upsertImmediate({
+            doctype: DocumentType.Group,
+            _id: _groupId,
+            doc: {
+              ..._groupDocument,
+              pages: _groupDocument.pages.filter((p) => p !== _page._id),
+            },
+          })
+        }
+        // remove group from page documents
+        setGroupPageAction(_groupId, _page._id, PageAction.REMOVE)
+      }
+    }
   }
 }
 
@@ -566,7 +602,7 @@ export const deleteCollection = async (groupId: string) => {
     const _pageIds = _group.pages
     for (const pageId of _pageIds) {
       // remove group from all documents associated with pageId
-      await removeGroupFromPage({ pageId, groupId: `g_${groupId}` })
+      await removeGroupFromPage({ pageId, groupId })
     }
 
     // delete group locally

@@ -1,6 +1,8 @@
 import * as services from '.'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import { Page } from '../interfaces'
+import { removeAllGroupsFromPage } from '../../databyss-data/pouchdb/groups/index'
+import { PageDoc } from '../../databyss-data/pouchdb/interfaces'
 
 import {
   FETCH_PAGE,
@@ -83,7 +85,7 @@ export function deletePage(id: string) {
 
 export function onArchivePage(
   id: string,
-  page: Page,
+  page: Page & PageDoc,
   bool: boolean,
   callback: Function
 ) {
@@ -98,6 +100,9 @@ export function onArchivePage(
       name: page.name,
       archive: bool,
     })
+
+    removeAllGroupsFromPage(page._id)
+
     if (callback) {
       callback()
     }

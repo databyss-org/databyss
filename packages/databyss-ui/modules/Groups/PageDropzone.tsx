@@ -47,11 +47,17 @@ export const PageDropzone = ({
     if (!group) {
       return
     }
+
     // if item is being dragged from the `PUBLIC PAGES` section, get the public page id
     let _id
     if (item.payload.doctype === DocumentType.Group) {
       _id = item.payload._id.substring(2)
     } else {
+      // do not allow archived pages
+      if (item.payload?.archive) {
+        return
+      }
+
       const _pageHeader = item.payload as PageHeader
       _id = _pageHeader._id
     }
@@ -64,7 +70,6 @@ export const PageDropzone = ({
       return
     }
     const _pageToRemove = pages[_id]
-
     setGroupPageAction(group._id, _pageToRemove._id, PageAction.REMOVE)
 
     const _nextValue = value!.filter((p) => p !== _id)

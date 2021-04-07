@@ -347,15 +347,17 @@ const PageMenu = () => {
               right: 0,
             }}
           >
-            <DropdownListItem
-              height={pxUnits(34)}
-              justifyContent="center"
-              label={isPagePublic ? 'Page is public' : 'Make page public '}
-              value={isPagePublic}
-              onPress={togglePublicPage}
-              action="togglePublic"
-              switchControl
-            />
+            {!_page.archive ? (
+              <DropdownListItem
+                height={pxUnits(34)}
+                justifyContent="center"
+                label={isPagePublic ? 'Page is public' : 'Make page public '}
+                value={isPagePublic}
+                onPress={togglePublicPage}
+                action="togglePublic"
+                switchControl
+              />
+            ) : null}
             {isPagePublic ? (
               <>
                 <Separator secondary />

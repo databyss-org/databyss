@@ -113,52 +113,51 @@ export const PageReplicator = ({
         // check if group is already replicating
         const _repStatus = replicationStatusRef.current[group._id]
         if (!_repStatus) {
-          const validate = async (count: number = 0) => {
+          const validate = (count: number = 0) => {
             if (count > MAX_RETRIES) {
               console.log(
                 `[PageReplicator] retry limit exceeded when trying to replicate to group ${group._id}`
               )
+              return
             }
             // check local storage for credentials
             // get group credentials from local storage
 
-            // if group ID does not begin with p_ assume its a shared group with g_
-            const gId =
-              group._id.substr(0, 2) === 'p_' ? group._id : `g_${group._id}`
-
             const dbCache = getPouchSecret()
             // id is in cache without the `p_` prefix
-            const creds = dbCache[gId.substr(2)]
+            const creds = dbCache[group._id]
             if (!creds) {
               // credentials are not in local storage
               // creates new user credentials and adds them to local storage
-              await createDatabaseCredentials({
-                groupId: gId,
+              createDatabaseCredentials({
+                groupId: group._id,
                 isPublic: group.public,
-              }).catch((err) => {
-                if (err instanceof NetworkUnavailableError) {
-                  // if user is offline, just bail. we shouldn't get here
-                  //   because the "make page public" should be disabled when offline
-                  console.log(
-                    '[PageReplicator] skipping public page replication in offline mode'
-                  )
-                  return
-                }
-                throw err
               })
-              setTimeout(() => validate(count + 1), INTERVAL_TIME)
+                .catch((err) => {
+                  if (err instanceof NetworkUnavailableError) {
+                    // if user is offline, just bail
+                    console.log(
+                      '[PageReplicator] skipping public page replication in offline mode'
+                    )
+                    return
+                  }
+                  setTimeout(() => validate(count + 1), INTERVAL_TIME)
+                })
+                .then(() =>
+                  setTimeout(() => validate(count + 1), INTERVAL_TIME)
+                )
             } else {
               // credentials are in local
               // validate credentials with server
               validateGroupCredentials({
-                groupId: gId,
+                groupId: group._id,
                 dbKey: creds.dbKey,
               })
                 .then(() => {
                   replicationStatusRef.current[group._id] = true
                   // start replication with creds
                   startReplication({
-                    groupId: gId,
+                    groupId: group._id,
                     dbKey: creds.dbKey,
                     dbPassword: creds.dbPassword,
                   })
