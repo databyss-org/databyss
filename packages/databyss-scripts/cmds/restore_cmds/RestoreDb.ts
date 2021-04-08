@@ -11,7 +11,7 @@ import { setSecurity } from '@databyss-org/api/src/lib/createUserDatabase'
 import { Group } from '@databyss-org/services/interfaces'
 
 export class RestoreDb extends ServerProcess {
-  constructor(argv: ServerProcessArg) {
+  constructor(argv: ServerProcessArgs) {
     super(argv, 'restore.single-database')
   }
   async run() {
@@ -107,6 +107,6 @@ exports.builder = (yargs: ServerProcessArgs) =>
       '$0 users --replace',
       'Restore "users" database, replacing if necessary'
     )
-exports.handler = (argv: ServerProcessArg) => {
+exports.handler = (argv: ServerProcessArgs) => {
   new RestoreDb(argv).runCli()
 }
