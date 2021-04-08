@@ -12,7 +12,7 @@ const _css = (position, showToolbar) => ({
   paddingLeft: 'small',
   paddingRight: 'small',
   backgroundColor: 'background.0',
-  zIndex: 'menu',
+  zIndex: 'hoveringToolbar',
   pointerEvents: showToolbar ? 'all' : 'none',
   marginTop: pxUnits(-6),
   position: 'absolute',

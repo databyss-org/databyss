@@ -1,5 +1,6 @@
 /* eslint-disable react/no-danger */
 import React, { ReactNode, PropsWithChildren } from 'react'
+import { useDebounce } from 'use-debounce'
 import { Helmet } from 'react-helmet'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
@@ -19,20 +20,23 @@ export const StickyHeader = ({
 }: PropsWithChildren<StickyHeaderProps>) => {
   const { isOnline } = useNotifyContext()
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
-  const writesPending = useSessionContext((c) => c && c.writesPending)
   const readsPending = useSessionContext((c) => c && c.readsPending)
+  const writesPending = useSessionContext((c) => c && c.writesPending)
+
+  const [debouncedIsOnline] = useDebounce(isOnline, 1000, { trailing: true })
+  const [debouncedIsDbBusy] = useDebounce(isDbBusy, 1000, { trailing: true })
 
   if (isMobile()) {
     return null
   }
 
-  let statusMessage = `Databyss is ${
-    isOnline
-      ? 'online'
-      : 'offline\nYour changes will be synched when you go back online'
-  }`
-  if (isOnline) {
-    statusMessage += `\n${writesPending} pending local changes\n${readsPending} pending remote changes`
+  let statusMessage =
+    'Databyss is up to date.\nAll your changes have been synched to the cloud.'
+  if (!debouncedIsOnline) {
+    statusMessage =
+      'Databyss is offline.\nYour changes are being saved locally and will be synched when you go back online.'
+  } else if (debouncedIsDbBusy) {
+    statusMessage = `Databyss is getting back in synch.\n${writesPending} pending local changes\n${readsPending} pending remote changes`
   }
 
   return (
@@ -65,7 +69,9 @@ export const StickyHeader = ({
             </View>
           )}
           <View
-            backgroundColor={!isOnline || isDbBusy ? 'orange.2' : 'green.0'}
+            backgroundColor={
+              !debouncedIsOnline || debouncedIsDbBusy ? 'orange.2' : 'green.0'
+            }
             title={statusMessage}
             p="extraSmall"
             borderRadius="round"

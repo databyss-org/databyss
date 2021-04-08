@@ -1,11 +1,15 @@
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
-import { run, ServerProcess, sleep } from '@databyss-org/scripts/lib'
+import {
+  ServerProcess,
+  ServerProcessArgs,
+  sleep,
+} from '@databyss-org/scripts/lib'
 import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
 import { groupSchema } from '@databyss-org/data/schemas'
 import { DesignDoc } from '@databyss-org/data/interfaces'
 
 export class MigrateGroupDesignDocs extends ServerProcess {
-  constructor(argv) {
+  constructor(argv: ServerProcessArgs) {
     super(argv, 'migrate.group-schemas')
   }
   async run() {
@@ -27,7 +31,6 @@ export class MigrateGroupDesignDocs extends ServerProcess {
 exports.command = 'group-schemas'
 exports.desc = 'Update design docs on all group databases'
 exports.builder = {}
-exports.handler = (argv) => {
-  const _job = new MigrateGroupDesignDocs(argv)
-  run(_job)
+exports.handler = (argv: ServerProcessArgs) => {
+  new MigrateGroupDesignDocs(argv).runCli()
 }

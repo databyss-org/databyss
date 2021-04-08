@@ -88,6 +88,7 @@
     "semver": "^7.3.5",
     "styled-system": "^5.0.5",
     "use-context-selector": "^1.1.1",
+    "use-debounce": "^6.0.1",
     "uuid": "3.3.3",
     "webpack-node-externals": "^1.7.2",
     "xss": "^1.0.6"

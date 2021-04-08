@@ -547,6 +547,7 @@ export const removePageFromGroup = async ({
 }
 
 export const removeAllGroupsFromPage = async (pageId: string) => {
+  console.log('[removeAllGroupsFromPage]')
   const _page = await findOne({
     doctype: DocumentType.Page,
     query: { _id: pageId },
@@ -554,6 +555,11 @@ export const removeAllGroupsFromPage = async (pageId: string) => {
 
   if (_page?.sharedWithGroups?.length) {
     for (const groupId of _page.sharedWithGroups) {
+      console.log(
+        '[removeAllGroupsFromPage] groupId pageId',
+        groupId,
+        _page._id
+      )
       const _prefix = groupId.substring(0, 2)
       // is shared page
       if (_prefix === 'p_') {
