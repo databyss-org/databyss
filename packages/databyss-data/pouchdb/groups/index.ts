@@ -554,21 +554,19 @@ export const removeAllGroupsFromPage = async (pageId: string) => {
   })
 
   if (_page?.sharedWithGroups?.length) {
-    for (const groupId of _page.sharedWithGroups) {
+    for (const _groupId of _page.sharedWithGroups) {
       console.log(
         '[removeAllGroupsFromPage] groupId pageId',
-        groupId,
+        _groupId,
         _page._id
       )
-      const _prefix = groupId.substring(0, 2)
+      const _prefix = _groupId.substring(0, 2)
       // is shared page
       if (_prefix === 'p_') {
         setPublicPage(_page._id, false)
       }
       // is in shared group
       if (_prefix === 'g_') {
-        const _groupId = groupId.substring(2)
-
         // remove page from local groupId
         const _groupDocument: Group | null = await findOne({
           doctype: DocumentType.Group,
