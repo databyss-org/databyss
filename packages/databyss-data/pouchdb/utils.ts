@@ -1,7 +1,7 @@
 import PouchDB from 'pouchdb'
 import EventEmitter from 'es-event-emitter'
 import { Document } from '@databyss-org/services/interfaces'
-import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
+import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'

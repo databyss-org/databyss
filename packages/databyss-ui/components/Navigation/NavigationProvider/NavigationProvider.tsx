@@ -6,7 +6,7 @@ import {
   Router as ReachRouter,
 } from '@databyss-org/reach-router'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
+import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import reducer, { initialState } from './reducer'
 import * as actions from './actions'
 import {

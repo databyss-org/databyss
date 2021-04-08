@@ -10,7 +10,7 @@ import {
 } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
-import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
+import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
