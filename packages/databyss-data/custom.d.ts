@@ -1,9 +1,5 @@
 import * as nano from 'nano'
 
-export { updateDesignDocs, initiateDatabases } from './util'
-export { cloudant } from './cloudant'
-export type { DocumentScope } from 'nano'
-
 declare module 'nano' {
   export interface DocumentScope<D> {
     upsert: (docname: string, callback: (oldDocument: D) => D) => D

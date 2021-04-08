@@ -1,12 +1,11 @@
 import fs from 'fs'
-import { DocumentScope } from 'nano'
 import { restore } from '@cloudant/couchbackup'
 import {
   cloudantUrl,
   ServerProcess,
   ServerProcessArgs,
 } from '@databyss-org/scripts/lib'
-import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { cloudant, DocumentScope } from '@databyss-org/data/couchdb'
 import { setSecurity } from '@databyss-org/api/src/lib/createUserDatabase'
 import { Group } from '@databyss-org/services/interfaces'
 
