@@ -171,9 +171,9 @@ describe('page sharing', () => {
     */
     await getElementByTag(driver, '[data-test-path="email"]')
 
-    // // const pageBody = body.trim() === 'Not Authorized' || body.trim() === ''
-    // // // confirm private page is not authorized
-    // // assert.equal(true, pageBody)
+    // const pageBody = body.trim() === 'Not Authorized' || body.trim() === ''
+    // // confirm private page is not authorized
+    // assert.equal(true, pageBody)
 
     // navigate to public page
     await driver.get(publicPageUrl)
