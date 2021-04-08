@@ -134,7 +134,7 @@ const PageMenu = () => {
     // delete page
   }
 
-  const menuItems = []
+  const menuItems = [{ separator: true }]
 
   if (canBeArchived && !_page.archive) {
     menuItems.push({
@@ -168,7 +168,9 @@ const PageMenu = () => {
     })
   }
 
-  menuItems.push({ separator: true })
+  if (menuItems.length > 1) {
+    menuItems.push({ separator: true })
+  }
 
   menuItems.push({
     icon: <HelpSvg />,
@@ -364,7 +366,6 @@ const PageMenu = () => {
                 {publicLinkItem}
               </>
             ) : null}
-            {!_page.archive && menuItems.length ? <Separator /> : null}
             <DropdownList />
             {/* {Object.values(groups).length ? <Separator /> : null}
             {groupsRes.isSuccess && Object.values(groups).length ? (
