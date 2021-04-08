@@ -16,23 +16,29 @@ import {
 
 export function fetchPage(_id: string) {
   return async (dispatch: Function) => {
+    const pPage = services.loadPage(_id)
     dispatch({
       type: FETCH_PAGE,
-      payload: { id: _id },
+      payload: { id: _id, promise: pPage },
     })
-    try {
-      const page = await services.loadPage(_id)
-      dispatch({
-        type: CACHE_PAGE,
-        payload: { page, id: _id },
+    pPage
+      .then((page) => {
+        dispatch({
+          type: CACHE_PAGE,
+          payload: { page, id: _id },
+        })
       })
-    } catch (e) {
-      dispatch({
-        type: CACHE_PAGE,
-        payload: { page: e, id: _id },
+      .catch((e) => {
+        if (pPage.isCanceled) {
+          // abort, do nothing
+          return
+        }
+        dispatch({
+          type: CACHE_PAGE,
+          payload: { page: e, id: _id },
+        })
+        throw e
       })
-      throw e
-    }
   }
 }
 
