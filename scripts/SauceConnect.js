@@ -1,9 +1,9 @@
+const ServerProcess = require('./ServerProcess')
 require('../config/env')
 const path = require('path')
 const fs = require('fs')
 const download = require('download')
 const os = require('os')
-const ServerProcess = require('./ServerProcess')
 
 const IS_CI =
   process.env.CI &&
@@ -26,9 +26,7 @@ class SauceConnect extends ServerProcess {
       await this.downloadBinary()
     }
     return run(
-      `${binPath} -u ${process.env.SAUCE_USERNAME} -k ${
-        process.env.SAUCE_ACCESS_KEY
-      } --config-file ${configPath}`
+      `${binPath} -u ${process.env.SAUCE_USERNAME} -k ${process.env.SAUCE_ACCESS_KEY} --config-file ${configPath}`
     )
   }
   spawnProxy() {
@@ -58,13 +56,13 @@ if (require.main === module) {
   job.on('end', () => {
     process.exit()
   })
-  job.on('stdout', msg => {
+  job.on('stdout', (msg) => {
     console.log(msg)
     if (msg.match('Sauce Connect is up')) {
       console.log('Sauce dashboard: https://app.saucelabs.com/dashboard/builds')
     }
   })
-  job.on('stderr', msg => {
+  job.on('stderr', (msg) => {
     console.error(msg)
   })
   job.startProxy()

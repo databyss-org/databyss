@@ -60,6 +60,8 @@ describe('inline atomic', () => {
 
   afterEach(async (done) => {
     await logout(driver)
+    await driver.quit()
+
     done()
   })
 

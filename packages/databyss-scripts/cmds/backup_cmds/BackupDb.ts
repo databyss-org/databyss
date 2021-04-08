@@ -1,9 +1,13 @@
 import fs from 'fs'
 import { backup } from '@cloudant/couchbackup'
-import { cloudantUrl, run, ServerProcess } from '@databyss-org/scripts/lib'
+import {
+  cloudantUrl,
+  ServerProcess,
+  ServerProcessArgs,
+} from '@databyss-org/scripts/lib'
 
 export class BackupDb extends ServerProcess {
-  constructor(argv) {
+  constructor(argv: ServerProcessArgs) {
     super(argv, 'backup.single-database')
   }
   run() {
@@ -27,7 +31,7 @@ export class BackupDb extends ServerProcess {
 
 exports.command = 'single-database <dbName> [options]'
 exports.desc = 'Backup data from a single couch db'
-exports.builder = (yargs) =>
+exports.builder = (yargs: ServerProcessArgs) =>
   yargs
     .describe('f', 'Output to a file')
     .alias('f', 'file')
@@ -37,7 +41,6 @@ exports.builder = (yargs) =>
       'Backup "users" database to "users.json"'
     )
     .example('$0 users', 'Stream backup of "users" database to stdout')
-exports.handler = (argv) => {
-  const _job = new BackupDb(argv)
-  run(_job)
+exports.handler = (argv: ServerProcessArgs) => {
+  new BackupDb(argv).runCli()
 }

@@ -8,8 +8,11 @@ class ServerProcess extends EventEmitter {
     this.exec = this.exec.bind(this)
     this.spawn = this.spawn.bind(this)
   }
-  log(...msgs) {
-    this.stdOut(...msgs)
+  log(msgs) {
+    this.stdOut(msgs)
+  }
+  logError(msgs) {
+    this.stdErr(msgs)
   }
   stdOut(...msgs) {
     this.emit('stdout', msgs.join(' '))
@@ -25,7 +28,7 @@ class ServerProcess extends EventEmitter {
       child.on('close', () => {
         resolve()
       })
-      child.on('error', data => {
+      child.on('error', (data) => {
         reject(data)
       })
     })
@@ -39,12 +42,24 @@ class ServerProcess extends EventEmitter {
     return proc
   }
   _bindProcEvents(proc) {
-    proc.stdout.on('data', data => {
+    proc.stdout.on('data', (data) => {
       this.stdOut(data)
     })
-    proc.stderr.on('data', data => {
+    proc.stderr.on('data', (data) => {
       this.stdErr(data)
     })
+  }
+  _patchStdOut() {
+    // let output = '';
+    const originalStdoutWrite = process.stdout.write.bind(process.stdout)
+    process.stdout.write = (chunk, encoding, callback) => {
+      if (typeof chunk === 'string') {
+        output += chunk
+      }
+      return originalStdoutWrite(chunk, encoding, callback)
+    }
+    process.stdout.write = originalStdoutWrite
+    output
   }
 }
 
