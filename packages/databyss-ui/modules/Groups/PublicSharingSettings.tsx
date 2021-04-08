@@ -84,6 +84,7 @@ export const PublicSharingSettings = ({
         </View>
       ) : (
         <IconControl
+          data-test-element="copy-link"
           onClick={() => {
             setLinkCopied(true)
             if (onClick) {
