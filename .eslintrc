@@ -31,6 +31,7 @@
       "LabeledStatement",
       "WithStatement"
     ],
+    "class-methods-use-this": "off", // sometimes we want them there just for consistency
     "no-continue": "off", // if we're using for...of, we need continue
     "no-await-in-loop": "off", // this is needed for synchronous iteration where order matters
     "no-return-assign": ["error", "except-parens"], // Default option

@@ -1,8 +1,12 @@
 import { Key, By, until } from 'selenium-webdriver'
 
+const LOCAL_URL = 'http://localhost:3000'
+const PROXY_URL = 'http://0.0.0.0:3000'
+
 const waitUntilTime = 30000
 
 const SLEEP_TIME = 300
+const MAX_RETRIES = 3
 
 // HACK: saucelabs environment double triggers meta key, use ctrl key instead
 
@@ -79,24 +83,92 @@ export const getElementByTag = async (driver, tag) => {
   return el
 }
 
-export const logout = async (driver) => {
-  await sleep(1000)
+export const tagButtonClick = async (tag, driver) => {
+  const actions = driver.actions({ async: true })
+
+  let count = 0
+  const clickAction = async () => {
+    if (count > MAX_RETRIES) {
+      throw new Error('Stale Element')
+    }
+    const element = await getElementByTag(driver, `[${tag}]`)
+    await actions.click(element).perform()
+    await actions.clear()
+    await sleep(SLEEP_TIME)
+  }
   try {
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
-    await accountDropdown.click()
-    await sleep(500)
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-    await logoutButton.click()
-    await getElementByTag(driver, '[data-test-path="email"]')
-    await driver.quit()
+    await clickAction()
   } catch (err) {
-    console.log('Logout ERROR - ', err)
+    if (err.name !== 'StaleElementReferenceError') {
+      throw err
+    }
+    console.log('Stale element, retrying')
+    count += 1
+    await clickAction()
+  }
+}
+
+export const tagButtonListClick = async (tag, index, driver) => {
+  const actions = driver.actions({ async: true })
+
+  let count = 0
+  const clickAction = async () => {
+    if (count > MAX_RETRIES) {
+      throw new Error('Stale Element')
+    }
+    const elements = await getElementsByTag(driver, `[${tag}]`)
+    await actions.click(elements[index]).perform()
+    await actions.clear()
+    await sleep(SLEEP_TIME)
+  }
+  try {
+    await clickAction()
+  } catch (err) {
+    if (err.name !== 'StaleElementReferenceError') {
+      throw err
+    }
+    console.log('Stale element, retrying')
+    count += 1
+    await clickAction()
+  }
+}
+
+export const dragAndDrop = async (item, container, driver) => {
+  const actions = driver.actions()
+
+  const _itemElement = await getElementByTag(driver, `[${item}]`)
+
+  const _containerElement = await getElementByTag(driver, `[${container}]`)
+
+  await actions.dragAndDrop(_itemElement, _containerElement).perform()
+  await actions.clear()
+  await sleep(SLEEP_TIME)
+}
+
+export const logout = async (driver) => {
+  let count = 0
+  const logoutAction = async () => {
+    if (count > MAX_RETRIES) {
+      throw new Error('LOGOUT ERROR')
+    }
+
+    await tagButtonClick('data-test-element="account-menu"', driver)
+
+    await sleep(500)
+    await tagButtonClick('data-test-block-menu="logout"', driver)
+
+    await getElementByTag(driver, '[data-test-path="email"]')
+
+    await sleep(SLEEP_TIME)
+
+    // todo: driver.quit on logout actions
+  }
+  try {
+    await logoutAction()
+  } catch (err) {
+    console.log('logout fail - retrying')
+    count += 1
+    await logoutAction()
   }
 }
 
@@ -290,11 +362,28 @@ export const redo = async (actions) => {
   await sleep(SLEEP_TIME)
 }
 
-// export const upKey = async actions => {
-//   await actions
-//     .keyUp(Key.ARROW_UP)
-//     .perform()
+export const logIn = async (email, driver) => {
+  await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
-//   await actions.clear()
-//   await sleep(SLEEP_TIME)
-// }
+  const emailField = await getElementByTag(driver, '[data-test-path="email"]')
+  await emailField.sendKeys(email)
+
+  let continueButton = await getElementByTag(
+    driver,
+    '[data-test-id="continueButton"]'
+  )
+  await continueButton.click()
+
+  const codeField = await getElementByTag(driver, '[data-test-path="code"]')
+  await codeField.sendKeys('test-code-42')
+
+  continueButton = await getElementByTag(
+    driver,
+    '[data-test-id="continueButton"]'
+  )
+
+  await continueButton.click()
+
+  // wait for editor to be visible
+  await getEditor(driver)
+}

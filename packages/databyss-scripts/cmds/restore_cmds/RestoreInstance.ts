@@ -1,10 +1,14 @@
 import fs from 'fs'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
-import { run, ServerProcess, sleep } from '@databyss-org/scripts/lib'
+import {
+  ServerProcess,
+  ServerProcessArgs,
+  sleep,
+} from '@databyss-org/scripts/lib'
 import { RestoreDb } from './RestoreDb'
 
 export class RestoreInstance extends ServerProcess {
-  constructor(argv) {
+  constructor(argv: ServerProcessArgs) {
     super(argv, 'restore.instance')
   }
   async run() {
@@ -31,7 +35,7 @@ export class RestoreInstance extends ServerProcess {
 
 exports.command = 'instance [options]'
 exports.desc = 'Restore all dbs to a cloudant instance'
-exports.builder = (yargs) =>
+exports.builder = (yargs: ServerProcessArgs) =>
   yargs
     .describe('path', 'Input path for db files')
     .nargs('path', 1)
@@ -41,7 +45,6 @@ exports.builder = (yargs) =>
       'Restore instance from "../backups/production'
     )
     .example('$0', 'Stream restore of instance from stdin')
-exports.handler = (argv) => {
-  const _job = new RestoreInstance(argv)
-  run(_job)
+exports.handler = (argv: ServerProcessArgs) => {
+  new RestoreInstance(argv).runCli()
 }

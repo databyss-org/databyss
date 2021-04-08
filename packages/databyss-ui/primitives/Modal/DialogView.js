@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import nl2br from 'react-nl2br'
 import { View, Text, List, Button, RawHtml } from '../'
 
@@ -8,8 +8,24 @@ const DialogView = ({
   onConfirm,
   showConfirmButtons,
   html,
+  dolphins,
   ...others
 }) => {
+  const [, setDolphinString] = useState('')
+  const timerRef = useRef(null)
+  const dolphinsRef = useRef('🐬')
+  useEffect(() => {
+    if (dolphins) {
+      timerRef.current = setInterval(() => {
+        dolphinsRef.current += '🐬'
+        setDolphinString(dolphinsRef.current)
+      }, 10000)
+      return () => {
+        clearInterval(timerRef.current)
+      }
+    }
+    return () => null
+  }, [])
   if (!confirmButtons.length) {
     confirmButtons.push(
       <Button variant="secondaryUi" onPress={onConfirm}>
@@ -23,6 +39,11 @@ const DialogView = ({
         <RawHtml html={message} variant="uiTextNormal" />
       ) : (
         <Text variant="uiTextNormal">{nl2br(message)}</Text>
+      )}
+      {dolphins && (
+        <Text variant="uiTextNormal" flexWrap="wrap" color="gray.5" width={215}>
+          {dolphinsRef.current}[{dolphinsRef.current.length / 2}]
+        </Text>
       )}
       {showConfirmButtons && (
         <List verticalItemPadding="small">

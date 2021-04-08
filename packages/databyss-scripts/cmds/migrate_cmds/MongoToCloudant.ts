@@ -18,13 +18,16 @@ import {
 } from '@databyss-org/api/src/lib/createUserDatabase'
 import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { Role, User as UserInterface } from '@databyss-org/data/interfaces'
-import { run, ServerProcess } from '@databyss-org/scripts/lib'
+import { ServerProcess, ServerProcessArgs } from '@databyss-org/scripts/lib'
 
-const fixDetail = (detail: any) => {
-  if (!detail) {
-    return detail
+const fixDetail = (block: any) => {
+  if (block.type !== 'SOURCE') {
+    return {}
   }
-  const _detail = cloneDeep(detail)
+  if (!block.detail) {
+    return {}
+  }
+  const _detail = cloneDeep(block.detail)
   // TODO: fix title in source modal
   if (_detail.title === '') {
     _detail.title = {
@@ -35,38 +38,68 @@ const fixDetail = (detail: any) => {
   // TODO: fix year in source modal
   if (_detail.year?.textValue) {
     _detail.year = {
-      textValue: detail.year.textValue.toString(),
-      ranges: detail.year.ranges || [],
+      textValue: _detail.year.textValue.toString(),
+      ranges: _detail.year.ranges || [],
     }
   }
   // TODO: fix journalTitle in source modal
   if (Array.isArray(_detail.journalTitle?.textValue)) {
     _detail.journalTitle = {
-      textValue: detail.journalTitle.textValue[0],
-      ranges: detail.journalTitle.ranges || [],
+      textValue: _detail.journalTitle.textValue[0],
+      ranges: _detail.journalTitle.ranges || [],
     }
   }
-  return _detail
+  return { detail: _detail }
 }
 
-class UserMongoToCloudant extends ServerProcess {
-  constructor(argv) {
+class MongoToCloudant extends ServerProcess {
+  constructor(argv: ServerProcessArgs) {
     super(argv, 'migrate.mongo-to-cloudant')
   }
+
   async run() {
-    this.emit('stdout', `Migrating user "${this.args.email}" to cloudant`)
+    // connect to Mongo
+    connectDB(this.args.env.API_MONGO_URI)
+
+    if (this.args.email) {
+      await this.migrateUser(this.args.email)
+    } else {
+      await this.migrateAll()
+    }
+  }
+
+  async migrateAll() {
+    let _resumed = !this.args.resume
+    // get all active user accounts in Mongo
+    const _users: any[] = await User.find()
+    for (const _user of _users) {
+      if (_user.email === this.args.resume) {
+        this.logInfo('Resuming migration at', _user.email)
+        _resumed = true
+      }
+      if (!_resumed) {
+        continue
+      }
+      if (this.args.skip?.includes(_user.email)) {
+        continue
+      }
+      await this.migrateUser(_user.email)
+    }
+    closeDB()
+  }
+
+  async migrateUser(email: string) {
     try {
-      // STEP 1: connect to Mongo
-      connectDB(this.args.env.API_MONGO_URI)
+      this.logInfo('👤', `Migrating user "${email}" to cloudant`)
       // (cloudant connects when the lib functions are called below)
 
       // STEP 1a: Get User record from mongo and save the defaultAccountId
-      const _mongoUser: any = await User.findOne({ email: this.args.email })
+      const _mongoUser: any = await User.findOne({ email })
       if (!_mongoUser) {
         throw new Error('User not found')
       }
       const _defaultAccountId = _mongoUser.defaultAccount
-      console.log(`Mongo accountId to migrate: ${_defaultAccountId}`)
+      this.logInfo(`Mongo accountId to migrate: ${_defaultAccountId}`)
 
       /**------------------------------------------------------------------
        * DEFAULT GROUP
@@ -81,7 +114,7 @@ class UserMongoToCloudant extends ServerProcess {
       /**
        * Populate fields required on all docs, like timestamps and belongsToGroup
        */
-      const getDocFields = (doc) => ({
+      const getDocFields = (doc: any) => ({
         belongsToGroup: _defaultGroupId,
         createdAt: doc.createdAt
           ? new Date(doc.createdAt).getTime()
@@ -93,14 +126,14 @@ class UserMongoToCloudant extends ServerProcess {
 
       // STEP 2: Create the user's default group database and add design docs
       const _couchGroupName = `g_${_defaultGroupId}`
-      console.log(`⏳ Create group: ${_couchGroupName}`)
+      this.logInfo('⏳', `Create group: ${_couchGroupName}`)
       await createGroupDatabase(_couchGroupName)
-      console.log(`✅ Group created: ${_defaultGroupId}`)
+      this.logSuccess(`Group created: ${_defaultGroupId}`)
       const _groupDb = await cloudant.current.db.use<any>(_couchGroupName)
       const _mongoAccount: any = await Account.findOne({
         _id: _defaultAccountId,
       })
-      console.log(`ℹ️  Old defaultPageId: ${_mongoAccount!.defaultPage}`)
+      this.logInfo(`Old defaultPageId: ${_mongoAccount!.defaultPage}`)
 
       // STEP 3: Copy all Pages, Blocks, Selections and BlockRelations belonging to the user
       //   to the group db
@@ -117,19 +150,21 @@ class UserMongoToCloudant extends ServerProcess {
       /**
        * mongo blockId => { mongo pageId => boolean }
        */
-      const _relatedBlockMap = {}
+      const _relatedBlockMap: {
+        [blockId: string]: { [pageId: string]: boolean }
+      } = {}
       /**
        * mongo blockId => mongo pageId
        */
-      const _blockToPageMap = {}
+      const _blockToPageMap: { [blockId: string]: string } = {}
       _mongoPages.forEach((page) => {
         page.blocks.forEach((block) => {
           // aggregate all blocks into a Map so we don't write orphaned blocks
           _blockToPageMap[block._id] = page._id
         })
       })
-      console.log(
-        `ℹ️  Valid (non-orphaned) ENTRY count: ${
+      this.logInfo(
+        `Valid (non-orphaned) ENTRY count: ${
           Object.values(_blockToPageMap).length
         }`
       )
@@ -146,11 +181,11 @@ class UserMongoToCloudant extends ServerProcess {
       /**
        * mongo blockId => couch blockId
        */
-      const _blockIdMap = {}
+      const _blockIdMap: { [blockId: string]: string } = {}
       /**
        * mongo blockId => block type
        */
-      const _blockTypeMap = {}
+      const _blockTypeMap: { [blockId: string]: string } = {}
 
       // insert the blocks in couch, generating new ids and keeping a map
       for (const _mongoBlock of _mongoBlocks) {
@@ -173,7 +208,7 @@ class UserMongoToCloudant extends ServerProcess {
               length: r.length,
             })),
           },
-          detail: fixDetail(_mongoBlock.detail),
+          ...fixDetail(_mongoBlock),
           ...getDocFields(_mongoBlock),
         })
 
@@ -191,7 +226,7 @@ class UserMongoToCloudant extends ServerProcess {
           }
         }
       }
-      console.log(`➡️  Migrated ${Object.keys(_blockIdMap).length} Blocks`)
+      this.logSuccess(`Migrated ${Object.keys(_blockIdMap).length} Blocks`)
 
       // update inline block ids
 
@@ -229,9 +264,7 @@ class UserMongoToCloudant extends ServerProcess {
                 // map the new block and blockType so it can be used by the block relation step
                 _blockIdMap[_mark[1]] = _couchInlineBlockId
                 _blockTypeMap[_mark[1]] = 'TOPIC'
-                console.log(
-                  `ℹ️  created missing block for TOPIC: ${_textValue}`
-                )
+                this.logInfo(`created missing block for TOPIC: ${_textValue}`)
               }
 
               // update the blockId in the inline mark
@@ -244,7 +277,7 @@ class UserMongoToCloudant extends ServerProcess {
           _inlineIdCount += 1
         }
       }
-      console.log(`➡️  Updated ${_inlineIdCount} INLINE ids`)
+      this.logSuccess(`Updated ${_inlineIdCount} INLINE ids`)
 
       /**------------------------------------------------------------------
        * PAGES
@@ -358,9 +391,9 @@ class UserMongoToCloudant extends ServerProcess {
         }
       }
 
-      console.log(`➡️  Migrated ${Object.keys(_pageIdMap).length} Pages`)
-      console.log(
-        `➡️  Migrated ${
+      this.logSuccess(`Migrated ${Object.keys(_pageIdMap).length} Pages`)
+      this.logSuccess(
+        `Migrated ${
           Object.keys(_sharedAccountMap).length
         } Shared Accounts (groups)`
       )
@@ -376,15 +409,15 @@ class UserMongoToCloudant extends ServerProcess {
       const _couchRelationsByPage: { [couchPageId: string]: string[] } = {}
 
       // generate BlockRelations using the _blockRelationMap
-      console.log(
-        `ℹ️  Migrating ${Object.keys(_relatedBlockMap).length} block relations`
+      this.logInfo(
+        `Migrating ${Object.keys(_relatedBlockMap).length} block relations`
       )
       let _relationsCount = 0
       for (const _relationBlockMongoId of Object.keys(_relatedBlockMap)) {
         // get the block id
         const _relationBlockId = _blockIdMap[_relationBlockMongoId]
         if (!_relationBlockId) {
-          console.log(`⚠️  relation.block not found: ${_relationBlockMongoId}`)
+          this.logWarning(`relation.block not found: ${_relationBlockMongoId}`)
           continue
         }
 
@@ -397,7 +430,7 @@ class UserMongoToCloudant extends ServerProcess {
         )) {
           const _relationPageId = _pageIdMap[_relationPageMongoId]
           if (!_relationPageId) {
-            console.log(`⚠️  relation.page not found: ${_relationPageMongoId}`)
+            this.logWarning(`relation.page not found: ${_relationPageMongoId}`)
             continue
           }
           _relationPageIds.push(_relationPageId)
@@ -419,7 +452,7 @@ class UserMongoToCloudant extends ServerProcess {
         })
         _relationsCount += 1
       }
-      console.log(`➡️  Migrated ${_relationsCount} BlockRelations`)
+      this.logSuccess(`Migrated ${_relationsCount} BlockRelations`)
 
       /**
        * SHARED PAGE DEPENDENCIES
@@ -427,9 +460,7 @@ class UserMongoToCloudant extends ServerProcess {
 
       // migrate the Blocks and Relations for shared pages
       for (const _sharedGroupName of Object.values(_sharedAccountMap)) {
-        console.log(
-          `ℹ️  Migrating shared group dependencies: ${_sharedGroupName}`
-        )
+        this.logInfo(`Migrating shared group dependencies: ${_sharedGroupName}`)
         const _sharedPageId = _sharedGroupName.substring(2)
         const _sharedGroupDb = await cloudant.current.db.use<any>(
           _sharedGroupName
@@ -441,7 +472,7 @@ class UserMongoToCloudant extends ServerProcess {
           try {
             _doc = await _groupDb.get(_docid)
           } catch (_) {
-            console.log(`⚠️  shared page dependency doc not found: ${_docid}`)
+            this.logWarning(`shared page dependency doc not found: ${_docid}`)
             return null
           }
           if (!_doc.sharedWithGroups) {
@@ -491,8 +522,8 @@ class UserMongoToCloudant extends ServerProcess {
         await _groupDb.insert(_groupDoc)
         // await _sharedGroupDb.insert(_groupDoc)
       }
-      console.log(
-        `➡️  Migrated Dependencies for ${
+      this.logSuccess(
+        `Migrated Dependencies for ${
           Object.keys(_sharedAccountMap).length
         } Shared Pages`
       )
@@ -518,7 +549,7 @@ class UserMongoToCloudant extends ServerProcess {
         ],
         ...getDocFields({}),
       })
-      console.log(`➡️  Migrated userPreferences`)
+      this.logSuccess(`Migrated userPreferences`)
 
       /**------------------------------------------------------------------
        * USER
@@ -526,7 +557,7 @@ class UserMongoToCloudant extends ServerProcess {
 
       // STEP 5: Create document in the Users db for the new user so they can login
       const _usersDb = await cloudant.current.db.use<UserInterface>('users')
-      _usersDb.insert({
+      await _usersDb.insert({
         _id: _couchUserId,
         email: _mongoUser.email,
         defaultGroupId: _defaultGroupId,
@@ -536,27 +567,36 @@ class UserMongoToCloudant extends ServerProcess {
             }
           : {}),
       })
-      console.log(`👤 Created User document`)
-
-      // TODO: STEP 6: Migrate pages shared by this user by creating a new group db for each page
-      //   and updating the page.sharedWithGroups array with the new group id
-
-      this.emit('stdout', `✅ User migrated.`)
+      this.logSuccess('Created User document')
     } catch (err) {
-      this.emit('stderr', err)
-      this.emit('end', false)
-    } finally {
-      closeDB()
+      this.logFailure(`[${email}]`)
+      this.logError(`[${email}]`, err)
     }
   }
 }
 
-export default UserMongoToCloudant
+export default MongoToCloudant
 
-exports.command = 'mongo-to-cloudant <email>'
+exports.command = 'mongo-to-cloudant [email]'
 exports.desc = 'Migrate Mongo user to Cloudant'
-exports.builder = {}
-exports.handler = (argv) => {
-  const _job = new UserMongoToCloudant(argv)
-  run(_job)
+exports.builder = (yargs: ServerProcessArgs) =>
+  yargs
+    .describe('skip', 'List of emails to skip')
+    .array('skip')
+    .example(
+      '$0 --skip jreed03@gmail.com paul@hine.works',
+      'Migrate all users, skip "jreed03@gmail.com" and "paul@hine.works"'
+    )
+    .example('$0 jreed03@gmail.com', 'Migrate user "jreed03@gmail.com"')
+    .string('resume')
+    .describe(
+      'resume',
+      'Email where we want to resume the batch. Can be used with --skip to resume right after this user.'
+    )
+    .example(
+      '$0 --resume paul@hine.works',
+      'Resume migration of all users at "paul@hine.works"'
+    )
+exports.handler = (argv: ServerProcessArgs) => {
+  new MongoToCloudant(argv).runCli()
 }

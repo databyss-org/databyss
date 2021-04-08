@@ -91,9 +91,8 @@ export async function checkNetwork() {
     return true
   }
   try {
-    const _res = await request('/', {
+    const _res = await request(process.env.API_URL, {
       method: 'HEAD',
-      mode: 'no-cors',
       rawResponse: true,
     })
     if (!(_res && (_res.ok || _res.type === 'opaque'))) {
