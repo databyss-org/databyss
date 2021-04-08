@@ -57,6 +57,10 @@ const run = async () => {
     res.redirect('https://app.databyss.org')
   })
 
+  app.get('/api', (_req, res) => {
+    res.status(200).send('👍')
+  })
+
   // Define Routes
   app.use('/api/users', usersRoute)
   app.use('/api/auth', authRoute)

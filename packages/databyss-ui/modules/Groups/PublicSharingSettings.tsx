@@ -64,6 +64,7 @@ export const PublicSharingSettings = ({
     >
       <SwitchControl
         label="Public collection"
+        data-test-element="group-public"
         alignLabel="left"
         textVariant="uiTextNormal"
         labelTextProps={{

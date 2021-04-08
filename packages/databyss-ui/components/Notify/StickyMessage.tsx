@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { ReactNode, useState } from 'react'
 import { ThemeProvider } from 'emotion-theming'
 import { darkTheme } from '@databyss-org/ui/theming/theme'
 import {
@@ -10,7 +10,19 @@ import {
 } from '@databyss-org/ui/primitives'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 
-const StickyMessage = ({ messageId, html, children, visible }) => {
+interface StickyMessageProps {
+  messageId?: string | null
+  html?: string | null
+  children?: ReactNode | null
+  visible?: boolean
+}
+
+const StickyMessage = ({
+  messageId,
+  html,
+  children,
+  visible,
+}: StickyMessageProps) => {
   const [dismissed, setDismissed] = useState(
     messageId ? localStorage.getItem(`${messageId}_dismissed`) : false
   )

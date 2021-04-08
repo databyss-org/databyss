@@ -108,7 +108,7 @@ export interface TextProps
 declare const TextPrimitive: RefForwardingFC<PropsWithChildren<TextProps>>
 declare const Text: RefForwardingFC<PropsWithChildren<TextProps>>
 
-export interface RawHtmlProps extends ColorProps, SpaceProps, BorderProps {
+export interface RawHtmlProps extends TextProps, BorderProps {
   _html?: string
   html?: string
 }
@@ -307,11 +307,12 @@ export interface ModalWindowProps extends ModalProps, ModalViewProps {}
 declare const ModalWindow: FC<PropsWithChildren<ModalWindowProps>>
 
 export interface DialogViewProps extends ViewProps {
-  message?: string
+  message?: string | null
   confirmButtons?: ReactNode[]
   onConfirm?: (e: MouseEvent | KeyboardEvent) => void
   showConfirmButtons?: boolean
-  html?: string
+  html?: boolean
+  dolphins?: boolean
 }
 
 export interface DialogProps extends DialogViewProps {
@@ -353,7 +354,7 @@ declare const useDrag: <
 export interface DropdownContainerProps
   extends Omit<ViewProps, 'position'>,
     Omit<ListProps, 'position'> {
-  position: {
+  position?: {
     left?: number
     top?: number
     right?: number

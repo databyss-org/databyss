@@ -29,7 +29,11 @@ export const IndexPageView = ({
         <title>{path[path.length - 1]}</title>
       </Helmet>
       <View pt="small" pb="medium" pl="medium">
-        <Text variant="bodyHeading1" color="text.3">
+        <Text
+          data-test-element="index-results"
+          variant="bodyHeading1"
+          color="text.3"
+        >
           {path[path.length - 1]}
         </Text>
       </View>

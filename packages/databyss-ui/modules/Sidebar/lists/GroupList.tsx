@@ -10,12 +10,15 @@ export const GroupList = (others) => {
   const pagesRes = usePages()
 
   const getGroupItems = (groups: Group[]) =>
-    groups.map((group) => ({
-      text: group.name,
-      type: 'group',
-      route: `/collections/${group._id}`,
-      data: group,
-    }))
+    sortEntriesAtoZ(
+      groups.map((group) => ({
+        text: group.name,
+        type: 'group',
+        route: `/collections/${group._id}`,
+        data: group,
+      })),
+      'text'
+    )
 
   // const sorted = sortEntriesAtoZ(mapped, 'text')
 
