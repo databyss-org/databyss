@@ -22,14 +22,18 @@ const App = () => {
       <NotifyProvider>
         <ServiceProvider>
           <FirefoxWarning />
-          <SessionProvider
-            signUp={location.pathname === '/signup'}
-            unauthorizedChildren={<Public />}
-            email={email}
-            code={code}
-          >
-            <Private />
-          </SessionProvider>
+          {process.env.MAINTENANCE_MODE?.toLowerCase() === 'true' ? (
+            <Public />
+          ) : (
+            <SessionProvider
+              signUp={location.pathname === '/signup'}
+              unauthorizedChildren={<Public />}
+              email={email}
+              code={code}
+            >
+              <Private />
+            </SessionProvider>
+          )}
         </ServiceProvider>
       </NotifyProvider>
     </Viewport>

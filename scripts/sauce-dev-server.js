@@ -1,14 +1,14 @@
 // inspired by jest-dev-server
 // https://github.com/smooth-code/jest-puppeteer/tree/master/packages/jest-dev-server
 const SauceConnect = require('./SauceConnect.js')
-const ServerProcess = require('./ServerProcess.js')
+const ServerProcess = require('./ServerProcess')
 
 const servers = []
 
 const setup = () => {
-  const proxySetup = new Promise(async resolve => {
+  const proxySetup = new Promise(async (resolve) => {
     const sauce = new SauceConnect()
-    sauce.on('stdout', msg => {
+    sauce.on('stdout', (msg) => {
       console.log(msg)
       if (msg.match('Sauce Connect is up')) {
         console.log(
@@ -20,10 +20,10 @@ const setup = () => {
     const proc = await sauce.spawnProxy()
     servers.push(proc)
   })
-  const storybookSetup = new Promise(resolve => {
+  const storybookSetup = new Promise((resolve) => {
     const serverProc = new ServerProcess()
     const proc = serverProc.spawn('yarn storybook:sauce')
-    serverProc.on('stdout', msg => {
+    serverProc.on('stdout', (msg) => {
       if (msg.match('webpack built')) {
         console.log('Storybook URL: http://0.0.0.0:8080')
         resolve()
@@ -34,7 +34,7 @@ const setup = () => {
   return Promise.all([proxySetup, storybookSetup])
 }
 
-const teardown = () => Promise.all(servers.map(server => server.destroy()))
+const teardown = () => Promise.all(servers.map((server) => server.destroy()))
 
 if (require.main === module) {
   setup()
@@ -45,7 +45,7 @@ if (require.main === module) {
         process.exit()
       })
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err)
     })
 }
