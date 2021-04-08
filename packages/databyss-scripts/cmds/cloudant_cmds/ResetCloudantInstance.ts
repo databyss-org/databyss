@@ -1,9 +1,13 @@
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
-import { ServerProcess, sleep } from '@databyss-org/scripts/lib'
+import {
+  ServerProcess,
+  ServerProcessArgs,
+  sleep,
+} from '@databyss-org/scripts/lib'
 import { updateDesignDocs, initiateDatabases } from '@databyss-org/data/couchdb'
 
 class ResetCloudantInstance extends ServerProcess {
-  constructor(argv) {
+  constructor(argv: ServerProcessArgs) {
     super(argv, 'cloudant.reset-instance')
   }
   async run() {
@@ -34,9 +38,9 @@ export default ResetCloudantInstance
 
 exports.command = 'reset-instance [options]'
 exports.desc = 'Delete all databases on Cloudant and re-initialize'
-exports.builder = (yargs) =>
+exports.builder = (yargs: ServerProcessArgs) =>
   yargs.describe('clean', 'Leave instance clean (do not init admin dbs)')
 
-exports.handler = (argv) => {
+exports.handler = (argv: ServerProcessArgs) => {
   new ResetCloudantInstance(argv).runCli()
 }

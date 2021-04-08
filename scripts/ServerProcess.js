@@ -49,6 +49,18 @@ class ServerProcess extends EventEmitter {
       this.stdErr(data)
     })
   }
+  _patchStdOut() {
+    // let output = '';
+    const originalStdoutWrite = process.stdout.write.bind(process.stdout)
+    process.stdout.write = (chunk, encoding, callback) => {
+      if (typeof chunk === 'string') {
+        output += chunk
+      }
+      return originalStdoutWrite(chunk, encoding, callback)
+    }
+    process.stdout.write = originalStdoutWrite
+    output
+  }
 }
 
 module.exports = ServerProcess

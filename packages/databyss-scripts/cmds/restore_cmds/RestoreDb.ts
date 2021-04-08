@@ -1,13 +1,17 @@
 import fs from 'fs'
 import { DocumentScope } from 'nano'
 import { restore } from '@cloudant/couchbackup'
-import { cloudantUrl, ServerProcess } from '@databyss-org/scripts/lib'
+import {
+  cloudantUrl,
+  ServerProcess,
+  ServerProcessArgs,
+} from '@databyss-org/scripts/lib'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import { setSecurity } from '@databyss-org/api/src/lib/createUserDatabase'
 import { Group } from '@databyss-org/services/interfaces'
 
 export class RestoreDb extends ServerProcess {
-  constructor(argv) {
+  constructor(argv: ServerProcessArg) {
     super(argv, 'restore.single-database')
   }
   async run() {
@@ -84,7 +88,7 @@ export class RestoreDb extends ServerProcess {
 
 exports.command = 'single-database <dbName> [options]'
 exports.desc = 'Restore data to a single couch db'
-exports.builder = (yargs) =>
+exports.builder = (yargs: ServerProcessArgs) =>
   yargs
     .describe('f', 'Input from a file')
     .alias('f', 'file')
@@ -103,6 +107,6 @@ exports.builder = (yargs) =>
       '$0 users --replace',
       'Restore "users" database, replacing if necessary'
     )
-exports.handler = (argv) => {
+exports.handler = (argv: ServerProcessArg) => {
   new RestoreDb(argv).runCli()
 }

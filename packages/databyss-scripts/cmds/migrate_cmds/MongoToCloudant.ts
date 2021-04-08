@@ -69,9 +69,17 @@ class MongoToCloudant extends ServerProcess {
   }
 
   async migrateAll() {
+    let _resumed = !this.args.resume
     // get all active user accounts in Mongo
     const _users: any[] = await User.find()
     for (const _user of _users) {
+      if (_user.email === this.args.resume) {
+        this.logInfo('Resuming migration at', _user.email)
+        _resumed = true
+      }
+      if (!_resumed) {
+        continue
+      }
       if (this.args.skip?.includes(_user.email)) {
         continue
       }
@@ -571,7 +579,7 @@ export default MongoToCloudant
 
 exports.command = 'mongo-to-cloudant [email]'
 exports.desc = 'Migrate Mongo user to Cloudant'
-exports.builder = (yargs: any) =>
+exports.builder = (yargs: ServerProcessArgs) =>
   yargs
     .describe('skip', 'List of emails to skip')
     .array('skip')
@@ -580,6 +588,15 @@ exports.builder = (yargs: any) =>
       'Migrate all users, skip "jreed03@gmail.com" and "paul@hine.works"'
     )
     .example('$0 jreed03@gmail.com', 'Migrate user "jreed03@gmail.com"')
-exports.handler = (argv: any) => {
+    .string('resume')
+    .describe(
+      'resume',
+      'Email where we want to resume the batch. Can be used with --skip to resume right after this user.'
+    )
+    .example(
+      '$0 --resume paul@hine.works',
+      'Resume migration of all users at "paul@hine.works"'
+    )
+exports.handler = (argv: ServerProcessArgs) => {
   new MongoToCloudant(argv).runCli()
 }
