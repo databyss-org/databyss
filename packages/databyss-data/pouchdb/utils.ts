@@ -1,11 +1,11 @@
 import PouchDB from 'pouchdb'
 import EventEmitter from 'es-event-emitter'
+import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import {
   Document,
   Group,
   ResourceNotFoundError,
 } from '@databyss-org/services/interfaces'
-import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'

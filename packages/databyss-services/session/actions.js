@@ -29,7 +29,7 @@ import {
   localStorageHasSession,
 } from './clientStorage'
 
-import { getAccountFromLocation } from './_helpers'
+import { getAccountFromLocation } from './utils'
 
 export const fetchSession = ({ _request, ...credentials }) => async (
   dispatch

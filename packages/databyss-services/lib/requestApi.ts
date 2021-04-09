@@ -1,6 +1,6 @@
 import request, { RequestOptions, FETCH_TIMEOUT } from './request'
 import { getAccountId, getAuthToken } from './../session/clientStorage'
-// import { getAccountFromLocation } from '../session/_helpers'
+// import { getAccountFromLocation } from '../session/utils'
 import { version as databyssVersion } from './../version'
 
 export const requestApi = async (
