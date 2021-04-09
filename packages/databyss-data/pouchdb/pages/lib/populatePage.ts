@@ -1,9 +1,10 @@
 import { Page } from '@databyss-org/services/interfaces/Page'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
+import { Block } from '@databyss-org/editor/interfaces'
 import { getAtomicClosureText } from '@databyss-org/services/blocks'
 import { PageDoc } from '../../interfaces'
-import { getDocument, getDocuments } from '../../utils'
 import { Selection } from '../../../../databyss-services/interfaces/Selection'
+import { getDocument, getDocuments } from '../../utils'
 
 const populatePage = async (
   _id: string
@@ -27,7 +28,7 @@ const populatePage = async (
     }, {})
 
     // get all blocks in one request using bulk getDocuments
-    const _blocksDict = await getDocuments(Object.keys(_blocksToGetDict))
+    const _blocksDict = await getDocuments<Block>(Object.keys(_blocksToGetDict))
 
     // populate blocks
     const _blocks = _page.blocks.map((_pageBlock) => {
@@ -50,13 +51,13 @@ const populatePage = async (
         }
       }
       return _block
-    })
+    }) as Block[]
 
     // add to blocks and selection to page
     const _populatedPage: Page = {
       ..._page,
       selection: _selection!,
-      blocks: _blocks!,
+      blocks: _blocks,
     }
 
     return _populatedPage

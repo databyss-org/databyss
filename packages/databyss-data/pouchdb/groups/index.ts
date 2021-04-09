@@ -6,6 +6,7 @@ import {
   deletePouchSecret,
   getPouchSecret,
 } from '@databyss-org/services/session/clientStorage'
+import { Selection } from '@databyss-org/services/interfaces'
 import { DocumentType, PageDoc } from '../interfaces'
 import {
   upsertImmediate,
@@ -34,7 +35,6 @@ import {
   createDatabaseCredentials,
   validateGroupCredentials,
 } from '../../../databyss-services/editorPage/index'
-import { Selection } from '@databyss-org/services/interfaces'
 
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)

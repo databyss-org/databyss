@@ -1,4 +1,5 @@
 import { Group } from '@databyss-org/services/interfaces/Group'
+import { BlockRelation } from '@databyss-org/services/interfaces'
 import {
   updateAndReplicateSharedDatabase,
   replicateGroup,
@@ -7,7 +8,6 @@ import {
 } from './index'
 import { findOne } from '../utils'
 import { DocumentType, PageDoc } from '../interfaces'
-import { BlockRelation } from '@databyss-org/services/interfaces'
 
 export enum GroupAction {
   SHARED = 'SHARED',

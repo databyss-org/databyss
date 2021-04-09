@@ -17,7 +17,7 @@ import {
   createGroupDatabase,
 } from '@databyss-org/api/src/lib/createUserDatabase'
 import { uid, uidlc } from '@databyss-org/data/lib/uid'
-import { Role, User as UserInterface } from '@databyss-org/data/interfaces'
+import { Role, SysUser } from '@databyss-org/data/interfaces'
 import { ServerProcess, ServerProcessArgs } from '@databyss-org/scripts/lib'
 
 const fixDetail = (block: any) => {
@@ -556,7 +556,7 @@ class MongoToCloudant extends ServerProcess {
        */
 
       // STEP 5: Create document in the Users db for the new user so they can login
-      const _usersDb = await cloudant.current.db.use<UserInterface>('users')
+      const _usersDb = await cloudant.current.db.use<SysUser>('users')
       await _usersDb.insert({
         _id: _couchUserId,
         email: _mongoUser.email,
