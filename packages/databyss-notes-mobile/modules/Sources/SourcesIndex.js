@@ -68,8 +68,6 @@ const headerItems = [SourcesMetadata]
 const SourcesIndex = () => {
   const blocksRes = useBlocks('SOURCE')
 
-  console.log(blocksRes)
-
   const navigationContext = useNavigationContext()
 
   const getQueryParams = useNavigationContext((c) => c.getQueryParams)

@@ -40,7 +40,6 @@ const Private = () => {
   // const { getCurrentAccount } = useSessionContext()
 
   const group = getDefaultGroup()
-  console.log(group)
 
   const [currentTab, setCurrentTab] = useState(Tabs.PAGES)
 
@@ -80,7 +79,7 @@ const Private = () => {
                 <SourcesIndex path="/" />
                 <AuthorDetails path="/:query" />
               </RouterGroup>
-              <SourceDetails path="/:sourceId" />
+              <SourceDetails path="/:blockId" />
             </RouterGroup>
 
             <RouterGroup path="topics">

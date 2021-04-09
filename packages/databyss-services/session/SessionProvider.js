@@ -63,7 +63,6 @@ const SessionProvider = ({
     if (state.session.publicAccount?._id) {
       return state.session.publicAccount._id
     }
-    console.log(state)
     return state.session.account._id
   }, [state.session])
   // credentials can be:
@@ -105,7 +104,6 @@ const SessionProvider = ({
         // 2nd pass: load session from local_storage
         // replicate from cloudant
         const groupId = _sesionFromLocalStorage.defaultGroupId
-        console.log(process.env)
         // download remote database if not on mobile
 
         if (!process.env.FORCE_MOBILE) {

@@ -60,6 +60,7 @@ export const getPathFromBlock = (block: Block) => {
 
 export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const { blockId } = useParams()
+
   const blocksRes = useBlocks(blockType)
 
   if (!blocksRes.isSuccess) {

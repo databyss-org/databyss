@@ -71,7 +71,6 @@ const AuthorDetails = ({ query }) => {
   )
 
   return render()
-  // return <div>author details</div>
 }
 
 export default AuthorDetails
