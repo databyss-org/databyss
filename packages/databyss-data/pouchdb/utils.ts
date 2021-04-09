@@ -1,6 +1,10 @@
 import PouchDB from 'pouchdb'
 import EventEmitter from 'es-event-emitter'
-import { Document, Group } from '@databyss-org/services/interfaces'
+import {
+  Document,
+  Group,
+  ResourceNotFoundError,
+} from '@databyss-org/services/interfaces'
 import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
@@ -105,7 +109,8 @@ export const getDocument = async <T extends Document>(
 /**
  * Get several documents at once
  * @param ids array of document ids to get
- * @returns dictionary of { docId => null | doc } (null if doc not found)
+ * @returns dictionary of { docId => doc }
+ * @throws ResourceNotFoundError if one or more docs is missing
  */
 export const getDocuments = async <D>(
   ids: string[]
@@ -115,10 +120,10 @@ export const getDocuments = async <D>(
   return _res!.results.reduce((accum, curr) => {
     const _doc: any = curr.docs[0]
     if (_doc.error) {
-      if (_doc.error.error !== 'not_found') {
-        throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error.error}`)
+      if (_doc.error.name === 'not_found') {
+        throw new ResourceNotFoundError(`_bulk_get docId ${curr.id} not found`)
       }
-      accum[curr.id] = null
+      throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error}`)
     }
     accum[curr.id] = _doc.ok
     return accum

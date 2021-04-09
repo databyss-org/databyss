@@ -141,7 +141,7 @@ export async function processGroupActionQ(dispatch: Function) {
       }
     }
     // check for add/remove action for page
-    if (groupPayload.pages) {
+    if (groupPayload?.pages) {
       for (const pageId of Object.keys(groupPayload.pages)) {
         const _pageAction = groupPayload.pages[pageId]
 
