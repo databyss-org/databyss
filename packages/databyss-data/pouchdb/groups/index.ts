@@ -23,7 +23,6 @@ import {
 import { getAtomicClosureText } from '../../../databyss-services/blocks/index'
 import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/getAtomicsFromSelection'
 import { dbRef, REMOTE_CLOUDANT_URL } from '../db'
-import { isAtomicInlineType } from '../../../databyss-editor/lib/util'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import {
   setGroupAction,
@@ -36,7 +35,6 @@ import {
   createDatabaseCredentials,
   validateGroupCredentials,
 } from '../../../databyss-services/editorPage/index'
-import { blockRelationSchema } from '../../schemas'
 
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
@@ -231,6 +229,7 @@ const upsertReplication = ({
   dbPassword: string
 }) => {
   const opts = {
+    batch_size: 1000,
     retry: true,
     auth: {
       username: dbKey,

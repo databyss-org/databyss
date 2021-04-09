@@ -6,8 +6,8 @@ import {
   removePageFromGroup,
   removeSharedDatabase,
 } from './index'
-import { findOne, getDocument } from '../utils'
-import { DocumentType, PageDoc } from '../interfaces'
+import { getDocument } from '../utils'
+import { PageDoc } from '../interfaces'
 
 export enum GroupAction {
   SHARED = 'SHARED',
