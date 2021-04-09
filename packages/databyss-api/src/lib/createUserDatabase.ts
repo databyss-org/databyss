@@ -1,4 +1,4 @@
-import { User, Role } from '@databyss-org/data/interfaces'
+import { SysUser, Role } from '@databyss-org/data/interfaces'
 import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
 import { uidlc } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
@@ -41,7 +41,7 @@ export const initializeNewPage = async ({
   pageId: string
 }) => {
   // get user group
-  const groupDb = await cloudant.current.db.use(`g_${groupId}`)
+  const groupDb = await cloudant.current.db.use(groupId)
   const _page: any = new Page(pageId)
   // upsert selection
   await groupDb.upsert(_page.selection._id, () => ({
@@ -67,41 +67,24 @@ export const initializeNewPage = async ({
 }
 
 // TODO: rename to createGroup, because it doesn't just create the id
-export const createGroupId = async ({
+export const createGroupId = ({
   groupId,
   userId,
 }: {
   userId: string
-  groupId?: string
-}) => {
-  // TODO: fix this so its not 'any'
-  const _id: string = groupId || uidlc()
-  const Groups: any = await cloudant.current.db.use('groups')
-  try {
-    await Groups.insert({
-      // TODO: this should be "belongsToUser" for consistency
-      belongsToUserId: userId,
-      name: 'untitled',
-      sessions: [],
-      // TODO: cloudant does not allow uppercase for db names,
-      // will this affect collisions?
-      _id,
-    })
-  } catch (err) {
-    // group might already exist
-    if (err.error !== 'conflict') {
-      // TODO: Make sure user owns group
-      throw err
-    }
-  }
+  groupId: string
+}) =>
+  cloudant.models.Groups.upsert(groupId, () => ({
+    _id: groupId,
+    belongsToUserId: userId,
+    name: 'untitled',
+    sessions: [],
+  }))
 
-  return _id
-}
-
-/*
-deletes group id from cloudant Groups database, the user should already be verified to have access to this database
-*/
-export const deleteGroupId = async ({ groupId }) => {
+/**
+ * deletes group id from cloudant Groups database, the user should already be verified to have access to this database
+ */
+export const deleteGroupId = async (groupId) => {
   const Groups = await cloudant.current.db.use('groups')
   const _doc = await Groups.get(groupId)
   if (_doc) {
@@ -191,7 +174,7 @@ export const setSecurity = ({
         }
         _credentials.dbKey = api.key
         _credentials.dbPassword = api.password
-        _credentials.groupId = groupId.substr(2)
+        _credentials.groupId = groupId
 
         resolve(_credentials)
       })
@@ -230,7 +213,7 @@ export const addCredentialsToGroupId = async ({
   userId: string
 }) => {
   // set user as GROUP_ADMIN and return credentials
-  const response = await setSecurity({ groupId: `g_${groupId}` })
+  const response = await setSecurity({ groupId })
   // add the user session to groups
   await addSessionToGroup(userId, response)
 
@@ -239,16 +222,17 @@ export const addCredentialsToGroupId = async ({
 }
 
 export const createUserDatabaseCredentials = async (
-  user: User
+  user: SysUser
 ): Promise<CredentialResponse> => {
   let groupId = user.defaultGroupId
 
   // create new group if user does not have one
   if (!groupId) {
-    groupId = await createGroupId({ userId: user._id })
+    groupId = `g_${uidlc()}`
+    await createGroupId({ groupId, userId: user._id })
 
     // creates a database if not yet defined
-    const _db = await createGroupDatabase(`g_${groupId}`)
+    const _db = await createGroupDatabase(groupId)
     // add user preferences to user database
 
     const defaultPageId = uidlc()

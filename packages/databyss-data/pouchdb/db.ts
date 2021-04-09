@@ -15,6 +15,7 @@ import {
   pouchDocSchema,
   blockSchema,
   userPreferenceSchema,
+  notificationSchema,
 } from '@databyss-org/data/schemas'
 import {
   getPouchSecret,
@@ -64,7 +65,7 @@ if (
   defaultGroup &&
   (!groupIdFromUrl || groupIdFromUrl === defaultGroup || process.env.STORYBOOK)
 ) {
-  dbRef.current = getPouchDb(`g_${defaultGroup}`)
+  dbRef.current = getPouchDb(defaultGroup)
 }
 
 export const areIndexBuilt = {
@@ -219,7 +220,7 @@ export const replicateDbFromRemote = ({
   groupId: string
 }) =>
   new Promise<Boolean>((resolve, reject) => {
-    const _couchUrl = `${REMOTE_CLOUDANT_URL}/g_${groupId}`
+    const _couchUrl = `${REMOTE_CLOUDANT_URL}/${groupId}`
 
     // for now we are getting the first credentials from local storage groups
     const _creds = getPouchSecret()
@@ -246,7 +247,7 @@ export const replicateDbFromRemote = ({
         password: _cred.dbPassword,
       },
     }
-    dbRef.current = getPouchDb(`g_${groupId}`)
+    dbRef.current = getPouchDb(groupId)
 
     checkNetwork().then((isOnline) => {
       if (isOnline) {
@@ -287,7 +288,7 @@ export const syncPouchDb = ({
   }
 
   ;(dbRef.current as PouchDB.Database).replicate
-    .to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
+    .to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
       ...opts,
       // do not replciate design docs
       filter: (doc) => !doc._id.includes('design/'),
@@ -316,7 +317,7 @@ export const syncPouchDb = ({
       }
     })
   ;(dbRef.current as PouchDB.Database).replicate
-    .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
+    .from(`${REMOTE_CLOUDANT_URL}/${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
     .on('change', (info) => {
       dispatch({
@@ -367,6 +368,7 @@ export const pouchDataValidation = (data) => {
   tv4.addSchema('text', textSchema)
   tv4.addSchema('pouchDb', pouchDocSchema)
   tv4.addSchema('blockSchema', blockSchema)
+  tv4.addSchema('notification', notificationSchema)
 
   if (data._id.includes('design/')) {
     return

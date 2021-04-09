@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-async function auth(req, res, next) {
+export async function authMiddleware(req, res, next) {
   // check if current account is public account
 
   // TODO: THIS WILL BE REPLPACED IN REFACTOR
@@ -24,11 +24,12 @@ async function auth(req, res, next) {
   // Verify token
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    req.user = decoded.user
+    req.user = {
+      ...decoded.user,
+      _id: decoded.user.id,
+    }
     return next()
   } catch (err) {
     return res.status(401).json({ msg: 'Token is not valid' })
   }
 }
-
-export default auth

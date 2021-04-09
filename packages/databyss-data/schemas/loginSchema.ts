@@ -33,11 +33,11 @@ export const loginSchema: JSONSchema4 = {
     token: {
       type: 'string',
     },
-    date: {
+    createdAt: {
       type: 'number',
     },
   },
-  required: ['_id', 'email', 'date'],
+  required: ['_id', 'email', 'createdAt'],
 }
 
 export default loginSchema

@@ -30,6 +30,7 @@ export interface DialogOptions {
   onOk?: () => void
   onCancel?: () => void
   showConfirmButtons?: boolean
+  showCancelButton?: boolean
   dolphins?: boolean
 }
 
@@ -279,9 +280,15 @@ class NotifyProvider extends React.Component {
     })
   }
 
-  notifyConfirm = (options: DialogOptions) => {
-    const { okText, cancelText, onOk, onCancel } = options
-    const buttons = [
+  notifyConfirm = ({
+    okText = 'Ok',
+    cancelText = 'Cancel',
+    showCancelButton = true,
+    onOk,
+    onCancel,
+    ...options
+  }: DialogOptions) => {
+    const _buttons = [
       <Button
         key="notifyConfirmOk"
         onPress={() => {
@@ -293,21 +300,25 @@ class NotifyProvider extends React.Component {
       >
         {okText}
       </Button>,
-      <Button
-        variant="secondaryUi"
-        key="notifyConfirmCancel"
-        onPress={() => {
-          if (onCancel) {
-            onCancel()
-          }
-          this.hideDialog()
-        }}
-      >
-        {cancelText}
-      </Button>,
     ]
+    if (showCancelButton) {
+      _buttons.push(
+        <Button
+          variant="secondaryUi"
+          key="notifyConfirmCancel"
+          onPress={() => {
+            if (onCancel) {
+              onCancel()
+            }
+            this.hideDialog()
+          }}
+        >
+          {cancelText}
+        </Button>
+      )
+    }
     this.notify({
-      buttons,
+      buttons: _buttons,
       ...options,
     })
   }

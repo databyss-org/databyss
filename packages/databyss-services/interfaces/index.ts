@@ -12,8 +12,8 @@ export {
 } from './Errors'
 export type { PageHeader } from './Page'
 export { Page } from './Page'
-export type { Point } from './Point'
-export type { Selection } from './Selection'
+export { Point } from './Point'
+export { Selection } from './Selection'
 export { Text } from './Text'
 export type {
   Source,

@@ -1,7 +1,11 @@
 import PouchDB from 'pouchdb'
 import EventEmitter from 'es-event-emitter'
-import { Document } from '@databyss-org/services/interfaces'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
+import {
+  Document,
+  Group,
+  ResourceNotFoundError,
+} from '@databyss-org/services/interfaces'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
@@ -105,20 +109,21 @@ export const getDocument = async <T extends Document>(
 /**
  * Get several documents at once
  * @param ids array of document ids to get
- * @returns dictionary of { docId => null | doc } (null if doc not found)
+ * @returns dictionary of { docId => doc }
+ * @throws ResourceNotFoundError if one or more docs is missing
  */
-export const getDocuments = async (
+export const getDocuments = async <D>(
   ids: string[]
-): Promise<{ [docId: string]: any | null }> => {
+): Promise<{ [docId: string]: D | null }> => {
   const _options = { docs: ids.map((id) => ({ id })) }
   const _res = await dbRef.current?.bulkGet(_options)
   return _res!.results.reduce((accum, curr) => {
     const _doc: any = curr.docs[0]
     if (_doc.error) {
-      if (_doc.error.error !== 'not_found') {
-        throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error.error}`)
+      if (_doc.error.name === 'not_found') {
+        throw new ResourceNotFoundError(`_bulk_get docId ${curr.id} not found`)
       }
-      accum[curr.id] = null
+      throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error}`)
     }
     accum[curr.id] = _doc.ok
     return accum
@@ -141,9 +146,6 @@ export const replaceOne = async ({
   await upsert({ doctype, _id, doc })
 }
 
-/*
-_local documents do not appear with `find` so a `get` function must be used
-*/
 export const getUserSession = async (): Promise<UserPreference | null> => {
   let response
   try {
@@ -152,6 +154,24 @@ export const getUserSession = async (): Promise<UserPreference | null> => {
     console.error('user session not found')
   }
   return response
+}
+
+export const getGroupSession = async (): Promise<Group | null> => {
+  if (!dbRef.current) {
+    return null
+  }
+  const _response = await dbRef.current!.find({
+    selector: {
+      doctype: 'GROUP',
+    },
+  })
+  if (!_response.docs.length) {
+    console.error('group doc not found')
+  }
+  if (_response.docs.length > 1) {
+    console.warn('multiple group docs')
+  }
+  return _response.docs[0]
 }
 
 export const searchText = async (query) => {
@@ -208,6 +228,34 @@ export const upsertImmediate = async ({
     pouchDataValidation(_doc)
     return _doc
   })
+
+export const upsertUserPreferences = async (
+  cb: PouchDB.UpsertDiffCallback<Partial<UserPreference>>
+): Promise<PouchDB.UpsertResponse> =>
+  dbRef.current!.upsert('user_preference', (oldDoc) => {
+    const _doc = addTimeStamp({
+      doctype: DocumentType.UserPreferences,
+      ...cb(oldDoc),
+    })
+    pouchDataValidation(_doc)
+    return _doc
+  })
+
+export const updateGroupPreferences = async (
+  cb: PouchDB.UpsertDiffCallback<Partial<Group>>
+) => {
+  const _oldDoc = await getGroupSession()
+  if (!_oldDoc) {
+    console.warn('No group doc found')
+    return
+  }
+  const _groupDoc = addTimeStamp({
+    doctype: DocumentType.Group,
+    ...cb(_oldDoc),
+  })
+  pouchDataValidation(_groupDoc)
+  dbRef.current!.put(_groupDoc)
+}
 
 export class QueueProcessor extends EventEmitter {
   // on(event: string, listener: Function): this
