@@ -1,8 +1,10 @@
 import { Group } from '@databyss-org/services/interfaces/Group'
+import { BlockRelation } from '@databyss-org/services/interfaces'
 import {
   updateAndReplicateSharedDatabase,
   replicateGroup,
   removePageFromGroup,
+  removeSharedDatabase,
 } from './index'
 import { findOne } from '../utils'
 import { DocumentType, PageDoc } from '../interfaces'
@@ -123,10 +125,16 @@ export async function processGroupActionQ(dispatch: Function) {
     if (_groupAction) {
       removeGroupAction(groupId)
       try {
-        await updateAndReplicateSharedDatabase({
-          groupId,
-          isPublic: GroupAction.SHARED === _groupAction,
-        })
+        switch (_groupAction) {
+          case GroupAction.SHARED: {
+            await updateAndReplicateSharedDatabase({ groupId, isPublic: true })
+            break
+          }
+          case GroupAction.UNSHARED: {
+            await removeSharedDatabase(groupId)
+            break
+          }
+        }
       } catch (err) {
         console.log('groupActionQueue error', err)
         setGroupAction(groupId, _groupAction)
@@ -159,7 +167,7 @@ export async function processGroupActionQ(dispatch: Function) {
             }
           }
           if (_pageAction === PageAction.ADD) {
-            await replicateGroup({ groupId: `g_${groupId}`, isPublic: true })
+            await replicateGroup({ groupId, isPublic: true })
           }
         } catch (err) {
           console.log('groupActionQueue error', err)
@@ -176,4 +184,14 @@ export async function processGroupActionQ(dispatch: Function) {
       writesPending: 0,
     },
   })
+}
+
+/**
+ * Returns the intersection of @relation.pages and @group.pages
+ * @param group Returned pages are in this group
+ * @param relation Return pages are in this BlockRelation
+ * @returns Array of Page Ids
+ */
+export function relatedPagesInGroup(group: Group, relation: BlockRelation) {
+  return relation.pages.filter((p) => group.pages.includes(p))
 }

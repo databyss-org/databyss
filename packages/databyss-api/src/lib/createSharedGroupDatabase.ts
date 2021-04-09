@@ -30,27 +30,27 @@ export const verifyDatabaseCredentials = async ({
     })
   })
 
-export const verifyUserOwnsDatabase = async ({
-  userId,
-  dbName,
-}: {
-  userId: string
-  dbName: string
-}) => {
-  // look up db in our groups DB
-  const groupResponse = await cloudant.models.Groups.find({
-    selector: { _id: dbName },
-  })
+// export const verifyUserOwnsDatabase = async ({
+//   userId,
+//   dbName,
+// }: {
+//   userId: string
+//   dbName: string
+// }) => {
+//   // look up db in our groups DB
+//   const groupResponse = await cloudant.models.Groups.find({
+//     selector: { _id: dbName },
+//   })
 
-  if (groupResponse.docs.length) {
-    const _group = groupResponse.docs[0]
-    // verify the user owns this group
-    if (_group.belongsToUserId === userId) {
-      return true
-    }
-  }
-  return false
-}
+//   if (groupResponse.docs.length) {
+//     const _group = groupResponse.docs[0]
+//     // verify the user owns this group
+//     if (_group.belongsToUserId === userId) {
+//       return true
+//     }
+//   }
+//   return false
+// }
 
 export const getDB = async ({ dbName }: { dbName: string }) => {
   try {
@@ -61,13 +61,8 @@ export const getDB = async ({ dbName }: { dbName: string }) => {
   }
 }
 
-export const deleteSharedGroupDatabase = async ({ groupId }) => {
-  try {
-    await cloudant.current.db.destroy(groupId)
-  } catch (err) {
-    console.error(err)
-  }
-}
+export const deleteSharedGroupDatabase = (dbName: string) =>
+  cloudant.current.db.destroy(dbName)
 
 const createSharedGroupDatabase = async ({
   groupId,
@@ -84,12 +79,12 @@ const createSharedGroupDatabase = async ({
 
 export const removeIdsFromSharedDb = async ({
   ids,
-  groupId,
+  dbName,
 }: {
   ids: string[]
-  groupId: string
+  dbName: string
 }) => {
-  const _db = await getDB({ dbName: `g_${groupId}` })
+  const _db = await getDB({ dbName })
   if (_db) {
     // get all documents with current revisions
     const docList: any = await _db.fetch({ keys: ids })

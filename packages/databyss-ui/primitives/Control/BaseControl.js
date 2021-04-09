@@ -17,6 +17,7 @@ const BaseControl = forwardRef(
       noFeedback,
       childViewProps,
       href,
+      target,
       onKeyDown,
       draggable,
       ...others
@@ -46,6 +47,7 @@ const BaseControl = forwardRef(
 
       if (
         href &&
+        !target &&
         !href.match(/^http/) &&
         !event.defaultPrevented &&
         navigationContext
@@ -63,6 +65,7 @@ const BaseControl = forwardRef(
         opacity={disabled ? 0.5 : 1}
         ref={ref}
         href={href}
+        target={target}
         draggable={draggable}
         {...others}
       >

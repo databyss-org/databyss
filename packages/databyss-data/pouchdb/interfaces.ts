@@ -1,6 +1,6 @@
 import { PageHeader } from '@databyss-org/services/interfaces/Page'
 import { BlockReference } from '@databyss-org/services/interfaces/Block'
-import { Role } from '../interfaces/user'
+import { Role } from '../interfaces/sysUser'
 
 export interface PageDoc extends PageHeader {
   blocks: BlockReference[]
@@ -31,6 +31,22 @@ export interface UserSession {
   groups: Array<UserGroup>
 }
 
+export enum NotificationType {
+  Dialog = 'DIALOG',
+  Sticky = 'STICKY',
+  ForceUpdate = 'FORCE_UPDATE',
+}
+
+export interface Notification {
+  id: string
+  messageHtml: string
+  type: NotificationType
+  createdAt: number
+  targetVersion?: string
+  href?: string
+  viewedAt?: number
+}
+
 export interface UserPreference {
   _id: string
   userId: string
@@ -38,4 +54,5 @@ export interface UserPreference {
   belongsToGroup: string
   groups?: Array<UserGroup>
   createdAt: number
+  notifications?: Notification[]
 }

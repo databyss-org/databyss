@@ -1,10 +1,11 @@
 import PCancelable from 'p-cancelable'
 import { Page } from '@databyss-org/services/interfaces/Page'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
+import { Block } from '@databyss-org/editor/interfaces'
 import { getAtomicClosureText } from '@databyss-org/services/blocks'
 import { PageDoc } from '../../interfaces'
-import { getDocument, getDocuments } from '../../utils'
 import { Selection } from '../../../../databyss-services/interfaces/Selection'
+import { getDocument, getDocuments } from '../../utils'
 
 const RETRY_DELAY = 1500
 const MAX_RETRIES = 5
@@ -56,7 +57,7 @@ export default (_id: string) =>
         // get all blocks in one request using bulk getDocuments
         let _blocksDict
         try {
-          _blocksDict = await getDocuments(Object.keys(_blocksToGetDict))
+          _blocksDict = await getDocuments<Block>(Object.keys(_blocksToGetDict))
         } catch (err) {
           console.log(`[populatePage] getDocuments error: `, err)
           if (err instanceof ResourceNotFoundError) {
@@ -89,7 +90,7 @@ export default (_id: string) =>
             }
             return _block
           })
-          .filter((_b) => !!_b)
+          .filter((_b) => !!_b) as Block[]
 
         // add to blocks and selection to page
         const _populatedPage: Page = {

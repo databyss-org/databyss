@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Text, BaseControl, View, Separator } from '@databyss-org/ui/primitives'
-import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import LogoutSvg from '@databyss-org/ui/assets/log-out.svg'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
@@ -13,19 +11,11 @@ import DropdownListItem from '../Menu/DropdownListItem'
 import { AccountLoader } from '../Loaders'
 
 const AccountMenu = () => {
-  const { navigate } = useNavigationContext()
   const { isOnline, notifyConfirm } = useNotifyContext()
   const logout = useSessionContext((c) => c && c.logout)
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const [menuOpen, setMenuOpen] = useState(false)
   const [authToken, setAuthToken] = useState()
-
-  const navToDefaultPage = () => {
-    navigate(`/`, { hasAccount: true })
-    // window does not refresh on navigation change
-    window.location.reload()
-  }
 
   const onLogout = () => {
     if (!isOnline || isDbBusy) {
@@ -64,16 +54,6 @@ const AccountMenu = () => {
             shortcut: `v${version}`,
           },
         ]
-
-        if (isPublicAccount()) {
-          menuItems.unshift({
-            icon: <LinkSvg />,
-            label: 'Back to my Databyss',
-            action: () => navToDefaultPage(userInfo),
-            actionType: 'backToDatabyss',
-            shortcut: `v${version}`,
-          })
-        }
 
         const DropdownList = () =>
           menuItems.map((menuItem, i) => (
@@ -131,6 +111,7 @@ const AccountMenu = () => {
                       {userInfo.email}
                     </Text>
                   </View>
+
                   <Separator
                     key="account-name-seperator"
                     color="border.3"

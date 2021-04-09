@@ -17,7 +17,7 @@ import {
   createGroupDatabase,
 } from '@databyss-org/api/src/lib/createUserDatabase'
 import { uid, uidlc } from '@databyss-org/data/lib/uid'
-import { Role, User as UserInterface } from '@databyss-org/data/interfaces'
+import { Role, SysUser } from '@databyss-org/data/interfaces'
 import { ServerProcess, ServerProcessArgs } from '@databyss-org/scripts/lib'
 
 const fixDetail = (block: any) => {
@@ -108,8 +108,9 @@ class MongoToCloudant extends ServerProcess {
       // generate a userId for the user
       const _couchUserId = uid()
 
-      // create a defaultGroup
-      const _defaultGroupId = await createGroupId({ userId: _couchUserId })
+      // generate a groupId for the default group
+      const _defaultGroupId = `g_${uidlc()}`
+      await createGroupId({ groupId: _defaultGroupId, userId: _couchUserId })
 
       /**
        * Populate fields required on all docs, like timestamps and belongsToGroup
@@ -125,11 +126,10 @@ class MongoToCloudant extends ServerProcess {
       })
 
       // STEP 2: Create the user's default group database and add design docs
-      const _couchGroupName = `g_${_defaultGroupId}`
-      this.logInfo('⏳', `Create group: ${_couchGroupName}`)
-      await createGroupDatabase(_couchGroupName)
+      this.logInfo('⏳', `Create group: ${_defaultGroupId}`)
+      await createGroupDatabase(_defaultGroupId)
       this.logSuccess(`Group created: ${_defaultGroupId}`)
-      const _groupDb = await cloudant.current.db.use<any>(_couchGroupName)
+      const _groupDb = await cloudant.current.db.use<any>(_defaultGroupId)
       const _mongoAccount: any = await Account.findOne({
         _id: _defaultAccountId,
       })
@@ -556,7 +556,7 @@ class MongoToCloudant extends ServerProcess {
        */
 
       // STEP 5: Create document in the Users db for the new user so they can login
-      const _usersDb = await cloudant.current.db.use<UserInterface>('users')
+      const _usersDb = await cloudant.current.db.use<SysUser>('users')
       await _usersDb.insert({
         _id: _couchUserId,
         email: _mongoUser.email,
