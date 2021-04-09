@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
-import { run, ServerProcess, sleep } from '@databyss-org/scripts/lib'
+import { ServerProcess, sleep } from '@databyss-org/scripts/lib'
 import {
   Notification,
   NotificationType,
@@ -110,7 +110,7 @@ export class EditNotifications extends ServerProcess {
         _prefs = await _db.tryGet(_dbName.substr(2))
       }
       if (!_prefs) {
-        this.log('No user_preference or group doc found', _dbName)
+        this.logWarning('No user_preference or group doc found', _dbName)
         continue
       }
 
@@ -127,7 +127,7 @@ export class EditNotifications extends ServerProcess {
       await _db.insert(_prefs)
       // dont exceed cloudant rate limit
       await sleep(100)
-      this.log(`✅ ${_dbName}`)
+      this.logSuccess(_dbName)
     }
   }
 }
@@ -137,6 +137,5 @@ exports.desc =
   'Add notification(s) from a file. Must be formatted as a JSON array.'
 exports.builder = {}
 exports.handler = (argv) => {
-  const _job = new EditNotifications(argv, EditAction.Add)
-  run(_job)
+  new EditNotifications(argv, EditAction.Add).runCli()
 }

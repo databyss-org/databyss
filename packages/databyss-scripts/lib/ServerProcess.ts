@@ -31,9 +31,6 @@ class ServerProcess extends EventEmitter {
 
   constructor(args: ServerProcessArgs, name: string) {
     super()
-    this.exec = this.exec.bind(this)
-    this.spawn = this.spawn.bind(this)
-    this._shutdown = this._shutdown.bind(this)
     this.args = args
     this.name = name
 
@@ -43,7 +40,7 @@ class ServerProcess extends EventEmitter {
     }
     this._patchConsole()
   }
-  initLogFiles() {
+  initLogFiles = () => {
     const logPath = path.join(this.args.logs, this.name.replace('.', '_'))
     fs.mkdirSync(logPath, {
       recursive: true,
@@ -56,8 +53,8 @@ class ServerProcess extends EventEmitter {
       path.join(logPath, `output_${fileFriendlyDateTime()}.log`)
     )
   }
-  closeLogFiles() {
-    return Promise.allSettled([
+  closeLogFiles = () =>
+    Promise.allSettled([
       new Promise<void>(
         (resolve) => this.errorLogFs?.end(resolve) ?? resolve()
       ),
@@ -65,8 +62,7 @@ class ServerProcess extends EventEmitter {
         (resolve) => this.outputLogFs?.end(resolve) ?? resolve()
       ),
     ])
-  }
-  _log(...msgs: any) {
+  _log = (...msgs: any) => {
     let symbol = '⬜️'
     let text = msgs.join(' ')
     if (Array.isArray(msgs) && msgs.length > 1 && msgs[0].length <= 2) {
@@ -79,47 +75,37 @@ class ServerProcess extends EventEmitter {
     if (this.spinner) {
       this.spinner.stopAndPersist({ prefixText, symbol, text }).start()
     } else {
-      console.log(msg)
+      this.stdout(`${msg}\n`)
     }
     return msg
   }
-  log(...msgs: any) {
+  log = (...msgs: any) => {
     this.logInfo(...msgs)
   }
-  logError(...msgs: any) {
+  logError = (...msgs: any) => {
     this.writeErrorLog(`${this._log('🟥', ...msgs)}\n`)
   }
-  logInfo(...msgs: any) {
+  logInfo = (...msgs: any) => {
     this.writeLog(`${this._log(...msgs)}\n`)
   }
-  logWarning(...msgs: any) {
-    return this.logInfo('🔶', ...msgs)
-  }
-  logFailure(...msgs: any) {
-    return this.logInfo('❌', ...msgs)
-  }
-  logSuccess(...msgs: any) {
-    return this.logInfo('✅', ...msgs)
-  }
-  writeLog(msg: string) {
+  logWarning = (...msgs: any) => this.logInfo('🔶', ...msgs)
+  logFailure = (...msgs: any) => this.logInfo('❌', ...msgs)
+  logSuccess = (...msgs: any) => this.logInfo('✅', ...msgs)
+  writeLog = (msg: string) => {
     if (this.outputLogFs) {
       this.outputLogFs.write(msg)
-      return true
     }
-    return false
   }
-  writeErrorLog(msg: string) {
+  writeErrorLog = (msg: string) => {
     if (this.errorLogFs) {
       this.errorLogFs.write(msg)
-      return true
     }
-    return false
   }
 
   /**
    * Run the job with CLI output
    */
-  async runCli() {
+  runCli = async () => {
     this.spinner = ora({
       stream: process.stdout,
     })
@@ -135,9 +121,9 @@ class ServerProcess extends EventEmitter {
    * Run a server command with `exec` and capture its output
    * @param cmd command string
    */
-  exec(cmd: any) {
-    return new Promise<void>((resolve, reject) => {
-      this.stdOut(cmd)
+  exec = (cmd: any) =>
+    new Promise<void>((resolve, reject) => {
+      this.logInfo(cmd)
       const child = exec(cmd)
       this._bindProcEvents(child)
       child.on('close', () => {
@@ -147,12 +133,16 @@ class ServerProcess extends EventEmitter {
         reject(data)
       })
     })
-  }
+
+  stdout = (msg: string) => process.stdout.write(msg)
+
+  stderr = (msg: string | Error) => process.stderr.write(msg.toString())
+
   /**
    * Run a server command with `spawnd` and capture its output
    * @param cmd command string
    */
-  spawn(cmd: any) {
+  spawn = (cmd: any) => {
     const proc = spawnd(cmd, {
       shell: true,
       env: process.env,
@@ -160,26 +150,33 @@ class ServerProcess extends EventEmitter {
     this._bindProcEvents(proc)
     return proc
   }
-  _bindProcEvents(proc: any) {
+  _bindProcEvents = (proc: any) => {
     proc.stdout.on('data', (data: any) => {
-      this.stdOut(data)
+      this.stdout(data)
       this.outputLogFs?.write(data)
     })
     proc.stderr.on('data', (data: any) => {
-      this.stdErr(data)
+      this.stderr(data)
+      this.errorLogFs?.write(data)
     })
   }
-  async _shutdown(err?: Error) {
+  _shutdown = async (err?: Error) => {
     if (err) {
-      this.stdErr(err)
+      this.stderr(err)
     }
     await this.closeLogFiles()
     process.exit(err ? 1 : 0)
   }
-  _patchConsole() {
+  _patchConsole = () => {
+    this._originalConsoleLog = console.log
+    this._originalConsoleError = console.error
     console.log = (...msgs: any[]) => this.writeLog(this._log('⬛️', ...msgs))
     console.error = (...msgs: any[]) =>
       this.writeErrorLog(this._log('🟥', ...msgs))
+  }
+  _unpatchConsole = () => {
+    console.log = this._originalConsoleLog
+    console.error = this._originalConsoleError
   }
 }
 

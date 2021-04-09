@@ -64,7 +64,7 @@ export const PageReplicator = ({
     const _replication = dbRef
       .current!.replicate.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
         ...opts,
-        // do not replciate design docs or documents that dont include the page
+        // do not replciate design docs or documents that are not shared with group
         filter: (doc) => {
           if (!doc?.sharedWithGroups) {
             return false

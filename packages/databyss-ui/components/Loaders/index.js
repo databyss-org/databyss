@@ -37,6 +37,7 @@ export const AccountLoader = ({ children }) => {
       resources={getUserAccount()}
       children={children}
       fallbackSize="15"
+      errorFallback=""
     />
   )
 }

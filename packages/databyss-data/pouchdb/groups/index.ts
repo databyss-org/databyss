@@ -18,6 +18,7 @@ import {
 import {
   Block,
   BlockRelation,
+  BlockType,
 } from '../../../databyss-services/interfaces/Block'
 import { getAtomicClosureText } from '../../../databyss-services/blocks/index'
 import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/getAtomicsFromSelection'
@@ -35,6 +36,7 @@ import {
   createDatabaseCredentials,
   validateGroupCredentials,
 } from '../../../databyss-services/editorPage/index'
+import { blockRelationSchema } from '../../schemas'
 
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
@@ -45,10 +47,12 @@ export const removeIdsFromSharedDb = ({
 }: {
   ids: string[]
   groupId: string
-}) =>
-  httpPost(`/cloudant/groups/${groupId}/remove`, {
+}) => {
+  console.log('[removeIdsFromSharedDb]', ids, groupId)
+  return httpPost(`/cloudant/groups/${groupId}/remove`, {
     data: { ids, groupId },
   })
+}
 
 /**
  * creates a cloudant group database
@@ -117,6 +121,7 @@ export const removeGroupsFromDocument = async (
   if (document.sharedWithGroups.length !== _sharedWithGroups.length) {
     document.sharedWithGroups = _sharedWithGroups
 
+    console.log('[removeGroupsFromDocument] upsert', document)
     await upsertImmediate({
       doctype: document.doctype,
       _id: document._id,
@@ -323,22 +328,24 @@ export const setGroup = async (group: Group, pageId?: string) => {
   }
 }
 
-/*
-removes given groupId from any document associated with pageId
-*/
-
+/**
+ * Removes given groupId from any document associated with pageId
+ * @returns an array of document _ids to delete from the shared db on cloudant
+ */
 export const removeGroupFromPage = async ({
   pageId,
   groupId,
 }: {
   pageId: string
   groupId: string
-}) => {
+}): Promise<string[]> => {
   const _page = await getDocument<PageDoc>(pageId)
 
   if (!_page) {
-    return
+    return []
   }
+
+  const _idsToRemove = [pageId]
 
   // removes groupId from sharedWithGroups array
   await removeGroupsFromDocument([groupId], _page)
@@ -347,46 +354,47 @@ export const removeGroupFromPage = async ({
   const _selectionId = _page.selection
   const _selection = await getDocument<Selection>(_selectionId)
   await removeGroupsFromDocument([groupId], _selection)
+  _idsToRemove.push(_selectionId)
 
   // get all blocks related to page
   const _pageBlocks = _page.blocks.filter((_pb) => !_pb.type?.match(/^END_/))
-  console.log('[removeGroupFromPage] pageBlocks', _pageBlocks)
   const _blocks = Object.values(
     await getDocuments<Block>(_pageBlocks.map((_pb) => _pb._id))
   ).filter((_b) => !!_b) as Block[]
-  console.log('[removeGroupFromPage] blocks', _blocks)
+
+  // remove from all page entries
+  const _entryBlocks = _blocks.filter(
+    (_block) => _block.type === BlockType.Entry
+  )
+  for (const _entry of _entryBlocks) {
+    await removeGroupsFromDocument([groupId], _entry)
+    _idsToRemove.push(_entry._id)
+  }
+
+  // remove from non-entry blocks if they don't appear in other pages in the shared group
   const _relatedBlocks = getAtomicsFromFrag(_blocks)
-  console.log('[removeGroupFromPage] relatedBlocks', _relatedBlocks)
-
-  // get group doc
   const _group = await getDocument<Group>(groupId)
-  console.log('[removeGroupFromPage] group', _group)
 
-  for (const _relatedBlock of _relatedBlocks) {
-    const _relation = await getDocument<BlockRelation>(`r_${_relatedBlock._id}`)
-    // only remove group if this page is the only page in the relation.pages
-    //   (filtered for pages included group.pages)
+  for (const _relatedBlockRef of _relatedBlocks) {
+    const _relation = await getDocument<BlockRelation>(
+      `r_${_relatedBlockRef._id}`
+    )
+    // only remove from related block if it doesn't exist on other pages
     let _relatedPagesInGroup: string[] = []
     if (_relation) {
       _relatedPagesInGroup = relatedPagesInGroup(_group!, _relation)
     }
-    console.log(
-      '[removeGroupFromPage] relatedPagesInGroup',
-      _relatedPagesInGroup
-    )
-
     if (_relatedPagesInGroup.length > 1) {
       continue
     }
     if (!_relatedPagesInGroup.length || _relatedPagesInGroup[0] === pageId) {
-      console.log(
-        '[removeGroupFromPage] removeGroupsFromDocument',
-        _relatedBlock
-      )
+      const _relatedBlock = await getDocument<Block>(_relatedBlockRef._id)
       await removeGroupsFromDocument([groupId], _relatedBlock)
-      // TODO: also do /api/cloudant DELETE to remove the block from the remote db
+      _idsToRemove.push(_relatedBlockRef._id)
     }
   }
+
+  return _idsToRemove
 }
 
 export const setPublicPage = async (pageId: string, bool: boolean) => {
@@ -523,14 +531,11 @@ export const removePageFromGroup = async ({
   page: PageDoc | Page
   group: Group
 }) => {
+  // remove group from all documents associated with pageId
   // compose list of id's that need deleting
-
-  // TODO: this should check for atomics as well
-  const _ids = [page._id]
-  page.blocks.forEach((b) => {
-    if (!isAtomicInlineType(b.type)) {
-      _ids.push(b._id)
-    }
+  const _ids = await removeGroupFromPage({
+    pageId: page._id,
+    groupId: group._id,
   })
 
   await removeIdsFromSharedDb({
@@ -539,8 +544,6 @@ export const removePageFromGroup = async ({
   })
 
   const { public: isPublic, _id: groupId } = group
-  // remove group from all documents associated with pageId
-  await removeGroupFromPage({ pageId: page._id, groupId: group._id })
 
   if (isPublic) {
     replicateGroup({
@@ -552,10 +555,7 @@ export const removePageFromGroup = async ({
 
 export const removeAllGroupsFromPage = async (pageId: string) => {
   console.log('[removeAllGroupsFromPage]')
-  const _page = await findOne({
-    doctype: DocumentType.Page,
-    query: { _id: pageId },
-  })
+  const _page = await getDocument<PageDoc>(pageId)
 
   if (_page?.sharedWithGroups?.length) {
     for (const _groupId of _page.sharedWithGroups) {
@@ -572,10 +572,7 @@ export const removeAllGroupsFromPage = async (pageId: string) => {
       // is in shared group
       if (_prefix === 'g_') {
         // remove page from local groupId
-        const _groupDocument: Group | null = await findOne({
-          doctype: DocumentType.Group,
-          query: { _id: _groupId },
-        })
+        const _groupDocument = await getDocument<Group>(_groupId)
         if (_groupDocument) {
           upsertImmediate({
             doctype: DocumentType.Group,
