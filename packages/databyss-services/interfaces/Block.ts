@@ -10,7 +10,8 @@ export enum BlockType {
   EndTopic = 'END_TOPIC',
 }
 
-export interface BlockReference extends Document {
+export interface BlockReference {
+  _id: string
   type: BlockType
 }
 

@@ -7,8 +7,17 @@ import {
   getPouchSecret,
 } from '@databyss-org/services/session/clientStorage'
 import { DocumentType, PageDoc } from '../interfaces'
-import { upsertImmediate, findOne, findAll } from '../utils'
-import { Block } from '../../../databyss-services/interfaces/Block'
+import {
+  upsertImmediate,
+  findOne,
+  findAll,
+  getDocument,
+  getDocuments,
+} from '../utils'
+import {
+  Block,
+  BlockRelation,
+} from '../../../databyss-services/interfaces/Block'
 import { getAtomicClosureText } from '../../../databyss-services/blocks/index'
 import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/getAtomicsFromSelection'
 import { dbRef, REMOTE_CLOUDANT_URL } from '../db'
@@ -19,11 +28,13 @@ import {
   setGroupPageAction,
   PageAction,
   GroupAction,
+  relatedPagesInGroup,
 } from './utils'
 import {
   createDatabaseCredentials,
   validateGroupCredentials,
 } from '../../../databyss-services/editorPage/index'
+import { Selection } from '@databyss-org/services/interfaces'
 
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
@@ -323,64 +334,57 @@ export const removeGroupFromPage = async ({
   pageId: string
   groupId: string
 }) => {
-  const _page = await findOne<PageDoc>({
-    doctype: DocumentType.Page,
-    query: { _id: pageId },
-  })
+  const _page = await getDocument<PageDoc>(pageId)
 
-  if (_page?.sharedWithGroups) {
-    // removes groupId from sharedWithGroups array
-    await removeGroupsFromDocument([groupId], _page)
+  if (!_page) {
+    return
+  }
 
-    const _blocks: Block[] = []
+  // removes groupId from sharedWithGroups array
+  await removeGroupsFromDocument([groupId], _page)
 
-    // add to all blocks associated with page
-    for (const [i, _b] of _page.blocks.entries()) {
-      const _block = await findOne<Block>({
-        doctype: DocumentType.Block,
-        query: { _id: _b._id },
-      })
-      if (_block) {
-        const _populatedBlock = { ..._block }
+  // remove from selection
+  const _selectionId = _page.selection
+  const _selection = await getDocument<Selection>(_selectionId)
+  await removeGroupsFromDocument([groupId], _selection)
 
-        if (_b.type?.match(/^END_/)) {
-          _populatedBlock.type = _b.type
-          _populatedBlock.text = {
-            textValue: getAtomicClosureText(
-              _b.type,
-              _populatedBlock.text.textValue
-            ),
-            ranges: [],
-          }
-        } else {
-          await removeGroupsFromDocument([groupId], _block)
-        }
-        _blocks[i] = _populatedBlock
-      }
+  // get all blocks related to page
+  const _pageBlocks = _page.blocks.filter((_pb) => !_pb.type?.match(/^END_/))
+  console.log('[removeGroupFromPage] pageBlocks', _pageBlocks)
+  const _blocks = Object.values(
+    await getDocuments<Block>(_pageBlocks.map((_pb) => _pb._id))
+  ).filter((_b) => !!_b) as Block[]
+  console.log('[removeGroupFromPage] blocks', _blocks)
+  const _relatedBlocks = getAtomicsFromFrag(_blocks)
+  console.log('[removeGroupFromPage] relatedBlocks', _relatedBlocks)
+
+  // get group doc
+  const _group = await getDocument<Group>(groupId)
+  console.log('[removeGroupFromPage] group', _group)
+
+  for (const _relatedBlock of _relatedBlocks) {
+    const _relation = await getDocument<BlockRelation>(`r_${_relatedBlock._id}`)
+    // only remove group if this page is the only page in the relation.pages
+    //   (filtered for pages included group.pages)
+    let _relatedPagesInGroup: string[] = []
+    if (_relation) {
+      _relatedPagesInGroup = relatedPagesInGroup(_group!, _relation)
     }
+    console.log(
+      '[removeGroupFromPage] relatedPagesInGroup',
+      _relatedPagesInGroup
+    )
 
-    // remove from selection
-    const _selectionId = _page.selection
-    const _selection = await findOne<any>({
-      doctype: DocumentType.Selection,
-      query: { _id: _selectionId },
-    })
-    if (_selection.sharedWithPages) {
-      await removeGroupsFromDocument([groupId], _selection)
+    if (_relatedPagesInGroup.length > 1) {
+      continue
     }
-
-    // get all atomics associated with page
-    const _atomics = getAtomicsFromFrag(_blocks)
-    // add groupId to all atomics in pouch
-
-    for (const _a of _atomics) {
-      const _atomic = await findOne<any>({
-        doctype: DocumentType.BlockRelation,
-        query: { _id: `r_${_a._id}` },
-      })
-      if (_atomic) {
-        await removeGroupsFromDocument([groupId], _atomic)
-      }
+    if (!_relatedPagesInGroup.length || _relatedPagesInGroup[0] === pageId) {
+      console.log(
+        '[removeGroupFromPage] removeGroupsFromDocument',
+        _relatedBlock
+      )
+      await removeGroupsFromDocument([groupId], _relatedBlock)
+      // TODO: also do /api/cloudant DELETE to remove the block from the remote db
     }
   }
 }

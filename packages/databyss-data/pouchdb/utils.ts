@@ -107,9 +107,9 @@ export const getDocument = async <T extends Document>(
  * @param ids array of document ids to get
  * @returns dictionary of { docId => null | doc } (null if doc not found)
  */
-export const getDocuments = async (
+export const getDocuments = async <D>(
   ids: string[]
-): Promise<{ [docId: string]: any | null }> => {
+): Promise<{ [docId: string]: D | null }> => {
   const _options = { docs: ids.map((id) => ({ id })) }
   const _res = await dbRef.current?.bulkGet(_options)
   return _res!.results.reduce((accum, curr) => {

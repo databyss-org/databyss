@@ -87,7 +87,6 @@ export const GroupFields = ({
         _values.defaultPageId = _values.pages[0]
       }
 
-      console.log('onChange', _values)
       // update internal state
       setValues(_values)
       // update database
