@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react'
 
-import { View, styled } from '../../primitives'
-
 import Tab from './Tab'
+import { View } from '../..'
+import styled from '../../primitives/styled'
 
 /*
 export interface TabListItemProps {
@@ -29,7 +29,7 @@ const TabList = (props) => {
   const { selectedIndex, items, onChange } = props
   const hasInitSelectedIndex = selectedIndex !== undefined
 
-  // TODO: error checks
+  // // TODO: error checks
 
   const [internalSelectedIndex, setSelectedIndex] = useState(
     hasInitSelectedIndex ? selectedIndex : 0

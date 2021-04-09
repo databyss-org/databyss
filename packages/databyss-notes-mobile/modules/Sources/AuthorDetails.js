@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
@@ -9,6 +9,8 @@ import NoResultsView from '../../components/NoResultsView'
 import ScrollableListView from '../../components/ScrollableListView'
 
 import SourcesMetadata from './SourcesMetadata'
+import { getSourceCitations } from '@databyss-org/services/sources'
+import { LoadingFallback } from '@databyss-org/ui/components'
 
 const buildHeaderItems = (firstName, lastName) => [
   SourcesMetadata,
@@ -24,9 +26,16 @@ const AuthorDetails = ({ query }) => {
 
   const authorQueryFirstName = decodeURIComponent(params.get('firstName'))
   const authorQueryLastName = decodeURIComponent(params.get('lastName'))
+  const [citations, setCitations] = useState(null)
+
+  getSourceCitations().then((_citations) => setCitations(_citations))
+
+  if (!citations) {
+    return <LoadingFallback queryObserver={citations} />
+  }
 
   // render methods
-  const renderAuthorCitations = (citations) => {
+  const renderAuthorCitations = () => {
     const authorCitations = buildAuthorCitationData(
       citations,
       authorQueryFirstName,
@@ -57,15 +66,12 @@ const AuthorDetails = ({ query }) => {
     <MobileView
       headerItems={buildHeaderItems(authorQueryFirstName, authorQueryLastName)}
     >
-      <SourceProvider>
-        <SourceCitationsLoader>
-          {(citations) => renderAuthorCitations(citations)}
-        </SourceCitationsLoader>
-      </SourceProvider>
+      {renderAuthorCitations(citations)}
     </MobileView>
   )
 
   return render()
+  // return <div>author details</div>
 }
 
 export default AuthorDetails

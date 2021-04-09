@@ -3,11 +3,11 @@ import {
   useParams,
   useLocation,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
-
+import { EditorPageLoader } from '@databyss-org/ui/components/Loaders'
 import { PageContainer } from '@databyss-org/ui/components/PageContent/PageContent'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
-import PageProvider from '@databyss-org/services/pages/PageProvider'
+
 import { MobileView } from '../Mobile'
 
 import { getScrollViewMaxHeight } from '../../utils/getScrollViewMaxHeight'
@@ -43,18 +43,17 @@ const PageDetails = () => {
 
   const render = () => (
     <MobileView headerItems={buildHeaderItems(pageTitle, pageId)}>
-      <PageProvider>
-        <PageLoader pageId={pageId}>
-          {(page) => {
-            setPageTitle(page.name)
-            return renderPageDetails(page)
-          }}
-        </PageLoader>
-      </PageProvider>
+      <EditorPageLoader pageId={pageId} key={pageId}>
+        {(page) => {
+          setPageTitle(page.name)
+          return renderPageDetails(page)
+        }}
+      </EditorPageLoader>
     </MobileView>
   )
 
   return render()
+  // return <div>page details</div>
 }
 
 export default PageDetails

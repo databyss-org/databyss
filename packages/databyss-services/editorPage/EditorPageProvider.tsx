@@ -105,6 +105,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
 
   const getPage = useCallback(
     (id: string): ResourceResponse<Page> => {
+      console.log('ID', id)
       if (state.cache[id]) {
         const _pouchPage = pagesRes?.data?.[id]
 

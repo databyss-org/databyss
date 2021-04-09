@@ -1,6 +1,8 @@
 import React from 'react'
 import { uid } from '@databyss-org/data/lib/uid'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
+import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
+
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
@@ -22,6 +24,8 @@ import SourcesTabItems from '../../constants/SourcesTabItems'
 import AuthorDetails from './AuthorDetails'
 
 import SourcesMetadata from './SourcesMetadata'
+import { LoadingFallback } from '@databyss-org/ui/components'
+import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
 
 const getAuthorName = (value) => {
   const firstName = value.firstName?.textValue
@@ -62,11 +66,22 @@ const headerItems = [SourcesMetadata]
 
 // component
 const SourcesIndex = () => {
+  const blocksRes = useBlocks('SOURCE')
+
+  console.log(blocksRes)
+
   const navigationContext = useNavigationContext()
 
   const getQueryParams = useNavigationContext((c) => c.getQueryParams)
 
   const _queryParams = getQueryParams()
+
+  if (!blocksRes.isSuccess) {
+    return <LoadingFallback queryObserver={blocksRes} />
+  }
+
+  const sources = Object.values(blocksRes.data)
+  const authors = getAuthorsFromSources(sources)
 
   if (Object.keys(_queryParams).length) {
     return <AuthorDetails query={_queryParams} />
@@ -79,45 +94,37 @@ const SourcesIndex = () => {
     navigationContext.navigate(tabItem.url)
   }
 
-  // render methods
-  const renderSourcesList = () => (
-    <SourceCitationsLoader>
-      {(sources) => {
-        const listItems = buildListItems({
-          data: sources,
-          baseUrl: '/sources',
-          labelPropPath: 'text.textValue',
-          icon: SourcesMetadata.icon,
-        })
+  // // render methods
+  const renderSourcesList = () => {
+    const listItems = buildListItems({
+      data: sources,
+      baseUrl: '/sources',
+      labelPropPath: 'text.textValue',
+      icon: SourcesMetadata.icon,
+    })
 
-        return listItems.length ? (
-          <ScrollableListView
-            maxHeight={getSourcesViewMaxHeight()}
-            listItems={listItems}
-          />
-        ) : (
-          <NoResultsView text="No source found" />
-        )
-      }}
-    </SourceCitationsLoader>
-  )
+    return listItems.length ? (
+      <ScrollableListView
+        maxHeight={getSourcesViewMaxHeight()}
+        listItems={listItems}
+      />
+    ) : (
+      <NoResultsView text="No source found" />
+    )
+  }
 
-  const renderAuthorsList = () => (
-    <AuthorsLoader>
-      {(authors) => {
-        const listItems = buildAuthorList(authors)
+  const renderAuthorsList = () => {
+    const listItems = buildAuthorList(authors)
 
-        return listItems.length ? (
-          <ScrollableListView
-            maxHeight={getSourcesViewMaxHeight()}
-            listItems={listItems}
-          />
-        ) : (
-          <NoResultsView text="No author found" />
-        )
-      }}
-    </AuthorsLoader>
-  )
+    return listItems.length ? (
+      <ScrollableListView
+        maxHeight={getSourcesViewMaxHeight()}
+        listItems={listItems}
+      />
+    ) : (
+      <NoResultsView text="No author found" />
+    )
+  }
 
   const render = () => {
     const details = parseLocation(location)
@@ -136,6 +143,7 @@ const SourcesIndex = () => {
     )
   }
 
+  // return <div>test</div>
   return render()
 }
 

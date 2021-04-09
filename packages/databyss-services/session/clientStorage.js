@@ -104,6 +104,7 @@ export async function deletePouchDbs(matchName) {
 }
 
 export function setDefaultGroup(groupId) {
+  console.log('SETTING DEFAULT GROUP', groupId)
   localStorage.setItem('default_group', groupId)
 }
 

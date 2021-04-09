@@ -63,6 +63,7 @@ const SessionProvider = ({
     if (state.session.publicAccount?._id) {
       return state.session.publicAccount._id
     }
+    console.log(state)
     return state.session.account._id
   }, [state.session])
   // credentials can be:
@@ -104,16 +105,19 @@ const SessionProvider = ({
         // 2nd pass: load session from local_storage
         // replicate from cloudant
         const groupId = _sesionFromLocalStorage.defaultGroupId
+        console.log(process.env)
+        // download remote database if not on mobile
 
-        // TODO: connect directly to CouchDB on cloudant while pouch is synching
-        await replicateDbFromRemote({
-          groupId,
-        })
+        if (!process.env.FORCE_MOBILE) {
+          await replicateDbFromRemote({
+            groupId,
+          })
 
-        // TODO: indexing is built after 5 seconds
-        setTimeout(() => {
-          initiatePouchDbIndexes()
-        }, [5000])
+          // set up search indexes
+          setTimeout(() => {
+            initiatePouchDbIndexes()
+          }, [5000])
+        }
 
         // set up live sync
         syncPouchDb({
