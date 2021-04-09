@@ -45,6 +45,9 @@ const AccountMenu = () => {
   return authToken ? (
     <AccountLoader>
       {(userInfo) => {
+        if (!userInfo) {
+          return null
+        }
         const menuItems = [
           {
             icon: <LogoutSvg />,

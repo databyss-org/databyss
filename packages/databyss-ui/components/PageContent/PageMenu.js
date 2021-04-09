@@ -134,7 +134,7 @@ const PageMenu = () => {
     // delete page
   }
 
-  const menuItems = [{ separator: true }]
+  const menuItems = []
 
   if (canBeArchived && !_page.archive) {
     menuItems.push({
@@ -168,14 +168,14 @@ const PageMenu = () => {
     })
   }
 
-  if (menuItems.length > 1) {
+  if (menuItems.length > 0) {
     menuItems.push({ separator: true })
   }
 
   menuItems.push({
     icon: <HelpSvg />,
     label: 'Help...',
-    href: '/pg14wtokooze8v/pages/0ifomglhsu17jp',
+    href: '/g_7v9n4vjx2h7511',
     target: '_blank',
     actionType: 'help',
     light: true,
@@ -350,22 +350,26 @@ const PageMenu = () => {
             }}
           >
             {!_page.archive ? (
-              <DropdownListItem
-                height={pxUnits(34)}
-                justifyContent="center"
-                label={isPagePublic ? 'Page is public' : 'Make page public '}
-                value={isPagePublic}
-                onPress={togglePublicPage}
-                action="togglePublic"
-                switchControl
-              />
-            ) : null}
-            {isPagePublic ? (
               <>
-                <Separator secondary />
-                {publicLinkItem}
+                <DropdownListItem
+                  height={pxUnits(34)}
+                  justifyContent="center"
+                  label={isPagePublic ? 'Page is public' : 'Make page public '}
+                  value={isPagePublic}
+                  onPress={togglePublicPage}
+                  action="togglePublic"
+                  switchControl
+                />
+                {isPagePublic ? (
+                  <>
+                    <Separator secondary />
+                    {publicLinkItem}
+                  </>
+                ) : null}
+                <Separator />
               </>
             ) : null}
+
             <DropdownList />
             {/* {Object.values(groups).length ? <Separator /> : null}
             {groupsRes.isSuccess && Object.values(groups).length ? (

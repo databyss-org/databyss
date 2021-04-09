@@ -178,8 +178,12 @@ export const getUserAccount = () => async (dispatch) => {
   const authToken = getAuthToken()
   if (authToken) {
     const data = { authToken }
-    const _res = await httpPost('/users', { data })
-    dispatch({ type: CACHE_USER_ACCOUNT, payload: _res })
+    try {
+      const _res = await httpPost('/users', { data })
+      dispatch({ type: CACHE_USER_ACCOUNT, payload: _res })
+    } catch (err) {
+      dispatch({ type: CACHE_USER_ACCOUNT, payload: { data: err } })
+    }
   } else {
     dispatch({ type: CACHE_USER_ACCOUNT, payload: null })
   }

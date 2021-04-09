@@ -6,8 +6,8 @@ import {
   removePageFromGroup,
   removeSharedDatabase,
 } from './index'
-import { findOne } from '../utils'
-import { DocumentType, PageDoc } from '../interfaces'
+import { getDocument } from '../utils'
+import { PageDoc } from '../interfaces'
 
 export enum GroupAction {
   SHARED = 'SHARED',
@@ -151,14 +151,8 @@ export async function processGroupActionQ(dispatch: Function) {
           // perform the action
           if (_pageAction === PageAction.REMOVE) {
             // finishing removing page (and related entities) from group
-            const page: PageDoc | null = await findOne({
-              doctype: DocumentType.Page,
-              query: { _id: pageId },
-            })
-            const group: Group | null = await findOne({
-              doctype: DocumentType.Group,
-              query: { _id: groupId },
-            })
+            const page = await getDocument<PageDoc>(pageId)
+            const group = await getDocument<Group>(groupId)
             if (page && group) {
               await removePageFromGroup({
                 page,
