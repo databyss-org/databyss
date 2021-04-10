@@ -254,12 +254,15 @@ export const createUserDatabaseCredentials = async (
           role: Role.GroupAdmin,
         },
       ],
-      notifications: _notifications.map((_notification) => ({
-        id: uid(),
-        type: NotificationType.Dialog,
-        ..._notification,
-        createdAt: Date.now(),
-      })) as Notification[],
+      notifications:
+        process.env.NODE_ENV === 'test'
+          ? []
+          : (_notifications.map((_notification) => ({
+              id: uid(),
+              type: NotificationType.Dialog,
+              ..._notification,
+              createdAt: Date.now(),
+            })) as Notification[]),
     }
 
     await initializeNewPage({
