@@ -1,5 +1,4 @@
-import { Patch } from 'immer'
-import { Block } from '@databyss-org/services/interfaces'
+import { Block, ExtendedPatch } from '@databyss-org/services/interfaces'
 import { PageDoc, DocumentType } from '../interfaces'
 import { upsert, addTimeStamp } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
@@ -52,7 +51,11 @@ const addOrReplaceBlock = async (p) => {
     _block.type = type
   }
 
-  upsert({ doctype: DocumentType.Block, _id: _block._id!, doc: _block })
+  upsert({
+    doctype: DocumentType.Block,
+    _id: _block._id!,
+    doc: { ..._block, sharedWithGroups: p.sharedWithGroups },
+  })
 }
 
 const replacePatch = async (p) => {
@@ -108,7 +111,7 @@ const removePatches = async (p) => {
   }
 }
 
-export const runPatches = (p: Patch) => {
+export const runPatches = (p: ExtendedPatch) => {
   switch (p.op) {
     case 'replace': {
       replacePatch(p)

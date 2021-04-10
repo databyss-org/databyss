@@ -45,7 +45,9 @@ interface ContextType {
   archivePage: (id: string, boolean: boolean) => Promise<void>
   onPageCached: (id: string, callback: Function) => void
   removePageFromCache: (id: string) => void
+  sharedWithGroups?: string[]
 }
+
 const useReducer = createReducer()
 export const EditorPageContext = createContext<ContextType>(null!)
 
@@ -69,6 +71,16 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   // useEffect(() => {
   //   pageDependencyObserver()
   // }, [])
+
+  useEffect(() => {
+    const _groups = (pagesRes.data?.[pageId] as any)?.sharedWithGroups
+    // console.log('[EditorPageProvider] sharedWithGroups changed', _groups)
+    dispatch(actions.cacheSharedWithGroups(_groups ?? []))
+  }, [
+    JSON.stringify(
+      [...((pagesRes.data?.[pageId] as any)?.sharedWithGroups ?? [])].sort()
+    ),
+  ])
 
   useEffect(() => {
     if (pageCachedHookRef.current) {
@@ -150,11 +162,14 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     [state.cache]
   )
 
-  const setPatches = useCallback((patches: PatchBatch) => {
-    if (patches) {
-      savePatchBatch(patches)
-    }
-  }, [])
+  const setPatches = useCallback(
+    (patches: PatchBatch) => {
+      if (patches) {
+        savePatchBatch(patches, state.sharedWithGroups)
+      }
+    },
+    [state.sharedWithGroups]
+  )
 
   const removePageFromCache = (id: string) => {
     dispatch(actions.removePageFromCache(id))
@@ -186,6 +201,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         setPagePublic,
         removePageFromCache,
         getPublicAccount,
+        sharedWithGroups: state.sharedWithGroups,
       }}
     >
       <PageReplicator key={pageId} pageId={pageId}>
