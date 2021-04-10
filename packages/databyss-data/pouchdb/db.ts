@@ -281,6 +281,7 @@ export const syncPouchDb = ({
     live: true,
     retry: true,
     continuous: true,
+    batch_size: 1000,
     auth: {
       username: _cred.dbKey,
       password: _cred.dbPassword,

@@ -1,6 +1,6 @@
 import { SysUser, Role } from '@databyss-org/data/interfaces'
 import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
-import { uidlc } from '@databyss-org/data/lib/uid'
+import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import { DocumentScope } from 'nano'
 import { Page } from '../../../databyss-services/interfaces/Page'
@@ -9,7 +9,10 @@ import {
   UserPreference,
   DocumentType,
   PageDoc,
+  NotificationType,
+  Notification,
 } from '../../../databyss-data/pouchdb/interfaces'
+import welcomeNotifications from '../../assets/welcome.json'
 
 export interface CredentialResponse {
   dbKey: string
@@ -236,6 +239,7 @@ export const createUserDatabaseCredentials = async (
     // add user preferences to user database
 
     const defaultPageId = uidlc()
+    const _notifications = welcomeNotifications as Partial<Notification>[]
     const _userPreferences: UserPreference = {
       _id: 'user_preference',
       userId: user._id,
@@ -250,6 +254,12 @@ export const createUserDatabaseCredentials = async (
           role: Role.GroupAdmin,
         },
       ],
+      notifications: _notifications.map((_notification) => ({
+        id: uid(),
+        type: NotificationType.Dialog,
+        ..._notification,
+        createdAt: Date.now(),
+      })) as Notification[],
     }
 
     await initializeNewPage({

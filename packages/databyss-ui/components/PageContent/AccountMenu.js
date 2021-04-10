@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Text, BaseControl, View, Separator } from '@databyss-org/ui/primitives'
 import LogoutSvg from '@databyss-org/ui/assets/log-out.svg'
+import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
@@ -14,6 +15,7 @@ const AccountMenu = () => {
   const { isOnline, notifyConfirm } = useNotifyContext()
   const logout = useSessionContext((c) => c && c.logout)
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const [menuOpen, setMenuOpen] = useState(false)
   const [authToken, setAuthToken] = useState()
 
@@ -57,6 +59,17 @@ const AccountMenu = () => {
             shortcut: `v${version}`,
           },
         ]
+
+        if (isPublicAccount()) {
+          menuItems.unshift({
+            icon: <LinkSvg />,
+            label: 'Back to my Databyss',
+            action: () => null,
+            actionType: 'backToDatabyss',
+            href: '/',
+            target: '_blank',
+          })
+        }
 
         const DropdownList = () =>
           menuItems.map((menuItem, i) => (

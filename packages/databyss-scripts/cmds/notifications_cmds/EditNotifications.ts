@@ -107,7 +107,7 @@ export class EditNotifications extends ServerProcess {
       let _prefs = await _db.tryGet('user_preference')
       if (!_prefs) {
         // if no user_preference doc, try using the GROUP document
-        _prefs = await _db.tryGet(_dbName.substr(2))
+        _prefs = await _db.tryGet(_dbName)
       }
       if (!_prefs) {
         this.logWarning('No user_preference or group doc found', _dbName)

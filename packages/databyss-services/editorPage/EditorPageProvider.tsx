@@ -16,7 +16,7 @@ import {
   ResourceNotFoundError,
 } from '../interfaces'
 import { PageReplicator } from './PageReplicator'
-import { pageDependencyObserver } from './pageDependencyObserver'
+// import { pageDependencyObserver } from './pageDependencyObserver'
 import * as actions from './actions'
 
 interface PropsType {
@@ -66,9 +66,9 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   const [state, dispatch] = useReducer(reducer, initialState)
 
   //  initiate page listener
-  useEffect(() => {
-    pageDependencyObserver()
-  }, [])
+  // useEffect(() => {
+  //   pageDependencyObserver()
+  // }, [])
 
   useEffect(() => {
     if (pageCachedHookRef.current) {

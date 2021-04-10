@@ -6,7 +6,7 @@ import {
   deletePouchSecret,
   getPouchSecret,
 } from '@databyss-org/services/session/clientStorage'
-import { Selection } from '@databyss-org/services/interfaces'
+import { Document, Selection } from '@databyss-org/services/interfaces'
 import { DocumentType, PageDoc } from '../interfaces'
 import {
   upsertImmediate,
@@ -128,76 +128,46 @@ export const removeGroupsFromDocument = async (
   }
 }
 
-export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
-  const _page = page
-
-  const _sharedWithPages = _page.sharedWithGroups || []
-
-  // if page is not shared, bail from function
-  if (!_sharedWithPages.length) {
-    return
-  }
-
-  const _blocks: Block[] = []
-
-  // add to all blocks associated with page
-  for (const [i, _b] of _page.blocks.entries()) {
-    const _block = await findOne<Block>({
-      doctype: DocumentType.Block,
-      query: { _id: _b._id },
-    })
-    if (_block) {
-      const _populatedBlock = { ..._block }
-
-      if (_b.type?.match(/^END_/)) {
-        _populatedBlock.type = _b.type
-        _populatedBlock.text = {
-          textValue: getAtomicClosureText(
-            _b.type,
-            _populatedBlock.text.textValue
-          ),
-          ranges: [],
-        }
-      } else {
-        await addGroupToDocument(_sharedWithPages, _block)
-      }
-      _blocks[i] = _populatedBlock
-    }
-  }
-
-  // add to selection
-  const _selectionId = _page.selection
-  const _selection = await findOne<any>({
-    doctype: DocumentType.Selection,
-    query: { _id: _selectionId },
-  })
-  if (_selection) {
-    await addGroupToDocument(_sharedWithPages, _selection)
-  }
-
-  // get all atomics associated with page
-  const _atomics = getAtomicsFromFrag(_blocks)
-  // add groupId to all atomics in pouch
-
-  for (const _a of _atomics) {
-    // add sharedToGroup to inline atomics
-    const _atomic = await findOne<any>({
-      doctype: DocumentType.Block,
-      query: { _id: _a._id },
-    })
-    if (_atomic) {
-      await addGroupToDocument(_sharedWithPages, _atomic)
-    }
-
-    const _blockRelation = await findOne<any>({
-      doctype: DocumentType.BlockRelation,
-      query: { _id: `r_${_a._id}` },
-    })
-    if (_blockRelation) {
-      await addGroupToDocument(_sharedWithPages, _blockRelation)
-    }
-  }
+enum DocumentGroupsAction {
+  Add = 'ADD',
+  Remove = 'REMOVE',
 }
+
+export async function editPageDocumentGroups(
+  page: PageDoc,
+  groupIds: string[],
+  action: DocumentGroupsAction
+) {
+  if (action === DocumentGroupsAction.Add && !page.sharedWithGroups?.length) {
+    return null
+  }
+  const _idsToUpdate = await docIdsRelatedToPage(page)
+
+  // get all the docs
+  const _docsToUpdate = Object.values(
+    await getDocuments<Document>(_idsToUpdate.all)
+  ).filter((_d) => !!_d) as Document[]
+
+  // add the group(s) to all docs
+  _docsToUpdate.forEach((_doc) => {
+    _doc.sharedWithGroups =
+      action === DocumentGroupsAction.Add
+        ? Array.from(
+            new Set(
+              (_doc.sharedWithGroups ?? []).concat(page.sharedWithGroups!)
+            )
+          )
+        : (_doc.sharedWithGroups ?? []).filter((_id) => !groupIds.includes(_id))
+  })
+
+  // write all docs as a batch
+  await dbRef.current!.bulkDocs(_docsToUpdate)
+
+  return _idsToUpdate
+}
+
+export const addGroupToDocumentsInPage = async (page: PageDoc) =>
+  editPageDocumentGroups(page, page.sharedWithGroups!, DocumentGroupsAction.Add)
 
 /*
 crawl page and append groupId to all documents
@@ -219,7 +189,7 @@ export const addPageToGroup = async ({
   }
 }
 
-const upsertReplication = ({
+const upsertReplication = async ({
   groupId,
   dbKey,
   dbPassword,
@@ -229,7 +199,6 @@ const upsertReplication = ({
   dbPassword: string
 }) => {
   const opts = {
-    batch_size: 1000,
     retry: true,
     auth: {
       username: dbKey,
@@ -237,20 +206,26 @@ const upsertReplication = ({
     },
   }
 
+  console.log('[upsertReplication]', groupId)
+
+  const _findRes = await dbRef.current?.find({
+    selector: {
+      sharedWithGroups: {
+        $elemMatch: {
+          $eq: groupId,
+        },
+      },
+    },
+  })
+
+  const _docIds = _findRes?.docs.map((doc) => doc._id)
+  // console.log('[upsertReplication] doc ids', _docIds)
+
   // upsert replication
   dbRef.current!.replicate.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
     ...opts,
-    // do not replciate design docs or documents that dont include the page
-    filter: (doc) => {
-      if (!doc?.sharedWithGroups) {
-        return false
-      }
-      const _isSharedWithGroup = doc?.sharedWithGroups.includes(groupId)
-      if (!_isSharedWithGroup) {
-        return false
-      }
-      return !doc._id.includes('design/')
-    },
+    doc_ids: _docIds,
+    batch_size: 1000,
   })
 }
 
@@ -327,10 +302,48 @@ export const setGroup = async (group: Group, pageId?: string) => {
   }
 }
 
+export async function docIdsRelatedToPage(page: PageDoc) {
+  const _pageBlockIds = page.blocks
+    .filter((_pb) => !_pb.type?.match(/^END_/))
+    .map((_pb) => _pb._id)
+  const _blocks = Object.values(
+    await getDocuments<Block>(_pageBlockIds)
+  ).filter((_b) => !!_b) as Block[]
+  const _blockIds = _blocks.map((_b) => _b._id)
+  const _entryBlocks = _blocks.filter(
+    (_block) => _block.type === BlockType.Entry
+  )
+  const _entryBlockIds = _entryBlocks.map((_b) => _b._id)
+  const _relatedBlocks = getAtomicsFromFrag(_blocks)
+  const _relatedBlockIds = _relatedBlocks.map((_b) => _b._id)
+  const _relationIds = _relatedBlocks.map((_b) => `r_${_b._id}`)
+
+  return {
+    all: Array.from(
+      new Set(
+        [page.selection]
+          .concat(_blockIds)
+          .concat(_relatedBlockIds)
+          .concat(_relationIds)
+      )
+    ),
+    selection: page.selection,
+    blocks: _blockIds,
+    entryBlocks: _entryBlockIds,
+    relatedBlockIds: _relatedBlockIds,
+    relationIds: _relationIds,
+  }
+}
+
 /**
  * Removes given groupId from any document associated with pageId
  * @returns an array of document _ids to delete from the shared db on cloudant
  */
+export const removeGroupFromDocumentsInPage = async (
+  page: PageDoc,
+  groupId: string
+) => editPageDocumentGroups(page, [groupId], DocumentGroupsAction.Remove)
+
 export const removeGroupFromPage = async ({
   pageId,
   groupId,
@@ -344,56 +357,11 @@ export const removeGroupFromPage = async ({
     return []
   }
 
-  const _idsToRemove = [pageId]
-
   // removes groupId from sharedWithGroups array
   await removeGroupsFromDocument([groupId], _page)
 
-  // remove from selection
-  const _selectionId = _page.selection
-  const _selection = await getDocument<Selection>(_selectionId)
-  await removeGroupsFromDocument([groupId], _selection)
-  _idsToRemove.push(_selectionId)
-
-  // get all blocks related to page
-  const _pageBlocks = _page.blocks.filter((_pb) => !_pb.type?.match(/^END_/))
-  const _blocks = Object.values(
-    await getDocuments<Block>(_pageBlocks.map((_pb) => _pb._id))
-  ).filter((_b) => !!_b) as Block[]
-
-  // remove from all page entries
-  const _entryBlocks = _blocks.filter(
-    (_block) => _block.type === BlockType.Entry
-  )
-  for (const _entry of _entryBlocks) {
-    await removeGroupsFromDocument([groupId], _entry)
-    _idsToRemove.push(_entry._id)
-  }
-
-  // remove from non-entry blocks if they don't appear in other pages in the shared group
-  const _relatedBlocks = getAtomicsFromFrag(_blocks)
-  const _group = await getDocument<Group>(groupId)
-
-  for (const _relatedBlockRef of _relatedBlocks) {
-    const _relation = await getDocument<BlockRelation>(
-      `r_${_relatedBlockRef._id}`
-    )
-    // only remove from related block if it doesn't exist on other pages
-    let _relatedPagesInGroup: string[] = []
-    if (_relation) {
-      _relatedPagesInGroup = relatedPagesInGroup(_group!, _relation)
-    }
-    if (_relatedPagesInGroup.length > 1) {
-      continue
-    }
-    if (!_relatedPagesInGroup.length || _relatedPagesInGroup[0] === pageId) {
-      const _relatedBlock = await getDocument<Block>(_relatedBlockRef._id)
-      await removeGroupsFromDocument([groupId], _relatedBlock)
-      _idsToRemove.push(_relatedBlockRef._id)
-    }
-  }
-
-  return _idsToRemove
+  const _res = await removeGroupFromDocumentsInPage(_page, groupId)
+  return [pageId].concat(_res?.all ?? [])
 }
 
 export const setPublicPage = async (pageId: string, bool: boolean) => {
@@ -503,13 +471,10 @@ export const addPageDocumentToGroup = async ({
   // add groupId to page document
   await addPageToGroup({ pageId, groupId: group._id })
   // get updated pageDoc
-  const _page: PageDoc | null = await findOne({
-    doctype: DocumentType.Page,
-    query: { _id: pageId },
-  })
+  const _page = await getDocument<PageDoc>(pageId)
   if (_page) {
     // add propagate sharedWithGroups property to all documents
-    await addGroupToDocumentsFromPage(_page)
+    await addGroupToDocumentsPage(_page)
     // get group shared status
     const { _id: groupId, public: isPublic } = group
     // one time upsert to remote db

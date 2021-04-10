@@ -1,5 +1,5 @@
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
-import { addGroupToDocumentsFromPage } from '@databyss-org/data/pouchdb/groups'
+import { addGroupToDocumentsInPage } from '@databyss-org/data/pouchdb/groups'
 import { dbRef } from '../../databyss-data/pouchdb/db'
 
 export const pageDependencyObserver = () => {
@@ -15,7 +15,7 @@ export const pageDependencyObserver = () => {
       const _pageDoc = change.doc
 
       if (_pageDoc?.sharedWithGroups?.length) {
-        addGroupToDocumentsFromPage(_pageDoc)
+        addGroupToDocumentsInPage(_pageDoc)
       }
     })
 }
