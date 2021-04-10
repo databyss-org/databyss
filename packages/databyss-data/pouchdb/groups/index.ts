@@ -474,7 +474,7 @@ export const addPageDocumentToGroup = async ({
   const _page = await getDocument<PageDoc>(pageId)
   if (_page) {
     // add propagate sharedWithGroups property to all documents
-    await addGroupToDocumentsPage(_page)
+    await addGroupToDocumentsInPage(_page)
     // get group shared status
     const { _id: groupId, public: isPublic } = group
     // one time upsert to remote db
