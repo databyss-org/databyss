@@ -9,7 +9,7 @@ import {
   LoadingFallback,
 } from '@databyss-org/ui/components'
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
-import { useBlockRelations, usePages } from '@databyss-org/data/pouchdb/hooks'
+import { useBlockRelations } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
 import { addPagesToBlockRelation } from '@databyss-org/services/blocks/joins'

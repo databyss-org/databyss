@@ -1,9 +1,11 @@
 import React, { PropsWithChildren } from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { Helmet } from 'react-helmet'
-import { useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback, StickyHeader } from '@databyss-org/ui/components'
+import { useDocuments } from '@databyss-org/data/pouchdb/hooks/useDocuments'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import {
   ScrollView,
   View,
@@ -11,8 +13,6 @@ import {
   ScrollViewProps,
 } from '@databyss-org/ui/primitives'
 import { IndexResults } from './IndexResults'
-import { useDocuments } from '@databyss-org/data/pouchdb/hooks/useDocuments'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
