@@ -127,6 +127,7 @@ const SidebarList = ({
               key={`${item.type}-${index}`}
               draggable={getDraggable(item)}
               icon={item.icon ? item.icon : menuSvgs[item.type]}
+              iconColor={item.iconColor}
             />
           )
         })}

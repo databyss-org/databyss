@@ -29,4 +29,5 @@ export interface SidebarListItemData<T> {
   route: string
   icon?: ReactNode
   data?: T
+  iconColor?: string | null
 }
