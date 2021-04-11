@@ -43,7 +43,7 @@ const SuggestSources = ({
 }) => {
   const sourcesRes = useBlocksInPages(BlockType.Source)
   const { replace } = useEditorContext()
-  const sharedWithGroups = useEditorPageContext((c) => c.sharedWithGroups)
+  const sharedWithGroups = useEditorPageContext((c) => c && c.sharedWithGroups)
   const [suggestions, setSuggestsions] = useState()
   const { isOnline } = useNotifyContext() || { isOnline: false }
 
