@@ -1,7 +1,7 @@
 import React, { PropsWithChildren } from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { Helmet } from 'react-helmet'
-import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
+import { useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback, StickyHeader } from '@databyss-org/ui/components'
 import {
@@ -11,6 +11,8 @@ import {
   ScrollViewProps,
 } from '@databyss-org/ui/primitives'
 import { IndexResults } from './IndexResults'
+import { useDocuments } from '@databyss-org/data/pouchdb/hooks/useDocuments'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -60,10 +62,13 @@ export const getPathFromBlock = (block: Block) => {
 
 export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const { blockId } = useParams()
-  const blocksRes = useBlocks(blockType)
+  const blocksRes = useDocuments<Block>({
+    doctype: DocumentType.Block,
+  })
+  const pagesRes = usePages()
 
-  if (!blocksRes.isSuccess) {
-    return <LoadingFallback queryObserver={blocksRes} />
+  if (!blocksRes.isSuccess || !pagesRes.isSuccess) {
+    return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
   }
 
   return (
@@ -72,6 +77,8 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
         blockType={blockType}
         relatedBlockId={blockId}
         key={`${blockType}_${blockId}`}
+        blocks={blocksRes.data!}
+        pages={pagesRes.data!}
       />
     </IndexPageView>
   )

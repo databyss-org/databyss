@@ -8,7 +8,6 @@ export const SidebarListRow = ({
   text,
   icon,
   isActive,
-  iconColor,
   ...others
 }) => (
   <View
@@ -21,7 +20,7 @@ export const SidebarListRow = ({
     <View flexDirection="row" flexWrap="nowrap" maxWidth="100%" flexShrink={1}>
       <Icon
         sizeVariant="tiny"
-        color={iconColor ?? (isActive ? 'text.1' : 'text.3')}
+        color={others.iconColor ?? (isActive ? 'text.1' : 'text.3')}
         mt={pxUnits(2)}
         mr="small"
       >
