@@ -160,6 +160,7 @@ export const PageDropzone = ({
                 icon={<PageSvg />}
                 hoverColor="control.1"
                 p="em"
+                iconColor="orange.2"
               >
                 <BaseControl
                   onPress={() => onRemove(page._id)}

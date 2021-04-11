@@ -15,7 +15,7 @@ export const GroupList = (others) => {
         type: 'group',
         route: `/collections/${group._id}`,
         data: group,
-        iconColor: group.public ? 'yellow' : null,
+        iconColor: group.public ? 'orange.2' : null,
       })),
       'text'
     )
