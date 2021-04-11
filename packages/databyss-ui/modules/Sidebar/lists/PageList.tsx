@@ -8,6 +8,7 @@ import {
   pagesToListItemData,
   SidebarTransformFunction,
 } from '@databyss-org/ui/modules/Sidebar/transforms'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 
 interface PageListProps {
   archive?: boolean
@@ -17,8 +18,12 @@ interface PageListProps {
 export const PageList = ({ archive, transform, ...others }: PageListProps) => {
   const pagesRes = usePages()
   const groupsRes = useGroups()
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   const _pagesInPublicGroups = useMemo(() => {
+    if (isPublicAccount()) {
+      return {}
+    }
     if (!groupsRes.isSuccess) {
       return {}
     }
@@ -41,8 +46,12 @@ export const PageList = ({ archive, transform, ...others }: PageListProps) => {
   )
   const joined = filtered.map((_page) => ({
     ..._page,
-    public: groupsRes.data[`p_${_page._id}`]?.public,
-    inPublicGroup: _pagesInPublicGroups[_page._id],
+    ...(isPublicAccount()
+      ? {}
+      : {
+          public: groupsRes.data[`p_${_page._id}`]?.public,
+          inPublicGroup: _pagesInPublicGroups[_page._id],
+        }),
   }))
   console.log('[PageList] joined', joined)
   const mapped = transform!(joined)
