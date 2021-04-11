@@ -5,14 +5,16 @@ import { BlockRelation } from '../../../../databyss-services/interfaces/Block'
 import { replicateSharedPage } from '../../groups/index'
 
 export const setSource = async (data: Source) => {
-  const { text, detail, _id } = data
+  const { text, detail, _id, sharedWithGroups } = data as any
   const blockFields = {
     _id,
     text,
     type: BlockType.Source,
     doctype: DocumentType.Block,
     detail,
+    sharedWithGroups,
   }
+  console.log('[setSource]', blockFields)
   // TODO: get document and use Object.assign(_source, blockFields) to only replace new fields
   await upsert({
     doctype: DocumentType.Block,

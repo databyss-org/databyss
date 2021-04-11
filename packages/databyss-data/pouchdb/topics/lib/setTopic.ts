@@ -7,6 +7,7 @@ import { upsert, getDocument, findOne } from '../../utils'
 import { replicateSharedPage } from '../../groups'
 
 const setTopic = async (data: Topic) => {
+  console.log('[setTopic]', data)
   const { text, _id } = data
 
   await upsert({

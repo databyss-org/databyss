@@ -6,7 +6,7 @@ import {
   deletePouchSecret,
   getPouchSecret,
 } from '@databyss-org/services/session/clientStorage'
-import { Document, Selection } from '@databyss-org/services/interfaces'
+import { Document } from '@databyss-org/services/interfaces'
 import { DocumentType, PageDoc } from '../interfaces'
 import {
   upsertImmediate,
@@ -20,7 +20,6 @@ import {
   BlockRelation,
   BlockType,
 } from '../../../databyss-services/interfaces/Block'
-import { getAtomicClosureText } from '../../../databyss-services/blocks/index'
 import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/getAtomicsFromSelection'
 import { dbRef, REMOTE_CLOUDANT_URL } from '../db'
 import { Page } from '../../../databyss-services/interfaces/Page'
@@ -138,17 +137,21 @@ export async function editPageDocumentGroups(
   groupIds: string[],
   action: DocumentGroupsAction
 ) {
+  console.log('[editPageDocumentGroups]', action, page, groupIds)
   if (action === DocumentGroupsAction.Add && !page.sharedWithGroups?.length) {
     return null
   }
-  const _idsToUpdate = await docIdsRelatedToPage(page)
+  const _idsToUpdate = await docIdsRelatedToPage(
+    page,
+    action === DocumentGroupsAction.Remove ? groupIds[0] : null
+  )
 
   // get all the docs
   const _docsToUpdate = Object.values(
     await getDocuments<Document>(_idsToUpdate.all)
   ).filter((_d) => !!_d) as Document[]
 
-  // add the group(s) to all docs
+  // edit the group(s) in all docs
   _docsToUpdate.forEach((_doc) => {
     _doc.sharedWithGroups =
       action === DocumentGroupsAction.Add
@@ -179,14 +182,12 @@ export const addPageToGroup = async ({
   pageId: string
   groupId: string
 }) => {
-  const _page = await findOne<PageDoc>({
-    doctype: DocumentType.Page,
-    query: { _id: pageId },
-  })
+  const _page = await getDocument<PageDoc>(pageId)
   if (_page && !_page?.sharedWithGroups?.includes(groupId)) {
     // add groupId to page array if does not already exist
     await addGroupToDocument([groupId], _page)
   }
+  return _page
 }
 
 const upsertReplication = async ({
@@ -302,7 +303,10 @@ export const setGroup = async (group: Group, pageId?: string) => {
   }
 }
 
-export async function docIdsRelatedToPage(page: PageDoc) {
+export async function docIdsRelatedToPage(
+  page: PageDoc,
+  relatedOnlyToThisGroupId: string | null
+) {
   const _pageBlockIds = page.blocks
     .filter((_pb) => !_pb.type?.match(/^END_/))
     .map((_pb) => _pb._id)
@@ -315,14 +319,40 @@ export async function docIdsRelatedToPage(page: PageDoc) {
   )
   const _entryBlockIds = _entryBlocks.map((_b) => _b._id)
   const _relatedBlocks = getAtomicsFromFrag(_blocks)
-  const _relatedBlockIds = _relatedBlocks.map((_b) => _b._id)
-  const _relationIds = _relatedBlocks.map((_b) => `r_${_b._id}`)
+  let _relatedBlockIds = _relatedBlocks.map((_b) => _b._id)
+  let _relationIds = _relatedBlocks.map((_b) => `r_${_b._id}`)
+
+  if (relatedOnlyToThisGroupId) {
+    // include non-entry blocks if they don't appear in other pages in the shared group
+    const _group = await getDocument<Group>(relatedOnlyToThisGroupId)
+    const _relations = await getDocuments<BlockRelation>(_relationIds)
+    _relatedBlockIds = []
+    _relationIds = []
+    for (const _relatedBlockRef of _relatedBlocks) {
+      const _relation = _relations[`r_${_relatedBlockRef._id}`]
+      // only remove from related block if it doesn't exist on other pages
+      let _relatedPagesInGroup: string[] = []
+      if (_relation) {
+        _relatedPagesInGroup = relatedPagesInGroup(_group!, _relation)
+      }
+      if (_relatedPagesInGroup.length > 1) {
+        continue
+      }
+      if (
+        !_relatedPagesInGroup.length ||
+        _relatedPagesInGroup[0] === page._id
+      ) {
+        _relatedBlockIds.push(_relatedBlockRef._id)
+        _relationIds.push(`r_${_relatedBlockRef._id}`)
+      }
+    }
+  }
 
   return {
     all: Array.from(
       new Set(
         [page.selection]
-          .concat(_blockIds)
+          .concat(_entryBlockIds)
           .concat(_relatedBlockIds)
           .concat(_relationIds)
       )
@@ -375,7 +405,9 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
   if (bool) {
     // add groupId to pages sharedWithPages array
     // this will kick off `pageDepencencyObserver` which will add the group id to all page document
-    await addPageToGroup({ pageId, groupId: _data._id })
+    const _page = await addPageToGroup({ pageId, groupId: _data._id })
+
+    await addGroupToDocumentsInPage(_page!)
 
     // append property in order for replicated group to get group metadata
     await addGroupToDocument([_data._id], {

@@ -1,11 +1,7 @@
 import PouchDB from 'pouchdb'
 import EventEmitter from 'es-event-emitter'
+import { Document, Group } from '@databyss-org/services/interfaces'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
-import {
-  Document,
-  Group,
-  ResourceNotFoundError,
-} from '@databyss-org/services/interfaces'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
@@ -42,6 +38,7 @@ export const upsert = async ({
   _id: string
   doc: any
 }) => {
+  console.log('[upsert]', doc)
   upQdict.current.push({ ...doc, _id, doctype })
 }
 
@@ -109,8 +106,7 @@ export const getDocument = async <T extends Document>(
 /**
  * Get several documents at once
  * @param ids array of document ids to get
- * @returns dictionary of { docId => doc }
- * @throws ResourceNotFoundError if one or more docs is missing
+ * @returns dictionary of { docId => null | doc } (null if doc not found)
  */
 export const getDocuments = async <D>(
   ids: string[]
@@ -120,10 +116,10 @@ export const getDocuments = async <D>(
   return _res!.results.reduce((accum, curr) => {
     const _doc: any = curr.docs[0]
     if (_doc.error) {
-      if (_doc.error.name === 'not_found') {
-        throw new ResourceNotFoundError(`_bulk_get docId ${curr.id} not found`)
+      if (_doc.error.error !== 'not_found') {
+        throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error.error}`)
       }
-      throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error}`)
+      accum[curr.id] = null
     }
     accum[curr.id] = _doc.ok
     return accum
@@ -218,16 +214,27 @@ export const upsertImmediate = async ({
   doctype: DocumentType
   _id: string
   doc: any
-}) =>
-  dbRef.current!.upsert(_id, (oldDoc) => {
+}) => {
+  const { sharedWithGroups, ...docFields } = doc
+  return dbRef.current!.upsert(_id, (oldDoc) => {
+    const _groupSet = new Set(
+      (oldDoc?.sharedWithGroups ?? []).concat(sharedWithGroups ?? [])
+    )
     const _doc = {
       ...oldDoc,
-      ...addTimeStamp({ ...oldDoc, ...doc, doctype }),
+      ...addTimeStamp({ ...oldDoc, ...docFields, doctype }),
+      // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
+      sharedWithGroups:
+        doctype === DocumentType.Page
+          ? sharedWithGroups ?? oldDoc?.sharedWithGroups
+          : Array.from(_groupSet),
       belongsToGroup: getAccountFromLocation(),
     }
+    console.log('[upsertImmediate] doc, set, _doc', doc, _groupSet, _doc)
     pouchDataValidation(_doc)
     return _doc
   })
+}
 
 export const upsertUserPreferences = async (
   cb: PouchDB.UpsertDiffCallback<Partial<UserPreference>>
