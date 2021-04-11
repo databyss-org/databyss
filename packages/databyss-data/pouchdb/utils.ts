@@ -38,7 +38,7 @@ export const upsert = async ({
   _id: string
   doc: any
 }) => {
-  console.log('[upsert]', doc)
+  // console.log('[upsert]', doc)
   upQdict.current.push({ ...doc, _id, doctype })
 }
 
@@ -234,7 +234,7 @@ export const upsertImmediate = async ({
           : Array.from(_groupSet),
       belongsToGroup: getAccountFromLocation(),
     }
-    console.log('[upsertImmediate] doc, set, _doc', doc, _groupSet, _doc)
+    // console.log('[upsertImmediate] doc, set, _doc', doc, _groupSet, _doc)
     pouchDataValidation(_doc)
     return _doc
   })

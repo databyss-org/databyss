@@ -42,7 +42,7 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
   const DropdownList = () => (
     <DropdownListItem
       icon={<TrashSvg />}
-      label="Delete group forever"
+      label="Delete collection"
       data-test-element="delete-group"
       action="delete-group"
       onPress={deleteGroup}

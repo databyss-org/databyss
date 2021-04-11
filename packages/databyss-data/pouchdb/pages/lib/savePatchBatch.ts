@@ -10,7 +10,7 @@ const savePatchBatch = async (
   if (!patches) {
     return
   }
-  console.log('[savePatchBatch] sharedWithGroups', sharedWithGroups)
+  // console.log('[savePatchBatch] sharedWithGroups', sharedWithGroups)
   for (const patch of patches) {
     runPatches({ ...patch, sharedWithGroups })
   }

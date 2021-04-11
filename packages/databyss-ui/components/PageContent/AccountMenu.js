@@ -12,7 +12,13 @@ import DropdownListItem from '../Menu/DropdownListItem'
 import { AccountLoader } from '../Loaders'
 
 const AccountMenu = () => {
-  const { isOnline, notifyConfirm } = useNotifyContext()
+  const {
+    isOnline,
+    notifyConfirm,
+    // hideApplication,
+    // notifySticky,
+    // notify,
+  } = useNotifyContext()
   const logout = useSessionContext((c) => c && c.logout)
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
@@ -58,6 +64,25 @@ const AccountMenu = () => {
             actionType: 'logout',
             shortcut: `v${version}`,
           },
+          // {
+          //   label: 'Hide',
+          //   action: () => {
+          //     hideApplication()
+          //     notify({
+          //       nude: true,
+          //       message: 'Synchronizing your Databyss with the cloud...',
+          //     })
+          //   },
+          //   actionType: 'hide',
+          // },
+          // {
+          //   label: 'Sticky',
+          //   action: () =>
+          //     notifySticky({
+          //       children: <Text>Hello sticky</Text>,
+          //     }),
+          //   actionType: 'sticky',
+          // },
         ]
 
         if (isPublicAccount()) {

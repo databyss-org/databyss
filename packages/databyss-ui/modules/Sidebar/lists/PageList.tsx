@@ -53,7 +53,7 @@ export const PageList = ({ archive, transform, ...others }: PageListProps) => {
           inPublicGroup: _pagesInPublicGroups[_page._id],
         }),
   }))
-  console.log('[PageList] joined', joined)
+  // console.log('[PageList] joined', joined)
   const mapped = transform!(joined)
   const sorted = sortEntriesAtoZ(mapped, 'text')
 
