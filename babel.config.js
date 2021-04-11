@@ -1,4 +1,4 @@
-module.exports = api => {
+module.exports = (api) => {
   api.cache(true)
 
   const presets = ['react-app']
@@ -7,5 +7,6 @@ module.exports = api => {
   return {
     presets,
     plugins,
+    sourceType: 'unambiguous',
   }
 }

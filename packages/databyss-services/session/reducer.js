@@ -119,12 +119,7 @@ export default (state, action) => {
     case CACHE_PUBLIC_SESSION: {
       return {
         ...state,
-        session: {
-          ...state.session,
-          publicAccount: {
-            _id: action.payload.publicAccount,
-          },
-        },
+        session: action.payload.session,
       }
     }
 

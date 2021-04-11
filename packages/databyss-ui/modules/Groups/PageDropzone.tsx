@@ -125,7 +125,9 @@ export const PageDropzone = ({
     const _pageToRemove = pages[_id]
     setGroupPageAction(group._id, _pageToRemove._id, PageAction.REMOVE)
 
-    onChange!(value!.filter((p) => p !== _id))
+    const _nextValue = value!.filter((p) => p !== _id)
+
+    onChange!(_nextValue)
   }
 
   if (!pages || !group) {

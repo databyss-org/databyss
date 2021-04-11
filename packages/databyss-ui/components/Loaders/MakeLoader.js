@@ -9,6 +9,7 @@ const MakeLoader = ({
   onUnload,
   onLoad,
   fallbackSize,
+  errorFallback,
 }) => {
   useEffect(
     () => () => {
@@ -38,13 +39,15 @@ const MakeLoader = ({
 
   if (errors) {
     return (
-      <ErrorFallback
-        error={
-          Array.isArray(resources)
-            ? resources.filter((r) => r && r instanceof Error)
-            : resources
-        }
-      />
+      errorFallback ?? (
+        <ErrorFallback
+          error={
+            Array.isArray(resources)
+              ? resources.filter((r) => r && r instanceof Error)
+              : resources
+          }
+        />
+      )
     )
   }
 

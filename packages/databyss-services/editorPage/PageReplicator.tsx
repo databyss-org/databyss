@@ -68,7 +68,7 @@ export const PageReplicator = ({
     const _replication = dbRef
       .current!.replicate.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
         ...opts,
-        // do not replciate design docs or documents that dont include the page
+        // do not replciate design docs or documents that are not shared with group
         filter: (doc) => {
           if (!doc?.sharedWithGroups) {
             return false
@@ -127,19 +127,15 @@ export const PageReplicator = ({
             // check local storage for credentials
             // get group credentials from local storage
 
-            // if group ID does not begin with p_ assume its a shared group with g_
-            const gId =
-              group._id.substr(0, 2) === 'p_' ? group._id : `g_${group._id}`
-
             const dbCache = getPouchSecret()
             // id is in cache without the `p_` prefix
-            const creds = dbCache[gId.substr(2)]
+            const creds = dbCache[group._id]
             if (!creds) {
               // credentials are not in local storage
               // creates new user credentials and adds them to local storage
               console.log('[PageReplicator] createDatabaseCredentials')
               createDatabaseCredentials({
-                groupId: gId,
+                groupId: group._id,
                 isPublic: group.public,
               })
                 .then(() => {
@@ -159,14 +155,14 @@ export const PageReplicator = ({
               // credentials are in local
               // validate credentials with server
               validateGroupCredentials({
-                groupId: gId,
+                groupId: group._id,
                 dbKey: creds.dbKey,
               })
                 .then(() => {
                   replicationStatusRef.current[group._id] = true
                   // start replication with creds
                   startReplication({
-                    groupId: gId,
+                    groupId: group._id,
                     dbKey: creds.dbKey,
                     dbPassword: creds.dbPassword,
                   })

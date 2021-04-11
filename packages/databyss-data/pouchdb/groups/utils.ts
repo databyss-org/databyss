@@ -1,11 +1,13 @@
 import { Group } from '@databyss-org/services/interfaces/Group'
+import { BlockRelation } from '@databyss-org/services/interfaces'
 import {
   updateAndReplicateSharedDatabase,
   replicateGroup,
   removePageFromGroup,
+  removeSharedDatabase,
 } from './index'
-import { findOne } from '../utils'
-import { DocumentType, PageDoc } from '../interfaces'
+import { getDocument } from '../utils'
+import { PageDoc } from '../interfaces'
 
 export enum GroupAction {
   SHARED = 'SHARED',
@@ -123,17 +125,23 @@ export async function processGroupActionQ(dispatch: Function) {
     if (_groupAction) {
       removeGroupAction(groupId)
       try {
-        await updateAndReplicateSharedDatabase({
-          groupId,
-          isPublic: GroupAction.SHARED === _groupAction,
-        })
+        switch (_groupAction) {
+          case GroupAction.SHARED: {
+            await updateAndReplicateSharedDatabase({ groupId, isPublic: true })
+            break
+          }
+          case GroupAction.UNSHARED: {
+            await removeSharedDatabase(groupId)
+            break
+          }
+        }
       } catch (err) {
         console.log('groupActionQueue error', err)
         setGroupAction(groupId, _groupAction)
       }
     }
     // check for add/remove action for page
-    if (groupPayload.pages) {
+    if (groupPayload?.pages) {
       for (const pageId of Object.keys(groupPayload.pages)) {
         const _pageAction = groupPayload.pages[pageId]
 
@@ -143,14 +151,8 @@ export async function processGroupActionQ(dispatch: Function) {
           // perform the action
           if (_pageAction === PageAction.REMOVE) {
             // finishing removing page (and related entities) from group
-            const page: PageDoc | null = await findOne({
-              doctype: DocumentType.Page,
-              query: { _id: pageId },
-            })
-            const group: Group | null = await findOne({
-              doctype: DocumentType.Group,
-              query: { _id: groupId },
-            })
+            const page = await getDocument<PageDoc>(pageId)
+            const group = await getDocument<Group>(groupId)
             if (page && group) {
               await removePageFromGroup({
                 page,
@@ -159,7 +161,7 @@ export async function processGroupActionQ(dispatch: Function) {
             }
           }
           if (_pageAction === PageAction.ADD) {
-            await replicateGroup({ groupId: `g_${groupId}`, isPublic: true })
+            await replicateGroup({ groupId, isPublic: true })
           }
         } catch (err) {
           console.log('groupActionQueue error', err)
@@ -176,4 +178,14 @@ export async function processGroupActionQ(dispatch: Function) {
       writesPending: 0,
     },
   })
+}
+
+/**
+ * Returns the intersection of @relation.pages and @group.pages
+ * @param group Returned pages are in this group
+ * @param relation Return pages are in this BlockRelation
+ * @returns Array of Page Ids
+ */
+export function relatedPagesInGroup(group: Group, relation: BlockRelation) {
+  return relation.pages.filter((p) => group.pages.includes(p))
 }

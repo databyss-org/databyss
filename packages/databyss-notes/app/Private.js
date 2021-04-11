@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Router } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
-import { SearchProvider } from '@databyss-org/ui/hooks'
+import { SearchProvider, UserPreferencesProvider } from '@databyss-org/ui/hooks'
 import {
   Sidebar,
   useNavigationContext,
@@ -67,6 +67,19 @@ const NotFoundRedirect = () => {
   return null
 }
 
+const Providers = ({ children }) => (
+  <QueryClientProvider client={queryClient}>
+    <UserPreferencesProvider>
+      <SearchProvider>
+        <SourceProvider>
+          <GestureProvider>{children}</GestureProvider>
+        </SourceProvider>
+      </SearchProvider>
+    </UserPreferencesProvider>
+    {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+  </QueryClientProvider>
+)
+
 const Private = () => {
   const { location, navigate } = useNavigationContext()
   const getSession = useSessionContext((c) => c && c.getSession)
@@ -88,35 +101,28 @@ const Private = () => {
   }, [])
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SearchProvider>
-        <SourceProvider>
-          <GestureProvider>
-            <Router>
-              <AppView path="/:accountId">
-                <NotFoundRedirect default />
-                <EditorPageProvider path="pages/:id">
-                  <PageContent default />
-                </EditorPageProvider>
-                <SearchContent path="search/:query" />
-                <GroupDetail path="collections/:id" />
-                <IndexPageContent
-                  blockType={BlockType.Source}
-                  path="sources/:blockId"
-                />
-                <IndexPageContent
-                  blockType={BlockType.Topic}
-                  path="topics/:blockId"
-                />
-                <SourcesContent path="sources/" />
-              </AppView>
-            </Router>
-            <ModalManager />
-          </GestureProvider>
-        </SourceProvider>
-      </SearchProvider>
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-    </QueryClientProvider>
+    <Providers>
+      <Router>
+        <AppView path="/:accountId">
+          <NotFoundRedirect default />
+          <EditorPageProvider path="pages/:id">
+            <PageContent default />
+          </EditorPageProvider>
+          <SearchContent path="search/:query" />
+          <GroupDetail path="collections/:id" />
+          <IndexPageContent
+            blockType={BlockType.Source}
+            path="sources/:blockId"
+          />
+          <IndexPageContent
+            blockType={BlockType.Topic}
+            path="topics/:blockId"
+          />
+          <SourcesContent path="sources/" />
+        </AppView>
+      </Router>
+      <ModalManager />
+    </Providers>
   )
 }
 
