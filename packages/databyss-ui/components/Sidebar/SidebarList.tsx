@@ -87,8 +87,7 @@ const SidebarList = ({
       flexShrink={1}
       flexGrow={1}
       {...others}
-      mt="tiny"
-      mb={0}
+      my={0}
       shadowOnScroll
     >
       <List
@@ -97,6 +96,8 @@ const SidebarList = ({
         initialActiveIndex={initialActiveIndex}
         keyboardNavigation={keyboardNavigation}
         keyboardEventsActive={keyboardEventsActive}
+        horizontalItemPadding="em"
+        verticalItemMargin="tiny"
         onItemSelected={onItemSelected}
         py={0}
       >

@@ -51,7 +51,13 @@ export const PageList = ({ archive, transform, ...others }: PageListProps) => {
   return (
     <SidebarList
       data-test-element="sidebar-pages-list"
-      menuItems={sorted}
+      menuItems={[
+        {
+          text: archive ? 'Archived' : 'Pages',
+          type: 'heading',
+        },
+        ...sorted,
+      ]}
       {...others}
     />
   )

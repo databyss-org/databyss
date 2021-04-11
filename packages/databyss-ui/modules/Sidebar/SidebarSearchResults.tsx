@@ -83,7 +83,13 @@ const SidebarSearchResults = ({
   return (
     <SidebarList
       data-test-element="search-results"
-      menuItems={[...(filterQuery === '' ? sortedSources : filteredEntries)]}
+      menuItems={[
+        {
+          text: 'Quick Matches',
+          type: 'heading',
+        },
+        ...(filterQuery === '' ? sortedSources : filteredEntries),
+      ]}
       height={height}
       keyboardNavigation
       keyboardEventsActive={searchHasFocus}
