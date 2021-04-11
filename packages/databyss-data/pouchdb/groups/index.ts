@@ -146,6 +146,8 @@ export async function editPageDocumentGroups(
     action === DocumentGroupsAction.Remove ? groupIds[0] : null
   )
 
+  console.log('[editPageDocumentGroups] _idsToUpdate', _idsToUpdate)
+
   // get all the docs
   const _docsToUpdate = Object.values(
     await getDocuments<Document>(_idsToUpdate.all)
@@ -164,7 +166,10 @@ export async function editPageDocumentGroups(
   })
 
   // write all docs as a batch
+  console.log('[editPageDocumentGroups] _bulk_docs', action, page, groupIds)
   await dbRef.current!.bulkDocs(_docsToUpdate)
+
+  console.log('[editPageDocumentGroups] 🟢', action, page, groupIds)
 
   return _idsToUpdate
 }
@@ -307,6 +312,7 @@ export async function docIdsRelatedToPage(
   page: PageDoc,
   relatedOnlyToThisGroupId: string | null
 ) {
+  console.log('[docIdsRelatedToPage]', page, relatedOnlyToThisGroupId)
   const _pageBlockIds = page.blocks
     .filter((_pb) => !_pb.type?.match(/^END_/))
     .map((_pb) => _pb._id)
@@ -322,10 +328,14 @@ export async function docIdsRelatedToPage(
   let _relatedBlockIds = _relatedBlocks.map((_b) => _b._id)
   let _relationIds = _relatedBlocks.map((_b) => `r_${_b._id}`)
 
+  console.log('[docIdsRelatedToPage] blocks', _blocks)
+
   if (relatedOnlyToThisGroupId) {
     // include non-entry blocks if they don't appear in other pages in the shared group
     const _group = await getDocument<Group>(relatedOnlyToThisGroupId)
+    console.log('[docIdsRelatedToPage] group', _group)
     const _relations = await getDocuments<BlockRelation>(_relationIds)
+    console.log('[docIdsRelatedToPage] relations', _relations)
     _relatedBlockIds = []
     _relationIds = []
     for (const _relatedBlockRef of _relatedBlocks) {
@@ -424,17 +434,19 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     // create cloudant db
     setGroupAction(_data._id, GroupAction.SHARED)
   } else {
-    // if page is removed from sharing
-    // delete group from pouchDb
+    // page is removed from sharing
 
+    // crawl page and remove groupId from documents
+    console.log('[setPublicPage] remove docs', _data._id)
+    await removeGroupFromPage({ pageId, groupId: _data._id })
+
+    // delete group from pouchDb
+    console.log('[setPublicPage] remove group', _data._id)
     await upsertImmediate({
       doctype: DocumentType.Group,
       _id: _data._id,
       doc: { ..._data, _deleted: true },
     })
-
-    // crawl page and remove groupId from documents
-    await removeGroupFromPage({ pageId, groupId: _data._id })
 
     // remove database from cloudant
     setGroupAction(_data._id, GroupAction.UNSHARED)

@@ -20,7 +20,7 @@ export class BackupDb extends ServerProcess {
           if (err) {
             reject(err)
           } else {
-            this.log(data)
+            // this.log(data)
             resolve(data)
           }
         }

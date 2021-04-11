@@ -111,11 +111,15 @@ export const getDocument = async <T extends Document>(
 export const getDocuments = async <D>(
   ids: string[]
 ): Promise<{ [docId: string]: D | null }> => {
+  if (!ids.length) {
+    return {}
+  }
   const _options = { docs: ids.map((id) => ({ id })) }
   const _res = await dbRef.current?.bulkGet(_options)
   return _res!.results.reduce((accum, curr) => {
     const _doc: any = curr.docs[0]
     if (_doc.error) {
+      console.log('[getDocuments] error', _doc.error)
       if (_doc.error.error !== 'not_found') {
         throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error.error}`)
       }
