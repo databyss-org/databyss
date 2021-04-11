@@ -372,14 +372,14 @@ class NotifyProvider extends React.Component {
   }
 
   hideApplication = () => {
-    ;(window as any).databyssgsap.seek(0).resume()
+    ;(window as any).startdatabyss()
     this.setState({
       hideApplication: true,
     })
   }
 
   showApplication = () => {
-    ;(window as any).databyssgsap.pause()
+    ;(window as any).stopdatabyss()
     this.setState({
       hideApplication: false,
     })

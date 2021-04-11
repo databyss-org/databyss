@@ -31,7 +31,7 @@
       body {
         background-color: #3b3835;
       }
-      #databyss {
+      .databyss {
         position: fixed;
         left: 0;
         right: 0;
@@ -49,7 +49,7 @@
 
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="databyss">
+    <div id="databyss1" class="databyss">
       <svg
         height="100vh"
         viewBox="0 0 1100 1100"
@@ -85,37 +85,60 @@
           fill="#8AFFB4"
         />
       </svg>
-      <script>
-        var shapes = '.databysspath'
-        gsap.set(shapes, {
-          opacity: 0,
-          scale: 0,
-          transformOrigin: '50% 50%',
-          fill: 'transparent',
-          stroke: 'white',
-          strokeWidth: 6,
-        })
-        window.databyssgsap = gsap
-          .timeline({ repeat: -1 })
-          .pause()
-          .to(shapes, {
-            duration: 6,
-            scale: 0.75,
-            stagger: 0.5,
-            transformOrigin: '50% 50%',
-            ease: 'linear',
-          })
-          .to(shapes, { duration: 4, opacity: 1, ease: 'linear' }, '-=5')
-          .to(shapes, { duration: 1, fill: '#8AFFB4', ease: 'linear' }, '-=6')
-          .to(
-            shapes,
-            { duration: 1, fill: 'transparent', ease: 'linear' },
-            '-=3'
-          )
-          .to(shapes, { duration: 1, opacity: 0, ease: 'linear' }, '-=2.5')
-          .to(shapes, { duration: 1.5, opacity: 0, ease: 'linear' }, '-=1.5')
-      </script>
     </div>
     <div id="root"></div>
+    <script>
+      ;(function () {
+        var containerNode = document.getElementById('databyss1').cloneNode(true)
+        containerNode.id = 'databyss2'
+        document.body.appendChild(containerNode)
+
+        function startanim(i) {
+          var shapes = '#databyss' + i + ' .databysspath'
+          gsap.set(shapes, {
+            opacity: 0,
+            scale: 0,
+            transformOrigin: '50% 50%',
+            fill: '#FF66D7',
+            stroke: 'white',
+            strokeWidth: 6,
+          })
+          gsap
+            .timeline()
+            // .pause()
+            .to(shapes, {
+              duration: 6,
+              scale: 0.75,
+              stagger: 0.5,
+              transformOrigin: '50% 50%',
+              ease: 'linear',
+            })
+            .to(shapes, { duration: 4, opacity: 1, ease: 'linear' }, '-=6')
+            .to(
+              shapes,
+              { duration: 3.5, fill: '#8AFFB4', ease: 'linear' },
+              '-=6'
+            )
+            .to(
+              shapes,
+              { duration: 1, fill: 'transparent', ease: 'linear' },
+              '-=3'
+            )
+            .to(shapes, { duration: 1, opacity: 0, ease: 'linear' }, '-=2.5')
+            .to(shapes, { duration: 1.5, opacity: 0, ease: 'linear' }, '-=1.5')
+
+          window.databysstimer = setTimeout(
+            () => startanim(i === 1 ? 2 : 1),
+            4000
+          )
+        }
+        window.startdatabyss = function () {
+          startanim(1)
+        }
+        window.stopdatabyss = function () {
+          clearTimeout(window.databysstimer)
+        }
+      })()
+    </script>
   </body>
 </html>
