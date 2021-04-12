@@ -8,8 +8,8 @@ const MakeLoader = ({
   children,
   onUnload,
   onLoad,
-  fallbackSize,
   errorFallback,
+  loadingFallbackOptions,
 }) => {
   useEffect(
     () => () => {
@@ -34,7 +34,7 @@ const MakeLoader = ({
   }, [resources])
 
   if (isLoading) {
-    return <Loading padding="small" size={fallbackSize || '25'} />
+    return <Loading {...loadingFallbackOptions} />
   }
 
   if (errors) {
@@ -56,6 +56,13 @@ const MakeLoader = ({
   }
 
   return children(resources)
+}
+
+MakeLoader.defaultProps = {
+  loadingFallbackOptions: {
+    padding: 'small',
+    size: '25',
+  },
 }
 
 export default MakeLoader

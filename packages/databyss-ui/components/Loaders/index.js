@@ -36,7 +36,9 @@ export const AccountLoader = ({ children }) => {
     <MakeLoader
       resources={getUserAccount()}
       children={children}
-      fallbackSize="15"
+      loadingFallbackOptions={{
+        size: '15',
+      }}
       errorFallback=""
     />
   )
