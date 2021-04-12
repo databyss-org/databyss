@@ -256,7 +256,7 @@ export const hasUnathenticatedAccess = (maxRetries = 5) =>
       return
     }
     const _checkAccess = async (count = 0) => {
-      console.log('[hasUnauthenticatedAccess] checkAccess attempt', count + 1)
+      // console.log('[hasUnauthenticatedAccess] checkAccess attempt', count + 1)
       if (count >= maxRetries) {
         resolve(false)
         return
@@ -275,9 +275,7 @@ export const hasUnathenticatedAccess = (maxRetries = 5) =>
     _checkAccess()
   })
 
-export const replicateGroup = async (id) => {
-  // attempt group replication
-  await replicatePublicGroup({
+export const replicateGroup = (id) =>
+  replicatePublicGroup({
     groupId: id,
   })
-}

@@ -16,7 +16,6 @@ import {
   ResourceNotFoundError,
 } from '../interfaces'
 import { PageReplicator } from './PageReplicator'
-// import { pageDependencyObserver } from './pageDependencyObserver'
 import * as actions from './actions'
 
 interface PropsType {
@@ -68,11 +67,8 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  //  initiate page listener
-  // useEffect(() => {
-  //   pageDependencyObserver()
-  // }, [])
-
+  // instead of pageDependencyObserver, keep a reference to the `sharedWithGroups`
+  //   for the page and use this value whenever a new block (or topic or source) is created
   useEffect(() => {
     const _groups = (pagesRes.data?.[pageId] as any)?.sharedWithGroups
     // console.log('[EditorPageProvider] sharedWithGroups changed', _groups)

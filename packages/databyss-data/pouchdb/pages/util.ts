@@ -51,7 +51,7 @@ const addOrReplaceBlock = async (p) => {
     _block.type = type
   }
 
-  console.log('[addOrReplaceBlock]', _id, p.sharedWithGroups)
+  // console.log('[addOrReplaceBlock]', _id, p.sharedWithGroups)
 
   upsert({
     doctype: DocumentType.Block,

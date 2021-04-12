@@ -44,12 +44,11 @@ export const removeIdsFromSharedDb = ({
 }: {
   ids: string[]
   groupId: string
-}) => {
-  console.log('[removeIdsFromSharedDb]', ids, groupId)
-  return httpPost(`/cloudant/groups/${groupId}/remove`, {
+}) =>
+  // console.log('[removeIdsFromSharedDb]', ids, groupId)
+  httpPost(`/cloudant/groups/${groupId}/remove`, {
     data: { ids, groupId },
   })
-}
 
 /**
  * creates a cloudant group database
@@ -118,7 +117,7 @@ export const removeGroupsFromDocument = async (
   if (document.sharedWithGroups.length !== _sharedWithGroups.length) {
     document.sharedWithGroups = _sharedWithGroups
 
-    console.log('[removeGroupsFromDocument] upsert', document)
+    // console.log('[removeGroupsFromDocument] upsert', document)
     await upsertImmediate({
       doctype: document.doctype,
       _id: document._id,
@@ -137,7 +136,7 @@ export async function editPageDocumentGroups(
   groupIds: string[],
   action: DocumentGroupsAction
 ) {
-  console.log('[editPageDocumentGroups]', action, page, groupIds)
+  // console.log('[editPageDocumentGroups]', action, page, groupIds)
   if (action === DocumentGroupsAction.Add && !page.sharedWithGroups?.length) {
     return null
   }
@@ -146,7 +145,7 @@ export async function editPageDocumentGroups(
     action === DocumentGroupsAction.Remove ? groupIds[0] : null
   )
 
-  console.log('[editPageDocumentGroups] _idsToUpdate', _idsToUpdate)
+  // console.log('[editPageDocumentGroups] _idsToUpdate', _idsToUpdate)
 
   // get all the docs
   const _docsToUpdate = Object.values(
@@ -166,10 +165,10 @@ export async function editPageDocumentGroups(
   })
 
   // write all docs as a batch
-  console.log('[editPageDocumentGroups] _bulk_docs', action, page, groupIds)
+  // console.log('[editPageDocumentGroups] _bulk_docs', action, page, groupIds)
   await dbRef.current!.bulkDocs(_docsToUpdate)
 
-  console.log('[editPageDocumentGroups] 🟢', action, page, groupIds)
+  // console.log('[editPageDocumentGroups] 🟢', action, page, groupIds)
 
   return _idsToUpdate
 }
@@ -212,7 +211,7 @@ const upsertReplication = async ({
     },
   }
 
-  console.log('[upsertReplication]', groupId)
+  // console.log('[upsertReplication]', groupId)
 
   const _findRes = await dbRef.current?.find({
     selector: {
@@ -308,11 +307,15 @@ export const setGroup = async (group: Group, pageId?: string) => {
   }
 }
 
+/**
+ * Returns a report of all docs in the page
+ * @groupId If set, only include related docs (eg topic, source) where this page is the only page that it appears in, for this group
+ */
 export async function docIdsRelatedToPage(
   page: PageDoc,
-  relatedOnlyToThisGroupId: string | null
+  groupId: string | null
 ) {
-  console.log('[docIdsRelatedToPage]', page, relatedOnlyToThisGroupId)
+  // console.log('[docIdsRelatedToPage]', page, groupId)
   const _pageBlockIds = page.blocks
     .filter((_pb) => !_pb.type?.match(/^END_/))
     .map((_pb) => _pb._id)
@@ -328,19 +331,19 @@ export async function docIdsRelatedToPage(
   let _relatedBlockIds = _relatedBlocks.map((_b) => _b._id)
   let _relationIds = _relatedBlocks.map((_b) => `r_${_b._id}`)
 
-  console.log('[docIdsRelatedToPage] blocks', _blocks)
+  // console.log('[docIdsRelatedToPage] blocks', _blocks)
 
-  if (relatedOnlyToThisGroupId) {
+  if (groupId) {
     // include non-entry blocks if they don't appear in other pages in the shared group
-    const _group = await getDocument<Group>(relatedOnlyToThisGroupId)
-    console.log('[docIdsRelatedToPage] group', _group)
+    const _group = await getDocument<Group>(groupId)
+    // console.log('[docIdsRelatedToPage] group', _group)
     const _relations = await getDocuments<BlockRelation>(_relationIds)
-    console.log('[docIdsRelatedToPage] relations', _relations)
+    // console.log('[docIdsRelatedToPage] relations', _relations)
     _relatedBlockIds = []
     _relationIds = []
     for (const _relatedBlockRef of _relatedBlocks) {
       const _relation = _relations[`r_${_relatedBlockRef._id}`]
-      // only remove from related block if it doesn't exist on other pages
+      // only include related block if it doesn't exist on other pages
       let _relatedPagesInGroup: string[] = []
       if (_relation) {
         _relatedPagesInGroup = relatedPagesInGroup(_group!, _relation)
@@ -437,11 +440,11 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     // page is removed from sharing
 
     // crawl page and remove groupId from documents
-    console.log('[setPublicPage] remove docs', _data._id)
+    // console.log('[setPublicPage] remove docs', _data._id)
     await removeGroupFromPage({ pageId, groupId: _data._id })
 
     // delete group from pouchDb
-    console.log('[setPublicPage] remove group', _data._id)
+    // console.log('[setPublicPage] remove group', _data._id)
     await upsertImmediate({
       doctype: DocumentType.Group,
       _id: _data._id,
@@ -562,16 +565,16 @@ export const removePageFromGroup = async ({
 }
 
 export const removeAllGroupsFromPage = async (pageId: string) => {
-  console.log('[removeAllGroupsFromPage]')
+  // console.log('[removeAllGroupsFromPage]')
   const _page = await getDocument<PageDoc>(pageId)
 
   if (_page?.sharedWithGroups?.length) {
     for (const _groupId of _page.sharedWithGroups) {
-      console.log(
-        '[removeAllGroupsFromPage] groupId pageId',
-        _groupId,
-        _page._id
-      )
+      // console.log(
+      //   '[removeAllGroupsFromPage] groupId pageId',
+      //   _groupId,
+      //   _page._id
+      // )
       const _prefix = _groupId.substring(0, 2)
       // is shared page
       if (_prefix === 'p_') {

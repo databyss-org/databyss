@@ -119,7 +119,7 @@ export const getDocuments = async <D>(
   return _res!.results.reduce((accum, curr) => {
     const _doc: any = curr.docs[0]
     if (_doc.error) {
-      console.log('[getDocuments] error', _doc.error)
+      console.warn('[getDocuments] error', _doc.error)
       if (_doc.error.error !== 'not_found') {
         throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error.error}`)
       }
@@ -156,23 +156,41 @@ export const getUserSession = async (): Promise<UserPreference | null> => {
   return response
 }
 
-export const getGroupSession = async (): Promise<Group | null> => {
-  if (!dbRef.current) {
-    return null
-  }
-  const _response = await dbRef.current!.find({
-    selector: {
-      doctype: 'GROUP',
-    },
+export const getGroupSession = async (
+  maxRetries: number = 0
+): Promise<Group | null> =>
+  new Promise((resolve, reject) => {
+    if (!dbRef.current) {
+      resolve(null)
+      return
+    }
+
+    const _getGroup = async (count = 0) => {
+      if (count > maxRetries) {
+        resolve(null)
+        return
+      }
+
+      // console.log('[getGroupSession] attempt', count + 1)
+
+      const _response = await dbRef.current!.find({
+        selector: {
+          doctype: 'GROUP',
+        },
+      })
+      if (_response.docs.length > 1) {
+        reject(new Error('multiple group docs'))
+        return
+      }
+      if (!_response.docs.length) {
+        setTimeout(() => _getGroup(count + 1), 3000)
+        return
+      }
+      resolve(_response.docs[0])
+    }
+
+    _getGroup()
   })
-  if (!_response.docs.length) {
-    console.error('group doc not found')
-  }
-  if (_response.docs.length > 1) {
-    console.warn('multiple group docs')
-  }
-  return _response.docs[0]
-}
 
 export const searchText = async (query) => {
   // calculate how strict we want the search to be

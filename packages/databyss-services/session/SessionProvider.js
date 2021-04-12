@@ -144,7 +144,7 @@ const SessionProvider = ({
         const unauthenticatedGroupId = await hasUnathenticatedAccess()
         if (unauthenticatedGroupId) {
           await replicateGroup(unauthenticatedGroupId)
-          _publicSession = await localStorageHasPublicSession()
+          _publicSession = await localStorageHasPublicSession(3)
         }
       }
       if (_publicSession) {

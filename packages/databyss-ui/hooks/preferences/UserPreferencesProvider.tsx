@@ -76,7 +76,7 @@ export const UserPreferencesProvider = ({ children }) => {
   // show DIALOG notifications immediately
   const _notifications = getUnreadNotifications()
   useEffect(() => {
-    console.log('[UserPreferencesProvider] Process notifications...')
+    // console.log('[UserPreferencesProvider] Process notifications...')
     const _notification = _notifications[0]
     if (_notification) {
       switch (_notification.type) {

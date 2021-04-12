@@ -1,5 +1,8 @@
 import { Group } from '@databyss-org/services/interfaces/Group'
-import { BlockRelation } from '@databyss-org/services/interfaces'
+import {
+  BlockRelation,
+  ResourceNotFoundError,
+} from '@databyss-org/services/interfaces'
 import {
   updateAndReplicateSharedDatabase,
   replicateGroup,
@@ -20,6 +23,7 @@ export enum PageAction {
 }
 
 interface QueuePayload {
+  retry: number
   action?: GroupAction
   pages?: {
     [pageId: string]: PageAction
@@ -43,10 +47,14 @@ export function setGroupActionQ(_d) {
   localStorage.setItem('groupActionQ', JSON.stringify(_d))
 }
 
-export function setGroupAction(groupId: string, action: GroupAction) {
+export function setGroupAction(
+  groupId: string,
+  action: GroupAction,
+  retry: number = 0
+) {
   const _dict = getGroupActionQ()
   if (!_dict[groupId]) {
-    _dict[groupId] = {}
+    _dict[groupId] = { retry }
   }
   if (_dict[groupId].action && _dict[groupId].action !== action) {
     // nullify previous action if it's different
@@ -60,11 +68,12 @@ export function setGroupAction(groupId: string, action: GroupAction) {
 export function setGroupPageAction(
   groupId: string,
   pageId: string,
-  action: PageAction
+  action: PageAction,
+  retry: number = 0
 ) {
   const _dict = getGroupActionQ()
   if (!_dict[groupId]) {
-    _dict[groupId] = { pages: {} }
+    _dict[groupId] = { pages: {}, retry }
   }
   // nullify previous action if it's different
   if (
@@ -122,6 +131,7 @@ export async function processGroupActionQ(dispatch: Function) {
     const groupPayload: QueuePayload = _q()[groupId]
 
     const _groupAction = groupPayload?.action
+    const _retry = groupPayload?.retry ?? 0
     if (_groupAction) {
       removeGroupAction(groupId)
       try {
@@ -131,13 +141,27 @@ export async function processGroupActionQ(dispatch: Function) {
             break
           }
           case GroupAction.UNSHARED: {
-            await removeSharedDatabase(groupId)
+            try {
+              await removeSharedDatabase(groupId)
+            } catch (err) {
+              if (!(err instanceof ResourceNotFoundError)) {
+                throw err
+              }
+            }
             break
           }
         }
       } catch (err) {
-        console.log('groupActionQueue error', err)
-        setGroupAction(groupId, _groupAction)
+        if (_retry < 5) {
+          console.warn(
+            'groupActionQueue error',
+            groupPayload,
+            JSON.stringify(err)
+          )
+          setGroupAction(groupId, _groupAction, _retry + 1)
+        } else {
+          throw err
+        }
       }
     }
     // check for add/remove action for page
@@ -164,8 +188,16 @@ export async function processGroupActionQ(dispatch: Function) {
             await replicateGroup({ groupId, isPublic: true })
           }
         } catch (err) {
-          console.log('groupActionQueue error', err)
-          setGroupPageAction(groupId, pageId, _pageAction)
+          if (_retry < 5) {
+            console.warn(
+              'groupActionQueue error',
+              groupPayload,
+              JSON.stringify(err)
+            )
+            setGroupPageAction(groupId, pageId, _pageAction)
+          } else {
+            throw err
+          }
         }
       }
     }

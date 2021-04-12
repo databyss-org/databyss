@@ -14,7 +14,7 @@ export const setSource = async (data: Source) => {
     detail,
     sharedWithGroups,
   }
-  console.log('[setSource]', blockFields)
+  // console.log('[setSource]', blockFields)
   // TODO: get document and use Object.assign(_source, blockFields) to only replace new fields
   await upsert({
     doctype: DocumentType.Block,
