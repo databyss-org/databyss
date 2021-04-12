@@ -237,16 +237,17 @@ export const replicateDbFromRemote = ({
     if (!_cred) {
       reject()
     }
-
     const opts = {
       // live: true,
       retry: true,
       // continuous: true,
+      batch_size: 1000,
       auth: {
         username: _cred.dbKey,
         password: _cred.dbPassword,
       },
     }
+    console.log('[replicateDbFromRemote]', opts)
     dbRef.current = getPouchDb(groupId)
 
     checkNetwork().then((isOnline) => {
