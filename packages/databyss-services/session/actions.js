@@ -2,6 +2,7 @@ import {
   replicateDbFromRemote,
   replicatePublicGroup,
   REMOTE_CLOUDANT_URL,
+  initiatePouchDbIndexes,
 } from '@databyss-org/data/pouchdb/db'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
@@ -267,4 +268,8 @@ export const replicateGroup = async (id) => {
   await replicatePublicGroup({
     groupId: id,
   })
+
+  setTimeout(() => {
+    initiatePouchDbIndexes()
+  }, [5000])
 }
