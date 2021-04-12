@@ -14,7 +14,6 @@ import {
   DENY_ACCESS,
   REQUEST_CODE,
   END_SESSION,
-  CACHE_PUBLIC_SESSION,
   GET_USER_ACCOUNT,
   CACHE_USER_ACCOUNT,
   LOGOUT,
@@ -32,7 +31,7 @@ import {
   localStorageHasSession,
 } from './clientStorage'
 
-import { getAccountFromLocation } from './_helpers'
+import { getAccountFromLocation } from './utils'
 
 export const fetchSession = ({ _request, ...credentials }) => async (
   dispatch
@@ -132,11 +131,12 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         type: STORE_SESSION_LOCALLY,
       })
     } else if (res.data?.isPublic) {
+      throw new Error('We should never get here')
       // cache public account info in session state
-      dispatch({
-        type: CACHE_PUBLIC_SESSION,
-        payload: { publicAccount: res.data.accountId },
-      })
+      // dispatch({
+      //   type: CACHE_PUBLIC_SESSION,
+      //   payload: { publicAccount: res.data.accountId },
+      // })
     } else {
       // assume TFA, request code
       dispatch({
@@ -183,8 +183,12 @@ export const getUserAccount = () => async (dispatch) => {
   const authToken = getAuthToken()
   if (authToken) {
     const data = { authToken }
-    const _res = await httpPost('/users', { data })
-    dispatch({ type: CACHE_USER_ACCOUNT, payload: _res })
+    try {
+      const _res = await httpPost('/users', { data })
+      dispatch({ type: CACHE_USER_ACCOUNT, payload: _res })
+    } catch (err) {
+      dispatch({ type: CACHE_USER_ACCOUNT, payload: { data: err } })
+    }
   } else {
     dispatch({ type: CACHE_USER_ACCOUNT, payload: null })
   }
@@ -239,10 +243,9 @@ export const isGroupPublic = async () => {
   // get the page id
   const groupId = path?.[1]
   if (groupId) {
-    const group = `g_${groupId}`
     try {
-      await request(`${REMOTE_CLOUDANT_URL}/${group}`)
-      return group
+      await request(`${REMOTE_CLOUDANT_URL}/${groupId}`)
+      return groupId
     } catch (err) {
       return false
     }

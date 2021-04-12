@@ -1,11 +1,12 @@
 import {
   upsert,
   getUserSession,
+  getGroupSession,
   findOne,
 } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { resetPouchDb } from '@databyss-org/data/pouchdb/db'
-import { getAccountFromLocation } from './_helpers'
+import { getAccountFromLocation } from './utils'
 
 // TODO: Add native versions of these
 
@@ -157,6 +158,10 @@ export function getDbCredentialsFromLocal(groupId) {
 
 export function getPouchSecret() {
   return JSON.parse(localStorage.getItem('pouch_secrets'))
+}
+
+export function localStorageHasPublicSession() {
+  return getGroupSession()
 }
 
 export async function localStorageHasSession() {

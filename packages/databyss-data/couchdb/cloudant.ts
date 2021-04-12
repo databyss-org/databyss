@@ -1,14 +1,14 @@
 import Cloudant from '@cloudant/cloudant'
 import { DocumentGetResponse, DocumentScope } from 'nano'
-import { User, Group, Login, DesignDoc } from '../interfaces'
+import { SysUser, SysGroup, SysLogin, DesignDoc } from '../interfaces'
 
 let _current: Cloudant.ServerScope
 let _models: {
-  Users: DocumentScope<User>
+  Users: DocumentScope<SysUser>
   UsersDesignDoc: DocumentScope<DesignDoc>
-  Logins: DocumentScope<Login>
+  Logins: DocumentScope<SysLogin>
   LoginsDesignDoc: DocumentScope<DesignDoc>
-  Groups: DocumentScope<Group>
+  Groups: DocumentScope<SysGroup>
   GroupsDesignDoc: DocumentScope<DesignDoc>
 }
 
@@ -54,11 +54,11 @@ export const cloudant = {
   get models() {
     if (!_models) {
       _models = {
-        Users: cloudant.current.db.use<User>('users'),
+        Users: cloudant.current.db.use<SysUser>('users'),
         UsersDesignDoc: cloudant.current.db.use<DesignDoc>('users'),
-        Logins: cloudant.current.db.use<Login>('logins'),
+        Logins: cloudant.current.db.use<SysLogin>('logins'),
         LoginsDesignDoc: cloudant.current.db.use<DesignDoc>('logins'),
-        Groups: cloudant.current.db.use<Group>('groups'),
+        Groups: cloudant.current.db.use<SysGroup>('groups'),
         GroupsDesignDoc: cloudant.current.db.use<DesignDoc>('groups'),
       }
     }

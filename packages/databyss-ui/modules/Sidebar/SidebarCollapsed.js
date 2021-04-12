@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, List } from '@databyss-org/ui/primitives'
+import { View, List, Separator } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
@@ -41,10 +41,13 @@ const SidebarCollapsed = () => {
       title: 'Collections',
       icon: <img src={GroupsImg} />,
       sizeVariant: 'large',
-      onClick: () =>
-        !isPublicAccount()
-          ? onItemClick('groups')
-          : (window.location.href = 'https://www.databyss.org'),
+      onClick: () => (!isPublicAccount() ? onItemClick('groups') : () => null),
+      ...(isPublicAccount()
+        ? {
+            href: 'https://www.databyss.org',
+            target: '_blank',
+          }
+        : {}),
     },
     {
       name: 'search',
@@ -109,6 +112,8 @@ const SidebarCollapsed = () => {
             seperatorTop={
               sideBarCollapsedItems.length === i + 1 && !isPublicAccount()
             }
+            href={item.href}
+            target={item.target}
           />
         ))}
       </List>

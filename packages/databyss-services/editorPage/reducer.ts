@@ -24,6 +24,7 @@ export const initialState: PageState = {
   cache: {},
   headerCache: null,
   refDict: {},
+  promiseDict: {},
 }
 
 export default produce((draft: Draft<PageState>, action: FSA) => {
@@ -40,10 +41,13 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
     case PATCH:
     case FETCH_PAGE: {
       draft.cache[action.payload.id] = new ResourcePending()
+      draft.promiseDict[action.payload.id] = action.payload.promise
       break
     }
     case REMOVE_PAGE_FROM_CACHE: {
       delete draft.cache[action.payload.id]
+      draft.promiseDict[action.payload.id]?.cancel()
+      delete draft.promiseDict[action.payload.id]
       break
     }
     case CACHE_PAGE: {
@@ -63,6 +67,8 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
           __cache.name = _page.name
         }
       }
+
+      delete draft.promiseDict[action.payload.id]
       break
     }
 
