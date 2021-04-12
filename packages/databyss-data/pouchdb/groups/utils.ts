@@ -194,7 +194,7 @@ export async function processGroupActionQ(dispatch: Function) {
               groupPayload,
               JSON.stringify(err)
             )
-            setGroupPageAction(groupId, pageId, _pageAction)
+            setGroupPageAction(groupId, pageId, _pageAction, _retry + 1)
           } else {
             throw err
           }
