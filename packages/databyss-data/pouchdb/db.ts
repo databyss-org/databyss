@@ -50,13 +50,10 @@ declare global {
 }
 
 export const getPouchDb = (groupId: string) => {
-  console.log(process.env.FORCE_MOBILE?.toLowerCase())
-
   if (
     process.env.FORCE_MOBILE?.toLowerCase() === 'true' ||
     process.env.COUCH_DIRECT?.toLowerCase() === 'true'
   ) {
-    console.log('GETS IN THIS ONE')
     if (!couchDbRef.current) {
       connect(groupId)
     }

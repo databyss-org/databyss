@@ -37,7 +37,7 @@ const TopicDetails = () => {
 
   // render methods
   const renderTopicDetails = () => (
-    <ScrollView maxHeight={getScrollViewMaxHeight()} pr="medium" py="large">
+    <ScrollView maxHeight={getScrollViewMaxHeight()}>
       <IndexPageContent blockType="TOPIC" />
     </ScrollView>
   )

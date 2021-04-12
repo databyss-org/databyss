@@ -149,8 +149,6 @@ export const replaceOne = async ({
 export const getUserSession = async (): Promise<UserPreference | null> => {
   let response
   try {
-    console.log(dbRef.current)
-
     response = await dbRef.current!.get('user_preference')
   } catch (err) {
     console.error('user session not found')

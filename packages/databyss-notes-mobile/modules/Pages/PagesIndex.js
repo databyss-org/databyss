@@ -35,7 +35,6 @@ const PagesIndex = () => {
   )
 
   return render()
-  // return <div>pages index</div>
 }
 
 export default PagesIndex

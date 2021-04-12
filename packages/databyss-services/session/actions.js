@@ -124,7 +124,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
           groupId: _defaultGroupId,
         })
       } else {
-        dbRef.current = getPouchDb(`g_${_defaultGroupId}`)
+        dbRef.current = getPouchDb(`${_defaultGroupId}`)
       }
 
       dispatch({

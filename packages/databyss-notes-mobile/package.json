@@ -10,16 +10,10 @@
   "peerDependencies": {
     "react": "16.9.0",
     "react-dom": "16.9.0",
-<<<<<<< HEAD
     "@databyss-org/data": "2.0.1",
     "@databyss-org/notes": "2.0.1",
     "react-query": "^3.6.0",
     "@databyss-org/ui": "2.0.1",
     "@databyss-org/services": "2.0.1"
-=======
-    "@databyss-org/data": "2.0.2",
-    "@databyss-org/ui": "2.0.2",
-    "@databyss-org/services": "2.0.2"
->>>>>>> 2c7bd62edf9511fe9cf912dfcfcc14c3c03af53b
   }
 }

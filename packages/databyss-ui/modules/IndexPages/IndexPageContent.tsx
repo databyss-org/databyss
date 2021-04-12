@@ -28,7 +28,7 @@ export const IndexPageView = ({
         <meta charSet="utf-8" />
         <title>{path[path.length - 1]}</title>
       </Helmet>
-      <View pt="small" pb="medium" pl="medium">
+      <View py="medium">
         <Text
           data-test-element="index-results"
           variant="bodyHeading1"
@@ -37,7 +37,7 @@ export const IndexPageView = ({
           {path[path.length - 1]}
         </Text>
       </View>
-      <View px="medium">{children}</View>
+      <View>{children}</View>
     </ScrollView>
   </>
 )
@@ -61,9 +61,6 @@ export const getPathFromBlock = (block: Block) => {
 export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const { blockId } = useParams()
 
-  console.log(useParams())
-
-  console.log(blockId)
   const blocksRes = useBlocks(blockType)
 
   if (!blocksRes.isSuccess) {

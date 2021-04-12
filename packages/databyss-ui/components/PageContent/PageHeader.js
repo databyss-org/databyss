@@ -76,8 +76,9 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
       placeholder={noPageTitle}
       variant="bodyHeading1"
       color="text.3"
-      ml="medium"
-      mb="em"
+      ml={process.env.FORCE_MOBILE ? 'none' : 'medium'}
+      mb={!process.env.FORCE_MOBILE ? 'em' : 'none'}
+      mt={process.env.FORCE_MOBILE ? 'em' : 'none'}
     />
   )
 })
