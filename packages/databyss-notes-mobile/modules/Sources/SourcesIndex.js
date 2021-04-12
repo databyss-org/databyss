@@ -1,7 +1,12 @@
 import React from 'react'
 import { uid } from '@databyss-org/data/lib/uid'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
-import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
+import {
+  useBlockRelations,
+  usePages,
+  useBlocks,
+} from '@databyss-org/data/pouchdb/hooks'
+import { getBlocksFromBlockRelations } from '@databyss-org/services/blocks/joins'
 
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
@@ -63,6 +68,8 @@ const headerItems = [SourcesMetadata]
 // component
 const SourcesIndex = () => {
   const blocksRes = useBlocks('SOURCE')
+  const pagesRes = usePages()
+  const blockRelationsRes = useBlockRelations('SOURCE')
 
   const navigationContext = useNavigationContext()
 
@@ -70,12 +77,21 @@ const SourcesIndex = () => {
 
   const _queryParams = getQueryParams()
 
-  if (!blocksRes.isSuccess) {
-    return <LoadingFallback queryObserver={blocksRes} />
+  const queryRes = [blockRelationsRes, blocksRes, pagesRes]
+
+  if (queryRes.some((q) => !q.isSuccess)) {
+    return <LoadingFallback queryObserver={queryRes} />
   }
 
-  const sources = Object.values(blocksRes.data)
-  const authors = getAuthorsFromSources(sources)
+  // removes atomics not appearing on pages
+  const _filteredSources = getBlocksFromBlockRelations(
+    blockRelationsRes.data,
+    blocksRes.data,
+    pagesRes.data,
+    false
+  )
+
+  const authors = getAuthorsFromSources(_filteredSources)
 
   if (Object.keys(_queryParams).length) {
     return <AuthorDetails query={_queryParams} />
@@ -91,7 +107,7 @@ const SourcesIndex = () => {
   // // render methods
   const renderSourcesList = () => {
     const listItems = buildListItems({
-      data: sources,
+      data: _filteredSources,
       baseUrl: '/sources',
       labelPropPath: 'text.textValue',
       icon: SourcesMetadata.icon,

@@ -1,8 +1,11 @@
 import React from 'react'
-import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
+import {
+  useBlocks,
+  useBlockRelations,
+  usePages,
+} from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
-// import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
-// import TopicProvider from '@databyss-org/services/topics/TopicProvider'
+import { getBlocksFromBlockRelations } from '@databyss-org/services/blocks/joins'
 import { MobileView } from '../Mobile'
 import { buildListItems } from '../../utils/buildListItems'
 import NoResultsView from '../../components/NoResultsView'
@@ -15,14 +18,26 @@ const headerItems = [TopicsMetadata]
 
 // component
 const TopicsIndex = () => {
+  const blockRelationsRes = useBlockRelations('TOPIC')
+  const pagesRes = usePages()
   const blocksRes = useBlocks('TOPIC')
-  if (!blocksRes.isSuccess) {
-    return <LoadingFallback queryObserver={blocksRes} />
+
+  const queryRes = [blockRelationsRes, blocksRes, pagesRes]
+
+  if (queryRes.some((q) => !q.isSuccess)) {
+    return <LoadingFallback queryObserver={queryRes} />
   }
-  const topics = Object.values(blocksRes.data)
+
+  // removes atomics not appearing on pages
+  const _filteredTopics = getBlocksFromBlockRelations(
+    blockRelationsRes.data,
+    blocksRes.data,
+    pagesRes.data,
+    false
+  )
 
   const listItems = buildListItems({
-    data: topics,
+    data: _filteredTopics,
     baseUrl: '/topics',
     labelPropPath: 'text.textValue',
     icon: TopicsMetadata.icon,
