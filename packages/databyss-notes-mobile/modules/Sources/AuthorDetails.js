@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
-import SourceProvider from '@databyss-org/services/sources/SourceProvider'
+import { getSourceCitations } from '@databyss-org/services/sources'
+import { LoadingFallback } from '@databyss-org/ui/components'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import { MobileView } from '../Mobile'
 import { buildAuthorCitationData } from '../../utils/buildAuthorCitationData'
@@ -9,8 +9,6 @@ import NoResultsView from '../../components/NoResultsView'
 import ScrollableListView from '../../components/ScrollableListView'
 
 import SourcesMetadata from './SourcesMetadata'
-import { getSourceCitations } from '@databyss-org/services/sources'
-import { LoadingFallback } from '@databyss-org/ui/components'
 
 const buildHeaderItems = (firstName, lastName) => [
   SourcesMetadata,

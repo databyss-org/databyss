@@ -2,6 +2,7 @@ import React, { ReactNode, useEffect, useRef } from 'react'
 import PouchDB from 'pouchdb'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { getPouchSecret } from '@databyss-org/services/session/clientStorage'
+import { CouchDb } from '@databyss-org/data/couchdb-client/couchdb'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
@@ -12,7 +13,6 @@ import {
   NetworkUnavailableError,
 } from '../interfaces/Errors'
 import { dbRef, REMOTE_CLOUDANT_URL } from '../../databyss-data/pouchdb/db'
-import { CouchDb } from '@databyss-org/data/couchdb-client/couchdb'
 
 const INTERVAL_TIME = 5000
 const MAX_RETRIES = 5

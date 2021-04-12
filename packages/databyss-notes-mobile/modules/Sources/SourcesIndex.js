@@ -6,10 +6,8 @@ import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
-import {
-  AuthorsLoader,
-  SourceCitationsLoader,
-} from '@databyss-org/ui/components/Loaders'
+import { LoadingFallback } from '@databyss-org/ui/components'
+import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
 import {
   TabbedContent,
   TabHeight,
@@ -24,8 +22,6 @@ import SourcesTabItems from '../../constants/SourcesTabItems'
 import AuthorDetails from './AuthorDetails'
 
 import SourcesMetadata from './SourcesMetadata'
-import { LoadingFallback } from '@databyss-org/ui/components'
-import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
 
 const getAuthorName = (value) => {
   const firstName = value.firstName?.textValue

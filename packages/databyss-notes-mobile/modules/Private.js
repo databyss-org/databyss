@@ -4,7 +4,7 @@ import {
   Router,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { QueryClientProvider, QueryClient } from 'react-query'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { getDefaultGroup } from '@databyss-org/services/session/clientStorage'
 import { View } from '@databyss-org/ui/primitives'
 import { EditorPageProvider } from '@databyss-org/services'
 import NavBar from '../components/NavBar'
@@ -18,7 +18,6 @@ import AuthorDetails from './Sources/AuthorDetails'
 import TopicsIndex from './Topics/TopicsIndex'
 import TopicDetails from './Topics/TopicDetails'
 import ConfigIndex from './Config/ConfigIndex'
-import { getDefaultGroup } from '@databyss-org/services/session/clientStorage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -84,7 +83,7 @@ const Private = () => {
 
             <RouterGroup path="topics">
               <TopicsIndex path="/" />
-              <TopicDetails path="/:topicId" />
+              <TopicDetails path="/:blockId" />
             </RouterGroup>
 
             <RouterGroup path="config">
