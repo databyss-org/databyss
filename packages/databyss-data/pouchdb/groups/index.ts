@@ -238,7 +238,7 @@ const upsertReplication = ({
   }
 
   // upsert replication
-  dbRef.current!.replicate.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
+  dbRef.current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
     ...opts,
     // do not replciate design docs or documents that dont include the page
     filter: (doc) => {

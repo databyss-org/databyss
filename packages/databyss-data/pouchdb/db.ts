@@ -40,7 +40,7 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 
 interface DbRef {
-  current: Partial<PouchDB.Database<any>> | null
+  current: CouchDb | Partial<PouchDB.Database<any>> | null
 }
 
 declare global {
@@ -190,8 +190,8 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
     }
     dbRef.current = getPouchDb(groupId)
 
-    dbRef.current.replicate
-      .from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
+    dbRef.current?.replicate
+      ?.from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
         ...opts,
       })
       .on('complete', () => {
