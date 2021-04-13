@@ -104,7 +104,7 @@ export const tagButtonClick = async (tag, driver) => {
       await _clickAction(count + 1)
     }
   }
-  _clickAction()
+  return _clickAction()
 }
 
 export const tagButtonListClick = async (tag, index, driver) => {
