@@ -40,7 +40,7 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 
 interface DbRef {
-  current: CouchDb | Partial<PouchDB.Database<any>> | null
+  current: PouchDB.Database<any> | null
 }
 
 declare global {
@@ -57,7 +57,8 @@ export const getPouchDb = (groupId: string) => {
     if (!couchDbRef.current) {
       connect(groupId)
     }
-    return couchDbRef.current
+    const _unknown = couchDbRef.current as unknown
+    return _unknown as PouchDB.Database
   }
   return new PouchDB(groupId, {
     auto_compaction: true,
