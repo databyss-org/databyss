@@ -31,6 +31,7 @@ const PageBody = ({
 
   const { location } = useNavigationContext()
   const clearBlockDict = useEditorPageContext((c) => c.clearBlockDict)
+  const sharedWithGroups = useEditorPageContext((c) => c.sharedWithGroups)
   const setPatches = useEditorPageContext((c) => c.setPatches)
 
   useEffect(() => () => clearBlockDict(), [])
@@ -99,6 +100,7 @@ const PageBody = ({
               active={false}
               editorRef={editorRef}
               readonly={isReadOnly}
+              sharedWithGroups={sharedWithGroups}
             />
           </EditorProvider>
         </HistoryProvider>

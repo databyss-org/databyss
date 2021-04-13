@@ -146,6 +146,8 @@ export const PageDropzone = ({
           accepts: 'PAGE',
           onDrop,
         }}
+        horizontalItemPadding="em"
+        verticalItemPadding="small"
         py="small"
       >
         {_inTestEnv ? _pagesList : null}
@@ -159,7 +161,7 @@ export const PageDropzone = ({
                 isActive
                 icon={<PageSvg />}
                 hoverColor="control.1"
-                p="em"
+                // p="em"
               >
                 <BaseControl
                   onPress={() => onRemove(page._id)}

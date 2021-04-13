@@ -1,5 +1,11 @@
 import React, { createContext, ReactNode, useContext } from 'react'
-import { Dialog, Button, Text, View } from '@databyss-org/ui/primitives'
+import {
+  Dialog,
+  Button,
+  Text,
+  View,
+  RawHtml,
+} from '@databyss-org/ui/primitives'
 import {
   NotAuthorizedError,
   NetworkUnavailableError,
@@ -32,6 +38,7 @@ export interface DialogOptions {
   showConfirmButtons?: boolean
   showCancelButton?: boolean
   dolphins?: boolean
+  nude?: boolean
 }
 
 export interface StickyOptions {
@@ -44,6 +51,7 @@ interface NotifyProviderState {
   sticky: StickyOptions
   isOnline: boolean
   hasError: boolean
+  hideApplication: boolean
 }
 
 interface ContextType {
@@ -54,6 +62,8 @@ interface ContextType {
   notifyConfirm: (options: DialogOptions) => void
   hideDialog: () => void
   hideSticky: () => void
+  hideApplication: () => void
+  showApplication: () => void
   isOnline: boolean
 }
 
@@ -93,6 +103,7 @@ const initialDialogState: DialogOptions = {
   html: false,
   buttons: null,
   showConfirmButtons: true,
+  nude: false,
 }
 const initialStickyState: StickyOptions = {
   visible: false,
@@ -134,6 +145,7 @@ class NotifyProvider extends React.Component {
     sticky: initialStickyState,
     isOnline: true,
     hasError: false,
+    hideApplication: false,
   }
 
   static getDerivedStateFromError() {
@@ -359,6 +371,26 @@ class NotifyProvider extends React.Component {
     })
   }
 
+  hideApplication = () => {
+    if (process.env.NODE_ENV === 'test' || process.env.STORYBOOK) {
+      return
+    }
+    ;(window as any).startdatabyss()
+    this.setState({
+      hideApplication: true,
+    })
+  }
+
+  showApplication = () => {
+    if (process.env.NODE_ENV === 'test' || process.env.STORYBOOK) {
+      return
+    }
+    ;(window as any).stopdatabyss()
+    this.setState({
+      hideApplication: false,
+    })
+  }
+
   render() {
     const { dialog, sticky, isOnline } = this.state
     const errorConfirmButtons = [
@@ -386,6 +418,8 @@ class NotifyProvider extends React.Component {
           notifyConfirm: this.notifyConfirm,
           hideDialog: this.hideDialog,
           hideSticky: this.hideSticky,
+          showApplication: this.showApplication,
+          hideApplication: this.hideApplication,
           isOnline,
         }}
       >
@@ -394,14 +428,41 @@ class NotifyProvider extends React.Component {
             {sticky.children}
           </View>
         </StickyMessage>
-        {!this.state.hasError && this.props.children}
+        <View
+          width="100%"
+          overflow="hidden"
+          flexShrink={1}
+          flexGrow={1}
+          backgroundColor="background.1"
+          opacity={this.state.hideApplication ? 0 : 1}
+          css={{
+            transition: 'opacity 200ms ease',
+          }}
+        >
+          {!this.state.hasError && this.props.children}
+        </View>
+        {dialog.visible && dialog.nude && (
+          <View position="absolute" bottom="extraLarge">
+            {dialog.html ? (
+              <RawHtml
+                color="gray.4"
+                variant="uiTextLargeSemibold"
+                html={dialog.message!}
+              />
+            ) : (
+              <Text color="gray.4" variant="uiTextLargeSemibold">
+                {dialog.message}
+              </Text>
+            )}
+          </View>
+        )}
         <Dialog
           showConfirmButtons={dialog.showConfirmButtons}
           confirmButtons={
             this.state.hasError ? errorConfirmButtons : dialog.buttons || []
           }
           onConfirm={() => this.hideDialog()}
-          visible={dialog.visible}
+          visible={dialog.visible && !dialog.nude}
           message={dialog.message}
           html={dialog.html}
           dolphins={dialog.dolphins}

@@ -160,8 +160,8 @@ export function getPouchSecret() {
   return JSON.parse(localStorage.getItem('pouch_secrets'))
 }
 
-export function localStorageHasPublicSession() {
-  return getGroupSession()
+export function localStorageHasPublicSession(maxRetries = 0) {
+  return getGroupSession(maxRetries)
 }
 
 export async function localStorageHasSession() {

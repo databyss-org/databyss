@@ -11,8 +11,6 @@ export const SidebarListRow = ({
   ...others
 }) => (
   <View
-    py="small"
-    px="em"
     width="100%"
     flexDirection="row"
     alignItems="center"
@@ -22,7 +20,7 @@ export const SidebarListRow = ({
     <View flexDirection="row" flexWrap="nowrap" maxWidth="100%" flexShrink={1}>
       <Icon
         sizeVariant="tiny"
-        color={isActive ? 'text.1' : 'text.3'}
+        color={others.iconColor ?? (isActive ? 'text.1' : 'text.3')}
         mt={pxUnits(2)}
         mr="small"
       >
@@ -51,6 +49,7 @@ const SidebarListItem = ({
   navigationItemRef,
   navigationItemHandle,
   draggable,
+  ...others
 }) => {
   const _controlHandle = useRef()
   useImperativeHandle(navigationItemHandle, () => ({
@@ -73,7 +72,7 @@ const SidebarListItem = ({
       handle={_controlHandle}
       draggable={draggable}
     >
-      <SidebarListRow isActive={isActive} icon={icon} text={text}>
+      <SidebarListRow isActive={isActive} icon={icon} text={text} {...others}>
         {children}
       </SidebarListRow>
     </BaseControl>

@@ -171,6 +171,7 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
   new Promise<boolean>((resolve, reject) => {
     const opts = {
       retry: true,
+      batch_size: 1000,
     }
     dbRef.current = getPouchDb(groupId)
 
@@ -179,6 +180,7 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
         ...opts,
       })
       .on('complete', () => {
+        // console.log('[replicatePublicGroup] complete')
         const _opts = {
           ...opts,
           live: true,
@@ -189,6 +191,9 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
           .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
             ..._opts,
           })
+          .on('paused', () => {
+            resolve(true)
+          })
           .on('error', () => {
             setTimeout(() => {
               // first reset DB then reload
@@ -197,7 +202,6 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
               })
             }, 1000)
           })
-        resolve(true)
       })
       .on('error', (err) => {
         reject(err)
@@ -235,16 +239,17 @@ export const replicateDbFromRemote = ({
     if (!_cred) {
       reject()
     }
-
     const opts = {
       // live: true,
       retry: true,
       // continuous: true,
+      batch_size: 1000,
       auth: {
         username: _cred.dbKey,
         password: _cred.dbPassword,
       },
     }
+    // console.log('[replicateDbFromRemote]', opts)
     dbRef.current = getPouchDb(groupId)
 
     checkNetwork().then((isOnline) => {
@@ -279,6 +284,7 @@ export const syncPouchDb = ({
     live: true,
     retry: true,
     continuous: true,
+    batch_size: 1000,
     auth: {
       username: _cred.dbKey,
       password: _cred.dbPassword,

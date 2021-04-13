@@ -517,10 +517,11 @@ class MongoToCloudant extends ServerProcess {
           _id: _sharedGroupName,
           pages: [_sharedPageId],
           public: true,
+          sharedWithGroups: [_sharedGroupName],
           ...getDocFields({}),
         }
         await _groupDb.insert(_groupDoc)
-        // await _sharedGroupDb.insert(_groupDoc)
+        await _sharedGroupDb.insert(_groupDoc)
       }
       this.logSuccess(
         `Migrated Dependencies for ${

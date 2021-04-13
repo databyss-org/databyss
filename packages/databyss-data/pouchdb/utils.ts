@@ -1,11 +1,7 @@
 import PouchDB from 'pouchdb'
 import EventEmitter from 'es-event-emitter'
+import { Document, Group } from '@databyss-org/services/interfaces'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
-import {
-  Document,
-  Group,
-  ResourceNotFoundError,
-} from '@databyss-org/services/interfaces'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
@@ -42,6 +38,7 @@ export const upsert = async ({
   _id: string
   doc: any
 }) => {
+  // console.log('[upsert]', doc)
   upQdict.current.push({ ...doc, _id, doctype })
 }
 
@@ -109,21 +106,24 @@ export const getDocument = async <T extends Document>(
 /**
  * Get several documents at once
  * @param ids array of document ids to get
- * @returns dictionary of { docId => doc }
- * @throws ResourceNotFoundError if one or more docs is missing
+ * @returns dictionary of { docId => null | doc } (null if doc not found)
  */
 export const getDocuments = async <D>(
   ids: string[]
 ): Promise<{ [docId: string]: D | null }> => {
+  if (!ids.length) {
+    return {}
+  }
   const _options = { docs: ids.map((id) => ({ id })) }
   const _res = await dbRef.current?.bulkGet(_options)
   return _res!.results.reduce((accum, curr) => {
     const _doc: any = curr.docs[0]
     if (_doc.error) {
-      if (_doc.error.name === 'not_found') {
-        throw new ResourceNotFoundError(`_bulk_get docId ${curr.id} not found`)
+      console.warn('[getDocuments] error', _doc.error)
+      if (_doc.error.error !== 'not_found') {
+        throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error.error}`)
       }
-      throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error}`)
+      accum[curr.id] = null
     }
     accum[curr.id] = _doc.ok
     return accum
@@ -156,23 +156,41 @@ export const getUserSession = async (): Promise<UserPreference | null> => {
   return response
 }
 
-export const getGroupSession = async (): Promise<Group | null> => {
-  if (!dbRef.current) {
-    return null
-  }
-  const _response = await dbRef.current!.find({
-    selector: {
-      doctype: 'GROUP',
-    },
+export const getGroupSession = async (
+  maxRetries: number = 0
+): Promise<Group | null> =>
+  new Promise((resolve, reject) => {
+    if (!dbRef.current) {
+      resolve(null)
+      return
+    }
+
+    const _getGroup = async (count = 0) => {
+      if (count > maxRetries) {
+        resolve(null)
+        return
+      }
+
+      // console.log('[getGroupSession] attempt', count + 1)
+
+      const _response = await dbRef.current!.find({
+        selector: {
+          doctype: 'GROUP',
+        },
+      })
+      if (_response.docs.length > 1) {
+        reject(new Error('multiple group docs'))
+        return
+      }
+      if (!_response.docs.length) {
+        setTimeout(() => _getGroup(count + 1), 3000)
+        return
+      }
+      resolve(_response.docs[0])
+    }
+
+    _getGroup()
   })
-  if (!_response.docs.length) {
-    console.error('group doc not found')
-  }
-  if (_response.docs.length > 1) {
-    console.warn('multiple group docs')
-  }
-  return _response.docs[0]
-}
 
 export const searchText = async (query) => {
   // calculate how strict we want the search to be
@@ -218,16 +236,27 @@ export const upsertImmediate = async ({
   doctype: DocumentType
   _id: string
   doc: any
-}) =>
-  dbRef.current!.upsert(_id, (oldDoc) => {
+}) => {
+  const { sharedWithGroups, ...docFields } = doc
+  return dbRef.current!.upsert(_id, (oldDoc) => {
+    const _groupSet = new Set(
+      (oldDoc?.sharedWithGroups ?? []).concat(sharedWithGroups ?? [])
+    )
     const _doc = {
       ...oldDoc,
-      ...addTimeStamp({ ...oldDoc, ...doc, doctype }),
+      ...addTimeStamp({ ...oldDoc, ...docFields, doctype }),
+      // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
+      sharedWithGroups:
+        doctype === DocumentType.Page
+          ? sharedWithGroups ?? oldDoc?.sharedWithGroups
+          : Array.from(_groupSet),
       belongsToGroup: getAccountFromLocation(),
     }
+    // console.log('[upsertImmediate] doc, set, _doc', doc, _groupSet, _doc)
     pouchDataValidation(_doc)
     return _doc
   })
+}
 
 export const upsertUserPreferences = async (
   cb: PouchDB.UpsertDiffCallback<Partial<UserPreference>>

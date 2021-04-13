@@ -17,6 +17,7 @@ import {
   PATCH,
   SET_PAGE_PUBLIC,
   CACHE_PUBLIC_PAGE,
+  CACHE_SHARED_WITH_GROUPS,
 } from './constants'
 import { resourceIsReady } from '../lib/util'
 
@@ -25,6 +26,7 @@ export const initialState: PageState = {
   headerCache: null,
   refDict: {},
   promiseDict: {},
+  sharedWithGroups: [],
 }
 
 export default produce((draft: Draft<PageState>, action: FSA) => {
@@ -100,6 +102,10 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
         const _resource: any = draft.cache[action.payload.id]
         _resource.publicAccountId = action.payload.accountId
       }
+      break
+    }
+    case CACHE_SHARED_WITH_GROUPS: {
+      draft.sharedWithGroups = action.payload.sharedWithGroups
       break
     }
   }

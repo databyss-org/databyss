@@ -54,6 +54,7 @@ export const PageReplicator = ({
     // set up page replication
     const opts = {
       live: true,
+      batch_size: 1000,
       retry: true,
       continuous: true,
       auth: {
