@@ -71,7 +71,7 @@ describe('page sharing', () => {
 
     const privatePageURL = await driver.getCurrentUrl()
 
-    await tagButtonClick('data-test-element="new-page-button', driver)
+    await tagButtonClick('data-test-element="new-page-button"', driver)
 
     // If a page has been copied and is public, anyone can view it
 

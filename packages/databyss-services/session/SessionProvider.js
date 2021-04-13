@@ -2,6 +2,7 @@ import React, { useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 // import { debounce } from 'lodash'
 import Login from '@databyss-org/ui/modules/Login/Login'
+import { useNavigationContext } from '@databyss-org/ui'
 import {
   replicateDbFromRemote,
   syncPouchDb,
@@ -46,6 +47,7 @@ const SessionProvider = ({
     name: 'SessionProvider',
   })
   const { session: actions } = useServiceContext()
+  const { navigate } = useNavigationContext()
   const { notify } = useNotifyContext()
 
   const isPublicAccount = useCallback(() => {
@@ -170,9 +172,9 @@ const SessionProvider = ({
         // if user has a default groupId in local storage, change url and retry session _init
         const _hasDefaultGroup = getDefaultGroup()
         if (_hasDefaultGroup && !_hasRetriedSession) {
-          window.location.href = '/'
           _hasRetriedSession = true
-          _init()
+          window.setTimeout(() => _init(), 100)
+          navigate(`/`, { hasAccount: true })
         } else {
           // pass 1: get session from API
           getSession({ retry: true, code, email })
