@@ -2,6 +2,7 @@ import React, { ReactNode, useEffect, useRef } from 'react'
 import PouchDB from 'pouchdb'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { getPouchSecret } from '@databyss-org/services/session/clientStorage'
+import { CouchDb } from '@databyss-org/data/couchdb-client/couchdb'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
@@ -44,6 +45,9 @@ export const PageReplicator = ({
     dbKey: string
     dbPassword: string
   }) => {
+    if (dbRef.current instanceof CouchDb) {
+      return
+    }
     sessionDispatch({
       type: 'DB_BUSY',
       payload: {

@@ -1,17 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useBlockRelations, useBlocks } from '@databyss-org/data/pouchdb/hooks'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
+import { BlockType } from '@databyss-org/services/interfaces'
+import { LoadingFallback } from '@databyss-org/ui/components'
 import { ScrollView } from '@databyss-org/ui/primitives'
-import { PageProvider } from '@databyss-org/services'
-import EntryProvider from '@databyss-org/services/entries/EntryProvider'
-import IndexSourceContent from '@databyss-org/ui/components/SourcesContent/IndexSourceContent'
-import TopicProvider from '@databyss-org/services/topics/TopicProvider'
-import {
-  BlockRelationsLoader,
-  PagesLoader,
-  TopicLoader,
-} from '@databyss-org/ui/components/Loaders'
-import { MobileView } from '../Mobile'
+import { IndexPageContent } from '@databyss-org/ui/modules'
 import { getScrollViewMaxHeight } from '../../utils/getScrollViewMaxHeight'
+import { MobileView } from '../Mobile'
+// import { getScrollViewMaxHeight } from '../../utils/getScrollViewMaxHeight'
 
 import TopicsMetadata from './TopicsMetadata'
 
@@ -27,39 +23,33 @@ const buildHeaderItems = (title, id) => [
 const TopicDetails = () => {
   const { topicId } = useParams()
 
-  const [pageTitle, setPageTitle] = useState('Loading...')
+  const blockRelationRes = useBlockRelations(BlockType.Source)
+  const sourcesRes = useBlocks(BlockType.Source)
+  const queryRes = [blockRelationRes, sourcesRes]
+
+  let pageTitle = 'Loading...'
+
+  if (queryRes.some((q) => !q.isSuccess)) {
+    return <LoadingFallback queryObserver={queryRes} />
+  }
+
+  pageTitle = sourcesRes.data[topicId]?.text.textValue
 
   // render methods
   const renderTopicDetails = () => (
-    <ScrollView maxHeight={getScrollViewMaxHeight()} pr="medium" py="large">
-      <PageProvider>
-        <PagesLoader>
-          {() => (
-            <EntryProvider>
-              <BlockRelationsLoader atomicId={topicId}>
-                {(relations) => <IndexSourceContent relations={relations} />}
-              </BlockRelationsLoader>
-            </EntryProvider>
-          )}
-        </PagesLoader>
-      </PageProvider>
+    <ScrollView maxHeight={getScrollViewMaxHeight()}>
+      <IndexPageContent blockType="TOPIC" />
     </ScrollView>
   )
 
   const render = () => (
     <MobileView headerItems={buildHeaderItems(pageTitle, topicId)}>
-      <TopicProvider>
-        <TopicLoader topicId={topicId}>
-          {(topic) => {
-            setPageTitle(topic.text.textValue)
-            return renderTopicDetails()
-          }}
-        </TopicLoader>
-      </TopicProvider>
+      {renderTopicDetails()}
     </MobileView>
   )
 
   return render()
+  // return <div>topics detail section</div>
 }
 
 export default TopicDetails

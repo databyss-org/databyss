@@ -24,8 +24,8 @@ export const useDocument = <T extends Document>(
     queryKey,
     () =>
       new Promise<T>((resolve, reject) => {
-        dbRef.current
-          ?.get(_id)
+        dbRef
+          .current!.get(_id)
           .then((res) => resolve(res))
           .catch((err) => reject(err))
       }),
@@ -42,7 +42,7 @@ export const useDocument = <T extends Document>(
     if (subscriptionDict[_id]) {
       return
     }
-    subscriptionDict[_id] = dbRef.current
+    subscriptionDict[_id] = dbRef!.current
       ?.changes({
         since: 'now',
         live: true,
