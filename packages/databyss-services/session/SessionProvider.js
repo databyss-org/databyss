@@ -47,7 +47,7 @@ const SessionProvider = ({
     name: 'SessionProvider',
   })
   const { session: actions } = useServiceContext()
-  const { navigate } = useNavigationContext()
+  const navigateContext = useNavigationContext()
   const { notify } = useNotifyContext()
 
   const isPublicAccount = useCallback(() => {
@@ -171,9 +171,10 @@ const SessionProvider = ({
       } else {
         // if user has a default groupId in local storage, change url and retry session _init
         const _hasDefaultGroup = getDefaultGroup()
-        if (_hasDefaultGroup && !_hasRetriedSession) {
+        if (_hasDefaultGroup && !_hasRetriedSession && !process.env.STORYBOOK) {
           _hasRetriedSession = true
           window.setTimeout(() => _init(), 100)
+          const { navigate } = navigateContext
           navigate(`/`, { hasAccount: true })
         } else {
           // pass 1: get session from API
