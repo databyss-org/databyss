@@ -257,7 +257,11 @@ export const hasUnathenticatedAccess = (maxRetries = 5) =>
     }
     const _checkAccess = async (count = 0) => {
       // console.log('[hasUnauthenticatedAccess] checkAccess attempt', count + 1)
-      if (count >= maxRetries) {
+      if (
+        process.env.NODE_ENV === 'test' ||
+        process.env.STORYBOOK ||
+        count >= maxRetries
+      ) {
         resolve(false)
         return
       }

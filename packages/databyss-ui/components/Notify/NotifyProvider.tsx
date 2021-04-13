@@ -372,6 +372,9 @@ class NotifyProvider extends React.Component {
   }
 
   hideApplication = () => {
+    if (process.env.NODE_ENV === 'test' || process.env.STORYBOOK) {
+      return
+    }
     ;(window as any).startdatabyss()
     this.setState({
       hideApplication: true,
@@ -379,6 +382,9 @@ class NotifyProvider extends React.Component {
   }
 
   showApplication = () => {
+    if (process.env.NODE_ENV === 'test' || process.env.STORYBOOK) {
+      return
+    }
     ;(window as any).stopdatabyss()
     this.setState({
       hideApplication: false,
