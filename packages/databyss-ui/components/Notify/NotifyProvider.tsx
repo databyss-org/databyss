@@ -429,8 +429,6 @@ class NotifyProvider extends React.Component {
           </View>
         </StickyMessage>
         <View
-          flexDirection="row"
-          display="flex"
           width="100%"
           overflow="hidden"
           flexShrink={1}
