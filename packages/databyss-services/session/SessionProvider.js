@@ -17,6 +17,7 @@ import { useServiceContext } from '../'
 import {
   localStorageHasSession,
   localStorageHasPublicSession,
+  getDefaultGroup,
 } from './clientStorage'
 import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
 import { replicateGroup, hasUnathenticatedAccess } from './actions'
@@ -100,6 +101,7 @@ const SessionProvider = ({
   }, [state.session])
 
   useEffect(() => {
+    let _hasRetriedSession = false
     const _init = async () => {
       const _sesionFromLocalStorage = await localStorageHasSession()
 
@@ -140,8 +142,11 @@ const SessionProvider = ({
         // start replication on public group
         await replicateGroup(_publicSession.belongsToGroup)
       } else {
+        console.log('IN ELSE', _publicSession)
         // try to get public access
         const unauthenticatedGroupId = await hasUnathenticatedAccess()
+        console.log('IN ELSE', unauthenticatedGroupId)
+
         if (unauthenticatedGroupId) {
           await replicateGroup(unauthenticatedGroupId)
           _publicSession = await localStorageHasPublicSession()
@@ -162,8 +167,16 @@ const SessionProvider = ({
           },
         })
       } else {
-        // pass 1: get session from API
-        getSession({ retry: true, code, email })
+        // if user has a default groupId in local storage, change url and retry session _init
+        const _hasDefaultGroup = getDefaultGroup()
+        if (_hasDefaultGroup && !_hasRetriedSession) {
+          window.location.href = '/'
+          _hasRetriedSession = true
+          _init()
+        } else {
+          // pass 1: get session from API
+          getSession({ retry: true, code, email })
+        }
       }
     }
 

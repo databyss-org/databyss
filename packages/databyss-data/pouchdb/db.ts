@@ -156,7 +156,6 @@ export const initiatePouchDbIndexes = async () => {
 }
 
 export const resetPouchDb = async () => {
-  // console.log(dbRef.current.name)
   if (dbRef.current) {
     await (dbRef.current as PouchDB.Database).destroy()
   }
@@ -191,7 +190,6 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
             ..._opts,
           })
           .on('error', () => {
-            // user has turned off sharing
             setTimeout(() => {
               // first reset DB then reload
               resetPouchDb().then(() => {
