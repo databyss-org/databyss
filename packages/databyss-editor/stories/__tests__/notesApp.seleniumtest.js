@@ -12,6 +12,8 @@ import {
   enterKey,
   backspaceKey,
   logout,
+  tagButtonClick,
+  tagButtonListClick,
 } from './_helpers.selenium'
 
 let driver
@@ -32,21 +34,12 @@ describe('notes app', () => {
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
-    let continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
 
-    continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     editor = await getEditor(driver)
     actions = driver.actions()
@@ -61,18 +54,10 @@ describe('notes app', () => {
 
   it('should switch page names and verify atomics appear on the sidebar', async () => {
     // click on topics sidebar
-    const topicSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="topics"]'
-    )
+    await tagButtonClick('data-test-sidebar-element="topics"', driver)
 
-    await topicSidebarButton.click()
+    await tagButtonClick('data-test-element="page-header"', driver)
 
-    let headerField = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await headerField.click()
     await sendKeys(actions, 'First Test Page Title')
     await enterKey(actions)
 
@@ -86,6 +71,7 @@ describe('notes app', () => {
     await isAppInNotesSaved(driver)
 
     // verify that the topic sidebar has the new topic
+
     const sidebarTopic = await getElementsByTag(
       driver,
       '[data-test-element="page-sidebar-item"]'
@@ -96,41 +82,24 @@ describe('notes app', () => {
     assert.equal(sidebar.trim(), 'this is a new topic')
 
     // click on the topic in sidebar
-    await sidebarTopic[0].click()
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
+
     await sleep(1000)
 
     // get all search page results
-    const searchPageResultsTitle = await getElementsByTag(
-      driver,
-      '[data-test-element="atomic-results"]'
-    )
+    await tagButtonListClick('data-test-element="atomic-results"', 0, driver)
 
-    await searchPageResultsTitle[0].click()
     await getEditor(driver)
 
     // add second page
-    const newPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="new-page-button"]'
-    )
-
-    await newPageButton.click()
+    await tagButtonClick('data-test-element="new-page-button"', driver)
 
     // wait for editor to be visible
     await getEditor(driver)
 
-    const sourcesSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="sources"]'
-    )
+    await tagButtonClick('data-test-sidebar-element="sources"', driver)
 
-    await sourcesSidebarButton.click()
-
-    headerField = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await headerField.click()
+    await tagButtonClick('data-test-element="page-header"', driver)
 
     await sendKeys(actions, 'Second page title')
     await enterKey(actions)
@@ -139,18 +108,9 @@ describe('notes app', () => {
     await sendKeys(actions, '@Murray Bookchin')
     await isAppInNotesSaved(driver)
 
-    const googleApi = await getElementByTag(
-      driver,
-      '[data-test-block-menu="GOOGLE_BOOKS"]'
-    )
-    await googleApi.click()
+    await tagButtonClick('data-test-block-menu="GOOGLE_BOOKS"', driver)
 
-    const firstResult = await getElementsByTag(
-      driver,
-      '[data-test-catalog="GOOGLE_BOOKS"]'
-    )
-
-    await firstResult[0].click()
+    await tagButtonListClick('data-test-catalog="GOOGLE_BOOKS"', 0, driver)
 
     await isAppInNotesSaved(driver)
     await sleep(3000)
@@ -182,25 +142,15 @@ describe('notes app', () => {
     await sendKeys(actions, 'Editor test two')
 
     // click on sidebar for pages menu
+    await tagButtonClick('data-test-sidebar-element="pages"', driver)
 
-    const pagesSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="pages"]'
-    )
-
-    await pagesSidebarButton.click()
     await sleep(500)
 
-    const firstPageButton = await getElementsByTag(
-      driver,
-      '[data-test-element="page-sidebar-item"]'
-    )
-
-    await firstPageButton[0].click()
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
 
     await getEditor(driver)
 
-    headerField = await getElementByTag(
+    let headerField = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
     )
@@ -210,12 +160,7 @@ describe('notes app', () => {
     assert.equal(headerField.trim(), 'First Test Page Title')
 
     // Second page integrity test
-    const secondPageButton = await getElementsByTag(
-      driver,
-      '[data-test-element="page-sidebar-item"]'
-    )
-
-    await secondPageButton[1].click()
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 1, driver)
 
     headerField = await getElementByTag(
       driver,
