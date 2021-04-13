@@ -146,7 +146,7 @@ const SessionProvider = ({
         const unauthenticatedGroupId = await hasUnathenticatedAccess()
         if (unauthenticatedGroupId) {
           await replicateGroup(unauthenticatedGroupId)
-          _publicSession = await localStorageHasPublicSession()
+          _publicSession = await localStorageHasPublicSession(3)
         }
       }
       if (_publicSession) {
@@ -191,7 +191,16 @@ const SessionProvider = ({
       signupFlow: signUp,
     })
   } else if (isPending) {
-    _children = <Loading />
+    _children = (
+      <Loading
+        showLongWaitMessage
+        splashOnLongWait
+        longWaitDialogOptions={{
+          nude: true,
+          message: 'Loading Databyss collection...',
+        }}
+      />
+    )
   }
 
   const logout = () => {

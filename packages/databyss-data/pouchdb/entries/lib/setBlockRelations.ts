@@ -5,7 +5,7 @@ import { DocumentType, PageDoc } from '../../interfaces'
 import {
   removeGroupsFromDocument,
   addGroupToDocument,
-  addGroupToDocumentsFromPage,
+  addGroupToDocumentsInPage,
 } from '../../groups/index'
 
 const setBlockRelations = async (payload: {
@@ -96,7 +96,7 @@ const setBlockRelations = async (payload: {
   // update blocks in page, allow time for page to be updated
   if (operationType === BlockRelationOperation.ADD && _pageRes) {
     setTimeout(() => {
-      addGroupToDocumentsFromPage(_pageRes)
+      addGroupToDocumentsInPage(_pageRes)
     }, 3000)
   }
 }

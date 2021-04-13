@@ -13,6 +13,7 @@ import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
+import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 
 import { useEditorContext } from '../../state/EditorProvider'
 
@@ -42,6 +43,7 @@ const SuggestSources = ({
 }) => {
   const sourcesRes = useBlocksInPages(BlockType.Source)
   const { replace } = useEditorContext()
+  const sharedWithGroups = useEditorPageContext((c) => c && c.sharedWithGroups)
   const [suggestions, setSuggestsions] = useState()
   const { isOnline } = useNotifyContext() || { isOnline: false }
 
@@ -53,7 +55,7 @@ const SuggestSources = ({
   const onSourceSelected = (source) => {
     if (!source._id) {
       source._id = uid()
-      setSource(formatSource(source))
+      setSource({ ...formatSource(source), sharedWithGroups })
     }
 
     replace([source])

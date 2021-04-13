@@ -14,6 +14,7 @@ import {
   paste,
   selectAll,
   backspaceKey,
+  tagButtonClick,
 } from './_helpers.selenium'
 
 let driver
@@ -154,11 +155,12 @@ describe('page sharing', () => {
 
     await accountDropdown.click()
     await sleep(1000)
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-    await logoutButton.click()
+    // const logoutButton = await getElementByTag(
+    //   driver,
+    //   '[data-test-block-menu="logout"]'
+    // )
+    // await logoutButton.click()
+    await tagButtonClick('data-test-block-menu="logout"', driver)
 
     // wait till login screen renders
     await getElementByTag(driver, '[data-test-path="email"]')

@@ -16,7 +16,6 @@ import {
   ResourceNotFoundError,
 } from '../interfaces'
 import { PageReplicator } from './PageReplicator'
-import { pageDependencyObserver } from './pageDependencyObserver'
 import * as actions from './actions'
 
 interface PropsType {
@@ -45,7 +44,9 @@ interface ContextType {
   archivePage: (id: string, boolean: boolean) => Promise<void>
   onPageCached: (id: string, callback: Function) => void
   removePageFromCache: (id: string) => void
+  sharedWithGroups?: string[]
 }
+
 const useReducer = createReducer()
 export const EditorPageContext = createContext<ContextType>(null!)
 
@@ -54,6 +55,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   initialState = _initState,
 }: PropsType) => {
   const refDictRef = useRef<RefDict>({})
+  const sharedWithGroupsRef = useRef<string[] | null>(null)
   const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
   const pagesRes = usePages()
 
@@ -65,10 +67,17 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  //  initiate page listener
+  // instead of pageDependencyObserver, keep a reference to the `sharedWithGroups`
+  //   for the page and use this value whenever a new block (or topic or source) is created
   useEffect(() => {
-    pageDependencyObserver()
-  }, [])
+    const _groups = (pagesRes.data?.[pageId] as any)?.sharedWithGroups
+    // console.log('[EditorPageProvider] sharedWithGroups changed', _groups)
+    sharedWithGroupsRef.current = _groups
+  }, [
+    JSON.stringify(
+      [...((pagesRes.data?.[pageId] as any)?.sharedWithGroups ?? [])].sort()
+    ),
+  ])
 
   useEffect(() => {
     if (pageCachedHookRef.current) {
@@ -150,11 +159,11 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     [state.cache]
   )
 
-  const setPatches = useCallback((patches: PatchBatch) => {
+  const setPatches = (patches: PatchBatch) => {
     if (patches) {
-      savePatchBatch(patches)
+      savePatchBatch(patches, sharedWithGroupsRef.current ?? [])
     }
-  }, [])
+  }
 
   const removePageFromCache = (id: string) => {
     dispatch(actions.removePageFromCache(id))
@@ -186,6 +195,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         setPagePublic,
         removePageFromCache,
         getPublicAccount,
+        sharedWithGroups: sharedWithGroupsRef.current ?? [],
       }}
     >
       <PageReplicator key={pageId} pageId={pageId}>

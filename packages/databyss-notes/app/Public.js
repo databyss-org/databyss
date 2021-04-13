@@ -4,10 +4,9 @@ import { Maintenance, Login } from '@databyss-org/ui/modules'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 
 const Public = (props) => (
-  <React.Fragment>
+  <View flexGrow={1} width="100%" alignItems="center">
     <Grid
       widthVariant="page"
-      backgroundColor="background.1"
       width="100%"
       top="0"
       paddingVariant="medium"
@@ -40,7 +39,7 @@ const Public = (props) => (
     ) : (
       <Login {...props} />
     )}
-  </React.Fragment>
+  </View>
 )
 
 export default Public

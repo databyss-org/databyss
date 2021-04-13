@@ -179,6 +179,11 @@ const Login = ({ pending, signupFlow, navLinks }) => {
                     showLongWaitMessage={
                       didSubmit?.code || didSubmit?.googleCode
                     }
+                    splashOnLongWait
+                    longWaitDialogOptions={{
+                      nude: true,
+                      message: 'Synchronizing your Databyss with the cloud...',
+                    }}
                   />
                 ) : (
                   `${signInOrSignUp} with ${

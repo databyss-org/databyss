@@ -221,9 +221,9 @@ export const getPagePath = (page: EditorState): PagePath => {
 
   return { path: _path, blockRelations: _blockRelations }
 }
-/*
-takes blocks array and returns all current block relations array
-*/
+/**
+ * takes blocks array and returns all current block relations array
+ */
 export const indexPage = ({
   pageId,
   blocks,
