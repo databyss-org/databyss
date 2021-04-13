@@ -26,6 +26,10 @@ interface LoadingFallbackProps extends ViewProps {
    * Text to show if more than @longWaitMs ms has elapsed
    */
   longWaitDialogOptions?: DialogOptions
+  /**
+   * During long wait, should we hide the application and show the splash screen?
+   */
+  splashOnLongWait?: boolean
 }
 
 export const LoadingFallback = ({
@@ -34,16 +38,25 @@ export const LoadingFallback = ({
   longWaitMs,
   showLongWaitMessage,
   longWaitDialogOptions,
+  splashOnLongWait,
   ...others
 }: LoadingFallbackProps) => {
-  const { notify, hideDialog } = useNotifyContext() ?? {}
+  const { notify, hideDialog, hideApplication, showApplication } =
+    useNotifyContext() ?? {}
   const timerRef = useRef<number | null>(null)
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'test' || !showLongWaitMessage) {
+    if (
+      process.env.NODE_ENV === 'test' ||
+      process.env.STORYBOOK ||
+      !showLongWaitMessage
+    ) {
       return () => null
     }
     timerRef.current = setTimeout(() => {
+      if (splashOnLongWait) {
+        hideApplication()
+      }
       notify({
         showConfirmButtons: false,
         ...longWaitDialogOptions,
@@ -51,6 +64,9 @@ export const LoadingFallback = ({
     }, longWaitMs)
     return () => {
       if (timerRef.current) {
+        if (splashOnLongWait) {
+          showApplication()
+        }
         hideDialog()
         clearTimeout(timerRef.current!)
       }

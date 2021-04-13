@@ -54,6 +54,7 @@ const ContentEditable = ({
   readonly,
   onNavigateUpFromTop,
   editorRef,
+  sharedWithGroups,
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
@@ -140,6 +141,7 @@ const ContentEditable = ({
               textValue: entity.text.textValue,
               ranges: entity.text.ranges,
             },
+            sharedWithGroups,
           }
         }
         const _types = {

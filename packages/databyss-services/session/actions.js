@@ -248,23 +248,34 @@ export const isGroupPublic = async () => {
   return false
 }
 
-export const hasUnathenticatedAccess = async () => {
-  const _isGroupPublic = await isGroupPublic()
-  if (_isGroupPublic) {
-    return _isGroupPublic
-  }
+export const hasUnathenticatedAccess = (maxRetries = 5) =>
+  new Promise((resolve, reject) => {
+    // if there's no group (account) in the URL, bail and resolve false
+    if (!getAccountFromLocation()) {
+      resolve(false)
+      return
+    }
+    const _checkAccess = async (count = 0) => {
+      // console.log('[hasUnauthenticatedAccess] checkAccess attempt', count + 1)
+      if (process.env.STORYBOOK || count >= maxRetries) {
+        resolve(false)
+        return
+      }
+      try {
+        const _groupId = (await isGroupPublic()) || (await isPagePublic())
+        if (_groupId) {
+          resolve(_groupId)
+          return
+        }
+        setTimeout(() => _checkAccess(count + 1), 3000)
+      } catch (err) {
+        reject(err)
+      }
+    }
+    _checkAccess()
+  })
 
-  const _isPagePublic = await isPagePublic()
-  if (_isPagePublic) {
-    return _isPagePublic
-  }
-
-  return false
-}
-
-export const replicateGroup = async (id) => {
-  // attempt group replication
-  await replicatePublicGroup({
+export const replicateGroup = (id) =>
+  replicatePublicGroup({
     groupId: id,
   })
-}

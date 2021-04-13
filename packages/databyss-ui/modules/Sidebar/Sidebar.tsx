@@ -58,6 +58,11 @@ export const Sidebar = () => {
                 transform={authorsToListItemData}
                 prependItems={[
                   {
+                    text: 'Sources',
+                    type: 'heading',
+                    route: '',
+                  },
+                  {
                     type: 'sources',
                     text: 'All sources',
                     route: '/sources',
@@ -65,7 +70,18 @@ export const Sidebar = () => {
                 ]}
               />
             )}
-            {menuItem === 'topics' && <BlockList blockType={BlockType.Topic} />}
+            {menuItem === 'topics' && (
+              <BlockList
+                blockType={BlockType.Topic}
+                prependItems={[
+                  {
+                    text: 'Topics',
+                    type: 'heading',
+                    route: '',
+                  },
+                ]}
+              />
+            )}
             {menuItem === 'archive' && <PageList archive />}
             {menuItem === 'groups' && <GroupList />}
             <Footer collapsed={false} />

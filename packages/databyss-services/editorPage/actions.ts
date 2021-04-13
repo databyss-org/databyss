@@ -12,6 +12,7 @@ import {
   REMOVE_PAGE_FROM_CACHE,
   SET_PAGE_PUBLIC,
   CACHE_PUBLIC_PAGE,
+  CACHE_SHARED_WITH_GROUPS,
 } from './constants'
 
 export function fetchPage(_id: string) {
@@ -132,5 +133,12 @@ export function setPagePublic(id: string, boolean: boolean, accountId: string) {
       type: CACHE_PUBLIC_PAGE,
       payload: { id, accountId: _res.accountId },
     })
+  }
+}
+
+export function cacheSharedWithGroups(sharedWithGroups: string[]) {
+  return {
+    type: CACHE_SHARED_WITH_GROUPS,
+    payload: { sharedWithGroups },
   }
 }

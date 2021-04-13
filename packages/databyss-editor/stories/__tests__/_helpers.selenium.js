@@ -86,26 +86,25 @@ export const getElementByTag = async (driver, tag) => {
 export const tagButtonClick = async (tag, driver) => {
   const actions = driver.actions({ async: true })
 
-  let count = 0
-  const clickAction = async () => {
+  const _clickAction = async (count = 0) => {
     if (count > MAX_RETRIES) {
       throw new Error('Stale Element')
     }
-    const element = await getElementByTag(driver, `[${tag}]`)
-    await actions.click(element).perform()
-    await actions.clear()
-    await sleep(SLEEP_TIME)
-  }
-  try {
-    await clickAction()
-  } catch (err) {
-    if (err.name !== 'StaleElementReferenceError') {
-      throw err
+    try {
+      const element = await getElementByTag(driver, `[${tag}]`)
+      await actions.click(element).perform()
+      await actions.clear()
+      await sleep(SLEEP_TIME)
+    } catch (err) {
+      if (err.name !== 'StaleElementReferenceError') {
+        throw err
+      }
+      console.log('Stale element, retrying')
+
+      await _clickAction(count + 1)
     }
-    console.log('Stale element, retrying')
-    count += 1
-    await clickAction()
   }
+  return _clickAction()
 }
 
 export const tagButtonListClick = async (tag, index, driver) => {

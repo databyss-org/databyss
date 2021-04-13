@@ -6,4 +6,5 @@ export interface PageState {
   headerCache: NullableCache<PageHeader>
   refDict: RefDict
   promiseDict: { [pageId: string]: PCancelable<Page> }
+  sharedWithGroups: string[]
 }
