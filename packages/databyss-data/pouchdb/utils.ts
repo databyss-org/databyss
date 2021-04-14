@@ -349,7 +349,8 @@ export const updateGroupPreferences = async (
   dbRef.current!.put(_groupDoc)
 }
 
-const isDbBusy = (isBusy: boolean, writesPending: number) => {
+const setDbBusy = (isBusy: boolean, writesPending: number) => {
+  // if `isBusy` is false, first check the two queues
   if (dbBusyDispatchRef.current) {
     dbBusyDispatchRef.current({
       type: 'DB_BUSY',
@@ -377,7 +378,7 @@ export class QueueProcessor extends EventEmitter {
 
     if (!this.isProcessing) {
       if (upQdict.current.length) {
-        isDbBusy(true, _queueLength)
+        setDbBusy(true, _queueLength)
 
         // do a coallece
         this.isProcessing = true
@@ -385,17 +386,18 @@ export class QueueProcessor extends EventEmitter {
         upQdict.current = []
         await bulkUpsert(_upQdict)
         this.isProcessing = false
+
         //  check  to see if theres any patches pending write
         const _pendingPatches = Object.keys(upQdict.current).length
         if (_pendingPatches) {
-          isDbBusy(true, _pendingPatches)
+          setDbBusy(true, _pendingPatches)
         } else {
-          isDbBusy(false, 0)
+          setDbBusy(false, 0)
         }
       }
     } else {
       // db is not pending any writes
-      isDbBusy(false, 0)
+      setDbBusy(false, 0)
     }
   }
 
