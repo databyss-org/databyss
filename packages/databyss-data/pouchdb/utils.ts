@@ -7,7 +7,7 @@ import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
 
-const INTERVAL_TIME = 3000
+const INTERVAL_TIME = 3500
 
 const dbBusyDispatchRef: { current: Function | null } = {
   current: null,
