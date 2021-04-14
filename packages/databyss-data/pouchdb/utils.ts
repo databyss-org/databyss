@@ -9,6 +9,14 @@ import { BlockType } from '../../databyss-services/interfaces/Block'
 
 const INTERVAL_TIME = 5000
 
+const dbBusyDispatchRef: { current: Function | null } = {
+  current: null,
+}
+
+export const setDbBusyDispatch = (dispatch: Function) => {
+  dbBusyDispatchRef.current = dispatch
+}
+
 export const addTimeStamp = (doc: any): any => {
   // if document has been created add a modifiedAt timestamp
   if (doc.createdAt) {
@@ -335,6 +343,18 @@ export const updateGroupPreferences = async (
   dbRef.current!.put(_groupDoc)
 }
 
+const isDbBusy = (isBusy: boolean, writesPending: number) => {
+  if (dbBusyDispatchRef.current) {
+    dbBusyDispatchRef.current({
+      type: 'DB_BUSY',
+      payload: {
+        isBusy,
+        writesPending,
+      },
+    })
+  }
+}
+
 export class QueueProcessor extends EventEmitter {
   // on(event: string, listener: Function): this
   // emit(event: string): void
@@ -347,15 +367,29 @@ export class QueueProcessor extends EventEmitter {
   }
 
   process = async () => {
+    const _queueLength = Object.keys(upQdict.current).length
+
     if (!this.isProcessing) {
       if (upQdict.current.length) {
+        isDbBusy(true, _queueLength)
+
         // do a coallece
         this.isProcessing = true
         const _upQdict = coallesceQ(upQdict.current)
         upQdict.current = []
         await bulkUpsert(_upQdict)
         this.isProcessing = false
+        //  check  to see if theres any patches pending write
+        const _pendingPatches = Object.keys(upQdict.current).length
+        if (_pendingPatches) {
+          isDbBusy(true, _pendingPatches)
+        } else {
+          isDbBusy(false, 0)
+        }
       }
+    } else {
+      // db is not pending any writes
+      isDbBusy(false, 0)
     }
   }
 

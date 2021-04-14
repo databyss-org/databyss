@@ -27,7 +27,7 @@ import tv4 from 'tv4'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { checkNetwork } from '@databyss-org/services/lib/request'
 import { DocumentType } from './interfaces'
-import { searchText } from './utils'
+import { searchText, setDbBusyDispatch } from './utils'
 import { processGroupActionQ } from './groups/utils'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
@@ -316,6 +316,9 @@ export const syncPouchDb = ({
             writesPending: 0,
           },
         })
+        // pass  the  session provider dispatch to the patch queue
+        setDbBusyDispatch(dispatch)
+
         // when replication has paused, sync group queues
         processGroupActionQ(dispatch)
       }

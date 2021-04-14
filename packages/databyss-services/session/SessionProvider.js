@@ -106,7 +106,6 @@ const SessionProvider = ({
     let _hasRetriedSession = false
     const _init = async () => {
       const _sesionFromLocalStorage = await localStorageHasSession()
-
       if (_sesionFromLocalStorage) {
         // 2nd pass: load session from local_storage
         // replicate from cloudant
