@@ -9,7 +9,7 @@ import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import { BackupDb } from './BackupDb'
 import { fileFriendlyDateTime } from '../../lib/ServerProcess'
 
-export class BackupInstance extends ServerProcess {
+export class Backup extends ServerProcess {
   constructor(argv: ServerProcessArgs) {
     super(argv, 'backup.instance')
   }
@@ -24,11 +24,11 @@ export class BackupInstance extends ServerProcess {
     this.logSuccess('Created output directory', outputPath)
     const _dbs = await cloudant.current.db.list()
     for (const _db of _dbs) {
-      this.logInfo('💾', _db)
       const _backup = new BackupDb({
-        dbName: _db,
-        file: `${outputPath}/${_db}.json`,
         ...this.args,
+        dbName: _db,
+        path: path.join(outputPath, `${_db}.json`),
+        spinner: this.spinner,
       })
       await _backup.run()
       await sleep(100)
@@ -38,16 +38,7 @@ export class BackupInstance extends ServerProcess {
 
 exports.command = 'instance [options]'
 exports.desc = 'Backup all dbs in a cloudant instance'
-exports.builder = (yargs: ServerProcessArgs) =>
-  yargs
-    .describe('path', 'Output path for db files')
-    .nargs('path', 1)
-    .demandOption('path')
-    .example(
-      '$0 --path ../backups/production',
-      'Backup instance to "../backups/production'
-    )
-    .example('$0', 'Stream backup of instance to stdout')
+exports.builder = {}
 exports.handler = (argv: ServerProcessArgs) => {
-  new BackupInstance(argv).runCli()
+  new Backup(argv).runCli()
 }

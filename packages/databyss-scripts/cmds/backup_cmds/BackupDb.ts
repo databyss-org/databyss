@@ -8,19 +8,19 @@ import {
 
 export class BackupDb extends ServerProcess {
   constructor(argv: ServerProcessArgs) {
-    super(argv, 'backup.single-database')
+    super(argv, 'backup.database')
   }
   run() {
     return new Promise((resolve, reject) => {
       backup(
         `${cloudantUrl(this.args.env)}/${this.args.dbName}`,
-        this.args.file ? fs.createWriteStream(this.args.file) : process.stdout,
+        fs.createWriteStream(this.args.path),
         { parallelism: 2 },
         (err, data) => {
           if (err) {
             reject(err)
           } else {
-            // this.log(data)
+            this.logSuccess(this.args.dbName)
             resolve(data)
           }
         }
@@ -29,18 +29,13 @@ export class BackupDb extends ServerProcess {
   }
 }
 
-exports.command = 'single-database <dbName> [options]'
+exports.command = 'database <dbName> [options]'
 exports.desc = 'Backup data from a single couch db'
 exports.builder = (yargs: ServerProcessArgs) =>
-  yargs
-    .describe('f', 'Output to a file')
-    .alias('f', 'file')
-    .nargs('f', 1)
-    .example(
-      '$0 users -f users.json',
-      'Backup "users" database to "users.json"'
-    )
-    .example('$0 users', 'Stream backup of "users" database to stdout')
+  yargs.example(
+    '$0 backup database g_8sozwot4jo1azq -f g_8sozwot4jo1azq.json',
+    'Backup `g_8sozwot4jo1azq` database to `g_8sozwot4jo1azq.json`'
+  )
 exports.handler = (argv: ServerProcessArgs) => {
   new BackupDb(argv).runCli()
 }
