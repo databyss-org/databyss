@@ -7,7 +7,7 @@ import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
 
-const INTERVAL_TIME = 3000
+const INTERVAL_TIME = 5000
 
 const dbBusyDispatchRef: { current: Function | null } = {
   current: null,
@@ -280,6 +280,12 @@ const bulkUpsert = async (upQdict: any) => {
       if (_docResponse?.ok) {
         const _oldDoc = _docResponse.ok
         _oldDocs[_oldDoc._id] = _oldDoc
+      } else {
+        // new document has been created
+        const _id = oldDocRes.id
+        if (_id && upQdict[_id]) {
+          _oldDocs[_id] = upQdict[_id]
+        }
       }
     })
   }
