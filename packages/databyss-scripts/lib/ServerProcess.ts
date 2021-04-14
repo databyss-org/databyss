@@ -100,7 +100,7 @@ class ServerProcess extends EventEmitter {
   }
   logError = (...msgs: any) => {
     const _msgs = msgs.map((_m) => (_m instanceof Error ? _m.stack : _m))
-    this.writeErrorLog(`${this._log(this._format(_msgs, '🟥'))}\n`)
+    this.writeErrorLog(`${this._log(...this._format(_msgs, '🟥'))}\n`)
   }
   logInfo = (...msgs: any) => {
     this.writeLog(`${this._log(...msgs)}\n`)
