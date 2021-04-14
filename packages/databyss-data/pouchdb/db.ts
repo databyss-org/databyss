@@ -2,7 +2,6 @@ import PouchDB from 'pouchdb'
 import PouchDBFind from 'pouchdb-find'
 import PouchDBUpsert from 'pouchdb-upsert'
 import PouchDbQuickSearch from 'pouchdb-quick-search'
-import _ from 'lodash'
 import PouchDBTransform from 'transform-pouch'
 import {
   sourceSchema,
@@ -38,8 +37,6 @@ PouchDB.plugin(PouchDBTransform)
 PouchDB.plugin(PouchDbQuickSearch)
 PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
-
-const DEBOUNCE_TIME = 5000
 
 interface DbRef {
   current: PouchDB.Database<any> | null
@@ -319,19 +316,8 @@ export const syncPouchDb = ({
             writesPending: 0,
           },
         })
-
-        _.debounce(
-          () => {
-            // when replication has paused, sync group queues
-            processGroupActionQ(dispatch)
-          },
-          // wait time
-          DEBOUNCE_TIME,
-          {
-            leading: false,
-            trailing: true,
-          }
-        )()
+        // when replication has paused, sync group queues
+        processGroupActionQ(dispatch)
       }
     })
   ;(dbRef.current as PouchDB.Database).replicate

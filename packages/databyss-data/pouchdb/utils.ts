@@ -7,6 +7,8 @@ import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
 
+const INTERVAL_TIME = 5000
+
 export const addTimeStamp = (doc: any): any => {
   // if document has been created add a modifiedAt timestamp
   if (doc.createdAt) {
@@ -38,7 +40,6 @@ export const upsert = async ({
   _id: string
   doc: any
 }) => {
-  // console.log('[upsert]', doc)
   upQdict.current.push({ ...doc, _id, doctype })
 }
 
@@ -171,8 +172,6 @@ export const getGroupSession = async (
         return
       }
 
-      // console.log('[getGroupSession] attempt', count + 1)
-
       const _response = await dbRef.current!.find({
         selector: {
           doctype: 'GROUP',
@@ -252,10 +251,60 @@ export const upsertImmediate = async ({
           : Array.from(_groupSet),
       belongsToGroup: getAccountFromLocation(),
     }
-    // console.log('[upsertImmediate] doc, set, _doc', doc, _groupSet, _doc)
+
     pouchDataValidation(_doc)
     return _doc
   })
+}
+
+// todo: use document type interface
+const bulkUpsert = async (upQdict: any) => {
+  // compose bulk get request
+  const _bulkGetQuery = { docs: Object.keys(upQdict).map((d) => ({ id: d })) }
+
+  const _res = await dbRef.current!.bulkGet(_bulkGetQuery)
+
+  const _oldDocs = {}
+  // build old document index
+  if (_res.results?.length) {
+    _res.results.forEach((oldDocRes) => {
+      const _docResponse = oldDocRes.docs?.[0] as any
+      if (_docResponse?.ok) {
+        const _oldDoc = _docResponse.ok
+        _oldDocs[_oldDoc._id] = _oldDoc
+      }
+    })
+  }
+
+  // compose updated documents to bulk upsert
+  const _docs: any = []
+
+  for (const _docId of Object.keys(upQdict)) {
+    const { _id, doctype, ...docFields } = upQdict[_docId]
+    const _oldDoc = _oldDocs[_id]
+    if (_oldDoc) {
+      const { sharedWithGroups } = _oldDoc
+
+      const _groupSet = new Set(
+        (_oldDoc?.sharedWithGroups ?? []).concat(sharedWithGroups ?? [])
+      )
+      const _doc = {
+        ..._oldDoc,
+        ...addTimeStamp({ ..._oldDoc, ...docFields, doctype }),
+        // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
+        sharedWithGroups:
+          doctype === DocumentType.Page
+            ? sharedWithGroups ?? _oldDoc?.sharedWithGroups
+            : Array.from(_groupSet),
+        belongsToGroup: getAccountFromLocation(),
+      }
+      pouchDataValidation(_doc)
+
+      _docs.push(_doc)
+    }
+  }
+
+  await dbRef.current!.bulkDocs(_docs)
 }
 
 export const upsertUserPreferences = async (
@@ -299,22 +348,19 @@ export class QueueProcessor extends EventEmitter {
 
   process = async () => {
     if (!this.isProcessing) {
-      while (upQdict.current.length) {
+      if (upQdict.current.length) {
         // do a coallece
         this.isProcessing = true
         const _upQdict = coallesceQ(upQdict.current)
         upQdict.current = []
-        for (const _docId of Object.keys(_upQdict)) {
-          const { _id, doctype } = _upQdict[_docId]
-          upsertImmediate({ _id, doctype, doc: _upQdict[_docId] })
-        }
+        await bulkUpsert(_upQdict)
         this.isProcessing = false
       }
     }
   }
 
   start = () => {
-    this.interval = setInterval(this.process, 3000)
+    this.interval = setInterval(this.process, INTERVAL_TIME)
   }
 }
 
