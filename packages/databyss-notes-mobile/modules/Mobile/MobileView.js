@@ -40,14 +40,10 @@ const MobileView = (props) => {
   const render = () => (
     <StyledArea>
       <ViewHeader navItems={props.headerItems} />
-<<<<<<< Updated upstream
-      <View>{props.children}</View>
-=======
       <View flexGrow={1} flexShrink={1} overflow="hidden">
         {props.children}
       </View>
       <NavBar onChange={onNavBarChange} />
->>>>>>> Stashed changes
     </StyledArea>
   )
 

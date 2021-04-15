@@ -22,11 +22,15 @@ const App = () => {
     <Viewport p={0}>
       <NotifyProvider>
         <ServiceProvider>
-          <MobileWarning />
           <SessionProvider
             signUp={isSignUp()}
             code={urlParams.get('code')}
-            unauthorizedChildren={<Public signupFlow={isSignUp()} />}
+            unauthorizedChildren={
+              <>
+                <MobileWarning />
+                <Public signupFlow={isSignUp()} />
+              </>
+            }
           >
             <Private />
           </SessionProvider>

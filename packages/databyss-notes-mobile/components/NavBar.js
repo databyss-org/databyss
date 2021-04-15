@@ -7,7 +7,7 @@ import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconBu
 import styled from '@databyss-org/ui/primitives/styled'
 import { parseLocation } from '../utils/parseLocation'
 import NavBarItems from '../constants/NavBarItems'
-import Tabs from '../constants/Tabs'
+// import Tabs from '../constants/Tabs'
 
 export const NavBarHeight = 50
 
@@ -48,7 +48,7 @@ const NavBar = (props) => {
   const { location } = navigationContext
 
   const navBarItems = NavBarItems(isPublicAccount())
-  const getItemByName = (name) => navBarItems.find((i) => i.name === name)
+  // const getItemByName = (name) => navBarItems.find((i) => i.name === name)
 
   const [activeItem, setActiveItem] = useState(null)
 
