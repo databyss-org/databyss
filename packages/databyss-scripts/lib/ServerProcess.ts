@@ -12,6 +12,8 @@ export interface ServerProcessArgs extends Omit<yargs.Argv, 'env'> {
   env: EnvDict
   envName: string
   spinner?: ora.Ora
+  outputLogFs?: fs.WriteStream
+  errorLogFs?: fs.WriteStream
   [name: string]: any
 }
 
@@ -34,13 +36,15 @@ class ServerProcess extends EventEmitter {
     super()
     this.args = args
     this.name = name
+    this.outputLogFs = args.outputLogFs
+    this.errorLogFs = args.errorLogFs
 
     if (this.args.spinner) {
       this.spinner = this.args.spinner
     }
 
     // create log streams if `--logs` was supplied
-    if (this.args.logs) {
+    if (this.args.logs && !this.outputLogFs) {
       this.initLogFiles()
     }
     this._patchConsole()
@@ -50,12 +54,13 @@ class ServerProcess extends EventEmitter {
     fs.mkdirSync(logPath, {
       recursive: true,
     })
-    console.log('Created log directory', logPath)
+    this.logInfo('Created log directory', logPath)
+    const _timestamp = fileFriendlyDateTime()
     this.errorLogFs = fs.createWriteStream(
-      path.join(logPath, `errors_${fileFriendlyDateTime()}.log`)
+      path.join(logPath, `errors_${_timestamp}.log`)
     )
     this.outputLogFs = fs.createWriteStream(
-      path.join(logPath, `output_${fileFriendlyDateTime()}.log`)
+      path.join(logPath, `output_${_timestamp}.log`)
     )
   }
   closeLogFiles = () =>

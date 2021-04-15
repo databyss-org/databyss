@@ -29,6 +29,8 @@ export class Backup extends ServerProcess {
         dbName: _db,
         path: path.join(outputPath, `${_db}.json`),
         spinner: this.spinner,
+        outputLogFs: this.outputLogFs,
+        errorLogFs: this.errorLogFs,
       })
       await _backup.run()
       await sleep(100)
