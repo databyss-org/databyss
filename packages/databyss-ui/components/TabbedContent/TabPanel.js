@@ -24,7 +24,14 @@ const TabPanel = (props) => {
   // render methods
   const render = () =>
     isActive ? (
-      <View id={id} role="tabpanel" tabindex="0" ariaLabelledby={labelledBy}>
+      <View
+        id={id}
+        role="tabpanel"
+        tabindex="0"
+        ariaLabelledby={labelledBy}
+        flexShrink={1}
+        overflow="hidden"
+      >
         {children}
       </View>
     ) : null

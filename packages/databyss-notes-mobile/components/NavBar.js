@@ -13,9 +13,7 @@ export const NavBarHeight = 50
 
 // styled components
 const areaStyles = () => ({
-  bottom: 0,
   height: `${NavBarHeight}px`,
-  position: 'fixed',
   width: '100%',
 })
 
@@ -52,7 +50,7 @@ const NavBar = (props) => {
   const navBarItems = NavBarItems(isPublicAccount())
   const getItemByName = (name) => navBarItems.find((i) => i.name === name)
 
-  const [activeItem, setActiveItem] = useState(Tabs.PAGES)
+  const [activeItem, setActiveItem] = useState(null)
 
   const isItemActive = (item) => item.name === activeItem
 
@@ -60,7 +58,7 @@ const NavBar = (props) => {
     if (!item) {
       // no item provided, set pages as default
       /* eslint-disable no-param-reassign */
-      item = getItemByName(Tabs.PAGES)
+      // item = getItemByName(Tabs.PAGES)
       /* eslint-enable no-param-reassign */
     }
 

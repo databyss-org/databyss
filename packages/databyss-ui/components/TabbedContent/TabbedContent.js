@@ -126,7 +126,7 @@ const TabbedContent = (props) => {
     ))
 
   const render = () => (
-    <View>
+    <View flexShrink={1} overflow="hidden">
       <TabList
         items={tabItems}
         selectedIndex={selectedIndex}

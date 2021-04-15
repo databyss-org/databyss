@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Redirect,
   Router,
@@ -7,8 +7,6 @@ import { QueryClientProvider, QueryClient } from 'react-query'
 import { getDefaultGroup } from '@databyss-org/services/session/clientStorage'
 import { View } from '@databyss-org/ui/primitives'
 import { EditorPageProvider } from '@databyss-org/services'
-import NavBar from '../components/NavBar'
-import Tabs from '../constants/Tabs'
 
 import PagesIndex from './Pages/PagesIndex'
 import PageDetails from './Pages/PageDetails'
@@ -40,27 +38,18 @@ const Private = () => {
 
   const group = getDefaultGroup()
 
-  const [currentTab, setCurrentTab] = useState(Tabs.PAGES)
-
-  const onNavBarChange = (item) => {
-    if (item.name !== currentTab) {
-      setCurrentTab(item.name)
-
-      if (window) {
-        window.scrollTo(0, 0)
-      }
-    }
-  }
-
   // render methods
   const render = () => (
     <QueryClientProvider client={queryClient}>
       <View
-        position="absolute"
-        top="0"
-        bottom="0"
+        // position="absolute"
+        // top="0"
+        // bottom="0"
+        flexGrow={1}
+        flexShrink={1}
         width="100%"
         backgroundColor="background.1"
+        overflow="hidden"
       >
         <Router>
           <Redirect noThrow from="/signup" to="/" />
@@ -95,8 +84,6 @@ const Private = () => {
 
           <Redirect noThrow from="*" to={`${group}/pages`} />
         </Router>
-
-        <NavBar onChange={onNavBarChange} />
       </View>
     </QueryClientProvider>
   )

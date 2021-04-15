@@ -17,7 +17,7 @@ const ScrollableListView = (props) => {
 
   // render methods
   const render = () => (
-    <ScrollView maxHeight={getMaxHeight()}>
+    <ScrollView maxHeight={getMaxHeight()} flexShrink={1}>
       <TappableList items={props.listItems} />
     </ScrollView>
   )

@@ -36,6 +36,7 @@ const PageDetails = () => {
         id={pageId}
         page={page}
         maxHeight={getScrollViewMaxHeight()}
+        flexShrink={1}
       />
     </NotifyProvider>
   )
