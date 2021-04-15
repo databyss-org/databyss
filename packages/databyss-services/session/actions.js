@@ -2,6 +2,7 @@ import {
   replicateDbFromRemote,
   replicatePublicGroup,
   REMOTE_CLOUDANT_URL,
+  initiatePouchDbIndexes,
   dbRef,
   getPouchDb,
 } from '@databyss-org/data/pouchdb/db'
@@ -280,7 +281,12 @@ export const hasUnathenticatedAccess = (maxRetries = 5) =>
     _checkAccess()
   })
 
-export const replicateGroup = (id) =>
+export const replicateGroup = (id) => {
   replicatePublicGroup({
     groupId: id,
   })
+
+  setTimeout(() => {
+    initiatePouchDbIndexes()
+  }, [5000])
+}

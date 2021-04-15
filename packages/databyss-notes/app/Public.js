@@ -1,6 +1,6 @@
 import React from 'react'
 import { Viewport } from '@databyss-org/ui'
-
+import MobileWarning from '@databyss-org/ui/components/Notify/MobileWarning'
 import { View, Text, Grid, Button } from '@databyss-org/ui/primitives'
 import { Maintenance, Login } from '@databyss-org/ui/modules'
 import { pxUnits } from '@databyss-org/ui/theming/views'
@@ -45,7 +45,10 @@ const Public = (props) => {
     </View>
   )
   return process.env.FORCE_MOBILE ? (
-    <Viewport p={0}> {_public}</Viewport>
+    <>
+      <MobileWarning />
+      <Viewport p={0}> {_public}</Viewport>
+    </>
   ) : (
     _public
   )

@@ -5,7 +5,12 @@ import assert from 'assert'
 import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import { jsx as h } from './hyperscript'
 import { sanitizeEditorChildren } from './__helpers'
-import { getEditor, sleep, getElementById } from './_helpers.selenium'
+import {
+  getEditor,
+  sleep,
+  getElementById,
+  tagButtonClick,
+} from './_helpers.selenium'
 
 let driver
 let editor
@@ -36,12 +41,11 @@ describe('new block menu actions', () => {
 
   it('should toggle a new atomics', async () => {
     await sleep(300)
-    await driver
-      .findElement(By.tagName('[data-test-block-menu="open"]'))
-      .click()
-    await driver
-      .findElement(By.tagName('[data-test-block-menu="SOURCE"]'))
-      .click()
+
+    await tagButtonClick('data-test-block-menu="open"', driver)
+
+    await tagButtonClick('data-test-block-menu="SOURCE"', driver)
+
     await actions.sendKeys('this should be a new source')
     await actions.sendKeys(Key.ENTER)
     await actions.sendKeys('sample text')
@@ -49,12 +53,10 @@ describe('new block menu actions', () => {
     await actions.sendKeys(Key.ENTER)
     await actions.perform()
     await actions.clear()
-    await driver
-      .findElement(By.tagName('[data-test-block-menu="open"]'))
-      .click()
-    await driver
-      .findElement(By.tagName('[data-test-block-menu="TOPIC"]'))
-      .click()
+
+    await tagButtonClick('data-test-block-menu="open"', driver)
+    await tagButtonClick('data-test-block-menu="TOPIC"', driver)
+
     await actions.sendKeys('this should be a new topic')
     await actions.sendKeys(Key.ENTER)
     await actions.perform()

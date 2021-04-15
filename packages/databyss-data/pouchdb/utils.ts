@@ -6,6 +6,44 @@ import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
+import { getGroupActionQ } from './groups/utils'
+
+const INTERVAL_TIME = 5000
+
+export const upQdict: upsertQueueRef = {
+  current: [],
+}
+
+const dbBusyDispatchRef: { current: Function | null } = {
+  current: null,
+}
+
+export const setDbBusyDispatch = (dispatch: Function) => {
+  dbBusyDispatchRef.current = dispatch
+}
+
+/**
+ *
+ * @param isBusy
+ * @param writesPending
+ * global function to dispatch db_busy action
+ */
+
+export const setDbBusy = (isBusy: boolean, writesPending?: number) => {
+  if (!dbBusyDispatchRef.current) {
+    return
+  }
+  const _writesPending =
+    upQdict.current.length + Object.keys(getGroupActionQ()).length
+  // only set busy to false if no writes are left in queue
+  dbBusyDispatchRef.current({
+    type: 'DB_BUSY',
+    payload: {
+      isBusy: !!(_writesPending || writesPending) || isBusy,
+      writesPending: writesPending || _writesPending,
+    },
+  })
+}
 
 export const addTimeStamp = (doc: any): any => {
   // if document has been created add a modifiedAt timestamp
@@ -25,10 +63,6 @@ type upsertQueueRef = {
   current: Patch[]
 }
 
-export const upQdict: upsertQueueRef = {
-  current: [],
-}
-
 export const upsert = async ({
   doctype,
   _id,
@@ -38,8 +72,8 @@ export const upsert = async ({
   _id: string
   doc: any
 }) => {
-  // console.log('[upsert]', doc)
   upQdict.current.push({ ...doc, _id, doctype })
+  setDbBusy(!!upQdict.current.length)
 }
 
 export const findAll = async ({
@@ -171,8 +205,6 @@ export const getGroupSession = async (
         return
       }
 
-      // console.log('[getGroupSession] attempt', count + 1)
-
       const _response = await dbRef.current!.find({
         selector: {
           doctype: 'GROUP',
@@ -252,10 +284,66 @@ export const upsertImmediate = async ({
           : Array.from(_groupSet),
       belongsToGroup: getAccountFromLocation(),
     }
-    // console.log('[upsertImmediate] doc, set, _doc', doc, _groupSet, _doc)
+
     pouchDataValidation(_doc)
     return _doc
   })
+}
+
+// todo: use document type interface
+const bulkUpsert = async (upQdict: any) => {
+  // compose bulk get request
+  const _bulkGetQuery = { docs: Object.keys(upQdict).map((d) => ({ id: d })) }
+
+  const _res = await dbRef.current!.bulkGet(_bulkGetQuery)
+
+  const _oldDocs = {}
+  // build old document index
+  if (_res.results?.length) {
+    _res.results.forEach((oldDocRes) => {
+      const _docResponse = oldDocRes.docs?.[0] as any
+      if (_docResponse?.ok) {
+        const _oldDoc = _docResponse.ok
+        _oldDocs[_oldDoc._id] = _oldDoc
+      } else {
+        // new document has been created
+        const _id = oldDocRes.id
+        if (_id && upQdict[_id]) {
+          _oldDocs[_id] = upQdict[_id]
+        }
+      }
+    })
+  }
+
+  // compose updated documents to bulk upsert
+  const _docs: any = []
+
+  for (const _docId of Object.keys(upQdict)) {
+    const { _id, doctype, ...docFields } = upQdict[_docId]
+    const _oldDoc = _oldDocs[_id]
+    if (_oldDoc) {
+      const { sharedWithGroups } = _oldDoc
+
+      const _groupSet = new Set(
+        (_oldDoc?.sharedWithGroups ?? []).concat(sharedWithGroups ?? [])
+      )
+      const _doc = {
+        ..._oldDoc,
+        ...addTimeStamp({ ..._oldDoc, ...docFields, doctype }),
+        // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
+        sharedWithGroups:
+          doctype === DocumentType.Page
+            ? sharedWithGroups ?? _oldDoc?.sharedWithGroups
+            : Array.from(_groupSet),
+        belongsToGroup: getAccountFromLocation(),
+      }
+      pouchDataValidation(_doc)
+
+      _docs.push(_doc)
+    }
+  }
+
+  await dbRef.current!.bulkDocs(_docs)
 }
 
 export const upsertUserPreferences = async (
@@ -299,22 +387,26 @@ export class QueueProcessor extends EventEmitter {
 
   process = async () => {
     if (!this.isProcessing) {
-      while (upQdict.current.length) {
+      if (upQdict.current.length) {
+        setDbBusy(true)
+
         // do a coallece
         this.isProcessing = true
         const _upQdict = coallesceQ(upQdict.current)
         upQdict.current = []
-        for (const _docId of Object.keys(_upQdict)) {
-          const { _id, doctype } = _upQdict[_docId]
-          upsertImmediate({ _id, doctype, doc: _upQdict[_docId] })
-        }
+        await bulkUpsert(_upQdict)
         this.isProcessing = false
+
+        setDbBusy(false)
       }
+    } else {
+      // db is not pending any writes
+      setDbBusy(false)
     }
   }
 
   start = () => {
-    this.interval = setInterval(this.process, 3000)
+    this.interval = setInterval(this.process, INTERVAL_TIME)
   }
 }
 

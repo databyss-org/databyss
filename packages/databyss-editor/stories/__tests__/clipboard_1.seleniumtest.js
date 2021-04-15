@@ -24,6 +24,7 @@ import {
   isSaved,
   escapeKey,
   leftShiftKey,
+  tagButtonClick,
 } from './_helpers.selenium'
 
 let driver
@@ -48,20 +49,12 @@ describe('editor clipboard', () => {
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
-    let continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
 
-    continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     await getElementByTag(driver, '[data-test-id="logoutButton"]')
 
@@ -275,6 +268,7 @@ describe('editor clipboard', () => {
     await copy(actions)
     await sendKeys(actions, 'and we append #')
     await paste(actions)
+    await sleep(1000)
     await enterKey(actions)
     // copy fraction of an inline
     await leftShiftKey(actions)
@@ -283,6 +277,7 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await enterKey(actions)
     await paste(actions)
+    await sleep(1000)
 
     // block pasting multiple blocks
     await enterKey(actions)
@@ -292,6 +287,8 @@ describe('editor clipboard', () => {
     await rightKey(actions)
     await sendKeys(actions, 'this should block #')
     await paste(actions)
+    await sleep(1000)
+
     await enterKey(actions)
     await getEditor(driver)
 

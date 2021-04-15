@@ -9,7 +9,7 @@ import {
   removePageFromGroup,
   removeSharedDatabase,
 } from './index'
-import { getDocument } from '../utils'
+import { getDocument, setDbBusy } from '../utils'
 import { PageDoc } from '../interfaces'
 
 export enum GroupAction {
@@ -114,17 +114,11 @@ export function removeGroupAction(groupId: string, pageId?: string) {
   return _dict
 }
 
-export async function processGroupActionQ(dispatch: Function) {
+export async function processGroupActionQ() {
   const _q = getGroupActionQ
   // update ui element
   if (Object.keys(_q()).length) {
-    dispatch({
-      type: 'DB_BUSY',
-      payload: {
-        isBusy: true,
-        writesPending: Object.keys(_q()).length,
-      },
-    })
+    setDbBusy(true, Object.keys(_q()).length)
   }
 
   for (const groupId of Object.keys(_q())) {
@@ -203,13 +197,7 @@ export async function processGroupActionQ(dispatch: Function) {
     }
   }
   // set busy to false
-  dispatch({
-    type: 'DB_BUSY',
-    payload: {
-      isBusy: false,
-      writesPending: 0,
-    },
-  })
+  setDbBusy(false)
 }
 
 /**
