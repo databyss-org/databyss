@@ -229,7 +229,7 @@
     "object-assign": "4.1.1",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "pnp-webpack-plugin": "^1.5.0",
-    "postcss-flexbugs-fixes": "^4.1.0",
+    "postcss-flexbugs-fixes": "^5.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-normalize": "^8.0.0",
     "postcss-preset-env": "^6.6.0",
