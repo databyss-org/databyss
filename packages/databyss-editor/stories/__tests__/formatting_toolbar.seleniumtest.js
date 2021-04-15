@@ -13,6 +13,7 @@ import {
   toggleLocation,
   singleHighlight,
   getElementById,
+  tagButtonClick,
 } from './_helpers.selenium'
 
 let driver
@@ -54,9 +55,8 @@ describe('format text in editor', () => {
     await singleHighlight(actions)
     await actions.perform()
     await sleep(1000)
-    await driver
-      .findElement(By.tagName('[data-test-format-menu="italic"]'))
-      .click()
+
+    await tagButtonClick('data-test-format-menu="italic"', driver)
 
     await sleep(3000)
 
@@ -96,9 +96,8 @@ describe('format text in editor', () => {
     await singleHighlight(actions)
     await actions.perform()
     await sleep(1000)
-    await driver
-      .findElement(By.tagName('[data-test-format-menu="location"]'))
-      .click()
+
+    await tagButtonClick('data-test-format-menu="location"', driver)
 
     await sleep(300)
     slateDocument = await getElementById(driver, 'slateDocument')

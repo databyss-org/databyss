@@ -18,6 +18,7 @@ import { useServiceContext } from '../'
 import {
   localStorageHasSession,
   localStorageHasPublicSession,
+  getDefaultGroup,
 } from './clientStorage'
 import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
 import { replicateGroup, hasUnathenticatedAccess } from './actions'
@@ -103,7 +104,6 @@ const SessionProvider = ({
   useEffect(() => {
     const _init = async () => {
       const _sesionFromLocalStorage = await localStorageHasSession()
-
       if (_sesionFromLocalStorage) {
         // 2nd pass: load session from local_storage
         // replicate from cloudant
@@ -145,6 +145,7 @@ const SessionProvider = ({
       } else {
         // try to get public access
         const unauthenticatedGroupId = await hasUnathenticatedAccess()
+
         if (unauthenticatedGroupId) {
           await replicateGroup(unauthenticatedGroupId)
           _publicSession = await localStorageHasPublicSession(3)
@@ -165,8 +166,19 @@ const SessionProvider = ({
           },
         })
       } else {
-        // pass 1: get session from API
-        getSession({ retry: true, code, email })
+        // if user has a default groupId in local storage, change url and retry session _init
+        const _hasDefaultGroup = getDefaultGroup()
+        if (
+          _hasDefaultGroup &&
+          // && !_hasRetriedSession
+          !process.env.STORYBOOK
+        ) {
+          // user is logged in
+          window.location.href = '/'
+        } else {
+          // pass 1: get session from API
+          getSession({ retry: true, code, email })
+        }
       }
     }
 

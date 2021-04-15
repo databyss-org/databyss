@@ -2,7 +2,7 @@
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, CHROME } from '@databyss-org/ui/lib/saucelabs'
-import { sleep, getElementById, getElementByTag } from './_helpers.selenium'
+import { sleep, getElementById, tagButtonClick } from './_helpers.selenium'
 
 let driver
 let actions
@@ -34,10 +34,8 @@ describe('value list controller', () => {
 
   it('should accept inputs', async () => {
     // name = await getElementByTag(driver, '[data-test-path="text"]')
+    await tagButtonClick('data-test-path="text"', driver)
 
-    const name = await getElementByTag(driver, '[data-test-path="text"]')
-
-    await name.click()
     // await actions.sendKeys('\t')
     await actions.sendKeys('Name of text')
     await actions.sendKeys('\t')

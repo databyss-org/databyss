@@ -17,6 +17,7 @@ import {
   isSaved,
   enterKey,
   backspaceKey,
+  tagButtonClick,
 } from './_helpers.selenium'
 
 let driver
@@ -43,20 +44,12 @@ describe('connected editor', () => {
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
-    let continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
 
-    continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     await getElementByTag(driver, '[data-test-id="logoutButton"]')
 

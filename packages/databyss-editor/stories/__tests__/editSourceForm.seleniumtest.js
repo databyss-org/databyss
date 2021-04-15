@@ -14,6 +14,7 @@ import {
   sleep,
   tabKey,
   upKey,
+  tagButtonClick,
 } from './_helpers.selenium'
 
 let driver
@@ -43,20 +44,12 @@ describe('<EditSourceForm/>', () => {
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
-    let continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
 
-    continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     await getElementByTag(driver, '[data-test-id="logoutButton"]')
 
@@ -101,8 +94,7 @@ describe('<EditSourceForm/>', () => {
     // FIXME: focus should be set to modal component on open
 
     // HACK: select element to be able to start keyboard navigation
-    const nameField = await getElementByTag(driver, '[data-test-path="text"]')
-    await nameField.click()
+    await tagButtonClick('data-test-path="text"', driver)
 
     // reach publication title field
     await tabKey(actions)
@@ -111,11 +103,7 @@ describe('<EditSourceForm/>', () => {
     await sendKeys(actions, sourceTitle)
 
     // dismiss modal
-    const dismissModalButton = await getElementByTag(
-      driver,
-      '[data-test-dismiss-modal="true"]'
-    )
-    await dismissModalButton.click()
+    await tagButtonClick('data-test-dismiss-modal="true"', driver)
 
     await isSaved(driver)
 

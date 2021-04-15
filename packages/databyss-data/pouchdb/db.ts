@@ -27,7 +27,7 @@ import tv4 from 'tv4'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { checkNetwork } from '@databyss-org/services/lib/request'
 import { DocumentType } from './interfaces'
-import { searchText } from './utils'
+import { searchText, setDbBusyDispatch, setDbBusy } from './utils'
 import { processGroupActionQ } from './groups/utils'
 import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
 
@@ -172,7 +172,6 @@ export const initiatePouchDbIndexes = async () => {
 }
 
 export const resetPouchDb = async () => {
-  // console.log(dbRef.current.name)
   if (dbRef.current) {
     await (dbRef.current as PouchDB.Database).destroy()
   }
@@ -212,7 +211,6 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
             resolve(true)
           })
           .on('error', () => {
-            // user has turned off sharing
             setTimeout(() => {
               // first reset DB then reload
               resetPouchDb().then(() => {
@@ -299,6 +297,9 @@ export const syncPouchDb = ({
     return
   }
   console.log('Start PouchDB <=> Cloudant sync')
+  // pass  the  session provider dispatch to the patch queue
+  setDbBusyDispatch(dispatch)
+
   // get credentials from local storage
   const _cred: any = getDbCredentialsFromLocal(groupId)
 
@@ -324,48 +325,25 @@ export const syncPouchDb = ({
     })
     .on('error', (err) => console.log(`REPLICATE.TO ERROR - ${err}`))
     .on('change', (info) => {
-      dispatch({
-        type: 'DB_BUSY',
-        payload: {
-          isBusy: true,
-          writesPending: info.docs.length,
-        },
-      })
+      setDbBusy(true, info.docs.length)
     })
     .on('paused', (err) => {
       if (!err) {
-        dispatch({
-          type: 'DB_BUSY',
-          payload: {
-            isBusy: false,
-            writesPending: 0,
-          },
-        })
+        setDbBusy(false)
+
         // when replication has paused, sync group queues
-        processGroupActionQ(dispatch)
+        processGroupActionQ()
       }
     })
   ;(dbRef.current as PouchDB.Database).replicate
     .from(`${REMOTE_CLOUDANT_URL}/${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
     .on('change', (info) => {
-      dispatch({
-        type: 'DB_BUSY',
-        payload: {
-          isBusy: true,
-          readsPending: info.docs.length,
-        },
-      })
+      setDbBusy(true, info.docs.length)
     })
     .on('paused', (err) => {
       if (!err) {
-        dispatch({
-          type: 'DB_BUSY',
-          payload: {
-            isBusy: false,
-            readsPending: 0,
-          },
-        })
+        setDbBusy(false)
       }
     })
 }

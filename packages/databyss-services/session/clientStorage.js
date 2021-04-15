@@ -44,6 +44,7 @@ export function getDefaultGroup() {
     groupId = localStorage.getItem('default_group')
   } catch (err) {
     console.error('no default account found')
+    return false
   }
   return groupId
 }
@@ -187,6 +188,7 @@ export async function localStorageHasSession() {
     groupIdFromUrl !== defaultGroup
   ) {
     // TODO: first check it against the user Session default group
+
     return false
   }
 

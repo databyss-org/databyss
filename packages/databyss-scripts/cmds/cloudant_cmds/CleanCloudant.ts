@@ -35,14 +35,14 @@ export class CleanCloudant extends ServerProcess {
       }
       // remove the db
       await cloudant.current.db.destroy(_db)
-      this.logSuccess('🧽', _db)
+      this.logSuccess('🧽', 'db', _db)
 
       if (this.user) {
         // if we're not resetting the instance, remove the group document
         const _groupDoc = await cloudant.models.Groups.tryGet(_db)
         if (_groupDoc) {
           await cloudant.models.Groups.destroy(_db, _groupDoc._rev)
-          this.logSuccess('🧽', _db)
+          this.logSuccess('🧽', 'group doc', _db)
         }
       }
 

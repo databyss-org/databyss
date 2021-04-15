@@ -23,6 +23,7 @@ import {
   isSaved,
   escapeKey,
   sleep,
+  tagButtonClick,
 } from './_helpers.selenium'
 
 let driver
@@ -47,20 +48,12 @@ describe('editor clipboard', () => {
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
-    let continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
 
-    continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     await getElementByTag(driver, '[data-test-id="logoutButton"]')
 
@@ -173,26 +166,17 @@ describe('editor clipboard', () => {
     await paste(actions)
     await isSaved(driver)
 
-    let atomic = await getElementByTag(driver, '[data-test-atomic-edit="open"]')
+    // double click
+    await tagButtonClick('data-test-atomic-edit="open"', driver)
 
-    await atomic.click()
+    await tagButtonClick('data-test-atomic-edit="open"', driver)
 
-    atomic = await getElementByTag(driver, '[data-test-atomic-edit="open"]')
-
-    await atomic.click()
-
-    const source = await getElementByTag(driver, '[data-test-path="text"]')
-
-    // double click on atomic
-    await source.click()
+    await tagButtonClick('data-test-path="text"', driver)
 
     await sendKeys(actions, ' with appended text')
 
-    const doneButton = await getElementByTag(
-      driver,
-      '[data-test-dismiss-modal="true"]'
-    )
-    await doneButton.click()
+    await tagButtonClick('data-test-dismiss-modal="true"', driver)
+
     await isSaved(driver)
 
     await driver.navigate().refresh()
