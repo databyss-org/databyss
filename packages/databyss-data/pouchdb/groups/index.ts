@@ -227,7 +227,7 @@ const upsertReplication = async ({
   // console.log('[upsertReplication] doc ids', _docIds)
 
   // upsert replication
-  dbRef.current!.replicate.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
+  dbRef.current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
     ...opts,
     doc_ids: _docIds,
     batch_size: 1000,

@@ -68,9 +68,9 @@ export const SearchContent = () => {
           longWaitMs={5000}
           longWaitDialogOptions={{
             message:
-              "<strong>Databyss is still building your search index, which may take a while but will allow fast once it's done.</strong><p>If it's not done shortly...</p><p>&nbsp;&nbsp;&nbsp;...just wait longer.</p>",
+              "<strong>⏳ Databyss is still building your search index, which may take a while but will allow fast searching once it's done.</strong>",
             html: true,
-            dolphins: true,
+            showConfirmButtons: true,
           }}
         />
       )}

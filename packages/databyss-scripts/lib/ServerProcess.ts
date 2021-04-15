@@ -11,6 +11,9 @@ const { exec } = require('child_process')
 export interface ServerProcessArgs extends Omit<yargs.Argv, 'env'> {
   env: EnvDict
   envName: string
+  spinner?: ora.Ora
+  outputLogFs?: fs.WriteStream
+  errorLogFs?: fs.WriteStream
   [name: string]: any
 }
 
@@ -33,9 +36,15 @@ class ServerProcess extends EventEmitter {
     super()
     this.args = args
     this.name = name
+    this.outputLogFs = args.outputLogFs
+    this.errorLogFs = args.errorLogFs
+
+    if (this.args.spinner) {
+      this.spinner = this.args.spinner
+    }
 
     // create log streams if `--logs` was supplied
-    if (this.args.logs) {
+    if (this.args.logs && !this.outputLogFs) {
       this.initLogFiles()
     }
     this._patchConsole()
@@ -45,12 +54,13 @@ class ServerProcess extends EventEmitter {
     fs.mkdirSync(logPath, {
       recursive: true,
     })
-    console.log('Created log directory', logPath)
+    this.logInfo('Created log directory', logPath)
+    const _timestamp = fileFriendlyDateTime()
     this.errorLogFs = fs.createWriteStream(
-      path.join(logPath, `errors_${fileFriendlyDateTime()}.log`)
+      path.join(logPath, `errors_${_timestamp}.log`)
     )
     this.outputLogFs = fs.createWriteStream(
-      path.join(logPath, `output_${fileFriendlyDateTime()}.log`)
+      path.join(logPath, `output_${_timestamp}.log`)
     )
   }
   closeLogFiles = () =>
@@ -63,34 +73,46 @@ class ServerProcess extends EventEmitter {
       ),
     ])
   _log = (...msgs: any) => {
-    let symbol = '⬜️'
-    let text = msgs.join(' ')
-    if (Array.isArray(msgs) && msgs.length > 1 && msgs[0].length <= 2) {
-      symbol = msgs[0]
-      text = msgs.slice(1).join(' ')
-    }
-    const prefixText = `[${shortTimeString()}|${this.name}]`
-    const msg = `${prefixText} ${symbol} ${text}`
+    const _text = msgs.slice(1).join(' ')
+    const _symbol = msgs[0]
+    const _prefixText = `[${shortTimeString()}|${this.name}]`
+    const _msg = `${_prefixText} ${_symbol} ${_text}`
 
     if (this.spinner) {
-      this.spinner.stopAndPersist({ prefixText, symbol, text }).start()
+      this.spinner
+        .stopAndPersist({
+          prefixText: _prefixText,
+          symbol: _symbol,
+          text: _text,
+        })
+        .start()
     } else {
-      this.stdout(`${msg}\n`)
+      this.stdout(`${_msg}\n`)
     }
-    return msg
+    return _msg
+  }
+  _format = (msgs: any[], symbol: string) => {
+    let _symbol = symbol
+    let _msgs = msgs
+    if (Array.isArray(msgs) && msgs.length > 1 && msgs[0].length <= 2) {
+      _symbol = msgs[0]
+      _msgs = msgs.slice(1)
+    }
+    return [_symbol, ..._msgs]
   }
   log = (...msgs: any) => {
-    this.logInfo(...msgs)
+    this.logInfo(...this._format(msgs, '⬜️'))
   }
   logError = (...msgs: any) => {
-    this.writeErrorLog(`${this._log('🟥', ...msgs)}\n`)
+    const _msgs = msgs.map((_m) => (_m instanceof Error ? _m.stack : _m))
+    this.writeErrorLog(`${this._log(...this._format(_msgs, '🟥'))}\n`)
   }
   logInfo = (...msgs: any) => {
     this.writeLog(`${this._log(...msgs)}\n`)
   }
-  logWarning = (...msgs: any) => this.logInfo('🔶', ...msgs)
-  logFailure = (...msgs: any) => this.logInfo('❌', ...msgs)
-  logSuccess = (...msgs: any) => this.logInfo('✅', ...msgs)
+  logWarning = (...msgs: any) => this.logInfo(...this._format(msgs, '🔶'))
+  logFailure = (...msgs: any) => this.logInfo(...this._format(msgs, '❌'))
+  logSuccess = (...msgs: any) => this.logInfo(...this._format(msgs, '✅'))
   writeLog = (msg: string) => {
     if (this.outputLogFs) {
       this.outputLogFs.write(msg)
@@ -110,11 +132,11 @@ class ServerProcess extends EventEmitter {
       stream: process.stdout,
     })
     this.on('end', async (success: boolean) => {
-      this.spinner!.stop()
+      this.spinner?.stop()
       await this.closeLogFiles()
       process.exit(success ? 0 : 1)
     })
-    this.spinner!.start()
+    this.spinner?.start()
     this.run().then(this._shutdown).catch(this._shutdown)
   }
   /**
@@ -162,7 +184,8 @@ class ServerProcess extends EventEmitter {
   }
   _shutdown = async (err?: Error) => {
     if (err) {
-      this.stderr(err)
+      this.logFailure('Unhandled exception, see error log for details')
+      this.logError(err)
     }
     await this.closeLogFiles()
     process.exit(err ? 1 : 0)

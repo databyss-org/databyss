@@ -83,25 +83,26 @@ export function clearLocalStorage() {
 }
 
 export async function deletePouchDbs(matchName) {
-  let dbs = await window.indexedDB.databases()
-  dbs = dbs.filter((db) => db.name.includes(matchName))
+  if (!process.env.FORCE_MOBILE) {
+    let dbs = await window.indexedDB.databases()
+    dbs = dbs.filter((db) => db.name.includes(matchName))
 
-  // if we don't do this, we get an error that we're accessing
-  //  the db while the connection is closing
-  await resetPouchDb()
+    // if we don't do this, we get an error that we're accessing
+    //  the db while the connection is closing
+    await resetPouchDb()
 
-  await Promise.all(
-    dbs.map(
-      (db) =>
-        new Promise((resolve, reject) => {
-          // deletes index databases
-          const request = indexedDB.deleteDatabase(db.name)
-          request.onsuccess = resolve
-          request.onerror = reject
-        })
+    await Promise.all(
+      dbs.map(
+        (db) =>
+          new Promise((resolve, reject) => {
+            // deletes index databases
+            const request = indexedDB.deleteDatabase(db.name)
+            request.onsuccess = resolve
+            request.onerror = reject
+          })
+      )
     )
-  )
-
+  }
   clearLocalStorage()
 }
 
@@ -213,5 +214,6 @@ export async function cleanupDefaultGroup() {
     return
   }
   await deletePouchDbs(groupId)
+
   await deletePouchSecret(groupId)
 }

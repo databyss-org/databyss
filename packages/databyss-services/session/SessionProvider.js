@@ -7,6 +7,7 @@ import {
   syncPouchDb,
   initiatePouchDbIndexes,
 } from '@databyss-org/data/pouchdb/db'
+import { Viewport } from '@databyss-org/ui'
 // import { connect } from '@databyss-org/data/couchdb-client/couchdb'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
@@ -107,16 +108,18 @@ const SessionProvider = ({
         // 2nd pass: load session from local_storage
         // replicate from cloudant
         const groupId = _sesionFromLocalStorage.defaultGroupId
+        // download remote database if not on mobile
 
-        // TODO: connect directly to CouchDB on cloudant while pouch is synching
-        await replicateDbFromRemote({
-          groupId,
-        })
+        if (!process.env.FORCE_MOBILE) {
+          await replicateDbFromRemote({
+            groupId,
+          })
 
-        // TODO: indexing is built after 5 seconds
-        setTimeout(() => {
-          initiatePouchDbIndexes()
-        }, [5000])
+          // set up search indexes
+          setTimeout(() => {
+            initiatePouchDbIndexes()
+          }, [5000])
+        }
 
         // set up live sync
         syncPouchDb({
@@ -197,14 +200,16 @@ const SessionProvider = ({
     })
   } else if (isPending) {
     _children = (
-      <Loading
-        showLongWaitMessage
-        splashOnLongWait
-        longWaitDialogOptions={{
-          nude: true,
-          message: 'Loading Databyss collection...',
-        }}
-      />
+      <Viewport>
+        <Loading
+          showLongWaitMessage
+          splashOnLongWait
+          longWaitDialogOptions={{
+            nude: true,
+            message: 'Loading Databyss collection...',
+          }}
+        />
+      </Viewport>
     )
   }
 

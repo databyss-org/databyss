@@ -48,6 +48,7 @@ export const LoadingFallback = ({
   useEffect(() => {
     if (
       process.env.NODE_ENV === 'test' ||
+      process.env.FORCE_MOBILE ||
       process.env.STORYBOOK ||
       !showLongWaitMessage
     ) {

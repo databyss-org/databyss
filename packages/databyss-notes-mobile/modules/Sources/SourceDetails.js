@@ -1,8 +1,9 @@
 import React from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { ScrollView } from '@databyss-org/ui/primitives'
-import IndexSourceContent from '@databyss-org/ui/components/SourcesContent/IndexSourceContent'
+// import IndexSourceContent from '@databyss-org/ui/components/SourcesContent/IndexSourceContent'
 import { BlockType } from '@databyss-org/services/interfaces'
+import { IndexPageContent } from '@databyss-org/ui/modules'
 import { useBlockRelations, useBlocks } from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { getScrollViewMaxHeight } from '../../utils/getScrollViewMaxHeight'
@@ -19,7 +20,8 @@ const buildHeaderItems = (title, id) => [
 
 // component
 const SourceDetails = () => {
-  const { sourceId } = useParams()
+  const { blockId } = useParams()
+
   const blockRelationRes = useBlockRelations(BlockType.Source)
   const sourcesRes = useBlocks(BlockType.Source)
   const queryRes = [blockRelationRes, sourcesRes]
@@ -30,26 +32,23 @@ const SourceDetails = () => {
     return <LoadingFallback queryObserver={queryRes} />
   }
 
-  const relations = Object.values(blockRelationRes.data).filter(
-    (_rel) => _rel.relatedBlock === sourceId
-  )
+  pageTitle = sourcesRes.data[blockId].text.textValue
 
-  pageTitle = sourcesRes.data[sourceId].text.textValue
-
-  // render methods
+  // // render methods
   const renderSourceDetails = () => (
-    <ScrollView maxHeight={getScrollViewMaxHeight()} pr="medium" py="large">
-      <IndexSourceContent relations={relations} />
+    <ScrollView maxHeight={getScrollViewMaxHeight()} flexGrow={1}>
+      <IndexPageContent blockType="SOURCE" />
     </ScrollView>
   )
 
   const render = () => (
-    <MobileView headerItems={buildHeaderItems(pageTitle, sourceId)}>
+    <MobileView headerItems={buildHeaderItems(pageTitle, blockId)}>
       {renderSourceDetails()}
     </MobileView>
   )
 
   return render()
+  // return <div> source detail</div>
 }
 
 export default SourceDetails

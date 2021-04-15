@@ -3,6 +3,8 @@ import {
   replicatePublicGroup,
   REMOTE_CLOUDANT_URL,
   initiatePouchDbIndexes,
+  dbRef,
+  getPouchDb,
 } from '@databyss-org/data/pouchdb/db'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
@@ -105,7 +107,6 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     })
     if (res.data && res.data.session) {
       const { session } = res.data
-
       // set credentials in local storage if sent from server
       if (session.groupCredentials) {
         setPouchSecret(session.groupCredentials)
@@ -119,9 +120,13 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       const _defaultGroupId =
         session.user?.defaultGroupId || session?.groupCredentials[0].groupId
 
-      await replicateDbFromRemote({
-        groupId: _defaultGroupId,
-      })
+      if (!process.env.FORCE_MOBILE) {
+        await replicateDbFromRemote({
+          groupId: _defaultGroupId,
+        })
+      } else {
+        dbRef.current = getPouchDb(`${_defaultGroupId}`)
+      }
 
       dispatch({
         type: STORE_SESSION_LOCALLY,

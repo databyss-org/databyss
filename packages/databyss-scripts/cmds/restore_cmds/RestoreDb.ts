@@ -11,14 +11,13 @@ import { Group } from '@databyss-org/services/interfaces'
 
 export class RestoreDb extends ServerProcess {
   constructor(argv: ServerProcessArgs) {
-    super(argv, 'restore.single-database')
+    super(argv, 'restore.database')
   }
   async run() {
     let _db
     try {
       _db = await this.createOrResetDatabase(this.args.dbName)
     } catch (err) {
-      await this.restore()
       this.logFailure(
         `Cannot create database ${this.args.dbName}, aborting restore operation.`
       )
@@ -39,16 +38,17 @@ export class RestoreDb extends ServerProcess {
     }
   }
   async restore() {
+    this.logInfo('Restoring from file', this.args.path)
     return new Promise((resolve, reject) => {
       restore(
-        this.args.file ? fs.createReadStream(this.args.file) : process.stdout,
+        fs.createReadStream(this.args.path),
         `${cloudantUrl(this.args.env)}/${this.args.dbName}`,
         { parallelism: 2 },
         (err, data) => {
           if (err) {
             reject(err)
           } else {
-            this.log(data)
+            this.logSuccess(this.args.dbName)
             resolve(data)
           }
         }
@@ -56,10 +56,7 @@ export class RestoreDb extends ServerProcess {
     })
   }
   async dbIsPublic(db: DocumentScope<Group>) {
-    let _group = await db.tryGet(this.args.dbName)
-    if (!_group) {
-      _group = await db.tryGet(this.args.dbName.substr(2))
-    }
+    const _group = await db.tryGet(this.args.dbName)
     if (!_group) {
       return false
     }
@@ -85,27 +82,13 @@ export class RestoreDb extends ServerProcess {
   }
 }
 
-exports.command = 'single-database <dbName> [options]'
-exports.desc = 'Restore data to a single couch db'
+exports.command = 'database <dbName> [options]'
+exports.desc = 'Restore a single database'
 exports.builder = (yargs: ServerProcessArgs) =>
-  yargs
-    .describe('f', 'Input from a file')
-    .alias('f', 'file')
-    .nargs('f', 1)
-    .example(
-      '$0 users -f users.json',
-      'Restore "users" database from "users.json"'
-    )
-    .example('$0 users', 'Stream restore of "users" database from stdin')
-    .describe(
-      'reset',
-      'Replace the database if it exists. If "false" and database exists, job will quit with an error.'
-    )
-    .boolean('replace')
-    .example(
-      '$0 users --replace',
-      'Restore "users" database, replacing if necessary'
-    )
+  yargs.example(
+    '$0 restore database g_8sozwot4jo1azq --path g_8sozwot4jo1azq.json',
+    'Restore `g_8sozwot4jo1azq` database from `g_8sozwot4jo1azq.json`'
+  )
 exports.handler = (argv: ServerProcessArgs) => {
   new RestoreDb(argv).runCli()
 }

@@ -25,12 +25,16 @@ export const IndexPageView = ({
 }: PropsWithChildren<IndexPageViewProps>) => (
   <>
     <StickyHeader path={path} />
-    <ScrollView pl="em" flex="1" {...others}>
+    <ScrollView px="em" flex="1" {...others}>
       <Helmet>
         <meta charSet="utf-8" />
         <title>{path[path.length - 1]}</title>
       </Helmet>
-      <View pt="small" pb="medium" pl="medium">
+      <View
+        pt={{ _: 'medium', mobile: 'small' }}
+        pb="medium"
+        pl={{ _: 'small', mobile: 'medium' }}
+      >
         <Text
           data-test-element="index-results"
           variant="bodyHeading1"
@@ -39,7 +43,9 @@ export const IndexPageView = ({
           {path[path.length - 1]}
         </Text>
       </View>
-      <View px="medium">{children}</View>
+      <View px={{ _: 'small', mobile: 'medium' }} flexGrow={1}>
+        {children}
+      </View>
     </ScrollView>
   </>
 )

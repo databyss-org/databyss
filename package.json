@@ -28,7 +28,7 @@
     "start:notes": "NPM_BUILD_TARGET=NOTES_APP node scripts/start.js",
     "start:notes:test": "NPM_BUILD_TARGET=NOTES_APP NODE_ENV=test node scripts/start.js",
     "start:homepage": "NPM_BUILD_TARGET=HOMEPAGE node scripts/start.js",
-    "start:mobile": "NPM_BUILD_TARGET=NOTES_MOBILE REACT_APP_FORCE_MOBILE=true node scripts/start.js",
+    "start:mobile": "PORT=3001 NPM_BUILD_TARGET=NOTES_MOBILE REACT_APP_FORCE_MOBILE=true node scripts/start.js",
     "start:docs": "cd ./packages/databyss-documentation/website && yarn run start",
     "seed:testdb": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER NODE_ENV=test babel-node --config-file ./packages/databyss-api/babel.config.js packages/databyss-api/scripts/seed-test-server.js",
     "start:server:test": "NODE_ENV=test yarn start:server",

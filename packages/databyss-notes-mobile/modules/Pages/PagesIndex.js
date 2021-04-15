@@ -1,5 +1,4 @@
 import React from 'react'
-import { PageProvider } from '@databyss-org/services'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { MobileView } from '../Mobile'
@@ -17,22 +16,22 @@ const PagesIndex = () => {
   if (!pagesRes.isSuccess) {
     return <LoadingFallback queryObserver={pagesRes} />
   }
+
   const listItems = buildListItems({
     data: pagesRes.data,
     baseUrl: '/pages',
     labelPropPath: 'name',
     icon: PagesMetadata.icon,
   })
+
   const render = () => (
-    <PageProvider>
-      <MobileView headerItems={headerItems}>
-        {listItems.length ? (
-          <ScrollableListView listItems={listItems} />
-        ) : (
-          <NoResultsView text="No page found" />
-        )}
-      </MobileView>
-    </PageProvider>
+    <MobileView headerItems={headerItems}>
+      {listItems.length ? (
+        <ScrollableListView listItems={listItems} />
+      ) : (
+        <NoResultsView text="No page found" />
+      )}
+    </MobileView>
   )
 
   return render()
