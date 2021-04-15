@@ -7,6 +7,7 @@ import { QueryClientProvider, QueryClient } from 'react-query'
 import { getDefaultGroup } from '@databyss-org/services/session/clientStorage'
 import { View } from '@databyss-org/ui/primitives'
 import { EditorPageProvider } from '@databyss-org/services'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import NavBar from '../components/NavBar'
 import Tabs from '../constants/Tabs'
 
@@ -36,9 +37,8 @@ const RouterGroup = ({ children }) => <>{children}</>
 
 // component
 const Private = () => {
-  // const { getCurrentAccount } = useSessionContext()
-
-  const group = getDefaultGroup()
+  const getSession = useSessionContext((c) => c && c.getSession)
+  const { defaultGroupId } = getSession()
 
   const [currentTab, setCurrentTab] = useState(Tabs.PAGES)
 
@@ -90,10 +90,10 @@ const Private = () => {
               <ConfigIndex path="/" />
             </RouterGroup>
 
-            <Redirect noThrow from="*" to="/pages" />
+            <Redirect noThrow from="*" to="pages" />
           </RouterGroup>
 
-          <Redirect noThrow from="*" to={`${group}/pages`} />
+          <Redirect noThrow from="*" to={`${defaultGroupId}/pages`} />
         </Router>
 
         <NavBar onChange={onNavBarChange} />
