@@ -23,11 +23,7 @@ const App = () => {
         <SessionProvider
           signUp={isSignUp()}
           code={urlParams.get('code')}
-          unauthorizedChildren={
-            <Viewport p={0}>
-              <Public signupFlow={isSignUp()} />
-            </Viewport>
-          }
+          unauthorizedChildren={<Public signupFlow={isSignUp()} />}
         >
           <Private />
         </SessionProvider>
