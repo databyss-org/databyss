@@ -585,17 +585,20 @@ exports.builder = (yargs: ServerProcessArgs) =>
     .describe('skip', 'List of emails to skip')
     .array('skip')
     .example(
-      '$0 --skip jreed03@gmail.com paul@hine.works',
+      '$0 migrate mongo-to-cloudant --skip jreed03@gmail.com paul@hine.works',
       'Migrate all users, skip "jreed03@gmail.com" and "paul@hine.works"'
     )
-    .example('$0 jreed03@gmail.com', 'Migrate user "jreed03@gmail.com"')
+    .example(
+      '$0 migrate mongo-to-cloudant jreed03@gmail.com',
+      'Migrate user "jreed03@gmail.com"'
+    )
     .string('resume')
     .describe(
       'resume',
       'Email where we want to resume the batch. Can be used with --skip to resume right after this user.'
     )
     .example(
-      '$0 --resume paul@hine.works',
+      '$0 migrate mongo-to-cloudant --resume paul@hine.works',
       'Resume migration of all users at "paul@hine.works"'
     )
 exports.handler = (argv: ServerProcessArgs) => {

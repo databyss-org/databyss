@@ -11,13 +11,14 @@
       rel="stylesheet"
     />
     <title>Databyss</title>
+    <% if (!process.env.FORCE_MOBILE) { %>
     <script>
       ;(function () {
         // if mobile, replace hostname with mobile hostname
         var mobileOsAgents = /ios|iphone|android|windows phone/i
         var isMobile = Math.max(window.innerWidth, window.innerHeight) < 900
         var isMobileOs = navigator.userAgent.match(mobileOsAgents)
-        if (!'%FORCE_MOBILE%' && '%MOBILE_HOST%' && isMobile && isMobileOs) {
+        if ('%MOBILE_HOST%' && isMobile && isMobileOs) {
           var redir = window.location.href.replace(
             window.location.host,
             '%MOBILE_HOST%'
@@ -45,10 +46,12 @@
         fill: transparent;
       }
     </style>
+    <% } %>
   </head>
 
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <% if (!process.env.FORCE_MOBILE) { %>
     <div id="databyss1" class="databyss">
       <svg
         height="100vh"
@@ -86,7 +89,9 @@
         />
       </svg>
     </div>
+    <% } %>
     <div id="root"></div>
+    <% if (!process.env.FORCE_MOBILE) { %>
     <script>
       ;(function () {
         var containerNode = document.getElementById('databyss1').cloneNode(true)
@@ -140,5 +145,6 @@
         }
       })()
     </script>
+    <% } %>
   </body>
 </html>

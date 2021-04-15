@@ -7,6 +7,7 @@ import {
   syncPouchDb,
   initiatePouchDbIndexes,
 } from '@databyss-org/data/pouchdb/db'
+import { Viewport } from '@databyss-org/ui'
 // import { connect } from '@databyss-org/data/couchdb-client/couchdb'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
@@ -174,11 +175,6 @@ const SessionProvider = ({
     }
   }, [state.sessionIsStored])
 
-  // // try to resume session on mount
-  // useEffect(() => {
-  //   getSession({ retry: true, code, email })
-  // }, [])
-
   let _children = children
   const isPending = state.session instanceof ResourcePending
   if (
@@ -192,14 +188,16 @@ const SessionProvider = ({
     })
   } else if (isPending) {
     _children = (
-      <Loading
-        showLongWaitMessage
-        splashOnLongWait
-        longWaitDialogOptions={{
-          nude: true,
-          message: 'Loading Databyss collection...',
-        }}
-      />
+      <Viewport>
+        <Loading
+          showLongWaitMessage
+          splashOnLongWait
+          longWaitDialogOptions={{
+            nude: true,
+            message: 'Loading Databyss collection...',
+          }}
+        />
+      </Viewport>
     )
   }
 

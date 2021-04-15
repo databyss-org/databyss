@@ -8,27 +8,52 @@ import { updateDesignDocs, initiateDatabases } from '@databyss-org/data/couchdb'
 import { SysUser } from '@databyss-org/data/interfaces'
 import { Document, Group } from '@databyss-org/services/interfaces'
 
-class ResetCloudant extends ServerProcess {
+export class CleanCloudant extends ServerProcess {
+  user: (SysUser & { _rev: string }) | null = null
+
   constructor(argv: ServerProcessArgs) {
-    super(argv, `cloudant.${argv.email ? 'delete-user' : 'reset-instance'}`)
+    super(argv, `cloudant.clean`)
   }
   async run() {
     if (!this.args.email && this.args.envName === 'production') {
-      throw new Error('Cannot run on production env')
+      throw new Error('Cannot run on production env without --email arg')
     }
-    const _dbs = await cloudant.current.db.list()
+    if (this.args.email && this.args.init) {
+      throw new Error('Cannot specify --init=true and --email')
+    }
+
     if (this.args.email) {
       // get the user
       this.user = await getUser(this.args.email)
     }
+
+    const _dbs = await cloudant.current.db.list()
+
     for (const _db of _dbs) {
       if (this.user && !(await dbBelongsToUser(_db, this.user))) {
         continue
       }
+      // remove the db
       await cloudant.current.db.destroy(_db)
+      this.logSuccess('🧽', _db)
+
+      if (this.user) {
+        // if we're not resetting the instance, remove the group document
+        const _groupDoc = await cloudant.models.Groups.tryGet(_db)
+        if (_groupDoc) {
+          await cloudant.models.Groups.destroy(_db, _groupDoc._rev)
+          this.logSuccess('🧽', _db)
+        }
+      }
+
       // dont exceed cloudant rate limit
       await sleep(100)
-      this.logInfo('🧽', `destroyed - ${_db}`)
+    }
+
+    if (this.user) {
+      // clean up the user document
+      await cloudant.models.Users.destroy(this.user._id, this.user._rev)
+      this.logSuccess('🧽', this.user._id)
     }
 
     if (this.args.init) {
@@ -66,18 +91,28 @@ export async function dbBelongsToUser(dbName: string, user: SysUser) {
   const _groupDb = await cloudant.current.db.use<Group & Document>(dbName)
   const _group = await _groupDb.tryGet(dbName)
   if (!_group) {
-    throw new Error(`Cannot find Group doc in db ${dbName}`)
+    return false
   }
-  return _group.belongsToGroup === dbName
+  return _group.belongsToGroup === user.defaultGroupId
 }
 
-export default ResetCloudant
-
-exports.command = 'reset-instance [options]'
-exports.desc = 'Delete all databases on Cloudant and re-initialize'
+exports.command = 'clean [options]'
+exports.desc = 'Clean up (remove) users and databases on Cloudant'
 exports.builder = (yargs: ServerProcessArgs) =>
-  yargs.describe('init', 'Leave instance clean (do not init admin dbs)')
+  yargs
+    .describe('init', 'Initialize admin dbs')
+    .describe('email', 'Remove a user and all their group dbs')
+    .boolean('init')
+    .default('init', false)
+    .example(
+      '$0 cloudant clean --init --env development',
+      'Clean all dbs from development instance and re-initialize (full reset)'
+    )
+    .example(
+      '$0 cloudant clean --email paul@hine.works',
+      'Clean dbs belonging to `paul@hine.works` and remove user'
+    )
 
 exports.handler = (argv: ServerProcessArgs) => {
-  new ResetCloudant(argv).runCli()
+  new CleanCloudant(argv).runCli()
 }

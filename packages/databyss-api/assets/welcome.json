@@ -1,7 +1,7 @@
 [
   {
     "type": "DIALOG",
-    "messageHtml": "<p><strong>Welcome to Databyss version 2.0.2!</strong></p><p>For an introduction to Databyss and in-depth help guides, please visit the <a href='/g_7v9n4vjx2h7511' target='_blank'>Databyss Help</a> page (opens in new tab).</p><p>ℹ️ You can access the help guides at any time from the three-dot-menu in the upper-right under \"Help\".</p><p>If you are coming from Databyss 1.x, please note that your shared pages have new URLs, so you will need to resend them to your public viewers. Please see our <a href='/g_7v9n4vjx2h7511/pages/iku2iiu2d16y33' target='_blank'>What's New</a> page (opens in new tab) for details.</p>",
+    "messageHtml": "<p><strong>Welcome to Databyss version 2.0.2!</strong></p><p>For an introduction to Databyss and in-depth help guides, please visit the <a href='/g_7v9n4vjx2h7511' target='_blank'>Databyss Help</a> page (opens in new tab).</p><p>ℹ️ You can access the help guides at any time from the three-dot-menu in the upper-right under \"Help\".</p>",
     "targetVersion": "2.0.2",
     "id": "jAiJtCbjUOKh"
   }

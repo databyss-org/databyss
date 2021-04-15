@@ -9,6 +9,7 @@ import ViewHeader from './ViewHeader'
 const areaStyles = () => ({
   position: 'relative',
   width: '100%',
+  flexGrow: 1,
 })
 
 const StyledArea = styled(View, areaStyles)
@@ -25,7 +26,7 @@ const MobileView = (props) => {
   const render = () => (
     <StyledArea>
       <ViewHeader navItems={props.headerItems} />
-      <View>{props.children}</View>
+      <View flexGrow={1}>{props.children}</View>
     </StyledArea>
   )
 

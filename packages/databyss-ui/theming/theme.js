@@ -27,6 +27,7 @@ const theme = {
 
   /* responsive */
   ...responsive,
+  breakpoints: responsive,
 
   /* views */
   ...views,

@@ -36,7 +36,7 @@ const SourceDetails = () => {
 
   // // render methods
   const renderSourceDetails = () => (
-    <ScrollView maxHeight={getScrollViewMaxHeight()} pr="medium" py="large">
+    <ScrollView maxHeight={getScrollViewMaxHeight()} flexGrow={1}>
       <IndexPageContent blockType="SOURCE" />
     </ScrollView>
   )
