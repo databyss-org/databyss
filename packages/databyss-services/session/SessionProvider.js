@@ -2,7 +2,6 @@ import React, { useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 // import { debounce } from 'lodash'
 import Login from '@databyss-org/ui/modules/Login/Login'
-import { useNavigationContext } from '@databyss-org/ui'
 import {
   replicateDbFromRemote,
   syncPouchDb,
@@ -47,7 +46,6 @@ const SessionProvider = ({
     name: 'SessionProvider',
   })
   const { session: actions } = useServiceContext()
-  const navigateContext = useNavigationContext()
   const { notify } = useNotifyContext()
 
   const isPublicAccount = useCallback(() => {
@@ -185,11 +183,6 @@ const SessionProvider = ({
       _init()
     }
   }, [state.sessionIsStored])
-
-  // // try to resume session on mount
-  // useEffect(() => {
-  //   getSession({ retry: true, code, email })
-  // }, [])
 
   let _children = children
   const isPending = state.session instanceof ResourcePending

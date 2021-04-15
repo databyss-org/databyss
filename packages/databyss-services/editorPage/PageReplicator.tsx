@@ -12,6 +12,7 @@ import {
   NetworkUnavailableError,
 } from '../interfaces/Errors'
 import { dbRef, REMOTE_CLOUDANT_URL } from '../../databyss-data/pouchdb/db'
+import { setDbBusy } from '../../databyss-data/pouchdb/utils'
 
 const INTERVAL_TIME = 5000
 const MAX_RETRIES = 5
@@ -30,8 +31,6 @@ export const PageReplicator = ({
   // get the groups from react-query
   const groupsRes = useGroups()
 
-  const sessionDispatch = useSessionContext((c) => c && c.dispatch)
-
   const { isOnline } = useNotifyContext()
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
@@ -44,12 +43,7 @@ export const PageReplicator = ({
     dbKey: string
     dbPassword: string
   }) => {
-    sessionDispatch({
-      type: 'DB_BUSY',
-      payload: {
-        isBusy: true,
-      },
-    })
+    setDbBusy(true)
 
     // set up page replication
     const opts = {
@@ -79,21 +73,11 @@ export const PageReplicator = ({
       })
       // keeps track of the loader wheel
       .on('change', () => {
-        sessionDispatch({
-          type: 'DB_BUSY',
-          payload: {
-            isBusy: true,
-          },
-        })
+        setDbBusy(true)
       })
       .on('paused', (err) => {
         if (!err) {
-          sessionDispatch({
-            type: 'DB_BUSY',
-            payload: {
-              isBusy: false,
-            },
-          })
+          setDbBusy(false)
         }
       })
 

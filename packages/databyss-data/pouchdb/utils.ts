@@ -6,8 +6,13 @@ import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
+import { getGroupActionQ } from './groups/utils'
 
-const INTERVAL_TIME = 3500
+const INTERVAL_TIME = 5000
+
+export const upQdict: upsertQueueRef = {
+  current: [],
+}
 
 const dbBusyDispatchRef: { current: Function | null } = {
   current: null,
@@ -15,6 +20,29 @@ const dbBusyDispatchRef: { current: Function | null } = {
 
 export const setDbBusyDispatch = (dispatch: Function) => {
   dbBusyDispatchRef.current = dispatch
+}
+
+/**
+ *
+ * @param isBusy
+ * @param writesPending
+ * global function to dispatch db_busy action
+ */
+
+export const setDbBusy = (isBusy: boolean, writesPending?: number) => {
+  if (!dbBusyDispatchRef.current) {
+    return
+  }
+  const _writesPending =
+    upQdict.current.length + Object.keys(getGroupActionQ()).length
+  // only set busy to false if no writes are left in queue
+  dbBusyDispatchRef.current({
+    type: 'DB_BUSY',
+    payload: {
+      isBusy: !!(_writesPending || writesPending) || isBusy,
+      writesPending: writesPending || _writesPending,
+    },
+  })
 }
 
 export const addTimeStamp = (doc: any): any => {
@@ -35,10 +63,6 @@ type upsertQueueRef = {
   current: Patch[]
 }
 
-export const upQdict: upsertQueueRef = {
-  current: [],
-}
-
 export const upsert = async ({
   doctype,
   _id,
@@ -49,6 +73,7 @@ export const upsert = async ({
   doc: any
 }) => {
   upQdict.current.push({ ...doc, _id, doctype })
+  setDbBusy(!!upQdict.current.length)
 }
 
 export const findAll = async ({
@@ -349,19 +374,6 @@ export const updateGroupPreferences = async (
   dbRef.current!.put(_groupDoc)
 }
 
-const setDbBusy = (isBusy: boolean, writesPending: number) => {
-  // if `isBusy` is false, first check the two queues
-  if (dbBusyDispatchRef.current) {
-    dbBusyDispatchRef.current({
-      type: 'DB_BUSY',
-      payload: {
-        isBusy,
-        writesPending,
-      },
-    })
-  }
-}
-
 export class QueueProcessor extends EventEmitter {
   // on(event: string, listener: Function): this
   // emit(event: string): void
@@ -374,11 +386,9 @@ export class QueueProcessor extends EventEmitter {
   }
 
   process = async () => {
-    const _queueLength = Object.keys(upQdict.current).length
-
     if (!this.isProcessing) {
       if (upQdict.current.length) {
-        setDbBusy(true, _queueLength)
+        setDbBusy(true)
 
         // do a coallece
         this.isProcessing = true
@@ -387,17 +397,11 @@ export class QueueProcessor extends EventEmitter {
         await bulkUpsert(_upQdict)
         this.isProcessing = false
 
-        //  check  to see if theres any patches pending write
-        const _pendingPatches = Object.keys(upQdict.current).length
-        if (_pendingPatches) {
-          setDbBusy(true, _pendingPatches)
-        } else {
-          setDbBusy(false, 0)
-        }
+        setDbBusy(false)
       }
     } else {
       // db is not pending any writes
-      setDbBusy(false, 0)
+      setDbBusy(false)
     }
   }
 

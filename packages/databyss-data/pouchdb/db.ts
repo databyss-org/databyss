@@ -27,7 +27,7 @@ import tv4 from 'tv4'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { checkNetwork } from '@databyss-org/services/lib/request'
 import { DocumentType } from './interfaces'
-import { searchText, setDbBusyDispatch } from './utils'
+import { searchText, setDbBusyDispatch, setDbBusy } from './utils'
 import { processGroupActionQ } from './groups/utils'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
@@ -274,6 +274,9 @@ export const syncPouchDb = ({
   dispatch: Function
 }) => {
   console.log('Start PouchDB <=> Cloudant sync')
+  // pass  the  session provider dispatch to the patch queue
+  setDbBusyDispatch(dispatch)
+
   // get credentials from local storage
   const _cred: any = getDbCredentialsFromLocal(groupId)
 
@@ -299,51 +302,25 @@ export const syncPouchDb = ({
     })
     .on('error', (err) => console.log(`REPLICATE.TO ERROR - ${err}`))
     .on('change', (info) => {
-      dispatch({
-        type: 'DB_BUSY',
-        payload: {
-          isBusy: true,
-          writesPending: info.docs.length,
-        },
-      })
+      setDbBusy(true, info.docs.length)
     })
     .on('paused', (err) => {
       if (!err) {
-        dispatch({
-          type: 'DB_BUSY',
-          payload: {
-            isBusy: false,
-            writesPending: 0,
-          },
-        })
-        // pass  the  session provider dispatch to the patch queue
-        setDbBusyDispatch(dispatch)
+        setDbBusy(false)
 
         // when replication has paused, sync group queues
-        processGroupActionQ(dispatch)
+        processGroupActionQ()
       }
     })
   ;(dbRef.current as PouchDB.Database).replicate
     .from(`${REMOTE_CLOUDANT_URL}/${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
     .on('change', (info) => {
-      dispatch({
-        type: 'DB_BUSY',
-        payload: {
-          isBusy: true,
-          readsPending: info.docs.length,
-        },
-      })
+      setDbBusy(true, info.docs.length)
     })
     .on('paused', (err) => {
       if (!err) {
-        dispatch({
-          type: 'DB_BUSY',
-          payload: {
-            isBusy: false,
-            readsPending: 0,
-          },
-        })
+        setDbBusy(false)
       }
     })
 }
