@@ -268,6 +268,7 @@ describe('editor clipboard', () => {
     await copy(actions)
     await sendKeys(actions, 'and we append #')
     await paste(actions)
+    await sleep(1000)
     await enterKey(actions)
     // copy fraction of an inline
     await leftShiftKey(actions)
@@ -276,6 +277,7 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await enterKey(actions)
     await paste(actions)
+    await sleep(1000)
 
     // block pasting multiple blocks
     await enterKey(actions)
@@ -285,6 +287,8 @@ describe('editor clipboard', () => {
     await rightKey(actions)
     await sendKeys(actions, 'this should block #')
     await paste(actions)
+    await sleep(1000)
+
     await enterKey(actions)
     await getEditor(driver)
 

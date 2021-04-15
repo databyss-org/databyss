@@ -6,6 +6,8 @@ import {
   replicateDbFromRemote,
   syncPouchDb,
   initiatePouchDbIndexes,
+  dbRef,
+  getPouchDb,
 } from '@databyss-org/data/pouchdb/db'
 import { Viewport } from '@databyss-org/ui'
 // import { connect } from '@databyss-org/data/couchdb-client/couchdb'
@@ -147,7 +149,11 @@ const SessionProvider = ({
         const unauthenticatedGroupId = await hasUnathenticatedAccess()
 
         if (unauthenticatedGroupId) {
-          await replicateGroup(unauthenticatedGroupId)
+          if (!process.env.FORCE_MOBILE) {
+            await replicateGroup(unauthenticatedGroupId)
+          } else {
+            dbRef.current = getPouchDb(unauthenticatedGroupId)
+          }
           _publicSession = await localStorageHasPublicSession(3)
         }
       }

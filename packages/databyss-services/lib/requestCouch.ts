@@ -30,15 +30,25 @@ export const requestCouch = (
 ) => {
   const { authenticateAsGroupId } = options
   const _secrets = getPouchSecret()
-  const _groupId = authenticateAsGroupId || Object.keys(_secrets)[0]
-  const { dbKey: _username, dbPassword: _password } = _secrets[_groupId]
+  const _groupId =
+    authenticateAsGroupId || (_secrets && Object.keys(_secrets)?.[0])
+  let _username
+  let _password
+  if (_groupId) {
+    _username = _secrets[_groupId].dbKey
+    _password = _secrets[_groupId].dbPassword
+  }
+
+  // todo if not authenticated comment out authorization
 
   const _uri = `https://${process.env.CLOUDANT_HOST}/${path}`
   const _options = {
     ...options,
     headers: {
       ...options.headers,
-      Authorization: `Basic ${Base64.btoa(`${_username}:${_password}`)}`,
+      ...(_groupId && {
+        Authorization: `Basic ${Base64.btoa(`${_username}:${_password}`)}`,
+      }),
     },
   }
   return new Promise((resolve, reject) => {
