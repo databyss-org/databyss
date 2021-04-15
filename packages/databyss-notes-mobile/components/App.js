@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Viewport, useNavigationContext } from '@databyss-org/ui'
+import { useNavigationContext } from '@databyss-org/ui'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import SessionProvider from '@databyss-org/services/session/SessionProvider'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'

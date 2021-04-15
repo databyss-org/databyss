@@ -4,7 +4,6 @@ import {
   Router,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { QueryClientProvider, QueryClient } from 'react-query'
-import { getDefaultGroup } from '@databyss-org/services/session/clientStorage'
 import { View } from '@databyss-org/ui/primitives'
 import { EditorPageProvider } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
