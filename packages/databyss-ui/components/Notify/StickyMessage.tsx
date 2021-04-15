@@ -44,7 +44,7 @@ const StickyMessage = ({
           columnGap="small"
           flexWrap="nowrap"
         >
-          <View width="100%" pr="medium">
+          <View width="100%" pr="medium" maxWidth="85%" pl="em">
             {html ? (
               <RawHtml html={html} color="text.0" variant="uiTextNormal" />
             ) : (
