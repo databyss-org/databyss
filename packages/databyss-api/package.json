@@ -48,7 +48,7 @@
     "redis": "^3.0.2",
     "request": "^2.88.0",
     "supertest": "^4.0.2",
-    "webpack": "^4.33.0",
+    "webpack": "^4.46.0",
     "webpack-bugsnag-plugins": "^1.4.3",
     "webpack-node-externals": "^1.7.2"
   }
