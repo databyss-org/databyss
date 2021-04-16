@@ -13,27 +13,37 @@ const Navbar = ({ lightTheme, navLinks }) => (
     right="medium"
   >
     <View flexDirection="row" maxWidth="400px">
-      {navLinks.map((link, index) => (
-        <BaseControl
-          key={index}
-          href={link.route}
-          ml="medium"
-          height={pxUnits(26)}
-          hoverColor="transparent"
-          css={{
-            textDecoration: 'none',
-            borderBottom: '2px solid transparent',
-            transition: `${timing.quick}ms ${timing.ease}`,
-            '&:hover': {
-              borderBottom: `2px solid ${theme.colors.purple[1]}`,
-            },
-          }}
-        >
-          <Text color={lightTheme ? 'text.3' : 'text.4'} variant="uiTextNormal">
-            {link.name}
+      {navLinks.map((link, index) =>
+        link.separator ? (
+          <Text color="gray.5" pl="em" variant="uiTextNormal">
+            |
           </Text>
-        </BaseControl>
-      ))}
+        ) : (
+          <BaseControl
+            key={index}
+            href={link.route}
+            target={link.target}
+            ml="em"
+            height={pxUnits(26)}
+            hoverColor="transparent"
+            css={{
+              textDecoration: 'none',
+              borderBottom: '2px solid transparent',
+              transition: `${timing.quick}ms ${timing.ease}`,
+              '&:hover': {
+                borderBottom: `2px solid ${theme.colors.purple[1]}`,
+              },
+            }}
+          >
+            <Text
+              color={lightTheme ? 'text.3' : 'text.4'}
+              variant="uiTextNormal"
+            >
+              {link.name}
+            </Text>
+          </BaseControl>
+        )
+      )}
     </View>
   </View>
 )
