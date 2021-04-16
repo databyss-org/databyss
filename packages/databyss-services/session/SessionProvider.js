@@ -223,6 +223,18 @@ const SessionProvider = ({
     dispatch(actions.logout())
   }
 
+  document.addEventListener('visibilitychange', () => {
+    // if window is in focus, not on a public account, has no group in local storage and has a db reference navigate page to home screen
+    if (
+      !document.hidden &&
+      !state?.session?.publicAccount &&
+      !getDefaultGroup() &&
+      dbRef.current
+    ) {
+      window.location.href = '/'
+    }
+  })
+
   const setDefaultPage = useCallback((id) => {
     dispatch(actions.onSetDefaultPage(id))
   }, [])
