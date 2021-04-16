@@ -53,7 +53,9 @@ const BaseControl = forwardRef(
         navigationContext
       ) {
         event.preventDefault()
-        navigationContext.navigate(href)
+        setTimeout(() => {
+          navigationContext.navigate(href)
+        }, 500)
       }
     }
 
