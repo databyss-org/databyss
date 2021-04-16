@@ -19,6 +19,8 @@ import TopicsIndex from './Topics/TopicsIndex'
 import TopicDetails from './Topics/TopicDetails'
 import ConfigIndex from './Config/ConfigIndex'
 
+// test
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
