@@ -64,6 +64,7 @@ interface ContextType {
   hideSticky: () => void
   hideApplication: () => void
   showApplication: () => void
+  notifyUpdateAvailable: () => void
   isOnline: boolean
 }
 
@@ -235,15 +236,24 @@ class NotifyProvider extends React.Component {
     this.notifySticky({
       children: (
         <>
-          <Text variant="uiTextSmall">There is a new version available!</Text>
+          <Text variant="uiTextNormal">There is a new version available!</Text>
           <Button
             ml="small"
             variant="uiLink"
-            textVariant="uiTextSmall"
+            textVariant="uiTextNormal"
+            href="/g_7v9n4vjx2h7511/pages/iku2iiu2d16y33"
+            target="_blank"
+          >
+            See what&apos;s new
+          </Button>
+          <Button
+            ml="small"
+            variant="uiLink"
+            textVariant="uiTextNormal"
             href={window.location.href}
             onPress={() => window.location.reload(true)}
           >
-            Click here to update
+            Refresh or click here to update
           </Button>
         </>
       ),
@@ -420,6 +430,7 @@ class NotifyProvider extends React.Component {
           hideSticky: this.hideSticky,
           showApplication: this.showApplication,
           hideApplication: this.hideApplication,
+          notifyUpdateAvailable: this.notifyUpdateAvailable,
           isOnline,
         }}
       >

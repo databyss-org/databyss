@@ -1,6 +1,5 @@
 import React, { ReactNode, useState } from 'react'
-import { ThemeProvider } from 'emotion-theming'
-import { darkTheme } from '@databyss-org/ui/theming/theme'
+import { darkTheme, pxUnits } from '@databyss-org/ui/theming/theme'
 import {
   View,
   Grid,
@@ -36,34 +35,41 @@ const StickyMessage = ({
     return null
   }
   return (
-    <ThemeProvider theme={darkTheme}>
-      <View bg="background.0" width="100%" alignItems="center" py="em">
-        <Grid
-          widthVariant="content"
-          singleRow
-          columnGap="small"
-          flexWrap="nowrap"
+    <View
+      bg="background.0"
+      width="100%"
+      alignItems="left"
+      py="em"
+      pl="em"
+      pr="medium"
+      theme={darkTheme}
+      flexShrink={0}
+      flexGrow={0}
+      overflow="hidden"
+      borderBottomWidth={pxUnits(1)}
+      borderBottomColor="gray.3"
+      borderBottomStyle="solid"
+    >
+      <Grid singleRow columnGap="large" flexWrap="nowrap">
+        <View flexGrow={1} flexShrink={1} overflow="hidden">
+          {html ? (
+            <RawHtml html={html} color="text.0" variant="uiTextNormal" />
+          ) : (
+            children
+          )}
+        </View>
+        <BaseControl
+          onPress={dismiss}
+          py="tiny"
+          px="tiny"
+          alignSelf="flex-start"
         >
-          <View width="100%" pr="medium" maxWidth="85%" pl="em">
-            {html ? (
-              <RawHtml html={html} color="text.0" variant="uiTextNormal" />
-            ) : (
-              children
-            )}
-          </View>
-          <BaseControl
-            onPress={dismiss}
-            py="tiny"
-            px="tiny"
-            alignSelf="flex-start"
-          >
-            <Icon sizeVariant="tiny" color="text.3">
-              <CloseSvg />
-            </Icon>
-          </BaseControl>
-        </Grid>
-      </View>
-    </ThemeProvider>
+          <Icon sizeVariant="tiny" color="text.3">
+            <CloseSvg />
+          </Icon>
+        </BaseControl>
+      </Grid>
+    </View>
   )
 }
 
