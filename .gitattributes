@@ -1,2 +1,3 @@
-ios/* linguist-generated
-android/* linguist-generated
+* linguist-language=Other
+*.ts* linguist-language=TypeScript
+*.js linguist-language=JavaScript
