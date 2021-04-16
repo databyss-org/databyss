@@ -4,6 +4,7 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import Control, { ControlNoFeedback } from './native/Control'
 import DraggableControl from './native/DraggableControl'
 import { View } from '../'
+import { upQdict } from '@databyss-org/data/pouchdb/utils'
 
 /**
  * Base Control component that handles disabled state
@@ -53,9 +54,17 @@ const BaseControl = forwardRef(
         navigationContext
       ) {
         event.preventDefault()
-        setTimeout(() => {
-          navigationContext.navigate(href)
-        }, 500)
+        const _navigate = (count = 0) => {
+          if (count > 20) {
+            console.error('[BaseControl] navigate: Max retry exceeded')
+          }
+          if (!upQdict.current.length) {
+            navigationContext.navigate(href)
+            return
+          }
+          setTimeout(() => _navigate(count + 1), 100)
+        }
+        _navigate()
       }
     }
 
