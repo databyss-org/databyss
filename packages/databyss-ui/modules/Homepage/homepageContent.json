@@ -20,11 +20,6 @@
           "tabletOnly": "true"
         },
         {
-          "text": "Sign Up",
-          "href": "https://app.databyss.org/signup",
-          "mobileOnly": "true"
-        },
-        {
           "text": "Login",
           "href": "https://app.databyss.org/",
           "mobileOnly": "true"

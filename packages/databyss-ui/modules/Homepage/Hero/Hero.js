@@ -73,6 +73,7 @@ const Hero = ({
             }
             return (
               <Button
+                minWidth={60}
                 key={index}
                 variant="pinkHighlighted"
                 href={button.href}
