@@ -1009,14 +1009,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
         autofocus={autofocus}
         value={editor.children}
         selection={nextSelection}
-        onChange={(val) => {
-          if (!onChange) {
-            // do something to save the chage some other way
-            console.error('no onchange')
-            return
-          }
-          onChange()
-        }}
+        onChange={onChange}
         onKeyDown={onKeyDown}
         readonly={readonly}
       />
