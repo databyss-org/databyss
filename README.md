@@ -1,8 +1,6 @@
 # Databyss
 
-Expressive database management tools for writers and researchers.
-
-[![CircleCI](https://circleci.com/gh/databyss-org/databyss/tree/master.svg?style=svg)](https://circleci.com/gh/databyss-org/databyss/tree/master)
+The word processor is dead, long live the word processor!
 
 **If you're a new developer working on the project,**  
 please see our [CONTRIBUTING](CONTRIBUTING.md) guide.

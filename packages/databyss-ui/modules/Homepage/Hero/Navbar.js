@@ -1,51 +1,73 @@
 import React from 'react'
-import { BaseControl, View, Text } from '@databyss-org/ui/primitives'
+import { BaseControl, View, Text, Grid } from '@databyss-org/ui/primitives'
 import theme, { timing } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
+import { useMediaQuery } from 'react-responsive'
 
-const Navbar = ({ lightTheme, navLinks }) => (
-  <View
-    flexDirection="row"
-    justifyContent="flex-end"
-    width="100%"
-    position="absolute"
-    top="medium"
-    right="medium"
-  >
-    <View flexDirection="row" maxWidth="400px">
-      {navLinks.map((link, index) =>
-        link.separator ? (
-          <Text color="gray.5" pl="em" variant="uiTextNormal">
-            |
-          </Text>
-        ) : (
-          <BaseControl
-            key={index}
-            href={link.route}
-            target={link.target}
-            ml="em"
-            height={pxUnits(26)}
-            hoverColor="transparent"
-            css={{
-              textDecoration: 'none',
-              borderBottom: '2px solid transparent',
-              transition: `${timing.quick}ms ${timing.ease}`,
-              '&:hover': {
-                borderBottom: `2px solid ${theme.colors.purple[1]}`,
-              },
-            }}
-          >
-            <Text
-              color={lightTheme ? 'text.3' : 'text.4'}
-              variant="uiTextNormal"
-            >
-              {link.name}
+const Navbar = ({ lightTheme, navLinks }) => {
+  const isTablet = useMediaQuery({ minWidth: theme.breakpoints.tablet })
+  const isMobile = useMediaQuery({ maxWidth: theme.breakpoints.mobile })
+  const isDesktop = useMediaQuery({ minWidth: theme.breakpoints.desktop })
+  console.log('[navbar] isMobile', isMobile)
+  return (
+    <View
+      flexDirection="row"
+      justifyContent={isMobile ? 'center' : 'flex-end'}
+      width="100%"
+      position={isMobile ? 'static' : 'absolute'}
+      top="medium"
+      right="medium"
+      mt={isMobile ? 'medium' : 'none'}
+    >
+      <Grid singleRow columnGap="em">
+        {navLinks.map((link, index) => {
+          if (link.mobileOnly && !isMobile) {
+            return null
+          }
+          if (link.desktopOnly && !isDesktop) {
+            return null
+          }
+          if (link.tabletOnly && !isTablet) {
+            return null
+          }
+
+          return link.separator ? (
+            <Text key={index} color="gray.5" variant="uiTextNormal">
+              |
             </Text>
-          </BaseControl>
-        )
-      )}
+          ) : (
+            <BaseControl
+              key={index}
+              href={link.route}
+              target={link.target}
+              height={pxUnits(26)}
+              hoverColor="transparent"
+              css={{
+                textDecoration: 'none',
+                ...(isTablet
+                  ? {
+                      transition: `${timing.quick}ms ${timing.ease}`,
+                      borderBottom: '2px solid transparent',
+                      '&:hover': {
+                        borderBottom: `2px solid ${theme.colors.purple[1]}`,
+                      },
+                    }
+                  : {
+                      borderBottom: `2px solid ${theme.colors.purple[1]}`,
+                    }),
+              }}
+            >
+              <Text
+                color={lightTheme ? 'text.3' : 'text.4'}
+                variant="uiTextNormal"
+              >
+                {link.name}
+              </Text>
+            </BaseControl>
+          )
+        })}
+      </Grid>
     </View>
-  </View>
-)
-
+  )
+}
 export default Navbar

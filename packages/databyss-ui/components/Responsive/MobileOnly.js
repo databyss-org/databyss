@@ -1,13 +1,8 @@
-import React from 'react'
-import MediaQuery from 'react-responsive'
+import { useMediaQuery } from 'react-responsive'
 import { withTheme } from 'react-jss'
 import { isMobileOs } from '../../lib/mediaQuery'
-import { macros } from '../../theming'
 
-export default withTheme(({ theme, children, orMobileOs = false }) =>
-  orMobileOs && isMobileOs() ? (
-    children
-  ) : (
-    <MediaQuery query={macros.mobileQuery(theme)}>{children}</MediaQuery>
-  )
-)
+export default withTheme(({ theme, children, orMobileOs = false }) => {
+  const isTablet = useMediaQuery({ minWidth: theme.breakpoints.tablet })
+  return orMobileOs && isMobileOs() ? children : !isTablet && children
+})
