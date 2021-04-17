@@ -1,26 +1,28 @@
 import React from 'react'
-import { View, Text, Button } from '@databyss-org/ui/primitives'
+import { View, Text, Button, Grid } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import breakpoints from '@databyss-org/ui/theming/responsive'
 import { useMediaQuery } from 'react-responsive'
 import Navbar from '@databyss-org/ui/modules/Homepage/Hero/Navbar'
+import MobileOnly from '../../../components/Responsive/MobileOnly'
+import TabletOnly from '../../../components/Responsive/TabletOnly'
 
 const Hero = ({
   logoSrc,
   title,
   headline,
-  buttonText,
-  buttonHref,
+  ctaButtons,
   backgroundImgSrc,
   backgroundColor,
   navLinks,
 }) => {
   const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
+  const isMobile = useMediaQuery({ maxWidth: breakpoints.mobile })
 
   return (
     <View
       p="large"
-      pb="extraLarge"
+      pb={isMobile ? 'extraLarge' : 'largest'}
       width="100%"
       alignItems="center"
       css={{
@@ -28,8 +30,14 @@ const Hero = ({
         background: backgroundImgSrc && `url(${backgroundImgSrc})`,
       }}
     >
-      <Navbar navLinks={navLinks} />
-      <View alignItems="center" mt="extraLarge" widthVariant="headline">
+      <TabletOnly>
+        <Navbar navLinks={navLinks} />
+      </TabletOnly>
+      <View
+        alignItems="center"
+        mt={isMobile ? 'large' : 'largest'}
+        widthVariant="headline"
+      >
         <View flexDirection="row" alignItems="center" mb="large">
           <View mr="em">
             <img
@@ -55,23 +63,35 @@ const Hero = ({
         >
           {headline}
         </Text>
-        <Button
-          variant="pinkHighlighted"
-          href={buttonHref}
-          childViewProps={{ flexDirection: 'row' }}
-          css={{
-            textDecoration: 'none',
-          }}
-        >
-          <Text variant="uiTextNormalSemibold" color="text.5">
-            {buttonText.bold}
-          </Text>
-          {buttonText.normal && (
-            <Text variant="uiTextNormal" color="text.5">
-              &nbsp;{buttonText.normal}
-            </Text>
-          )}
-        </Button>
+        <Grid singleRow>
+          {ctaButtons.map((button, index) => {
+            if (button.mobileOnly && !isMobile) {
+              return null
+            }
+            if (button.tabletOnly && !isTablet) {
+              return null
+            }
+            return (
+              <Button
+                minWidth={60}
+                key={index}
+                variant="pinkHighlighted"
+                href={button.href}
+                childViewProps={{ flexDirection: 'row' }}
+                css={{
+                  textDecoration: 'none',
+                }}
+              >
+                <Text variant="uiTextNormalSemibold" color="text.5">
+                  {button.text}
+                </Text>
+              </Button>
+            )
+          })}
+        </Grid>
+        <MobileOnly>
+          <Navbar navLinks={navLinks} />
+        </MobileOnly>
       </View>
     </View>
   )

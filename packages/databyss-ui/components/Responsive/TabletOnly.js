@@ -1,8 +1,7 @@
-import React from 'react'
-import MediaQuery from 'react-responsive'
+import { useMediaQuery } from 'react-responsive'
 import { withTheme } from 'react-jss'
-import { macros } from '../../theming'
 
-export default withTheme(({ theme, children }) => (
-  <MediaQuery query={macros.tabletOnlyQuery(theme)}>{children}</MediaQuery>
-))
+export default withTheme(({ theme, children }) => {
+  const isTablet = useMediaQuery({ minWidth: theme.breakpoints.tablet })
+  return isTablet ? children : null
+})

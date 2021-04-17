@@ -3,7 +3,7 @@
   "meta": [
     {
       "name": "description",
-      "content": "Write and cite, research and re-search, and never get lost in Databyss. The word processor is dead, long live the word processor."
+      "content": "Write and cite, research and re-search, and never get lost in Databyss. The word processor is dead, long live the word processor!"
     }
   ],
   "sections": [
@@ -12,24 +12,20 @@
       "backgroundImgSrc": "/homepage/stone_bg.jpg",
       "logoSrc": "/homepage/logo_new.png",
       "title": "Databyss",
-      "headline": "Write and cite, research and re-search, and never get lost in Databyss. The word processor is dead, long live the word processor.",
-      "buttonText": {
-        "bold": "Get Started",
-        "normal": ""
-      },
-      "buttonHref": "https://app.databyss.org/signup",
+      "headline": "Write and cite, research and re-search, and never get lost in Databyss. The word processor is dead, long live the word processor!",
+      "ctaButtons": [
+        {
+          "text": "Get Started",
+          "href": "https://app.databyss.org/signup",
+          "tabletOnly": "true"
+        },
+        {
+          "text": "Login",
+          "href": "https://app.databyss.org/",
+          "mobileOnly": "true"
+        }
+      ],
       "navLinks": [
-        {
-          "name": "Sign Up",
-          "route": "https://app.databyss.org/signup"
-        },
-        {
-          "name": "Log in",
-          "route": "https://app.databyss.org/"
-        },
-        {
-          "separator": true
-        },
         {
           "name": "User Guide",
           "route": "https://app.databyss.org/g_7v9n4vjx2h7511",
@@ -43,7 +39,22 @@
         {
           "name": "GitHub",
           "route": "https://github.com/databyss-org/databyss",
-          "target": "_blank"
+          "target": "_blank",
+          "tabletOnly": true
+        },
+        {
+          "separator": true,
+          "tabletOnly": true
+        },
+        {
+          "name": "Sign Up",
+          "route": "https://app.databyss.org/signup",
+          "tabletOnly": true
+        },
+        {
+          "name": "Log in",
+          "route": "https://app.databyss.org/",
+          "tabletOnly": true
         }
       ]
     },

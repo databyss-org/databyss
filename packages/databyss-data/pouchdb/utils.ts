@@ -1,4 +1,5 @@
 import PouchDB from 'pouchdb'
+import { throttle } from 'lodash'
 import EventEmitter from 'es-event-emitter'
 import { Document, Group } from '@databyss-org/services/interfaces'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
@@ -413,3 +414,11 @@ export class QueueProcessor extends EventEmitter {
 const EM = new QueueProcessor()
 
 EM.start()
+
+// eslint-disable-next-line func-names
+window.onload = function () {
+  this.addEventListener(
+    'mousemove',
+    throttle(EM.process, 3000, { leading: true })
+  )
+}

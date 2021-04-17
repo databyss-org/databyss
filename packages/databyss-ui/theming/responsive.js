@@ -1,7 +1,7 @@
 import { pxUnits } from './views'
 
 const breakpoints = [
-  pxUnits(425),
+  pxUnits(460),
   pxUnits(768),
   pxUnits(1024),
   pxUnits(1400),
