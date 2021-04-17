@@ -15,6 +15,7 @@ import versionRoute from './routes/api/version'
 import errorRoute from './routes/api/error'
 
 // middleware
+import { versionChecker } from './middleware/versionCheckMiddleware'
 import { createRateController } from './middleware/rateControlMiddleware'
 
 let app = null
@@ -62,11 +63,20 @@ const run = async () => {
   })
 
   // Define Routes
-  app.use('/api/users', usersRoute)
-  app.use('/api/auth', authRoute)
-  app.use('/api/cloudant', cloudantRoute)
-  app.use('/api/version', versionRoute)
-  app.use('/api/error', errorRoute)
+  app.use('/api/users', versionChecker, usersRoute)
+  app.use('/api/auth', versionChecker, authRoute)
+  app.use('/api/cloudant', versionChecker, cloudantRoute)
+  app.use('/api/version', versionChecker, versionRoute)
+  app.use('/api/error', versionChecker, errorRoute)
+
+  // deprecated routes
+  app.use('/api/pages', versionChecker)
+  app.use('/api/accounts', versionChecker)
+  app.use('/api/ping', versionChecker)
+  app.use('/api/entries', versionChecker)
+  app.use('/api/sources', versionChecker)
+  app.use('/api/topics', versionChecker)
+  app.use('/api/echo', versionChecker)
 
   // Bugsnag middleware must go before other error handler middleware
   app.use(bugsnagMiddleware.errorHandler)
