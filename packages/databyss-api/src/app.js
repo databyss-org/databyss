@@ -65,7 +65,7 @@ const run = async () => {
   // Define Routes
   app.use('/api/users', versionChecker, usersRoute)
   app.use('/api/auth', versionChecker, authRoute)
-  app.use('/api/cloudant', cloudantRoute)
+  app.use('/api/cloudant', versionChecker, cloudantRoute)
   app.use('/api/version', versionRoute)
   app.use('/api/error', errorRoute)
 
