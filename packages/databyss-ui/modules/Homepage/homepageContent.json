@@ -13,11 +13,23 @@
       "logoSrc": "/homepage/logo_new.png",
       "title": "Databyss",
       "headline": "Write and cite, research and re-search, and never get lost in Databyss. The word processor is dead, long live the word processor!",
-      "buttonText": {
-        "bold": "Get Started",
-        "normal": ""
-      },
-      "buttonHref": "https://app.databyss.org/signup",
+      "ctaButtons": [
+        {
+          "text": "Get Started",
+          "href": "https://app.databyss.org/signup",
+          "tabletOnly": "true"
+        },
+        {
+          "text": "Sign Up",
+          "href": "https://app.databyss.org/signup",
+          "mobileOnly": "true"
+        },
+        {
+          "text": "Login",
+          "href": "https://app.databyss.org/",
+          "mobileOnly": "true"
+        }
+      ],
       "navLinks": [
         {
           "name": "User Guide",

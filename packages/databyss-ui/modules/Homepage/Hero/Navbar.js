@@ -8,7 +8,6 @@ const Navbar = ({ lightTheme, navLinks }) => {
   const isTablet = useMediaQuery({ minWidth: theme.breakpoints.tablet })
   const isMobile = useMediaQuery({ maxWidth: theme.breakpoints.mobile })
   const isDesktop = useMediaQuery({ minWidth: theme.breakpoints.desktop })
-  console.log('[navbar] isMobile', isMobile)
   return (
     <View
       flexDirection="row"

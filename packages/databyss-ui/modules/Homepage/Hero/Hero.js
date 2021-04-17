@@ -11,8 +11,7 @@ const Hero = ({
   logoSrc,
   title,
   headline,
-  buttonText,
-  buttonHref,
+  ctaButtons,
   backgroundImgSrc,
   backgroundColor,
   navLinks,
@@ -65,40 +64,29 @@ const Hero = ({
           {headline}
         </Text>
         <Grid singleRow>
-          <Button
-            variant="pinkHighlighted"
-            href={buttonHref}
-            childViewProps={{ flexDirection: 'row' }}
-            css={{
-              textDecoration: 'none',
-            }}
-          >
-            <Text variant="uiTextNormalSemibold" color="text.5">
-              Sign Up
-            </Text>
-            {buttonText.normal && (
-              <Text variant="uiTextNormal" color="text.5">
-                &nbsp;{buttonText.normal}
-              </Text>
-            )}
-          </Button>
-          <Button
-            variant="pinkHighlighted"
-            href={buttonHref}
-            childViewProps={{ flexDirection: 'row' }}
-            css={{
-              textDecoration: 'none',
-            }}
-          >
-            <Text variant="uiTextNormalSemibold" color="text.5">
-              Login
-            </Text>
-            {buttonText.normal && (
-              <Text variant="uiTextNormal" color="text.5">
-                &nbsp;{buttonText.normal}
-              </Text>
-            )}
-          </Button>
+          {ctaButtons.map((button, index) => {
+            if (button.mobileOnly && !isMobile) {
+              return null
+            }
+            if (button.tabletOnly && !isTablet) {
+              return null
+            }
+            return (
+              <Button
+                key={index}
+                variant="pinkHighlighted"
+                href={button.href}
+                childViewProps={{ flexDirection: 'row' }}
+                css={{
+                  textDecoration: 'none',
+                }}
+              >
+                <Text variant="uiTextNormalSemibold" color="text.5">
+                  {button.text}
+                </Text>
+              </Button>
+            )
+          })}
         </Grid>
         <MobileOnly>
           <Navbar navLinks={navLinks} />

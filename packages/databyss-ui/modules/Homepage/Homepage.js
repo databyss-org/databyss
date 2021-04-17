@@ -18,11 +18,7 @@ const Homepage = () => (
             logoSrc={section.logoSrc}
             title={section.title}
             headline={section.headline}
-            buttonText={{
-              bold: section.buttonText.bold,
-              normal: section.buttonText.normal,
-            }}
-            buttonHref={section.buttonHref}
+            ctaButtons={section.ctaButtons}
             navLinks={section.navLinks}
           />
         )

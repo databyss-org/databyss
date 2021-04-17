@@ -413,3 +413,8 @@ export class QueueProcessor extends EventEmitter {
 const EM = new QueueProcessor()
 
 EM.start()
+
+// eslint-disable-next-line func-names
+window.onload = function () {
+  this.addEventListener('mousemove', () => EM.process())
+}
