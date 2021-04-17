@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react'
 import { Platform } from 'react-native'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import Control, { ControlNoFeedback } from './native/Control'
+import DraggableControl from './native/DraggableControl'
 import { View } from '../'
 
 /**
@@ -16,7 +17,9 @@ const BaseControl = forwardRef(
       noFeedback,
       childViewProps,
       href,
+      target,
       onKeyDown,
+      draggable,
       ...others
     },
     ref
@@ -24,10 +27,12 @@ const BaseControl = forwardRef(
     // may not exist
     const navigationContext = useNavigationContext()
 
+    // may not exist
+
     const Styled = Platform.select({
       ios: disabled || noFeedback ? ControlNoFeedback : Control,
       android: disabled || noFeedback ? ControlNoFeedback : Control,
-      default: Control,
+      default: draggable ? DraggableControl : Control,
     })
 
     const _children = React.Children.map(
@@ -42,6 +47,7 @@ const BaseControl = forwardRef(
 
       if (
         href &&
+        !target &&
         !href.match(/^http/) &&
         !event.defaultPrevented &&
         navigationContext
@@ -59,6 +65,8 @@ const BaseControl = forwardRef(
         opacity={disabled ? 0.5 : 1}
         ref={ref}
         href={href}
+        target={target}
+        draggable={draggable}
         {...others}
       >
         <View zIndex="base" {...childViewProps}>

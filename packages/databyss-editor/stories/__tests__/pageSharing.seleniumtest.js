@@ -4,15 +4,17 @@ import assert from 'assert'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
-  getElementsByTag,
   sleep,
   sendKeys,
   enterKey,
   getEditor,
+  getSharedPage,
   isAppInNotesSaved,
   paste,
   selectAll,
   backspaceKey,
+  tagButtonClick,
+  tagButtonListClick,
 } from './_helpers.selenium'
 
 let driver
@@ -28,26 +30,18 @@ describe('page sharing', () => {
     const random = Math.random().toString(36).substring(7)
     // OSX and chrome are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
+    await sleep(1000)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
-    let continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
 
-    continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     // wait for editor to be visible
     await getEditor(driver)
@@ -57,20 +51,18 @@ describe('page sharing', () => {
   })
 
   afterEach(async () => {
-    await sleep(100)
-    await driver.quit()
-    driver = null
-    await sleep(100)
+    if (driver) {
+      await driver.quit()
+      driver = null
+      await sleep(100)
+    }
   })
 
   it('should ensure page sharing integrity', async () => {
     // If a page has been copied but is not public, only the private user can view it
     // populate a page
-    let pageTitle = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await pageTitle.click()
+    await tagButtonClick('data-test-element="page-header"', driver)
+
     await sleep(500)
     await sendKeys(actions, 'this is the non shared page title')
     await enterKey(actions)
@@ -79,45 +71,24 @@ describe('page sharing', () => {
 
     const privatePageURL = await driver.getCurrentUrl()
 
-    const newPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="new-page-button"]'
-    )
+    await tagButtonClick('data-test-element="new-page-button"', driver)
 
-    await newPageButton.click()
     // If a page has been copied and is public, anyone can view it
-    pageTitle = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await pageTitle.click()
+
+    await tagButtonClick('data-test-element="page-header"', driver)
+
     await sleep(500)
     await sendKeys(actions, 'this is a shared page title')
     await enterKey(actions)
     await isAppInNotesSaved(driver)
 
     // make page public
-    const pageDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="archive-dropdown"]'
-    )
+    await tagButtonClick('data-test-element="archive-dropdown"', driver)
 
-    await pageDropdown.click()
-
-    const publicPageToggle = await getElementByTag(
-      driver,
-      '[data-test-block-menu="togglePublic"]'
-    )
-
-    await publicPageToggle.click()
+    await tagButtonClick('data-test-block-menu="togglePublic"', driver)
 
     // copy public link
-    const publicPageLink = await getElementByTag(
-      driver,
-      '[data-test-block-menu="copy-link"]'
-    )
-
-    await publicPageLink.click()
+    await tagButtonClick('data-test-block-menu="copy-link"', driver)
 
     editor = await getEditor(driver)
     await editor.click()
@@ -139,19 +110,16 @@ describe('page sharing', () => {
     await sendKeys(actions, 'this entry exists within the public page')
     await isAppInNotesSaved(driver)
 
+    // allow the public page to replicate
+    await sleep(10000)
+    await isAppInNotesSaved(driver)
+
     // log user out to test links
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
+    await tagButtonClick('data-test-element="account-menu"', driver)
 
-    await accountDropdown.click()
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
+    await sleep(1000)
 
-    await logoutButton.click()
+    await tagButtonClick('data-test-block-menu="logout"', driver)
 
     // wait till login screen renders
     await getElementByTag(driver, '[data-test-path="email"]')
@@ -159,43 +127,35 @@ describe('page sharing', () => {
     // navigate to the private page url
     await driver.get(privatePageURL)
 
-    let body = await getElementByTag(driver, '[data-test-element="body"]')
-
-    body = await body.getAttribute('innerText')
-
     /*
-      unauthorized page should return empty page or not authorized
+      unauthorized page on unauthorized user should return the login screen
     */
-    const pageBody = body.trim() === 'Not Authorized' || body.trim() === ''
-    // confirm private page is not authorized
-    assert.equal(true, pageBody)
+    await getElementByTag(driver, '[data-test-path="email"]')
 
-    // navigate to public pageq
+    // const pageBody = body.trim() === 'Not Authorized' || body.trim() === ''
+    // // confirm private page is not authorized
+    // assert.equal(true, pageBody)
+
+    // navigate to public page
     await driver.get(publicPageUrl)
+
+    await getSharedPage(driver)
+
+    // allow sync to occur
+    await sleep(3000)
     // verify topic is in page
-    const topicsSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="topics"]'
-    )
-    await topicsSidebarButton.click()
+    await tagButtonClick('data-test-sidebar-element="topics"', driver)
+
+    await sleep(1000)
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
 
     await sleep(1000)
 
-    const topic = await getElementsByTag(
-      driver,
-      '[data-test-element="page-sidebar-item"]'
+    await tagButtonListClick(
+      'data-test-element="atomic-result-item"',
+      0,
+      driver
     )
-
-    await topic[0].click()
-
-    await sleep(1000)
-
-    const topicEntries = await getElementsByTag(
-      driver,
-      '[data-test-element="atomic-result-item"]'
-    )
-
-    await topicEntries[0].click()
 
     let header = await getElementByTag(
       driver,
@@ -208,36 +168,16 @@ describe('page sharing', () => {
     assert.equal(header.trim(), 'this is a shared page title')
 
     // check if source is linked to page
-    const sourcesSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="sources"]'
-    )
-    await sourcesSidebarButton.click()
+    await tagButtonClick('data-test-sidebar-element="sources"', driver)
 
     await sleep(1000)
 
-    const allSources = await getElementsByTag(
-      driver,
-      '[data-test-element="page-sidebar-item"]'
-    )
-
-    await allSources[0].click()
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
 
     await sleep(1000)
+    await tagButtonListClick('data-test-element="source-results"', 0, driver)
 
-    const sourcesResults = await getElementsByTag(
-      driver,
-      '[data-test-element="source-results"]'
-    )
-
-    await sourcesResults[0].click()
-
-    const sourceResults = await getElementsByTag(
-      driver,
-      '[data-test-element="atomic-results"]'
-    )
-
-    await sourceResults[0].click()
+    await tagButtonListClick('data-test-element="atomic-results"', 0, driver)
 
     header = await getElementByTag(driver, '[data-test-element="page-header"]')
 

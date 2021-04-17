@@ -1,8 +1,8 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession } from '@databyss-org/ui/lib/saucelabs'
-import { sleep, getElementById, getElementByTag } from './_helpers.selenium'
+import { startSession, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { sleep, getElementById, tagButtonClick } from './_helpers.selenium'
 
 let driver
 let actions
@@ -11,14 +11,14 @@ let actions
 const LOCAL_URL =
   'http://localhost:6006/iframe.html?id=selenium-tests--valuelist-controller'
 const PROXY_URL =
-  'http://0.0.0.0:8080/iframe.html?id=selenium-tests--valuelist-controller'
+  'http://localhost:8080/iframe.html?id=selenium-tests--valuelist-controller'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('value list controller', () => {
   beforeEach(async (done) => {
     // OSX and safari are necessary
-    driver = await startSession()
+    driver = await startSession({ browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     actions = driver.actions()
@@ -34,10 +34,8 @@ describe('value list controller', () => {
 
   it('should accept inputs', async () => {
     // name = await getElementByTag(driver, '[data-test-path="text"]')
+    await tagButtonClick('data-test-path="text"', driver)
 
-    const name = await getElementByTag(driver, '[data-test-path="text"]')
-
-    await name.click()
     // await actions.sendKeys('\t')
     await actions.sendKeys('Name of text')
     await actions.sendKeys('\t')

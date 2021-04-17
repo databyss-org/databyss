@@ -2,7 +2,6 @@ import { createContext, useContextSelector } from 'use-context-selector'
 import { debounce } from 'lodash'
 import MurmurHash3 from 'imurmurhash'
 import React, { useCallback } from 'react'
-
 import createReducer from '@databyss-org/services/lib/createReducer'
 
 import { CitationFormatOptions, SourceDetail } from '../interfaces'
@@ -17,7 +16,8 @@ interface PropsType {
 interface ContextType {
   generateCitation: (
     source: SourceDetail,
-    options: CitationFormatOptions
+    options: CitationFormatOptions,
+    isOnline: boolean
   ) => String
 }
 
@@ -54,10 +54,18 @@ const CitationProvider: React.FunctionComponent<PropsType> = (
   )
 
   const generateCitation = useCallback(
-    (source: SourceDetail, options: CitationFormatOptions) => {
+    (
+      source: SourceDetail,
+      options: CitationFormatOptions,
+      isOnline: boolean
+    ) => {
       const hash = generateHash(source, options).toString()
       if (state.citationCache[hash]) {
         return state.citationCache[hash]
+      }
+
+      if (!isOnline) {
+        return ''
       }
 
       return debouncedProcessCitation({ source, options }, hash)

@@ -1,5 +1,5 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
 import {
   Selection,
@@ -259,11 +259,28 @@ export const cleanupPatches = (patches: Patch[]) =>
       )
   )
 
-export const addMetaToPatches = ({ nextState, patches }: OnChangeArgs) =>
+export const addMetaToPatches = ({
+  nextState,
+  previousState,
+  patches,
+}: OnChangeArgs) =>
   cleanupPatches(patches)?.map((_p) => {
     // add selection
     if (_p.path[0] === 'selection') {
       _p.value = { ..._p.value, _id: nextState.selection._id }
+    }
+    // adds _id for patch system to consume
+    if (_p.path[0] === 'blocks') {
+      if (_p.op === 'remove') {
+        const _id = previousState.blocks[_p.path[1]]._id
+        _p.value = { ..._p.value, _id }
+      }
+      if (_p.op === 'replace') {
+        const { _id, type, text } = nextState.blocks[_p.path[1]]
+        if (typeof _p.value !== 'string') {
+          _p.value = { ...text, ..._p.value, _id, type }
+        }
+      }
     }
     return _p
   })
@@ -320,14 +337,23 @@ export const pushSingleBlockOperation = ({
  * @param text text to trim
  * @returns true if lines were trimmed
  */
-export const trimLeft = (text: Text): Boolean => {
+export const trimLeft = (block: Block): Boolean => {
+  const text = block?.text
   if (!text) {
     return false
   }
   const _trim = text.textValue.match(/^\n+/)
   if (_trim) {
-    text.textValue = text.textValue.substring(_trim[0].length)
-    text.ranges = offsetRanges(text.ranges, _trim[0].length)
+    const _textValue = text.textValue.substring(_trim[0].length)
+    const _ranges = offsetRanges(text.ranges, _trim[0].length)
+
+    const _text = {
+      textValue: _textValue,
+      ranges: _ranges,
+    }
+
+    block.text = _text
+
     return true
   }
   return false
@@ -338,20 +364,27 @@ export const trimLeft = (text: Text): Boolean => {
  * @param text text to trim
  * @returns true if lines were trimmed
  */
-export const trimRight = (text: Text): Boolean => {
+export const trimRight = (block: Block): Boolean => {
+  const text = block?.text
   if (!text) {
     return false
   }
   const _trim = text.textValue.match(/\n+$/)
   if (_trim) {
     // cleanup ranges
-    text.ranges = text.ranges.filter(
+    const _ranges = text.ranges.filter(
       (r) => r.offset < text.textValue.length - _trim[0].length
     )
-    text.textValue = text.textValue.substring(
+    const _textValue = text.textValue.substring(
       0,
       text.textValue.length - _trim[0].length
     )
+    const _text = {
+      textValue: _textValue,
+      ranges: _ranges,
+    }
+    block.text = _text
+
     return true
   }
   return false
@@ -362,7 +395,7 @@ export const trimRight = (text: Text): Boolean => {
  * @param text text to trim
  * @returns true if lines were trimmed
  */
-export const trim = (text: Text) => trimLeft(text) || trimRight(text)
+export const trim = (block: Block) => trimLeft(block) || trimRight(block)
 
 export const splitBlockAtEmptyLine = ({
   draft,
@@ -384,13 +417,19 @@ export const splitBlockAtEmptyLine = ({
   })
   // set current block text to first part of split
   //   but remove the last 2 character (which are newlines)
-  _block.text.textValue = before.textValue.substring(0, _offset - 1)
-  _block.text.ranges = before.ranges
+
+  const _text = {
+    textValue: before.textValue.substring(0, _offset - 1),
+    ranges: before.ranges,
+  }
+  _block.text = _text
+  // _block.text.textValue = before.textValue.substring(0, _offset - 1)
+  // _block.text.ranges = before.ranges
 
   // make a new block to insert with second part of split
   const _blockToInsert: Block = {
     type: BlockType.Entry,
-    _id: new ObjectId().toHexString(),
+    _id: uid(),
     text: after,
   }
 
@@ -517,7 +556,6 @@ export const convertInlineToAtomicBlocks = ({
   /*
     if flag `convertInlineToAtomic` is set, pull out text within range `inlineAtomicMenu`, look up in entityCache and set the markup with appropriate id and range
   */
-  let _pushNewEntity = false
 
   // get the markup data, function returns: offset, length, text
   const inlineMarkupData = getTextOffsetWithRange({
@@ -553,7 +591,7 @@ export const convertInlineToAtomicBlocks = ({
     let _atomicTextValue = inlineMarkupData?.text
 
     // new Id for inline atomic
-    let _atomicId = new ObjectId().toHexString()
+    let _atomicId = uid()
 
     // check entitySuggestionCache for an atomic with the identical name
     // if there's a match and the atomic type matches, use the cached
@@ -567,9 +605,6 @@ export const convertInlineToAtomicBlocks = ({
     if (_suggestion?.type === _atomicType) {
       _atomicId = _suggestion._id
       _atomicTextValue = `#${_suggestion.text.textValue}`
-    } else {
-      // set flag to new push atomic entity to appropriate provider
-      _pushNewEntity = true
     }
 
     // get value before offset
@@ -616,18 +651,14 @@ export const convertInlineToAtomicBlocks = ({
       focus: { index, offset: _caretOffest },
     }
 
-    // TODO: confirm this selection gets pushed upstream
     draft.selection = _nextSelection
-
-    if (_pushNewEntity) {
-      const _entity = {
-        type: _atomicType,
-        // remove atomic symbol
-        text: { textValue: _atomicTextValue.substring(1), ranges: [] },
-        _id: _atomicId,
-      }
-      draft.newEntities.push(_entity)
+    const _entity = {
+      type: _atomicType,
+      // remove atomic symbol
+      text: { textValue: _atomicTextValue.substring(1), ranges: [] },
+      _id: _atomicId,
     }
+    draft.newEntities.push(_entity)
   }
 }
 
@@ -664,6 +695,28 @@ export const getInlineOrAtomicsFromStateSelection = (
   return atomicsInSelection
 }
 
+/*
+create a selection which includes the whole document
+*/
+
+export const selectAllSelection = ({
+  selection,
+  blocks,
+}: {
+  selection: Selection
+  blocks: Block[]
+}) => {
+  const _selectionFromState = {
+    _id: selection._id,
+    anchor: { offset: 0, index: 0 },
+    focus: {
+      offset: blocks[blocks.length - 1].text.textValue.length,
+      index: blocks.length,
+    },
+  }
+  return _selectionFromState
+}
+
 export const pushAtomicChangeUpstream = ({
   state,
   draft,
@@ -674,21 +727,9 @@ export const pushAtomicChangeUpstream = ({
   // check if any atomics were removed in the redo process, if so, push removed atomics upstream
 
   // create a selection which includes the whole document
-  const _selectionFromState = {
-    anchor: { offset: 0, index: 0 },
-    focus: {
-      offset: state.blocks[state.blocks.length - 1].text.textValue.length,
-      index: state.blocks.length,
-    },
-  }
+  const _selectionFromState = selectAllSelection(state)
 
-  const _selectionFromDraft = {
-    anchor: { offset: 0, index: 0 },
-    focus: {
-      offset: draft.blocks[draft.blocks.length - 1].text.textValue.length,
-      index: draft.blocks.length,
-    },
-  }
+  const _selectionFromDraft = selectAllSelection(draft)
 
   // return a list of atomics which were found in the second selection and not the first, this is used to see if atomics were removed from the page
 

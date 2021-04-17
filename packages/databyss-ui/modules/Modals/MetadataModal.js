@@ -2,13 +2,13 @@ import React, { useState } from 'react'
 
 import { buildDatabyssName } from '@databyss-org/services/catalog/util'
 import { buildSourceDetail } from '@databyss-org/services/sources/lib'
-import { makeText } from '@databyss-org/services/block/makeText'
+import { makeText } from '@databyss-org/services/blocks'
 import { ModalWindow } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import CitationProvider from '@databyss-org/services/citations/CitationProvider'
 import crossref from '@databyss-org/services/catalog/crossref'
 
-import EditSourceForm from '../../components/SourcesContent/EditSourceForm'
+import EditSourceForm from '../../components/SourceForm/EditSourceForm'
 
 // utils
 const createAuthorFromCrossref = (crossrefAuthor) => ({

@@ -1,16 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
-
 import { ScrollView } from '@databyss-org/ui/primitives'
-import { PageProvider } from '@databyss-org/services'
-import EntryProvider from '@databyss-org/services/entries/EntryProvider'
-import IndexSourceContent from '@databyss-org/ui/components/SourcesContent/IndexSourceContent'
-import SourceProvider from '@databyss-org/services/sources/SourceProvider'
-import {
-  BlockRelationsLoader,
-  PagesLoader,
-  SourceCitationsLoader,
-} from '@databyss-org/ui/components/Loaders'
+// import IndexSourceContent from '@databyss-org/ui/components/SourcesContent/IndexSourceContent'
+import { BlockType } from '@databyss-org/services/interfaces'
+import { IndexPageContent } from '@databyss-org/ui/modules'
+import { useBlockRelations, useBlocks } from '@databyss-org/data/pouchdb/hooks'
+import { LoadingFallback } from '@databyss-org/ui/components'
 import { getScrollViewMaxHeight } from '../../utils/getScrollViewMaxHeight'
 import { MobileView } from '../Mobile'
 import SourcesMetadata from './SourcesMetadata'
@@ -25,42 +20,35 @@ const buildHeaderItems = (title, id) => [
 
 // component
 const SourceDetails = () => {
-  const { sourceId } = useParams()
+  const { blockId } = useParams()
 
-  const [pageTitle, setPageTitle] = useState('Loading...')
+  const blockRelationRes = useBlockRelations(BlockType.Source)
+  const sourcesRes = useBlocks(BlockType.Source)
+  const queryRes = [blockRelationRes, sourcesRes]
 
-  // render methods
+  let pageTitle = 'Loading...'
+
+  if (queryRes.some((q) => !q.isSuccess)) {
+    return <LoadingFallback queryObserver={queryRes} />
+  }
+
+  pageTitle = sourcesRes.data[blockId].text.textValue
+
+  // // render methods
   const renderSourceDetails = () => (
-    <ScrollView maxHeight={getScrollViewMaxHeight()} pr="medium" py="large">
-      <PageProvider>
-        <PagesLoader>
-          {() => (
-            <EntryProvider>
-              <BlockRelationsLoader atomicId={sourceId}>
-                {(relations) => <IndexSourceContent relations={relations} />}
-              </BlockRelationsLoader>
-            </EntryProvider>
-          )}
-        </PagesLoader>
-      </PageProvider>
+    <ScrollView maxHeight={getScrollViewMaxHeight()} flexGrow={1}>
+      <IndexPageContent blockType="SOURCE" />
     </ScrollView>
   )
 
   const render = () => (
-    <MobileView headerItems={buildHeaderItems(pageTitle, sourceId)}>
-      <SourceProvider>
-        <SourceCitationsLoader>
-          {(citations) => {
-            const heading = citations[sourceId].text.textValue
-            setPageTitle(heading)
-            return renderSourceDetails()
-          }}
-        </SourceCitationsLoader>
-      </SourceProvider>
+    <MobileView headerItems={buildHeaderItems(pageTitle, blockId)}>
+      {renderSourceDetails()}
     </MobileView>
   )
 
   return render()
+  // return <div> source detail</div>
 }
 
 export default SourceDetails

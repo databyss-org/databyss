@@ -2,7 +2,7 @@
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 
-import { startSession } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, CHROME } from '@databyss-org/ui/lib/saucelabs'
 
 import {
   enterKey,
@@ -14,6 +14,7 @@ import {
   sleep,
   tabKey,
   upKey,
+  tagButtonClick,
 } from './_helpers.selenium'
 
 let driver
@@ -21,12 +22,12 @@ let editor
 let actions
 
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=services-auth--login'
+const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
 
 const LOCAL_URL_EDITOR =
   'http://localhost:6006/iframe.html?id=services-page--slate-5'
 const PROXY_URL_EDITOR =
-  'http://0.0.0.0:8080/iframe.html?id=services-page--slate-5'
+  'http://localhost:8080/iframe.html?id=services-page--slate-5'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -35,7 +36,7 @@ describe('<EditSourceForm/>', () => {
     const random = Math.random().toString(36).substring(7)
 
     // osx and safari are necessary
-    driver = await startSession()
+    driver = await startSession({ browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     await sleep(1000)
@@ -43,20 +44,12 @@ describe('<EditSourceForm/>', () => {
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
-    let continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
 
-    continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     await getElementByTag(driver, '[data-test-id="logoutButton"]')
 
@@ -86,6 +79,7 @@ describe('<EditSourceForm/>', () => {
     // write to editor
     await sendKeys(actions, `@${sourceTitle}`)
     await enterKey(actions)
+    await isSaved(driver)
 
     await sleep(1000)
 
@@ -100,8 +94,7 @@ describe('<EditSourceForm/>', () => {
     // FIXME: focus should be set to modal component on open
 
     // HACK: select element to be able to start keyboard navigation
-    const nameField = await getElementByTag(driver, '[data-test-path="text"]')
-    await nameField.click()
+    await tagButtonClick('data-test-path="text"', driver)
 
     // reach publication title field
     await tabKey(actions)
@@ -110,14 +103,9 @@ describe('<EditSourceForm/>', () => {
     await sendKeys(actions, sourceTitle)
 
     // dismiss modal
-    const dismissModalButton = await getElementByTag(
-      driver,
-      '[data-test-dismiss-modal="true"]'
-    )
-    await dismissModalButton.click()
+    await tagButtonClick('data-test-dismiss-modal="true"', driver)
 
     await isSaved(driver)
-    await sleep(1000)
 
     // refresh page
     await driver.navigate().refresh()

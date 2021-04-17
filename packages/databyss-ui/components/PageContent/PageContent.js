@@ -1,26 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, forwardRef } from 'react'
 import {
   useParams,
   useLocation,
-  Router,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
+import { EditorPageLoader } from '@databyss-org/ui/components/Loaders'
+import { View, ScrollView } from '@databyss-org/ui/primitives'
+import { useEditorPageContext } from '@databyss-org/services'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
-import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { View } from '@databyss-org/ui/primitives'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
-import { isMobile } from '../../lib/mediaQuery'
-import AccountMenu from './AccountMenu'
+
+export const PageContentView = forwardRef(({ children, ...others }, ref) => (
+  <ScrollView flexShrink={1} flexGrow={1} ref={ref}>
+    <View pl="em" pr="medium" pt="small" flexGrow={1} {...others}>
+      {children}
+    </View>
+  </ScrollView>
+))
 
 export const PageContainer = React.memo(
   ({ anchor, id, page, ...others }) => {
-    const getBlockRefByIndex = usePageContext((c) => c.getBlockRefByIndex)
-
+    const getBlockRefByIndex = useEditorPageContext((c) => c.getBlockRefByIndex)
+    const [, setAuthToken] = useState()
     const [editorPath, setEditorPath] = useState(null)
-    const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
     const headerRef = useRef()
     const editorRef = useRef()
@@ -28,6 +31,17 @@ export const PageContainer = React.memo(
 
     // index is used to set selection in slate
     const [index, setIndex] = useState(null)
+
+    /*
+  confirms a token is in local pouch in order to show account menu
+  */
+
+    useEffect(() => {
+      const _token = getAuthToken()
+      if (_token) {
+        setAuthToken(true)
+      }
+    }, [])
 
     useEffect(() => {
       // if anchor link exists, scroll to anchor
@@ -68,26 +82,14 @@ export const PageContainer = React.memo(
     }
 
     return (
-      <View height="100%" overflowY="auto" ref={editorWindowRef} {...others}>
-        <View
-          pl="medium"
-          pr="medium"
-          pb="medium"
-          pt={isPublicAccount() || isMobile() ? 'large' : 'none'}
-          flexGrow={1}
-        >
-          {!isPublicAccount() && !isMobile() && (
-            <PageSticky pagePath={editorPath} pageId={page._id} />
-          )}
-          {getAuthToken() && isPublicAccount() && !isMobile() && (
-            <View position="absolute" right="extraLarge">
-              <AccountMenu />
-            </View>
-          )}
+      <>
+        <PageSticky pagePath={editorPath} pageId={page._id} />
+        <PageContentView ref={editorWindowRef} {...others}>
           <PageHeader
             ref={headerRef}
             pageId={id}
             onNavigateDownFromHeader={onNavigateDownToEditor}
+            ml="small"
           />
           <PageBody
             onEditorPathChange={setEditorPath}
@@ -96,8 +98,8 @@ export const PageContainer = React.memo(
             focusIndex={index}
             onNavigateUpFromEditor={onNavigateUpFromEditor}
           />
-        </View>
-      </View>
+        </PageContentView>
+      </>
     )
   },
   (prev, next) =>
@@ -118,21 +120,14 @@ const PageContent = (others) => {
   return (
     <View flex="1" height="100%" backgroundColor="background.1">
       {id && (
-        <PageLoader pageId={id} key={id}>
+        <EditorPageLoader pageId={id} key={id}>
           {(page) => (
             <PageContainer anchor={anchor} id={id} page={page} {...others} />
           )}
-        </PageLoader>
+        </EditorPageLoader>
       )}
     </View>
   )
 }
-
-// components
-export const PageRouter = () => (
-  <Router>
-    <PageContent path=":id" />
-  </Router>
-)
 
 export default PageContent

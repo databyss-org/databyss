@@ -73,3 +73,7 @@ buck-out/
 
 # CocoaPods
 Pods/
+
+# logs and configs that we can't turn off in pouchdb-server
+log.txt
+config.json

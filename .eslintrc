@@ -5,11 +5,7 @@
     "prettier",
     "plugin:prettier/recommended"
   ],
-  "plugins": [
-    "@typescript-eslint",
-    "react-hooks",
-    "prettier"
-  ],
+  "plugins": ["@typescript-eslint", "react-hooks", "prettier"],
   "parser": "@typescript-eslint/parser",
   "env": {
     "jest": true,
@@ -18,12 +14,7 @@
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [
-          ".js",
-          ".jsx",
-          ".ts",
-          ".tsx"
-        ]
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
     }
   },
@@ -40,12 +31,10 @@
       "LabeledStatement",
       "WithStatement"
     ],
+    "class-methods-use-this": "off", // sometimes we want them there just for consistency
     "no-continue": "off", // if we're using for...of, we need continue
     "no-await-in-loop": "off", // this is needed for synchronous iteration where order matters
-    "no-return-assign": [
-      "error",
-      "except-parens"
-    ], // Default option
+    "no-return-assign": ["error", "except-parens"], // Default option
     "no-console": "off", // Console logs are too useful and are removed in prod anyway
     "global-require": "off", // Useful for images, assets, etc
     "import/no-dynamic-require": "off", // Useful for images, assets, etc
@@ -68,6 +57,7 @@
     ], // Useful for mutating reduce accumulators, ex.
     "react-hooks/rules-of-hooks": "error",
     "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/alt-text": "off", // we will enforce alt text at the primitive level
     "default-case": "off", // switch mostly used for immer produce, which doesn't require a default
     "no-unused-vars": "off", // use Typescript check instead
     "@typescript-eslint/no-use-before-define": [
@@ -85,9 +75,7 @@
         "ignoreRestSiblings": false
       }
     ],
-    "prettier/prettier": [
-      "error"
-    ],
+    "prettier/prettier": ["error"],
     "import/extensions": [
       "error",
       "ignorePackages",

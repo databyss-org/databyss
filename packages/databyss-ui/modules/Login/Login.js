@@ -46,13 +46,14 @@ const Login = ({ pending, signupFlow, navLinks }) => {
       return
     }
 
-    getSession({
+    const _session = {
       email: values.email.textValue.toLowerCase(),
       code: values.code.textValue,
       googleCode,
       retry: true,
-    })
-    setDidSubmit(true)
+    }
+    setDidSubmit(_session)
+    getSession(_session)
   }
 
   const onGoogleRequest = () => {
@@ -173,7 +174,17 @@ const Login = ({ pending, signupFlow, navLinks }) => {
                 data-test-id="continueButton"
               >
                 {pending ? (
-                  <Loading size={18} />
+                  <Loading
+                    size={20}
+                    showLongWaitMessage={
+                      didSubmit?.code || didSubmit?.googleCode
+                    }
+                    splashOnLongWait
+                    longWaitDialogOptions={{
+                      nude: true,
+                      message: 'Synchronizing your Databyss with the cloud...',
+                    }}
+                  />
                 ) : (
                   `${signInOrSignUp} with ${
                     showRequestCode ? 'Login Code' : 'Email'

@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, CHROME, WIN } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
   getElementsByTag,
@@ -16,40 +16,34 @@ import {
   backspaceKey,
   getEditor,
   isAppInNotesSaved,
+  logout,
+  tagButtonClick,
+  tagButtonListClick,
 } from './_helpers.selenium'
 
 let driver
 let actions
 const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
+const PROXY_URL = 'http://localhost:3000'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('block indexing', () => {
   beforeEach(async (done) => {
     const random = Math.random().toString(36).substring(7)
-    // OSX and chrome are necessary
-    driver = await startSession({ platformName: OSX, browserName: CHROME })
+    // WIN and SAFARI are necessary
+    driver = await startSession({ platformName: WIN, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
-    let continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
 
-    continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     await getEditor(driver)
 
@@ -58,11 +52,11 @@ describe('block indexing', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
     await driver.quit()
-    driver = null
-    await sleep(100)
+
+    done()
   })
 
   // Tests for indexing [adding a topic, adds it to the index, clicking on it should show results, clicking on results should show page with correct entries]
@@ -70,54 +64,39 @@ describe('block indexing', () => {
 
   it('should test block indexing', async () => {
     // populate a page
-    const pageTitle = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await pageTitle.click()
+    await tagButtonClick('data-test-element="page-header"', driver)
+
     await sleep(500)
     await sendKeys(actions, 'this is the first page title')
     await enterKey(actions)
 
     await sendKeys(actions, '@this is an opening source')
     await enterKey(actions)
+    await isAppInNotesSaved(driver)
+
     await upKey(actions)
     // edits the author
     await rightKey(actions)
     await rightKey(actions)
     await enterKey(actions)
     await sleep(1000)
-    const name = await getElementByTag(driver, '[data-test-path="text"]')
 
-    await name.click()
+    await tagButtonClick('data-test-path="text"', driver)
+
     await rightKey(actions)
 
-    const addAuthorButton = await getElementByTag(
-      driver,
-      '[data-test-button="source-add-author"]'
-    )
+    await tagButtonClick('data-test-button="source-add-author"', driver)
 
-    await addAuthorButton.click()
+    await tagButtonClick('data-test-path="detail.authors[0].lastName"', driver)
 
-    const lastName = await getElementByTag(
-      driver,
-      '[data-test-path="detail.authors[0].lastName"]'
-    )
-    await lastName.click()
     await sendKeys(actions, 'Derrida')
 
-    const firstName = await getElementByTag(
-      driver,
-      '[data-test-path="detail.authors[0].firstName"]'
-    )
-    await firstName.click()
+    await tagButtonClick('data-test-path="detail.authors[0].firstName"', driver)
+
     await sendKeys(actions, 'Jaques')
 
-    const doneButton = await getElementByTag(
-      driver,
-      '[data-test-dismiss-modal="true"]'
-    )
-    await doneButton.click()
+    await tagButtonClick('data-test-dismiss-modal="true"', driver)
+
     await sleep(500)
     await downKey(actions)
     await sendKeys(actions, 'this is an entry')
@@ -129,11 +108,13 @@ describe('block indexing', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'third entry')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/#')
     await enterKey(actions)
     await sendKeys(actions, 'fourth entry not in atomic')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/@')
@@ -141,28 +122,29 @@ describe('block indexing', () => {
     await sendKeys(actions, '#this is the second topic')
     await enterKey(actions)
     await sendKeys(actions, 'entry should be contained within topic')
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, 'second entry within topic')
     await isAppInNotesSaved(driver)
+
+    await enterKey(actions)
+    await enterKey(actions)
+    await isAppInNotesSaved(driver)
+
+    await sendKeys(actions, 'second entry within topic')
+    // BLOCK RELATIONS NEED TO BE ADDED, WAIT FOR CHANGE
+    await sleep(3000)
+    await isAppInNotesSaved(driver)
+    await sleep(3000)
+
     await driver.navigate().refresh()
     await getEditor(driver)
-    const topicsSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="topics"]'
-    )
-    await topicsSidebarButton.click()
+
+    await tagButtonClick('data-test-sidebar-element="topics"', driver)
 
     await sleep(2000)
 
     // TODO: function should wait until element is located then remove sleep
     // assure two topics are show in sidebar
-    const secondTopic = await getElementsByTag(
-      driver,
-      '[data-test-element="page-sidebar-item"]'
-    )
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 1, driver)
 
-    await secondTopic[1].click()
     await sleep(1000)
 
     const topicResults = await await getElementsByTag(
@@ -180,7 +162,12 @@ describe('block indexing', () => {
     // assure two results are listed under entry
     assert.equal(topicEntries.length, 2)
 
-    await topicEntries[1].click()
+    await tagButtonListClick(
+      'data-test-element="atomic-result-item"',
+      1,
+      driver
+    )
+
     await getEditor(driver)
     await rightShiftKey(actions)
     await rightShiftKey(actions)
@@ -196,27 +183,18 @@ describe('block indexing', () => {
     // check highlight for correct words
     assert.equal(_selection, 'second')
 
-    const sourcesSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="sources"]'
-    )
-    await sourcesSidebarButton.click()
+    await tagButtonClick('data-test-sidebar-element="sources"', driver)
+
     await sleep(1000)
 
     // assure two topics are show in sidebar
-    const authorSidebarButton = await getElementsByTag(
-      driver,
-      '[data-test-element="page-sidebar-item"]'
-    )
 
-    await authorSidebarButton[2].click()
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 1, driver)
+
     await sleep(1000)
-    const authorSorces = await getElementsByTag(
-      driver,
-      '[data-test-element="source-results"]'
-    )
 
-    await authorSorces[0].click()
+    await tagButtonListClick('data-test-element="source-results"', 0, driver)
+
     await sleep(1000)
 
     const citationsResults = await getElementsByTag(
@@ -227,11 +205,17 @@ describe('block indexing', () => {
     assert.equal(citationsResults.length, 4)
 
     // remove author from page
-    await citationsResults[0].click()
+    await tagButtonListClick(
+      'data-test-element="atomic-result-item"',
+      0,
+      driver
+    )
+
     await getEditor(driver)
     await leftKey(actions)
 
     await backspaceKey(actions)
+    await sleep(3000)
     await isAppInNotesSaved(driver)
 
     const allSources = await getElementsByTag(
@@ -240,6 +224,6 @@ describe('block indexing', () => {
     )
 
     // author should not appear on sidebar
-    assert.equal(allSources.length, 2)
+    assert.equal(allSources.length, 1)
   })
 })

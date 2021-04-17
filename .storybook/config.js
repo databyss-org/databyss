@@ -95,12 +95,12 @@ setOptions({
 // automatically import all files ending in *.stories.js
 
 const reqs = [
-  require.context('../packages/databyss-ui', true, /.stories.js$/),
+  require.context('../packages/databyss-ui', true, /.stories.(js|tsx)$/),
   require.context('../packages/databyss-editor', true, /.stories.js$/),
 ]
 
 function loadStories() {
-  reqs.map(req => req.keys().forEach(filename => req(filename)))
+  reqs.map((req) => req.keys().forEach((filename) => req(filename)))
 }
 
 configure(loadStories, module)

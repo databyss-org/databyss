@@ -1,19 +1,16 @@
 /* eslint-disable no-plusplus */
 
 import React, { useState, useEffect } from 'react'
-
-import ObjectId from 'bson-objectid'
-
+import { uid } from '@databyss-org/data/lib/uid'
 import { BlockType } from '@databyss-org/services/interfaces'
-import { makeText } from '@databyss-org/services/block/makeText'
+import { makeText } from '@databyss-org/services/blocks'
 import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { setSource } from '@databyss-org/services/sources'
 import * as services from '@databyss-org/services/pdf'
-
+import { formatSource } from '@databyss-org/editor/components/Suggest/SuggestSources'
 import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
 import { View } from '../../primitives'
 import InfoModal from '../../modules/Modals/InfoModal'
-import styled from '../../primitives/styled'
 
 import DashedArea from './DashedArea'
 
@@ -30,11 +27,11 @@ const viewStyles = () => ({
   left: '50%',
   marginLeft: '-48%',
   overflow: 'hidden',
-  pointerEvents: 'none',
   width: '96%',
+  css: {
+    pointerEvents: 'none',
+  },
 })
-
-const StyledView = styled(View, viewStyles)
 
 // methods
 const isAcceptableFile = (item) =>
@@ -116,7 +113,6 @@ const findMatchesInCrossref = (crossref, metadata) => {
 // component
 const PDFDropZoneManager = () => {
   const editorContext = useEditorContext()
-  const setSource = useSourceContext((c) => c && c.setSource)
 
   const { showModal } = useNavigationContext()
 
@@ -127,7 +123,7 @@ const PDFDropZoneManager = () => {
 
   // utils
   const buildEntryBlock = (data) => {
-    let response = { _id: new ObjectId().toHexString() }
+    let response = { _id: uid() }
 
     if (typeof data === 'string') {
       // filename only
@@ -158,7 +154,7 @@ const PDFDropZoneManager = () => {
       // source text
       if (sourceText) {
         response.push({
-          _id: new ObjectId().toHexString(),
+          _id: uid(),
           type: BlockType.Entry,
           text: {
             textValue: `p. ${page} ${sourceText}`,
@@ -170,7 +166,7 @@ const PDFDropZoneManager = () => {
       // annotation contents
       if (contents) {
         response.push({
-          _id: new ObjectId().toHexString(),
+          _id: uid(),
           type: BlockType.Entry,
           text: {
             textValue: `p. ${page} [${contents}]`,
@@ -310,7 +306,7 @@ const PDFDropZoneManager = () => {
 
       let entryBlock
       if (metadata.fromCrossref) {
-        const detailedMetadata = await showMetadataModal(metadata)
+        const detailedMetadata = formatSource(await showMetadataModal(metadata))
         entryBlock = buildEntryBlock(detailedMetadata)
       } else {
         entryBlock = buildEntryBlock(file.name)
@@ -358,14 +354,14 @@ const PDFDropZoneManager = () => {
   const getLabel = () => (hasParsed ? '' : 'Drop your PDF here')
 
   const render = () => (
-    <StyledView className="pdf-drop-zone-manager">
+    <View {...viewStyles()} className="pdf-drop-zone-manager">
       <DashedArea
         label={getLabel()}
         isVisible={isDropAreaVisible}
         isParsing={isParsing}
       />
       <InfoModal id="pdfDropZoneModal" />
-    </StyledView>
+    </View>
   )
 
   return render()

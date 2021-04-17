@@ -1,7 +1,9 @@
 import React from 'react'
 
-import { Button, Icon, Text, pxUnits, styled } from '../../primitives'
+import { Button, Icon, Text } from '../../primitives'
+import styled from '../../primitives/styled'
 import { sans } from '../../theming/fonts'
+import { pxUnits } from '../../theming/views'
 
 export const TabHeight = 50
 

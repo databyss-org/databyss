@@ -12,7 +12,6 @@ const TerserPlugin = require('terser-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
-// const WorkboxWebpackPlugin = require('workbox-webpack-plugin')
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
 const paths = require('./paths')
@@ -22,8 +21,8 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 // const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin')
 // const typescriptFormatter = require('react-dev-utils/typescriptFormatter')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const manifestSeedJson = require('../public/manifest.json')
 const packageJson = require(paths.appPackageJson)
+const { InjectManifest } = require('workbox-webpack-plugin')
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false'
@@ -68,11 +67,12 @@ module.exports = (webpackEnv) => {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
     // Stop compilation early in production
     bail: isEnvProduction,
-    devtool: isEnvProduction
-      ? shouldUseSourceMap
-        ? 'source-map'
-        : false
-      : isEnvDevelopment && 'cheap-module-source-map',
+    devtool:
+      isEnvProduction || isEnvTest
+        ? shouldUseSourceMap
+          ? 'source-map'
+          : false
+        : isEnvDevelopment && 'cheap-module-source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     entry: [
@@ -114,14 +114,15 @@ module.exports = (webpackEnv) => {
       // We use "/" in development.
       publicPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)
-      devtoolModuleFilenameTemplate: isEnvProduction
-        ? (info) =>
-            path
-              .relative(paths.appSrc, info.absoluteResourcePath)
-              .replace(/\\/g, '/')
-        : isEnvDevelopment &&
-          ((info) =>
-            path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
+      devtoolModuleFilenameTemplate:
+        isEnvProduction || isEnvTest
+          ? (info) =>
+              path
+                .relative(paths.appSrc, info.absoluteResourcePath)
+                .replace(/\\/g, '/')
+          : isEnvDevelopment &&
+            ((info) =>
+              path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
     },
     optimization: {
       minimize: isEnvProduction,
@@ -139,6 +140,7 @@ module.exports = (webpackEnv) => {
             },
             compress: {
               ecma: 5,
+              drop_console: true,
               warnings: false,
               // Disabled because of an issue with Uglify breaking seemingly valid code:
               // https://github.com/facebook/create-react-app/issues/2376
@@ -478,20 +480,12 @@ module.exports = (webpackEnv) => {
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
       // Generate a service worker script that will precache, and keep up to date,
       // the HTML & assets that are part of the Webpack build.
-      // isEnvProduction &&
-      //   new WorkboxWebpackPlugin.GenerateSW({
-      //     clientsClaim: true,
-      //     exclude: [/\.map$/, /asset-manifest\.json$/],
-      //     importWorkboxFrom: 'cdn',
-      //     navigateFallback: `${publicUrl}/index.html`,
-      //     navigateFallbackBlacklist: [
-      //       // Exclude URLs starting with /_, as they're likely an API call
-      //       new RegExp('^/_'),
-      //       // Exclude URLs containing a dot, as they're likely a resource in
-      //       // public/ and not a SPA route
-      //       new RegExp('/[^/]+\\.[^/]+$'),
-      //     ],
-      //   }),
+      isEnvProduction &&
+        new InjectManifest({
+          swSrc: path.resolve(__dirname, './service-worker.js'),
+          include: [/\.(?:html|png|jpg|jpeg|svg|mp4|js|ico)$/],
+          maximumFileSizeToCacheInBytes: 3145728,
+        }),
       // TypeScript type checking
       // useTypeScript &&
       //   new ForkTsCheckerWebpackPlugin({

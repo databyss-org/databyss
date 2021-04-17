@@ -12,6 +12,8 @@ import {
   toggleItalic,
   toggleLocation,
   singleHighlight,
+  getElementById,
+  tagButtonClick,
 } from './_helpers.selenium'
 
 let driver
@@ -19,7 +21,7 @@ let editor
 let slateDocument
 let actions
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=selenium-tests--slate-5'
-const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=selenium-tests--slate-5'
+const PROXY_URL = 'http://localhost:8080/iframe.html?id=selenium-tests--slate-5'
 
 // export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -53,11 +55,12 @@ describe('format text in editor', () => {
     await singleHighlight(actions)
     await actions.perform()
     await sleep(1000)
-    await driver
-      .findElement(By.tagName('[data-test-format-menu="italic"]'))
-      .click()
+
+    await tagButtonClick('data-test-format-menu="italic"', driver)
 
     await sleep(3000)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     const actual = JSON.parse(await slateDocument.getText())
 
@@ -93,11 +96,11 @@ describe('format text in editor', () => {
     await singleHighlight(actions)
     await actions.perform()
     await sleep(1000)
-    await driver
-      .findElement(By.tagName('[data-test-format-menu="location"]'))
-      .click()
+
+    await tagButtonClick('data-test-format-menu="location"', driver)
 
     await sleep(300)
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     const actual = JSON.parse(await slateDocument.getText())
 
@@ -132,6 +135,7 @@ describe('format text in editor', () => {
     await actions.sendKeys(Key.ENTER)
     await actions.perform()
     await sleep(500)
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     const actual = JSON.parse(await slateDocument.getText())
 
@@ -169,6 +173,7 @@ describe('format text in editor', () => {
     await actions.sendKeys(Key.ENTER)
     await actions.perform()
     await sleep(500)
+    slateDocument = await getElementById(driver, 'slateDocument')
 
     const actual = JSON.parse(await slateDocument.getText())
 

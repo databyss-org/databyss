@@ -6,15 +6,16 @@ import {
   BaseControl,
   Switch,
   RawHtml,
-  withKeyboardNavigation,
 } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
+import { withKeyboardNavigation } from '../../primitives/List/KeyboardNavigationItem'
 
 const DropdownListItem = ({
   action,
   textSymbol,
   icon,
   iconColor,
+  textColor,
   label,
   labelHtml,
   shortcut,
@@ -25,6 +26,7 @@ const DropdownListItem = ({
   activeNavigationItem,
   navigationItemRef,
   navigationItemHandle,
+  light,
   ...others
 }) => {
   useImperativeHandle(navigationItemHandle, () => ({
@@ -64,14 +66,20 @@ const DropdownListItem = ({
             </Text>
           )}
           {icon && (
-            <Icon sizeVariant="small" mr="small" color={iconColor}>
+            <Icon
+              sizeVariant="small"
+              mr="small"
+              color={light ? 'text.3' : iconColor}
+            >
               {icon}
             </Icon>
           )}
           {labelHtml ? (
             <RawHtml html={labelHtml} />
           ) : (
-            <Text variant="uiTextSmall">{label}</Text>
+            <Text variant="uiTextSmall" color={light ? 'text.3' : textColor}>
+              {label}
+            </Text>
           )}
         </View>
         {switchControl && <Switch value={value} />}
@@ -86,6 +94,7 @@ const DropdownListItem = ({
 }
 
 DropdownListItem.defaultProps = {
+  textColor: 'text.0',
   iconColor: 'text.2',
 }
 

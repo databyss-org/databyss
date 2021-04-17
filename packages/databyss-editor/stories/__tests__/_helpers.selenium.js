@@ -1,8 +1,12 @@
 import { Key, By, until } from 'selenium-webdriver'
 
-const waitUntilTime = 20000
+const LOCAL_URL = 'http://localhost:3000'
+const PROXY_URL = 'http://0.0.0.0:3000'
+
+const waitUntilTime = 30000
 
 const SLEEP_TIME = 300
+const MAX_RETRIES = 3
 
 // HACK: saucelabs environment double triggers meta key, use ctrl key instead
 
@@ -11,23 +15,50 @@ const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 
 export const getEditor = async (driver) => {
-  await sleep(500)
+  await sleep(1000)
   const el = await driver.wait(
     until.elementLocated(By.tagName('[contenteditable="true"]')),
-    waitUntilTime
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
   )
 
-  const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
+  const _driver = await driver.wait(
+    until.elementIsVisible(el),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
+  return _driver
+}
+
+export const getSharedPage = async (driver) => {
+  await sleep(1000)
+  const el = await driver.wait(
+    until.elementLocated(By.tagName('[data-test-element="page-header"]')),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
+
+  const _driver = await driver.wait(
+    until.elementIsVisible(el),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
   return _driver
 }
 
 export const getElementsByTag = async (driver, tag) => {
-  await sleep(500)
+  await sleep(1000)
   let el = []
   try {
     el = await driver.wait(
       until.elementsLocated(By.tagName(tag)),
-      waitUntilTime
+      waitUntilTime,
+      'Timed out after 30 seconds',
+      500
     )
   } catch (ex) {
     if (ex.name !== 'TimeoutError') {
@@ -40,30 +71,145 @@ export const getElementsByTag = async (driver, tag) => {
 }
 
 export const getElementByTag = async (driver, tag) => {
-  await sleep(500)
+  await sleep(1000)
   const el = await driver.wait(
     until.elementLocated(By.tagName(tag)),
-    waitUntilTime
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
   )
 
   // const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
   return el
 }
 
+export const tagButtonClick = async (tag, driver) => {
+  const actions = driver.actions({ async: true })
+
+  const _clickAction = async (count = 0) => {
+    if (count > MAX_RETRIES) {
+      throw new Error('Stale Element')
+    }
+    try {
+      const element = await getElementByTag(driver, `[${tag}]`)
+      await actions.click(element).perform()
+      await actions.clear()
+      await sleep(SLEEP_TIME)
+    } catch (err) {
+      if (err.name !== 'StaleElementReferenceError') {
+        throw err
+      }
+      console.log('Stale element, retrying')
+
+      await _clickAction(count + 1)
+    }
+  }
+  return _clickAction()
+}
+
+export const tagButtonListClick = async (tag, index, driver) => {
+  const actions = driver.actions({ async: true })
+
+  let count = 0
+  const clickAction = async () => {
+    if (count > MAX_RETRIES) {
+      throw new Error('Stale Element')
+    }
+    const elements = await getElementsByTag(driver, `[${tag}]`)
+    await actions.click(elements[index]).perform()
+    await actions.clear()
+    await sleep(SLEEP_TIME)
+  }
+  try {
+    await clickAction()
+  } catch (err) {
+    if (err.name !== 'StaleElementReferenceError') {
+      throw err
+    }
+    console.log('Stale element, retrying')
+    count += 1
+    await clickAction()
+  }
+}
+
+export const dragAndDrop = async (item, container, driver) => {
+  const actions = driver.actions()
+
+  const _itemElement = await getElementByTag(driver, `[${item}]`)
+
+  const _containerElement = await getElementByTag(driver, `[${container}]`)
+
+  await actions.dragAndDrop(_itemElement, _containerElement).perform()
+  await actions.clear()
+  await sleep(SLEEP_TIME)
+}
+
+export const logout = async (driver) => {
+  let count = 0
+  const logoutAction = async () => {
+    if (count > MAX_RETRIES) {
+      throw new Error('LOGOUT ERROR')
+    }
+
+    await tagButtonClick('data-test-element="account-menu"', driver)
+
+    await sleep(500)
+    await tagButtonClick('data-test-block-menu="logout"', driver)
+
+    await getElementByTag(driver, '[data-test-path="email"]')
+
+    await sleep(SLEEP_TIME)
+
+    // todo: driver.quit on logout actions
+  }
+  try {
+    await logoutAction()
+  } catch (err) {
+    console.log('logout fail - retrying')
+    count += 1
+    await logoutAction()
+  }
+}
+
 export const getElementById = async (driver, id) => {
   await sleep(500)
-  const el = await driver.wait(until.elementLocated(By.id(id)), waitUntilTime)
+  const el = await driver.wait(
+    until.elementLocated(By.id(id)),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
 
-  const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
+  const _driver = await driver.wait(
+    until.elementIsVisible(el),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
   return _driver
 }
 
 export const isSaved = async (driver) => {
-  await getElementById(driver, 'complete')
+  await sleep(2000)
+  try {
+    await getElementById(driver, 'complete')
+  } catch (err) {
+    if (err.name !== 'StaleElementReferenceError') {
+      console.log(err.name)
+      throw err
+    }
+  }
 }
 
 export const isAppInNotesSaved = async (driver) => {
-  await getElementById(driver, 'changes-saved')
+  await sleep(2000)
+  try {
+    await getElementById(driver, 'changes-saved')
+  } catch (err) {
+    if (err.name !== 'StaleElementReferenceError') {
+      throw err
+    }
+  }
 }
 
 export const toggleBold = (actions) =>
@@ -86,6 +232,7 @@ export const singleHighlight = async (actions) => {
 }
 
 const navigationActionsBuilder = async (actions, key) => {
+  await sleep(SLEEP_TIME)
   await actions.sendKeys(key)
   await actions.perform()
   await actions.clear()
@@ -214,11 +361,28 @@ export const redo = async (actions) => {
   await sleep(SLEEP_TIME)
 }
 
-// export const upKey = async actions => {
-//   await actions
-//     .keyUp(Key.ARROW_UP)
-//     .perform()
+export const logIn = async (email, driver) => {
+  await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
-//   await actions.clear()
-//   await sleep(SLEEP_TIME)
-// }
+  const emailField = await getElementByTag(driver, '[data-test-path="email"]')
+  await emailField.sendKeys(email)
+
+  let continueButton = await getElementByTag(
+    driver,
+    '[data-test-id="continueButton"]'
+  )
+  await continueButton.click()
+
+  const codeField = await getElementByTag(driver, '[data-test-path="code"]')
+  await codeField.sendKeys('test-code-42')
+
+  continueButton = await getElementByTag(
+    driver,
+    '[data-test-id="continueButton"]'
+  )
+
+  await continueButton.click()
+
+  // wait for editor to be visible
+  await getEditor(driver)
+}

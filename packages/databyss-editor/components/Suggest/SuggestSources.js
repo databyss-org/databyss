@@ -1,22 +1,35 @@
 import React, { useState, useEffect } from 'react'
-import ObjectId from 'bson-objectid'
-
+import { uid } from '@databyss-org/data/lib/uid'
 import {
   CROSSREF,
   GOOGLE_BOOKS,
   OPEN_LIBRARY,
 } from '@databyss-org/services/catalog/constants'
-import { prefixSearchAll } from '@databyss-org/services/block/filter'
-import { Separator } from '@databyss-org/ui/primitives'
-import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
+import { prefixSearchAll } from '@databyss-org/services/blocks'
+import { Separator, Text, View } from '@databyss-org/ui/primitives'
+import { setSource } from '@databyss-org/services/sources'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
+import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
+import { BlockType } from '@databyss-org/services/interfaces'
+import { LoadingFallback } from '@databyss-org/ui/components'
+import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 
 import { useEditorContext } from '../../state/EditorProvider'
 
 import { CatalogResults } from './'
 
 export const LOCAL_SOURCES = 'LOCAL_SOURCES'
+
+export const formatSource = (value) => {
+  const _value = JSON.parse(JSON.stringify(value))
+  // format year
+  const year = value?.detail?.year?.textValue
+  if (year) {
+    _value.detail.year.textValue = year.toString()
+  }
+  return _value
+}
 
 const SuggestSources = ({
   query,
@@ -28,13 +41,11 @@ const SuggestSources = ({
   setResultsMode,
   ...others
 }) => {
-  const setSource = useSourceContext((c) => c && c.setSource)
-
-  const addPageToCacheHeader = useSourceContext(
-    (c) => c && c.addPageToCacheHeader
-  )
-  const { replace, state } = useEditorContext()
+  const sourcesRes = useBlocksInPages(BlockType.Source)
+  const { replace } = useEditorContext()
+  const sharedWithGroups = useEditorPageContext((c) => c && c.sharedWithGroups)
   const [suggestions, setSuggestsions] = useState()
+  const { isOnline } = useNotifyContext() || { isOnline: false }
 
   useEffect(() => {
     // reset menu when active state changes
@@ -43,13 +54,8 @@ const SuggestSources = ({
 
   const onSourceSelected = (source) => {
     if (!source._id) {
-      source._id = new ObjectId().toHexString()
-      setSource(source)
-    }
-
-    // check document to see if page should be added to source cache
-    if (state.blocks.filter((b) => b._id === source._id).length < 1) {
-      addPageToCacheHeader(source._id, state.pageHeader._id)
+      source._id = uid()
+      setSource({ ...formatSource(source), sharedWithGroups })
     }
 
     replace([source])
@@ -95,33 +101,38 @@ const SuggestSources = ({
     },
   ]
 
-  const onSourcesLoaded = (resources) => {
-    if (!suggestions) {
-      onSuggestionsChanged(Object.values(resources))
-      setSuggestsions(resources)
-    }
-  }
   const _mode = resultsMode || LOCAL_SOURCES
 
+  if (!sourcesRes.isSuccess) {
+    return <LoadingFallback queryObserver={sourcesRes} />
+  }
+
+  if (!suggestions) {
+    onSuggestionsChanged(Object.values(sourcesRes.data))
+    setSuggestsions(Object.values(sourcesRes.data))
+  }
+
   if (_mode === LOCAL_SOURCES) {
-    return (
-      <SourceCitationsLoader onLoad={onSourcesLoaded}>
-        {(_sourceCitations) =>
-          _composeLocalSources(_sourceCitations).concat(
-            _menuItems.map((menuItem) => (
-              <DropdownListItem
-                {...menuItem}
-                key={menuItem.action}
-                data-test-element="suggest-dropdown"
-                onPress={() => {
-                  setResultsMode(menuItem.action)
-                  focusEditor()
-                }}
-              />
-            ))
-          )
-        }
-      </SourceCitationsLoader>
+    return _composeLocalSources(Object.values(sourcesRes.data)).concat(
+      isOnline ? (
+        _menuItems.map((menuItem) => (
+          <DropdownListItem
+            {...menuItem}
+            key={menuItem.action}
+            data-test-element="suggest-dropdown"
+            onPress={() => {
+              setResultsMode(menuItem.action)
+              focusEditor()
+            }}
+          />
+        ))
+      ) : (
+        <View padding="tiny" pl="small">
+          <Text variant="uiTextSmall" color="text.3">
+            Go online to search source catalogs
+          </Text>
+        </View>
+      )
     )
   }
 

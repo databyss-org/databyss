@@ -22,7 +22,7 @@ const GoogleLoginButton = ({
       prompt: 'select_account',
       response_type: 'code',
       state: oauthHash,
-      redirect_uri: `${window.location.protocol}//${window.location.host}/oauth/google`,
+      redirect_uri: `${window.location.protocol}//${window.location.host}/oauth_google.html`,
       client_id: process.env.GAPI_CLIENT_ID,
       flowName: 'GeneralOAuthFlow',
     }

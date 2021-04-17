@@ -1,6 +1,0 @@
-{
-  "docs": {
-    "Users": ["users", "profile"],
-    "Entries": ["authors", "sources", "entries"]
-  }
-}

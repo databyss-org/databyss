@@ -7,7 +7,6 @@ import React, {
   useMemo,
 } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { Patch } from 'immer'
 import {
   SET_SELECTION,
@@ -26,17 +25,10 @@ import {
   CACHE_ENTITY_SUGGESTIONS,
   DEQUEUE_REMOVED_ENTITY,
 } from './constants'
-import {
-  Text,
-  Selection,
-  EditorState,
-  Block,
-  PagePath,
-  BlockRelationPayload,
-} from '../interfaces'
+import { Text, Selection, EditorState, Block, PagePath } from '../interfaces'
 import _initState, { addMetaDataToBlocks } from './initialState'
 import reducer from './reducer'
-import { getPagePath, indexPage } from '../lib/util'
+import { getPagePath } from '../lib/util'
 
 import {
   cutOrCopyEventHandler,
@@ -81,7 +73,6 @@ type ContextType = {
   insert: (blocks: Block[]) => void
   replace: (blocks: Block[]) => void
   cacheEntitySuggestions: (blocks: Block[]) => void
-  setInlineBlockRelations: (callback: Function) => void
 }
 
 export type OnChangeArgs = {
@@ -100,46 +91,18 @@ export interface EditorHandles {
 }
 
 type PropsType = {
-  //  ref?: React.RefObject<EditorHandles>
-  // children: JSX.Element
   initialState: EditorState
   onChange?: (args: OnChangeArgs) => void
 }
 
 const useReducer = createReducer()
 
-/*
-actions to set block relations
-*/
-const isSetBlockRelations: string[] = []
-
-/*
-actions to clear block relations, then set new relations
-*/
-const isClearBlockRelations = [
-  CUT,
-  PASTE,
-  CLEAR,
-  DEQUEUE_NEW_ENTITY,
-  REMOVE_AT_SELECTION,
-  MERGE,
-  SPLIT,
-  REMOVE,
-]
-
 export const EditorContext = createContext<ContextType>(null!)
-
-// : React.RefForwardingComponent<
-//   React.RefObject<EditorHandles>,
-//   PropsType
-// >
 
 const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
   { children, initialState = _initState, onChange },
   ref
 ) => {
-  const setBlockRelations = useEntryContext((c) => c && c.setBlockRelations)
-
   // get the current page header
 
   const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
@@ -147,71 +110,10 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
   /*
     intercepts onChange props and runs the block relations algorithm, dispatches block relations
     */
-  const blockRelationsBuffer = useRef<BlockRelationPayload[]>([])
-
-  const pendingAtomicSave = useRef<boolean>(false)
 
   const forkOnChange = (props: OnChangeArgs) => {
     pagePathRef.current = getPagePath(props.nextState)
     if (onChange) {
-      if (setBlockRelations) {
-        // check if a new atomic has just been removed in the patches
-
-        if (
-          props.patches.filter(
-            (p) =>
-              p.op === 'replace' &&
-              p?.path[0] === 'newEntities' &&
-              p?.value.length === 0
-          ).length
-        ) {
-          // if it has been added, set a flag for pending atomic
-          // useEffect inside of ContentEditable will set this flag to false, block relations must be set before the atomic is set in order to update the headers in the atomic cache
-          pendingAtomicSave.current = true
-        }
-
-        const _pageId = props.nextState.pageHeader?._id
-        if (_pageId) {
-          // if last action was whitelisted, set block relations
-          if (isSetBlockRelations.findIndex((t) => t === props.type) > -1) {
-            blockRelationsBuffer.current.push({
-              blocksRelationArray: indexPage({
-                pageId: _pageId,
-                blocks: props.nextState.blocks,
-              }),
-            })
-          } else if (
-            (isClearBlockRelations.findIndex((t) => t === props.type) > -1 ||
-              props.clearBlockRelations) &&
-            pagePathRef.current
-          ) {
-            blockRelationsBuffer.current.push({
-              clearPageRelationships: _pageId,
-              blocksRelationArray: indexPage({
-                pageId: _pageId,
-                blocks: props.nextState.blocks,
-              }),
-            })
-          } else if (props.type === SET_CONTENT && pagePathRef.current) {
-            if (pagePathRef?.current.blockRelations.length) {
-              /*
-            get the page and block relations at current index
-            */
-              blockRelationsBuffer.current.push({
-                blocksRelationArray: pagePathRef.current.blockRelations,
-              })
-            }
-          }
-        }
-
-        // the newEntity array is clear and its not pending a save
-        if (!props.nextState.newEntities.length && !pendingAtomicSave.current) {
-          // set block relations and clear buffer
-          blockRelationsBuffer.current.forEach((b) => setBlockRelations(b))
-          // clear block relations buffer
-          blockRelationsBuffer.current = []
-        }
-      }
       onChange(props)
     }
   }
@@ -245,37 +147,6 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
     }),
     [pagePathRef.current]
   )
-
-  const setInlineBlockRelations = (callback: Function) => {
-    //  this function is only called after an async `setAtomic` function
-
-    // if nothing in the buffer and callback was provided, fire callback
-    if (!blockRelationsBuffer.current.length) {
-      // reset the pendingAtomicSave ref
-      pendingAtomicSave.current = false
-      if (callback) {
-        callback()
-      }
-      return
-    }
-
-    // set block relations
-    blockRelationsBuffer.current.forEach((b, i) => {
-      // only fire the callback on the last block relation of the array
-      const _fireCallback = i === blockRelationsBuffer.current.length - 1
-
-      setBlockRelations(b).then(() => {
-        if (callback && _fireCallback) {
-          // reset the pendingAtomicSave ref
-          pendingAtomicSave.current = false
-          callback()
-        }
-      })
-    })
-
-    // clear block relations buffer
-    blockRelationsBuffer.current = []
-  }
 
   const setSelection = (selection: Selection) =>
     dispatch({
@@ -439,7 +310,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
           removeEntityFromQueue,
           cacheEntitySuggestions,
           removeAtomicFromQueue,
-          setInlineBlockRelations,
+          // setInlineBlockRelations,
         }}
       >
         {children}

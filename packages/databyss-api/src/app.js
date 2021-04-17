@@ -2,24 +2,17 @@ import express from 'express'
 import cors from 'cors'
 import http from 'http'
 import Bugsnag from '@bugsnag/js'
-
+import { updateDesignDocs, initiateDatabases } from '@databyss-org/data/couchdb'
 import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import BugsnagPluginExpress from '@bugsnag/plugin-express'
 import { ApiError } from './lib/Errors'
-import { connectDB } from './lib/db'
 
 // routes
 import usersRoute from './routes/api/users'
 import authRoute from './routes/api/auth'
-import pagesRoute from './routes/api/pages'
-import accountsRoute from './routes/api/accounts'
-import pingRoute from './routes/api/ping'
+import cloudantRoute from './routes/api/cloudant'
 import versionRoute from './routes/api/version'
-import echoRoute from './routes/api/echo'
 import errorRoute from './routes/api/error'
-import entriesRoute from './routes/api/entries'
-import sourcesRoute from './routes/api/sources'
-import topicsRoute from './routes/api/topics'
 
 // middleware
 import { versionChecker } from './middleware/versionCheckMiddleware'
@@ -34,13 +27,9 @@ const run = async () => {
 
   app = express()
 
-  // Connect Database
-  let dbURI = process.env.MONGO_URI
-  if (process.env.LOCAL_ENV) {
-    dbURI = process.env.LOCAL_MONGO_URI
-  }
-
-  await connectDB(dbURI)
+  // couchdb routines
+  await initiateDatabases()
+  await updateDesignDocs()
 
   // bugsnag middleware must go first
   startBugsnag({
@@ -69,18 +58,25 @@ const run = async () => {
     res.redirect('https://app.databyss.org')
   })
 
+  app.get('/api', (_req, res) => {
+    res.status(200).send('👍')
+  })
+
   // Define Routes
   app.use('/api/users', versionChecker, usersRoute)
   app.use('/api/auth', versionChecker, authRoute)
-  app.use('/api/pages', versionChecker, pagesRoute)
-  app.use('/api/accounts', versionChecker, accountsRoute)
-  app.use('/api/ping', versionChecker, pingRoute)
-  app.use('/api/entries', versionChecker, entriesRoute)
-  app.use('/api/sources', versionChecker, sourcesRoute)
-  app.use('/api/topics', versionChecker, topicsRoute)
-  app.use('/api/echo', versionChecker, echoRoute)
+  app.use('/api/cloudant', versionChecker, cloudantRoute)
   app.use('/api/version', versionRoute)
   app.use('/api/error', errorRoute)
+
+  // deprecated routes
+  app.use('/api/pages', versionChecker)
+  app.use('/api/accounts', versionChecker)
+  app.use('/api/ping', versionChecker)
+  app.use('/api/entries', versionChecker)
+  app.use('/api/sources', versionChecker)
+  app.use('/api/topics', versionChecker)
+  app.use('/api/echo', versionChecker)
 
   // Bugsnag middleware must go before other error handler middleware
   app.use(bugsnagMiddleware.errorHandler)

@@ -2,7 +2,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import { jsx as h } from './hyperscript'
 import { sanitizeEditorChildren } from './__helpers'
 import {
@@ -15,6 +15,9 @@ import {
   toggleLocation,
   getElementById,
   isSaved,
+  enterKey,
+  backspaceKey,
+  tagButtonClick,
 } from './_helpers.selenium'
 
 let driver
@@ -22,12 +25,12 @@ let editor
 let slateDocument
 let actions
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=services-auth--login'
+const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
 
 const LOCAL_URL_EDITOR =
   'http://localhost:6006/iframe.html?id=services-page--slate-5'
 const PROXY_URL_EDITOR =
-  'http://0.0.0.0:8080/iframe.html?id=services-page--slate-5'
+  'http://localhost:8080/iframe.html?id=services-page--slate-5'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -35,26 +38,18 @@ describe('connected editor', () => {
   beforeEach(async (done) => {
     const random = Math.random().toString(36).substring(7)
     // OSX and safari are necessary
-    driver = await startSession()
+    driver = await startSession({ platformName: OSX, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
-    let continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
 
-    continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     await getElementByTag(driver, '[data-test-id="logoutButton"]')
 
@@ -128,11 +123,13 @@ describe('connected editor', () => {
     await sendKeys(actions, 'following text should be ')
     await toggleBold(actions)
     await toggleItalic(actions)
-    await await sendKeys(actions, 'bold and italic ')
+    await sendKeys(actions, 'bold and italic ')
     await toggleItalic(actions)
-    await await sendKeys(actions, 'and just bold ')
+    await sendKeys(actions, 'and just bold ')
     await toggleLocation(actions)
-    await await sendKeys(actions, 'and location with bold')
+    await sendKeys(actions, 'and location with bold')
+    await enterKey(actions)
+    await backspaceKey(actions)
     await isSaved(driver)
 
     await driver.navigate().refresh()

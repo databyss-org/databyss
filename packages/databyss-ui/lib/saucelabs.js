@@ -4,7 +4,7 @@ export const CHROME = 'chrome'
 export const FIREFOX = 'firefox'
 export const SAFARI = 'safari'
 export const WIN = 'Windows 10'
-export const OSX = 'OS X 10.14'
+export const OSX = 'OS X 10.15'
 
 const username = process.env.SAUCE_USERNAME
 const accessKey = process.env.SAUCE_ACCESS_KEY

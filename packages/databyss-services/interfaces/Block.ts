@@ -1,6 +1,6 @@
-import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { SelectOption } from './UI'
 import { Text } from './Text'
+import { Document } from './Document'
 
 export enum BlockType {
   Entry = 'ENTRY',
@@ -10,12 +10,13 @@ export enum BlockType {
   EndTopic = 'END_TOPIC',
 }
 
-export interface BasicBlock {
+export interface BlockReference {
   _id: string
   type: BlockType
 }
 
-export interface Block extends BasicBlock {
+export interface Block extends BlockReference {
+  page?: string
   text: Text
   __showCitationMenu?: boolean
   __showTopicMenu?: boolean
@@ -76,7 +77,33 @@ export interface Topic extends Block {
   isInPages?: string[]
 }
 
+export interface CacheDict<T> {
+  [key: string]: T
+}
 export interface BlockRelationsServerResponse {
   count: number
-  results: BlockRelation[]
+  results: CacheDict<IndexPageResult[]>
+}
+
+export enum BlockRelationshipType {
+  'HEADING' = 'HEADING',
+  'INLINE' = 'INLINE',
+}
+
+export interface IndexPageResult {
+  _id?: string
+  block: string
+  relatedBlock: string
+  relationshipType: BlockRelationshipType
+  relatedBlockType: BlockType
+  page: string
+  blockIndex: number
+  blockText: Text
+}
+
+export interface BlockRelation extends Document {
+  _id: string
+  blockId: string
+  blockType: BlockType
+  pages: string[]
 }

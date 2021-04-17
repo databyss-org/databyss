@@ -1,7 +1,7 @@
 import React from 'react'
-
+import styled from '@databyss-org/ui/primitives/styled'
 import { sans } from '@databyss-org/ui/theming/fonts'
-import { Text, styled } from '@databyss-org/ui/primitives'
+import { Text } from '@databyss-org/ui/primitives'
 
 import { getScrollViewMaxHeight } from '../utils/getScrollViewMaxHeight'
 

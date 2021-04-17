@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getEditor,
   isAppInNotesSaved,
@@ -11,12 +11,14 @@ import {
   enterKey,
   rightShiftKey,
   sleep,
+  logout,
+  tagButtonClick,
 } from './_helpers.selenium'
 
 let driver
 let actions
 const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
+const PROXY_URL = 'http://localhost:3000'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -24,27 +26,18 @@ describe('entry search', () => {
   beforeEach(async (done) => {
     const random = Math.random().toString(36).substring(7)
     // OSX and chrome are necessary
-    driver = await startSession({ platformName: OSX, browserName: CHROME })
+    driver = await startSession({ platformName: WIN, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
-    let continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
 
-    continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     // wait for editor to be visible
     await getEditor(driver)
@@ -54,22 +47,19 @@ describe('entry search', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
     await driver.quit()
-    driver = null
-    await sleep(100)
+
+    done()
   })
 
   // should search an entry at the middle of an entry
   // should search an entry at the end of an entry
   it('should test the integrity of search results', async () => {
     // populate a page
-    let pageTitle = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await pageTitle.click()
+    await tagButtonClick('data-test-element="page-header"', driver)
+
     await sendKeys(actions, 'this is the first page title')
     await sleep(500)
 
@@ -90,21 +80,15 @@ describe('entry search', () => {
     await enterKey(actions)
     await sendKeys(actions, 'this keyword something will be searched')
     await isAppInNotesSaved(driver)
-    await sleep(500)
+    await sleep(1000)
     // check for search results appearing in the same order as they appear on the page
-    let searchSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="search"]'
-    )
-    //  data-test-element="search-result-entries"
 
-    await searchSidebarButton.click()
+    await tagButtonClick('data-test-sidebar-element="search"', driver)
+
     // click on sidebar entry search
-    let searchInput = await getElementByTag(
-      driver,
-      '[data-test-element="search-input"]'
-    )
-    await searchInput.click()
+
+    await tagButtonClick('data-test-element="search-input"', driver)
+
     // wait for editor to be visible
     await sleep(500)
     await sendKeys(actions, 'something searched will')
@@ -112,6 +96,7 @@ describe('entry search', () => {
     await enterKey(actions)
 
     // get the search results, they should be in the order of relevance
+
     const searchPageEntryResults = await getElementsByTag(
       driver,
       '[data-test-element="search-result-entries"]'
@@ -137,25 +122,16 @@ describe('entry search', () => {
     )
 
     // clear the search element
-    const clearButton = await getElementByTag(
-      driver,
-      '[data-test-element="clear-search-results"]'
-    )
-    await clearButton.click()
+    await tagButtonClick('data-test-element="clear-search-results"', driver)
 
     // create a new page and populate the page
-    let newPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="new-page-button"]'
-    )
-    await newPageButton.click()
+    await tagButtonClick('data-test-element="new-page-button"', driver)
+
     // wait for editor to be visible
     await getEditor(driver)
-    pageTitle = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await pageTitle.click()
+    await tagButtonClick('data-test-element="page-header"', driver)
+
+    await sleep(500)
     await sendKeys(actions, 'this is the second page title')
     await sleep(500)
     await enterKey(actions)
@@ -171,18 +147,12 @@ describe('entry search', () => {
     await isAppInNotesSaved(driver)
 
     // create a third page
-    newPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="new-page-button"]'
-    )
-    await newPageButton.click()
+    await tagButtonClick('data-test-element="new-page-button"', driver)
+
     // wait for editor to be visible
     await getEditor(driver)
-    pageTitle = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await pageTitle.click()
+    await tagButtonClick('data-test-element="page-header"', driver)
+
     await sendKeys(
       actions,
       'this is the third page title has keyword something'
@@ -199,24 +169,21 @@ describe('entry search', () => {
     // refresh and archive the page
     await driver.navigate().refresh()
 
+    await getEditor(driver)
+
     // click on sidebar entry search
-    searchSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="search"]'
-    )
-    await searchSidebarButton.click()
+    await tagButtonClick('data-test-sidebar-element="search"', driver)
+
     // click on sidebar entry search
-    searchInput = await getElementByTag(
-      driver,
-      '[data-test-element="search-input"]'
-    )
-    await searchInput.click()
+    await tagButtonClick('data-test-element="search-input"', driver)
+
     await sendKeys(actions, 'something')
     await sleep(1000)
-    await enterKey(actions)
+    // await enterKey(actions)
     await enterKey(actions)
 
     // verify that a source is shown in the search results
+
     let sourceResult = await getElementsByTag(
       driver,
       '[data-test-element="page-sidebar-item"]'

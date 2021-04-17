@@ -5,10 +5,10 @@ import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from '@databyss-org/slate-react'
 import { Range } from '@databyss-org/slate'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { useSearchContext } from '@databyss-org/ui/hooks'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useEditorPageContext } from '@databyss-org/services'
 import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
@@ -36,7 +36,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const _isPublic = isPublicAccount ? isPublicAccount() : null
 
-  const _searchTerm = useEntryContext((c) => c && c.searchTerm)
+  const _searchTerm = useSearchContext((c) => c && c.searchTerm)
 
   let searchTerm = ''
 
@@ -49,7 +49,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
 
   const navigationContext = useNavigationContext()
 
-  const registerBlockRefByIndex = usePageContext(
+  const registerBlockRefByIndex = useEditorPageContext(
     (c) => c && c.registerBlockRefByIndex
   )
 
@@ -200,7 +200,9 @@ const Element = ({ attributes, children, element, readOnly }) => {
                 cursor: selHasRange ? 'text' : 'pointer',
                 caretColor: block.__isActive ? 'transparent' : 'currentcolor',
               }}
-              {...(block.__isActive && !isAtomicClosure(element.type)
+              {...(block.__isActive &&
+              !readOnly &&
+              !isAtomicClosure(element.type)
                 ? { onMouseDown: onAtomicMouseDown }
                 : {})}
             >
@@ -211,7 +213,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
               >
                 {children}
               </Text>
-              {block.__isActive && !isAtomicClosure(element.type) && (
+              {block.__isActive && !isAtomicClosure(element.type) && !readOnly && (
                 <View display="inline">
                   <Button variant="editSource" onPress={onAtomicMouseDown}>
                     <Icon sizeVariant="tiny" color="background.5">

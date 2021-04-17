@@ -1,7 +1,9 @@
-import React, { useState, useRef, useCallback } from 'react'
-import { throttle } from 'lodash'
+import React, { useState, useCallback, useEffect } from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { debounce } from 'lodash'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
+import { EditorPageLoader } from '@databyss-org/ui/components/Loaders'
 import {
   ViewportDecorator,
   NotifyDecorator,
@@ -12,25 +14,23 @@ import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
 import SessionProvider, {
   useSessionContext,
 } from '@databyss-org/services/session/SessionProvider'
-import TopicProvider from '@databyss-org/services/topics/TopicProvider'
+import {
+  useEditorPageContext,
+  EditorPageProvider,
+} from '@databyss-org/services'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
-import PageProvider, {
-  usePageContext,
-} from '@databyss-org/services/pages/PageProvider'
-import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
-import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import { dbRef } from '@databyss-org/data/pouchdb/db'
+import { normalizePage } from '@databyss-org/data/pouchdb/pages/util'
+import { upsert } from '@databyss-org/data/pouchdb/utils'
+import { Page } from '@databyss-org/services/interfaces'
 import HistoryProvider from '../history/EditorHistory'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
-import connectedFixture from './fixtures/connectedState'
-import {
-  cleanupPatches,
-  addMetaToPatches,
-  editorStateToPage,
-  pageToEditorState,
-} from '../state/util'
+import { addMetaToPatches, pageToEditorState } from '../state/util'
+
+const queryClient = new QueryClient()
 
 const LoginRequired = () => (
   <Text>You must login before running this story</Text>
@@ -43,36 +43,49 @@ const Box = ({ children, ...others }) => (
 )
 
 const PageWithAutosave = ({ page }) => {
-  const { setPatches } = usePageContext()
-  const hasPendingPatches = usePageContext((c) => c && c.hasPendingPatches)
+  // const { setPatches } = usePageContext()
+  const { isDbBusy } = useSessionContext()
   const [pageState, setPageState] = useState(null)
+  const [showSaving, setShowSaving] = useState(false)
+  const setPatches = useEditorPageContext((c) => c.setPatches)
 
-  const operationsQueue = useRef([])
-
-  const throttledAutosave = useCallback(
-    throttle(({ nextState, patches }) => {
-      const _patches = cleanupPatches(patches)
-      if (_patches?.length) {
-        const payload = {
-          id: nextState.pageHeader._id,
-          patches: operationsQueue.current,
-        }
-        setPatches(payload)
-        operationsQueue.current = []
-      }
-    }, 500),
+  // debonce the ui component showing the saving icon
+  const debounceSavingIcon = useCallback(
+    debounce(
+      (count) => {
+        setShowSaving(count)
+      },
+      2500,
+      { leading: true }
+    ),
     []
   )
+
+  useEffect(() => {
+    debounceSavingIcon(isDbBusy)
+  }, [isDbBusy])
 
   const onDocumentChange = (val) => {
     setPageState(JSON.stringify(val, null, 2))
   }
 
   const onChange = (value) => {
-    const patches = addMetaToPatches(value)
-    // push changes to a queue
-    operationsQueue.current = operationsQueue.current.concat(patches)
-    throttledAutosave({ ...value, patches })
+    const _patches = addMetaToPatches(value)
+
+    const payload = {
+      id: value.nextState.pageHeader._id,
+      patches: _patches,
+    }
+    setPatches(payload)
+
+    if (_patches.length) {
+      // blocks array in page might have changed, upsert page blocks
+      const _nextBlocks = normalizePage(value.nextState).blocks
+      const { _id } = value.nextState.pageHeader
+      const _page = { blocks: _nextBlocks, _id }
+
+      upsert({ doctype: 'PAGE', _id: _page._id, doc: _page })
+    }
   }
 
   return (
@@ -86,7 +99,7 @@ const PageWithAutosave = ({ page }) => {
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{pageState}</pre>
       </Box>
-      {!hasPendingPatches ? (
+      {!showSaving ? (
         <Text id="complete" variant="uiText">
           changes saved
         </Text>
@@ -97,23 +110,30 @@ const PageWithAutosave = ({ page }) => {
 
 const EditorWithProvider = () => {
   const { getSession } = useSessionContext()
-  const { account } = getSession()
-  const { setPage } = usePageContext()
+  const { defaultPageId } = getSession()
+  // const { setPage } = usePageContext()
+  const setPage = useEditorPageContext((c) => c.setPage)
 
-  const _defaultPage = editorStateToPage(connectedFixture(account.defaultPage))
+  const _pageId = defaultPageId
+
+  // save new page
+  const _page = new Page(_pageId)
+
+  useEffect(() => {
+    // check to see if page exists in DB, if not add page
+
+    dbRef.current?.find({ selector: { _id: _pageId } }).then((res) => {
+      if (!res.docs.length) {
+        setPage(_page)
+      }
+    })
+  }, [])
 
   return (
     <View>
-      <PageLoader pageId={account.defaultPage}>
-        {(page) => {
-          if (page.name !== 'test document') {
-            setPage(_defaultPage)
-            return null
-          }
-
-          return <PageWithAutosave page={pageToEditorState(page)} />
-        }}
-      </PageLoader>
+      <EditorPageLoader key={_pageId} pageId={_pageId}>
+        {(page) => <PageWithAutosave page={pageToEditorState(page)} />}
+      </EditorPageLoader>
     </View>
   )
 }
@@ -121,16 +141,16 @@ const EditorWithProvider = () => {
 const EditorWithModals = () => (
   <ServiceProvider>
     <SessionProvider unauthorizedChildren={<LoginRequired />}>
-      <PageProvider initialState={pageInitialState}>
-        <SourceProvider>
-          <TopicProvider>
+      <QueryClientProvider client={queryClient}>
+        <EditorPageProvider>
+          <SourceProvider>
             <CatalogProvider>
               <EditorWithProvider />
               <ModalManager />
             </CatalogProvider>
-          </TopicProvider>
-        </SourceProvider>
-      </PageProvider>
+          </SourceProvider>
+        </EditorPageProvider>
+      </QueryClientProvider>
     </SessionProvider>
   </ServiceProvider>
 )

@@ -15,12 +15,15 @@ import {
   isAppInNotesSaved,
   downShiftKey,
   rightKey,
+  logout,
+  tagButtonClick,
+  tagButtonListClick,
 } from './_helpers.selenium'
 
 let driver
 let actions
 const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
+const PROXY_URL = 'http://localhost:3000'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -34,21 +37,12 @@ describe('inline atomic', () => {
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
-    let continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
 
-    continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     await getEditor(driver)
 
@@ -57,25 +51,19 @@ describe('inline atomic', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
     await driver.quit()
-    driver = null
-    await sleep(100)
+
+    done()
   })
 
   it('should test the integrity of inline atomics', async () => {
-    let topicsSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="topics"]'
-    )
-    await topicsSidebarButton.click()
+    await tagButtonClick('data-test-sidebar-element="topics"', driver)
+
     // populate a page
-    let pageTitle = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await pageTitle.click()
+    await tagButtonClick('data-test-element="page-header"', driver)
+
     await sleep(500)
     await sendKeys(actions, 'this is the first page title')
     await enterKey(actions)
@@ -87,6 +75,7 @@ describe('inline atomic', () => {
     await isAppInNotesSaved(driver)
 
     // assure the new topic is in the sidebar
+
     let sidebarTopics = await getElementsByTag(
       driver,
       '[data-test-element="page-sidebar-item"]'
@@ -97,20 +86,12 @@ describe('inline atomic', () => {
     await enterKey(actions)
     await sendKeys(actions, 'this entry should get ignored')
 
-    const newPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="new-page-button"]'
-    )
+    await tagButtonClick('data-test-element="new-page-button"', driver)
 
     // populate a new page with the same topic
-    await newPageButton.click()
     await getEditor(driver)
 
-    pageTitle = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await pageTitle.click()
+    await tagButtonClick('data-test-element="page-header"', driver)
 
     await sendKeys(actions, 'this is the second page title')
     await enterKey(actions)
@@ -124,19 +105,12 @@ describe('inline atomic', () => {
     await enterKey(actions)
 
     await sendKeys(actions, '/#')
+    await sleep(1000)
     await isAppInNotesSaved(driver)
 
-    topicsSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="topics"]'
-    )
-    await topicsSidebarButton.click()
+    await tagButtonClick('data-test-sidebar-element="topics"', driver)
 
-    sidebarTopics = await getElementsByTag(
-      driver,
-      '[data-test-element="page-sidebar-item"]'
-    )
-    await sidebarTopics[0].click()
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
 
     await sleep(500)
     // verify both atomics are linked
@@ -156,7 +130,11 @@ describe('inline atomic', () => {
     assert.equal(topicEntries.length, 2)
 
     // change the name of the inline atomic
-    await topicEntries[1].click()
+    await tagButtonListClick(
+      'data-test-element="atomic-result-item"',
+      1,
+      driver
+    )
     await leftKey(actions)
     await leftKey(actions)
 
@@ -175,23 +153,16 @@ describe('inline atomic', () => {
 
     await sendKeys(actions, 'new topic')
 
-    const doneButton = await getElementByTag(
-      driver,
-      '[data-test-dismiss-modal="true"]'
-    )
-    await doneButton.click()
+    await tagButtonClick('data-test-dismiss-modal="true"', driver)
 
-    const searchInput = await getElementByTag(
-      driver,
-      '[data-test-element="search-input"]'
-    )
-    await searchInput.click()
+    await tagButtonClick('data-test-element="search-input"', driver)
 
     await sleep(500)
     await sendKeys(actions, 'new topic')
     await sleep(1000)
     await enterKey(actions)
     await sleep(1000)
+
     // verify results still appear
 
     topicResults = await await getElementsByTag(
@@ -209,7 +180,13 @@ describe('inline atomic', () => {
     // assure two results are listed under entry
     assert.equal(topicEntries.length, 2)
 
-    await topicEntries[0].click()
+    // change the name of the inline atomic
+    await tagButtonListClick(
+      'data-test-element="search-result-entries"',
+      0,
+      driver
+    )
+
     await getEditor(driver)
     // highlight row and get inner selection
     await downShiftKey(actions)
@@ -228,15 +205,12 @@ describe('inline atomic', () => {
     await leftKey(actions)
 
     await backspaceKey(actions)
+    await sleep(1000)
+    await isAppInNotesSaved(driver)
 
     // check the sidebar for topic and see results
     // only one result should be present
-    sidebarTopics = await getElementsByTag(
-      driver,
-      '[data-test-element="page-sidebar-item"]'
-    )
-
-    await sidebarTopics[1].click()
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 1, driver)
 
     topicResults = await await getElementsByTag(
       driver,
@@ -252,28 +226,28 @@ describe('inline atomic', () => {
 
     // assure two results are listed under entry
     assert.equal(topicEntries.length, 1)
-
-    await topicEntries[0].click()
+    await tagButtonListClick(
+      'data-test-element="atomic-result-item"',
+      0,
+      driver
+    )
 
     await getEditor(driver)
     await driver.navigate().refresh()
-    topicsSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="topics"]'
-    )
-    await topicsSidebarButton.click()
-    pageTitle = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await pageTitle.click()
+    await sleep(1000)
+
+    await tagButtonClick('data-test-sidebar-element="topics"', driver)
+
+    await tagButtonClick('data-test-element="page-header"', driver)
+
+    await sleep(1000)
     await enterKey(actions)
     await rightKey(actions)
     await rightKey(actions)
 
     await backspaceKey(actions)
     await backspaceKey(actions)
-
+    await sleep(1000)
     // check sidebar for removed topic
     await isAppInNotesSaved(driver)
 

@@ -6,7 +6,7 @@ let _c = {
     '#221F1B',
     '#2F2E2D',
     '#3B3835',
-    '#534D46',
+    '#504d49',
     '#A19A91',
     '#D0CDC8',
     '#e3e1de',
@@ -48,7 +48,8 @@ _c = {
   // application specific
   selectionHighlight: Color(_c.blue[3]).alpha(0.5).rgb().string(),
   activeTextInputBackground: _c.white,
-  pageBackground: _c.gray[7],
+  pageBackground: 'transparent',
+  scrollShadow: '#bbb',
 }
 
 // legacy (deprecated)
@@ -72,11 +73,12 @@ _c = {
       // control colors [enabled, hover, active, label]
       secondary: [_c.blue[1], _c.gray[2], _c.gray[0], _c.blue[2]],
       activeTextInputBackground: _c.black,
-      pageBackground: _c.black,
+      pageBackground: 'transparent',
       // BaseControl colors [enabled, hover, pressed]
       control: [_c.transparent].concat(
         [_c.gray[4], _c.gray[3]].map((c) => Color(c).alpha(0.4).rgb().string())
       ),
+      scrollShadow: '#222',
     },
   },
 }

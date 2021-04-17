@@ -9,11 +9,10 @@ import {
 } from '@databyss-org/slate'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import cloneDeep from 'clone-deep'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { setSource } from '@databyss-org/services/sources'
+import { setBlockRelations } from '@databyss-org/services/entries'
+import { setTopic } from '@databyss-org/services/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -26,7 +25,6 @@ import {
   toggleMark,
   isMarkActive,
   isCurrentlyInInlineAtomicField,
-  getInlineFromBlock,
   isCharacterKeyPress,
   insertTextWithInilneCorrection,
   inlineAtomicBlockCorrector,
@@ -56,28 +54,11 @@ const ContentEditable = ({
   readonly,
   onNavigateUpFromTop,
   editorRef,
+  sharedWithGroups,
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
 
-  const setSource = useSourceContext((c) => c && c.setSource)
-  const setBlockRelations = useEntryContext((c) => c && c.setBlockRelations)
-
-  const removePageFromSourceCacheHeader = useSourceContext(
-    (c) => c && c.removePageFromCacheHeader
-  )
-
-  const resetSourceHeaders = useSourceContext((c) => c && c.resetSourceHeaders)
-
-  const removePageFromTopicCacheHeader = useTopicContext(
-    (c) => c && c.removePageFromCacheHeader
-  )
-
-  const resetTopicHeaders = useTopicContext((c) => c && c.resetTopicHeaders)
-
-  const hasPendingPatches = usePageContext((c) => c && c.hasPendingPatches)
-
-  const topicContext = useTopicContext()
   const historyContext = useHistoryContext()
 
   const {
@@ -91,7 +72,6 @@ const ContentEditable = ({
     removeAtSelection,
     removeEntityFromQueue,
     removeAtomicFromQueue,
-    setInlineBlockRelations,
   } = editorContext
 
   const editor = useMemo(() => withReact(createEditor()), [])
@@ -107,7 +87,9 @@ const ContentEditable = ({
           editor.children,
           state.selection
         )
+
         Transforms.select(editor, selection)
+
         if (!state.operations.reloadAll) {
           setSelection(state.selection)
         }
@@ -117,6 +99,20 @@ const ContentEditable = ({
     // FIXME: handle selection failure, to prevent page from breaking on load
     console.warn(error)
   }
+
+  // if atomics were removed from page, clear page from block relation
+  useEffect(() => {
+    state.removedEntities.forEach((e) => {
+      removeAtomicFromQueue(e._id)
+      const _payload = {
+        operationType: 'REMOVE',
+        type: e.type,
+        _id: e._id,
+        page: state.pageHeader?._id,
+      }
+      setBlockRelations(_payload)
+    })
+  }, [state.removedEntities])
 
   // if focus index is provides, move caret
   useEffect(() => {
@@ -133,39 +129,11 @@ const ContentEditable = ({
     }
   }, [focusIndex])
 
-  // if an atomic has been removed in the reducer, push action upstream
-  useEffect(() => {
-    if (
-      state.removedEntities.length &&
-      removePageFromTopicCacheHeader &&
-      state?.pageHeader?._id
-    ) {
-      state.removedEntities.forEach((e) => {
-        const _types = {
-          SOURCE: () =>
-            removePageFromSourceCacheHeader(e._id, state.pageHeader._id),
-          TOPIC: () =>
-            removePageFromTopicCacheHeader(e._id, state.pageHeader._id),
-        }
-        _types[e.type]()
-        removeAtomicFromQueue(e._id)
-      })
-    }
-  }, [state.removedEntities])
-
   // if new atomic block has been added, save atomic
   useEffect(() => {
-    if (
-      state.newEntities.length &&
-      setSource &&
-      topicContext &&
-      !hasPendingPatches
-    ) {
-      const { setTopic } = topicContext
-
+    if (state.newEntities.length) {
       state.newEntities.forEach((entity) => {
         let _data = null
-
         if (entity.text) {
           _data = {
             _id: entity._id,
@@ -173,39 +141,35 @@ const ContentEditable = ({
               textValue: entity.text.textValue,
               ranges: entity.text.ranges,
             },
+            sharedWithGroups,
           }
         }
-
         const _types = {
           SOURCE: () => {
-            // requestAnimationFrame will allow the `forkOnChange` function in the editor provider to execute before setting the inline block relations
-            window.requestAnimationFrame(() => {
-              setInlineBlockRelations(() => {
-                if (_data) {
-                  setSource(_data)
-                } else {
-                  resetSourceHeaders()
-                }
-              })
-            })
+            if (_data) {
+              setSource(_data)
+            }
           },
           TOPIC: () => {
-            window.requestAnimationFrame(() => {
-              setInlineBlockRelations(() => {
-                if (_data) {
-                  setTopic(_data)
-                } else {
-                  resetTopicHeaders()
-                }
-              })
-            })
+            if (_data) {
+              setTopic(_data)
+            }
           },
         }
         _types[entity.type]()
+
+        // set BlockRelation property
+        const _payload = {
+          operationType: 'ADD',
+          type: entity.type,
+          _id: entity._id,
+          page: state.pageHeader?._id,
+        }
+        setBlockRelations(_payload)
         removeEntityFromQueue(entity._id)
       })
     }
-  }, [state.newEntities.length, hasPendingPatches])
+  }, [state.newEntities.length])
 
   useImperativeHandle(editorRef, () => ({
     focus: () => {
@@ -498,24 +462,6 @@ const ContentEditable = ({
             if (event.key === 'Backspace') {
               // remove inline node
 
-              /*
-                scan block to see if this is the last instance of inline atomic, if so, remove block relation
-                */
-              const _currentBlock = state.blocks[state.selection.anchor.index]
-              const _inlineRangeMatch = getInlineFromBlock(
-                _currentBlock,
-                _currentLeaf.atomicId
-              )
-              if (_inlineRangeMatch.length < 2 && setBlockRelations) {
-                // clear this block relation
-                const blockRelation = {
-                  block: _currentBlock._id,
-                  relatedBlock: _currentLeaf.atomicId,
-                  removeBlock: true,
-                }
-                setBlockRelations({ blocksRelationArray: [blockRelation] })
-              }
-
               Transforms.removeNodes(editor, {
                 match: (node) => node === _currentLeaf,
               })
@@ -737,6 +683,7 @@ const ContentEditable = ({
             const _index = state.selection.anchor.index
             const _stateBlock = state.blocks[_index]
             // set the block with a re-render
+
             setContent({
               selection: state.selection,
               operations: [

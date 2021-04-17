@@ -1,7 +1,10 @@
-import { httpGet, httpPost } from '../lib/requestApi'
+import * as pouchDB from '@databyss-org/data/pouchdb/topics'
 import { Topic } from '../interfaces'
+import { ResourceNotFoundError } from '../interfaces/Errors'
 
-export const getTopic = (_id: string): Promise<Topic> =>
-  httpGet(`/topics/${_id}`)
-export const getTopicHeaders = (): Promise<Topic[]> => httpGet(`/topics/`)
-export const setTopic = (data: Topic) => httpPost('/topics', { data })
+export const getTopic = (_id: string): Promise<Topic | ResourceNotFoundError> =>
+  pouchDB.getTopic(_id)
+
+export const getTopicHeaders = () => pouchDB.getTopicHeaders()
+
+export const setTopic = (data: Topic) => pouchDB.setTopic(data)

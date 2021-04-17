@@ -1,0 +1,4 @@
+{
+  "title": "Scheduled Maintenance",
+  "body": "<p>We had to take the servers offline for a bit while we upgrade to Databyss 2.0. Please try again in an hour or two.</p><p><strong>✨ The good news</strong> is that this upgrade means you probably won't ever see this message in the future. We're moving to an offline-first data architecture, which means you can still work on Databyss while you're offline and your changes will sync back up to the cloud when it's available again, automatically.</p><p>Thanks again for your patience while we perform this very important upgrade. 🙏</p>"
+}

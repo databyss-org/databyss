@@ -14,13 +14,13 @@ import {
   ScrollView,
   BaseControl,
   TextInput,
-  withKeyboardNavigation,
 } from '@databyss-org/ui/primitives'
 import { loremIpsum } from 'lorem-ipsum'
 import { getNames } from 'country-list'
 import Alea from 'alea'
 import { Section } from './'
 import { darkTheme } from '../../theming/theme'
+import { withKeyboardNavigation } from '../../primitives/List/KeyboardNavigationItem'
 
 const alea = new Alea('typography')
 const ipsum = () => loremIpsum({ units: 'words', count: 4, random: alea })
@@ -97,15 +97,16 @@ export const ComplexItems = () => {
         theme={darkTheme}
         bg="background.0"
       >
-        <List
-          verticalItemPadding={2}
-          horizontalItemPadding={2}
-          mt="none"
-          mb="none"
-        >
+        <List verticalItemPadding={2} horizontalItemPadding={2} py="none">
           {menuItems.reduce((acc, item, index) => {
             if (index > 0) {
-              acc.push(<Separator key={`separator${index}`} />)
+              acc.push(
+                <Separator
+                  spacing="none"
+                  color="border.1"
+                  key={`separator${index}`}
+                />
+              )
             }
             acc.push(
               <BaseControl key={index}>

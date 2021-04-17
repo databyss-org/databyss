@@ -1,26 +1,35 @@
+import * as pouchDb from '@databyss-org/data/pouchdb/sources'
+import { CitationResponse } from '@databyss-org/data/pouchdb/sources/lib/getSourceCitation'
 import { defaultCitationStyle } from '../citations/constants'
-import { httpGet, httpPost, httpDelete } from '../lib/requestApi'
+import { httpDelete } from '../lib/requestApi'
 import { Source, Author, SourceCitationHeader } from '../interfaces'
+
+import { ResourceNotFoundError } from '../interfaces/Errors'
 
 // TODO: Add native versions of these
 
-export const getSource = (_id: string): Promise<Source> =>
-  httpGet(`/sources/${_id}`)
+export const getSource = (
+  _id: string
+): Promise<SourceCitationHeader | ResourceNotFoundError> =>
+  pouchDb.getSource(_id)
 
-export const setSource = (data: Source) => httpPost('/sources', { data })
+export const setSource = (data: Source) => pouchDb.setSource(data)
 
-export const getSources = (): Promise<Source[]> => httpGet('/sources')
+export const getSources = (): Promise<Source[] | ResourceNotFoundError> =>
+  pouchDb.getSources()
 
 export const getSourceCitations = (
   citationStyleId?: string
-): Promise<SourceCitationHeader[]> => {
+): Promise<CitationResponse[] | ResourceNotFoundError> => {
   const styleId = citationStyleId || defaultCitationStyle?.id
-  return httpGet(`/sources/citations/${styleId}`)
+  return pouchDb.getSourceCitation(styleId)
 }
 
 export const deleteSource = (_id: string) => httpDelete(`/sources/${_id}`)
 
-export const getAuthors = (): Promise<Author[]> => httpGet('/sources/authors')
+export const getAuthors = (): Promise<Author[] | ResourceNotFoundError> =>
+  pouchDb.getAuthors()
 
-export const getPageSources = (_id: string): Promise<Source[]> =>
-  httpGet(`/sources/pages/${_id}`)
+// dead link?
+// export const getPageSources = (_id: string): Promise<Source[]> =>
+//   httpGet(`/sources/pages/${_id}`)

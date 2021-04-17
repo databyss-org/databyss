@@ -16,7 +16,10 @@ const openLibrary: CatalogService = {
 
   search: async (query: string): Promise<GroupedCatalogResults> => {
     const results = await request(
-      `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`
+      `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`,
+      {
+        timeout: 15000,
+      }
     )
     return results
   },
@@ -51,7 +54,7 @@ const openLibrary: CatalogService = {
       hasPublisherLocation: apiResult['publisher-location'] !== undefined,
     }
 
-    const responseParts = []
+    const responseParts: any = []
     if (keys.hasPlace) {
       if (Array.isArray(apiResult.place)) {
         responseParts.push(...apiResult.place)

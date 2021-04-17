@@ -1,6 +1,6 @@
 import React from 'react'
-
-import { styled, View } from '@databyss-org/ui/primitives'
+import styled from '@databyss-org/ui/primitives/styled'
+import { View } from '@databyss-org/ui/primitives'
 
 import IconControl from './IconControl'
 

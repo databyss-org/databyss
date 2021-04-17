@@ -8,6 +8,7 @@ import {
   GET_USER_ACCOUNT,
   CACHE_USER_ACCOUNT,
   SET_DEFAULT_PAGE,
+  STORE_SESSION_LOCALLY,
 } from './constants'
 
 import { ResourcePending } from '../interfaces/'
@@ -25,6 +26,11 @@ export const initialState = {
   // cleared when challenge is accepted or rejected
   lastCredentials: null,
   userInfo: null,
+  // monitors pouch db sync
+  isDbBusy: false,
+  readsPending: 0,
+  writesPending: 0,
+  sessionIsStored: false,
 }
 
 export default (state, action) => {
@@ -48,6 +54,12 @@ export default (state, action) => {
       return {
         ...state,
         userInfo: action.payload.data,
+      }
+    }
+    case STORE_SESSION_LOCALLY: {
+      return {
+        ...state,
+        sessionIsStored: true,
       }
     }
     case GET_USER_ACCOUNT: {
@@ -100,19 +112,23 @@ export default (state, action) => {
     }
     case SET_DEFAULT_PAGE: {
       const _nextState = state
-      _nextState.session.account.defaultPage = action.payload.id
-      _nextState.userInfo.defaultPage = action.payload.id
+      _nextState.session.defaultPageId = action.payload.id
+      // _nextState.userInfo.defaultPage = action.payload.id
       return _nextState
     }
     case CACHE_PUBLIC_SESSION: {
       return {
         ...state,
-        session: {
-          ...state.session,
-          publicAccount: {
-            _id: action.payload.publicAccount,
-          },
-        },
+        session: action.payload.session,
+      }
+    }
+
+    case 'DB_BUSY': {
+      return {
+        ...state,
+        isDbBusy: action.payload.isBusy,
+        readsPending: action.payload.readsPending || 0,
+        writesPending: action.payload.writesPending || 0,
       }
     }
 

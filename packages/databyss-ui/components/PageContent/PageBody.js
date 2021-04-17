@@ -1,8 +1,7 @@
-import React, { useEffect, useCallback, useRef } from 'react'
-import { debounce } from 'lodash'
+import React, { useEffect, useRef } from 'react'
 import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'
 import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
@@ -10,11 +9,15 @@ import ContentEditable from '@databyss-org/editor/components/ContentEditable'
 import EditorProvider from '@databyss-org/editor/state/EditorProvider'
 import HistoryProvider from '@databyss-org/editor/history/EditorHistory'
 import {
+  normalizePage,
+  didBlocksChange,
+} from '@databyss-org/data/pouchdb/pages/util'
+import { upsert } from '@databyss-org/data/pouchdb/utils'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import {
   addMetaToPatches,
-  cleanupPatches,
   pageToEditorState,
 } from '@databyss-org/editor/state/util'
-
 import { isMobile } from '../../lib/mediaQuery'
 
 const PageBody = ({
@@ -25,31 +28,16 @@ const PageBody = ({
   onEditorPathChange,
 }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+
   const { location } = useNavigationContext()
-  const clearBlockDict = usePageContext((c) => c.clearBlockDict)
-  const setPatches = usePageContext((c) => c.setPatches)
+  const clearBlockDict = useEditorPageContext((c) => c.clearBlockDict)
+  const sharedWithGroups = useEditorPageContext((c) => c.sharedWithGroups)
+  const setPatches = useEditorPageContext((c) => c.setPatches)
 
   useEffect(() => () => clearBlockDict(), [])
 
-  const patchQueue = useRef([])
   const pageState = useRef(null)
   const editorStateRef = useRef()
-
-  // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
-  const throttledAutosave = useCallback(
-    debounce(({ nextState, patches }) => {
-      const _patches = cleanupPatches(patches)
-      if (_patches.length) {
-        const payload = {
-          id: nextState.pageHeader._id,
-          patches: patchQueue.current,
-        }
-        setPatches(payload)
-        patchQueue.current = []
-      }
-    }, process.env.SAVE_PAGE_THROTTLE),
-    []
-  )
 
   // state from provider is out of date
   const onChange = (value) => {
@@ -61,10 +49,29 @@ const PageBody = ({
 
     pageState.current = value.nextState
 
-    const patches = addMetaToPatches(value)
-    // push changes to a queue
-    patchQueue.current = patchQueue.current.concat(patches)
-    throttledAutosave({ ...value, patches })
+    const _patches = addMetaToPatches(value)
+
+    const payload = {
+      id: value.nextState.pageHeader._id,
+      patches: _patches,
+    }
+    setPatches(payload)
+
+    // blocks array in page might have changed, upsert page blocks
+    const _nextBlocks = normalizePage(value.nextState).blocks
+    const _prevBlocks = normalizePage(value.previousState).blocks
+
+    if (
+      _nextBlocks.length !== _prevBlocks.length ||
+      didBlocksChange({
+        blocksBefore: _prevBlocks,
+        blocksAfter: _nextBlocks,
+      })
+    ) {
+      const { _id } = value.nextState.pageHeader
+      const _page = { blocks: _nextBlocks, _id }
+      upsert({ doctype: DocumentType.Page, _id: _page._id, doc: _page })
+    }
   }
 
   const render = () => {
@@ -93,6 +100,7 @@ const PageBody = ({
               active={false}
               editorRef={editorRef}
               readonly={isReadOnly}
+              sharedWithGroups={sharedWithGroups}
             />
           </EditorProvider>
         </HistoryProvider>

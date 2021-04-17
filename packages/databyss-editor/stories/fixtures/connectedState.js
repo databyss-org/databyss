@@ -1,8 +1,8 @@
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 
-const entryId = ObjectId().toHexString()
+const entryId = uid()
 
-const selectionId = ObjectId().toHexString()
+const selectionId = uid()
 
 export default (pageId) => ({
   preventDefault: false,

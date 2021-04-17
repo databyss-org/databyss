@@ -1,7 +1,9 @@
 import React, { useCallback } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
+import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Text, Node } from '@databyss-org/slate'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { useSearchContext } from '@databyss-org/ui/hooks'
 import matchAll from 'string.prototype.matchall'
 import { useEditorContext } from '../state/EditorProvider'
 import Leaf from './Leaf'
@@ -17,7 +19,11 @@ const Editor = ({
   onInlineAtomicClick,
   ...others
 }) => {
-  const _searchTerm = useEntryContext((c) => c && c.searchTerm)
+  const _searchTerm = useSearchContext((c) => c && c.searchTerm)
+
+  // preloads source and topic cache to be used by the suggest menu
+  useBlocksInPages('SOURCE')
+  useBlocksInPages('TOPIC')
 
   const { copy, paste, cut } = useEditorContext()
 
@@ -38,7 +44,12 @@ const Editor = ({
     []
   )
 
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+
   const onInlineClick = useCallback(({ atomicType, id }) => {
+    if (isPublicAccount()) {
+      return
+    }
     onInlineAtomicClick({ type: atomicType, refId: id })
   }, [])
 

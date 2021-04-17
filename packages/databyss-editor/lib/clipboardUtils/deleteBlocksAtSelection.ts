@@ -133,6 +133,7 @@ export default (draft: EditorState) => {
 
   // create a selection which includes the whole document
   const _selection = {
+    _id: draft.selection._id,
     anchor: { offset: 0, index: 0 },
     focus: {
       offset: draft.blocks[draft.blocks.length - 1].text.textValue.length,

@@ -1,7 +1,7 @@
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 
-export const _id1 = ObjectId().toHexString()
-export const _id2 = ObjectId().toHexString()
+export const _id1 = uid()
+export const _id2 = uid()
 
 export const _seedValue1 = {
   authors: [

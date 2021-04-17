@@ -3,7 +3,14 @@ import { ResourcePending } from '@databyss-org/services/interfaces/ResourcePendi
 import ErrorFallback from '../Notify/ErrorFallback'
 import Loading from '../Notify/LoadingFallback'
 
-const MakeLoader = ({ resources, children, onUnload, onLoad }) => {
+const MakeLoader = ({
+  resources,
+  children,
+  onUnload,
+  onLoad,
+  errorFallback,
+  loadingFallbackOptions,
+}) => {
   useEffect(
     () => () => {
       if (onUnload) {
@@ -12,18 +19,6 @@ const MakeLoader = ({ resources, children, onUnload, onLoad }) => {
     },
     []
   )
-
-  useEffect(() => {
-    if (
-      onLoad &&
-      resources &&
-      !(resources instanceof ResourcePending) &&
-      !(resources instanceof Error)
-    ) {
-      onLoad(resources)
-    }
-  }, [resources])
-
   const isLoading = Array.isArray(resources)
     ? resources.some((r) => !r || r instanceof ResourcePending)
     : !resources || resources instanceof ResourcePending
@@ -32,19 +27,27 @@ const MakeLoader = ({ resources, children, onUnload, onLoad }) => {
     ? resources.some((r) => r && r instanceof Error)
     : resources instanceof Error
 
+  useEffect(() => {
+    if (onLoad && resources && !isLoading && !errors) {
+      onLoad(resources)
+    }
+  }, [resources])
+
   if (isLoading) {
-    return <Loading padding="small" />
+    return <Loading {...loadingFallbackOptions} />
   }
 
   if (errors) {
     return (
-      <ErrorFallback
-        error={
-          Array.isArray(resources)
-            ? resources.filter((r) => r && r instanceof Error)
-            : resources
-        }
-      />
+      errorFallback ?? (
+        <ErrorFallback
+          error={
+            Array.isArray(resources)
+              ? resources.filter((r) => r && r instanceof Error)
+              : resources
+          }
+        />
+      )
     )
   }
 
@@ -53,6 +56,13 @@ const MakeLoader = ({ resources, children, onUnload, onLoad }) => {
   }
 
   return children(resources)
+}
+
+MakeLoader.defaultProps = {
+  loadingFallbackOptions: {
+    padding: 'small',
+    size: '25',
+  },
 }
 
 export default MakeLoader

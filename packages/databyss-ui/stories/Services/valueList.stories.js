@@ -4,18 +4,16 @@ import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
 import { View, List, Grid, TextControl } from '@databyss-org/ui/primitives'
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 
 import SourceProvider, {
   useSourceContext,
 } from '@databyss-org/services/sources/SourceProvider'
 
-import { withSource } from '@databyss-org/ui/components/Loaders'
-
 import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
 
-const _id = ObjectId().toHexString()
+const _id = uid()
 
 const _initialValue = {
   authors: [
@@ -59,7 +57,7 @@ const valuesToSource = (values) => {
   }
 }
 
-const SourceForm = withSource(({ source }) => {
+const SourceForm = ({ source }) => {
   const [values, setValues] = useState(source)
   const { setSource } = useSourceContext()
 
@@ -142,7 +140,7 @@ const SourceForm = withSource(({ source }) => {
       </Grid>
     </ValueListProvider>
   )
-})
+}
 
 const SourcesDemo = () => {
   const { setSource } = useSourceContext()

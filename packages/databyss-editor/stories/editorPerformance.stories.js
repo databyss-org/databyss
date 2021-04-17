@@ -7,10 +7,6 @@ import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
-import TopicProvider from '@databyss-org/services/topics/TopicProvider'
-import topicReducer, {
-  initialState as topicInitialState,
-} from '@databyss-org/services/topics/reducer'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ContentEditable from '../components/ContentEditable'
 import EditorProvider from '../state/EditorProvider'
@@ -179,13 +175,11 @@ const EditorWithProvider = () => {
 }
 
 const EditorWithModals = () => (
-  <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
-    <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-      <NavigationProvider>
-        <EditorWithProvider initialState={generateState('SMALL')} />
-      </NavigationProvider>
-    </SourceProvider>
-  </TopicProvider>
+  <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+    <NavigationProvider>
+      <EditorWithProvider initialState={generateState('SMALL')} />
+    </NavigationProvider>
+  </SourceProvider>
 )
 
 storiesOf('Selenium//Tests', module)

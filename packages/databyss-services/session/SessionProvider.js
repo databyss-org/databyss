@@ -1,11 +1,30 @@
 import React, { useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
+// import { debounce } from 'lodash'
 import Login from '@databyss-org/ui/modules/Login/Login'
+import {
+  replicateDbFromRemote,
+  syncPouchDb,
+  initiatePouchDbIndexes,
+  dbRef,
+  getPouchDb,
+} from '@databyss-org/data/pouchdb/db'
+import { Viewport } from '@databyss-org/ui'
+// import { connect } from '@databyss-org/data/couchdb-client/couchdb'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { useServiceContext } from '../'
+import {
+  localStorageHasSession,
+  localStorageHasPublicSession,
+  getDefaultGroup,
+} from './clientStorage'
+import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
+import { replicateGroup, hasUnathenticatedAccess } from './actions'
+import { NetworkUnavailableError } from '../interfaces'
 
 const useReducer = createReducer()
 
@@ -30,6 +49,7 @@ const SessionProvider = ({
     name: 'SessionProvider',
   })
   const { session: actions } = useServiceContext()
+  const { notify } = useNotifyContext()
 
   const isPublicAccount = useCallback(() => {
     if (state.session.publicAccount?._id) {
@@ -74,10 +94,104 @@ const SessionProvider = ({
 
   const endSession = () => dispatch(actions.endSession())
 
-  // try to resume session on mount
   useEffect(() => {
-    getSession({ retry: true, code, email })
-  }, [])
+    if (state.session instanceof NetworkUnavailableError) {
+      notify({
+        message:
+          "We're having trouble reaching the server. Please check your network and try again.",
+      })
+    }
+  }, [state.session])
+
+  useEffect(() => {
+    const _init = async () => {
+      const _sesionFromLocalStorage = await localStorageHasSession()
+      if (_sesionFromLocalStorage) {
+        // 2nd pass: load session from local_storage
+        // replicate from cloudant
+        const groupId = _sesionFromLocalStorage.defaultGroupId
+        // download remote database if not on mobile
+
+        if (!process.env.FORCE_MOBILE) {
+          await replicateDbFromRemote({
+            groupId,
+          })
+
+          // set up search indexes
+          setTimeout(() => {
+            initiatePouchDbIndexes()
+          }, [5000])
+        }
+
+        // set up live sync
+        syncPouchDb({
+          groupId,
+          // TODO: how to curry dispatch
+          dispatch,
+        })
+
+        dispatch({
+          type: CACHE_SESSION,
+          payload: {
+            session: _sesionFromLocalStorage,
+          },
+        })
+        return
+      }
+
+      // do we have a public group in localstorage
+      let _publicSession = await localStorageHasPublicSession()
+      if (_publicSession) {
+        // start replication on public group
+        await replicateGroup(_publicSession.belongsToGroup)
+      } else {
+        // try to get public access
+        const unauthenticatedGroupId = await hasUnathenticatedAccess()
+
+        if (unauthenticatedGroupId) {
+          if (!process.env.FORCE_MOBILE) {
+            await replicateGroup(unauthenticatedGroupId)
+          } else {
+            dbRef.current = getPouchDb(unauthenticatedGroupId)
+          }
+          _publicSession = await localStorageHasPublicSession(3)
+        }
+      }
+      if (_publicSession) {
+        dispatch({
+          type: CACHE_PUBLIC_SESSION,
+          payload: {
+            session: {
+              defaultPageId: _publicSession.defaultPageId,
+              defaultGroupId: _publicSession._id,
+              publicAccount: {
+                _id: _publicSession._id,
+              },
+              notifications: _publicSession.notifications ?? [],
+            },
+          },
+        })
+      } else {
+        // if user has a default groupId in local storage, change url and retry session _init
+        const _hasDefaultGroup = getDefaultGroup()
+        if (
+          _hasDefaultGroup &&
+          // && !_hasRetriedSession
+          !process.env.STORYBOOK
+        ) {
+          // user is logged in
+          window.location.href = '/'
+        } else {
+          // pass 1: get session from API
+          getSession({ retry: true, code, email })
+        }
+      }
+    }
+
+    if (!state.sesson) {
+      _init()
+    }
+  }, [state.sessionIsStored])
 
   let _children = children
   const isPending = state.session instanceof ResourcePending
@@ -91,12 +205,35 @@ const SessionProvider = ({
       signupFlow: signUp,
     })
   } else if (isPending) {
-    _children = <Loading />
+    _children = (
+      <Viewport>
+        <Loading
+          showLongWaitMessage
+          splashOnLongWait
+          longWaitDialogOptions={{
+            nude: true,
+            message: 'Loading Databyss collection...',
+          }}
+        />
+      </Viewport>
+    )
   }
 
   const logout = () => {
     dispatch(actions.logout())
   }
+
+  document.addEventListener('visibilitychange', () => {
+    // if window is in focus, not on a public account, has no group in local storage and has a db reference navigate page to home screen
+    if (
+      !document.hidden &&
+      !state?.session?.publicAccount &&
+      !getDefaultGroup() &&
+      dbRef.current
+    ) {
+      window.location.href = '/'
+    }
+  })
 
   const setDefaultPage = useCallback((id) => {
     dispatch(actions.onSetDefaultPage(id))
@@ -113,6 +250,7 @@ const SessionProvider = ({
         getCurrentAccount,
         getUserAccount,
         logout,
+        dispatch,
       }}
     >
       {_children}

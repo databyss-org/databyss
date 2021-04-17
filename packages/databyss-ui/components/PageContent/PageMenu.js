@@ -1,29 +1,33 @@
 import React, { useState, useEffect } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useEditorPageContext } from '@databyss-org/services'
 import {
   BaseControl,
   Icon,
   View,
   Separator,
-  pxUnits,
+  // Text,
 } from '@databyss-org/ui/primitives'
-import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
+import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
+import HelpSvg from '@databyss-org/ui/assets/help.svg'
+// import { saveGroup } from '@databyss-org/services/groups'
+// import { Group } from '@databyss-org/services/interfaces'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
+import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
+import LoadingFallback from '../Notify/LoadingFallback'
+import { pxUnits } from '../../theming/views'
 
-function copyToClipboard(text) {
+export function copyToClipboard(text) {
   const dummy = document.createElement('textarea')
   // to avoid breaking orgain page when copying more words
   // cant copy when adding below this code
@@ -36,12 +40,22 @@ function copyToClipboard(text) {
   document.body.removeChild(dummy)
 }
 
-const PageMenu = ({ pages }) => {
+const PageMenu = () => {
+  const pagesRes = usePages()
+  const groupsRes = useGroups()
+
+  const pages = pagesRes.data
+  const groups = groupsRes.data
+
   const getSession = useSessionContext((c) => c && c.getSession)
   const setDefaultPage = useSessionContext((c) => c && c.setDefaultPage)
-  const { account } = getSession()
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+
+  const { defaultPageId } = getSession()
   const [showMenu, setShowMenu] = useState(false)
   const [isPagePublic, setIsPagePublic] = useState(false)
+  // const [pageInGroups, setPageInGroups] = useState([])
+  const [, setPageInGroups] = useState([])
   const [showCopiedCheck, setShowCopiedCheck] = useState(false)
 
   const {
@@ -52,37 +66,37 @@ const PageMenu = ({ pages }) => {
 
   const { params } = getTokensFromPath()
 
-  const archivePage = usePageContext((c) => c.archivePage)
-  const deletePage = usePageContext((c) => c.deletePage)
-  const getPage = usePageContext((c) => c.getPage)
+  const archivePage = useEditorPageContext((c) => c.archivePage)
+  const deletePage = useEditorPageContext((c) => c.deletePage)
 
-  const setPagePublic = usePageContext((c) => c && c.setPagePublic)
-
-  const getPublicAccount = usePageContext((c) => c && c.getPublicAccount)
-
-  const resetSourceHeaders = useSourceContext((c) => c && c.resetSourceHeaders)
-
-  const resetTopicHeaders = useTopicContext((c) => c && c.resetTopicHeaders)
+  const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
 
   const canBeArchived =
     Object.values(pages).filter((p) => !p.archive).length > 1
 
   // if page is shared, toggle public page
   useEffect(() => {
-    if (pages[params]?.publicAccountId) {
-      setIsPagePublic(true)
+    if (groupsRes.isSuccess) {
+      if (groups[`p_${params}`]) {
+        // get public status of page
+        const _pageGroup = groups[`p_${params}`]
+        setIsPagePublic(_pageGroup.public)
+      }
+
+      // get all groups page appears in
+      const pageGroups = Object.values(groupsRes.data).filter(
+        (group) => !!group.name && group.pages.includes(params)
+      )
+      setPageInGroups(pageGroups)
     }
-  }, [])
+  }, [groupsRes.isSuccess])
 
   const onArchivePress = (bool) => {
     archivePage(params, bool).then(() => {
-      // reset headers
-      resetSourceHeaders()
-      resetTopicHeaders()
       if (bool) {
         // if default page is archived set new page as default page
-        let redirect = account.defaultPage
-        if (account.defaultPage === params) {
+        let redirect = defaultPageId
+        if (redirect === params) {
           redirect = Object.keys(pages).find((_id) => _id !== params)
           setDefaultPage(redirect)
         }
@@ -99,29 +113,22 @@ const PageMenu = ({ pages }) => {
     }
   }
 
-  const _page = getPage(params)
+  const _page = pages?.[params]
 
   const onCopyLink = () => {
-    let _accountId
-    // if account is shared, get public account
-    if (_page?.publicAccountId) {
-      _accountId = _page.publicAccountId
-    } else {
-      // if account is private, get private account
-      _accountId = account._id
-    }
-
+    // getAccountFromLocation()
     // generate url and copy to clipboard
     const getUrl = window.location
-    const baseUrl = `${getUrl.protocol}//${getUrl.host}/${_accountId}/pages/${params}`
-
+    const baseUrl = `${getUrl.protocol}//${
+      getUrl.host
+    }/${getAccountFromLocation()}/pages/${params}`
     copyToClipboard(baseUrl)
     setShowCopiedCheck(true)
   }
 
   const onPageDelete = () => {
     deletePage(params)
-    navigate(`/pages/${account.defaultPage}`)
+    navigate(`/pages/${defaultPageId}`)
     navigateSidebar('/pages')
 
     // delete page
@@ -140,7 +147,7 @@ const PageMenu = ({ pages }) => {
     })
   }
 
-  if (_page.archive) {
+  if (_page?.archive) {
     // add restore option
     menuItems.push({
       icon: <PageSvg />,
@@ -161,32 +168,39 @@ const PageMenu = ({ pages }) => {
     })
   }
 
-  const togglePublicPage = () => {
-    if (isPagePublic) {
-      const _page = getPage(params)
-      // if account is shared, get public account
-      const _accountId = _page.publicAccountId
-      setPagePublic(params, !isPagePublic, _accountId)
-    } else {
-      setPagePublic(params, !isPagePublic)
-    }
-    setIsPagePublic(!isPagePublic)
-    setShowCopiedCheck(false)
+  if (menuItems.length > 0) {
+    menuItems.push({ separator: true })
   }
 
-  const SharedPageLoader = ({ children }) => (
-    <MakeLoader resources={getPublicAccount(params)} children={children} />
-  )
+  menuItems.push({
+    icon: <HelpSvg />,
+    label: 'Help...',
+    href: '/g_7v9n4vjx2h7511',
+    target: '_blank',
+    actionType: 'help',
+    light: true,
+    // TODO: detect platform and render correct modifier key
+    // shortcut: 'Ctrl + Del',
+  })
+
+  const togglePublicPage = () => {
+    setPagePublic(params, !isPagePublic)
+    setIsPagePublic(!isPagePublic)
+  }
 
   const DropdownList = () =>
-    menuItems.map((menuItem) => (
-      <DropdownListItem
-        {...menuItem}
-        action={menuItem.actionType}
-        onPress={() => menuItem.action()}
-        key={menuItem.label}
-      />
-    ))
+    menuItems.map((menuItem) =>
+      menuItem.separator ? (
+        <Separator />
+      ) : (
+        <DropdownListItem
+          {...menuItem}
+          action={menuItem.actionType}
+          onPress={() => (menuItem.action ? menuItem.action() : null)}
+          key={menuItem.label}
+        />
+      )
+    )
 
   useEffect(() => {
     if (showCopiedCheck && !showMenu) {
@@ -203,19 +217,105 @@ const PageMenu = ({ pages }) => {
       onPress={() => null}
     />
   ) : (
-    <SharedPageLoader>
-      {(res) =>
-        res.length ? (
-          <DropdownListItem
-            icon={<LinkSvg />}
-            action="copy-link"
-            label="Copy link"
-            onPress={onCopyLink}
-          />
-        ) : null
-      }
-    </SharedPageLoader>
+    <DropdownListItem
+      icon={<LinkSvg />}
+      action="copy-link"
+      label="Copy link"
+      onPress={onCopyLink}
+    />
   )
+
+  if (!pagesRes.isSuccess) {
+    return <LoadingFallback size="extraTiny" queryObserver={pagesRes} />
+  }
+
+  // const onGroupClick = (id) => {
+  //   navigate(`/collections/${id}`)
+  //   // TODO: should this also navigate to the collections sidebar?
+  // }
+
+  // const addPageToNewCollection = () => {
+  //   const _group = new Group('untitled collection')
+  //   _group.pages = [params]
+  //   saveGroup(_group, params)
+  //   navigate(`/collections/${_group._id}`)
+  // }
+
+  // const collections = () => {
+  //   const _pageNotInGroups = Object.values(groups).filter(
+  //     (group) => !!group.name && !group.pages.includes(params)
+  //   )
+
+  //   // todo: make this singular
+  //   const addPageToGroups = (groupId) => {
+  //     const _group = groups[groupId]
+  //     _group.pages = _group.pages.concat(params)
+  //     saveGroup(_group, params)
+  //     navigate(`/collections/${groupId}`)
+  //   }
+
+  //   return (
+  //     <>
+  //       {pageInGroups.length && (
+  //         <>
+  //           <View
+  //             ml="small"
+  //             height={pxUnits(34)}
+  //             justifyContent="center"
+  //             key="account-name"
+  //           >
+  //             <Text color="text.3" variant="uiTextSmall">
+  //               In collection(s):
+  //             </Text>
+  //           </View>
+  //           {pageInGroups.map((g) => (
+  //             <DropdownListItem
+  //               key={g._id}
+  //               mx="small"
+  //               justifyContent="center"
+  //               label={g.name}
+  //               // value={isPagePublic}
+  //               onPress={() => onGroupClick(g._id)}
+  //               action="groups_click"
+  //             />
+  //           ))}
+  //         </>
+  //       )}
+  //       <>
+  //         <View
+  //           ml="small"
+  //           height={pxUnits(34)}
+  //           justifyContent="center"
+  //           key="is-in-groups"
+  //         >
+  //           <Text color="text.3" variant="uiTextSmall">
+  //             Add to Collection:
+  //           </Text>
+  //         </View>
+  //         {_pageNotInGroups.map((g) => (
+  //           <DropdownListItem
+  //             key={g._id}
+  //             mx="small"
+  //             justifyContent="center"
+  //             label={g.name}
+  //             // value={isPagePublic}
+  //             onPress={() => addPageToGroups(g._id)}
+  //             action="groups_click"
+  //           />
+  //         ))}
+  //         <DropdownListItem
+  //           key="new-collection"
+  //           mx="small"
+  //           justifyContent="center"
+  //           label="New collection..."
+  //           // value={isPagePublic}
+  //           onPress={() => addPageToNewCollection(params)}
+  //           action="groups_click"
+  //         />
+  //       </>
+  //     </>
+  //   )
+  // }
 
   return (
     <View
@@ -233,9 +333,11 @@ const PageMenu = ({ pages }) => {
         data-test-element="archive-dropdown"
         label="Archive Page"
       >
-        <Icon sizeVariant="medium" color="text.1">
-          <MenuSvg />
-        </Icon>
+        {!isPublicAccount() && (
+          <Icon sizeVariant="medium" color="text.1">
+            <MenuSvg />
+          </Icon>
+        )}
       </BaseControl>
       {showMenu && (
         <ClickAwayListener onClickAway={() => setShowMenu(false)}>
@@ -247,24 +349,55 @@ const PageMenu = ({ pages }) => {
               right: 0,
             }}
           >
-            <DropdownListItem
-              px="small"
-              height={pxUnits(34)}
-              justifyContent="center"
-              label={isPagePublic ? 'Page is public' : 'Make page public '}
-              value={isPagePublic}
-              onPress={togglePublicPage}
-              action="togglePublic"
-              switchControl
-            />
-            {getPublicAccount(params).length ? (
+            {!_page.archive ? (
               <>
+                <DropdownListItem
+                  height={pxUnits(34)}
+                  justifyContent="center"
+                  label={isPagePublic ? 'Page is public' : 'Make page public '}
+                  value={isPagePublic}
+                  onPress={togglePublicPage}
+                  action="togglePublic"
+                  switchControl
+                />
+                {isPagePublic ? (
+                  <>
+                    <Separator secondary />
+                    {publicLinkItem}
+                  </>
+                ) : null}
                 <Separator />
-                {publicLinkItem}
               </>
             ) : null}
-            {!_page.archive && menuItems.length ? <Separator /> : null}
+
             <DropdownList />
+            {/* {Object.values(groups).length ? <Separator /> : null}
+            {groupsRes.isSuccess && Object.values(groups).length ? (
+              collections()
+            ) : (
+              <>
+                <Separator />
+                <View
+                  ml="small"
+                  height={pxUnits(34)}
+                  justifyContent="center"
+                  key="is-in-groups"
+                >
+                  <Text color="text.3" variant="uiTextSmall">
+                    Add to Collection:
+                  </Text>
+                </View>
+                <DropdownListItem
+                  key="new-collection"
+                  mx="small"
+                  justifyContent="center"
+                  label="New collection..."
+                  // value={isPagePublic}
+                  onPress={() => addPageToNewCollection(params)}
+                  action="groups_click"
+                />
+              </>
+            )} */}
           </DropdownContainer>
         </ClickAwayListener>
       )}

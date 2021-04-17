@@ -1,4 +1,4 @@
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
 import { FSA, BlockType, Block } from '@databyss-org/services/interfaces'
 import {
@@ -86,7 +86,7 @@ export const bakeAtomicBlock = ({
       // create a new entity
       const _block: Block = {
         type: BlockType.Entry,
-        _id: new ObjectId().toHexString(),
+        _id: uid(),
         text: { textValue: '', ranges: [] },
       }
       draft.blocks[index] = _block
@@ -142,7 +142,7 @@ export const bakeAtomicBlock = ({
         if (getClosureType(draft.blocks[_idx].type)) {
           const _newBlock: Block = {
             type: BlockType.Entry,
-            _id: new ObjectId().toHexString(),
+            _id: uid(),
             text: { textValue: '', ranges: [] },
           }
           draft.blocks[_idx] = _newBlock
@@ -194,7 +194,7 @@ export const bakeAtomicClosureBlock = ({
           // create a new entity
           const _newBlock: Block = {
             type: BlockType.Entry,
-            _id: new ObjectId().toHexString(),
+            _id: uid(),
             text: { textValue: '', ranges: [] },
           }
           draft.blocks[index + 1] = _newBlock
@@ -248,7 +248,7 @@ export const bakeAtomicClosureBlock = ({
             if (getClosureType(_nextBlock.type)) {
               const _newBlock: Block = {
                 type: BlockType.Entry,
-                _id: new ObjectId().toHexString(),
+                _id: uid(),
                 text: { textValue: '', ranges: [] },
               }
               draft.blocks[_idx] = _newBlock
@@ -522,33 +522,45 @@ export default (
           }
 
           const _leadingNext = trimLeft(payload.text)
-          trim(payload.text)
-          trim(payload.previous)
+
+          // add or insert a new block
+          const _payloadBlock: Block = {
+            type: BlockType.Entry,
+            _id: uid(),
+            text: payload.text,
+          }
+          trim(_payloadBlock)
+          const _previousBlock: Block = {
+            type: BlockType.Entry,
+            _id: uid(),
+            text: payload.previous,
+          }
+          trim(_previousBlock)
 
           // add or insert a new block
           const _block: Block = {
             type: BlockType.Entry,
-            _id: new ObjectId().toHexString(),
-            text: payload.text,
+            _id: uid(),
+            text: _payloadBlock.text,
           }
 
           let _insertAt = payload.index
 
-          if (payload.previous.textValue.length === 0) {
+          if (_previousBlock.text.textValue.length === 0) {
             // insert empty entry above
             draft.blocks.splice(_insertAt, 0, _block)
-            _block.text = payload.previous
+            _block.text = _previousBlock.text
           } else {
             // do not allow content change if previous block is closure type
             if (!getClosureType(draft.blocks[_insertAt].type)) {
-              draft.blocks[_insertAt].text = payload.previous
+              draft.blocks[_insertAt].text = _previousBlock.text
             }
 
             // if 2nd block in split has text, insert an empty block before it
-            if (payload.text.textValue.length) {
+            if (_block.text.textValue.length) {
               const _emptyBlock: Block = {
                 type: BlockType.Entry,
-                _id: new ObjectId().toHexString(),
+                _id: uid(),
                 text: { textValue: '', ranges: [] },
               }
               if (_insertAt === draft.blocks.length - 1) {
@@ -747,6 +759,7 @@ export default (
                 index: op.index,
                 block: _block,
               })
+              pushAtomicChangeUpstream({ state, draft })
             } else if (op.checkAtomicDelta) {
               pushAtomicChangeUpstream({ state, draft })
             }
@@ -784,7 +797,7 @@ export default (
           // create a new entity
           let _block: Block = {
             type: BlockType.Entry,
-            _id: new ObjectId().toHexString(),
+            _id: uid(),
             text: { textValue: '', ranges: [] },
           }
           draft.blocks[payload.index] = _block
@@ -803,7 +816,7 @@ export default (
           if (_idx > -1 && getClosureType(draft.blocks[_idx].type)) {
             _block = {
               type: BlockType.Entry,
-              _id: new ObjectId().toHexString(),
+              _id: uid(),
               text: { textValue: '', ranges: [] },
             }
             draft.blocks[_idx] = _block
@@ -884,8 +897,8 @@ export default (
 
         // trim leading and trailing linebreaks
         if (
-          trimLeft(draft.blocks[state.selection.focus.index]?.text) ||
-          trimRight(draft.blocks[state.selection.focus.index]?.text)
+          trimLeft(draft.blocks[state.selection.focus.index]) ||
+          trimRight(draft.blocks[state.selection.focus.index])
         ) {
           draft.operations.push({
             index: state.selection.focus.index,
@@ -927,7 +940,7 @@ export default (
         !draft.blocks[draft.selection.anchor.index]
       ) {
         draft.selection = {
-          _id: new ObjectId().toHexString(),
+          _id: uid(),
           anchor: { offset: 0, index: 0 },
           focus: { offset: 0, index: 0 },
         }

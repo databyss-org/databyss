@@ -10,20 +10,17 @@ import {
   isAppInNotesSaved,
   sendKeys,
   enterKey,
-  //  toggleBold,
-  //   toggleItalic,
-  //   toggleLocation,
-  //   enterKey,
-  //   upKey,
-  //   downKey,
   backspaceKey,
+  logout,
+  tagButtonClick,
+  tagButtonListClick,
 } from './_helpers.selenium'
 
 let driver
 let editor
 let actions
 const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
+const PROXY_URL = 'http://localhost:3000'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -37,21 +34,12 @@ describe('notes app', () => {
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
-    let continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
 
-    continueButton = await getElementByTag(
-      driver,
-      '[data-test-id="continueButton"]'
-    )
-
-    await continueButton.click()
+    await tagButtonClick('data-test-id="continueButton"', driver)
 
     editor = await getEditor(driver)
     actions = driver.actions()
@@ -59,39 +47,33 @@ describe('notes app', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
     await driver.quit()
-    driver = null
-    await sleep(100)
+
+    done()
   })
 
   it('should switch page names and verify atomics appear on the sidebar', async () => {
     // click on topics sidebar
-    const topicSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="topics"]'
-    )
+    await tagButtonClick('data-test-sidebar-element="topics"', driver)
 
-    await topicSidebarButton.click()
+    await tagButtonClick('data-test-element="page-header"', driver)
 
-    let headerField = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await headerField.click()
     await sendKeys(actions, 'First Test Page Title')
     await enterKey(actions)
 
     await sendKeys(actions, '#this is a new topic')
     await enterKey(actions)
     await sendKeys(actions, 'entries included within the topic')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'more entries included within topic')
     await isAppInNotesSaved(driver)
 
     // verify that the topic sidebar has the new topic
+
     const sidebarTopic = await getElementsByTag(
       driver,
       '[data-test-element="page-sidebar-item"]'
@@ -102,61 +84,38 @@ describe('notes app', () => {
     assert.equal(sidebar.trim(), 'this is a new topic')
 
     // click on the topic in sidebar
-    await sidebarTopic[0].click()
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
+
     await sleep(1000)
 
     // get all search page results
-    const searchPageResultsTitle = await getElementsByTag(
-      driver,
-      '[data-test-element="atomic-results"]'
-    )
+    await tagButtonListClick('data-test-element="atomic-results"', 0, driver)
 
-    await searchPageResultsTitle[0].click()
     await getEditor(driver)
 
     // add second page
-    const newPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="new-page-button"]'
-    )
-
-    await newPageButton.click()
+    await tagButtonClick('data-test-element="new-page-button"', driver)
 
     // wait for editor to be visible
     await getEditor(driver)
 
-    const sourcesSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="sources"]'
-    )
+    await tagButtonClick('data-test-sidebar-element="sources"', driver)
 
-    await sourcesSidebarButton.click()
-
-    headerField = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await headerField.click()
+    await tagButtonClick('data-test-element="page-header"', driver)
 
     await sendKeys(actions, 'Second page title')
     await enterKey(actions)
 
     // select author from the google api
     await sendKeys(actions, '@Murray Bookchin')
-    const googleApi = await getElementByTag(
-      driver,
-      '[data-test-block-menu="GOOGLE_BOOKS"]'
-    )
-    await googleApi.click()
+    await isAppInNotesSaved(driver)
 
-    const firstResult = await getElementsByTag(
-      driver,
-      '[data-test-catalog="GOOGLE_BOOKS"]'
-    )
+    await tagButtonClick('data-test-block-menu="GOOGLE_BOOKS"', driver)
 
-    await firstResult[0].click()
+    await tagButtonListClick('data-test-catalog="GOOGLE_BOOKS"', 0, driver)
 
     await isAppInNotesSaved(driver)
+    await sleep(3000)
 
     // check if source is on sidebar
     let sidebarSource = await getElementsByTag(
@@ -164,13 +123,14 @@ describe('notes app', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
-    sidebarSource = await sidebarSource[2].getAttribute('innerText')
+    sidebarSource = await sidebarSource[1].getAttribute('innerText')
 
     // verify source added to sidebar
     assert.equal(sidebarSource.trim().length > 0, true)
     // delete the source and verify its removed from the sidebar
     await backspaceKey(actions)
     await backspaceKey(actions)
+    await sleep(3000)
 
     // check if the source exists in the sidebar, it should be removed
 
@@ -179,30 +139,20 @@ describe('notes app', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
-    assert.equal(sidebarSource.length, 2)
+    assert.equal(sidebarSource.length, 1)
 
     await sendKeys(actions, 'Editor test two')
 
     // click on sidebar for pages menu
+    await tagButtonClick('data-test-sidebar-element="pages"', driver)
 
-    const pagesSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-sidebar-element="pages"]'
-    )
-
-    await pagesSidebarButton.click()
     await sleep(500)
 
-    const firstPageButton = await getElementsByTag(
-      driver,
-      '[data-test-element="page-sidebar-item"]'
-    )
-
-    await firstPageButton[0].click()
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
 
     await getEditor(driver)
 
-    headerField = await getElementByTag(
+    let headerField = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
     )
@@ -212,12 +162,7 @@ describe('notes app', () => {
     assert.equal(headerField.trim(), 'First Test Page Title')
 
     // Second page integrity test
-    const secondPageButton = await getElementsByTag(
-      driver,
-      '[data-test-element="page-sidebar-item"]'
-    )
-
-    await secondPageButton[1].click()
+    await tagButtonListClick('data-test-element="page-sidebar-item"', 1, driver)
 
     headerField = await getElementByTag(
       driver,
@@ -234,52 +179,52 @@ describe('notes app', () => {
     assert.equal(editorField.trim(), 'Editor test two')
   })
 
-  it('disable in offline mode', async () => {
-    const newPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="new-page-button"]'
-    )
+  // it('disable in offline mode', async () => {
+  //   const newPageButton = await getElementByTag(
+  //     driver,
+  //     '[data-test-element="new-page-button"]'
+  //   )
 
-    await newPageButton.click()
+  //   await newPageButton.click()
 
-    const editor = await getEditor(driver)
-    editor.sendKeys('Offline test')
-    await sleep(3000)
+  //   const editor = await getEditor(driver)
+  //   editor.sendKeys('Offline test')
+  //   await sleep(3000)
 
-    // toggle offline
-    if (!process.env.LOCAL_ENV) {
-      await driver.executeScript('sauce:throttleNetwork', {
-        condition: 'offline',
-      })
-    }
+  //   // toggle offline
+  //   if (!process.env.LOCAL_ENV) {
+  //     await driver.executeScript('sauce:throttleNetwork', {
+  //       condition: 'offline',
+  //     })
+  //   }
 
-    let isEnabled
+  //   let isEnabled
 
-    try {
-      await newPageButton.click()
-      isEnabled = true
-    } catch {
-      isEnabled = false
-    }
+  //   try {
+  //     await newPageButton.click()
+  //     isEnabled = true
+  //   } catch {
+  //     isEnabled = false
+  //   }
 
-    assert.equal(isEnabled, false)
+  //   assert.equal(isEnabled, false)
 
-    //   toggle online
-    if (!process.env.LOCAL_ENV) {
-      await driver.executeScript('sauce:throttleNetwork', {
-        condition: 'online',
-      })
-    }
+  //   //   toggle online
+  //   if (!process.env.LOCAL_ENV) {
+  //     await driver.executeScript('sauce:throttleNetwork', {
+  //       condition: 'online',
+  //     })
+  //   }
 
-    await sleep(500)
+  //   await sleep(500)
 
-    try {
-      await newPageButton.click()
-      isEnabled = true
-    } catch {
-      isEnabled = false
-    }
+  //   try {
+  //     await newPageButton.click()
+  //     isEnabled = true
+  //   } catch {
+  //     isEnabled = false
+  //   }
 
-    assert.equal(isEnabled, true)
-  })
+  //   assert.equal(isEnabled, true)
+  // })
 })

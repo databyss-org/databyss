@@ -167,7 +167,7 @@ export const toJsonCsl = (source: SourceDetail) => {
 
 // utils
 function buildDateParts(source: SourceDetail) {
-  let year = null
+  let year: null | string = null
   if (
     source.yearPublished &&
     'yearPublished' in source &&
@@ -184,7 +184,7 @@ function buildDateParts(source: SourceDetail) {
     year = source.year.textValue
   }
 
-  let month = null
+  let month: null | number | string = null
   if (
     validateOption(source, 'month') &&
     source?.month?.id &&

@@ -17,7 +17,10 @@ const googleBooks: CatalogService = {
     const results = await request(
       `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
         query
-      )}&key=AIzaSyCCoJxl3VhVwvM4v4cHSPJY6hsK-kh5VBk`
+      )}&key=AIzaSyCCoJxl3VhVwvM4v4cHSPJY6hsK-kh5VBk`,
+      {
+        timeout: 15000,
+      }
     )
     return results
   },

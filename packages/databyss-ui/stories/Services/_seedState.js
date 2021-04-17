@@ -1,9 +1,9 @@
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 
-const sourceId = ObjectId().toHexString()
-const entryId = ObjectId().toHexString()
-const blockOneId = ObjectId().toHexString()
-const blockTwoId = ObjectId().toHexString()
+const sourceId = uid()
+const entryId = uid()
+const blockOneId = uid()
+const blockTwoId = uid()
 
 export default (pageId) => ({
   editableState: null,
