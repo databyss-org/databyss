@@ -65,9 +65,9 @@ const run = async () => {
   // Define Routes
   app.use('/api/users', versionChecker, usersRoute)
   app.use('/api/auth', versionChecker, authRoute)
-  app.use('/api/cloudant', versionChecker, cloudantRoute)
-  app.use('/api/version', versionChecker, versionRoute)
-  app.use('/api/error', versionChecker, errorRoute)
+  app.use('/api/cloudant', cloudantRoute)
+  app.use('/api/version', versionRoute)
+  app.use('/api/error', errorRoute)
 
   // deprecated routes
   app.use('/api/pages', versionChecker)
