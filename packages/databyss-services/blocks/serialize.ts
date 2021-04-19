@@ -41,18 +41,25 @@ export function textToHtml(text: Text): string {
     const _segment = _html.slice(_range.offset, _range.offset + _range.length)
     const _after = _html.slice(_range.offset + _range.length)
 
-    let _openTags = ''
-    let _closeTags = ''
-    _range.marks.forEach((_mark) => {
-      // mark can also be a tuple, in that case, get first value as the mark
-      let __mark: any = _mark
-      if (Array.isArray(_mark)) {
-        __mark = _mark[0]
-      }
-      _openTags += `<${tags[__mark][0]}>`
-      _closeTags = `</${tags[__mark][1]}>${_closeTags}`
-    })
-    _html = `${_before}${_openTags}${_segment}${_closeTags}${_after}`
+    // ignore marks with no defined markup
+    try {
+      let _openTags = ''
+      let _closeTags = ''
+      _range.marks.forEach((_mark) => {
+        // mark can also be a tuple, in that case, get first value as the mark
+
+        let __mark: any = _mark
+        if (Array.isArray(_mark)) {
+          __mark = _mark[0]
+        }
+
+        _openTags += `<${tags[__mark][0]}>`
+        _closeTags = `</${tags[__mark][1]}>${_closeTags}`
+      })
+      _html = `${_before}${_openTags}${_segment}${_closeTags}${_after}`
+    } catch (err) {
+      _html = `${_before}${_segment}${_after}`
+    }
   })
   return _html.replaceAll('\n', '<br />')
 }

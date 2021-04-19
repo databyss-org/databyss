@@ -110,12 +110,20 @@ export const addPagesToBlockRelation = ({
   })
 
   const relations: IndexPageResult[] = []
+  // create a set to prevent duplicates
+  const _duplicateDict: { [key: string]: boolean } = {}
   // returns array of all block relations to provided id
   _pages.forEach((p) =>
     indexPage({
       pageId: p._id,
       blocks: p.blocks,
-    }).forEach((r: IndexPageResult) => relations.push(r))
+    }).forEach((r: IndexPageResult) => {
+      // do not allow duplicates
+      if (!_duplicateDict[`${r.block + r.relatedBlock}`]) {
+        relations.push(r)
+        _duplicateDict[`${r.block + r.relatedBlock}`] = true
+      }
+    })
   )
 
   return relations
