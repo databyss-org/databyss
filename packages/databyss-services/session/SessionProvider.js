@@ -226,11 +226,13 @@ const SessionProvider = ({
   document.addEventListener('visibilitychange', () => {
     // if window is in focus, not on a public account, has no group in local storage and has a db reference navigate page to home screen
     if (
+      !(state.session instanceof ResourcePending) &&
       !document.hidden &&
       !state?.session?.publicAccount &&
       !getDefaultGroup() &&
       dbRef.current
     ) {
+      console.log('REDIRECT')
       window.location.href = '/'
     }
   })
