@@ -166,43 +166,48 @@ export function localStorageHasPublicSession(maxRetries = 0) {
 }
 
 export async function localStorageHasSession() {
-  // compose the user session
-  let session
+  try {
+    // compose the user session
+    let session
 
-  const token = getAuthToken()
+    const token = getAuthToken()
 
-  const defaultGroup = getDefaultGroup()
-  if (!defaultGroup) {
-    return false
-  }
-
-  // get user preferences
-  const _userSession = await getUserSession()
-
-  // if we're on a URL with a groupid on it, make sure it matches default group
-  const groupIdFromUrl = getAccountFromLocation()
-
-  if (
-    !process.env.STORYBOOK &&
-    groupIdFromUrl &&
-    groupIdFromUrl !== defaultGroup
-  ) {
-    // TODO: first check it against the user Session default group
-
-    return false
-  }
-
-  if (token && _userSession) {
-    session = {
-      token,
-      userId: _userSession.userId,
-      email: _userSession.email,
-      defaultPageId: _userSession.groups[0].defaultPageId,
-      defaultGroupId: _userSession.belongsToGroup,
+    const defaultGroup = getDefaultGroup()
+    if (!defaultGroup) {
+      return false
     }
-  }
 
-  return session
+    // get user preferences
+    const _userSession = await getUserSession()
+
+    // if we're on a URL with a groupid on it, make sure it matches default group
+    const groupIdFromUrl = getAccountFromLocation()
+
+    if (
+      !process.env.STORYBOOK &&
+      groupIdFromUrl &&
+      groupIdFromUrl !== defaultGroup
+    ) {
+      // TODO: first check it against the user Session default group
+
+      return false
+    }
+
+    if (token && _userSession) {
+      session = {
+        token,
+        userId: _userSession.userId,
+        email: _userSession.email,
+        defaultPageId: _userSession.groups[0].defaultPageId,
+        defaultGroupId: _userSession.belongsToGroup,
+      }
+    }
+
+    return session
+  } catch (err) {
+    console.error(err)
+    return false
+  }
 }
 
 /**

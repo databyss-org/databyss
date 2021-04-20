@@ -148,12 +148,11 @@ export const logout = async (driver) => {
   let count = 0
   const logoutAction = async () => {
     if (count > MAX_RETRIES) {
-      throw new Error('LOGOUT ERROR')
+      throw new Error('Logout Error')
     }
 
     await tagButtonClick('data-test-element="account-menu"', driver)
 
-    await sleep(500)
     await tagButtonClick('data-test-block-menu="logout"', driver)
 
     await getElementByTag(driver, '[data-test-path="email"]')

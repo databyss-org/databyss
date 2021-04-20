@@ -223,9 +223,12 @@ const SessionProvider = ({
     dispatch(actions.logout())
   }
 
-  document.addEventListener('visibilitychange', () => {
-    // if window is in focus, not on a public account, has no group in local storage and has a db reference navigate page to home screen
+  /**
+   * checks on window focus if user should be forced logged out
+   */
+  const shouldForceLogout = () => {
     if (
+      !(state.session instanceof ResourcePending) &&
       !document.hidden &&
       !state?.session?.publicAccount &&
       !getDefaultGroup() &&
@@ -233,7 +236,9 @@ const SessionProvider = ({
     ) {
       window.location.href = '/'
     }
-  })
+  }
+
+  window.addEventListener('focus', shouldForceLogout)
 
   const setDefaultPage = useCallback((id) => {
     dispatch(actions.onSetDefaultPage(id))
