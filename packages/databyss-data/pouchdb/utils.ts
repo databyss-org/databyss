@@ -343,7 +343,6 @@ const bulkUpsert = async (upQdict: any) => {
       _docs.push(_doc)
     }
   }
-
   await dbRef.current!.bulkDocs(_docs)
 }
 
@@ -411,7 +410,7 @@ export class QueueProcessor extends EventEmitter {
   }
 }
 
-const EM = new QueueProcessor()
+export const EM = new QueueProcessor()
 
 EM.start()
 
