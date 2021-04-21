@@ -114,6 +114,8 @@ const SuggestMenu = ({
           setMenuActive(false)
         }
       } else if (!isAtomicInlineType(_node.type)) {
+        // INLINE REFACTOR
+
         // get current text with markup 'inlineAtomicMenu'
         // get text with active `inlineAtomicMenu` mark
         const innerText = getTextOffsetWithRange({

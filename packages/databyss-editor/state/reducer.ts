@@ -451,6 +451,8 @@ export default (
                 r.marks.includes(RangeType.InlineAtomicInput)
               ).length
             ) {
+              // INLINE REFACTOR
+
               /*
               if pasting within an inlineAtomicMenu field
               strip all text and carriage returns from text being pasted, add the mark `inlineAtomicMenu` to data being pasted
@@ -475,6 +477,7 @@ export default (
               })
 
               // merge 'inlineAtomicMenu Ranges'
+              // INLINE REFACTOR
 
               mergeInlineAtomicMenuRange({
                 block: draft.blocks[draft.selection.anchor.index],
@@ -858,6 +861,8 @@ export default (
             const _activeInlineAfter = _activeRangesAfter.filter((r) =>
               r.marks.includes(RangeType.InlineAtomicInput)
             )
+            // INLINE REFACTOR
+
             // if active selection was 'inlineAtomicMenu and' before and not after, convert inlines to atomic
             if (_activeInlineBefore.length && !_activeInlineAfter.length) {
               const _index = draft.selection.anchor.index
@@ -978,6 +983,7 @@ export default (
           _selectedBlock.text.textValue.startsWith('#') &&
           !_selectedBlock.text.textValue.match(`\n`) &&
           !_doesBlockHaveInlineAtomicRange
+        // INLINE REFACTOR
 
         // check if selected block has range type 'inlineAtomicMenu'
         const _hasInlineMenuMark = _selectedBlock.text.ranges.reduce(

@@ -39,6 +39,7 @@ const SuggestTopics = ({
       // compose new block with inline atomic id
       const _index = state.selection.anchor.index
       const _stateBlock = state.blocks[_index]
+      // INLINE REFACTOR
 
       // replace inner text with updated topic
       const _markupTextValue = getTextOffsetWithRange({
@@ -81,6 +82,7 @@ const SuggestTopics = ({
         ..._stateBlock,
         text: _newText,
       }
+      // INLINE REFACTOR
 
       // toggle editor to remove active 'inlineAtomicMenu'
       Editor.removeMark(editor, 'inlineAtomicMenu')

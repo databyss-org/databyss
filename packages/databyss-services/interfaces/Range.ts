@@ -9,6 +9,7 @@ export enum InlineTypes {
 }
 
 export type InlineRangeType = [InlineTypes, string]
+// INLINE REFACTOR
 
 export enum RangeType {
   Bold = 'bold',

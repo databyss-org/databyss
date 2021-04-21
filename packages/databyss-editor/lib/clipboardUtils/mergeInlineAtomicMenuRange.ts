@@ -4,6 +4,8 @@ import { RangeType } from '../../../databyss-services/interfaces/Range'
 this function assumes there are two ranges 'inlineAtomicMenu` which are adjacent and must be merged
 */
 export default ({ block }: { block: Block }) => {
+  // INLINE REFACTOR
+
   // get ranges for inlineAtomicMenu and sorted by ascending
   const _ranges = block.text.ranges
     .filter((r) => r.marks.includes(RangeType.InlineAtomicInput))

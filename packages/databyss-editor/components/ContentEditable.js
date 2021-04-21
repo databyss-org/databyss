@@ -329,6 +329,8 @@ const ContentEditable = ({
       if (isCharacterKeyPress(event) || event.key === 'Backspace') {
         inlineAtomicBlockCorrector(event, editor)
       }
+
+      // INLINE REFACTOR
       /*
         if inline menu is open, escape key should not bake inine and remove range
         */
@@ -354,7 +356,7 @@ const ContentEditable = ({
           ],
         })
       }
-
+      // INLINE REFACTOR
       // if a space or arrow right key is entered and were currently creating an inline atomic, pass through normal text and remove inline mark
       if (
         (event.key === ' ' || event.key === 'ArrowRight') &&
@@ -372,6 +374,8 @@ const ContentEditable = ({
         const _atBlockEnd = _offset === _text.length
 
         const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+        // INLINE REFACTOR
+
         // if only atomic symbol exists, remove mark
         if (_currentLeaf.inlineAtomicMenu && _currentLeaf.text.length === 1) {
           // remove inline mark
@@ -400,6 +404,8 @@ const ContentEditable = ({
           event.preventDefault()
           return
         } else if (
+          // INLINE REFACTOR
+
           _currentLeaf.inlineAtomicMenu &&
           _atBlockEnd &&
           event.key === 'ArrowRight'
@@ -490,6 +496,7 @@ const ContentEditable = ({
               event.preventDefault()
               return
             }
+            // INLINE REFACTOR
 
             /*
               if cursor is on an inline atomic and enter is pressed, launch modal
@@ -563,6 +570,8 @@ const ContentEditable = ({
         /*
           before toggling a range, make sure that no atomics are selected or we are not in an inlineAtomicMenu range
           */
+        // INLINE REFACTOR
+
         const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
         if (
           !(
@@ -602,6 +611,7 @@ const ContentEditable = ({
 
       // check for inline atomics
       if (event.key === '#' && Range.isCollapsed(editor.selection)) {
+        console.log('HERE TAKE THIS')
         // check if its not at the start of a block
         const _offset = parseInt(
           flattenOffset(editor, editor.selection.focus),
@@ -626,6 +636,7 @@ const ContentEditable = ({
               flattenOffset(editor, editor.selection.focus),
               10
             )
+            // INLINE REFACTOR
 
             const _nextCharIsWhitespace =
               _text.charAt(_offset) === ' ' || _text.charAt(_offset) === '\n'
@@ -647,6 +658,7 @@ const ContentEditable = ({
                 edge: 'focus',
               })
               Transforms.delete(editor)
+              // INLINE REFACTOR
 
               Transforms.insertNodes(editor, {
                 text: `#${_wordToSwollow}`,
@@ -657,6 +669,7 @@ const ContentEditable = ({
               return
             }
           }
+          // INLINE REFACTOR
 
           // toggle the inline atomic block
           // insert key manually to trigger an 'insert_text' command
@@ -674,6 +687,7 @@ const ContentEditable = ({
       if (event.key === 'Enter') {
         const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
         const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+        // INLINE REFACTOR
 
         if (isCurrentlyInInlineAtomicField(editor)) {
           // let suggest menu handle event if caret is inside of a new active inline atomic and _currentLeaf has more than one character
@@ -866,6 +880,8 @@ const ContentEditable = ({
             reverse: true,
           })
         }
+        // INLINE REFACTOR
+
         // check if `inlineAtomicMenu` is active and atomic symbol is going to be deleted, toggle mark and remove symbol
         const _text = Node.string(
           editor.children[editor.selection.focus.path[0]]
@@ -874,6 +890,8 @@ const ContentEditable = ({
           flattenOffset(editor, editor.selection.focus),
           10
         )
+        // INLINE REFACTOR
+
         if (
           isCurrentlyInInlineAtomicField(editor) &&
           _offset !== 0 &&
@@ -887,6 +905,8 @@ const ContentEditable = ({
                 match: (node) => node === _currentLeaf,
               })
             } else {
+              // INLINE REFACTOR
+
               // if atomic symbol is being removed, remove inlineAtomic mark from leaf
               const _textToInsert = _currentLeaf.text.substring(1)
               Transforms.removeNodes(editor, {

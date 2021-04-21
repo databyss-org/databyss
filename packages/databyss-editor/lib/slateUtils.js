@@ -134,7 +134,7 @@ export const stateToSlate = (initState) => {
   const _state = _blocks.map((_block) => stateBlockToSlateBlock(_block))
   return _state
 }
-
+// INLINE REFACTOR
 const allowedRanges = [
   'bold',
   'italic',
@@ -280,6 +280,7 @@ export const stateToHTMLString = (frag) => {
 
   return `<span>${_innerHtml}</span>`
 }
+// INLINE REFACTOR
 
 export const isCurrentlyInInlineAtomicField = (editor) => {
   if (

@@ -556,12 +556,14 @@ export const convertInlineToAtomicBlocks = ({
   /*
     if flag `convertInlineToAtomic` is set, pull out text within range `inlineAtomicMenu`, look up in entityCache and set the markup with appropriate id and range
   */
+  // INLINE REFACTOR
 
   // get the markup data, function returns: offset, length, text
   const inlineMarkupData = getTextOffsetWithRange({
     text: block.text,
     rangeType: RangeType.InlineAtomicInput,
   })
+  // INLINE REFACTOR
 
   // if the only text tagged with inlineAtomicMenu is the opener, remove mark and normalize the text
   if (inlineMarkupData?.length === 1) {
@@ -680,6 +682,7 @@ export const getInlineOrAtomicsFromStateSelection = (
           ).length
       ).length
   )
+  // INLINE REFACTOR
 
   const _inlineMenuRange = _frag.filter(
     (b) =>
