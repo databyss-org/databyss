@@ -132,9 +132,9 @@ const ContentEditable = ({
 
   // if new atomic block has been added, save atomic
   useEffect(() => {
-    if (state.newEntities.length) {
+    const _process = async () => {
       // flush the queue processor in order to get up to date values
-      EM?.process()
+      await EM?.process()
 
       state.newEntities.forEach((entity) => {
         let _data = null
@@ -172,6 +172,9 @@ const ContentEditable = ({
         setBlockRelations(_payload)
         removeEntityFromQueue(entity._id)
       })
+    }
+    if (state.newEntities.length) {
+      _process()
     }
   }, [state.newEntities.length])
 
