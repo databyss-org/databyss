@@ -2,6 +2,7 @@
 const fs = require('fs')
 const isWsl = require('is-wsl')
 const path = require('path')
+const hasha = require('hasha')
 const webpack = require('webpack')
 // const resolve = require('resolve')
 const PnpWebpackPlugin = require('pnp-webpack-plugin')
@@ -10,7 +11,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const ManifestPlugin = require('webpack-manifest-plugin')
+// const ManifestPlugin = require('webpack-manifest-plugin')
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
@@ -442,20 +443,23 @@ module.exports = (webpackEnv) => {
       // Generate an asset-manifest.json file which contains a mapping of all asset filenames
       // to their corresponding output file so that tools can pick it up without
       // having to parse `index.html`.
-      new ManifestPlugin({
-        fileName: 'asset-manifest.json',
-        publicPath,
-        generate: (seed, files) => {
-          const manifestFiles = files.reduce((manifest, file) => {
-            manifest[file.name] = file.path
-            return manifest
-          }, seed)
+      // [UNUSED]
+      // new ManifestPlugin({
+      //   fileName: 'asset-manifest.json',
+      //   publicPath,
+      //   generate: (seed, files) => {
+      //     const manifestFiles = files.reduce((manifest, file) => {
+      //       manifest[file.name] = file.path
+      //       return manifest
+      //     }, seed)
 
-          return {
-            files: manifestFiles,
-          }
-        },
-      }),
+      //     return {
+      //       files: {
+      //         ...manifestFiles,
+      //       },
+      //     }
+      //   },
+      // }),
       // Generate the manifest.json file
       !isEnvTest &&
         !process.env.REACT_APP_STORYBOOK &&
@@ -482,6 +486,19 @@ module.exports = (webpackEnv) => {
       // the HTML & assets that are part of the Webpack build.
       isEnvProduction &&
         new InjectManifest({
+          additionalManifestEntries: [
+            {
+              url: 'favicon.ico',
+              revision: hasha.fromFileSync(
+                path.resolve(paths.appPublic, 'favicon.ico'),
+                { algorithm: 'md5' }
+              ),
+            },
+            {
+              url: 'gsap.min.js',
+              revision: '3.6.1',
+            },
+          ],
           swSrc: path.resolve(__dirname, './service-worker.js'),
           include: [/\.(?:html|png|jpg|jpeg|svg|mp4|js|ico)$/],
           maximumFileSizeToCacheInBytes: 3145728,

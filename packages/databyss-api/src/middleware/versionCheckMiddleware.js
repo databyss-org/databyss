@@ -1,12 +1,11 @@
-import { version } from './../../package.json'
-import { BadRequestError, VersionMismatchError } from '../lib/Errors'
+import { VersionMismatchError } from '../lib/Errors'
 
-export const versionChecker = (req, res, next) => {
+export const versionChecker = (req, _res, next) => {
   const databyssVersion = req.header('x-databyss-version')
   if (!databyssVersion) {
-    return next(new BadRequestError(`missing version in header`))
+    return next()
   }
-  if (databyssVersion !== version) {
+  if (databyssVersion.startsWith('1.')) {
     return next(new VersionMismatchError(databyssVersion))
   }
 
