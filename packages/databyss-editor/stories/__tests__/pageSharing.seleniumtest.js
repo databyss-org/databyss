@@ -11,11 +11,12 @@ import {
   getSharedPage,
   isAppInNotesSaved,
   paste,
-  selectAll,
   backspaceKey,
   tagButtonClick,
   tagButtonListClick,
 } from './_helpers.selenium'
+
+import { selectLinkInFirstBlock } from './groupSharing.seleniumtest'
 
 let driver
 let editor
@@ -94,7 +95,7 @@ describe('page sharing', () => {
     await editor.click()
 
     await paste(actions)
-    await selectAll(actions)
+    await selectLinkInFirstBlock(actions)
 
     // get the public page url
     const publicPageUrl = await driver.executeScript(
@@ -162,7 +163,7 @@ describe('page sharing', () => {
       '[data-test-element="page-header"]'
     )
 
-    header = await header.getAttribute('value')
+    header = await header.getText()
 
     // verify that page is visible
     assert.equal(header.trim(), 'this is a shared page title')

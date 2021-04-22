@@ -18,17 +18,17 @@ export const TitleElement = ({ attributes, children, element }) => (
         suppressContentEditableWarning
         css={{ pointerEvents: 'none' }}
       >
-        <Text
-          variant="bodyHeading1"
-          color="text.3"
-          opacity={0.5}
-          data-test-element="page-header"
-        >
+        <Text variant="bodyHeading1" color="text.3" opacity={0.5}>
           {UNTITLED_PAGE_NAME}
         </Text>
       </View>
     )}
-    <Text {...attributes} variant="bodyHeading1" color="text.3">
+    <Text
+      {...attributes}
+      variant="bodyHeading1"
+      color="text.3"
+      data-test-element="page-header"
+    >
       {children}
     </Text>
   </View>
