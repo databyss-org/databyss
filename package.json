@@ -222,6 +222,7 @@
     "fetch-mock": "^8.0.1",
     "file-loader": "^4.0.0",
     "focus-trap-react": "^6.0.0",
+    "hasha": "^5.2.2",
     "html-webpack-plugin": "4.5.2",
     "imurmurhash": "^0.1.4",
     "is-hotkey": "^0.1.5",
