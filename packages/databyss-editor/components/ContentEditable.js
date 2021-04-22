@@ -47,6 +47,7 @@ import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
 import { onInlineFocusBlur } from '../lib/inlineUtils'
+import { onInlineBackspace } from '../lib/inlineUtils/onInlineEnterKey'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -368,91 +369,15 @@ const ContentEditable = ({
         return
       }
 
-      // never allow inline atomics to be entered manually
-      if (
-        (isCharacterKeyPress(event) || event.key === 'Backspace') &&
-        SlateEditor.marks(editor).inlineTopic &&
-        Range.isCollapsed(editor.selection)
-      ) {
-        const _currentBlock = state.blocks[state.selection.anchor.index]
-        let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
-        const _anchor = editor.selection.anchor
-        const _isAnchorAtStartOfLeaf =
-          _anchor.offset === 0 &&
-          (_anchor.path[1] !== 0 ||
-            _currentBlock.text.textValue.length === _currentLeaf.text.length)
-        const _isAnchorAtEndOfLeaf = _currentLeaf.text.length === _anchor.offset
-        if (_isAnchorAtStartOfLeaf) {
-          // jog the caret back and forward to reset current leaf
-          // current leaf will assume the end of last leaf
-          Transforms.move(editor, {
-            unit: 'character',
-            distance: 1,
-            reverse: true,
-          })
-          Transforms.move(editor, {
-            unit: 'character',
-            distance: 1,
-          })
-          _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
-        }
-        // if current or prevous leaf is inline
-        if (_currentLeaf.inlineTopic) {
-          // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
-          if (
-            !(_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf) ||
-            event.key === 'Backspace'
-          ) {
-            /*
-              remove entire inline atomic, check page to see if its the last one, if so, remove from page
-              */
-            if (event.key === 'Backspace') {
-              // remove inline node
-
-              Transforms.removeNodes(editor, {
-                match: (node) => node === _currentLeaf,
-              })
-
-              const _index = state.selection.anchor.index
-              const selection = {
-                ...slateSelectionToStateSelection(editor),
-                _id: state.selection._id,
-              }
-
-              // set the block with a re-render
-              setContent({
-                selection,
-                operations: [
-                  {
-                    index: _index,
-                    text: {
-                      textValue: Node.string(editor.children[_index]),
-                      ranges: slateRangesToStateRanges(editor.children[_index]),
-                    },
-                    checkAtomicDelta: true,
-                  },
-                ],
-              })
-
-              event.preventDefault()
-              return
-            }
-            // INLINE REFACTOR
-
-            /*
-              if cursor is on an inline atomic and enter is pressed, launch modal
-              */
-            if (event.key === 'Enter') {
-              const inlineAtomicData = {
-                refId: _currentLeaf.atomicId,
-                type: 'TOPIC',
-              }
-              onInlineAtomicClick(inlineAtomicData)
-            }
-            event.preventDefault()
-            return
-          }
-        }
+      const _isInlineBackspace = onInlineBackspace({
+        event,
+        editor,
+        state,
+        setContent,
+        onInlineAtomicClick,
+      })
+      if (_isInlineBackspace) {
+        return
       }
 
       if (isCharacterKeyPress(event) && isMarkActive(editor, 'inlineTopic')) {
