@@ -1,4 +1,4 @@
-import { ReactEditor } from 'slate-react'
+import { ReactEditor } from '@databyss-org/slate-react'
 import { KeyboardEvent } from 'react'
 import { isCharacterKeyPress, isMarkActive, toggleMark } from '../slateUtils'
 import { InlineTypes } from '../../../databyss-services/interfaces/Range'

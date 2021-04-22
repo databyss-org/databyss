@@ -46,7 +46,12 @@ import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
-import { onInlineFocusBlur, onInlineBackspace } from '../lib/inlineUtils'
+import {
+  onInlineFocusBlur,
+  onInlineBackspace,
+  preventInlineAtomicCharacters,
+} from '../lib/inlineUtils'
+import { initiateInlineMenu } from '../lib/inlineUtils/initiateInlineMenu'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -379,9 +384,7 @@ const ContentEditable = ({
         return
       }
 
-      if (isCharacterKeyPress(event) && isMarkActive(editor, 'inlineTopic')) {
-        toggleMark(editor, 'inlineTopic')
-      }
+      preventInlineAtomicCharacters(editor, event)
 
       if (Hotkeys.isUndo(event) && historyContext) {
         event.preventDefault()
@@ -473,79 +476,13 @@ const ContentEditable = ({
         event.preventDefault()
         return
       }
+      // INLINE REFACTOR
 
       // check for inline atomics
       if (event.key === '#' && Range.isCollapsed(editor.selection)) {
-        console.log('HERE TAKE THIS')
-        // check if its not at the start of a block
-        const _offset = parseInt(
-          flattenOffset(editor, editor.selection.focus),
-          10
-        )
-        const _atBlockStart = _offset === 0
-        if (!_atBlockStart) {
-          // make sure this isnt an atomic closure
-          const _text = Node.string(
-            editor.children[editor.selection.focus.path[0]]
-          )
-
-          const _isClosure = _text.charAt(_offset - 1) === '/'
-
-          const _atBlockEnd = _offset === _text.length
-          // perform a lookahead to see if inline atomic should 'slurp' following word
-          if (!_atBlockEnd) {
-            const _text = Node.string(
-              editor.children[editor.selection.focus.path[0]]
-            )
-            const _offset = parseInt(
-              flattenOffset(editor, editor.selection.focus),
-              10
-            )
-            // INLINE REFACTOR
-
-            const _nextCharIsWhitespace =
-              _text.charAt(_offset) === ' ' || _text.charAt(_offset) === '\n'
-            // if next character is not a whitespace, swollow next word into mark `inlineAtomicMenu`
-            if (
-              !_nextCharIsWhitespace &&
-              !isCurrentlyInInlineAtomicField(editor)
-            ) {
-              // get length of text to swollow
-              // get word to swollow divided by white space, comma or period
-              const _wordToSwollow = _text
-                .slice(_offset)
-                .split(/\s|\.|,|;|:|"|\]/)[0]
-
-              // highligh next word and remove word
-              Transforms.move(editor, {
-                unit: 'character',
-                distance: _wordToSwollow.length,
-                edge: 'focus',
-              })
-              Transforms.delete(editor)
-              // INLINE REFACTOR
-
-              Transforms.insertNodes(editor, {
-                text: `#${_wordToSwollow}`,
-                inlineAtomicMenu: true,
-              })
-
-              event.preventDefault()
-              return
-            }
-          }
-          // INLINE REFACTOR
-
-          // toggle the inline atomic block
-          // insert key manually to trigger an 'insert_text' command
-          if (!isCurrentlyInInlineAtomicField(editor) && !_isClosure) {
-            Transforms.insertNodes(editor, {
-              text: event.key,
-              inlineAtomicMenu: true,
-            })
-            event.preventDefault()
-            return
-          }
+        const _shouldInitiate = initiateInlineMenu({ editor, event })
+        if (_shouldInitiate) {
+          return
         }
       }
 

@@ -1,5 +1,5 @@
 import { KeyboardEvent } from 'react'
-import { ReactEditor } from 'slate-react'
+import { ReactEditor } from '@databyss-org/slate-react'
 import {
   Node,
   Transforms,
@@ -23,10 +23,14 @@ export const onInlineBackspace = ({
   onInlineAtomicClick: Function
   setContent: Function
   event: KeyboardEvent
-  editor: ReactEditor
+  editor: ReactEditor & SlateEditor
   state: EditorState
 }): boolean => {
   // never allow inline atomics to be entered manually
+  if (!editor.selection) {
+    return false
+  }
+
   if (
     (isCharacterKeyPress(event) || event.key === 'Backspace') &&
     SlateEditor.marks(editor)?.inlineTopic &&

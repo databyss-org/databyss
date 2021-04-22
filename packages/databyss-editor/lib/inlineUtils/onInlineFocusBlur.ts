@@ -1,5 +1,5 @@
 import { KeyboardEvent } from 'react'
-import { ReactEditor } from 'slate-react'
+import { ReactEditor } from '@databyss-org/slate-react'
 import { Node, Transforms, Editor as SlateEditor } from '@databyss-org/slate'
 import { EditorState } from '../../interfaces/EditorState'
 import {
@@ -21,10 +21,14 @@ export const onInlineFocusBlur = ({
 }: {
   setContent: Function
   state: EditorState
-  editor: ReactEditor
+  editor: ReactEditor & SlateEditor
   event: KeyboardEvent
 }): boolean | undefined => {
   // if a space or arrow right key is entered and were currently creating an inline atomic, pass through normal text and remove inline mark
+  if (!editor?.selection) {
+    return false
+  }
+
   if (
     (event.key === ' ' || event.key === 'ArrowRight') &&
     isCurrentlyInInlineAtomicField(editor)
