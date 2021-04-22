@@ -17,7 +17,7 @@
     "@databyss-org/data": "2.0.3",
     "@databyss-org/editor": "2.0.3",
     "@databyss-org/services": "2.0.3",
-    "slate": "0.61.3",
+    "@databyss-org/slate": "0.58.1-b2",
     "@databyss-org/ui": "2.0.3",
     "@storybook/react": "5.2.1",
     "react": "16.9.0",

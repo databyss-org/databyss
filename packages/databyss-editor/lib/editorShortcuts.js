@@ -1,4 +1,4 @@
-import { Node, Transforms, Editor } from 'slate'
+import { Node, Transforms, Editor } from '@databyss-org/slate'
 import { flattenOffset } from './slateUtils'
 
 export const replaceShortcut = (editor, event) => {

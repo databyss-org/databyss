@@ -7,6 +7,7 @@ import {
 import { EditorPageLoader } from '@databyss-org/ui/components/Loaders'
 import { View } from '@databyss-org/ui/primitives'
 import { useEditorPageContext } from '@databyss-org/services'
+import { useNavigationContext } from '@databyss-org/ui'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
@@ -22,7 +23,8 @@ export const PageContainer = React.memo(
     const getBlockRefByIndex = useEditorPageContext((c) => c.getBlockRefByIndex)
     const [, setAuthToken] = useState()
     const [editorPath, setEditorPath] = useState(null)
-
+    const location = useLocation()
+    const navigate = useNavigationContext((c) => c && c.navigate)
     const editorRef = useRef()
 
     // index is used to set selection in slate
@@ -50,6 +52,7 @@ export const PageContainer = React.memo(
           if (_ref) {
             window.requestAnimationFrame(() => {
               scrollIntoView(_ref)
+              navigate(location.pathname)
             })
           }
         }

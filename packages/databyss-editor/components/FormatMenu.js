@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Text, View } from '@databyss-org/ui/primitives'
-import { useEditor, ReactEditor, useSlate } from 'slate-react'
+import { useEditor, ReactEditor, useSlate } from '@databyss-org/slate-react'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import { Range } from 'slate'
+import { Range } from '@databyss-org/slate'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import HoveringToolbar from './HoveringToolbar'
 import {

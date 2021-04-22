@@ -20,7 +20,7 @@ module.exports = async ({ config, mode }) => {
   // alias slate
   config.resolve.alias = {
     ...config.resolve.alias,
-    slate: 'slate',
+    slate: '@databyss-org/slate',
   }
 
   // by default, storybook rewrites REACT_APP_ environment vars

@@ -188,7 +188,7 @@ module.exports = (webpackEnv) => {
     },
     resolve: {
       alias: {
-        slate: 'slate',
+        slate: '@databyss-org/slate',
         react: require.resolve('react'),
       },
       // This allows you to set a fallback for where Webpack should look for modules.
