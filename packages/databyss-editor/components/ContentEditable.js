@@ -46,6 +46,7 @@ import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
+import { onInlineFocusBlur } from '../lib/inlineUtils'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -356,75 +357,15 @@ const ContentEditable = ({
           ],
         })
       }
-      // INLINE REFACTOR
-      // if a space or arrow right key is entered and were currently creating an inline atomic, pass through normal text and remove inline mark
-      if (
-        (event.key === ' ' || event.key === 'ArrowRight') &&
-        isCurrentlyInInlineAtomicField(editor)
-      ) {
-        // check to see if were at the end of block
-        const _offset = parseInt(
-          flattenOffset(editor, editor.selection.focus),
-          10
-        )
-        const _text = Node.string(
-          editor.children[editor.selection.focus.path[0]]
-        )
 
-        const _atBlockEnd = _offset === _text.length
-
-        const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
-        // INLINE REFACTOR
-
-        // if only atomic symbol exists, remove mark
-        if (_currentLeaf.inlineAtomicMenu && _currentLeaf.text.length === 1) {
-          // remove inline mark
-          Transforms.move(editor, {
-            unit: 'character',
-            distance: 1,
-            reverse: true,
-          })
-          Transforms.move(editor, {
-            unit: 'character',
-            distance: 1,
-            edge: 'focus',
-          })
-          // remove all active marks in current text
-          const _activeMarks = SlateEditor.marks(editor)
-          Object.keys(_activeMarks).forEach((m) => {
-            toggleMark(editor, m)
-          })
-          Transforms.collapse(editor, {
-            edge: 'focus',
-          })
-
-          if (event.key === ' ') {
-            Transforms.insertText(editor, event.key)
-          }
-          event.preventDefault()
-          return
-        } else if (
-          // INLINE REFACTOR
-
-          _currentLeaf.inlineAtomicMenu &&
-          _atBlockEnd &&
-          event.key === 'ArrowRight'
-        ) {
-          // if caret is at the end of a block, convert current inlineAtomicMenu to an inline block
-          const _index = state.selection.anchor.index
-          const _stateBlock = state.blocks[_index]
-          // set the block with a re-render
-          setContent({
-            selection: state.selection,
-            operations: [
-              {
-                index: _index,
-                text: _stateBlock.text,
-                convertInlineToAtomic: true,
-              },
-            ],
-          })
-        }
+      const _shouldReturn = onInlineFocusBlur({
+        state,
+        editor,
+        event,
+        setContent,
+      })
+      if (_shouldReturn) {
+        return
       }
 
       // never allow inline atomics to be entered manually
