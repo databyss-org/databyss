@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, forwardRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import scrollIntoView from 'scroll-into-view-if-needed'
 import {
   useParams,
   useLocation,
@@ -23,7 +24,6 @@ export const PageContainer = React.memo(
     const [editorPath, setEditorPath] = useState(null)
 
     const editorRef = useRef()
-    const editorWindowRef = useRef()
 
     // index is used to set selection in slate
     const [index, setIndex] = useState(null)
@@ -49,24 +49,17 @@ export const PageContainer = React.memo(
           const _ref = getBlockRefByIndex(_index)
           if (_ref) {
             window.requestAnimationFrame(() => {
-              if (editorWindowRef.current) {
-                // to compensate for the sticky header
-                // https://github.com/iamdustan/smoothscroll/issues/47#issuecomment-350810238
-                const item = _ref
-                const wrapper = editorWindowRef.current
-                const count = item.offsetTop - wrapper.scrollTop - 74
-                wrapper.scrollBy({ top: count, left: 0, behavior: 'smooth' })
-              }
+              scrollIntoView(_ref)
             })
           }
         }
       }
-    }, [])
+    }, [editorRef.current])
 
     return (
       <>
         <PageSticky pagePath={editorPath} pageId={page._id} />
-        <PageContentView ref={editorWindowRef} {...others}>
+        <PageContentView {...others}>
           <PageBody
             onEditorPathChange={setEditorPath}
             editorRef={editorRef}

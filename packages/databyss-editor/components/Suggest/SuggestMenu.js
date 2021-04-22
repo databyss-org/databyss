@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useEditor, ReactEditor } from '@databyss-org/slate-react'
-import { Node, Editor } from '@databyss-org/slate'
+import { useEditor, ReactEditor } from 'slate-react'
+import { Node, Editor } from 'slate'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import { Text, View } from '@databyss-org/ui/primitives'

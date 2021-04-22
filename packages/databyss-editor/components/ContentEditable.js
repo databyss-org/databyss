@@ -6,8 +6,8 @@ import {
   Point,
   Range,
   Editor as SlateEditor,
-} from '@databyss-org/slate'
-import { ReactEditor, withReact } from '@databyss-org/slate-react'
+} from 'slate'
+import { ReactEditor, withReact } from 'slate-react'
 import cloneDeep from 'clone-deep'
 import { setSource } from '@databyss-org/services/sources'
 import { setBlockRelations } from '@databyss-org/services/entries'

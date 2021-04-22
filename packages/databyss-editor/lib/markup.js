@@ -1,4 +1,4 @@
-import { createEditor, Transforms } from '@databyss-org/slate'
+import { createEditor, Transforms } from 'slate'
 import cloneDeep from 'clone-deep'
 import { toggleMark } from './slateUtils'
 

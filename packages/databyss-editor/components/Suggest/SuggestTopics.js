@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Editor, Transforms } from '@databyss-org/slate'
-import { useEditor } from '@databyss-org/slate-react'
+import { Editor, Transforms } from 'slate'
+import { useEditor } from 'slate-react'
 import cloneDeep from 'clone-deep'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { prefixSearchAll } from '@databyss-org/services/blocks'

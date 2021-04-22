@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Text, View } from '@databyss-org/ui/primitives'
-import { useEditor, ReactEditor, useSlate } from '@databyss-org/slate-react'
+import { useEditor, ReactEditor, useSlate } from 'slate-react'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import { Range } from '@databyss-org/slate'
+import { Range } from 'slate'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
-import { throttle } from 'lodash'
 import HoveringToolbar from './HoveringToolbar'
 import {
   isFormatActive,
@@ -179,13 +178,6 @@ check if selection contains inline atomics or inline sources
     if (dontShowMenu) {
       setMenuActive(false)
     }
-
-    window.addEventListener(
-      'scroll',
-      throttle(() => {
-        setMenuActive(false)
-      }, 200)
-    )
   }, [editor.selection])
 
   const openFormatMenu = () => {

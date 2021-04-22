@@ -1,5 +1,5 @@
 import escapeHtml from 'escape-html'
-import { Text } from '@databyss-org/slate'
+import { Text } from 'slate'
 
 export const serialize = (node) => {
   if (Text.isText(node)) {

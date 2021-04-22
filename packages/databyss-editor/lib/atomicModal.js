@@ -1,5 +1,5 @@
-import { Transforms } from '@databyss-org/slate'
-import { ReactEditor } from '@databyss-org/slate-react'
+import { Transforms } from 'slate'
+import { ReactEditor } from 'slate-react'
 import { stateSelectionToSlateSelection } from './slateUtils'
 import { isAtomicInlineType } from './util'
 

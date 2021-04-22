@@ -2415,30 +2415,6 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
-"@databyss-org/slate-react@0.57.2-b5":
-  version "0.57.2-b5"
-  resolved "https://registry.yarnpkg.com/@databyss-org/slate-react/-/slate-react-0.57.2-b5.tgz#671e8203ef776d80ab1e703346ad4fc12225a2ec"
-  integrity sha512-oL+5QmessN8xyrf2kUBEszo89S94DZhHy238UnW675+obzIoiXMENEsbi1cLX4tE8mTRYpZTMP9OP7hxq7eGig==
-  dependencies:
-    "@types/is-hotkey" "^0.1.1"
-    "@types/lodash" "^4.14.149"
-    direction "^1.0.3"
-    is-hotkey "^0.1.6"
-    is-plain-object "^3.0.0"
-    lodash "^4.17.4"
-    scroll-into-view-if-needed "^2.2.20"
-
-"@databyss-org/slate@0.58.1-b2":
-  version "0.58.1-b2"
-  resolved "https://registry.yarnpkg.com/@databyss-org/slate/-/slate-0.58.1-b2.tgz#421d90f6f8df2d6d6252875287107e32e4da6000"
-  integrity sha512-wZo5ktRF2KBB0tNnI+JJJzmFxNqTRsbYzC0osPXAEDMWfKZQKubB/o++ArJtGJ5YmqYaL0qOJNZPvpfosdICIA==
-  dependencies:
-    "@types/esrever" "^0.2.0"
-    esrever "^0.2.0"
-    immer "^5.0.0"
-    is-plain-object "^3.0.0"
-    tiny-warning "^1.0.3"
-
 "@emotion/babel-plugin-jsx-pragmatic@^0.1.5":
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/@emotion/babel-plugin-jsx-pragmatic/-/babel-plugin-jsx-pragmatic-0.1.5.tgz#27debfe9c27c4d83574d509787ae553bf8a34d7e"
@@ -12788,15 +12764,15 @@ immer@1.10.0:
   resolved "https://registry.yarnpkg.com/immer/-/immer-1.10.0.tgz#bad67605ba9c810275d91e1c2a47d4582e98286d"
   integrity sha512-O3sR1/opvCDGLEVcvrGTMtLac8GJ5IwZC4puPrLuRj3l7ICKvkmA0vGuU9OW8mV9WIBRnaxp5GJh9IEAaNOoYg==
 
-immer@^5.0.0:
-  version "5.3.6"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-5.3.6.tgz#51eab8cbbeb13075fe2244250f221598818cac04"
-  integrity sha512-pqWQ6ozVfNOUDjrLfm4Pt7q4Q12cGw2HUZgry4Q5+Myxu9nmHRkWBpI0J4+MK0AxbdFtdMTwEGVl7Vd+vEiK+A==
-
 immer@^6.0.5:
   version "6.0.9"
   resolved "https://registry.yarnpkg.com/immer/-/immer-6.0.9.tgz#b9dd69b8e69b3a12391e87db1e3ff535d1b26485"
   integrity sha512-SyCYnAuiRf67Lvk0VkwFvwtDoEiCMjeamnHvRfnVDyc7re1/rQrNxuL+jJ7lA3WvdC4uznrvbmm+clJ9+XXatg==
+
+immer@^7.0.0:
+  version "7.0.15"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-7.0.15.tgz#dc3bc6db87401659d2e737c67a21b227c484a4ad"
+  integrity sha512-yM7jo9+hvYgvdCQdqvhCNRRio0SCXc8xDPzA25SvKWa7b1WVPjLwQs1VYU5JPXjcJPTqAa5NP5dqpORGYBQ2AA==
 
 immutable@^4.0.0-rc.12:
   version "4.0.0-rc.12"
@@ -22319,6 +22295,30 @@ slate-hyperscript@^0.57.2:
   integrity sha512-aUY+nXw9s9Fv0uEO7sBdRVQ9IJbKM/CaYixlUKFk+7lRZsBpplqSrb4XHL7cLPVmWIckjU4I2eCXoezNKsrgwQ==
   dependencies:
     is-plain-object "^3.0.0"
+
+slate-react@0.61.3:
+  version "0.61.3"
+  resolved "https://registry.yarnpkg.com/slate-react/-/slate-react-0.61.3.tgz#ae022dcf46aae5d6dac677ebef9dc8bac2da318d"
+  integrity sha512-458/7oDKV0i3nVp+UXLtB3MJST1/TNFgWkONfanbuO4bTVJdU8fWdWoZYKD9JInKJG1qjg5IIBbSTy0MtMd+5w==
+  dependencies:
+    "@types/is-hotkey" "^0.1.1"
+    "@types/lodash" "^4.14.149"
+    direction "^1.0.3"
+    is-hotkey "^0.1.6"
+    is-plain-object "^3.0.0"
+    lodash "^4.17.4"
+    scroll-into-view-if-needed "^2.2.20"
+
+slate@0.61.3:
+  version "0.61.3"
+  resolved "https://registry.yarnpkg.com/slate/-/slate-0.61.3.tgz#1b20a623f2b4628c02c0ffa372a423f30b73e312"
+  integrity sha512-cbQScBlWWZ+aj8tL+OpLkJkeocnXAshKj6gvz7Zmtrcy5efBvlirfGMHuisF4ZBfBqU/gLRkus+FEaKLd86YaA==
+  dependencies:
+    "@types/esrever" "^0.2.0"
+    esrever "^0.2.0"
+    immer "^7.0.0"
+    is-plain-object "^3.0.0"
+    tiny-warning "^1.0.3"
 
 slice-ansi@^2.0.0, slice-ansi@^2.1.0:
   version "2.1.0"
