@@ -27,7 +27,7 @@ TODO: importing this function causes server to fail
 */
 export const normalizePage = (page: Page): PageDoc => {
   const _pageDoc: PageDoc = {
-    blocks: [{ _id: page.blocks[0]._id, type: BlockType.Entry }],
+    blocks: page.blocks.map((_b) => ({ _id: _b._id, type: _b.type })),
     selection: page.selection._id,
     _id: page._id,
     name: page.name,
@@ -59,6 +59,12 @@ export const initializeNewPage = async ({
     createdAt: Date.now(),
     belongsToGroup: groupId,
     ..._page.blocks[0],
+  }))
+  await groupDb.upsert(_page.blocks[1]._id, () => ({
+    doctype: DocumentType.Block,
+    createdAt: Date.now(),
+    belongsToGroup: groupId,
+    ..._page.blocks[1],
   }))
 
   await groupDb.upsert(_page._id, () => ({
