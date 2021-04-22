@@ -6,6 +6,7 @@ import { Text, Node } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import matchAll from 'string.prototype.matchall'
 import { useEditorContext } from '../state/EditorProvider'
+import { TitleElement } from './TitleElement'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
@@ -39,10 +40,14 @@ const Editor = ({
 
   const readOnly = !others.onChange || readonly
   // const editor = useMemo(() => withReact(createEditor()), [])
-  const renderElement = useCallback(
-    (props) => <Element readOnly={readOnly} {...props} />,
-    []
-  )
+  const renderElement = useCallback((props) => {
+    const { element } = props
+    console.log('[renderElement]', props)
+    if (element.isTitle) {
+      return <TitleElement {...props} />
+    }
+    return <Element readOnly={readOnly} {...props} />
+  }, [])
 
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 

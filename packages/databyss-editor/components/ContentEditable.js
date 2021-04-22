@@ -235,7 +235,11 @@ const ContentEditable = ({
       const payload = {
         selection,
       }
-
+      console.log(
+        '[ContentEditable] value.length',
+        value.length,
+        valueRef.current.length
+      )
       if (value.length < valueRef.current.length) {
         // block was removed, so do a merge
         merge({
@@ -672,6 +676,13 @@ const ContentEditable = ({
       }
 
       if (event.key === 'Enter') {
+        // carriage return in title advances selection to next line
+        if (editor.selection.focus.path[0] === 0) {
+          event.preventDefault()
+          Transforms.move(editor, { unit: 'line', distance: 1 })
+          return
+        }
+
         const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
         const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
 

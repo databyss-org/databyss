@@ -129,10 +129,12 @@ export const stateBlockToSlateBlock = (block) => {
 convert page state to a slate value on initial mount
 */
 
-export const stateToSlate = (initState) => {
-  const _blocks = initState.blocks
-  const _state = _blocks.map((_block) => stateBlockToSlateBlock(_block))
-  return _state
+export const stateToSlate = ({ blocks }) => {
+  const _children = blocks.map((_block, index) => ({
+    ...stateBlockToSlateBlock(_block),
+    isTitle: !index,
+  }))
+  return _children
 }
 
 const allowedRanges = [

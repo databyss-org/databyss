@@ -99,6 +99,11 @@ const deleteSelectionAcrossBlocks = ({
 
   // remove all the the blocks in the selection except the anchor block
   blocks.splice(anchor.index + 1, focus.index - anchor.index)
+
+  // replace title block if it was removed
+  while (blocks.length < 2) {
+    blocks.push(new Block())
+  }
 }
 
 export default (draft: EditorState) => {
