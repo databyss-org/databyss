@@ -4,28 +4,24 @@ import {
   useLocation,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { EditorPageLoader } from '@databyss-org/ui/components/Loaders'
-import { View, ScrollView } from '@databyss-org/ui/primitives'
+import { View } from '@databyss-org/ui/primitives'
 import { useEditorPageContext } from '@databyss-org/services'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
-import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
 
-export const PageContentView = forwardRef(({ children, ...others }, ref) => (
-  <ScrollView flexShrink={1} flexGrow={1} ref={ref}>
-    <View pl="em" pr="medium" pt="small" flexGrow={1} {...others}>
-      {children}
-    </View>
-  </ScrollView>
-))
+export const PageContentView = ({ children, ...others }) => (
+  <View pt="small" flexShrink={1} flexGrow={1} overflow="hidden" {...others}>
+    {children}
+  </View>
+)
 
 export const PageContainer = React.memo(
-  ({ anchor, id, page, ...others }) => {
+  ({ anchor, page, ...others }) => {
     const getBlockRefByIndex = useEditorPageContext((c) => c.getBlockRefByIndex)
     const [, setAuthToken] = useState()
     const [editorPath, setEditorPath] = useState(null)
 
-    const headerRef = useRef()
     const editorRef = useRef()
     const editorWindowRef = useRef()
 
@@ -67,36 +63,15 @@ export const PageContainer = React.memo(
       }
     }, [])
 
-    // focus header
-    const onNavigateUpFromEditor = () => {
-      if (headerRef.current) {
-        headerRef.current.focus()
-      }
-    }
-
-    // focus editor
-    const onNavigateDownToEditor = () => {
-      if (editorRef.current?.focus) {
-        editorRef.current.focus()
-      }
-    }
-
     return (
       <>
         <PageSticky pagePath={editorPath} pageId={page._id} />
         <PageContentView ref={editorWindowRef} {...others}>
-          <PageHeader
-            ref={headerRef}
-            pageId={id}
-            onNavigateDownFromHeader={onNavigateDownToEditor}
-            ml="small"
-          />
           <PageBody
             onEditorPathChange={setEditorPath}
             editorRef={editorRef}
             page={page}
             focusIndex={index}
-            onNavigateUpFromEditor={onNavigateUpFromEditor}
           />
         </PageContentView>
       </>

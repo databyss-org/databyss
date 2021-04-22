@@ -235,11 +235,7 @@ const ContentEditable = ({
       const payload = {
         selection,
       }
-      console.log(
-        '[ContentEditable] value.length',
-        value.length,
-        valueRef.current.length
-      )
+
       if (value.length < valueRef.current.length) {
         // block was removed, so do a merge
         merge({

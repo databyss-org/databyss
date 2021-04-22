@@ -4,6 +4,8 @@ import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Text, Node } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
+import styledCss from '@styled-system/css'
+import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
 import matchAll from 'string.prototype.matchall'
 import { useEditorContext } from '../state/EditorProvider'
 import { TitleElement } from './TitleElement'
@@ -42,7 +44,6 @@ const Editor = ({
   // const editor = useMemo(() => withReact(createEditor()), [])
   const renderElement = useCallback((props) => {
     const { element } = props
-    console.log('[renderElement]', props)
     if (element.isTitle) {
       return <TitleElement {...props} />
     }
@@ -182,7 +183,14 @@ const Editor = ({
         autoFocus={autofocus}
         onKeyDown={onKeyDown}
         style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
-        css={{ flexGrow: 1 }}
+        css={styledCss({
+          flexGrow: 1,
+          overflowY: 'auto',
+          paddingLeft: 'em',
+          paddingRight: 'medium',
+          paddingBottom: 'extraLarge',
+          ...scrollbarResetCss,
+        })}
       />
     </Slate>
   )

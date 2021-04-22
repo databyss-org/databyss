@@ -57,7 +57,6 @@ const PageBody = ({
       const _patchValue = value.patches.find(
         (_patch) => _patch.path?.[0] === 'blocks' && _patch.path?.[1] === 0
       )?.value?.textValue
-      console.log('[PageBody]', _patchValue)
       if (_patchValue !== null && _patchValue !== undefined) {
         const _pageData = {
           name: _patchValue.trim() || UNTITLED_PAGE_NAME,
