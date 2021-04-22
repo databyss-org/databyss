@@ -10,13 +10,17 @@ export interface PageHeader extends Document {
   archive?: boolean
 }
 
+export interface PageConstructorOptions {
+  skipTitleBlock?: boolean
+}
+
 export class Page implements PageHeader {
   _id: string
   selection: Selection
   blocks: Block[]
   name: string
   archive?: boolean
-  constructor(id?: string) {
+  constructor(id?: string, options?: PageConstructorOptions) {
     this._id = id || uidlc()
     this.selection = {
       anchor: {
@@ -37,11 +41,13 @@ export class Page implements PageHeader {
         type: BlockType.Entry,
         text: { textValue: '', ranges: [] },
       },
-      {
+    ]
+    if (!options?.skipTitleBlock) {
+      this.blocks.push({
         _id: uid(),
         type: BlockType.Entry,
         text: { textValue: '', ranges: [] },
-      },
-    ]
+      })
+    }
   }
 }

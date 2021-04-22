@@ -39,13 +39,15 @@ export const normalizePage = (page: Page): PageDoc => {
 export const initializeNewPage = async ({
   groupId,
   pageId,
+  skipTitleBlock,
 }: {
   groupId: string
   pageId: string
+  skipTitleBlock?: boolean
 }) => {
   // get user group
   const groupDb = await cloudant.current.db.use(groupId)
-  const _page: any = new Page(pageId)
+  const _page: any = new Page(pageId, { skipTitleBlock })
   // upsert selection
   await groupDb.upsert(_page.selection._id, () => ({
     doctype: DocumentType.Selection,
@@ -54,19 +56,15 @@ export const initializeNewPage = async ({
     ..._page.selection,
   }))
   // upsert blocks
-  await groupDb.upsert(_page.blocks[0]._id, () => ({
-    doctype: DocumentType.Block,
-    createdAt: Date.now(),
-    belongsToGroup: groupId,
-    ..._page.blocks[0],
-  }))
-  await groupDb.upsert(_page.blocks[1]._id, () => ({
-    doctype: DocumentType.Block,
-    createdAt: Date.now(),
-    belongsToGroup: groupId,
-    ..._page.blocks[1],
-  }))
-
+  for (const _block of _page.blocks) {
+    await groupDb.upsert(_block._id, () => ({
+      doctype: DocumentType.Block,
+      createdAt: Date.now(),
+      belongsToGroup: groupId,
+      ..._block,
+    }))
+  }
+  // upsert page
   await groupDb.upsert(_page._id, () => ({
     createdAt: Date.now(),
     doctype: DocumentType.Page,
@@ -231,7 +229,8 @@ export const addCredentialsToGroupId = async ({
 }
 
 export const createUserDatabaseCredentials = async (
-  user: SysUser
+  user: SysUser,
+  skipTitleBlock?: boolean
 ): Promise<CredentialResponse> => {
   let groupId = user.defaultGroupId
 
@@ -274,6 +273,7 @@ export const createUserDatabaseCredentials = async (
     await initializeNewPage({
       groupId,
       pageId: defaultPageId,
+      skipTitleBlock,
     })
 
     await _db.upsert(_userPreferences._id, () => ({

@@ -86,7 +86,11 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     } else if (code && email) {
       // code from email
       path += '/auth/code'
-      options.body = JSON.stringify({ code, email })
+      options.body = JSON.stringify({
+        code,
+        email,
+        skipTitleBlock: !!process.env.STORYBOOK,
+      })
     } else if (email) {
       // register with email
       path += '/users/email'
