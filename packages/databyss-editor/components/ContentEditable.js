@@ -55,6 +55,7 @@ const ContentEditable = ({
   onNavigateUpFromTop,
   editorRef,
   sharedWithGroups,
+  firstBlockIsTitle,
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
@@ -673,10 +674,12 @@ const ContentEditable = ({
 
       if (event.key === 'Enter') {
         // carriage return in title advances selection to next line
-        if (editor.selection.focus.path[0] === 0) {
-          event.preventDefault()
-          Transforms.move(editor, { unit: 'line', distance: 1 })
-          return
+        if (firstBlockIsTitle) {
+          if (editor.selection.focus.path[0] === 0) {
+            event.preventDefault()
+            Transforms.move(editor, { unit: 'line', distance: 1 })
+            return
+          }
         }
 
         const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
@@ -1019,6 +1022,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
         onChange={onChange}
         onKeyDown={onKeyDown}
         readonly={readonly}
+        firstBlockIsTitle={firstBlockIsTitle}
       />
     )
   }, [editor, state])

@@ -20,6 +20,7 @@ const Editor = ({
   readonly,
   onFocus,
   onInlineAtomicClick,
+  firstBlockIsTitle,
   ...others
 }) => {
   const _searchTerm = useSearchContext((c) => c && c.searchTerm)
@@ -44,7 +45,7 @@ const Editor = ({
   // const editor = useMemo(() => withReact(createEditor()), [])
   const renderElement = useCallback((props) => {
     const { element } = props
-    if (element.isTitle) {
+    if (firstBlockIsTitle && element.isTitle) {
       return <TitleElement {...props} />
     }
     return <Element readOnly={readOnly} {...props} />

@@ -109,7 +109,10 @@ const PageBody = ({
             key={location.pathname}
             // if read only, disable on change
             onChange={(v) => !isReadOnly && onChange(v)}
-            initialState={pageToEditorState(withMetaData(page))}
+            initialState={{
+              ...pageToEditorState(withMetaData(page)),
+              firstBlockIsTitle: true,
+            }}
           >
             <PDFDropZoneManager />
             <ContentEditable
@@ -120,6 +123,7 @@ const PageBody = ({
               editorRef={editorRef}
               readonly={isReadOnly}
               sharedWithGroups={sharedWithGroups}
+              firstBlockIsTitle
             />
           </EditorProvider>
         </HistoryProvider>

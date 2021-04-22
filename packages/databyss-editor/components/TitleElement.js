@@ -3,7 +3,12 @@ import { View, Text } from '@databyss-org/ui'
 import { UNTITLED_PAGE_NAME } from '@databyss-org/services/interfaces'
 
 export const TitleElement = ({ attributes, children, element }) => (
-  <View position="relative" ml={process.env.FORCE_MOBILE ? 'none' : 'medium'}>
+  <View
+    position="relative"
+    ml={process.env.FORCE_MOBILE ? 'none' : 'medium'}
+    mb={!process.env.FORCE_MOBILE ? 'em' : 'none'}
+    mt={process.env.FORCE_MOBILE ? 'em' : 'none'}
+  >
     {element.children.length === 1 && !element.children[0].text.length && (
       <View
         position="absolute"
@@ -11,8 +16,14 @@ export const TitleElement = ({ attributes, children, element }) => (
         left="0"
         contentEditable="false"
         suppressContentEditableWarning
+        css={{ pointerEvents: 'none' }}
       >
-        <Text variant="bodyHeading1" color="text.3" opacity={0.5}>
+        <Text
+          variant="bodyHeading1"
+          color="text.3"
+          opacity={0.5}
+          data-test-element="page-header"
+        >
           {UNTITLED_PAGE_NAME}
         </Text>
       </View>

@@ -54,7 +54,7 @@ export const PageContainer = React.memo(
           }
         }
       }
-    }, [editorRef.current])
+    }, [])
 
     return (
       <>
