@@ -46,8 +46,7 @@ import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
-import { onInlineFocusBlur } from '../lib/inlineUtils'
-import { onInlineBackspace } from '../lib/inlineUtils/onInlineEnterKey'
+import { onInlineFocusBlur, onInlineBackspace } from '../lib/inlineUtils'
 
 const ContentEditable = ({
   onDocumentChange,
