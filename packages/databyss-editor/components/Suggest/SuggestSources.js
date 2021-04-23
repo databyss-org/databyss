@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { useEditor } from '@databyss-org/slate-react'
+import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import { uid } from '@databyss-org/data/lib/uid'
 import {
   CROSSREF,
@@ -18,6 +20,8 @@ import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPa
 import { useEditorContext } from '../../state/EditorProvider'
 
 import { CatalogResults } from './'
+import { slateSelectionToStateSelection } from '../../lib/slateUtils'
+import { onBakeInlineAtomic } from '../../lib/inlineUtils'
 
 export const LOCAL_SOURCES = 'LOCAL_SOURCES'
 
@@ -42,11 +46,37 @@ const SuggestSources = ({
   inlineAtomic,
   ...others
 }) => {
+  const editor = useEditor()
+
   const sourcesRes = useBlocksInPages(BlockType.Source)
-  const { replace } = useEditorContext()
+  const { replace, state, setContent } = useEditorContext()
+
+  const pendingSetContent = useRef(false)
+
   const sharedWithGroups = useEditorPageContext((c) => c && c.sharedWithGroups)
   const [suggestions, setSuggestsions] = useState()
+  const [filteredSuggestions, setFilteredSuggestions] = useState([])
+
   const { isOnline } = useNotifyContext() || { isOnline: false }
+
+  const filterSuggestions = (_sources) => {
+    if (!_sources.length) {
+      return []
+    }
+    return _sources.filter(prefixSearchAll(query)).slice(0, 4)
+  }
+
+  const updateSuggestions = () => {
+    if (!suggestions?.length) {
+      return
+    }
+    const _nextSuggestions = filterSuggestions(suggestions)
+    // onSuggestionsChanged(_nextSuggestions)
+
+    setFilteredSuggestions(_nextSuggestions)
+  }
+
+  useEffect(updateSuggestions, [query, suggestions])
 
   useEffect(() => {
     // reset menu when active state changes
@@ -62,7 +92,17 @@ const SuggestSources = ({
 
       replace([source])
     } else {
-      // inline
+      if (!source._id.length) {
+        source._id = uid()
+      }
+      const _formatteSource = { ...formatSource(source), sharedWithGroups }
+
+      onBakeInlineAtomic({
+        editor,
+        state,
+        suggestion: _formatteSource,
+        setContent,
+      })
     }
     dismiss()
   }
@@ -107,6 +147,51 @@ const SuggestSources = ({
   ]
 
   const _mode = resultsMode || LOCAL_SOURCES
+
+  // TODO: this function is generic for topic and suggestion
+  const setCurrentSourceWithoutSuggestion = () => {
+    const _index = state.selection.anchor.index
+    const _stateBlock = state.blocks[_index]
+    // set the block with a re-render
+    const selection = slateSelectionToStateSelection(editor)
+
+    // preserve selection id from DB
+    if (state.selection._id) {
+      selection._id = state.selection._id
+    }
+
+    setContent({
+      selection,
+      operations: [
+        {
+          index: _index,
+          text: _stateBlock.text,
+          convertInlineToAtomic: true,
+        },
+      ],
+    })
+  }
+
+  useEventListener('keydown', (e) => {
+    /*
+    bake source if arrow up or down without suggestion
+    */
+    if (
+      !filteredSuggestions.length &&
+      !isOnline &&
+      (e.key === 'ArrowDown' || e.key === 'ArrowUp')
+    ) {
+      setCurrentSourceWithoutSuggestion()
+    }
+
+    if (e.key === 'Enter') {
+      window.requestAnimationFrame(() => {
+        if (!pendingSetContent.current) {
+          setCurrentSourceWithoutSuggestion()
+        }
+      })
+    }
+  })
 
   if (!sourcesRes.isSuccess) {
     return <LoadingFallback queryObserver={sourcesRes} />

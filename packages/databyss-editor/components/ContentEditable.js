@@ -205,6 +205,7 @@ const ContentEditable = ({
       navigationContext,
       inlineAtomicData,
     }
+    console.log(modalData)
     showAtomicModal(modalData)
   }
 

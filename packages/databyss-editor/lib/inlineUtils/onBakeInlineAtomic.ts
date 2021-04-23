@@ -6,7 +6,6 @@ import { EditorState } from '../../interfaces/EditorState'
 import { Block } from '../../../databyss-services/interfaces/Block'
 import {
   getTextOffsetWithRange,
-  symbolToAtomicType,
   atomicTypeToInlineRangeType,
   atomicTypeToSymbol,
 } from '../../state/util'

@@ -34,6 +34,7 @@ const SuggestTopics = ({
     if (!inlineAtomic) {
       replace([topic])
     } else {
+      console.log(topic)
       // INLINE REFACTOR
       // if topic is provided, set the flag so the event listener will ignore command
       pendingSetContent.current = true
@@ -44,83 +45,6 @@ const SuggestTopics = ({
         suggestion: topic,
         setContent,
       })
-
-      //   // compose new block with inline atomic id
-      //   const _index = state.selection.anchor.index
-      //   const _stateBlock = state.blocks[_index]
-
-      //   // replace inner text with updated topic
-      //   const _markupTextValue = getTextOffsetWithRange({
-      //     text: _stateBlock.text,
-      //     rangeType: 'inlineAtomicMenu',
-      //   })
-
-      //   // get value before offset
-      //   let _textBefore = splitTextAtOffset({
-      //     text: _stateBlock.text,
-      //     offset: _markupTextValue.offset,
-      //   }).before
-
-      //   // get value after markup range
-      //   const _textAfter = splitTextAtOffset({
-      //     text: _stateBlock.text,
-      //     offset: _markupTextValue.offset + _markupTextValue.length,
-      //   }).after
-
-      //   // merge first block with topic value, add mark and id to second block
-      //   _textBefore = mergeText(_textBefore, {
-      //     textValue: `#${topic.text.textValue}`,
-      //     ranges: [
-      //       {
-      //         offset: 0,
-      //         length: topic.text.textValue.length + 1,
-      //         marks: [['inlineTopic', topic._id]],
-      //       },
-      //     ],
-      //   })
-
-      //   // get the offset value where the cursor should be placed after operation
-      //   const _caretOffest = _textBefore.textValue.length
-
-      //   // merge second block with first block
-      //   const _newText = mergeText(_textBefore, _textAfter)
-
-      //   // create a new block with updated ranges
-      //   const _newBlock = {
-      //     ..._stateBlock,
-      //     text: _newText,
-      //   }
-      //   // INLINE REFACTOR
-
-      //   // toggle editor to remove active 'inlineAtomicMenu'
-      //   Editor.removeMark(editor, 'inlineAtomicMenu')
-
-      //   // update the selection
-      //   const _sel = cloneDeep(state.selection)
-      //   _sel.anchor.offset = _caretOffest
-      //   _sel.focus.offset = _caretOffest
-
-      //   setContent({
-      //     selection: _sel,
-      //     operations: [
-      //       {
-      //         index: _index,
-      //         text: _newBlock.text,
-      //         withRerender: true,
-      //       },
-      //     ],
-      //   })
-      //   // Slate editor needs to retrigger current position
-      //   Transforms.move(editor, {
-      //     unit: 'character',
-      //     distance: 1,
-      //     reverse: true,
-      //   })
-      //   Transforms.move(editor, {
-      //     unit: 'character',
-      //     distance: 1,
-      //   })
-      // }
     }
     dismiss()
   }
