@@ -97,6 +97,8 @@ const SuggestSources = ({
       }
       const _formatteSource = { ...formatSource(source), sharedWithGroups }
 
+      console.log(_formatteSource)
+
       onBakeInlineAtomic({
         editor,
         state,

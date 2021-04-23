@@ -963,6 +963,7 @@ export default (
         block.__showNewBlockMenu = false
         block.__isActive = false
         block.__showInlineTopicMenu = false
+        block.__showInlineCitationMenu = false
       })
       const _selectedBlock = draft.blocks[draft.selection.focus.index]
 
@@ -1009,7 +1010,7 @@ export default (
         )
 
         // INLINE REFACTOR
-        // show __showInlineTopicMenu or __showInlineCitationMenu if selection is collapsed, selection is within text precedded with a `#` and it is currently not tagged already
+        // show __showInlineTopicMenu or __showInlineCitationMenu if selection is collapsed, selection is within text precedded with a `#` or `@` and it is currently not tagged already
         if (_hasInlineMenuMark) {
           // check to see if inline mark is source or topic
           const inlineMarkupData = getTextOffsetWithRange({

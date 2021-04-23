@@ -32,7 +32,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
-  if (leaf.inlineTopic) {
+  if (leaf.inlineTopic || leaf.inlineCitation) {
     _children = (
       <span
         onClick={() =>

@@ -33,7 +33,6 @@ export const onBakeInlineAtomic = ({
     text: _stateBlock.text,
     rangeType: RangeType.InlineAtomicInput,
   })
-  console.log(_markupTextValue)
 
   // get value before offset
   let _textBefore = splitTextAtOffset({
@@ -46,8 +45,6 @@ export const onBakeInlineAtomic = ({
     text: _stateBlock.text,
     offset: _markupTextValue!.offset + _markupTextValue!.length,
   }).after
-
-  console.log([atomicTypeToInlineRangeType(suggestion.type)])
 
   // merge first block with topic value, add mark and id to second block
   _textBefore = mergeText(_textBefore, {
