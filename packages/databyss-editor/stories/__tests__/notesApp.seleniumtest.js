@@ -175,8 +175,8 @@ describe('notes app', () => {
 
     const editorField = await editor.getAttribute('outerHTML')
 
-    assert(headerField.match('Second page title'))
-    assert(editorField.match('Editor test two'))
+    assert.match(headerField, /Second page title/)
+    assert.match(editorField, /Editor test two/)
   })
 
   // it('disable in offline mode', async () => {
