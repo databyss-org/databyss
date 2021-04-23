@@ -796,13 +796,13 @@ export default (
         case CLEAR: {
           const _oldBlock = draft.blocks[payload.index]
           // create a new entity
-          let _block = new Block()
+          let _block = blockValue(new Block())
           draft.blocks[payload.index] = _block
 
           // push update operation back to editor
           draft.operations.push({
             index: payload.index,
-            block: blockValue(_block),
+            block: _block,
           })
 
           /*
@@ -811,15 +811,11 @@ export default (
           const _idx = draft.blocks.findIndex((b) => b._id === _oldBlock._id)
 
           if (_idx > -1 && getClosureType(draft.blocks[_idx].type)) {
-            _block = {
-              type: BlockType.Entry,
-              _id: uid(),
-              text: { textValue: '', ranges: [] },
-            }
+            _block = blockValue(new Block())
             draft.blocks[_idx] = _block
             draft.operations.push({
               index: _idx,
-              block: blockValue(_block),
+              block: _block,
             })
           }
           pushAtomicChangeUpstream({ state, draft })

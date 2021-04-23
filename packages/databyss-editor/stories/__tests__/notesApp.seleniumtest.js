@@ -15,10 +15,10 @@ import {
   logout,
   tagButtonClick,
   tagButtonListClick,
+  getEditorElements,
 } from './_helpers.selenium'
 
 let driver
-let editor
 let actions
 const LOCAL_URL = 'http://localhost:3000'
 const PROXY_URL = 'http://localhost:3000'
@@ -42,7 +42,6 @@ describe('notes app', () => {
 
     await tagButtonClick('data-test-id="continueButton"', driver)
 
-    editor = await getEditor(driver)
     actions = driver.actions()
 
     done()
@@ -172,12 +171,13 @@ describe('notes app', () => {
 
     headerField = await headerField.getAttribute('outerHTML')
 
-    editor = await getEditor(driver)
-
-    const editorField = await editor.getAttribute('outerHTML')
+    const editorElements = await getEditorElements(driver)
 
     assert.equal(innerText(headerField), 'Second page title')
-    assert.equal(innerText(editorField), 'Editor test two')
+    assert.equal(
+      innerText(await editorElements[1].getAttribute('outerHTML')),
+      'Editor test two'
+    )
   })
 
   // it('disable in offline mode', async () => {

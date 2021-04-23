@@ -28,6 +28,7 @@ export const TitleElement = ({ attributes, children, element }) => (
       variant="bodyHeading1"
       color="text.3"
       data-test-element="page-header"
+      data-test-editor-element="true"
     >
       {children}
     </Text>
