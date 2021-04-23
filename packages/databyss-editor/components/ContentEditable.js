@@ -39,7 +39,7 @@ import {
   onEnterInlineField,
   onEscapeInInlineAtomicField,
   preventMarksOnInline,
-  enterAtEndofInlineAtomic,
+  enterAtEndOfInlineAtomic,
 } from '../lib/inlineUtils'
 
 const ContentEditable = ({
@@ -482,7 +482,7 @@ const ContentEditable = ({
           _text.length === 0
         if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
           // // edge case where enter is at the end of an inline atomic
-          const isEnterAtEndOfInlineAtomic = enterAtEndofInlineAtomic({
+          const isEnterAtEndOfInlineAtomic = enterAtEndOfInlineAtomic({
             editor,
             event,
             currentLeaf: _currentLeaf,
