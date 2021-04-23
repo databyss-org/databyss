@@ -9,8 +9,6 @@ import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorContext } from '../../state/EditorProvider'
-import { splitTextAtOffset, mergeText } from '../../lib/clipboardUtils'
-import { getTextOffsetWithRange } from '../../state/util'
 import { slateSelectionToStateSelection } from '../../lib/slateUtils'
 import { onBakeInlineAtomic } from '../../lib/inlineUtils'
 

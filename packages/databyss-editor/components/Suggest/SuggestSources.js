@@ -97,7 +97,7 @@ const SuggestSources = ({
       }
       const _formatteSource = { ...formatSource(source), sharedWithGroups }
 
-      console.log(_formatteSource)
+      pendingSetContent.current = true
 
       onBakeInlineAtomic({
         editor,
@@ -188,7 +188,7 @@ const SuggestSources = ({
 
     if (e.key === 'Enter') {
       window.requestAnimationFrame(() => {
-        if (!pendingSetContent.current) {
+        if (!pendingSetContent.current && !active) {
           setCurrentSourceWithoutSuggestion()
         }
       })
