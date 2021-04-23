@@ -9,7 +9,7 @@ import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
 import { getGroupActionQ } from './groups/utils'
 
-const INTERVAL_TIME = 5000
+const INTERVAL_TIME = 1000
 
 export const upQdict: upsertQueueRef = {
   current: [],
