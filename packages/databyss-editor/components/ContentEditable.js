@@ -436,6 +436,7 @@ const ContentEditable = ({
           currentLeaf: _currentLeaf,
           state,
           setContent,
+          editor,
         })
         if (isCurrentlyInInlineAtomicField) {
           return

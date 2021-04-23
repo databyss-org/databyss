@@ -14,7 +14,6 @@ export const onEnterInlineField = ({
   setContent,
 }: {
   event: KeyboardEvent
-
   currentLeaf: Text
   editor: ReactEditor
   state: EditorState
