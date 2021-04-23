@@ -489,7 +489,7 @@ const ContentEditable = ({
             currentLeaf: _currentLeaf,
             setContent,
             atBlockEnd: _atBlockEnd,
-            currentBlock: _atBlockEnd,
+            currentBlock: _focusedBlock,
             state,
           })
           if (isEnterAtEndOfInlineAtomic) {
