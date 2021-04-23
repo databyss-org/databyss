@@ -1,6 +1,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
+import innerText from 'innertext'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getEditor,
@@ -159,7 +160,7 @@ describe('notes app', () => {
 
     headerField = await headerField.getAttribute('outerHTML')
 
-    assert(headerField.match('First Test Page Title'))
+    assert.equal(innerText(headerField), 'First Test Page Title')
 
     // Second page integrity test
     await tagButtonListClick('data-test-element="page-sidebar-item"', 1, driver)
@@ -175,8 +176,8 @@ describe('notes app', () => {
 
     const editorField = await editor.getAttribute('outerHTML')
 
-    assert.match(headerField, /Second page title/)
-    assert.match(editorField, /Editor test two/)
+    assert.equal(innerText(headerField), 'Second page title')
+    assert.equal(innerText(editorField), 'Editor test two')
   })
 
   // it('disable in offline mode', async () => {

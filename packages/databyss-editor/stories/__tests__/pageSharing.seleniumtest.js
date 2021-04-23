@@ -1,6 +1,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
+import innerText from 'innertext'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
@@ -185,6 +186,6 @@ describe('page sharing', () => {
     header = await header.getAttribute('outerHTML')
 
     // verify that page is visible
-    assert.match(header, /this is a shared page title/)
+    assert.equal(innerText(header), 'this is a shared page title')
   })
 })
