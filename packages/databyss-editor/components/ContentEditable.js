@@ -1,14 +1,6 @@
 import React, { useMemo, useRef, useEffect, useImperativeHandle } from 'react'
-import {
-  createEditor,
-  Node,
-  Transforms,
-  Point,
-  Range,
-  Editor as SlateEditor,
-} from '@databyss-org/slate'
+import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
-import cloneDeep from 'clone-deep'
 import { setSource } from '@databyss-org/services/sources'
 import { setBlockRelations } from '@databyss-org/services/entries'
 import { setTopic } from '@databyss-org/services/topics'
@@ -22,9 +14,6 @@ import {
   stateSelectionToSlateSelection,
   flattenOffset,
   stateBlockToSlateBlock,
-  toggleMark,
-  isMarkActive,
-  isCurrentlyInInlineAtomicField,
   isCharacterKeyPress,
   insertTextWithInilneCorrection,
   inlineAtomicBlockCorrector,
@@ -37,21 +26,21 @@ import {
   isAtomicInlineType,
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
-import {
-  symbolToAtomicType,
-  selectionHasRange,
-  getInlineOrAtomicsFromStateSelection,
-} from '../state/util'
+import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
-import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
 import {
   onInlineFocusBlur,
   onInlineBackspace,
   preventInlineAtomicCharacters,
+  initiateInlineMenu,
+  onInlineFieldBackspace,
+  onEnterInlineField,
+  onEscapeInInlineAtomicField,
+  preventMarksOnInline,
+  enterAtEndofInlineAtomic,
 } from '../lib/inlineUtils'
-import { initiateInlineMenu } from '../lib/inlineUtils/initiateInlineMenu'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -212,7 +201,6 @@ const ContentEditable = ({
       type: inlineData.type,
     }
     const modalData = {
-      editorContext,
       editor,
       navigationContext,
       inlineAtomicData,
@@ -336,31 +324,15 @@ const ContentEditable = ({
         inlineAtomicBlockCorrector(event, editor)
       }
 
-      // INLINE REFACTOR
-      /*
-        if inline menu is open, escape key should not bake inine and remove range
-        */
-      if (event.key === 'Escape' && isCurrentlyInInlineAtomicField(editor)) {
-        const _index = state.selection.anchor.index
-        const _stateBlock = state.blocks[_index]
-        const _newRanges = _stateBlock.text.ranges.filter(
-          (r) => !r.marks.includes('inlineAtomicMenu')
-        )
+      const escapeInInlineAtomicField = onEscapeInInlineAtomicField({
+        editor,
+        event,
+        state,
+        setContent,
+      })
 
-        // set the block with a re-render
-        setContent({
-          selection: state.selection,
-          operations: [
-            {
-              index: _index,
-              text: {
-                textValue: _stateBlock.text.textValue,
-                ranges: _newRanges,
-              },
-              withRerender: true,
-            },
-          ],
-        })
+      if (escapeInInlineAtomicField) {
+        return
       }
 
       const _shouldReturn = onInlineFocusBlur({
@@ -430,42 +402,14 @@ const ContentEditable = ({
         return
       }
 
-      if (
-        Hotkeys.isBold(event) ||
-        Hotkeys.isItalic(event) ||
-        Hotkeys.isLocation(event)
-      ) {
-        /*
-          before toggling a range, make sure that no atomics are selected or we are not in an inlineAtomicMenu range
-          */
-        // INLINE REFACTOR
+      const shouldPreventMarks = preventMarksOnInline({
+        editor,
+        event,
+        state,
+      })
 
-        const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
-        if (
-          !(
-            getInlineOrAtomicsFromStateSelection(state).length ||
-            _currentLeaf.inlineAtomicMenu
-          )
-        ) {
-          if (Hotkeys.isBold(event)) {
-            toggleMark(editor, 'bold')
-            event.preventDefault()
-            return
-          }
-
-          if (Hotkeys.isItalic(event)) {
-            toggleMark(editor, 'italic')
-            event.preventDefault()
-            return
-          }
-
-          if (Hotkeys.isLocation(event)) {
-            toggleMark(editor, 'location')
-
-            event.preventDefault()
-            return
-          }
-        }
+      if (shouldPreventMarks) {
+        return
       }
 
       // don't allow a printable key to "overwrite" a selection that spans multiple blocks
@@ -476,42 +420,24 @@ const ContentEditable = ({
         event.preventDefault()
         return
       }
-      // INLINE REFACTOR
 
       // check for inline atomics
-      if (event.key === '#' && Range.isCollapsed(editor.selection)) {
-        const _shouldInitiate = initiateInlineMenu({ editor, event })
-        if (_shouldInitiate) {
-          return
-        }
+      const shouldInitiateMenu = initiateInlineMenu({ editor, event })
+      if (shouldInitiateMenu) {
+        return
       }
 
       if (event.key === 'Enter') {
         const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
         const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
-        // INLINE REFACTOR
 
-        if (isCurrentlyInInlineAtomicField(editor)) {
-          // let suggest menu handle event if caret is inside of a new active inline atomic and _currentLeaf has more than one character
-
-          // if only one character is within the inline range, remove mark from character
-          if (_currentLeaf.text.length === 1) {
-            const _index = state.selection.anchor.index
-            const _stateBlock = state.blocks[_index]
-            // set the block with a re-render
-
-            setContent({
-              selection: state.selection,
-              operations: [
-                {
-                  index: _index,
-                  text: _stateBlock.text,
-                  convertInlineToAtomic: true,
-                },
-              ],
-            })
-          }
-          event.preventDefault()
+        const isCurrentlyInInlineAtomicField = onEnterInlineField({
+          event,
+          currentLeaf: _currentLeaf,
+          state,
+          setContent,
+        })
+        if (isCurrentlyInInlineAtomicField) {
           return
         }
 
@@ -555,37 +481,20 @@ const ContentEditable = ({
           _prevIsDoubleBreak ||
           _text.length === 0
         if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
-          if (Range.isCollapsed(editor.selection) && _currentLeaf.inlineTopic) {
-            // // edge case where enter is at the end of an inline atomic
-            const _textToInsert = _atBlockEnd ? '\n\u2060' : '\n'
-            const { text, offsetAfterInsert } = insertTextAtOffset({
-              text: _focusedBlock.text,
-              offset: _offset,
-              textToInsert: { textValue: _textToInsert, ranges: [] },
-            })
-
-            const _newBlock = {
-              ..._focusedBlock,
-              text,
-            }
-            //  update the selection
-            const _sel = cloneDeep(state.selection)
-            _sel.anchor.offset = offsetAfterInsert
-            _sel.focus.offset = offsetAfterInsert
-
-            setContent({
-              selection: _sel,
-              operations: [
-                {
-                  index: editor.selection.focus.path[0],
-                  text: _newBlock.text,
-                  withRerender: true,
-                },
-              ],
-            })
-            event.preventDefault()
+          // // edge case where enter is at the end of an inline atomic
+          const isEnterAtEndOfInlineAtomic = enterAtEndofInlineAtomic({
+            editor,
+            event,
+            currentLeaf: _currentLeaf,
+            setContent,
+            atBlockEnd: _atBlockEnd,
+            currentBlock: _atBlockEnd,
+            state,
+          })
+          if (isEnterAtEndOfInlineAtomic) {
             return
           }
+
           // we're not creating a new block, so just insert a carriage return
           event.preventDefault()
 
@@ -682,53 +591,7 @@ const ContentEditable = ({
             reverse: true,
           })
         }
-        // INLINE REFACTOR
-
-        // check if `inlineAtomicMenu` is active and atomic symbol is going to be deleted, toggle mark and remove symbol
-        const _text = Node.string(
-          editor.children[editor.selection.focus.path[0]]
-        )
-        const _offset = parseInt(
-          flattenOffset(editor, editor.selection.focus),
-          10
-        )
-        // INLINE REFACTOR
-
-        if (
-          isCurrentlyInInlineAtomicField(editor) &&
-          _offset !== 0 &&
-          _text.charAt(_offset - 1) === '#'
-        ) {
-          const _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
-          if (_currentLeaf.inlineAtomicMenu) {
-            // remove entire inline node if only the atomic symbol exists
-            if (_currentLeaf.text.length === 1) {
-              Transforms.removeNodes(editor, {
-                match: (node) => node === _currentLeaf,
-              })
-            } else {
-              // INLINE REFACTOR
-
-              // if atomic symbol is being removed, remove inlineAtomic mark from leaf
-              const _textToInsert = _currentLeaf.text.substring(1)
-              Transforms.removeNodes(editor, {
-                match: (node) => node === _currentLeaf,
-              })
-
-              Transforms.insertNodes(editor, {
-                text: _textToInsert,
-              })
-              Transforms.move(editor, {
-                unit: 'character',
-                distance: _textToInsert.length,
-                reverse: true,
-              })
-              event.preventDefault()
-              return
-            }
-          }
-          event.preventDefault()
-        }
+        onInlineFieldBackspace({ editor, event })
       }
     }
 
