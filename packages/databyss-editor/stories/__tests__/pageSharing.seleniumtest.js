@@ -1,6 +1,8 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
+import innerText from 'innertext'
+import striptags from 'striptags'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
@@ -163,10 +165,10 @@ describe('page sharing', () => {
       '[data-test-element="page-header"]'
     )
 
-    header = await header.getText()
+    header = await header.getAttribute('outerHTML')
 
     // verify that page is visible
-    assert.equal(header.trim(), 'this is a shared page title')
+    assert(header.match('this is a shared page title'))
 
     // check if source is linked to page
     await tagButtonClick('data-test-sidebar-element="sources"', driver)
@@ -182,9 +184,9 @@ describe('page sharing', () => {
 
     header = await getElementByTag(driver, '[data-test-element="page-header"]')
 
-    header = await header.getAttribute('value')
+    header = await header.getAttribute('vaouterHTMLlue')
 
     // verify that page is visible
-    assert.equal(header.trim(), 'this is a shared page title')
+    assert(header.match('this is a shared page title'))
   })
 })

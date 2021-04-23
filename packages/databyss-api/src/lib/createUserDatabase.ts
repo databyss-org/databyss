@@ -4,7 +4,6 @@ import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import { DocumentScope } from 'nano'
 import { Page } from '../../../databyss-services/interfaces/Page'
-import { BlockType } from '../../../databyss-services/interfaces/Block'
 import {
   UserPreference,
   DocumentType,
