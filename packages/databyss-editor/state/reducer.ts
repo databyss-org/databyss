@@ -50,8 +50,12 @@ import {
 import { EditorState, PayloadOperation } from '../interfaces'
 
 import mergeInlineAtomicMenuRange from '../lib/clipboardUtils/mergeInlineAtomicMenuRange'
-import { RangeType } from '../../databyss-services/interfaces/Range'
+import {
+  RangeType,
+  InlineTypes,
+} from '../../databyss-services/interfaces/Range'
 import { OnChangeArgs } from './EditorProvider'
+import { getTextOffsetWithRange } from './util'
 
 // if block at @index in @draft.blocks starts with an atomic identifier character,
 // e.g. @ or #, convert the block to the appropriate atomic type and return it.
@@ -968,22 +972,27 @@ export default (
           !selectionHasRange(draft.selection) &&
           !_selectedBlock.text.textValue.length
 
-        _selectedBlock.__showCitationMenu =
-          _selectedBlock.text.textValue.startsWith('@') &&
-          !_selectedBlock.text.textValue.match(`\n`)
-
         // block new topic menu if current range is inlineTopic
         const _doesBlockHaveInlineAtomicRange = !!_selectedBlock.text.ranges.filter(
           (r) =>
             r.marks.length &&
-            r.marks.filter((i) => Array.isArray(i) && i[0] === 'inlineTopic')
+            r.marks.filter(
+              (i) =>
+                Array.isArray(i) &&
+                (i[0] === InlineTypes.InlineTopic ||
+                  i[0] === InlineTypes.InlineSource)
+            )
         ).length
+
+        _selectedBlock.__showCitationMenu =
+          _selectedBlock.text.textValue.startsWith('@') &&
+          !_selectedBlock.text.textValue.match(`\n`) &&
+          !_doesBlockHaveInlineAtomicRange
 
         _selectedBlock.__showTopicMenu =
           _selectedBlock.text.textValue.startsWith('#') &&
           !_selectedBlock.text.textValue.match(`\n`) &&
           !_doesBlockHaveInlineAtomicRange
-        // INLINE REFACTOR
 
         // check if selected block has range type 'inlineAtomicMenu'
         const _hasInlineMenuMark = _selectedBlock.text.ranges.reduce(
@@ -999,9 +1008,26 @@ export default (
           false
         )
 
-        // show __showInlineTopicMenu if selection is collapsed, selection is within text precedded with a `#` and it is currently not tagged already
-        _selectedBlock.__showInlineTopicMenu =
-          !selectionHasRange(draft.selection) && _hasInlineMenuMark
+        // INLINE REFACTOR
+        // show __showInlineTopicMenu or __showInlineCitationMenu if selection is collapsed, selection is within text precedded with a `#` and it is currently not tagged already
+        if (_hasInlineMenuMark) {
+          // check to see if inline mark is source or topic
+          const inlineMarkupData = getTextOffsetWithRange({
+            text: _selectedBlock.text,
+            rangeType: RangeType.InlineAtomicInput,
+          })
+          // first character in atomic input range
+          const _symbol = inlineMarkupData?.text.substring(0, 1)
+          if (_symbol && !selectionHasRange(draft.selection)) {
+            const _inlineAtomicType = symbolToAtomicType(_symbol)
+            if (_inlineAtomicType === BlockType.Topic) {
+              _selectedBlock.__showInlineTopicMenu = true
+            }
+            if (_inlineAtomicType === BlockType.Source) {
+              _selectedBlock.__showInlineCitationMenu = true
+            }
+          }
+        }
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element
         _selectedBlock.__isActive =

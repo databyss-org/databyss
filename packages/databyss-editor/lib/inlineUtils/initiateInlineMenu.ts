@@ -20,7 +20,10 @@ export const initiateInlineMenu = ({
     return false
   }
 
-  if (event.key === '#' && Range.isCollapsed(editor.selection)) {
+  if (
+    (event.key === '#' || event.key === '@') &&
+    Range.isCollapsed(editor.selection)
+  ) {
     // check if its not at the start of a block
     let _offset: string | number = flattenOffset(
       editor,
@@ -65,7 +68,7 @@ export const initiateInlineMenu = ({
           Transforms.delete(editor)
 
           Transforms.insertNodes(editor, {
-            text: `#${_wordToSwollow}`,
+            text: `${event.key}${_wordToSwollow}`,
             inlineAtomicMenu: true,
           })
 

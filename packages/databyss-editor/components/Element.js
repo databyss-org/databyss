@@ -169,6 +169,20 @@ const Element = ({ attributes, children, element, readOnly }) => {
             </View>
           )}
 
+          {/* 
+          // INLINE REFACTOR
+          {block.__showSourceMenu && (
+            <View contentEditable="false" suppressContentEditableWarning>
+              <SuggestMenu
+                onSuggestions={onSuggestions}
+                placeholder="start typing topic for suggestions..."
+                suggestType="topics"
+              >
+                <SuggestTopics onSuggestions={onSuggestions} />
+              </SuggestMenu>
+            </View>
+          )} */}
+
           {block.__showInlineTopicMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu
