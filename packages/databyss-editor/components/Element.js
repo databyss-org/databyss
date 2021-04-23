@@ -169,19 +169,19 @@ const Element = ({ attributes, children, element, readOnly }) => {
             </View>
           )}
 
-          {/* 
-          // INLINE REFACTOR
-          {block.__showSourceMenu && (
+          {/*  INLINE REFACTOR */}
+          {block.__showInlineCitationMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu
+                inlineAtomic
                 onSuggestions={onSuggestions}
-                placeholder="start typing topic for suggestions..."
-                suggestType="topics"
+                placeholder="type title and/or author for suggestions..."
+                suggestType="sources"
               >
-                <SuggestTopics onSuggestions={onSuggestions} />
+                <SuggestSources inlineAtomic onSuggestions={onSuggestions} />
               </SuggestMenu>
             </View>
-          )} */}
+          )}
 
           {block.__showInlineTopicMenu && (
             <View contentEditable="false" suppressContentEditableWarning>

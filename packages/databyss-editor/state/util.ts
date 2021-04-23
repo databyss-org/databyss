@@ -206,6 +206,28 @@ export const getClosureTypeFromOpeningType = (type: BlockType): BlockType => {
   return _type
 }
 
+export const atomicTypeToInlineRangeType = (type: BlockType): InlineTypes => {
+  const getSymbolObj = {
+    [BlockType.Source]: InlineTypes.InlineSource,
+    [BlockType.Topic]: InlineTypes.InlineTopic,
+  }
+
+  const inlineType: InlineTypes = getSymbolObj[type]
+
+  return inlineType
+}
+
+export const atomicTypeToSymbol = (type: BlockType): string => {
+  const getSymbolObj = {
+    [BlockType.Source]: '@',
+    [BlockType.Topic]: '#',
+  }
+
+  const symbol = getSymbolObj[type]
+
+  return symbol
+}
+
 export const symbolToAtomicType = (symbol: string): BlockType => {
   const getSymbolObj: { [key: string]: BlockType } = {
     '@': BlockType.Source,

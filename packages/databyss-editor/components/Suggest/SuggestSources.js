@@ -39,6 +39,7 @@ const SuggestSources = ({
   onSuggestionsChanged,
   resultsMode,
   setResultsMode,
+  inlineAtomic,
   ...others
 }) => {
   const sourcesRes = useBlocksInPages(BlockType.Source)
@@ -53,12 +54,16 @@ const SuggestSources = ({
   }, [active])
 
   const onSourceSelected = (source) => {
-    if (!source._id) {
-      source._id = uid()
-      setSource({ ...formatSource(source), sharedWithGroups })
-    }
+    if (!inlineAtomic) {
+      if (!source._id) {
+        source._id = uid()
+        setSource({ ...formatSource(source), sharedWithGroups })
+      }
 
-    replace([source])
+      replace([source])
+    } else {
+      // inline
+    }
     dismiss()
   }
 
