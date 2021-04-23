@@ -871,7 +871,12 @@ export default (
         draft.selection = nextSelection
       }
 
-      if (draft.selection.focus.index !== state.selection.focus.index) {
+      const _inTitleBlock =
+        draft.firstBlockIsTitle && state.selection.focus.index === 0
+      if (
+        !_inTitleBlock &&
+        draft.selection.focus.index !== state.selection.focus.index
+      ) {
         // check for atomic closure on block blur
         bakeAtomicClosureBlock({
           draft,

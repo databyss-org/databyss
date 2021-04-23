@@ -609,7 +609,10 @@ const ContentEditable = ({
           10
         )
         const _atBlockStart = _offset === 0
-        if (!_atBlockStart) {
+        // don't allow inline if we're in title block
+        const _isTitleBlock =
+          firstBlockIsTitle && editor.selection.focus.path[0] === 0
+        if (!_atBlockStart && !_isTitleBlock) {
           // make sure this isnt an atomic closure
           const _text = Node.string(
             editor.children[editor.selection.focus.path[0]]
