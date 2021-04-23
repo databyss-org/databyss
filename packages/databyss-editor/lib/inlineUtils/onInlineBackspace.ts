@@ -33,7 +33,8 @@ export const onInlineBackspace = ({
 
   if (
     (isCharacterKeyPress(event) || event.key === 'Backspace') &&
-    SlateEditor.marks(editor)?.inlineTopic &&
+    (SlateEditor.marks(editor)?.inlineTopic ||
+      SlateEditor.marks(editor)?.inlineCitation) &&
     Range.isCollapsed(editor.selection)
   ) {
     const _currentBlock = state.blocks[state.selection.anchor.index]
@@ -59,7 +60,7 @@ export const onInlineBackspace = ({
       _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
     }
     // if current or prevous leaf is inline
-    if (_currentLeaf.inlineTopic) {
+    if (_currentLeaf.inlineTopic || _currentLeaf.inlineCitation) {
       // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
       if (
         !(_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf) ||

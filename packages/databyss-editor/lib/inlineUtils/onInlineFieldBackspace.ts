@@ -24,7 +24,7 @@ export const onInlineFieldBackspace = ({
   if (
     isCurrentlyInInlineAtomicField(editor) &&
     _offset !== 0 &&
-    _text.charAt(_offset - 1) === '#'
+    (_text.charAt(_offset - 1) === '#' || _text.charAt(_offset - 1) === '@')
   ) {
     const _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
     if (_currentLeaf.inlineAtomicMenu) {

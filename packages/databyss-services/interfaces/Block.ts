@@ -20,7 +20,6 @@ export interface Block extends BlockReference {
   text: Text
   __showCitationMenu?: boolean
   __showTopicMenu?: boolean
-  __showSourceMenu?: boolean
   __showNewBlockMenu?: boolean
   __showInlineCitationMenu?: boolean
   __showInlineTopicMenu?: boolean

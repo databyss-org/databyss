@@ -13,4 +13,11 @@ export const preventInlineAtomicCharacters = (
   ) {
     toggleMark(editor, InlineTypes.InlineTopic)
   }
+
+  if (
+    isCharacterKeyPress(event) &&
+    isMarkActive(editor, InlineTypes.InlineSource)
+  ) {
+    toggleMark(editor, InlineTypes.InlineSource)
+  }
 }

@@ -32,7 +32,10 @@ export const enterAtEndOfInlineAtomic = ({
     10
   )
 
-  if (Range.isCollapsed(editor.selection) && currentLeaf.inlineTopic) {
+  if (
+    Range.isCollapsed(editor.selection) &&
+    (currentLeaf.inlineTopic || currentLeaf.inlineCitation)
+  ) {
     const _textToInsert = atBlockEnd ? '\n\u2060' : '\n'
     const { text, offsetAfterInsert } = insertTextAtOffset({
       text: currentBlock.text,
