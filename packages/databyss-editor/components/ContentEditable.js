@@ -7,6 +7,7 @@ import {
   Range,
   Editor as SlateEditor,
 } from '@databyss-org/slate'
+import { EM } from '@databyss-org/data/pouchdb/utils'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import cloneDeep from 'clone-deep'
 import { setSource } from '@databyss-org/services/sources'
@@ -131,7 +132,10 @@ const ContentEditable = ({
 
   // if new atomic block has been added, save atomic
   useEffect(() => {
-    if (state.newEntities.length) {
+    const _process = async () => {
+      // flush the queue processor in order to get up to date values
+      await EM?.process()
+
       state.newEntities.forEach((entity) => {
         let _data = null
         if (entity.text) {
@@ -147,12 +151,12 @@ const ContentEditable = ({
         const _types = {
           SOURCE: () => {
             if (_data) {
-              setSource(_data)
+              window.requestAnimationFrame(() => setSource(_data))
             }
           },
           TOPIC: () => {
             if (_data) {
-              setTopic(_data)
+              window.requestAnimationFrame(() => setTopic(_data))
             }
           },
         }
@@ -168,6 +172,9 @@ const ContentEditable = ({
         setBlockRelations(_payload)
         removeEntityFromQueue(entity._id)
       })
+    }
+    if (state.newEntities.length) {
+      _process()
     }
   }, [state.newEntities.length])
 
@@ -312,6 +319,7 @@ const ContentEditable = ({
                 ranges: slateRangesToStateRanges(value[idx]),
               },
             })
+
             setContent({ selection, operations: _operations })
             /* eslint-disable-next-line no-useless-return */
             return
@@ -683,7 +691,6 @@ const ContentEditable = ({
             const _index = state.selection.anchor.index
             const _stateBlock = state.blocks[_index]
             // set the block with a re-render
-
             setContent({
               selection: state.selection,
               operations: [

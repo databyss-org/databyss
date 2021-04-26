@@ -130,9 +130,6 @@ class NotifyProvider extends React.Component {
     window.addEventListener('error', this.onUnhandledError)
     window.addEventListener('unhandledrejection', this.onUnhandledError)
 
-    // check for service worker cache updates
-    this.checkForUpdates()
-
     // poll for online status
     this.checkOnlineStatusTimer = window.setInterval(
       this.checkOnlineStatus,
@@ -152,6 +149,11 @@ class NotifyProvider extends React.Component {
   static getDerivedStateFromError() {
     // Update state so the next render will show the fallback UI.
     return { hasError: true }
+  }
+
+  componentDidMount() {
+    // check for service worker cache updates
+    this.checkForUpdates()
   }
 
   componentDidCatch(error, info) {
@@ -250,7 +252,6 @@ class NotifyProvider extends React.Component {
             ml="small"
             variant="uiLink"
             textVariant="uiTextNormal"
-            href={window.location.href}
             onPress={() => window.location.reload(true)}
           >
             Refresh or click here to update
