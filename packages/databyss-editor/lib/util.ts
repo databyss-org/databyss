@@ -25,7 +25,10 @@ const getInlineAtomicFromBlock = (block: Block): Range[] => {
   const _inlineRanges = block.text.ranges.filter(
     (r) =>
       r.marks.filter(
-        (m) => Array.isArray(m) && m[0] === InlineTypes.InlineTopic
+        (m) =>
+          Array.isArray(m) &&
+          (m[0] === InlineTypes.InlineTopic ||
+            m[0] === InlineTypes.InlineSource)
       ).length
   )
   return _inlineRanges
@@ -35,6 +38,8 @@ export const getInlineAtomicType = (type: InlineTypes): BlockType | null => {
   switch (type) {
     case InlineTypes.InlineTopic:
       return BlockType.Topic
+    case InlineTypes.InlineSource:
+      return BlockType.Source
     default:
       return null
   }

@@ -46,6 +46,7 @@ import {
   replaceInlineText,
   getRangesAtPoint,
   pushAtomicChangeUpstream,
+  getTextOffsetWithRange,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
@@ -55,7 +56,6 @@ import {
   InlineTypes,
 } from '../../databyss-services/interfaces/Range'
 import { OnChangeArgs } from './EditorProvider'
-import { getTextOffsetWithRange } from './util'
 
 // if block at @index in @draft.blocks starts with an atomic identifier character,
 // e.g. @ or #, convert the block to the appropriate atomic type and return it.
@@ -714,11 +714,16 @@ export default (
                     block: _nextBlock,
                   })
                 } else if (op.isRefEntity) {
+                  console.log(JSON.parse(JSON.stringify(op)))
+                  // INLINE REFACTOR
+                  // THIS needs to know what type is being updated
+
                   // check text value to update any inline atomics found
                   const _newText = replaceInlineText({
                     text: _b.text,
                     refId: op.isRefEntity,
                     newText: op.text,
+                    type: InlineTypes.InlineTopic,
                   })
 
                   if (_newText) {

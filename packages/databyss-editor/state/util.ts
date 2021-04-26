@@ -488,10 +488,12 @@ export const replaceInlineText = ({
   text,
   refId,
   newText,
+  type,
 }: {
   text: Text
   refId: string
   newText: Text
+  type: InlineTypes
 }): Text | null => {
   const _textToInsert: Text = {
     textValue: `#${newText.textValue}`,
@@ -499,13 +501,13 @@ export const replaceInlineText = ({
       {
         length: newText.textValue.length + 1,
         offset: 0,
-        marks: [[InlineTypes.InlineTopic, refId]],
+        marks: [[type, refId]],
       },
     ],
   }
 
   const _rangesWithId = text.ranges.filter(
-    (r) => r.marks[0][0] === InlineTypes.InlineTopic && r.marks[0][1] === refId
+    (r) => r.marks[0][0] === type && r.marks[0][1] === refId
   )
   // offset will be updated in loop
   let _cumulativeOffset = 0

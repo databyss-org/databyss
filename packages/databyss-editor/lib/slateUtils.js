@@ -141,9 +141,10 @@ const allowedRanges = [
   'location',
   'inlineAtomicMenu',
   'inlineTopic',
+  'inlineCitation',
 ]
 
-const allowedInlines = ['inlineTopic']
+const allowedInlines = ['inlineTopic', 'inlineCitation']
 
 export const slateRangesToStateRanges = (node) => {
   let _offset = 0
@@ -309,7 +310,7 @@ export const getBlocksWithAtomicId = (blocks, id) => {
             (m) =>
               Array.isArray(m) &&
               m.length === 2 &&
-              m[0] === 'inlineTopic' &&
+              (m[0] === 'inlineTopic' || m[0] === 'inlineCitation') &&
               m[1] === id
           ).length
       ).length
@@ -324,7 +325,7 @@ export const getInlineFromBlock = (block, id) =>
         (m) =>
           Array.isArray(m) &&
           m.length === 2 &&
-          m[0] === 'inlineTopic' &&
+          (m[0] === 'inlineTopic' || m[0] === 'inlineCitation') &&
           m[1] === id
       )
     )
@@ -362,7 +363,11 @@ export const insertTextWithInilneCorrection = (text, editor) => {
     const _atLeafStart = editor.selection.focus.offset === 0
 
     // if current leaf is an inline and we are at the start edge of the leaf, jog editor back one space and forward in order to reset marks
-    if (_atLeafStart && !_atBlockStart && _currentLeaf.inlineTopic) {
+    if (
+      _atLeafStart &&
+      !_atBlockStart &&
+      (_currentLeaf.inlineTopic || _currentLeaf.inlineCitation)
+    ) {
       Transforms.move(editor, {
         unit: 'character',
         distance: 1,
@@ -376,13 +381,14 @@ export const insertTextWithInilneCorrection = (text, editor) => {
     }
     Transforms.insertText(editor, text)
     // if inserted text has inline mark, remove mark
-    if (_currentLeaf.inlineTopic) {
+    if (_currentLeaf.inlineTopic || _currentLeaf.inlineCitation) {
       Transforms.move(editor, {
         unit: 'character',
         distance: text.length,
         edge: 'anchor',
         reverse: true,
       })
+      Editor.removeMark(editor, 'inlineCitation')
       Editor.removeMark(editor, 'inlineTopic')
       Editor.removeMark(editor, 'atomicId')
 
@@ -418,7 +424,11 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
     */
     if (_offset > 0 && event.key === 'Backspace') {
       const _prev = Editor.previous(editor)
-      if (_prev?.length && Editor.previous(editor)[0]?.inlineTopic) {
+      if (
+        _prev?.length &&
+        (Editor.previous(editor)[0]?.inlineTopic ||
+          Editor.previous(editor)[0]?.inlineCitation)
+      ) {
         Transforms.move(editor, {
           unit: 'character',
           distance: 1,
@@ -446,7 +456,10 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
       const _atLeafEnd =
         _currentLeaf.text.length === editor.selection.focus.offset
       // move selection forward one
-      if (_atLeafEnd && !_currentLeaf.inlineTopic) {
+      if (
+        _atLeafEnd &&
+        !(_currentLeaf.inlineTopic || _currentLeaf.inlineCitation)
+      ) {
         Transforms.move(editor, {
           unit: 'character',
           distance: 1,
@@ -459,8 +472,9 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
         })
       }
       // remove marks before text is entered
-      if (_currentLeaf.inlineTopic) {
+      if (_currentLeaf.inlineTopic || _currentLeaf.inlineCitation) {
         Editor.removeMark(editor, 'inlineTopic')
+        Editor.removeMark(editor, 'inlineCitation')
         Editor.removeMark(editor, 'atomicId')
       }
     }

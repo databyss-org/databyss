@@ -1,3 +1,4 @@
+import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import { replaceInlineText } from '@databyss-org/editor/state/util'
 import { Topic, Block, Page } from '@databyss-org/services/interfaces'
@@ -59,6 +60,7 @@ const setTopic = async (data: Topic) => {
                 text: _block!.text,
                 refId: _id,
                 newText: text,
+                type: InlineTypes.InlineTopic,
               })
               Object.assign(_block, { text: _newText })
             }
