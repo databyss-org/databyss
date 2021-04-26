@@ -431,6 +431,7 @@ export default (
             // bake atomic blocks if there were any in the paste
             // this is useful when importing from external source, like PDF
             draft.blocks.forEach((_, index: number) => {
+              console.log('here')
               const _baked = bakeAtomicBlock({ draft, index })
               if (_baked) {
                 draft.blocks[index] = _baked
@@ -660,6 +661,8 @@ export default (
                 !op.isRefEntity
             )
           ) {
+            console.log('here')
+
             draft.preventDefault = true
             break
           }
@@ -668,12 +671,15 @@ export default (
             // update node text
             let _block = draft.blocks[op.index]
             // if operation is ref entity, handle separately
+
             if (!op.isRefEntity) {
               _block.text = op.text
             }
 
             // check for atomic closure
             if (bakeAtomicClosureBlock({ draft, index: op.index })) {
+              console.log('here')
+
               // set selection at end of atomic
               nextSelection = draft.selection
 
@@ -687,6 +693,8 @@ export default (
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {
                 if (_b._id === op.isRefEntity?._id) {
+                  console.log('here')
+
                   _block = draft.blocks[_idx]
                   _block.text = op.text
 
@@ -716,6 +724,7 @@ export default (
                   })
                 } else if (op.isRefEntity) {
                   // INLINE REFACTOR
+                  console.log('here')
 
                   // check text value to update any inline atomics found
                   const _newText = replaceInlineText({
@@ -912,8 +921,10 @@ export default (
           draft,
           index: state.selection.focus.index,
         })
-
+        console.log('BAKED', JSON.parse(JSON.stringify(_baked)))
         if (_baked && isAtomicInlineType(_baked.type)) {
+          console.log('here')
+
           draft.newEntities.push(_baked)
         }
 

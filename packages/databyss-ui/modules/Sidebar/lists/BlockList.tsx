@@ -38,6 +38,10 @@ export const BlockList = <T extends Block>({
     return <LoadingFallback queryObserver={queryRes} />
   }
 
+  console.log(blockRelationsRes.data)
+  console.log(blocksRes.data)
+  console.log(pagesRes.data)
+
   const mapped = transform!(
     getBlocksFromBlockRelations(
       blockRelationsRes.data!,
@@ -46,6 +50,8 @@ export const BlockList = <T extends Block>({
       false
     )
   )
+
+  console.log(mapped)
 
   const sorted = sortEntriesAtoZ(mapped, 'text')
   const menuItems = (prependItems || []).concat(sorted)

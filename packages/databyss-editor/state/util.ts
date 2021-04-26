@@ -692,6 +692,8 @@ export const convertInlineToAtomicBlocks = ({
       text: { textValue: _atomicTextValue.substring(1), ranges: [] },
       _id: _atomicId,
     }
+    console.log('here', _atomicType)
+
     draft.newEntities.push(_entity)
   }
 }
@@ -783,6 +785,8 @@ export const pushAtomicChangeUpstream = ({
   // if undo action added atomics not found in page, refresh page headers
   if (atomicsAdded.length) {
     atomicsAdded.forEach((a) => {
+      console.log('here', a)
+
       draft.newEntities.push(a)
     })
   }

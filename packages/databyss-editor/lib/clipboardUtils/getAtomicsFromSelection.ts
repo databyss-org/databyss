@@ -3,7 +3,8 @@ import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { BlockReference, BlockType } from '@databyss-org/services/interfaces'
 import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
-import { isAtomicInlineType } from '../util'
+import { isAtomicInlineType, getInlineAtomicType } from '../util'
+import { atomicTypeToInlineRangeType } from '../../state/util'
 
 export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
   const atomics: BlockReference[] = []
@@ -20,11 +21,14 @@ export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
             )
             .forEach((i) => {
               if (!atomics.some((a) => a._id === i[1])) {
-                const _inline: BlockReference = {
-                  type: BlockType.Topic,
-                  _id: i[1],
+                const atomicType = getInlineAtomicType(i[0])
+                if (atomicType) {
+                  const _inline: BlockReference = {
+                    type: atomicType,
+                    _id: i[1],
+                  }
+                  atomics.push(_inline)
                 }
-                atomics.push(_inline)
               }
             })
         }

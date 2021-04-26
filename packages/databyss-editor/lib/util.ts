@@ -34,7 +34,9 @@ const getInlineAtomicFromBlock = (block: Block): Range[] => {
   return _inlineRanges
 }
 
-export const getInlineAtomicType = (type: InlineTypes): BlockType | null => {
+export const getInlineAtomicType = (
+  type: InlineTypes | string
+): BlockType | null => {
   switch (type) {
     case InlineTypes.InlineTopic:
       return BlockType.Topic

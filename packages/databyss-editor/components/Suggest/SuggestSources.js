@@ -97,6 +97,8 @@ const SuggestSources = ({
       }
       const _formatteSource = { ...formatSource(source), sharedWithGroups }
 
+      setSource(_formatteSource)
+
       pendingSetContent.current = true
 
       onBakeInlineAtomic({

@@ -28,12 +28,13 @@ export const onBakeInlineAtomic = ({
   const _index = state.selection.anchor.index
   const _stateBlock = state.blocks[_index]
 
-  // replace inner text with updated topic
+  // replace inner text with updated atomic
   const _markupTextValue = getTextOffsetWithRange({
     text: _stateBlock.text,
     rangeType: RangeType.InlineAtomicInput,
   })
 
+  console.log('SPLIT', _markupTextValue)
   // get value before offset
   let _textBefore = splitTextAtOffset({
     text: _stateBlock.text,
