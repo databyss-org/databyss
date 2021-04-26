@@ -127,7 +127,6 @@ const ContentEditable = ({
   // if new atomic block has been added, save atomic
   useEffect(() => {
     if (state.newEntities.length) {
-      console.log('NEW ENTITIES', state.newEntities)
       state.newEntities.forEach((entity) => {
         let _data = null
         if (entity.text) {
@@ -206,7 +205,6 @@ const ContentEditable = ({
       navigationContext,
       inlineAtomicData,
     }
-    console.log(modalData)
     showAtomicModal(modalData)
   }
 

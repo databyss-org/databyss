@@ -30,7 +30,6 @@ const SuggestTopics = ({
     if (!inlineAtomic) {
       replace([topic])
     } else {
-      console.log(topic)
       // INLINE REFACTOR
       // if topic is provided, set the flag so the event listener will ignore command
       pendingSetContent.current = true
@@ -99,9 +98,7 @@ const SuggestTopics = ({
 
     if (e.key === 'Enter') {
       window.requestAnimationFrame(() => {
-        console.log('PRESSED ENTER')
         if (!pendingSetContent.current) {
-          console.log('SET WITHOUT SUGGESTION')
           setCurrentTopicWithoutSuggestion()
         }
       })

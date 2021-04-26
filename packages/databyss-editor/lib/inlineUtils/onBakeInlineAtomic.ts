@@ -34,7 +34,6 @@ export const onBakeInlineAtomic = ({
     rangeType: RangeType.InlineAtomicInput,
   })
 
-  console.log('SPLIT', _markupTextValue)
   // get value before offset
   let _textBefore = splitTextAtOffset({
     text: _stateBlock.text,

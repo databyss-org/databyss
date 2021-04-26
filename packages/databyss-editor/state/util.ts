@@ -495,7 +495,6 @@ export const replaceInlineText = ({
   newText: Text
   type: InlineTypes
 }): Text | null => {
-  console.log('replace type', type)
   const _textToInsert: Text = {
     textValue: `#${newText.textValue}`,
     ranges: [
@@ -578,8 +577,6 @@ export const convertInlineToAtomicBlocks = ({
   index: number
   draft: EditorState
 }) => {
-  console.log('CONVERT', JSON.parse(JSON.stringify(block)))
-
   /*
     if flag `convertInlineToAtomic` is set, pull out text within range `inlineAtomicMenu`, look up in entityCache and set the markup with appropriate id and range
   */
@@ -591,7 +588,6 @@ export const convertInlineToAtomicBlocks = ({
     rangeType: RangeType.InlineAtomicInput,
   })
 
-  console.log('inline data', inlineMarkupData)
   // INLINE REFACTOR
 
   // if the only text tagged with inlineAtomicMenu is the opener, remove mark and normalize the text
@@ -692,7 +688,6 @@ export const convertInlineToAtomicBlocks = ({
       text: { textValue: _atomicTextValue.substring(1), ranges: [] },
       _id: _atomicId,
     }
-    console.log('here', _atomicType)
 
     draft.newEntities.push(_entity)
   }
@@ -785,8 +780,6 @@ export const pushAtomicChangeUpstream = ({
   // if undo action added atomics not found in page, refresh page headers
   if (atomicsAdded.length) {
     atomicsAdded.forEach((a) => {
-      console.log('here', a)
-
       draft.newEntities.push(a)
     })
   }

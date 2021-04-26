@@ -14,7 +14,6 @@ const setBlockRelations = async (payload: {
   page: string
   operationType: BlockRelationOperation
 }) => {
-  console.log('BLOCK RELATION', payload)
   const { _id, page, operationType, type } = payload
 
   let sharedWithGroups: string[] = []

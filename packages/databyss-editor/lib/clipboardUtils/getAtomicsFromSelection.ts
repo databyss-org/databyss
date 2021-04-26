@@ -1,10 +1,9 @@
 import _ from 'lodash'
 import { InlineTypes } from '@databyss-org/services/interfaces/Range'
-import { BlockReference, BlockType } from '@databyss-org/services/interfaces'
+import { BlockReference } from '@databyss-org/services/interfaces'
 import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
 import { isAtomicInlineType, getInlineAtomicType } from '../util'
-import { atomicTypeToInlineRangeType } from '../../state/util'
 
 export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
   const atomics: BlockReference[] = []
