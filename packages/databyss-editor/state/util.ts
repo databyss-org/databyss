@@ -495,6 +495,7 @@ export const replaceInlineText = ({
   newText: Text
   type: InlineTypes
 }): Text | null => {
+  console.log('replace type', type)
   const _textToInsert: Text = {
     textValue: `#${newText.textValue}`,
     ranges: [
@@ -577,6 +578,8 @@ export const convertInlineToAtomicBlocks = ({
   index: number
   draft: EditorState
 }) => {
+  console.log('CONVERT', JSON.parse(JSON.stringify(block)))
+
   /*
     if flag `convertInlineToAtomic` is set, pull out text within range `inlineAtomicMenu`, look up in entityCache and set the markup with appropriate id and range
   */
@@ -587,6 +590,8 @@ export const convertInlineToAtomicBlocks = ({
     text: block.text,
     rangeType: RangeType.InlineAtomicInput,
   })
+
+  console.log('inline data', inlineMarkupData)
   // INLINE REFACTOR
 
   // if the only text tagged with inlineAtomicMenu is the opener, remove mark and normalize the text
@@ -612,7 +617,10 @@ export const convertInlineToAtomicBlocks = ({
   // check if text is inline atomic type
   const _atomicType =
     inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))
+
   if (inlineMarkupData && _atomicType) {
+    const _inlineType = atomicTypeToInlineRangeType(_atomicType)
+
     // text value with markup
     let _atomicTextValue = inlineMarkupData?.text
 
@@ -652,7 +660,7 @@ export const convertInlineToAtomicBlocks = ({
         {
           offset: 0,
           length: _atomicTextValue.length,
-          marks: [[InlineTypes.InlineTopic, _atomicId]],
+          marks: [[_inlineType, _atomicId]],
         },
       ],
     })

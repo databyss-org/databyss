@@ -40,7 +40,7 @@ export const showAtomicModal = ({
         operations: [
           {
             index,
-            isRefEntity: atomic._id,
+            isRefEntity: { _id: atomic._id, type },
             text: atomic.text,
           },
         ],

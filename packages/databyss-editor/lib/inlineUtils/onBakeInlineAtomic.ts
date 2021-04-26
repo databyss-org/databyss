@@ -80,7 +80,6 @@ export const onBakeInlineAtomic = ({
   _sel.anchor.offset = _caretOffest
   _sel.focus.offset = _caretOffest
 
-  console.log('TEXT TO SET', _newBlock)
   setContent({
     selection: _sel,
     operations: [

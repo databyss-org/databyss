@@ -99,7 +99,9 @@ const SuggestTopics = ({
 
     if (e.key === 'Enter') {
       window.requestAnimationFrame(() => {
+        console.log('PRESSED ENTER')
         if (!pendingSetContent.current) {
+          console.log('SET WITHOUT SUGGESTION')
           setCurrentTopicWithoutSuggestion()
         }
       })

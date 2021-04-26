@@ -47,6 +47,7 @@ import {
   getRangesAtPoint,
   pushAtomicChangeUpstream,
   getTextOffsetWithRange,
+  atomicTypeToInlineRangeType,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
@@ -685,7 +686,7 @@ export default (
             if (op.isRefEntity) {
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {
-                if (_b._id === op.isRefEntity) {
+                if (_b._id === op.isRefEntity?._id) {
                   _block = draft.blocks[_idx]
                   _block.text = op.text
 
@@ -714,16 +715,15 @@ export default (
                     block: _nextBlock,
                   })
                 } else if (op.isRefEntity) {
-                  console.log(JSON.parse(JSON.stringify(op)))
                   // INLINE REFACTOR
-                  // THIS needs to know what type is being updated
 
                   // check text value to update any inline atomics found
                   const _newText = replaceInlineText({
                     text: _b.text,
-                    refId: op.isRefEntity,
+                    refId: op.isRefEntity._id,
                     newText: op.text,
-                    type: InlineTypes.InlineTopic,
+                    type: atomicTypeToInlineRangeType(op.isRefEntity.type),
+                    // type: InlineTypes.InlineTopic,
                   })
 
                   if (_newText) {

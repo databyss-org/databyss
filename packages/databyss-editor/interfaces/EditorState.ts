@@ -1,11 +1,11 @@
 import { Text, PageHeader } from '@databyss-org/services/interfaces'
 import { Block, Selection } from './'
-import { BlockReference } from '../../databyss-services/interfaces'
+import { BlockReference, BlockType } from '../../databyss-services/interfaces'
 
 export interface PayloadOperation {
   index: number
   text: Text
-  isRefEntity?: string
+  isRefEntity?: { _id: string; type: BlockType }
   withRerender?: string
   checkAtomicDelta?: boolean
   withBakeAtomic?: boolean

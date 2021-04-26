@@ -46,7 +46,8 @@ const setTopic = async (data: Topic) => {
 
         // get all inline ranges from block
         const _inlineRanges = _block!.text.ranges.filter(
-          (r) => r.marks.filter((m) => m.includes('inlineTopic')).length
+          (r) =>
+            r.marks.filter((m) => m.includes(InlineTypes.InlineTopic)).length
         )
 
         // eslint-disable-next-line no-loop-func
