@@ -7,7 +7,6 @@ import { RangeType } from '../../../databyss-services/interfaces/Range'
 /**
  * if inline menu is open, escape key should not bake inine and remove rang
  */
-
 export const onEscapeInInlineAtomicField = ({
   editor,
   event,

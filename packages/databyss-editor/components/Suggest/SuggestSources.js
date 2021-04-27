@@ -44,6 +44,7 @@ const SuggestSources = ({
   resultsMode,
   setResultsMode,
   inlineAtomic,
+  activeIndexRef,
   ...others
 }) => {
   const editor = useEditor()
@@ -189,6 +190,11 @@ const SuggestSources = ({
     }
 
     if (e.key === 'Enter') {
+      // no suggestion selected on menu
+      if (activeIndexRef.current === -1) {
+        setCurrentSourceWithoutSuggestion()
+        return
+      }
       window.requestAnimationFrame(() => {
         if (!pendingSetContent.current && !active) {
           setCurrentSourceWithoutSuggestion()

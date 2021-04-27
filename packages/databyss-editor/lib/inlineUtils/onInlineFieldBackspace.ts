@@ -3,6 +3,7 @@ import { Node, Transforms, Editor as SlateEditor } from '@databyss-org/slate'
 import { ReactEditor } from '@databyss-org/slate-react'
 import { flattenOffset, isCurrentlyInInlineAtomicField } from '../slateUtils'
 import { Block } from '../../../databyss-services/interfaces/Block'
+import { RangeType } from '../../../databyss-services/interfaces/Range'
 
 export const onInlineFieldBackspace = ({
   editor,
@@ -41,7 +42,7 @@ export const onInlineFieldBackspace = ({
         // check if this is the last character left in the inlineAtomicMenu range
         // find if offset is on the one character into a inlineAtomicMenu
         const _inlineAtomicMenuRangeOffset = currentBlock.text.ranges.filter(
-          (r) => r.marks.includes('inlineAtomicMenu')
+          (r) => r.marks.includes(RangeType.InlineAtomicInput)
         )[0].offset
 
         if (_inlineAtomicMenuRangeOffset + 1 === _offset) {

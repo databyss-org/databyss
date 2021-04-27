@@ -645,8 +645,9 @@ export const convertInlineToAtomicBlocks = ({
 
     // if suggestion exists in cache, grab values
     if (_suggestion?.type === _atomicType) {
+      const _symbol = atomicTypeToSymbol(_atomicType)
       _atomicId = _suggestion._id
-      _atomicTextValue = `#${_suggestion.text.textValue}`
+      _atomicTextValue = `${_symbol}${_suggestion.text.textValue}`
     }
 
     // get value before offset

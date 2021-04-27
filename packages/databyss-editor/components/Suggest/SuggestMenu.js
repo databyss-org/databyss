@@ -195,6 +195,7 @@ const SuggestMenu = ({
           React.cloneElement(React.Children.only(children), {
             editor,
             editorContext,
+            activeIndexRef,
             dismiss: onDismiss,
             query,
             menuHeight: MENU_HEIGHT,
