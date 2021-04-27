@@ -114,8 +114,6 @@ const Editor = ({
       const _searchTerm = searchTerm.split(' ')
 
       _searchTerm.forEach((word) => {
-        // INLINE REFACTOR
-
         if (word && Text.isText(node) && !node.inlineAtomicMenu) {
           const { text } = node
           // normalize diactritics

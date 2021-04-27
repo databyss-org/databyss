@@ -4,8 +4,6 @@ import { Text } from '@databyss-org/slate'
 import { isCurrentlyInInlineAtomicField } from '../slateUtils'
 import { EditorState } from '../../interfaces/EditorState'
 
-// INLINE REFACTOR
-
 export const onEnterInlineField = ({
   event,
   currentLeaf,

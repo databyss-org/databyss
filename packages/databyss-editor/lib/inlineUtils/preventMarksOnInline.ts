@@ -5,8 +5,6 @@ import { getInlineOrAtomicsFromStateSelection } from '../../state/util'
 import { EditorState } from '../../interfaces/EditorState'
 import { toggleMark } from '../slateUtils'
 
-// INLINE REFACTOR
-
 /**
  * before toggling a range, make sure that no atomics are selected or we are not in an inlineAtomicMenu range
  */

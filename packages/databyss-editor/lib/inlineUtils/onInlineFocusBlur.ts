@@ -78,8 +78,6 @@ export const onInlineFocusBlur = ({
       event.preventDefault()
       return true
     } else if (
-      // INLINE REFACTOR
-
       _currentLeaf.inlineAtomicMenu &&
       _atBlockEnd &&
       event.key === 'ArrowRight'

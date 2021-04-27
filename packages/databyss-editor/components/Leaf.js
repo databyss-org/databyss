@@ -13,7 +13,6 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
   const { blue, gray, orange, red, green } = colors
 
   let _children = children
-  // INLINE REFACTOR
 
   if (leaf.inlineAtomicMenu) {
     _children = (

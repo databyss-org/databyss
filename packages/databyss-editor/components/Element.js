@@ -169,7 +169,6 @@ const Element = ({ attributes, children, element, readOnly }) => {
             </View>
           )}
 
-          {/*  INLINE REFACTOR */}
           {block.__showInlineCitationMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu

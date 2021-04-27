@@ -11,8 +11,6 @@ import {
 } from '../../state/util'
 import { mergeText, splitTextAtOffset } from '../clipboardUtils/index'
 
-// INLINE REFACTOR
-
 export const onBakeInlineAtomic = ({
   editor,
   state,

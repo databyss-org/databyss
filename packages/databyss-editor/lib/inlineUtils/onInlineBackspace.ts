@@ -100,7 +100,6 @@ export const onInlineBackspace = ({
           event.preventDefault()
           return true
         }
-        // INLINE REFACTOR
 
         /*
           if cursor is on an inline atomic and enter is pressed, launch modal

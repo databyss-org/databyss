@@ -30,7 +30,6 @@ const SuggestTopics = ({
     if (!inlineAtomic) {
       replace([topic])
     } else {
-      // INLINE REFACTOR
       // if topic is provided, set the flag so the event listener will ignore command
       pendingSetContent.current = true
 
