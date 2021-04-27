@@ -201,11 +201,11 @@ const ContentEditable = ({
       type: inlineData.type,
     }
     const modalData = {
+      editorContext,
       editor,
       navigationContext,
       inlineAtomicData,
     }
-    console.log(modalData)
     showAtomicModal(modalData)
   }
 

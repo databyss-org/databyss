@@ -10,7 +10,7 @@ const _emailRegEx = new RegExp(
 )
 
 const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
-  const { blue, gray, orange, red } = colors
+  const { blue, gray, orange, red, green } = colors
 
   let _children = children
   // INLINE REFACTOR
@@ -32,7 +32,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
-  if (leaf.inlineTopic || leaf.inlineCitation) {
+  if (leaf.inlineTopic) {
     _children = (
       <span
         onClick={() =>
@@ -40,6 +40,23 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
         }
         style={{
           color: red[1],
+          caretColor: 'black',
+          cursor: 'pointer',
+        }}
+      >
+        {_children}
+      </span>
+    )
+  }
+
+  if (leaf.inlineCitation) {
+    _children = (
+      <span
+        onClick={() =>
+          onInlineClick({ atomicType: 'SOURCE', id: leaf.atomicId })
+        }
+        style={{
+          color: green[0],
           caretColor: 'black',
           cursor: 'pointer',
         }}

@@ -228,6 +228,16 @@ export const atomicTypeToSymbol = (type: BlockType): string => {
   return symbol
 }
 
+export const inlineTypeToSymbol = (inlineType: InlineTypes): string => {
+  const getType = {
+    [InlineTypes.InlineSource]: BlockType.Source,
+    [InlineTypes.InlineTopic]: BlockType.Topic,
+  }
+  const type = getType[inlineType]
+
+  return atomicTypeToSymbol(type)
+}
+
 export const symbolToAtomicType = (symbol: string): BlockType => {
   const getSymbolObj: { [key: string]: BlockType } = {
     '@': BlockType.Source,
@@ -495,8 +505,10 @@ export const replaceInlineText = ({
   newText: Text
   type: InlineTypes
 }): Text | null => {
+  const _symbol = inlineTypeToSymbol(type)
+
   const _textToInsert: Text = {
-    textValue: `#${newText.textValue}`,
+    textValue: `${_symbol}${newText.textValue}`,
     ranges: [
       {
         length: newText.textValue.length + 1,
