@@ -720,7 +720,11 @@ export const getInlineOrAtomicsFromStateSelection = (
       b.text.ranges.filter(
         (r) =>
           r.marks.filter(
-            (m) => Array.isArray(m) && m.length === 2 && m[0] === 'inlineTopic'
+            (m) =>
+              Array.isArray(m) &&
+              m.length === 2 &&
+              (m[0] === InlineTypes.InlineTopic ||
+                m[0] === InlineTypes.InlineSource)
           ).length
       ).length
   )
