@@ -593,7 +593,10 @@ const ContentEditable = ({
             reverse: true,
           })
         }
-        onInlineFieldBackspace({ editor, event })
+
+        const currentBlock = state.blocks[_currentIndex]
+
+        onInlineFieldBackspace({ editor, event, currentBlock })
       }
     }
 
