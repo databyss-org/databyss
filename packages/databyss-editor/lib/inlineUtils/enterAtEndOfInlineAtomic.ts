@@ -3,8 +3,8 @@ import cloneDeep from 'clone-deep'
 import { ReactEditor } from '@databyss-org/slate-react'
 import insertTextAtOffset from '../clipboardUtils/insertTextAtOffset'
 import { Block } from '../../interfaces'
-import { EditorState } from '../../interfaces/EditorState'
 import { flattenOffset } from '../slateUtils'
+import { EditorState } from '../../interfaces/EditorState'
 
 export const enterAtEndOfInlineAtomic = ({
   editor,
