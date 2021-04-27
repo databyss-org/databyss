@@ -165,8 +165,8 @@ const FormatMenu = () => {
     const domSelection = window.getSelection()
 
     /*
-check if selection contains inline atomics or inline sources
-*/
+    check if selection contains inline atomics or inline sources
+    */
     const _atomics = getInlineOrAtomicsFromStateSelection(state)
 
     const dontShowMenu =

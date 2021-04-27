@@ -56,7 +56,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
           onInlineClick({ atomicType: 'SOURCE', id: leaf.atomicId })
         }
         style={{
-          color: green[0],
+          color: green[1],
           caretColor: 'black',
           cursor: 'pointer',
         }}
