@@ -35,6 +35,7 @@ export const showAtomicModal = ({
     // if atomic is saved, update content
     if (atomic) {
       const _selection = state.selection
+
       setContent({
         selection: _selection,
         operations: [

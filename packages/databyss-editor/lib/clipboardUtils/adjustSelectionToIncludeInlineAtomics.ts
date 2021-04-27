@@ -19,7 +19,10 @@ export default ({
   // find if the anchor and focus fall within an atomic inline
   const _inlineRangesAtAnchor = getRangesAtPoint({
     blocks,
-    point: anchor,
+    point: {
+      offset: anchor.offset + 1,
+      index: anchor.index,
+    },
   }).filter(
     (r) =>
       r.marks.length &&

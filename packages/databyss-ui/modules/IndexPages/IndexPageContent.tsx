@@ -73,7 +73,11 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   })
   const pagesRes = usePages()
 
-  if (!blocksRes.isSuccess || !pagesRes.isSuccess) {
+  if (
+    !blocksRes.isSuccess ||
+    !pagesRes.isSuccess ||
+    !blocksRes.data?.[blockId]
+  ) {
     return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
   }
 

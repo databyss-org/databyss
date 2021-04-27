@@ -19,6 +19,7 @@ import {
   logout,
   tagButtonClick,
   tagButtonListClick,
+  tabKey,
 } from './_helpers.selenium'
 
 let driver
@@ -84,6 +85,15 @@ describe('block indexing', () => {
     await tagButtonClick('data-test-path="text"', driver)
 
     await rightKey(actions)
+    await tabKey(actions)
+    await tabKey(actions)
+    await tabKey(actions)
+    await tabKey(actions)
+    await tabKey(actions)
+    await tabKey(actions)
+    await tabKey(actions)
+    await tabKey(actions)
+    await tabKey(actions)
 
     await tagButtonClick('data-test-button="source-add-author"', driver)
 
