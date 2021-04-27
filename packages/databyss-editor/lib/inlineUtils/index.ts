@@ -1,4 +1,4 @@
-export { enterAtEndOfInlineAtomic } from './enterAtEndofInlineAtomic'
+export { enterAtEndOfInlineAtomic } from './enterAtEndOfInlineAtomic'
 export { onBakeInlineAtomic } from './onBakeInlineAtomic'
 export { onInlineBackspace } from './onInlineBackspace'
 export { onInlineFocusBlur } from './onInlineFocusBlur'
