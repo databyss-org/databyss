@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useEffect, useImperativeHandle } from 'react'
 import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
+import { EM } from '@databyss-org/data/pouchdb/utils'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { setSource } from '@databyss-org/services/sources'
 import { setBlockRelations } from '@databyss-org/services/entries'
