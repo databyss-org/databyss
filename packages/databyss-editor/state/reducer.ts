@@ -464,8 +464,6 @@ export default (
                 r.marks.includes(RangeType.InlineAtomicInput)
               ).length
             ) {
-              // INLINE REFACTOR
-
               /*
               if pasting within an inlineAtomicMenu field
               strip all text and carriage returns from text being pasted, add the mark `inlineAtomicMenu` to data being pasted
@@ -490,7 +488,6 @@ export default (
               })
 
               // merge 'inlineAtomicMenu Ranges'
-              // INLINE REFACTOR
 
               mergeInlineAtomicMenuRange({
                 block: draft.blocks[draft.selection.anchor.index],
@@ -716,8 +713,6 @@ export default (
                     block: _nextBlock,
                   })
                 } else if (op.isRefEntity) {
-                  // INLINE REFACTOR
-
                   // check text value to update any inline atomics found
                   const _newText = replaceInlineText({
                     text: _b.text,
@@ -879,7 +874,6 @@ export default (
             const _activeInlineAfter = _activeRangesAfter.filter((r) =>
               r.marks.includes(RangeType.InlineAtomicInput)
             )
-            // INLINE REFACTOR
 
             // if active selection was 'inlineAtomicMenu and' before and not after, convert inlines to atomic
             if (_activeInlineBefore.length && !_activeInlineAfter.length) {
@@ -1022,7 +1016,6 @@ export default (
           false
         )
 
-        // INLINE REFACTOR
         // show __showInlineTopicMenu or __showInlineCitationMenu if selection is collapsed, selection is within text precedded with a `#` or `@` and it is currently not tagged already
         if (_hasInlineMenuMark) {
           // check to see if inline mark is source or topic
