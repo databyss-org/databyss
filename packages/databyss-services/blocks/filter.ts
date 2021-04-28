@@ -1,4 +1,4 @@
-import { BlockType, Source, Topic, Block } from '../interfaces'
+import { BlockType, Source, Topic } from '../interfaces'
 
 /**
  * Returns a filter callback to find all terms with a prefix search.
