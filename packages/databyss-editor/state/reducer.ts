@@ -1,6 +1,12 @@
 import { uid } from '@databyss-org/data/lib/uid'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
-import { FSA, BlockType, Block } from '@databyss-org/services/interfaces'
+import {
+  FSA,
+  BlockType,
+  Block,
+  Topic,
+  Source,
+} from '@databyss-org/services/interfaces'
 import {
   SPLIT,
   MERGE,
@@ -845,13 +851,23 @@ export default (
           break
         }
         case CACHE_ENTITY_SUGGESTIONS: {
-          const blocks: Block[] = payload.blocks
+          const blocks: Topic[] | Source[] = payload.blocks
           draft.entitySuggestionCache = draft.entitySuggestionCache || {}
+          // cache suggestions according to long name
           blocks.forEach((block) => {
             draft.entitySuggestionCache[
               block.text.textValue.toLowerCase()
             ] = block
           })
+          // cache suggestions according to short name
+          blocks.forEach((block) => {
+            if (block?.name) {
+              draft.entitySuggestionCache[
+                block.name.textValue.toLowerCase()
+              ] = block
+            }
+          })
+
           break
         }
         case SET_SELECTION: {

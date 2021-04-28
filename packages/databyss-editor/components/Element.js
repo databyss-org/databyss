@@ -72,6 +72,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
   const spellCheckTimeoutRef = useRef()
 
   const onSuggestions = (blocks) => {
+    console.log('SUGGESTION', blocks)
     if (!editorContext) {
       return
     }

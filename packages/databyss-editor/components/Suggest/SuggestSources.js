@@ -26,12 +26,19 @@ import { onBakeInlineAtomic } from '../../lib/inlineUtils'
 export const LOCAL_SOURCES = 'LOCAL_SOURCES'
 
 export const formatSource = (value) => {
+  console.log('VALUE', value)
   const _value = JSON.parse(JSON.stringify(value))
   // format year
   const year = value?.detail?.year?.textValue
   if (year) {
     _value.detail.year.textValue = year.toString()
   }
+  // ensure short name exists, if not create one
+  // format year
+  if (!value.name) {
+    console.log('NAME should be', value.text)
+  }
+
   return _value
 }
 
@@ -113,6 +120,7 @@ const SuggestSources = ({
   }
 
   const _composeLocalSources = (_sourcesDict) => {
+    console.log(_sourcesDict)
     let _sources = Object.values(_sourcesDict)
     if (!_sources.length) {
       return []
@@ -123,7 +131,7 @@ const SuggestSources = ({
       .map((s) => (
         <DropdownListItem
           data-test-element="suggested-menu-sources"
-          label={s.text.textValue}
+          label={s.name.textValue}
           key={s._id}
           onPress={() => onSourceSelected({ ...s, type: 'SOURCE' })}
         />

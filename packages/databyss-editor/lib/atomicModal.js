@@ -34,15 +34,15 @@ export const showAtomicModal = ({
   const onUpdate = (atomic) => {
     // if atomic is saved, update content
     if (atomic) {
+      console.log(atomic)
       const _selection = state.selection
-
       setContent({
         selection: _selection,
         operations: [
           {
             index,
             isRefEntity: { _id: atomic._id, type },
-            text: atomic.text,
+            text: atomic.name,
           },
         ],
       })
@@ -55,6 +55,7 @@ export const showAtomicModal = ({
 
     // current block type is atomic, set the focus
     // if atomic is being updated from an atomic inline, reducer will handler the selection
+
     if (isAtomicInlineType(_entity.type)) {
       // on dismiss refocus editor at end of atomic
       window.requestAnimationFrame(() => {

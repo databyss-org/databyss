@@ -12,9 +12,15 @@ import { replaceInlineText } from '../../../../databyss-editor/state/util'
 
 export const setSource = async (data: Source) => {
   const { text, detail, _id, sharedWithGroups } = data as any
+
+  let { name } = data as any
+  if (!name?.textValue?.length) {
+    name = text
+  }
   const blockFields = {
     _id,
     text,
+    name,
     type: BlockType.Source,
     doctype: DocumentType.Block,
     detail,
@@ -64,7 +70,7 @@ export const setSource = async (data: Source) => {
               const _newText = replaceInlineText({
                 text: _block!.text,
                 refId: _id,
-                newText: text,
+                newText: name,
                 type: InlineTypes.InlineSource,
               })
               Object.assign(_block, { text: _newText })
