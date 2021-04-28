@@ -1,4 +1,9 @@
-import { BlockType, Page } from '@databyss-org/services/interfaces'
+import {
+  BlockType,
+  Page,
+  Source,
+  Topic,
+} from '@databyss-org/services/interfaces'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
 import {
@@ -641,10 +646,15 @@ export const convertInlineToAtomicBlocks = ({
       ]
 
     // if suggestion exists in cache, grab values
-    if (_suggestion?.type === _atomicType) {
+    if (_suggestion?.type === _atomicType && _suggestion) {
+      let _shortName = _suggestion.text.textValue
+      const __sugestion = _suggestion as Source & Topic
+      if (__sugestion?.name) {
+        _shortName = __sugestion.name.textValue
+      }
       const _symbol = atomicTypeToSymbol(_atomicType)
       _atomicId = _suggestion._id
-      _atomicTextValue = `${_symbol}${_suggestion.text.textValue}`
+      _atomicTextValue = `${_symbol}${_shortName}`
     }
 
     // get value before offset
