@@ -11,10 +11,7 @@ const tags: { [mark: string]: string[] } = {
   ],
   [RangeType.Location]: [`span style="color: ${colors.gray[4]}"`, 'span'],
   [InlineTypes.InlineTopic]: [`span style="color: ${colors.red[1]}"`, 'span'],
-  [InlineTypes.InlineSource]: [
-    `span style="color: ${colors.green[1]}"`,
-    'span',
-  ],
+  [InlineTypes.InlineSource]: [`span style="color: ${colors.red[2]}"`, 'span'],
 }
 
 /**

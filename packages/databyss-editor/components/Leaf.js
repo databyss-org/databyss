@@ -10,7 +10,7 @@ const _emailRegEx = new RegExp(
 )
 
 const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
-  const { blue, gray, orange, red, green } = colors
+  const { blue, gray, orange, red } = colors
 
   let _children = children
 
@@ -55,7 +55,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
           onInlineClick({ atomicType: 'SOURCE', id: leaf.atomicId })
         }
         style={{
-          color: green[1],
+          color: red[2],
           caretColor: 'black',
           cursor: 'pointer',
         }}
