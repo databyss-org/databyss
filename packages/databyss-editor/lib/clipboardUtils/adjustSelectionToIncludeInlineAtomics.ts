@@ -31,7 +31,7 @@ export default ({
           Array.isArray(i) &&
           (i[0] === InlineTypes.InlineTopic ||
             i[0] === InlineTypes.InlineSource)
-      )
+      ).length
   )
   const _inlineRangesAtFocus = getRangesAtPoint({
     blocks,
@@ -44,7 +44,7 @@ export default ({
           Array.isArray(i) &&
           (i[0] === InlineTypes.InlineTopic ||
             i[0] === InlineTypes.InlineSource)
-      )
+      ).length
   )
 
   // try catch function works with both read only and non read only properties

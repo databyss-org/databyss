@@ -5,14 +5,10 @@ import {
   Page,
   Text,
 } from '@databyss-org/services/interfaces/'
-import { replicateSharedPage } from '../../../databyss-data/pouchdb/groups'
-import { DocumentType } from '../../../databyss-data/pouchdb/interfaces'
-import {
-  findOne,
-  getDocument,
-  upsert,
-} from '../../../databyss-data/pouchdb/utils'
-import { InlineTypes } from '../../../databyss-services/interfaces/Range'
+import { replicateSharedPage } from '@databyss-org/data/pouchdb/groups'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { findOne, getDocument, upsert } from '@databyss-org/data/pouchdb/utils'
+import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { replaceInlineText } from '../../state/util'
 
 /**
