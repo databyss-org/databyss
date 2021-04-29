@@ -39,12 +39,12 @@ export const formatSource = (value) => {
     _value.detail.year.textValue = year.toString()
   }
   // ensure short name exists, if not create one
-  if (!value.name && value?.detail?.authors?.[0]) {
+  if (!value.name) {
     const _name =
-      value.detail.authors[0].lastName.textValue ||
-      value.detail.authors[0].firstName.textValue
+      value?.detail?.authors[0]?.lastName.textValue ||
+      value?.detail?.authors[0]?.firstName.textValue
 
-    const _year = value.detail?.year?.textValue
+    const _year = value?.detail?.year?.textValue
 
     _value.name =
       _name && _year
