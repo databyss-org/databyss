@@ -655,7 +655,6 @@ export default (
           break
         }
         case SET_CONTENT: {
-          console.log(JSON.parse(JSON.stringify(payload)))
           // preventDefault if operation includes atomic
           if (
             payload.operations.find(
@@ -691,6 +690,7 @@ export default (
             if (op.isRefEntity) {
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {
+                // block is top level atomic
                 if (_b._id === op.isRefEntity?._id) {
                   _block = draft.blocks[_idx]
                   _block.text = op.text
@@ -721,10 +721,13 @@ export default (
                   })
                 } else if (op.isRefEntity) {
                   // check text value to update any inline atomics found
+                  // use shortname if provided for inlines
+                  const _refText = op.isRefEntity?.shortName || op.text
+
                   const _newText = replaceInlineText({
                     text: _b.text,
                     refId: op.isRefEntity._id,
-                    newText: op.text,
+                    newText: _refText,
                     type: atomicTypeToInlineRangeType(op.isRefEntity.type),
                     // type: InlineTypes.InlineTopic,
                   })

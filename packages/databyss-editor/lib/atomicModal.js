@@ -1,9 +1,6 @@
 import { Transforms } from '@databyss-org/slate'
 import { ReactEditor } from '@databyss-org/slate-react'
-import {
-  stateSelectionToSlateSelection,
-  slateSelectionToStateSelection,
-} from './slateUtils'
+import { stateSelectionToSlateSelection } from './slateUtils'
 import { isAtomicInlineType } from './util'
 
 export const showAtomicModal = ({
@@ -39,13 +36,14 @@ export const showAtomicModal = ({
     // if atomic is saved, update content
     if (atomic) {
       const _selection = state.selection
+
       setContent({
         selection: _selection,
         operations: [
           {
             index,
-            isRefEntity: { _id: atomic._id, type },
-            text: atomic.name,
+            isRefEntity: { _id: atomic._id, type, shortName: atomic.name },
+            text: atomic.text,
           },
         ],
       })

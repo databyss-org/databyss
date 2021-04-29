@@ -5,7 +5,11 @@ import { BlockReference, BlockType } from '../../databyss-services/interfaces'
 export interface PayloadOperation {
   index: number
   text: Text
-  isRefEntity?: { _id: string; type: BlockType }
+  isRefEntity?: {
+    _id: string
+    type: BlockType
+    shortName?: Text
+  }
   withRerender?: string
   checkAtomicDelta?: boolean
   withBakeAtomic?: boolean
