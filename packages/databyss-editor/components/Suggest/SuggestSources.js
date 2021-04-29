@@ -41,7 +41,7 @@ export const formatSource = (value) => {
 
     const _year = value.detail?.year?.textValue || ''
 
-    _value.name = { textValue: `${_name} ${_year}` }
+    _value.name = { textValue: `${_name} ${_year}`, ranges: [] }
   }
 
   return _value
