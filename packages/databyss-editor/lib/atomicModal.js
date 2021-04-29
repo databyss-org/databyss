@@ -20,7 +20,9 @@ export const showAtomicModal = ({
   let selection
   const { setContent, state } = editorContext
   const { showModal } = navigationContext
+  console.log('INDEX', index)
   const _index = index || editorContext.state.selection.anchor.index
+  console.log('STATE', editorContext.state.selection.anchor.index)
 
   const _entity = editorContext.state.blocks[_index]
 
