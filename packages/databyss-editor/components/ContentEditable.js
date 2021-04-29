@@ -201,6 +201,11 @@ const ContentEditable = ({
   /*
     this function must be outside of the useMemo in order to have up to date values
   */
+
+  console.log('root', slateSelectionToStateSelection(editor)?.anchor.index)
+
+  console.log('state', state?.selection?.anchor.index)
+
   const onInlineAtomicClick = (inlineData) => {
     const _currentIndex =
       slateSelectionToStateSelection(editor)?.anchor.index ||
