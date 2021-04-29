@@ -52,11 +52,6 @@ const SourceModal = ({ refId, visible, onUpdate, id, untitledPlaceholder }) => {
       source.detail = buildSourceDetail()
     }
 
-    // // check if detail has been provided
-    // if (!source.name) {
-    //   source.name = { textValue: 'wow', ranges: [] }
-    // }
-
     setValues(source)
   }, [source])
 
