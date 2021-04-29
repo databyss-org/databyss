@@ -22,7 +22,6 @@ export const onBakeInlineAtomic = ({
   setContent,
 }: {
   editor: ReactEditor & Editor
-  // TODO: why does this have to be a union?
   suggestion: Source & Topic
   state: EditorState
   setContent: Function
