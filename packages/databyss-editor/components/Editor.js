@@ -46,12 +46,12 @@ const Editor = ({
 
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
-  const onInlineClick = useCallback(({ atomicType, id }) => {
+  const onInlineClick = ({ atomicType, id }) => {
     if (isPublicAccount()) {
       return
     }
     onInlineAtomicClick({ type: atomicType, refId: id })
-  }, [])
+  }
 
   const renderLeaf = useCallback(
     (props) => (
