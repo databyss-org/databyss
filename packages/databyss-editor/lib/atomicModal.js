@@ -22,12 +22,7 @@ export const showAtomicModal = ({
   let selection
   const { setContent, state } = editorContext
   const { showModal } = navigationContext
-  // const index = editorContext.state.selection.anchor.index
-  selection = slateSelectionToStateSelection(editor)
-  if (!selection) {
-    return
-  }
-  const index = selection.anchor.index
+  const index = editorContext.state.selection.anchor.index
 
   const _entity = editorContext.state.blocks[index]
 
