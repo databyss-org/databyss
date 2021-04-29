@@ -632,7 +632,8 @@ export const convertInlineToAtomicBlocks = ({
     const _inlineType = atomicTypeToInlineRangeType(_atomicType)
 
     // text value with markup
-    let _atomicTextValue = inlineMarkupData?.text
+    const _atomicTextValue = inlineMarkupData?.text
+    let _atomicShortTextValue = _atomicTextValue
 
     // new Id for inline atomic
     let _atomicId = uid()
@@ -645,8 +646,9 @@ export const convertInlineToAtomicBlocks = ({
         inlineMarkupData.text.substring(1).toLowerCase()
       ]
 
+    let _isSuggestion = false
     // if suggestion exists in cache, grab values
-    if (_suggestion?.type === _atomicType && _suggestion) {
+    if (_suggestion?.type === _atomicType) {
       let _shortName = _suggestion.text.textValue
       const __sugestion = _suggestion as Source & Topic
       if (__sugestion?.name) {
@@ -654,7 +656,8 @@ export const convertInlineToAtomicBlocks = ({
       }
       const _symbol = atomicTypeToSymbol(_atomicType)
       _atomicId = _suggestion._id
-      _atomicTextValue = `${_symbol}${_shortName}`
+      _atomicShortTextValue = `${_symbol}${_shortName}`
+      _isSuggestion = true
     }
 
     // get value before offset
@@ -671,11 +674,11 @@ export const convertInlineToAtomicBlocks = ({
 
     // merge first block with atomic value, add mark and id to second block
     _textBefore = mergeText(_textBefore, {
-      textValue: _atomicTextValue,
+      textValue: _atomicShortTextValue,
       ranges: [
         {
           offset: 0,
-          length: _atomicTextValue.length,
+          length: _atomicShortTextValue.length,
           marks: [[_inlineType, _atomicId]],
         },
       ],
@@ -702,14 +705,18 @@ export const convertInlineToAtomicBlocks = ({
     }
 
     draft.selection = _nextSelection
-    const _entity = {
-      type: _atomicType,
-      // remove atomic symbol
-      text: { textValue: _atomicTextValue.substring(1), ranges: [] },
-      _id: _atomicId,
-    }
 
-    draft.newEntities.push(_entity)
+    // if suggestion exists do not create new entity
+    if (!_isSuggestion) {
+      const _entity = {
+        type: _atomicType,
+        // remove atomic symbol
+        text: { textValue: _atomicTextValue.substring(1), ranges: [] },
+        _id: _atomicId,
+      }
+
+      draft.newEntities.push(_entity)
+    }
   }
 }
 

@@ -1,6 +1,9 @@
 import { Transforms } from '@databyss-org/slate'
 import { ReactEditor } from '@databyss-org/slate-react'
-import { stateSelectionToSlateSelection } from './slateUtils'
+import {
+  stateSelectionToSlateSelection,
+  slateSelectionToStateSelection,
+} from './slateUtils'
 import { isAtomicInlineType } from './util'
 
 export const showAtomicModal = ({
@@ -19,7 +22,13 @@ export const showAtomicModal = ({
   let selection
   const { setContent, state } = editorContext
   const { showModal } = navigationContext
-  const index = editorContext.state.selection.anchor.index
+  // const index = editorContext.state.selection.anchor.index
+  selection = slateSelectionToStateSelection(editor)
+  if (!selection) {
+    return
+  }
+  const index = selection.anchor.index
+
   const _entity = editorContext.state.blocks[index]
 
   if (!inlineAtomicData) {
