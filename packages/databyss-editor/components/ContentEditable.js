@@ -202,6 +202,10 @@ const ContentEditable = ({
     this function must be outside of the useMemo in order to have up to date values
   */
   const onInlineAtomicClick = (inlineData) => {
+    const _currentIndex =
+      slateSelectionToStateSelection(editor)?.anchor.index ||
+      state?.selection?.anchor.index
+
     // pass editorContext
     const inlineAtomicData = {
       refId: inlineData.refId,
@@ -212,6 +216,7 @@ const ContentEditable = ({
       editor,
       navigationContext,
       inlineAtomicData,
+      index: _currentIndex,
     }
     showAtomicModal(modalData)
   }

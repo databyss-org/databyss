@@ -1,14 +1,17 @@
-import { BlockType, Source, Topic } from '../interfaces'
+import { Source, Topic } from '../interfaces'
 
 /**
  * Returns a filter callback to find all terms with a prefix search.
  * @param query string to search, split into terms at spaces
  */
-export const prefixSearchAll = (query: string) => (block: Source & Topic) => {
+export const prefixSearchAll = (query: string, searchPredicate?: string) => (
+  block: Source & Topic
+) => {
   let _text = block.text.textValue
-  if (block.type === BlockType.Source && block?.name?.textValue) {
+
+  if (searchPredicate) {
     // use `name` for the filtered suggestion
-    _text = block.name.textValue
+    _text = block[searchPredicate].textValue
   }
 
   return (

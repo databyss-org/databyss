@@ -8,6 +8,7 @@ export const showAtomicModal = ({
   navigationContext,
   editor,
   inlineAtomicData,
+  index,
 }) => {
   // we need navigationContext and editorContext to show the modal
   if (!navigationContext || !editorContext) {
@@ -19,9 +20,9 @@ export const showAtomicModal = ({
   let selection
   const { setContent, state } = editorContext
   const { showModal } = navigationContext
-  const index = editorContext.state.selection.anchor.index
+  const _index = index || editorContext.state.selection.anchor.index
 
-  const _entity = editorContext.state.blocks[index]
+  const _entity = editorContext.state.blocks[_index]
 
   if (!inlineAtomicData) {
     refId = _entity._id
@@ -41,7 +42,7 @@ export const showAtomicModal = ({
         selection: _selection,
         operations: [
           {
-            index,
+            index: _index,
             isRefEntity: { _id: atomic._id, type, shortName: atomic.name },
             text: atomic.text,
           },
@@ -61,8 +62,8 @@ export const showAtomicModal = ({
       // on dismiss refocus editor at end of atomic
       window.requestAnimationFrame(() => {
         selection = {
-          anchor: { index, offset },
-          focus: { index, offset },
+          anchor: { index: _index, offset },
+          focus: { index: _index, offset },
         }
         const _slateSelection = stateSelectionToSlateSelection(
           editor.children,

@@ -271,7 +271,7 @@ const EditSourceForm = (props) => {
         rich
       />
       <LabeledTextInput
-        placeholder="untitled"
+        placeholder="e.g. Jacobson 1975"
         path="name"
         id="shortName"
         label="Short Name"

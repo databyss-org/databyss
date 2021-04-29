@@ -2,12 +2,12 @@ import cloneDeep from 'clone-deep'
 import { Editor, Transforms } from '@databyss-org/slate'
 import { ReactEditor } from '@databyss-org/slate-react'
 import { RangeType } from '@databyss-org/services/interfaces'
-import { EditorState } from '../../interfaces/EditorState'
 import {
   BlockType,
   Source,
   Topic,
-} from '../../../databyss-services/interfaces/Block'
+} from '@databyss-org/services/interfaces/Block'
+import { EditorState } from '../../interfaces/EditorState'
 import {
   getTextOffsetWithRange,
   atomicTypeToInlineRangeType,
