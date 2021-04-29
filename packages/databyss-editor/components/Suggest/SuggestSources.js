@@ -20,8 +20,10 @@ import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPa
 import { useEditorContext } from '../../state/EditorProvider'
 
 import { CatalogResults } from './'
-import { slateSelectionToStateSelection } from '../../lib/slateUtils'
-import { onBakeInlineAtomic } from '../../lib/inlineUtils'
+import {
+  onBakeInlineAtomic,
+  setAtomicWithoutSuggestion,
+} from '../../lib/inlineUtils'
 
 export const LOCAL_SOURCES = 'LOCAL_SOURCES'
 
@@ -165,29 +167,12 @@ const SuggestSources = ({
 
   const _mode = resultsMode || LOCAL_SOURCES
 
-  // TODO: this function is generic for topic and suggestion
-  const setCurrentSourceWithoutSuggestion = () => {
-    const _index = state.selection.anchor.index
-    const _stateBlock = state.blocks[_index]
-    // set the block with a re-render
-    const selection = slateSelectionToStateSelection(editor)
-
-    // preserve selection id from DB
-    if (state.selection._id) {
-      selection._id = state.selection._id
-    }
-
-    setContent({
-      selection,
-      operations: [
-        {
-          index: _index,
-          text: _stateBlock.text,
-          convertInlineToAtomic: true,
-        },
-      ],
+  const setCurrentSourceWithoutSuggestion = () =>
+    setAtomicWithoutSuggestion({
+      editor,
+      state,
+      setContent,
     })
-  }
 
   useEventListener('keydown', (e) => {
     /*

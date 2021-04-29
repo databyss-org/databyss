@@ -7,8 +7,10 @@ import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorContext } from '../../state/EditorProvider'
-import { slateSelectionToStateSelection } from '../../lib/slateUtils'
-import { onBakeInlineAtomic } from '../../lib/inlineUtils'
+import {
+  onBakeInlineAtomic,
+  setAtomicWithoutSuggestion,
+} from '../../lib/inlineUtils'
 
 const SuggestTopics = ({
   query,
@@ -61,28 +63,12 @@ const SuggestTopics = ({
 
   useEffect(updateSuggestions, [query, suggestions])
 
-  const setCurrentTopicWithoutSuggestion = () => {
-    const _index = state.selection.anchor.index
-    const _stateBlock = state.blocks[_index]
-    // set the block with a re-render
-    const selection = slateSelectionToStateSelection(editor)
-
-    // preserve selection id from DB
-    if (state.selection._id) {
-      selection._id = state.selection._id
-    }
-
-    setContent({
-      selection,
-      operations: [
-        {
-          index: _index,
-          text: _stateBlock.text,
-          convertInlineToAtomic: true,
-        },
-      ],
+  const setCurrentTopicWithoutSuggestion = () =>
+    setAtomicWithoutSuggestion({
+      editor,
+      state,
+      setContent,
     })
-  }
 
   useEventListener('keydown', (e) => {
     /*
