@@ -655,6 +655,7 @@ export default (
           break
         }
         case SET_CONTENT: {
+          console.log(JSON.parse(JSON.stringify(payload)))
           // preventDefault if operation includes atomic
           if (
             payload.operations.find(
