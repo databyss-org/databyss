@@ -9,9 +9,13 @@ export const prefixSearchAll = (query: string, searchPredicate?: string) => (
 ) => {
   let _text = block.text.textValue
 
-  if (searchPredicate && block[searchPredicate]?.textValue) {
-    // use `name` for the filtered suggestion
-    _text = block[searchPredicate].textValue
+  if (searchPredicate) {
+    if (block[searchPredicate]?.textValue) {
+      // use `name` for the filtered suggestion
+      _text = block[searchPredicate].textValue
+    } else {
+      return false
+    }
   }
 
   return (
