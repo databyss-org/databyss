@@ -204,17 +204,16 @@ const ContentEditable = ({
 
   // console.log('root', slateSelectionToStateSelection(editor)?.anchor.index)
 
-  const _indexRef = useRef(state?.selection?.anchor.index)
-
-  const _atomicModalRef = {
-    current: {
-      index: state?.selection?.anchor.index,
-      editorContextRef: editorContext,
-    },
-  }
+  const _modalDataRef = useRef({
+    index: state?.selection?.anchor.index,
+    editorContext,
+  })
 
   useEffect(() => {
-    _indexRef.current = state?.selection?.anchor.index
+    _modalDataRef.current = {
+      index: state?.selection?.anchor.index,
+      editorContext,
+    }
   }, [state?.selection?.anchor.index])
 
   const onInlineAtomicClick = (inlineData) => {
@@ -228,12 +227,11 @@ const ContentEditable = ({
       type: inlineData.type,
     }
     const modalData = {
-      dataRef: _atomicModalRef,
+      dataRef: _modalDataRef,
       editorContext,
       editor,
       navigationContext,
       inlineAtomicData,
-      index: _indexRef,
     }
     showAtomicModal(modalData)
   }
