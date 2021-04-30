@@ -714,7 +714,6 @@ export const convertInlineToAtomicBlocks = ({
         text: { textValue: _atomicTextValue.substring(1), ranges: [] },
         _id: _atomicId,
       }
-
       draft.newEntities.push(_entity)
     }
   }
