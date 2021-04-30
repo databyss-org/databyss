@@ -62,6 +62,7 @@ export const showAtomicModal = ({
 
     // current block type is atomic, set the focus
     // if atomic is being updated from an atomic inline, reducer will handler the selection
+    console.log('editor text', editorContext)
     console.log('entity', _entity)
     if (isAtomicInlineType(_entity?.type)) {
       // on dismiss refocus editor at end of atomic
