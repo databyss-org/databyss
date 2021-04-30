@@ -4,6 +4,7 @@ import { stateSelectionToSlateSelection } from './slateUtils'
 import { isAtomicInlineType } from './util'
 
 export const showAtomicModal = ({
+  dataRef,
   editorContext,
   navigationContext,
   editor,
@@ -36,7 +37,8 @@ export const showAtomicModal = ({
 
   // compose modal dismiss callback function
   const onUpdate = (atomic) => {
-    console.log('')
+    console.log('REF', dataRef.current)
+
     // if atomic is saved, update content
     if (atomic) {
       const _selection = state.selection

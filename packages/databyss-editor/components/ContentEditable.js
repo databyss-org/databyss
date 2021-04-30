@@ -206,12 +206,16 @@ const ContentEditable = ({
 
   const _indexRef = useRef(state?.selection?.anchor.index)
 
+  const _atomicModalRef = {
+    current: {
+      index: state?.selection?.anchor.index,
+      editorContextRef: editorContext,
+    },
+  }
+
   useEffect(() => {
-    console.log('update', state?.selection?.anchor.index)
     _indexRef.current = state?.selection?.anchor.index
   }, [state?.selection?.anchor.index])
-
-  console.log('state', state?.selection?.anchor.index)
 
   const onInlineAtomicClick = (inlineData) => {
     // const _currentIndex =
@@ -224,6 +228,7 @@ const ContentEditable = ({
       type: inlineData.type,
     }
     const modalData = {
+      dataRef: _atomicModalRef,
       editorContext,
       editor,
       navigationContext,
