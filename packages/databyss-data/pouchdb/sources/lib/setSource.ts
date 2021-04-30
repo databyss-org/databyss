@@ -20,6 +20,7 @@ export const setSource = async (data: Source) => {
     detail,
     sharedWithGroups,
   }
+  console.log('SET SOURCE FIELD', blockFields)
 
   await upsert({
     doctype: DocumentType.Block,

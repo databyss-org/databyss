@@ -73,6 +73,7 @@ export const upsert = async ({
   _id: string
   doc: any
 }) => {
+  console.log({ ...doc, _id, doctype })
   upQdict.current.push({ ...doc, _id, doctype })
   setDbBusy(!!upQdict.current.length)
 }
