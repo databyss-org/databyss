@@ -204,14 +204,12 @@ const ContentEditable = ({
 
   // console.log('root', slateSelectionToStateSelection(editor)?.anchor.index)
 
-  const _modalDataRef = useRef({
-    index: state?.selection?.anchor.index,
+  const editorContextRef = useRef({
     editorContext,
   })
 
   useEffect(() => {
-    _modalDataRef.current = {
-      index: state?.selection?.anchor.index,
+    editorContextRef.current = {
       editorContext,
     }
   }, [state?.selection?.anchor.index])
@@ -227,7 +225,7 @@ const ContentEditable = ({
       type: inlineData.type,
     }
     const modalData = {
-      dataRef: _modalDataRef,
+      editorContextRef,
       editorContext,
       editor,
       navigationContext,
