@@ -202,14 +202,21 @@ const ContentEditable = ({
     this function must be outside of the useMemo in order to have up to date values
   */
 
-  console.log('root', slateSelectionToStateSelection(editor)?.anchor.index)
+  // console.log('root', slateSelectionToStateSelection(editor)?.anchor.index)
+
+  const _indexRef = useRef(state?.selection?.anchor.index)
+
+  useEffect(() => {
+    console.log('update', state?.selection?.anchor.index)
+    _indexRef.current = state?.selection?.anchor.index
+  }, [state?.selection?.anchor.index])
 
   console.log('state', state?.selection?.anchor.index)
 
   const onInlineAtomicClick = (inlineData) => {
-    const _currentIndex =
-      slateSelectionToStateSelection(editor)?.anchor.index ||
-      state?.selection?.anchor.index
+    // const _currentIndex =
+    //   slateSelectionToStateSelection(editor)?.anchor.index ||
+    //   state?.selection?.anchor.index
 
     // pass editorContext
     const inlineAtomicData = {
@@ -221,7 +228,7 @@ const ContentEditable = ({
       editor,
       navigationContext,
       inlineAtomicData,
-      index: _currentIndex,
+      index: _indexRef,
     }
     showAtomicModal(modalData)
   }
