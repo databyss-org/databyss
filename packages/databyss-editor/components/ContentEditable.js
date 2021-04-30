@@ -33,7 +33,7 @@ import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import {
   onInlineFocusBlur,
-  onInlineBackspace,
+  onInlineBackspaceOrEnter,
   preventInlineAtomicCharacters,
   initiateInlineMenu,
   onInlineFieldBackspace,
@@ -201,8 +201,6 @@ const ContentEditable = ({
   /*
     this function must be outside of the useMemo in order to have up to date values
   */
-
-  // console.log('root', slateSelectionToStateSelection(editor)?.anchor.index)
 
   const editorContextRef = useRef({
     editorContext,
@@ -372,7 +370,7 @@ const ContentEditable = ({
         return
       }
 
-      const _isInlineBackspace = onInlineBackspace({
+      const _isInlineBackspace = onInlineBackspaceOrEnter({
         event,
         editor,
         state,

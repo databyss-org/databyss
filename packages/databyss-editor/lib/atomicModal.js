@@ -9,18 +9,15 @@ export const showAtomicModal = ({
   navigationContext,
   editor,
   inlineAtomicData,
-  index,
 }) => {
   // we need navigationContext and editorContext to show the modal
 
-  console.log(editorContextRef)
   if (!navigationContext || !(editorContext || editorContextRef?.current)) {
     return
   }
   const _editorContext =
     editorContextRef?.current?.editorContext || editorContext
 
-  console.log('EDITOR CONTEXT', _editorContext)
   let refId
   let type
   let offset
@@ -41,14 +38,10 @@ export const showAtomicModal = ({
 
   // compose modal dismiss callback function
   const onUpdate = (atomic) => {
-    console.log('REF', editorContextRef)
-
     // if atomic is saved, update content
     if (atomic) {
       const _selection = state.selection
-      console.log('INDEX', index)
-      console.log('STATE', editorContext.state.selection.anchor.index)
-      console.log('INDEX IN SET CONTENT', _index)
+
       setContent({
         selection: _selection,
         operations: [
@@ -68,8 +61,6 @@ export const showAtomicModal = ({
 
     // current block type is atomic, set the focus
     // if atomic is being updated from an atomic inline, reducer will handler the selection
-    console.log('editor text', editorContext)
-    console.log('entity', _entity)
     if (isAtomicInlineType(_entity?.type)) {
       // on dismiss refocus editor at end of atomic
       window.requestAnimationFrame(() => {
