@@ -300,7 +300,7 @@
     "whatwg-fetch": "2.0.3",
     "workbox-precaching": "6.1.2",
     "workbox-routing": "6.1.2",
-    "workbox-webpack-plugin": "6.1.2",
+    "workbox-webpack-plugin": "6.1.5",
     "xss": "^1.0.6"
   },
   "browserslist": {}
