@@ -3,6 +3,7 @@ import { BlockType } from '@databyss-org/services/interfaces'
 import { Text, Range, Selection, Block } from '../../interfaces'
 import { isAtomicInlineType } from '../util'
 import { stateToHTMLString } from '../slateUtils'
+import { htmlToDatabyssFrag } from './databyssFragToHtmlString'
 
 export { default as splitTextAtOffset } from './splitTextAtOffset'
 export { default as getFragmentAtSelection } from './getFragmentAtSelection'
@@ -122,6 +123,17 @@ export const pasteEventHandler = (e: ClipboardEvent): Block[] | null => {
 
     data = resetIds(data)
     return data
+  }
+
+  //  check for rich text fragment
+  const richTextDataTransfer = e.clipboardData!.getData('text/html')
+  if (richTextDataTransfer) {
+    try {
+      const data = htmlToDatabyssFrag(richTextDataTransfer)
+      return data
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   // plaintext text fragment
