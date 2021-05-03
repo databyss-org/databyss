@@ -3,7 +3,6 @@ import { Node, Element, Text } from '@databyss-org/slate'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
 import { slateRangesToStateRanges } from '../slateUtils'
 import { uid } from '../../../databyss-data/lib/uid'
-import { type } from '../../../databyss-data/couchdb/index'
 
 const TEXT_TAGS = {
   SPAN: (el) => {
@@ -26,22 +25,30 @@ const TEXT_TAGS = {
   EM: () => ({ italic: true }),
   I: () => ({ italic: true }),
   STRONG: () => ({ bold: true }),
-  H1: () => ({ bold: true }),
-  H2: () => ({ bold: true }),
-  H3: () => ({ bold: true }),
-  H4: () => ({ bold: true }),
-  H5: () => ({ bold: true }),
-  H6: () => ({ bold: true }),
 }
 
 const ELEMENT_TAGS = {
-  DIV: () => ({ type: 'ENTRY' }),
+  DIV: (el) => {
+    if (el?.style?.fontStyle === 'italic') {
+      return { type: 'ENTRY', _meta: 'italic' }
+    }
+    if (el?.style?.fontWeight > 600) {
+      return { type: 'ENTRY', _meta: 'bold' }
+    }
+    return { type: 'ENTRY' }
+  },
   BLOCKQUOTE: () => ({ type: 'ENTRY' }),
   LI: () => ({ type: 'ENTRY' }),
   OL: () => ({ type: 'ENTRY' }),
   P: () => ({ type: 'ENTRY' }),
   PRE: () => ({ type: 'ENTRY' }),
   UL: () => ({ type: 'ENTRY' }),
+  H1: () => ({ type: 'ENTRY', _meta: 'bold' }),
+  H2: () => ({ type: 'ENTRY', _meta: 'bold' }),
+  H3: () => ({ type: 'ENTRY', _meta: 'bold' }),
+  H4: () => ({ type: 'ENTRY', _meta: 'bold' }),
+  H5: () => ({ type: 'ENTRY', _meta: 'bold' }),
+  H6: () => ({ type: 'ENTRY', _meta: 'bold' }),
 }
 
 export const deserialize = (el) => {
@@ -70,8 +77,29 @@ export const deserialize = (el) => {
   }
 
   if (ELEMENT_TAGS[nodeName]) {
+    let _children = children
     const attrs = ELEMENT_TAGS[nodeName](el)
-    return jsx('element', attrs, children)
+    // apply style to entire node
+    if (attrs._meta) {
+      // check if children consist of string
+      if (_children.length === 1 && typeof _children[0] === 'string') {
+        return children.map((child) =>
+          jsx('text', { [attrs._meta]: true }, child)
+        )
+      }
+      // apply style to all children
+      _children = children.map((c) => {
+        let _child = c
+        // check to see if string
+        if (typeof c === 'string') {
+          _child = { text: c, [attrs._meta]: true }
+        } else {
+          _child = { ...c, [attrs._meta]: true }
+        }
+        return _child
+      })
+    }
+    return jsx('element', attrs, _children)
   }
 
   if (TEXT_TAGS[nodeName]) {
@@ -82,12 +110,16 @@ export const deserialize = (el) => {
   return children
 }
 
+/**
+ *
+ * @param frag Slate Frag
+ * clean up slate frag and convert to databyss fragment
+ */
 const formatFragment = (frag: Node[]): Block[] => {
   let _frag = frag
 
   // if fragment only contains text nodes, wrap in a Node {type: 'ENTRY'}
   if (!frag.filter((b) => b.type).length) {
-    console.log('WRAP FRAG')
     _frag = [
       {
         type: BlockType.Entry,
@@ -123,7 +155,6 @@ const formatFragment = (frag: Node[]): Block[] => {
     return acc
   }, [] as Node[])
 
-  console.log('after', _sanatizedFrag)
   // convert slate frag to databyss frag
   const _databyssFrag = _sanatizedFrag.map((block) => {
     const _block = {
@@ -141,17 +172,9 @@ const formatFragment = (frag: Node[]): Block[] => {
 }
 
 export const htmlToDatabyssFrag = (html: string): Block[] => {
-  //   const parsed = new DOMParser().parseFromString(
-  //     `<div>${html}</div>`,
-  //     'text/html'
-  //   )
-
   const parsed = new DOMParser().parseFromString(html, 'text/html')
-
-  console.log(parsed.body)
 
   const fragment: Node[] = deserialize(parsed.body)
   const _databysFragment = formatFragment(fragment)
-  console.log(_databysFragment)
   return _databysFragment
 }
