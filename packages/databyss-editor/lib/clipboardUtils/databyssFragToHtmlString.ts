@@ -3,6 +3,7 @@ import { Node, Element, Text } from '@databyss-org/slate'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
 import { slateRangesToStateRanges } from '../slateUtils'
 import { uid } from '../../../databyss-data/lib/uid'
+import { type } from '../../../databyss-data/couchdb/index'
 
 const TEXT_TAGS = {
   SPAN: (el) => {
@@ -34,6 +35,7 @@ const TEXT_TAGS = {
 }
 
 const ELEMENT_TAGS = {
+  DIV: () => ({ type: 'ENTRY' }),
   BLOCKQUOTE: () => ({ type: 'ENTRY' }),
   LI: () => ({ type: 'ENTRY' }),
   OL: () => ({ type: 'ENTRY' }),
@@ -81,8 +83,19 @@ export const deserialize = (el) => {
 }
 
 const formatFragment = (frag: Node[]): Block[] => {
-  // top level blocks should have {type: 'ENTRY' }
-  const _frag = frag.reduce((acc: Node[], curr: Node) => {
+  let _frag = frag
+
+  // if fragment only contains text nodes, wrap in a Node {type: 'ENTRY'}
+  if (!frag.filter((b) => b.type).length) {
+    console.log('WRAP FRAG')
+    _frag = [
+      {
+        type: BlockType.Entry,
+        children: frag,
+      },
+    ]
+  }
+  const _sanatizedFrag = _frag.reduce((acc: Node[], curr: Node) => {
     if (curr.type === 'ENTRY' && curr?.children) {
       const _children = curr.children as Element[]
       // do not allow empty nodes
@@ -110,8 +123,9 @@ const formatFragment = (frag: Node[]): Block[] => {
     return acc
   }, [] as Node[])
 
+  console.log('after', _sanatizedFrag)
   // convert slate frag to databyss frag
-  const _databyssFrag = _frag.map((block) => {
+  const _databyssFrag = _sanatizedFrag.map((block) => {
     const _block = {
       text: {
         textValue: Node.string(block),
@@ -127,9 +141,17 @@ const formatFragment = (frag: Node[]): Block[] => {
 }
 
 export const htmlToDatabyssFrag = (html: string): Block[] => {
+  //   const parsed = new DOMParser().parseFromString(
+  //     `<div>${html}</div>`,
+  //     'text/html'
+  //   )
+
   const parsed = new DOMParser().parseFromString(html, 'text/html')
+
+  console.log(parsed.body)
 
   const fragment: Node[] = deserialize(parsed.body)
   const _databysFragment = formatFragment(fragment)
+  console.log(_databysFragment)
   return _databysFragment
 }

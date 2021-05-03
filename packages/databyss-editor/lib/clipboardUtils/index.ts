@@ -126,6 +126,7 @@ export const pasteEventHandler = (e: ClipboardEvent): Block[] | null => {
   }
 
   //  check for rich text fragment
+  console.log(e.clipboardData?.types)
   const richTextDataTransfer = e.clipboardData!.getData('text/html')
   if (richTextDataTransfer) {
     try {
