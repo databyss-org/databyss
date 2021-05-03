@@ -4,23 +4,29 @@ import { stateSelectionToSlateSelection } from './slateUtils'
 import { isAtomicInlineType } from './util'
 
 export const showAtomicModal = ({
+  editorContextRef,
   editorContext,
   navigationContext,
   editor,
   inlineAtomicData,
 }) => {
   // we need navigationContext and editorContext to show the modal
-  if (!navigationContext || !editorContext) {
+
+  if (!navigationContext || !(editorContext || editorContextRef?.current)) {
     return
   }
+  const _editorContext =
+    editorContextRef?.current?.editorContext || editorContext
+
   let refId
   let type
   let offset
   let selection
-  const { setContent, state } = editorContext
+  const { setContent, state } = _editorContext
   const { showModal } = navigationContext
-  const index = editorContext.state.selection.anchor.index
-  const _entity = editorContext.state.blocks[index]
+  const _index = _editorContext.state.selection.anchor.index
+
+  const _entity = state.blocks[_index]
 
   if (!inlineAtomicData) {
     refId = _entity._id
@@ -40,8 +46,8 @@ export const showAtomicModal = ({
         selection: _selection,
         operations: [
           {
-            index,
-            isRefEntity: { _id: atomic._id, type },
+            index: _index,
+            isRefEntity: { _id: atomic._id, type, shortName: atomic.name },
             text: atomic.text,
           },
         ],
@@ -55,12 +61,12 @@ export const showAtomicModal = ({
 
     // current block type is atomic, set the focus
     // if atomic is being updated from an atomic inline, reducer will handler the selection
-    if (isAtomicInlineType(_entity.type)) {
+    if (isAtomicInlineType(_entity?.type)) {
       // on dismiss refocus editor at end of atomic
       window.requestAnimationFrame(() => {
         selection = {
-          anchor: { index, offset },
-          focus: { index, offset },
+          anchor: { index: _index, offset },
+          focus: { index: _index, offset },
         }
         const _slateSelection = stateSelectionToSlateSelection(
           editor.children,

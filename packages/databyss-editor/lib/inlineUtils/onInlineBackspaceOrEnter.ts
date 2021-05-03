@@ -12,8 +12,9 @@ import {
   slateRangesToStateRanges,
 } from '../slateUtils'
 import { EditorState } from '../../interfaces/EditorState'
+import { symbolToAtomicType } from '../../state/util'
 
-export const onInlineBackspace = ({
+export const onInlineBackspaceOrEnter = ({
   event,
   editor,
   state,
@@ -105,10 +106,12 @@ export const onInlineBackspace = ({
           if cursor is on an inline atomic and enter is pressed, launch modal
           */
         if (event.key === 'Enter') {
+          const _type = symbolToAtomicType(_currentLeaf.text.substring(0, 1))
           const inlineAtomicData = {
             refId: _currentLeaf.atomicId,
-            type: 'TOPIC',
+            type: _type,
           }
+
           onInlineAtomicClick(inlineAtomicData)
         }
         event.preventDefault()

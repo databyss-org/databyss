@@ -27,6 +27,10 @@ import {
 
 export const LOCAL_SOURCES = 'LOCAL_SOURCES'
 
+// use to truncate no more than a max amount of characters
+const truncate = (input, max) =>
+  input.length > max ? `${input.substring(0, max)}...` : input
+
 export const formatSource = (value) => {
   const _value = JSON.parse(JSON.stringify(value))
   // format year
@@ -34,6 +38,20 @@ export const formatSource = (value) => {
   if (year) {
     _value.detail.year.textValue = year.toString()
   }
+  // ensure short name exists, if not create one
+  if (!value.name) {
+    const _name =
+      value?.detail?.authors[0]?.lastName.textValue ||
+      value?.detail?.authors[0]?.firstName.textValue
+
+    const _year = value?.detail?.year?.textValue
+
+    _value.name =
+      _name && _year
+        ? { textValue: `${_name} ${_year}`, ranges: [] }
+        : value.text
+  }
+
   return _value
 }
 
@@ -115,23 +133,39 @@ const SuggestSources = ({
   }
 
   const _composeLocalSources = (_sourcesDict) => {
-    let _sources = Object.values(_sourcesDict)
-    if (!_sources.length) {
+    const sources = Object.values(_sourcesDict)
+    if (!sources.length) {
       return []
     }
-    _sources = _sources
-      .filter(prefixSearchAll(query))
+    // first attempt to search based on the name property
+    let _sources = sources
+      .filter(prefixSearchAll(query, 'name'))
       .slice(0, 4)
       .map((s) => (
         <DropdownListItem
           data-test-element="suggested-menu-sources"
-          label={s.text.textValue}
+          label={`${s.name.textValue} [${truncate(s.text.textValue, 30)}]`}
           key={s._id}
           onPress={() => onSourceSelected({ ...s, type: 'SOURCE' })}
         />
       ))
+    // fall back to searching the text property
     if (!_sources.length) {
-      return []
+      _sources = sources
+        .filter(prefixSearchAll(query))
+        .slice(0, 4)
+        .map((s) => (
+          <DropdownListItem
+            data-test-element="suggested-menu-sources"
+            label={s.text.textValue}
+            key={s._id}
+            onPress={() => onSourceSelected({ ...s, type: 'SOURCE' })}
+          />
+        ))
+
+      if (!_sources.length) {
+        return []
+      }
     }
     return _sources.concat(
       <Separator color="border.3" spacing="extraSmall" key="sep" />

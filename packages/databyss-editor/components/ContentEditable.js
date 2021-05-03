@@ -33,7 +33,7 @@ import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import {
   onInlineFocusBlur,
-  onInlineBackspace,
+  onInlineBackspaceOrEnter,
   preventInlineAtomicCharacters,
   initiateInlineMenu,
   onInlineFieldBackspace,
@@ -201,6 +201,18 @@ const ContentEditable = ({
   /*
     this function must be outside of the useMemo in order to have up to date values
   */
+
+  // onInlineAtomicClick will recieve outdated information, pass `editorContextRef` instead
+  const editorContextRef = useRef({
+    editorContext,
+  })
+
+  useEffect(() => {
+    editorContextRef.current = {
+      editorContext,
+    }
+  }, [state?.selection?.anchor.index])
+
   const onInlineAtomicClick = (inlineData) => {
     // pass editorContext
     const inlineAtomicData = {
@@ -208,6 +220,7 @@ const ContentEditable = ({
       type: inlineData.type,
     }
     const modalData = {
+      editorContextRef,
       editorContext,
       editor,
       navigationContext,
@@ -354,7 +367,7 @@ const ContentEditable = ({
         return
       }
 
-      const _isInlineBackspace = onInlineBackspace({
+      const _isInlineBackspace = onInlineBackspaceOrEnter({
         event,
         editor,
         state,

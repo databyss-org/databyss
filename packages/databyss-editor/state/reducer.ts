@@ -1,6 +1,12 @@
 import { uid } from '@databyss-org/data/lib/uid'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
-import { FSA, BlockType, Block } from '@databyss-org/services/interfaces'
+import {
+  FSA,
+  BlockType,
+  Block,
+  Topic,
+  Source,
+} from '@databyss-org/services/interfaces'
 import {
   SPLIT,
   MERGE,
@@ -684,6 +690,7 @@ export default (
             if (op.isRefEntity) {
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {
+                // block is top level atomic
                 if (_b._id === op.isRefEntity?._id) {
                   _block = draft.blocks[_idx]
                   _block.text = op.text
@@ -714,10 +721,13 @@ export default (
                   })
                 } else if (op.isRefEntity) {
                   // check text value to update any inline atomics found
+                  // use shortname if provided for inlines
+                  const _refText = op.isRefEntity?.shortName || op.text
+
                   const _newText = replaceInlineText({
                     text: _b.text,
                     refId: op.isRefEntity._id,
-                    newText: op.text,
+                    newText: _refText,
                     type: atomicTypeToInlineRangeType(op.isRefEntity.type),
                     // type: InlineTypes.InlineTopic,
                   })
@@ -845,13 +855,23 @@ export default (
           break
         }
         case CACHE_ENTITY_SUGGESTIONS: {
-          const blocks: Block[] = payload.blocks
+          const blocks: Topic[] | Source[] = payload.blocks
           draft.entitySuggestionCache = draft.entitySuggestionCache || {}
+          // cache suggestions according to long name
           blocks.forEach((block) => {
             draft.entitySuggestionCache[
               block.text.textValue.toLowerCase()
             ] = block
           })
+          // cache suggestions according to short name
+          blocks.forEach((block) => {
+            if (block?.name) {
+              draft.entitySuggestionCache[
+                block.name.textValue.toLowerCase()
+              ] = block
+            }
+          })
+
           break
         }
         case SET_SELECTION: {

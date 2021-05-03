@@ -6,9 +6,15 @@ import { updateInlines } from '../../../../databyss-editor/lib/inlineUtils/updat
 
 export const setSource = async (data: Source) => {
   const { text, detail, _id, sharedWithGroups } = data as any
+
+  let { name } = data as any
+  if (!name?.textValue?.length) {
+    name = text
+  }
   const blockFields = {
     _id,
     text,
+    name,
     type: BlockType.Source,
     doctype: DocumentType.Block,
     detail,
@@ -23,7 +29,7 @@ export const setSource = async (data: Source) => {
 
   await updateInlines({
     inlineType: InlineTypes.InlineSource,
-    text,
+    text: name,
     _id,
   })
 }

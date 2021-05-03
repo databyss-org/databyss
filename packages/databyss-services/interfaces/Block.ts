@@ -71,6 +71,7 @@ export interface SourceCitationHeader extends Source {
 
 export interface Source extends Block {
   detail: SourceDetail
+  name?: Text
 }
 
 export interface Topic extends Block {

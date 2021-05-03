@@ -2,8 +2,12 @@ import cloneDeep from 'clone-deep'
 import { Editor, Transforms } from '@databyss-org/slate'
 import { ReactEditor } from '@databyss-org/slate-react'
 import { RangeType } from '@databyss-org/services/interfaces'
+import {
+  BlockType,
+  Source,
+  Topic,
+} from '@databyss-org/services/interfaces/Block'
 import { EditorState } from '../../interfaces/EditorState'
-import { Block } from '../../../databyss-services/interfaces/Block'
 import {
   getTextOffsetWithRange,
   atomicTypeToInlineRangeType,
@@ -18,7 +22,7 @@ export const onBakeInlineAtomic = ({
   setContent,
 }: {
   editor: ReactEditor & Editor
-  suggestion: Block
+  suggestion: Source & Topic
   state: EditorState
   setContent: Function
 }) => {
@@ -45,14 +49,21 @@ export const onBakeInlineAtomic = ({
   }).after
 
   // merge first block with topic value, add mark and id to second block
+
+  // if suggestion is a source, use short name
+  let _suggestionText = suggestion.text
+
+  if (suggestion.type === BlockType.Source && suggestion?.name) {
+    _suggestionText = suggestion.name
+  }
   _textBefore = mergeText(_textBefore, {
     textValue: `${atomicTypeToSymbol(suggestion.type)}${
-      suggestion.text.textValue
+      _suggestionText.textValue
     }`,
     ranges: [
       {
         offset: 0,
-        length: suggestion.text.textValue.length + 1,
+        length: _suggestionText.textValue.length + 1,
         marks: [[atomicTypeToInlineRangeType(suggestion.type), suggestion._id]],
       },
     ],

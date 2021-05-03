@@ -75,7 +75,6 @@ const RichText = forwardRef(
     ref
   ) => {
     // set initial value
-
     const initValue = (text) => [
       {
         children: stateToSlateMarkup({ text }),

@@ -51,6 +51,7 @@ const SourceModal = ({ refId, visible, onUpdate, id, untitledPlaceholder }) => {
     if (!source.detail) {
       source.detail = buildSourceDetail()
     }
+
     setValues(source)
   }, [source])
 
