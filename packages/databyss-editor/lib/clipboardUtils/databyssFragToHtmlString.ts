@@ -3,6 +3,7 @@ import {
   Node,
   Element,
   Text,
+  Leaf,
   createEditor,
   Transforms,
 } from '@databyss-org/slate'
@@ -145,9 +146,13 @@ export const deserialize = (el) => {
 const sanatizeFrag = (frag: Node[]): Node[] =>
   frag.reduce((acc: Node[], curr: Node) => {
     if (curr.type === 'ENTRY' && curr?.children) {
-      const _children = curr.children as Element[]
+      const _children = curr.children as Text[]
       // do not allow empty nodes
-      if (!_children.length) {
+
+      if (
+        !_children.length ||
+        !_children.filter((c) => !!c?.text.trim().length).length
+      ) {
         return acc
       }
 
@@ -214,6 +219,7 @@ const formatFragment = (frag: Node[]): Block[] => {
   })
 
   _normalized = sanatizeFrag(_normalized)
+  console.log('after sanatized', _normalized)
 
   const _databyssFrag = _normalized.map((block) => normalizeSlateNode(block))
 
