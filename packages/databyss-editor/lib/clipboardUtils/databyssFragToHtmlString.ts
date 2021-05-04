@@ -3,7 +3,6 @@ import {
   Node,
   Element,
   Text,
-  Leaf,
   createEditor,
   Transforms,
 } from '@databyss-org/slate'
@@ -20,7 +19,7 @@ const normalizeSlateNode = (block: Node): Block => {
   const _block = {
     text: {
       // REMOVE EXTRA WHITESPACE
-      textValue: Node.string(_slateNode).trim(),
+      textValue: Node.string(_slateNode),
       ranges: slateRangesToStateRanges(_slateNode),
     },
     type: BlockType.Entry,
@@ -51,6 +50,12 @@ const TEXT_TAGS = {
   I: () => ({ italic: true }),
   STRONG: () => ({ bold: true }),
   P: () => ({ newLine: true }),
+  B: (el, isGoogleDoc) => {
+    if (!isGoogleDoc) {
+      return { bold: true }
+    }
+    return false
+  },
 }
 
 const ELEMENT_TAGS = {
@@ -66,7 +71,12 @@ const ELEMENT_TAGS = {
   BLOCKQUOTE: () => ({ type: 'ENTRY' }),
   LI: () => ({ type: 'ENTRY' }),
   OL: () => ({ type: 'ENTRY' }),
-  P: () => ({ type: 'ENTRY' }),
+  P: (e, isGoogleDoc) => {
+    if (isGoogleDoc) {
+      return false
+    }
+    return { type: 'ENTRY' }
+  },
   PRE: () => ({ type: 'ENTRY' }),
   UL: () => ({ type: 'ENTRY' }),
   H1: () => ({ type: 'ENTRY', _meta: ['bold'] }),
@@ -112,7 +122,7 @@ export const deserialize = ({
 
   if (ELEMENT_TAGS[nodeName]) {
     let _children = children
-    const attrs = ELEMENT_TAGS[nodeName](el)
+    const attrs = ELEMENT_TAGS[nodeName](el, isGoogleDoc)
     // apply style to entire node
     if (attrs._meta) {
       const _attrs = {}
@@ -135,12 +145,24 @@ export const deserialize = ({
         return _child
       })
     }
-    return jsx('element', attrs, _children)
+    // if no attributes are passed, dont parse as element
+    if (attrs) {
+      return jsx('element', attrs, _children)
+    }
   }
 
   if (TEXT_TAGS[nodeName]) {
-    const attrs = TEXT_TAGS[nodeName](el)
-    return children.map((child) => jsx('text', attrs, child))
+    let _children = children
+    let attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
+    // if google doc, every <p> tag should end in a /n
+    if (attrs?.newLine) {
+      _children = _children.map((c: Text) => ({
+        ...c,
+        text: `${c.text}\n`,
+      }))
+      attrs = { ...attrs, newLine: null }
+    }
+    return _children.map((child) => jsx('text', attrs, child))
   }
 
   return children
@@ -227,7 +249,6 @@ const formatFragment = (frag: Node[]): Block[] => {
   })
 
   _normalized = sanatizeFrag(_normalized)
-  console.log('after sanatized', _normalized)
 
   const _databyssFrag = _normalized.map((block) => normalizeSlateNode(block))
 

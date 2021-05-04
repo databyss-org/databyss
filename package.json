@@ -258,6 +258,7 @@
     "prettier-eslint": "11.0.0",
     "promise": "8.0.1",
     "query-string": "^6.13.1",
+    "quill-paste-smart": "^1.4.5",
     "raf": "3.4.0",
     "react": "16.9.0",
     "react-dev-utils": "^9.0.1",
