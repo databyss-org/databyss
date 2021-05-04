@@ -77,7 +77,13 @@ const ELEMENT_TAGS = {
   H6: () => ({ type: 'ENTRY', _meta: ['bold'] }),
 }
 
-export const deserialize = (el) => {
+export const deserialize = ({
+  el,
+  isGoogleDoc,
+}: {
+  el: HTMLElement | any
+  isGoogleDoc?: boolean
+}) => {
   if (el.nodeType === 3) {
     return el.textContent
   } else if (el.nodeType !== 1) {
@@ -96,7 +102,9 @@ export const deserialize = (el) => {
   ) {
     parent = el.childNodes[0]
   }
-  const children = Array.from(parent.childNodes).map(deserialize).flat()
+  const children = Array.from(parent.childNodes)
+    .map((e) => deserialize({ el: e, isGoogleDoc }))
+    .flat()
 
   if (el.nodeName === 'BODY') {
     return jsx('fragment', {}, children)
@@ -148,9 +156,9 @@ const sanatizeFrag = (frag: Node[]): Node[] =>
     if (curr.type === 'ENTRY' && curr?.children) {
       const _children = curr.children as Text[]
       // do not allow empty nodes
-
       if (
         !_children.length ||
+        // if no text exist, remove node
         !_children.filter((c) => !!c?.text.trim().length).length
       ) {
         return acc
@@ -226,12 +234,26 @@ const formatFragment = (frag: Node[]): Block[] => {
   return _databyssFrag
 }
 
+const isGooglePaste = (body: HTMLElement): boolean => {
+  const _id: string = body?.children?.[0]?.id
+
+  if (_id?.search('docs-internal') > -1) {
+    return true
+  }
+  return false
+}
+
 export const htmlToDatabyssFrag = (html: string): Block[] => {
   const parsed = new DOMParser().parseFromString(html, 'text/html')
 
   console.log(parsed.body)
 
-  const fragment: Node[] = deserialize(parsed.body)
+  const _isGoogle = isGooglePaste(parsed.body)
+
+  const fragment: Node[] = deserialize({
+    el: parsed.body,
+    isGoogleDoc: _isGoogle,
+  })
   const _databysFragment = formatFragment(fragment)
   return _databysFragment
 }
