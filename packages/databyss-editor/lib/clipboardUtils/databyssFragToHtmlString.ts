@@ -13,11 +13,13 @@ import { uid } from '../../../databyss-data/lib/uid'
 const normalizeSlateNode = (block: Node): Block => {
   const editor = createEditor()
   Transforms.insertNodes(editor, block)
+
   const _slateNode = editor.children[0]
 
   const _block = {
     text: {
-      textValue: Node.string(_slateNode),
+      // REMOVE EXTRA WHITESPACE
+      textValue: Node.string(_slateNode).trim(),
       ranges: slateRangesToStateRanges(_slateNode),
     },
     type: BlockType.Entry,
@@ -191,8 +193,9 @@ const formatFragment = (frag: Node[]): Block[] => {
 
   const _sanatizedFrag = sanatizeFrag(_frag)
 
-  // flatten nested children, some children may have {type: 'ENTRY'}
   let _normalized: Node[] = []
+
+  // flatten nested children, some children may have {type: 'ENTRY'}
   _sanatizedFrag.forEach((n: Node) => {
     const _n = n as Element
     // check if children have a type property
