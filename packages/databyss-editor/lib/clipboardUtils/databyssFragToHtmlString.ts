@@ -1,8 +1,30 @@
 import { jsx } from 'slate-hyperscript'
-import { Node, Element, Text } from '@databyss-org/slate'
+import {
+  Node,
+  Element,
+  Text,
+  createEditor,
+  Transforms,
+} from '@databyss-org/slate'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
-import { slateRangesToStateRanges } from '../slateUtils'
+import { slateRangesToStateRanges, stateBlockToSlateBlock } from '../slateUtils'
 import { uid } from '../../../databyss-data/lib/uid'
+
+const normalizeSlateNode = (block: Node): Block => {
+  const editor = createEditor()
+  Transforms.insertNodes(editor, block)
+  const _slateNode = editor.children[0]
+
+  const _block = {
+    text: {
+      textValue: Node.string(_slateNode),
+      ranges: slateRangesToStateRanges(_slateNode),
+    },
+    type: BlockType.Entry,
+    _id: uid(),
+  }
+  return _block
+}
 
 const TEXT_TAGS = {
   SPAN: (el) => {
@@ -25,6 +47,7 @@ const TEXT_TAGS = {
   EM: () => ({ italic: true }),
   I: () => ({ italic: true }),
   STRONG: () => ({ bold: true }),
+  P: () => ({ newLine: true }),
 }
 
 const ELEMENT_TAGS = {
@@ -40,7 +63,7 @@ const ELEMENT_TAGS = {
   BLOCKQUOTE: () => ({ type: 'ENTRY' }),
   LI: () => ({ type: 'ENTRY' }),
   OL: () => ({ type: 'ENTRY' }),
-  P: () => ({ type: 'ENTRY' }),
+  //   P: () => ({ type: 'ENTRY' }),
   PRE: () => ({ type: 'ENTRY' }),
   UL: () => ({ type: 'ENTRY' }),
   H1: () => ({ type: 'ENTRY', _meta: 'bold' }),
@@ -157,14 +180,9 @@ const formatFragment = (frag: Node[]): Block[] => {
 
   // convert slate frag to databyss frag
   const _databyssFrag = _sanatizedFrag.map((block) => {
-    const _block = {
-      text: {
-        textValue: Node.string(block),
-        ranges: slateRangesToStateRanges(block),
-      },
-      type: BlockType.Entry,
-      _id: uid(),
-    }
+    const _block = normalizeSlateNode(block)
+    console.log(_block)
+
     return _block
   })
 
@@ -173,6 +191,8 @@ const formatFragment = (frag: Node[]): Block[] => {
 
 export const htmlToDatabyssFrag = (html: string): Block[] => {
   const parsed = new DOMParser().parseFromString(html, 'text/html')
+
+  console.log(parsed.body)
 
   const fragment: Node[] = deserialize(parsed.body)
   const _databysFragment = formatFragment(fragment)
