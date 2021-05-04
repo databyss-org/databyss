@@ -7,7 +7,7 @@ import {
   Transforms,
 } from '@databyss-org/slate'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
-import { slateRangesToStateRanges, stateBlockToSlateBlock } from '../slateUtils'
+import { slateRangesToStateRanges } from '../slateUtils'
 import { uid } from '../../../databyss-data/lib/uid'
 
 const normalizeSlateNode = (block: Node): Block => {
@@ -53,25 +53,25 @@ const TEXT_TAGS = {
 const ELEMENT_TAGS = {
   DIV: (el) => {
     if (el?.style?.fontStyle === 'italic') {
-      return { type: 'ENTRY', _meta: 'italic' }
+      return { type: 'ENTRY', _meta: ['italic'] }
     }
     if (el?.style?.fontWeight > 600) {
-      return { type: 'ENTRY', _meta: 'bold' }
+      return { type: 'ENTRY', _meta: ['bold'] }
     }
     return { type: 'ENTRY' }
   },
   BLOCKQUOTE: () => ({ type: 'ENTRY' }),
   LI: () => ({ type: 'ENTRY' }),
   OL: () => ({ type: 'ENTRY' }),
-  //   P: () => ({ type: 'ENTRY' }),
+  P: () => ({ type: 'ENTRY' }),
   PRE: () => ({ type: 'ENTRY' }),
   UL: () => ({ type: 'ENTRY' }),
-  H1: () => ({ type: 'ENTRY', _meta: 'bold' }),
-  H2: () => ({ type: 'ENTRY', _meta: 'bold' }),
-  H3: () => ({ type: 'ENTRY', _meta: 'bold' }),
-  H4: () => ({ type: 'ENTRY', _meta: 'bold' }),
-  H5: () => ({ type: 'ENTRY', _meta: 'bold' }),
-  H6: () => ({ type: 'ENTRY', _meta: 'bold' }),
+  H1: () => ({ type: 'ENTRY', _meta: ['bold'] }),
+  H2: () => ({ type: 'ENTRY', _meta: ['bold'] }),
+  H3: () => ({ type: 'ENTRY', _meta: ['bold'] }),
+  H4: () => ({ type: 'ENTRY', _meta: ['bold'] }),
+  H5: () => ({ type: 'ENTRY', _meta: ['bold'] }),
+  H6: () => ({ type: 'ENTRY', _meta: ['bold'] }),
 }
 
 export const deserialize = (el) => {
@@ -104,20 +104,22 @@ export const deserialize = (el) => {
     const attrs = ELEMENT_TAGS[nodeName](el)
     // apply style to entire node
     if (attrs._meta) {
+      const _attrs = {}
+      attrs._meta.forEach((a) => {
+        _attrs[a] = true
+      })
       // check if children consist of string
       if (_children.length === 1 && typeof _children[0] === 'string') {
-        return children.map((child) =>
-          jsx('text', { [attrs._meta]: true }, child)
-        )
+        return children.map((child) => jsx('text', _attrs, child))
       }
       // apply style to all children
       _children = children.map((c) => {
         let _child = c
         // check to see if string
         if (typeof c === 'string') {
-          _child = { text: c, [attrs._meta]: true }
+          _child = { text: c, ..._attrs }
         } else {
-          _child = { ...c, [attrs._meta]: true }
+          _child = { ...c, ..._attrs }
         }
         return _child
       })
@@ -135,31 +137,22 @@ export const deserialize = (el) => {
 
 /**
  *
- * @param frag Slate Frag
- * clean up slate frag and convert to databyss fragment
+ * @param frag
+ * cleans up slate fragment in order to have top level {type: 'ENTRY' }
  */
-const formatFragment = (frag: Node[]): Block[] => {
-  let _frag = frag
-
-  // if fragment only contains text nodes, wrap in a Node {type: 'ENTRY'}
-  if (!frag.filter((b) => b.type).length) {
-    _frag = [
-      {
-        type: BlockType.Entry,
-        children: frag,
-      },
-    ]
-  }
-  const _sanatizedFrag = _frag.reduce((acc: Node[], curr: Node) => {
+const sanatizeFrag = (frag: Node[]): Node[] =>
+  frag.reduce((acc: Node[], curr: Node) => {
     if (curr.type === 'ENTRY' && curr?.children) {
       const _children = curr.children as Element[]
       // do not allow empty nodes
       if (!_children.length) {
         return acc
       }
+
       acc.push(curr)
       return acc
     }
+
     // if top level not tagged as Entry, insert into a node
 
     // if only text on node is new line, remove node
@@ -178,13 +171,38 @@ const formatFragment = (frag: Node[]): Block[] => {
     return acc
   }, [] as Node[])
 
-  // convert slate frag to databyss frag
-  const _databyssFrag = _sanatizedFrag.map((block) => {
-    const _block = normalizeSlateNode(block)
-    console.log(_block)
+/**
+ *
+ * @param frag Slate Frag
+ * clean up slate frag and convert to databyss fragment
+ */
+const formatFragment = (frag: Node[]): Block[] => {
+  let _frag = frag
 
-    return _block
-  })
+  console.log('fragment', _frag)
+
+  // if fragment only contains text nodes, wrap in a Node {type: 'ENTRY'}
+  if (!frag.filter((b) => b.type).length) {
+    _frag = [
+      {
+        type: BlockType.Entry,
+        children: frag,
+      },
+    ]
+  }
+
+  const _sanatizedFrag = sanatizeFrag(_frag)
+
+  console.log('FIRST PASS', _sanatizedFrag)
+  // flatten nested children, some children may have {type: 'ENTRY'}
+  let _normalized = _sanatizedFrag
+    .flatMap((n) => n.children)
+    .filter((n) => !!n) as Node[]
+
+  _normalized = sanatizeFrag(_normalized)
+
+  console.log(_normalized)
+  const _databyssFrag = _normalized.map((block) => normalizeSlateNode(block))
 
   return _databyssFrag
 }
