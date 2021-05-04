@@ -195,13 +195,32 @@ const formatFragment = (frag: Node[]): Block[] => {
 
   console.log('FIRST PASS', _sanatizedFrag)
   // flatten nested children, some children may have {type: 'ENTRY'}
-  let _normalized = _sanatizedFrag
-    .flatMap((n) => n.children)
-    .filter((n) => !!n) as Node[]
+  let _normalized = []
+  _sanatizedFrag.forEach((n) => {
+    console.log('n', n)
+    const _n = n
+    if (n?.children.filter((n) => n?.type).length) {
+      // children contain nested entries
+      console.log('should flatten', n)
+      const _newNode = sanatizeFrag(
+        n.children.flatMap((n) => n.children).filter((n) => !!n)
+      )
+      _newNode.forEach((_nn) => _normalized.push(_nn))
+
+      return
+    }
+    _normalized.push(n)
+  })
+
+  //   let _normalized = _sanatizedFrag
+  //     .flatMap((n) => n.children)
+  //     .filter((n) => !!n) as Node[]
+
+  //   console.log('NORMALIZED', _normalized)
 
   _normalized = sanatizeFrag(_normalized)
 
-  console.log(_normalized)
+  console.log('AFTER SECOND PASS', _normalized)
   const _databyssFrag = _normalized.map((block) => normalizeSlateNode(block))
 
   return _databyssFrag
