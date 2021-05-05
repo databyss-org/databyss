@@ -189,19 +189,24 @@ export const deserialize = ({
 
   if (TEXT_TAGS[nodeName]) {
     let _children = children
-    console.log(children)
     const attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
     // append \n to text
     if (attrs?.newLine) {
       delete attrs.newLine
-      // if empty node add new line
       if (!_children.length) {
-        return { text: '\n' }
+        // const _str = parent.firstChild.nodeValue
+        // if empty node add new line
+        if (parent.innerText.length) {
+          const _str = parent?.firstChild?.nodeValue
+          const _nbsp = _str.charCodeAt(0) === 32 || _str.charCodeAt(0) === 160
+          const _text = _nbsp ? ' ' : '\n'
+          return { text: _text }
+        }
+        // return { text: ' ' }
       }
       _children = _children.map((c: Text) => {
         let _textNode = {}
 
-        console.log(c)
         // only append a new line to the end of text
         if (typeof c === 'string') {
           _textNode = {
