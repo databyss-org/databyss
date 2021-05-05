@@ -165,6 +165,7 @@ export const deserialize = ({
     return _children.map((child) => jsx('text', attrs, child))
   }
 
+  console.log('RETURN', children)
   return children
 }
 
@@ -214,6 +215,7 @@ const sanatizeFrag = (frag: Node[]): Node[] =>
  * clean up slate frag and convert to databyss fragment
  */
 const formatFragment = (frag: Node[]): Block[] => {
+  console.log('FRAG', frag)
   let _frag = frag
 
   // if fragment only contains text nodes, wrap in a Node {type: 'ENTRY'}
@@ -249,6 +251,7 @@ const formatFragment = (frag: Node[]): Block[] => {
   })
 
   _normalized = sanatizeFrag(_normalized)
+  console.log('POST SANATIZE', _normalized)
 
   const _databyssFrag = _normalized.map((block) => normalizeSlateNode(block))
 
