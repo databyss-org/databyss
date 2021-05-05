@@ -28,6 +28,14 @@ const normalizeSlateNode = (block: Node): Block => {
   return _block
 }
 
+const isChildSpanEl = (el) => {
+  // if only one child and is span, do not add new line
+  if (el?.children?.length === 1 && el.children[0].tagName === 'SPAN') {
+    return true
+  }
+  return false
+}
+
 const TEXT_TAGS = {
   SPAN: (el) => {
     let _style: any = { newLine: true }
@@ -50,7 +58,14 @@ const TEXT_TAGS = {
   EM: () => ({ italic: true }),
   I: () => ({ italic: true }),
   STRONG: () => ({ bold: true }),
-  P: () => ({ newLine: true }),
+  P: (el) => {
+    if (isChildSpanEl(el)) {
+      console.log('is span', el)
+      return false
+    }
+
+    return { newLine: true }
+  },
   B: (el, isGoogleDoc) => {
     if (!isGoogleDoc) {
       return { bold: true }
@@ -77,12 +92,44 @@ const TEXT_TAGS = {
   OL: () => ({ newLine: true }),
   PRE: () => ({ newLine: true }),
   UL: () => ({ newLine: true }),
-  H1: () => ({ newLine: true, bold: true }),
-  H2: () => ({ newLine: true, bold: true }),
-  H3: () => ({ newLine: true, bold: true }),
-  H4: () => ({ newLine: true, bold: true }),
-  H5: () => ({ newLine: true, bold: true }),
-  H6: () => ({ newLine: true, bold: true }),
+  H1: (el) => {
+    if (isChildSpanEl(el)) {
+      return { bold: true }
+    }
+    return { newLine: true, bold: true }
+  },
+  H2: (el) => {
+    if (isChildSpanEl(el)) {
+      return { bold: true }
+    }
+    return { newLine: true, bold: true }
+  },
+  H3: (el) => {
+    console.log(el)
+    if (isChildSpanEl(el)) {
+      console.log('NOT NEW LINE')
+      return { bold: true }
+    }
+    return { newLine: true, bold: true }
+  },
+  H4: (el) => {
+    if (isChildSpanEl(el)) {
+      return { bold: true }
+    }
+    return { newLine: true, bold: true }
+  },
+  H5: (el) => {
+    if (isChildSpanEl(el)) {
+      return { bold: true }
+    }
+    return { newLine: true, bold: true }
+  },
+  H6: (el) => {
+    if (isChildSpanEl(el)) {
+      return { bold: true }
+    }
+    return { newLine: true, bold: true }
+  },
 }
 
 export const deserialize = ({
@@ -120,7 +167,7 @@ export const deserialize = ({
 
   if (TEXT_TAGS[nodeName]) {
     let _children = children
-    let attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
+    const attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
     // append \n to text
     if (attrs?.newLine) {
       delete attrs.newLine
@@ -206,6 +253,7 @@ const formatFragment = (frag: Node[]): Block[] => {
     ]
   }
 
+  console.log(frag)
   const _sanatizedFrag = sanatizeFrag(_frag)
 
   let _normalized: Node[] = []
