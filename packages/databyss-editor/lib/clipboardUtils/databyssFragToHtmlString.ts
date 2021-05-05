@@ -30,10 +30,11 @@ const normalizeSlateNode = (block: Node): Block => {
 
 const TEXT_TAGS = {
   SPAN: (el) => {
-    let _style = {}
+    let _style: any = { newLine: true }
     // checks if span and bold
     if (el?.style?.fontWeight > 600) {
       _style = {
+        ..._style,
         bold: true,
       }
     }
@@ -56,35 +57,32 @@ const TEXT_TAGS = {
     }
     return false
   },
-}
-
-const ELEMENT_TAGS = {
+  // NEW LINE
   DIV: (el) => {
     if (el?.style?.fontStyle === 'italic') {
-      return { type: 'ENTRY', _meta: ['italic'] }
+      return { newLine: true, italic: true }
+      // return { type: 'ENTRY', _meta: ['italic'] }
     }
     if (el?.style?.fontWeight > 600) {
-      return { type: 'ENTRY', _meta: ['bold'] }
+      // return { type: 'ENTRY', _meta: ['bold'] }
+      return { newLine: true, bold: true }
     }
-    return { type: 'ENTRY' }
+    return { newLine: true }
+
+    // return { type: 'ENTRY' }
   },
-  BLOCKQUOTE: () => ({ type: 'ENTRY' }),
-  LI: () => ({ type: 'ENTRY' }),
-  OL: () => ({ type: 'ENTRY' }),
-  P: (e, isGoogleDoc) => {
-    if (isGoogleDoc) {
-      return false
-    }
-    return { type: 'ENTRY' }
-  },
-  PRE: () => ({ type: 'ENTRY' }),
-  UL: () => ({ type: 'ENTRY' }),
-  H1: () => ({ type: 'ENTRY', _meta: ['bold'] }),
-  H2: () => ({ type: 'ENTRY', _meta: ['bold'] }),
-  H3: () => ({ type: 'ENTRY', _meta: ['bold'] }),
-  H4: () => ({ type: 'ENTRY', _meta: ['bold'] }),
-  H5: () => ({ type: 'ENTRY', _meta: ['bold'] }),
-  H6: () => ({ type: 'ENTRY', _meta: ['bold'] }),
+  BLOCKQUOTE: () => ({ newLine: true }),
+  // TODO: ADD BULLET
+  LI: () => ({ newLine: true }),
+  OL: () => ({ newLine: true }),
+  PRE: () => ({ newLine: true }),
+  UL: () => ({ newLine: true }),
+  H1: () => ({ newLine: true, bold: true }),
+  H2: () => ({ newLine: true, bold: true }),
+  H3: () => ({ newLine: true, bold: true }),
+  H4: () => ({ newLine: true, bold: true }),
+  H5: () => ({ newLine: true, bold: true }),
+  H6: () => ({ newLine: true, bold: true }),
 }
 
 export const deserialize = ({
@@ -120,52 +118,33 @@ export const deserialize = ({
     return jsx('fragment', {}, children)
   }
 
-  if (ELEMENT_TAGS[nodeName]) {
-    let _children = children
-    const attrs = ELEMENT_TAGS[nodeName](el, isGoogleDoc)
-    // apply style to entire node
-    if (attrs._meta) {
-      const _attrs = {}
-      attrs._meta.forEach((a) => {
-        _attrs[a] = true
-      })
-      // check if children consist of string
-      if (_children.length === 1 && typeof _children[0] === 'string') {
-        return children.map((child) => jsx('text', _attrs, child))
-      }
-      // apply style to all children
-      _children = children.map((c) => {
-        let _child = c
-        // check to see if string
-        if (typeof c === 'string') {
-          _child = { text: c, ..._attrs }
-        } else {
-          _child = { ...c, ..._attrs }
-        }
-        return _child
-      })
-    }
-    // if no attributes are passed, dont parse as element
-    if (attrs) {
-      return jsx('element', attrs, _children)
-    }
-  }
-
   if (TEXT_TAGS[nodeName]) {
     let _children = children
     let attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
-    // if google doc, every <p> tag should end in a /n
+    // append \n to text
     if (attrs?.newLine) {
-      _children = _children.map((c: Text) => ({
-        ...c,
-        text: `${c.text}\n`,
-      }))
-      attrs = { ...attrs, newLine: null }
+      delete attrs.newLine
+      // if empty node add new line
+      if (!_children.length) {
+        return { text: '\n' }
+      }
+      _children = _children.map((c: Text, i: number) => {
+        // only append a new line to the end of text
+        const _newLine = i + 1 === _children.length ? '\n' : ''
+        if (typeof c === 'string') {
+          return {
+            text: `${c}${_newLine}`,
+          }
+        }
+        return {
+          ...c,
+          text: `${c.text}${_newLine}`,
+        }
+      })
     }
     return _children.map((child) => jsx('text', attrs, child))
   }
 
-  console.log('RETURN', children)
   return children
 }
 
@@ -215,7 +194,6 @@ const sanatizeFrag = (frag: Node[]): Node[] =>
  * clean up slate frag and convert to databyss fragment
  */
 const formatFragment = (frag: Node[]): Block[] => {
-  console.log('FRAG', frag)
   let _frag = frag
 
   // if fragment only contains text nodes, wrap in a Node {type: 'ENTRY'}
@@ -251,7 +229,6 @@ const formatFragment = (frag: Node[]): Block[] => {
   })
 
   _normalized = sanatizeFrag(_normalized)
-  console.log('POST SANATIZE', _normalized)
 
   const _databyssFrag = _normalized.map((block) => normalizeSlateNode(block))
 
