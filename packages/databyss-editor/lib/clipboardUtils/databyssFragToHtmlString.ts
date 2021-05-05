@@ -28,17 +28,40 @@ const normalizeSlateNode = (block: Node): Block => {
   return _block
 }
 
-const isChildSpanEl = (el) => {
-  // if only one child and is span, do not add new line
-  if (el?.children?.length === 1 && el.children[0].tagName === 'SPAN') {
+const newLineElements = {
+  SPAN: true,
+  DIV: true,
+  BLOCKQUOTE: true,
+  LI: true,
+  OL: true,
+  PRE: true,
+  UL: true,
+  H1: true,
+  H2: true,
+  H3: true,
+  H4: true,
+  H5: true,
+  H6: true,
+}
+
+const isChildNewLineEl = (el) => {
+  // do not allow new line on empty element
+  if (!el?.innerText.length) {
     return true
+  }
+
+  // check child element to see if content exists
+  if (el?.children?.length === 1) {
+    if (newLineElements[el.children[0].tagName]) {
+      return true
+    }
   }
   return false
 }
 
 const TEXT_TAGS = {
   SPAN: (el) => {
-    let _style: any = { newLine: true }
+    let _style: any = isChildNewLineEl(el) ? {} : { newLine: true }
     // checks if span and bold
     if (el?.style?.fontWeight > 600) {
       _style = {
@@ -59,9 +82,8 @@ const TEXT_TAGS = {
   I: () => ({ italic: true }),
   STRONG: () => ({ bold: true }),
   P: (el) => {
-    if (isChildSpanEl(el)) {
-      console.log('is span', el)
-      return false
+    if (isChildNewLineEl(el)) {
+      return {}
     }
 
     return { newLine: true }
@@ -70,21 +92,18 @@ const TEXT_TAGS = {
     if (!isGoogleDoc) {
       return { bold: true }
     }
-    return false
+    return {}
   },
   // NEW LINE
   DIV: (el) => {
+    const _newLine = isChildNewLineEl(el) ? {} : { newLine: true }
     if (el?.style?.fontStyle === 'italic') {
-      return { newLine: true, italic: true }
-      // return { type: 'ENTRY', _meta: ['italic'] }
+      return { italic: true, ..._newLine }
     }
     if (el?.style?.fontWeight > 600) {
-      // return { type: 'ENTRY', _meta: ['bold'] }
-      return { newLine: true, bold: true }
+      return { bold: true, ..._newLine }
     }
-    return { newLine: true }
-
-    // return { type: 'ENTRY' }
+    return _newLine
   },
   BLOCKQUOTE: () => ({ newLine: true }),
   // TODO: ADD BULLET
@@ -93,39 +112,37 @@ const TEXT_TAGS = {
   PRE: () => ({ newLine: true }),
   UL: () => ({ newLine: true }),
   H1: (el) => {
-    if (isChildSpanEl(el)) {
+    if (isChildNewLineEl(el)) {
       return { bold: true }
     }
     return { newLine: true, bold: true }
   },
   H2: (el) => {
-    if (isChildSpanEl(el)) {
+    if (isChildNewLineEl(el)) {
       return { bold: true }
     }
     return { newLine: true, bold: true }
   },
   H3: (el) => {
-    console.log(el)
-    if (isChildSpanEl(el)) {
-      console.log('NOT NEW LINE')
+    if (isChildNewLineEl(el)) {
       return { bold: true }
     }
     return { newLine: true, bold: true }
   },
   H4: (el) => {
-    if (isChildSpanEl(el)) {
+    if (isChildNewLineEl(el)) {
       return { bold: true }
     }
     return { newLine: true, bold: true }
   },
   H5: (el) => {
-    if (isChildSpanEl(el)) {
+    if (isChildNewLineEl(el)) {
       return { bold: true }
     }
     return { newLine: true, bold: true }
   },
   H6: (el) => {
-    if (isChildSpanEl(el)) {
+    if (isChildNewLineEl(el)) {
       return { bold: true }
     }
     return { newLine: true, bold: true }
@@ -140,6 +157,10 @@ export const deserialize = ({
   isGoogleDoc?: boolean
 }) => {
   if (el.nodeType === 3) {
+    // if node is text type and only whitespace, do not allow
+    if (el.textContent.length && !el.textContent.trim().length) {
+      return null
+    }
     return el.textContent
   } else if (el.nodeType !== 1) {
     return null
@@ -160,6 +181,7 @@ export const deserialize = ({
   const children = Array.from(parent.childNodes)
     .map((e) => deserialize({ el: e, isGoogleDoc }))
     .flat()
+    .filter((c) => !!c)
 
   if (el.nodeName === 'BODY') {
     return jsx('fragment', {}, children)
@@ -167,6 +189,7 @@ export const deserialize = ({
 
   if (TEXT_TAGS[nodeName]) {
     let _children = children
+    console.log(children)
     const attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
     // append \n to text
     if (attrs?.newLine) {
@@ -175,20 +198,30 @@ export const deserialize = ({
       if (!_children.length) {
         return { text: '\n' }
       }
-      _children = _children.map((c: Text, i: number) => {
+      _children = _children.map((c: Text) => {
+        let _textNode = {}
+
+        console.log(c)
         // only append a new line to the end of text
-        const _newLine = i + 1 === _children.length ? '\n' : ''
         if (typeof c === 'string') {
-          return {
-            text: `${c}${_newLine}`,
+          _textNode = {
+            text: `${c}`,
+          }
+        } else {
+          _textNode = {
+            ...c,
+            text: `${c.text}`,
           }
         }
-        return {
-          ...c,
-          text: `${c.text}${_newLine}`,
-        }
+        return _textNode
       })
+      // add new line to end of node
+      _children[_children.length - 1] = {
+        ..._children[_children.length - 1],
+        text: `${_children[_children.length - 1].text}\n`,
+      }
     }
+
     return _children.map((child) => jsx('text', attrs, child))
   }
 
@@ -243,6 +276,8 @@ const sanatizeFrag = (frag: Node[]): Node[] =>
 const formatFragment = (frag: Node[]): Block[] => {
   let _frag = frag
 
+  console.log(frag)
+
   // if fragment only contains text nodes, wrap in a Node {type: 'ENTRY'}
   if (!frag.filter((b) => b.type).length) {
     _frag = [
@@ -253,7 +288,6 @@ const formatFragment = (frag: Node[]): Block[] => {
     ]
   }
 
-  console.log(frag)
   const _sanatizedFrag = sanatizeFrag(_frag)
 
   let _normalized: Node[] = []
