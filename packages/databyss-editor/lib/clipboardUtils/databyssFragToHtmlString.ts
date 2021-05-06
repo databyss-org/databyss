@@ -290,7 +290,10 @@ export const deserialize = ({
   isGoogleDoc?: boolean
 }) => {
   if (el.nodeType === 3) {
-    // console.log('RETURN TEXT', `"${el.textContent}"`)
+    console.log('RETURN TEXT', `"${el.textContent}"`)
+    if (el.textContent === `\n`) {
+      return null
+    }
     // if node is text type and only whitespace, do not allow
     // if (el.textContent.length && !el.textContent.trim().length) {
     //   return null
@@ -339,7 +342,7 @@ export const deserialize = ({
           const _text = _nbsp ? ' ' : '\n'
           return { text: _text }
         }
-        // return { text: ' ' }
+        return { text: '' }
       }
       _children = _children.map((c: Text) => {
         let _textNode = {}
@@ -471,6 +474,40 @@ const isGooglePaste = (body: HTMLElement): boolean => {
   return false
 }
 
+const containerSanitizer = (tagName, attribs) => {
+  if (attribs?.style) {
+    const _css = toJSON(`body {${attribs.style}}`)?.children?.body?.attributes
+
+    // check if italic
+    const _fontStyle = _css?.['font-style']
+    const _fontWeight: string = _css?.['font-weight']
+    const _isItalic = _fontStyle === 'italic'
+    const _isBold = _fontWeight && parseInt(_fontWeight, 10) > 600
+    if (_isItalic && _isBold) {
+      return {
+        tagName: 'span',
+        attribs: {
+          bold: true,
+          italic: true,
+        },
+      }
+    }
+    if (_isItalic) {
+      return {
+        tagName: 'em',
+      }
+    }
+    if (_isBold) {
+      return {
+        tagName: 'strong',
+      }
+    }
+  }
+  return {
+    tagName: 'span',
+  }
+}
+
 const _sanitizeHtml = (html: string): string =>
   sanitizeHtml(html, {
     allowedTags: Object.keys(TEXT_TAGS).map((t) => t.toLocaleLowerCase()),
@@ -486,40 +523,8 @@ const _sanitizeHtml = (html: string): string =>
           break: !!attribs.break,
         },
       }),
-      span: (tagName, attribs) => {
-        if (attribs?.style) {
-          const _css = toJSON(`body {${attribs.style}}`)?.children?.body
-            ?.attributes
-
-          // check if italic
-          const _fontStyle = _css?.['font-style']
-          const _fontWeight: string = _css?.['font-weight']
-          const _isItalic = _fontStyle === 'italic'
-          const _isBold = _fontWeight && parseInt(_fontWeight, 10) > 600
-          if (_isItalic && _isBold) {
-            return {
-              tagName: 'span',
-              attribs: {
-                bold: true,
-                italic: true,
-              },
-            }
-          }
-          if (_isItalic) {
-            return {
-              tagName: 'em',
-            }
-          }
-          if (_isBold) {
-            return {
-              tagName: 'strong',
-            }
-          }
-        }
-        return {
-          tagName: 'span',
-        }
-      },
+      div: containerSanitizer,
+      span: containerSanitizer,
       h1: () => ({
         tagName: 'header',
         attribs: {
