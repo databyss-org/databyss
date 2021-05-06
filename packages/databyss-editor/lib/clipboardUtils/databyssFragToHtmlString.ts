@@ -7,10 +7,11 @@ import {
   Transforms,
 } from '@databyss-org/slate'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
+import sanitizeHtml from 'sanitize-html'
+import { toJSON } from 'cssjson'
 import { slateRangesToStateRanges } from '../slateUtils'
 import { uid } from '../../../databyss-data/lib/uid'
 import splitTextAtOffset from './splitTextAtOffset'
-import { before } from 'lodash'
 
 const normalizeSlateNode = (block: Node): Block => {
   const editor = createEditor()
@@ -65,8 +66,106 @@ const splitFragAtBreaks = (block: Block): Block[] => {
   return _blocks
 }
 
+// const TEXT_TAGS = {
+//   BOLDITALIC: () => ({ bold: true, italic: true }),
+//   HEADER: () => ({ bold: true, newLine: true }),
+//   SPAN: (el) => {
+//     console.log(el.hasAttribute('italic'))
+//     let _style: any = {}
+//     // let _style: any = isChildNewLineEl(el) ? {} : { newLine: true }
+
+//     // checks if span and bold
+//     if (el.hasAttribute('bold')) {
+//       _style = {
+//         ..._style,
+//         bold: true,
+//       }
+//     }
+//     // checks if span and italic
+//     if (el.hasAttribute('italic')) {
+//       _style = {
+//         ..._style,
+//         italic: true,
+//       }
+//     }
+
+//     return _style
+//   },
+//   EM: () => ({ italic: true }),
+//   I: () => ({ italic: true }),
+//   STRONG: () => ({ bold: true }),
+//   P: (el) => {
+//     if (el.hasAttribute('break')) {
+//       return { newLine: true }
+//     }
+
+//     return {}
+//   },
+//   B: (el, isGoogleDoc) => {
+//     if (!isGoogleDoc) {
+//       return { bold: true }
+//     }
+//     return {}
+//   },
+//   // NEW LINE
+//   DIV: (el) => {
+//     const _newLine = el.hasAttribute('break') ? { newLine: true } : {}
+//     // TODO: USE SAME AS SPAN
+//     if (el?.style?.fontStyle === 'italic') {
+//       return { italic: true, ..._newLine }
+//     }
+//     if (el?.style?.fontWeight > 600) {
+//       return { bold: true, ..._newLine }
+//     }
+//     return _newLine
+//   },
+//   BLOCKQUOTE: () => ({ newLine: true }),
+//   // TODO: ADD BULLET
+//   LI: () => ({ newLine: true }),
+//   OL: () => ({ newLine: true }),
+//   PRE: () => ({ newLine: true }),
+//   UL: () => ({ newLine: true }),
+//   H1: (el) => {
+//     if (isChildNewLineEl(el)) {
+//       return { bold: true }
+//     }
+//     return { newLine: true, bold: true }
+//   },
+//   H2: (el) => {
+//     if (isChildNewLineEl(el)) {
+//       return { bold: true }
+//     }
+//     return { newLine: true, bold: true }
+//   },
+//   H3: (el) => {
+//     if (isChildNewLineEl(el)) {
+//       return { bold: true }
+//     }
+//     return { newLine: true, bold: true }
+//   },
+//   H4: (el) => {
+//     if (isChildNewLineEl(el)) {
+//       return { bold: true }
+//     }
+//     return { newLine: true, bold: true }
+//   },
+//   H5: (el) => {
+//     if (isChildNewLineEl(el)) {
+//       return { bold: true }
+//     }
+//     return { newLine: true, bold: true }
+//   },
+//   H6: (el) => {
+//     if (isChildNewLineEl(el)) {
+//       return { bold: true }
+//     }
+//     return { newLine: true, bold: true }
+//   },
+// }
+
 const newLineElements = {
-  SPAN: true,
+  // SPAN: true,
+  P: true,
   DIV: true,
   BLOCKQUOTE: true,
   LI: true,
@@ -96,42 +195,40 @@ const isChildNewLineEl = (el) => {
   return false
 }
 
+const styleContainer = (el) => {
+  let _style: any = {}
+
+  // checks if span and bold
+  if (el.hasAttribute('bold')) {
+    _style = {
+      ..._style,
+      bold: true,
+    }
+  }
+  // checks if span and italic
+  if (el.hasAttribute('italic')) {
+    _style = {
+      ..._style,
+      italic: true,
+    }
+  }
+
+  return _style
+}
+
 const TEXT_TAGS = {
-  // TODO: CHECK A TAG TO SEE IF PARENT IS NEW LINE, IF NOT, ADD NEW LINE
-  // A: (el) => {
-  //   if (!newLineElements[el?.parentNode?.nodeName]) {
-  //     console.log(el?.parentNode?.nodeName)
-  //     console.log(el)
-  //     return { newLine: true }
-  //   }
-  // },
-  SPAN: (el) => {
-    let _style: any = isChildNewLineEl(el) ? {} : { newLine: true }
-    // checks if span and bold
-    if (el?.style?.fontWeight > 600) {
-      _style = {
-        ..._style,
-        bold: true,
-      }
-    }
-    // checks if span and italic
-    if (el?.style?.fontStyle === 'italic') {
-      _style = {
-        ..._style,
-        italic: true,
-      }
-    }
-    return _style
-  },
+  BOLDITALIC: () => ({ bold: true, italic: true }),
+  HEADER: () => ({ bold: true, newLine: true }),
+  SPAN: styleContainer,
   EM: () => ({ italic: true }),
   I: () => ({ italic: true }),
   STRONG: () => ({ bold: true }),
   P: (el) => {
-    if (isChildNewLineEl(el)) {
-      return {}
+    if (el.hasAttribute('break')) {
+      return { newLine: true }
     }
 
-    return { newLine: true }
+    return {}
   },
   B: (el, isGoogleDoc) => {
     if (!isGoogleDoc) {
@@ -140,16 +237,7 @@ const TEXT_TAGS = {
     return {}
   },
   // NEW LINE
-  DIV: (el) => {
-    const _newLine = isChildNewLineEl(el) ? {} : { newLine: true }
-    if (el?.style?.fontStyle === 'italic') {
-      return { italic: true, ..._newLine }
-    }
-    if (el?.style?.fontWeight > 600) {
-      return { bold: true, ..._newLine }
-    }
-    return _newLine
-  },
+  DIV: styleContainer,
   BLOCKQUOTE: () => ({ newLine: true }),
   // TODO: ADD BULLET
   LI: () => ({ newLine: true }),
@@ -202,10 +290,11 @@ export const deserialize = ({
   isGoogleDoc?: boolean
 }) => {
   if (el.nodeType === 3) {
+    // console.log('RETURN TEXT', `"${el.textContent}"`)
     // if node is text type and only whitespace, do not allow
-    if (el.textContent.length && !el.textContent.trim().length) {
-      return null
-    }
+    // if (el.textContent.length && !el.textContent.trim().length) {
+    //   return null
+    // }
     return el.textContent
   } else if (el.nodeType !== 1) {
     return null
@@ -223,11 +312,13 @@ export const deserialize = ({
   ) {
     parent = el.childNodes[0]
   }
+  // console.log('BEFORE DESERIALIZE', parent.childNodes)
   const children = Array.from(parent.childNodes)
     .map((e) => deserialize({ el: e, isGoogleDoc }))
     .flat()
     .filter((c) => !!c)
 
+  // console.log('children', children)
   if (el.nodeName === 'BODY') {
     return jsx('fragment', {}, children)
   }
@@ -243,6 +334,7 @@ export const deserialize = ({
         // if empty node add new line
         if (parent.innerText.length) {
           const _str = parent?.firstChild?.nodeValue
+          // console.log('INNER TEXT', _str.charCodeAt(0))
           const _nbsp = _str.charCodeAt(0) === 32 || _str.charCodeAt(0) === 160
           const _text = _nbsp ? ' ' : '\n'
           return { text: _text }
@@ -379,14 +471,110 @@ const isGooglePaste = (body: HTMLElement): boolean => {
   return false
 }
 
+const _sanitizeHtml = (html: string): string =>
+  sanitizeHtml(html, {
+    allowedTags: Object.keys(TEXT_TAGS).map((t) => t.toLocaleLowerCase()),
+    // allowed attributes
+    allowedAttributes: {
+      '*': ['break', 'bold', 'italic'],
+    },
+    // TRANSFORM TAG NAMES
+    transformTags: {
+      p: (tagName, attribs) => ({
+        tagName,
+        attribs: {
+          break: !!attribs.break,
+        },
+      }),
+      span: (tagName, attribs) => {
+        if (attribs?.style) {
+          const _css = toJSON(`body {${attribs.style}}`)?.children?.body
+            ?.attributes
+
+          // check if italic
+          const _fontStyle = _css?.['font-style']
+          const _fontWeight: string = _css?.['font-weight']
+          const _isItalic = _fontStyle === 'italic'
+          const _isBold = _fontWeight && parseInt(_fontWeight, 10) > 600
+          if (_isItalic && _isBold) {
+            return {
+              tagName: 'span',
+              attribs: {
+                bold: true,
+                italic: true,
+              },
+            }
+          }
+          if (_isItalic) {
+            return {
+              tagName: 'em',
+            }
+          }
+          if (_isBold) {
+            return {
+              tagName: 'strong',
+            }
+          }
+        }
+        return {
+          tagName: 'span',
+        }
+      },
+      h1: () => ({
+        tagName: 'header',
+        attribs: {
+          break: true,
+        },
+      }),
+      h2: () => ({
+        tagName: 'header',
+        attribs: {
+          break: true,
+        },
+      }),
+      h3: () => ({
+        tagName: 'header',
+        attribs: {
+          break: true,
+        },
+      }),
+      h4: () => ({
+        tagName: 'header',
+        attribs: {
+          break: true,
+        },
+      }),
+      h5: () => ({
+        tagName: 'header',
+        attribs: {
+          break: true,
+        },
+      }),
+    },
+  })
+
 export const htmlToDatabyssFrag = (html: string): Block[] => {
-  const parsed = new DOMParser().parseFromString(html, 'text/html')
-
-  console.log(parsed.body)
-
+  let parsed = new DOMParser().parseFromString(html, 'text/html')
   const _isGoogle = isGooglePaste(parsed.body)
 
-  console.log('IS GOOGLE', _isGoogle)
+  const _body = (_isGoogle
+    ? parsed.body.firstChild
+    : parsed.body) as HTMLElement
+
+  // add break property to all top level elements
+  const children = _body.children
+  for (let i = 0; i < children.length; i += 1) {
+    const _child = children[i]
+    if (newLineElements[_child.tagName]) {
+      _child.setAttribute('break', 'true')
+    }
+  }
+  // convert to custom tags
+  const _sanitzedHtml = _sanitizeHtml(_body.outerHTML)
+
+  parsed = new DOMParser().parseFromString(_sanitzedHtml, 'text/html')
+
+  console.log(parsed.body)
 
   const fragment: Node[] = deserialize({
     el: parsed.body,
