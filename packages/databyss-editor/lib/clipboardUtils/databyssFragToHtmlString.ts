@@ -60,6 +60,14 @@ const isChildNewLineEl = (el) => {
 }
 
 const TEXT_TAGS = {
+  // TODO: CHECK A TAG TO SEE IF PARENT IS NEW LINE, IF NOT, ADD NEW LINE
+  // A: (el) => {
+  //   if (!newLineElements[el?.parentNode?.nodeName]) {
+  //     console.log(el?.parentNode?.nodeName)
+  //     console.log(el)
+  //     return { newLine: true }
+  //   }
+  // },
   SPAN: (el) => {
     let _style: any = isChildNewLineEl(el) ? {} : { newLine: true }
     // checks if span and bold
