@@ -23703,6 +23703,11 @@ tinycolor2@^1.4.1:
   resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
   integrity sha1-9PrTM0R7wLB9TcjpIJ2POaisd+g=
 
+tinymce-word-paste-filter@^0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/tinymce-word-paste-filter/-/tinymce-word-paste-filter-0.7.3.tgz#d919d7db201812acb6c41db67e0e3b4854992bd6"
+  integrity sha512-+rZVCOQjCBU9+RBoYy57CfjjxVUGozch1hFS7N/M+ySG6vSQqOSRpOtjB6YWksba+u0Fnb6KOU9CGRdYL1gRLA==
+
 tmp@0.0.30:
   version "0.0.30"
   resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.0.30.tgz#72419d4a8be7d6ce75148fd8b324e593a711c2ed"

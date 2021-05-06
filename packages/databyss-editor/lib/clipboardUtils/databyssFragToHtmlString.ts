@@ -9,6 +9,8 @@ import {
 import { Block, BlockType } from '@databyss-org/services/interfaces'
 import { slateRangesToStateRanges } from '../slateUtils'
 import { uid } from '../../../databyss-data/lib/uid'
+import splitTextAtOffset from './splitTextAtOffset'
+import { before } from 'lodash'
 
 const normalizeSlateNode = (block: Node): Block => {
   const editor = createEditor()
@@ -26,6 +28,41 @@ const normalizeSlateNode = (block: Node): Block => {
     _id: uid(),
   }
   return _block
+}
+
+/**
+ *
+ * @param block if multiple \n\n split text into multiple entries
+ */
+const splitFragAtBreaks = (block: Block): Block[] => {
+  const _textArray = block.text.textValue.split('\n\n')
+  if (_textArray.length === 1) {
+    return [block]
+  }
+  const _blocks: any[] = []
+  let _afterText = block.text
+  _textArray.forEach((t) => {
+    const _offset = t.length
+    const { before, after } = splitTextAtOffset({
+      text: _afterText,
+      offset: _offset,
+    })
+    if (before.textValue.trim().length) {
+      _blocks.push({
+        type: BlockType.Entry,
+        text: before,
+        _id: uid(),
+      })
+    }
+
+    // trim after block to remove double \n
+    const _after = splitTextAtOffset({
+      text: after,
+      offset: 2,
+    }).after
+    _afterText = _after
+  })
+  return _blocks
 }
 
 const newLineElements = {
@@ -325,7 +362,10 @@ const formatFragment = (frag: Node[]): Block[] => {
 
   _normalized = sanatizeFrag(_normalized)
 
-  const _databyssFrag = _normalized.map((block) => normalizeSlateNode(block))
+  let _databyssFrag = _normalized.map((block) => normalizeSlateNode(block))
+
+  // split into mulitple blocks if two `\n` exist in a row
+  _databyssFrag = splitFragAtBreaks(_databyssFrag[0])
 
   return _databyssFrag
 }
@@ -345,6 +385,8 @@ export const htmlToDatabyssFrag = (html: string): Block[] => {
   console.log(parsed.body)
 
   const _isGoogle = isGooglePaste(parsed.body)
+
+  console.log('IS GOOGLE', _isGoogle)
 
   const fragment: Node[] = deserialize({
     el: parsed.body,

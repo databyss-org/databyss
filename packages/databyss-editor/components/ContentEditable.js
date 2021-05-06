@@ -660,7 +660,6 @@ const ContentEditable = ({
                 text: `#${_wordToSwollow}`,
                 inlineAtomicMenu: true,
               })
-
               event.preventDefault()
               return
             }
