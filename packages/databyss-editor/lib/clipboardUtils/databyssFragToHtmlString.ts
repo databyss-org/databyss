@@ -40,7 +40,7 @@ const splitFragAtBreaks = (block: Block): Block[] => {
   if (_textArray.length === 1) {
     return [block]
   }
-  const _blocks: any[] = []
+  let _blocks: any[] = []
   let _afterText = block.text
   _textArray.forEach((t) => {
     const _offset = t.length
@@ -63,6 +63,22 @@ const splitFragAtBreaks = (block: Block): Block[] => {
     }).after
     _afterText = _after
   })
+
+  // do not allow \n at the start of an entry
+  _blocks = _blocks.map((b: Block) => {
+    if (b.text.textValue.charAt(0) === '\n') {
+      return {
+        type: b.type,
+        _id: b._id,
+        text: splitTextAtOffset({
+          text: b.text,
+          offset: 1,
+        }).after,
+      }
+    }
+    return b
+  })
+
   return _blocks
 }
 
@@ -355,9 +371,6 @@ const sanatizeFrag = (frag: Node[]): Node[] =>
  */
 const formatFragment = (frag: Node[]): Block[] => {
   let _frag = frag
-
-  console.log(frag)
-
   // if fragment only contains text nodes, wrap in a Node {type: 'ENTRY'}
   if (!frag.filter((b) => b.type).length) {
     _frag = [
@@ -528,8 +541,6 @@ export const htmlToDatabyssFrag = (html: string): Block[] => {
 
   parsed = new DOMParser().parseFromString(_sanitzedHtml, 'text/html')
   console.log('after', parsed.body)
-
-  // console.log(parsed.body)
 
   const fragment: Node[] = deserialize({
     el: parsed.body,
