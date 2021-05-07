@@ -2281,11 +2281,6 @@
   resolved "https://registry.yarnpkg.com/@bugsnag/safe-json-stringify/-/safe-json-stringify-6.0.0.tgz#22abdcd83e008c369902976730c34c150148a758"
   integrity sha512-htzFO1Zc57S8kgdRK9mLcPVTW1BY2ijfH7Dk2CeZmspTWKdKqSo1iwmqrq2WtRjFlo8aRZYgLX0wFrDXF/9DLA==
 
-"@charles-owen/rtftohtml@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@charles-owen/rtftohtml/-/rtftohtml-1.0.5.tgz#d6dfdcb1fb8588453bedb7ac17e2b6e39835738f"
-  integrity sha512-ix2OtBG6HrKimPnAiXwUn/+7e/71g+Df+s8UXfX2nlNb82ULEdFvJGj0r+Oq0wmddtEjGqFOeSYq/96x6wVC2Q==
-
 "@citation-js/cli@0.5.0-alpha.9":
   version "0.5.0-alpha.9"
   resolved "https://registry.yarnpkg.com/@citation-js/cli/-/cli-0.5.0-alpha.9.tgz#e14a3515a698f321dcf45b3cd8022406d355359f"
@@ -9516,11 +9511,6 @@ domhandler@^4.0.0, domhandler@^4.2.0:
   integrity sha512-zk7sgt970kzPks2Bf+dwT/PLzghLnsivb9CcxkvR8Mzr66Olr0Ofd8neSbglHJHaHa2MadfoSdNlKYAaafmWfA==
   dependencies:
     domelementtype "^2.2.0"
-
-dompurify@^2.0.10:
-  version "2.2.8"
-  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.2.8.tgz#ce88e395f6d00b6dc53f80d6b2a6fdf5446873c6"
-  integrity sha512-9H0UL59EkDLgY3dUFjLV6IEUaHm5qp3mxSqWw7Yyx4Zhk2Jn2cmLe+CNPP3xy13zl8Bqg+0NehQzkdMoVhGRww==
 
 domutils@1.5.1:
   version "1.5.1"
@@ -20073,13 +20063,6 @@ quick-lru@^1.0.0:
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-1.1.0.tgz#4360b17c61136ad38078397ff11416e186dcfbb8"
   integrity sha1-Q2CxfGETatOAeDl/8RQW4Ybc+7g=
 
-quill-paste-smart@^1.4.5:
-  version "1.4.5"
-  resolved "https://registry.yarnpkg.com/quill-paste-smart/-/quill-paste-smart-1.4.5.tgz#5f4f2c084ed9c6c01d9105efd10e52eb4084236b"
-  integrity sha512-iH/1vuM1G+fUf/XzQRjI3auiND0pCX9WMG9DGv1XKufYTPN17JjA1+R9wzidiWJPKx5eKc/cx1eeTgr+oVuBtA==
-  dependencies:
-    dompurify "^2.0.10"
-
 raf@3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/raf/-/raf-3.4.0.tgz#a28876881b4bc2ca9117d4138163ddb80f781575"
@@ -23795,11 +23778,6 @@ tinycolor2@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
   integrity sha1-9PrTM0R7wLB9TcjpIJ2POaisd+g=
-
-tinymce-word-paste-filter@^0.7.3:
-  version "0.7.3"
-  resolved "https://registry.yarnpkg.com/tinymce-word-paste-filter/-/tinymce-word-paste-filter-0.7.3.tgz#d919d7db201812acb6c41db67e0e3b4854992bd6"
-  integrity sha512-+rZVCOQjCBU9+RBoYy57CfjjxVUGozch1hFS7N/M+ySG6vSQqOSRpOtjB6YWksba+u0Fnb6KOU9CGRdYL1gRLA==
 
 tmp@0.0.30:
   version "0.0.30"
