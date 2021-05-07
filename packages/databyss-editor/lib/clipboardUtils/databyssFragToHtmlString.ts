@@ -237,7 +237,7 @@ export const deserialize = ({
   if (TEXT_TAGS[nodeName]) {
     let _children = children
     const attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
-    const _indent = attrs?.indent ? '\t' : ''
+    let _indent = attrs?.indent ? '\t' : ''
     let _bullet = attrs?.list ? '\u2022 ' : ''
     if (attrs?.newLine) {
       delete attrs.newLine
@@ -253,6 +253,7 @@ export const deserialize = ({
       }
       _children = _children.map((c: Text, i: number) => {
         _bullet = i === 0 && _bullet.length ? '\u2022 ' : ''
+        _indent = i === 0 && _indent.length ? '\t' : ''
         let _textNode = {}
 
         // only append a new line to the end of text
