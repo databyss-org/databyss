@@ -103,7 +103,10 @@ const isChildNewLineEl = (el) => {
 }
 
 const styleContainer = (el) => {
-  let _style: any = { ...(el.hasAttribute('break') && { newLine: true }) }
+  let _style: any = {
+    ...(el.hasAttribute('break') && { newLine: true }),
+    ...(el.hasAttribute('indent') && { indent: true }),
+  }
 
   // checks if span and bold
   if (el.hasAttribute('bold')) {
@@ -217,19 +220,14 @@ export const deserialize = ({
   isGoogleDoc?: boolean
 }) => {
   if (el.nodeType === 3) {
-    console.log('RETURN TEXT', `"${el.textContent}"`)
     if (el.textContent === `\n`) {
       return null
     }
-    // if node is text type and only whitespace, do not allow
-    // if (el.textContent.length && !el.textContent.trim().length) {
-    //   return null
-    // }
+
     return el.textContent
   } else if (el.nodeType !== 1) {
     return null
   } else if (el.nodeName === 'BR') {
-    console.log(el.nodeName)
     return '\n'
   }
 
@@ -243,13 +241,11 @@ export const deserialize = ({
   ) {
     parent = el.childNodes[0]
   }
-  // console.log('BEFORE DESERIALIZE', parent.childNodes)
   const children = Array.from(parent.childNodes)
     .map((e) => deserialize({ el: e, isGoogleDoc }))
     .flat()
     .filter((c) => !!c)
 
-  // console.log('children', children)
   if (el.nodeName === 'BODY') {
     return jsx('fragment', {}, children)
   }
@@ -257,17 +253,15 @@ export const deserialize = ({
   if (TEXT_TAGS[nodeName]) {
     let _children = children
     const attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
-    // append \n to text
+    const _indent = attrs?.indent ? '\t' : ''
+
     if (attrs?.newLine) {
-      console.log(attrs?.indent)
-      const _indent = attrs?.indent ? '\t' : ''
       delete attrs.newLine
       if (!_children.length) {
         // const _str = parent.firstChild.nodeValue
         // if empty node add new line
         if (parent.innerText.length) {
           const _str = parent?.firstChild?.nodeValue
-          // console.log('INNER TEXT', _str.charCodeAt(0))
           const _nbsp = _str.charCodeAt(0) === 32 || _str.charCodeAt(0) === 160
           const _text = _nbsp ? ' ' : `${_indent}\n`
           return { text: _text }
@@ -406,17 +400,23 @@ const isGooglePaste = (body: HTMLElement): boolean => {
 
 const containerSanitizer = (tagName, attribs) => {
   let _isTab
+
+  // edge case, check for `Apple-tab-span`
+  if (attribs?.class === `Apple-tab-span`) {
+    _isTab = true
+  }
+
   if (attribs?.style) {
     const _css = toJSON(`body {${attribs.style}}`)?.children?.body?.attributes
 
-    // console.log('CSS STYLE', attribs)
     // check if italic
     const _fontStyle = _css?.['font-style']
     const _fontWeight: string = _css?.['font-weight']
     const _textIndent = _css?.['text-indent']
-    _isTab = _textIndent && parseInt(_textIndent.slice(0, -2), 10) > 0
+    if (!_isTab) {
+      _isTab = _textIndent && parseInt(_textIndent.slice(0, -2), 10) > 0
+    }
 
-    // console.log('TEXT INDENT', _isTab)
     const _isItalic = _fontStyle === 'italic'
     const _isBold = _fontWeight && parseInt(_fontWeight, 10) > 600
     if (_isItalic && _isBold) {
@@ -495,7 +495,6 @@ const _sanitizeHtml = (html: string): string =>
   })
 
 export const htmlToDatabyssFrag = (html: string): Block[] => {
-  console.log(html)
   let parsed = new DOMParser().parseFromString(html, 'text/html')
   console.log('before', parsed.body)
   const _isGoogle = isGooglePaste(parsed.body)
