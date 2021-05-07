@@ -140,11 +140,21 @@ const TEXT_TAGS = {
     ...(el.hasAttribute('break') && { newLine: true }),
   }),
   P: (el) => {
+    let _attributes = {}
     if (el.hasAttribute('break')) {
-      return { newLine: true }
+      _attributes = {
+        ..._attributes,
+        newLine: true,
+      }
+    }
+    if (el.hasAttribute('indent')) {
+      _attributes = {
+        ..._attributes,
+        indent: true,
+      }
     }
 
-    return {}
+    return _attributes
   },
   B: (el, isGoogleDoc) => {
     if (!isGoogleDoc) {
@@ -249,6 +259,8 @@ export const deserialize = ({
     const attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
     // append \n to text
     if (attrs?.newLine) {
+      console.log(attrs?.indent)
+      const _indent = attrs?.indent ? '\t' : ''
       delete attrs.newLine
       if (!_children.length) {
         // const _str = parent.firstChild.nodeValue
@@ -257,10 +269,10 @@ export const deserialize = ({
           const _str = parent?.firstChild?.nodeValue
           // console.log('INNER TEXT', _str.charCodeAt(0))
           const _nbsp = _str.charCodeAt(0) === 32 || _str.charCodeAt(0) === 160
-          const _text = _nbsp ? ' ' : '\n'
+          const _text = _nbsp ? ' ' : `${_indent}\n`
           return { text: _text }
         }
-        return { text: '' }
+        return { text: `${_indent}` }
       }
       _children = _children.map((c: Text) => {
         let _textNode = {}
@@ -268,12 +280,12 @@ export const deserialize = ({
         // only append a new line to the end of text
         if (typeof c === 'string') {
           _textNode = {
-            text: `${c}`,
+            text: `${_indent}${c}`,
           }
         } else {
           _textNode = {
             ...c,
-            text: `${c.text}`,
+            text: `${_indent}${c.text}`,
           }
         }
         return _textNode
@@ -393,12 +405,18 @@ const isGooglePaste = (body: HTMLElement): boolean => {
 }
 
 const containerSanitizer = (tagName, attribs) => {
+  let _isTab
   if (attribs?.style) {
     const _css = toJSON(`body {${attribs.style}}`)?.children?.body?.attributes
 
+    // console.log('CSS STYLE', attribs)
     // check if italic
     const _fontStyle = _css?.['font-style']
     const _fontWeight: string = _css?.['font-weight']
+    const _textIndent = _css?.['text-indent']
+    _isTab = _textIndent && parseInt(_textIndent.slice(0, -2), 10) > 0
+
+    // console.log('TEXT INDENT', _isTab)
     const _isItalic = _fontStyle === 'italic'
     const _isBold = _fontWeight && parseInt(_fontWeight, 10) > 600
     if (_isItalic && _isBold) {
@@ -426,8 +444,13 @@ const containerSanitizer = (tagName, attribs) => {
       }
     }
   }
+
   return {
-    tagName: 'span',
+    tagName,
+    attribs: {
+      ...(!!attribs?.break && { break: true }),
+      ...(!!_isTab && { indent: true }),
+    },
   }
 }
 
@@ -440,61 +463,41 @@ const textTagStyle = (tagName, attribs) => {
   }
 }
 
+// header function for sanatize
+const sanatizeHeader = () => ({
+  tagName: 'header',
+  attribs: {
+    break: true,
+  },
+})
+
 const _sanitizeHtml = (html: string): string =>
   sanitizeHtml(html, {
     allowedTags: Object.keys(TEXT_TAGS).map((t) => t.toLocaleLowerCase()),
     // allowed attributes
     allowedAttributes: {
-      '*': ['break', 'bold', 'italic'],
+      '*': ['break', 'bold', 'italic', 'indent'],
     },
     // TRANSFORM TAG NAMES
     transformTags: {
-      p: (tagName, attribs) => ({
-        tagName,
-        attribs: {
-          ...(!!attribs.break && { break: true }),
-        },
-      }),
+      p: containerSanitizer,
+      // links should come in as spans
       a: (tagName, attribs) => textTagStyle('span', attribs),
       b: textTagStyle,
       div: containerSanitizer,
       span: containerSanitizer,
-      h1: () => ({
-        tagName: 'header',
-        attribs: {
-          break: true,
-        },
-      }),
-      h2: () => ({
-        tagName: 'header',
-        attribs: {
-          break: true,
-        },
-      }),
-      h3: () => ({
-        tagName: 'header',
-        attribs: {
-          break: true,
-        },
-      }),
-      h4: () => ({
-        tagName: 'header',
-        attribs: {
-          break: true,
-        },
-      }),
-      h5: () => ({
-        tagName: 'header',
-        attribs: {
-          break: true,
-        },
-      }),
+      h1: sanatizeHeader,
+      h2: sanatizeHeader,
+      h3: sanatizeHeader,
+      h4: sanatizeHeader,
+      h5: sanatizeHeader,
     },
   })
 
 export const htmlToDatabyssFrag = (html: string): Block[] => {
+  console.log(html)
   let parsed = new DOMParser().parseFromString(html, 'text/html')
-  console.log(parsed)
+  console.log('before', parsed.body)
   const _isGoogle = isGooglePaste(parsed.body)
 
   const _body = (_isGoogle
@@ -514,8 +517,9 @@ export const htmlToDatabyssFrag = (html: string): Block[] => {
   const _sanitzedHtml = _sanitizeHtml(_body.outerHTML)
 
   parsed = new DOMParser().parseFromString(_sanitzedHtml, 'text/html')
+  console.log('after', parsed.body)
 
-  console.log(parsed.body)
+  // console.log(parsed.body)
 
   const fragment: Node[] = deserialize({
     el: parsed.body,
