@@ -1,4 +1,6 @@
 import { jsx } from 'slate-hyperscript'
+import sanitizeHtml from 'sanitize-html'
+import { toJSON } from 'cssjson'
 import {
   Node,
   Element,
@@ -7,8 +9,6 @@ import {
   Transforms,
 } from '@databyss-org/slate'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
-import sanitizeHtml from 'sanitize-html'
-import { toJSON } from 'cssjson'
 import { slateRangesToStateRanges } from '../slateUtils'
 import { uid } from '../../../databyss-data/lib/uid'
 import splitTextAtOffset from './splitTextAtOffset'
@@ -103,25 +103,9 @@ const newLineElements = {
   H4: true,
   H5: true,
   H6: true,
-  // TESTING THESE
   EM: true,
   B: true,
   A: true,
-}
-
-const isChildNewLineEl = (el) => {
-  // do not allow new line on empty element
-  if (!el?.innerText.length) {
-    return true
-  }
-
-  // check child element to see if content exists
-  if (el?.children?.length === 1) {
-    if (newLineElements[el.children[0].tagName]) {
-      return true
-    }
-  }
-  return false
 }
 
 const styleContainer = (el) => {
@@ -148,6 +132,9 @@ const styleContainer = (el) => {
   return _style
 }
 
+/**
+ * formatting rules for text tags
+ */
 const TEXT_TAGS = {
   BOLDITALIC: () => ({ bold: true, italic: true }),
   HEADER: () => ({ bold: true, newLine: true }),
@@ -205,6 +192,10 @@ const TEXT_TAGS = {
   BR: true,
 }
 
+/**
+ *
+ * @param param0 converts our custom jsx to slate fragments
+ */
 export const deserialize = ({
   el,
   isGoogleDoc,
@@ -247,11 +238,10 @@ export const deserialize = ({
     let _children = children
     const attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
     const _indent = attrs?.indent ? '\t' : ''
-    const _bullet = attrs?.list ? '\t\u2022 ' : ''
+    const _bullet = attrs?.list ? '\u2022 ' : ''
     if (attrs?.newLine) {
       delete attrs.newLine
       if (!_children.length) {
-        // const _str = parent.firstChild.nodeValue
         // if empty node add new line
         if (parent.innerText.length) {
           const _str = parent?.firstChild?.nodeValue
@@ -322,9 +312,6 @@ const sanatizeFrag = (frag: Node[]): Node[] =>
       acc.push(curr)
       return acc
     }
-
-    // if top level not tagged as Entry, insert into a node
-
     // if only text on node is new line, remove node
     const _curr = curr as Text
     if (_curr?.text.length === 1 && curr.text === '\n') {
