@@ -291,7 +291,18 @@ export const deserialize = ({
       }
     }
 
-    return _children.map((child) => jsx('text', attrs, child))
+    return _children.map((child) => {
+      let _attrs = attrs
+      // if empty string, do not apply markup
+      if (typeof child === 'string') {
+        if (!child.trim().length) {
+          _attrs = {}
+        }
+      } else if (!child.text.trim().length) {
+        _attrs = {}
+      }
+      return jsx('text', _attrs, child)
+    })
   }
 
   return children
@@ -525,5 +536,7 @@ export const htmlToDatabyssFrag = (html: string): Block[] => {
     isGoogleDoc: _isGoogle,
   })
   const _databysFragment = formatFragment(fragment)
+
+  console.log(_databysFragment)
   return _databysFragment
 }
