@@ -442,14 +442,12 @@ const containerSanitizer = (tagName, attribs) => {
   }
 }
 
-const textTagStyle = (tagName, attribs) => {
-  return {
-    tagName,
-    attribs: {
-      ...(!!attribs?.break && { break: true }),
-    },
-  }
-}
+const textTagStyle = (tagName, attribs) => ({
+  tagName,
+  attribs: {
+    ...(!!attribs?.break && { break: true }),
+  },
+})
 
 // header function for sanatize
 const sanatizeHeader = () => ({
@@ -484,7 +482,6 @@ const _sanitizeHtml = (html: string): string =>
 
 export const htmlToDatabyssFrag = (html: string): Block[] => {
   let parsed = new DOMParser().parseFromString(html, 'text/html')
-  console.log('before', parsed.body)
   const _isGoogle = isGooglePaste(parsed.body)
 
   const _body = (_isGoogle
@@ -500,18 +497,18 @@ export const htmlToDatabyssFrag = (html: string): Block[] => {
       _child.setAttribute('break', 'true')
     }
   }
-  // convert to custom tags
+  // convert to custom jsxtags
   const _sanitzedHtml = _sanitizeHtml(_body.outerHTML)
 
   parsed = new DOMParser().parseFromString(_sanitzedHtml, 'text/html')
-  console.log('after', parsed.body)
 
+  // convert to slate nodes
   const fragment: Node[] = deserialize({
     el: parsed.body,
     isGoogleDoc: _isGoogle,
   })
+  // convert to databyss format
   const _databysFragment = formatFragment(fragment)
 
-  console.log(_databysFragment)
   return _databysFragment
 }
