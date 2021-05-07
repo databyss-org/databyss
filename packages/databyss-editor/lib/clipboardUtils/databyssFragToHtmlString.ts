@@ -505,11 +505,9 @@ export const htmlToDatabyssFrag = (html: string): Block[] => {
   console.log('CHI.DRE', children)
   for (let i = 0; i < children.length; i += 1) {
     const _child = children[i]
-    console.log(_child.tagName)
 
     if (newLineElements[_child.tagName]) {
       _child.setAttribute('break', 'true')
-      console.log(_child)
     }
   }
   // convert to custom tags
