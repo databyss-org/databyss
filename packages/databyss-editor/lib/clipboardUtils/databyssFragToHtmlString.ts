@@ -13,6 +13,11 @@ import { slateRangesToStateRanges } from '../slateUtils'
 import { uid } from '../../../databyss-data/lib/uid'
 import splitTextAtOffset from './splitTextAtOffset'
 
+/**
+ *
+ * @param block convert block to slate and back to databyss format in order to normalize and merge ranges
+ */
+
 const normalizeSlateNode = (block: Node): Block => {
   const editor = createEditor()
   Transforms.insertNodes(editor, block)
@@ -82,6 +87,7 @@ const splitFragAtBreaks = (block: Block): Block[] => {
   return _blocks
 }
 
+// elements allowed to create a line break
 const newLineElements = {
   // SPAN: true,
   P: true,
@@ -185,47 +191,18 @@ const TEXT_TAGS = {
   DIV: styleContainer,
   BLOCKQUOTE: () => ({ newLine: true }),
   // TODO: ADD BULLET
-  LI: () => ({ newLine: true }),
+  LI: () => ({ newLine: true, list: true }),
   OL: () => ({ newLine: true }),
   PRE: () => ({ newLine: true }),
   UL: () => ({ newLine: true }),
-  H1: (el) => {
-    if (isChildNewLineEl(el)) {
-      return { bold: true }
-    }
-    return { newLine: true, bold: true }
-  },
-  H2: (el) => {
-    if (isChildNewLineEl(el)) {
-      return { bold: true }
-    }
-    return { newLine: true, bold: true }
-  },
-  H3: (el) => {
-    if (isChildNewLineEl(el)) {
-      return { bold: true }
-    }
-    return { newLine: true, bold: true }
-  },
-  H4: (el) => {
-    if (isChildNewLineEl(el)) {
-      return { bold: true }
-    }
-    return { newLine: true, bold: true }
-  },
-  H5: (el) => {
-    if (isChildNewLineEl(el)) {
-      return { bold: true }
-    }
-    return { newLine: true, bold: true }
-  },
-  H6: (el) => {
-    if (isChildNewLineEl(el)) {
-      return { bold: true }
-    }
-    return { newLine: true, bold: true }
-  },
-  BR: () => ({}),
+  // used in sanatizer for allowed tags
+  H1: true,
+  H2: true,
+  H3: true,
+  H4: true,
+  H5: true,
+  H6: true,
+  BR: true,
 }
 
 export const deserialize = ({
@@ -270,7 +247,7 @@ export const deserialize = ({
     let _children = children
     const attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
     const _indent = attrs?.indent ? '\t' : ''
-
+    const _bullet = attrs?.list ? '\t\u2022 ' : ''
     if (attrs?.newLine) {
       delete attrs.newLine
       if (!_children.length) {
@@ -279,10 +256,10 @@ export const deserialize = ({
         if (parent.innerText.length) {
           const _str = parent?.firstChild?.nodeValue
           const _nbsp = _str.charCodeAt(0) === 32 || _str.charCodeAt(0) === 160
-          const _text = _nbsp ? ' ' : `${_indent}\n`
+          const _text = _nbsp ? ' ' : `${_indent}${_bullet}\n`
           return { text: _text }
         }
-        return { text: `${_indent}` }
+        return { text: `${_indent}${_bullet}` }
       }
       _children = _children.map((c: Text) => {
         let _textNode = {}
@@ -290,12 +267,12 @@ export const deserialize = ({
         // only append a new line to the end of text
         if (typeof c === 'string') {
           _textNode = {
-            text: `${_indent}${c}`,
+            text: `${_indent}${_bullet}${c}`,
           }
         } else {
           _textNode = {
             ...c,
-            text: `${_indent}${c.text}`,
+            text: `${_indent}${_bullet}${c.text}`,
           }
         }
         return _textNode
@@ -500,7 +477,7 @@ const _sanitizeHtml = (html: string): string =>
     allowedTags: Object.keys(TEXT_TAGS).map((t) => t.toLocaleLowerCase()),
     // allowed attributes
     allowedAttributes: {
-      '*': ['break', 'bold', 'italic', 'indent'],
+      '*': ['break', 'bold', 'italic', 'indent', 'list'],
     },
     // TRANSFORM TAG NAMES
     transformTags: {
