@@ -238,7 +238,7 @@ export const deserialize = ({
     let _children = children
     const attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
     const _indent = attrs?.indent ? '\t' : ''
-    const _bullet = attrs?.list ? '\u2022 ' : ''
+    let _bullet = attrs?.list ? '\u2022 ' : ''
     if (attrs?.newLine) {
       delete attrs.newLine
       if (!_children.length) {
@@ -251,7 +251,8 @@ export const deserialize = ({
         }
         return { text: `${_indent}${_bullet}` }
       }
-      _children = _children.map((c: Text) => {
+      _children = _children.map((c: Text, i: number) => {
+        _bullet = i === 0 && _bullet.length ? '\u2022 ' : ''
         let _textNode = {}
 
         // only append a new line to the end of text
@@ -501,6 +502,7 @@ export const htmlToDatabyssFrag = (html: string): Block[] => {
   const _sanitzedHtml = _sanitizeHtml(_body.outerHTML)
 
   parsed = new DOMParser().parseFromString(_sanitzedHtml, 'text/html')
+  console.log(parsed)
 
   // convert to slate nodes
   const fragment: Node[] = deserialize({
