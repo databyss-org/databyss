@@ -196,6 +196,7 @@ const TEXT_TAGS = {
     }
     return { newLine: true, bold: true }
   },
+  BR: () => ({}),
 }
 
 export const deserialize = ({
@@ -218,6 +219,7 @@ export const deserialize = ({
   } else if (el.nodeType !== 1) {
     return null
   } else if (el.nodeName === 'BR') {
+    console.log(el.nodeName)
     return '\n'
   }
 
@@ -430,7 +432,6 @@ const containerSanitizer = (tagName, attribs) => {
 }
 
 const textTagStyle = (tagName, attribs) => {
-  console.log(tagName, attribs)
   return {
     tagName,
     attribs: {
@@ -502,7 +503,6 @@ export const htmlToDatabyssFrag = (html: string): Block[] => {
 
   // add break property to all top level elements
   const children = _body.children
-  console.log('CHI.DRE', children)
   for (let i = 0; i < children.length; i += 1) {
     const _child = children[i]
 
