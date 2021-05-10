@@ -25,7 +25,9 @@ export const formatSource = (value) => {
   const _value = JSON.parse(JSON.stringify(value))
   // format year
   const year = value?.detail?.year?.textValue
-  if (year) {
+  // TODO: THIS SHOULD BE TRUTHY IF ZERO
+
+  if (typeof year === 'number' || year) {
     _value.detail.year.textValue = year.toString()
   }
   return _value
