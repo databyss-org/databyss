@@ -3,6 +3,20 @@ const path = require('path')
 
 const packageJsonRoot = JSON.parse(fs.readFileSync('package.json').toString())
 const packagePrefix = process.argv[2]
+let ignoreList = []
+
+if (process.argv.length > 3) {
+  ignoreList = process.argv[3].split(',')
+}
+
+function matchesIgnoreList(text) {
+  for (const ignore of ignoreList) {
+    if (text.match(ignore)) {
+      return true
+    }
+  }
+  return false
+}
 
 function syncVersion(packagePath) {
   console.log('sync version', packagePath)
@@ -10,9 +24,9 @@ function syncVersion(packagePath) {
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath).toString())
   packageJson.version = packageJsonRoot.version
   if (packageJson.peerDependencies) {
-    Object.keys(packageJson.peerDependencies).forEach(depKey => {
+    Object.keys(packageJson.peerDependencies).forEach((depKey) => {
       const re = new RegExp(`^${packagePrefix}`)
-      if (depKey.match(re)) {
+      if (depKey.match(re) && !matchesIgnoreList(depKey)) {
         packageJson.peerDependencies[depKey] = packageJsonRoot.version
       }
     })
@@ -21,5 +35,5 @@ function syncVersion(packagePath) {
 }
 
 fs.readdirSync('packages').forEach(
-  p => p !== '.DS_Store' && syncVersion(`packages/${p}`)
+  (p) => p !== '.DS_Store' && syncVersion(`packages/${p}`)
 )
