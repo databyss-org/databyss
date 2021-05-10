@@ -16,6 +16,7 @@ import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 
 import { useEditorContext } from '../../state/EditorProvider'
 
@@ -24,7 +25,6 @@ import {
   onBakeInlineAtomic,
   setAtomicWithoutSuggestion,
 } from '../../lib/inlineUtils'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 
 export const LOCAL_SOURCES = 'LOCAL_SOURCES'
 
