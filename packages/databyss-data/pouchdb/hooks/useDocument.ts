@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
+import { EM } from '@databyss-org/data/pouchdb/utils'
 
 import { dbRef } from '../db'
 import { CouchDb } from '../../couchdb-client/couchdb'
@@ -19,6 +20,10 @@ export const useDocument = <T extends Document>(
 ) => {
   const queryClient = useQueryClient()
   const queryKey = `useDocument_${_id}`
+
+  useEffect(() => {
+    EM.process()
+  }, [])
 
   const query = useQuery<T>(
     queryKey,

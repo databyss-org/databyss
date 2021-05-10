@@ -9,7 +9,7 @@ import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
 import { getGroupActionQ } from './groups/utils'
 
-const INTERVAL_TIME = 5000
+const INTERVAL_TIME = 1000
 
 export const upQdict: upsertQueueRef = {
   current: [],
@@ -343,7 +343,6 @@ const bulkUpsert = async (upQdict: any) => {
       _docs.push(_doc)
     }
   }
-
   await dbRef.current!.bulkDocs(_docs)
 }
 
@@ -411,7 +410,7 @@ export class QueueProcessor extends EventEmitter {
   }
 }
 
-const EM = new QueueProcessor()
+export const EM = new QueueProcessor()
 
 EM.start()
 

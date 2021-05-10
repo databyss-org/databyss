@@ -150,29 +150,10 @@ export const dragAndDrop = async (item, container, driver) => {
 }
 
 export const logout = async (driver) => {
-  let count = 0
-  const logoutAction = async () => {
-    if (count > MAX_RETRIES) {
-      throw new Error('Logout Error')
-    }
-
-    await tagButtonClick('data-test-element="account-menu"', driver)
-
-    await tagButtonClick('data-test-block-menu="logout"', driver)
-
-    await getElementByTag(driver, '[data-test-path="email"]')
-
-    await sleep(SLEEP_TIME)
-
-    // todo: driver.quit on logout actions
-  }
-  try {
-    await logoutAction()
-  } catch (err) {
-    console.log('logout fail - retrying')
-    count += 1
-    await logoutAction()
-  }
+  await tagButtonClick('data-test-element="account-menu"', driver)
+  await tagButtonClick('data-test-block-menu="logout"', driver)
+  await getElementByTag(driver, '[data-test-path="email"]')
+  await sleep(SLEEP_TIME)
 }
 
 export const getElementById = async (driver, id) => {
