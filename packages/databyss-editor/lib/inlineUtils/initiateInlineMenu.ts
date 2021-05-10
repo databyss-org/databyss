@@ -42,6 +42,11 @@ export const initiateInlineMenu = ({
       // make sure this isnt an atomic closure
       const _text = Node.string(editor.children[editor.selection.focus.path[0]])
 
+      // do not allow inline in atomic block
+      const _firstChar = _text.charAt(0)
+      if (_firstChar === '@' || _firstChar === '#') {
+        return false
+      }
       const _isClosure = _text.charAt(_offset - 1) === '/'
 
       const _atBlockEnd = _offset === _text.length
