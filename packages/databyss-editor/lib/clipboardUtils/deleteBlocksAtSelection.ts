@@ -62,10 +62,12 @@ const deleteSelectionAcrossBlocks = ({
   blocks,
   anchor,
   focus,
+  firstBlockIsTitle,
 }: {
   blocks: Block[]
   anchor: Point
   focus: Point
+  firstBlockIsTitle?: boolean
 }) => {
   // after the delete, the anchor block should contain everything before the
   // anchor.offset in the anchor block merged with everything after the
@@ -99,6 +101,13 @@ const deleteSelectionAcrossBlocks = ({
 
   // remove all the the blocks in the selection except the anchor block
   blocks.splice(anchor.index + 1, focus.index - anchor.index)
+
+  if (firstBlockIsTitle) {
+    // replace title block and first line if they were removed
+    while (blocks.length < 2) {
+      blocks.push(new Block())
+    }
+  }
 }
 
 export default (draft: EditorState) => {
@@ -113,11 +122,23 @@ export default (draft: EditorState) => {
 
   adjustSelectionToIncludeInlineAtomics({ blocks, anchor, focus })
 
+  // adjust selection to not include title block
+  if (draft.firstBlockIsTitle && anchor.index === 0 && focus.index !== 0) {
+    draft.operations.reloadAll = true
+    anchor.index = 1
+    anchor.offset = 0
+  }
+
   // check if selection is within a block
   if (focus.index === anchor.index) {
     deleteSelectionWithinBlock({ blocks, anchor, focus })
   } else {
-    deleteSelectionAcrossBlocks({ blocks, anchor, focus })
+    deleteSelectionAcrossBlocks({
+      blocks,
+      anchor,
+      focus,
+      firstBlockIsTitle: draft.firstBlockIsTitle,
+    })
     draft.operations.reloadAll = true
   }
 

@@ -132,6 +132,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
             pb: 'small',
             mr: 'largest',
           })}
+          data-test-editor-element="true"
         >
           {block.__showNewBlockMenu && !readOnly && !_isPublic && (
             <View
@@ -165,6 +166,19 @@ const Element = ({ attributes, children, element, readOnly }) => {
                 suggestType="topics"
               >
                 <SuggestTopics onSuggestions={onSuggestions} />
+              </SuggestMenu>
+            </View>
+          )}
+
+          {block.__showInlineCitationMenu && (
+            <View contentEditable="false" suppressContentEditableWarning>
+              <SuggestMenu
+                inlineAtomic
+                onSuggestions={onSuggestions}
+                placeholder="type title and/or author for suggestions..."
+                suggestType="sources"
+              >
+                <SuggestSources inlineAtomic onSuggestions={onSuggestions} />
               </SuggestMenu>
             </View>
           )}

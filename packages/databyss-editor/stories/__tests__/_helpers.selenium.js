@@ -83,6 +83,11 @@ export const getElementByTag = async (driver, tag) => {
   return el
 }
 
+export const getEditorElements = async (driver) => {
+  await sleep(1000)
+  return getElementsByTag(driver, `[data-test-editor-element="true"]`)
+}
+
 export const tagButtonClick = async (tag, driver) => {
   const actions = driver.actions({ async: true })
 

@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { useEditor } from '@databyss-org/slate-react'
+import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import { uid } from '@databyss-org/data/lib/uid'
 import {
   CROSSREF,
@@ -18,8 +20,16 @@ import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPa
 import { useEditorContext } from '../../state/EditorProvider'
 
 import { CatalogResults } from './'
+import {
+  onBakeInlineAtomic,
+  setAtomicWithoutSuggestion,
+} from '../../lib/inlineUtils'
 
 export const LOCAL_SOURCES = 'LOCAL_SOURCES'
+
+// use to truncate no more than a max amount of characters
+const truncate = (input, max) =>
+  input.length > max ? `${input.substring(0, max)}...` : input
 
 export const formatSource = (value) => {
   const _value = JSON.parse(JSON.stringify(value))
@@ -30,6 +40,20 @@ export const formatSource = (value) => {
   if (typeof year === 'number' || year) {
     _value.detail.year.textValue = year.toString()
   }
+  // ensure short name exists, if not create one
+  if (!value.name) {
+    const _name =
+      value?.detail?.authors[0]?.lastName.textValue ||
+      value?.detail?.authors[0]?.firstName.textValue
+
+    const _year = value?.detail?.year?.textValue
+
+    _value.name =
+      _name && _year
+        ? { textValue: `${_name} ${_year}`, ranges: [] }
+        : value.text
+  }
+
   return _value
 }
 
@@ -41,13 +65,41 @@ const SuggestSources = ({
   onSuggestionsChanged,
   resultsMode,
   setResultsMode,
+  inlineAtomic,
+  activeIndexRef,
   ...others
 }) => {
+  const editor = useEditor()
+
   const sourcesRes = useBlocksInPages(BlockType.Source)
-  const { replace } = useEditorContext()
+  const { replace, state, setContent } = useEditorContext()
+
+  const pendingSetContent = useRef(false)
+
   const sharedWithGroups = useEditorPageContext((c) => c && c.sharedWithGroups)
   const [suggestions, setSuggestsions] = useState()
+  const [filteredSuggestions, setFilteredSuggestions] = useState([])
+
   const { isOnline } = useNotifyContext() || { isOnline: false }
+
+  const filterSuggestions = (_sources) => {
+    if (!_sources.length) {
+      return []
+    }
+    return _sources.filter(prefixSearchAll(query)).slice(0, 4)
+  }
+
+  const updateSuggestions = () => {
+    if (!suggestions?.length) {
+      return
+    }
+    const _nextSuggestions = filterSuggestions(suggestions)
+    // onSuggestionsChanged(_nextSuggestions)
+
+    setFilteredSuggestions(_nextSuggestions)
+  }
+
+  useEffect(updateSuggestions, [query, suggestions])
 
   useEffect(() => {
     // reset menu when active state changes
@@ -55,33 +107,67 @@ const SuggestSources = ({
   }, [active])
 
   const onSourceSelected = (source) => {
-    if (!source._id) {
-      source._id = uid()
-      setSource({ ...formatSource(source), sharedWithGroups })
-    }
+    if (!inlineAtomic) {
+      if (!source._id) {
+        source._id = uid()
+        setSource({ ...formatSource(source), sharedWithGroups })
+      }
 
-    replace([source])
+      replace([source])
+    } else {
+      if (!source._id.length) {
+        source._id = uid()
+      }
+      const _formatteSource = { ...formatSource(source), sharedWithGroups }
+
+      setSource(_formatteSource)
+
+      pendingSetContent.current = true
+
+      onBakeInlineAtomic({
+        editor,
+        state,
+        suggestion: _formatteSource,
+        setContent,
+      })
+    }
     dismiss()
   }
 
   const _composeLocalSources = (_sourcesDict) => {
-    let _sources = Object.values(_sourcesDict)
-    if (!_sources.length) {
+    const sources = Object.values(_sourcesDict)
+    if (!sources.length) {
       return []
     }
-    _sources = _sources
-      .filter(prefixSearchAll(query))
+    // first attempt to search based on the name property
+    let _sources = sources
+      .filter(prefixSearchAll(query, 'name'))
       .slice(0, 4)
       .map((s) => (
         <DropdownListItem
           data-test-element="suggested-menu-sources"
-          label={s.text.textValue}
+          label={`${s.name.textValue} [${truncate(s.text.textValue, 30)}]`}
           key={s._id}
           onPress={() => onSourceSelected({ ...s, type: 'SOURCE' })}
         />
       ))
+    // fall back to searching the text property
     if (!_sources.length) {
-      return []
+      _sources = sources
+        .filter(prefixSearchAll(query))
+        .slice(0, 4)
+        .map((s) => (
+          <DropdownListItem
+            data-test-element="suggested-menu-sources"
+            label={s.text.textValue}
+            key={s._id}
+            onPress={() => onSourceSelected({ ...s, type: 'SOURCE' })}
+          />
+        ))
+
+      if (!_sources.length) {
+        return []
+      }
     }
     return _sources.concat(
       <Separator color="border.3" spacing="extraSmall" key="sep" />
@@ -104,6 +190,39 @@ const SuggestSources = ({
   ]
 
   const _mode = resultsMode || LOCAL_SOURCES
+
+  const setCurrentSourceWithoutSuggestion = () =>
+    setAtomicWithoutSuggestion({
+      editor,
+      state,
+      setContent,
+    })
+
+  useEventListener('keydown', (e) => {
+    /*
+    bake source if arrow up or down without suggestion
+    */
+    if (
+      !filteredSuggestions.length &&
+      !isOnline &&
+      (e.key === 'ArrowDown' || e.key === 'ArrowUp')
+    ) {
+      setCurrentSourceWithoutSuggestion()
+    }
+
+    if (e.key === 'Enter') {
+      // no suggestion selected on menu
+      if (activeIndexRef.current === -1) {
+        setCurrentSourceWithoutSuggestion()
+        return
+      }
+      window.requestAnimationFrame(() => {
+        if (!pendingSetContent.current && !active) {
+          setCurrentSourceWithoutSuggestion()
+        }
+      })
+    }
+  })
 
   if (!sourcesRes.isSuccess) {
     return <LoadingFallback queryObserver={sourcesRes} />

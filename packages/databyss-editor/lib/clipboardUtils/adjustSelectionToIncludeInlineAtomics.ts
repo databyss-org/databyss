@@ -1,3 +1,4 @@
+import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import cloneDeep from 'clone-deep'
 import { Point, Block } from '../../interfaces'
 import { getRangesAtPoint } from '../../state/util'
@@ -25,7 +26,12 @@ export default ({
   }).filter(
     (r) =>
       r.marks.length &&
-      r.marks.filter((i) => Array.isArray(i) && i[0] === 'inlineTopic').length
+      r.marks.filter(
+        (i) =>
+          Array.isArray(i) &&
+          (i[0] === InlineTypes.InlineTopic ||
+            i[0] === InlineTypes.InlineSource)
+      ).length
   )
   const _inlineRangesAtFocus = getRangesAtPoint({
     blocks,
@@ -33,7 +39,12 @@ export default ({
   }).filter(
     (r) =>
       r.marks.length &&
-      r.marks.filter((i) => Array.isArray(i) && i[0] === 'inlineTopic').length
+      r.marks.filter(
+        (i) =>
+          Array.isArray(i) &&
+          (i[0] === InlineTypes.InlineTopic ||
+            i[0] === InlineTypes.InlineSource)
+      ).length
   )
 
   // try catch function works with both read only and non read only properties

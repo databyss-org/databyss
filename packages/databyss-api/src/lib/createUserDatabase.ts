@@ -4,7 +4,6 @@ import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import { DocumentScope } from 'nano'
 import { Page } from '../../../databyss-services/interfaces/Page'
-import { BlockType } from '../../../databyss-services/interfaces/Block'
 import {
   UserPreference,
   DocumentType,
@@ -27,7 +26,7 @@ TODO: importing this function causes server to fail
 */
 export const normalizePage = (page: Page): PageDoc => {
   const _pageDoc: PageDoc = {
-    blocks: [{ _id: page.blocks[0]._id, type: BlockType.Entry }],
+    blocks: page.blocks.map((_b) => ({ _id: _b._id, type: _b.type })),
     selection: page.selection._id,
     _id: page._id,
     name: page.name,
@@ -39,13 +38,15 @@ export const normalizePage = (page: Page): PageDoc => {
 export const initializeNewPage = async ({
   groupId,
   pageId,
+  skipTitleBlock,
 }: {
   groupId: string
   pageId: string
+  skipTitleBlock?: boolean
 }) => {
   // get user group
   const groupDb = await cloudant.current.db.use(groupId)
-  const _page: any = new Page(pageId)
+  const _page: any = new Page(pageId, { skipTitleBlock })
   // upsert selection
   await groupDb.upsert(_page.selection._id, () => ({
     doctype: DocumentType.Selection,
@@ -54,13 +55,15 @@ export const initializeNewPage = async ({
     ..._page.selection,
   }))
   // upsert blocks
-  await groupDb.upsert(_page.blocks[0]._id, () => ({
-    doctype: DocumentType.Block,
-    createdAt: Date.now(),
-    belongsToGroup: groupId,
-    ..._page.blocks[0],
-  }))
-
+  for (const _block of _page.blocks) {
+    await groupDb.upsert(_block._id, () => ({
+      doctype: DocumentType.Block,
+      createdAt: Date.now(),
+      belongsToGroup: groupId,
+      ..._block,
+    }))
+  }
+  // upsert page
   await groupDb.upsert(_page._id, () => ({
     createdAt: Date.now(),
     doctype: DocumentType.Page,
@@ -225,7 +228,8 @@ export const addCredentialsToGroupId = async ({
 }
 
 export const createUserDatabaseCredentials = async (
-  user: SysUser
+  user: SysUser,
+  skipTitleBlock?: boolean
 ): Promise<CredentialResponse> => {
   let groupId = user.defaultGroupId
 
@@ -268,6 +272,7 @@ export const createUserDatabaseCredentials = async (
     await initializeNewPage({
       groupId,
       pageId: defaultPageId,
+      skipTitleBlock,
     })
 
     await _db.upsert(_userPreferences._id, () => ({
