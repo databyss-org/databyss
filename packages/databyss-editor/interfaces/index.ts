@@ -7,14 +7,13 @@ export type {
 } from './EditorState'
 export type {
   Range,
-  Block,
   Selection,
   Point,
   Text,
   BlockRelation,
   IndexPageResult,
 } from '@databyss-org/services/interfaces'
-export { BlockType } from '@databyss-org/services/interfaces'
+export { BlockType, Block } from '@databyss-org/services/interfaces'
 
 export enum BlockRelationOperation {
   ADD = 'ADD',

@@ -31,6 +31,7 @@ export interface EditorState {
   removedEntities: BlockReference[]
   blocks: Block[]
   pageHeader?: PageHeader
+  firstBlockIsTitle?: boolean
   /**
    * Dictionary
    * - keys are entity names (e.g. topic or source text)

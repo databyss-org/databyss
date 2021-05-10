@@ -2415,10 +2415,10 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
-"@databyss-org/slate-react@0.57.2-b5":
-  version "0.57.2-b5"
-  resolved "https://registry.yarnpkg.com/@databyss-org/slate-react/-/slate-react-0.57.2-b5.tgz#671e8203ef776d80ab1e703346ad4fc12225a2ec"
-  integrity sha512-oL+5QmessN8xyrf2kUBEszo89S94DZhHy238UnW675+obzIoiXMENEsbi1cLX4tE8mTRYpZTMP9OP7hxq7eGig==
+"@databyss-org/slate-react@0.57.2-b6":
+  version "0.57.2-b6"
+  resolved "https://registry.yarnpkg.com/@databyss-org/slate-react/-/slate-react-0.57.2-b6.tgz#666eae7439d99233f37018e02aafd932826aeba8"
+  integrity sha512-xANuWLUwa7uBrS9EtDZHu5FalB1VD+w3KL1fh7ClAgQAdezqW+kHiUl2aG5JfIZXqibOuGsUStF6eqTvzvVFlA==
   dependencies:
     "@types/is-hotkey" "^0.1.1"
     "@types/lodash" "^4.14.149"
@@ -12955,6 +12955,13 @@ inline-style-prefixer@^5.0.3:
   dependencies:
     css-in-js-utils "^2.0.0"
 
+innertext@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/innertext/-/innertext-1.0.3.tgz#f1a8767592bcdcce2ea94e686ed41a86ba4e8df0"
+  integrity sha512-ZC410b7IbrTrmt8bQb27xUOJgXkJu+XL6MVncb9FGyxjRIHyQqNjpSDY20zvSUttkAiYj0dait/67/sXyWvwYg==
+  dependencies:
+    html-entities "^1.2.0"
+
 inquirer@6.5.0:
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-6.5.0.tgz#2303317efc9a4ea7ec2e2df6f86569b734accf42"
@@ -23123,6 +23130,11 @@ strip-outer@^1.0.0:
   integrity sha512-k55yxKHwaXnpYGsOzg4Vl8+tDrWylxDEpknGjhTiZB8dFRU5rTo9CAzeycivxV3s+zlTKwrs6WxMxR95n26kwg==
   dependencies:
     escape-string-regexp "^1.0.2"
+
+striptags@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/striptags/-/striptags-3.1.1.tgz#c8c3e7fdd6fb4bb3a32a3b752e5b5e3e38093ebd"
+  integrity sha1-yMPn/db7S7OjKjt1LltePjgJPr0=
 
 style-loader@^0.23.1:
   version "0.23.1"

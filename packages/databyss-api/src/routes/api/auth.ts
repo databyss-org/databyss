@@ -40,7 +40,7 @@ router.post('/', authMiddleware, async (req, res) => {
 router.post(
   '/code',
   wrap(async (req, res) => {
-    const { code, email } = req.body
+    const { code, email, skipTitleBlock } = req.body
     // const login = await cloudant.current.db.use('login')
 
     const _selector = {
@@ -62,7 +62,10 @@ router.post(
         const session = await getSessionFromToken(token)
 
         // give user credentials, if default db does not exist for user, create one
-        const credentials = await createUserDatabaseCredentials(session.user)
+        const credentials = await createUserDatabaseCredentials(
+          session.user,
+          skipTitleBlock
+        )
 
         session.groupCredentials = [credentials]
 

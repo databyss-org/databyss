@@ -28,7 +28,7 @@ module.exports = async ({ config, mode }) => {
   // remove the REACT_APP_ prefix from rewrite targets, so you only have
   // to do `process.env.API_URL` instead of `process.env.REACT_APP_API_URL`
   const _nextPlugins = []
-  config.plugins.forEach(p => {
+  config.plugins.forEach((p) => {
     if (!(p instanceof WebpackDefinePlugin)) {
       _nextPlugins.push(p)
     }
