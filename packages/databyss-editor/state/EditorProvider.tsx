@@ -29,6 +29,7 @@ import { Text, Selection, EditorState, Block, PagePath } from '../interfaces'
 import _initState, { addMetaDataToBlocks } from './initialState'
 import reducer from './reducer'
 import { getPagePath } from '../lib/util'
+import { BlockType } from '../../databyss-services/interfaces/Block'
 
 import {
   cutOrCopyEventHandler,
@@ -48,7 +49,7 @@ export type Transform = {
   previous?: Text
   // number of blocks added or removed
   blockDelta?: number
-  isRefEntity?: string
+  isRefEntity?: { _id: string; type: BlockType }
 }
 
 export type TransformArray = {

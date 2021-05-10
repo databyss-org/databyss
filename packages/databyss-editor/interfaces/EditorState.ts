@@ -1,11 +1,15 @@
 import { Text, PageHeader } from '@databyss-org/services/interfaces'
 import { Block, Selection } from './'
-import { BlockReference } from '../../databyss-services/interfaces'
+import { BlockReference, BlockType } from '../../databyss-services/interfaces'
 
 export interface PayloadOperation {
   index: number
   text: Text
-  isRefEntity?: string
+  isRefEntity?: {
+    _id: string
+    type: BlockType
+    shortName?: Text
+  }
   withRerender?: string
   checkAtomicDelta?: boolean
   withBakeAtomic?: boolean
@@ -31,6 +35,7 @@ export interface EditorState {
   removedEntities: BlockReference[]
   blocks: Block[]
   pageHeader?: PageHeader
+  firstBlockIsTitle?: boolean
   /**
    * Dictionary
    * - keys are entity names (e.g. topic or source text)

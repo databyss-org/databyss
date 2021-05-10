@@ -132,6 +132,9 @@ export const sourceSchema: JSONSchema4 = {
         },
       },
     },
+    name: {
+      $ref: 'text',
+    },
     title: {
       $ref: 'text',
     },

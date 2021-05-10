@@ -112,6 +112,7 @@ const EditSourceForm = (props) => {
   )
 
   const hasDetail = 'detail' in values
+
   const isArticle = checkIfArticle(values.detail)
   const isBook = checkIfBook(values.detail)
   const isBookSection = checkIfBookSection(values.detail)
@@ -267,6 +268,13 @@ const EditSourceForm = (props) => {
         path="text"
         id="name"
         label="Name"
+        rich
+      />
+      <LabeledTextInput
+        placeholder="e.g. Jacobson 1975"
+        path="name"
+        id="shortName"
+        label="Short Name"
         rich
       />
     </>
