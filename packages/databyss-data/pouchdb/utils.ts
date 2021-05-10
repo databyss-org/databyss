@@ -338,6 +338,14 @@ const bulkUpsert = async (upQdict: any) => {
             : Array.from(_groupSet),
         belongsToGroup: getAccountFromLocation(),
       }
+      // EDGE CASE
+      /**
+       * if undo on a block that went from entry -> source, validator will fail because entry will contain `name` property, in this case set `name` to null
+       */
+      if (_doc.type === BlockType.Entry && _doc?.name) {
+        delete _doc.name
+      }
+
       pouchDataValidation(_doc)
 
       _docs.push(_doc)

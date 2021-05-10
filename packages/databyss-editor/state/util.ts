@@ -1,4 +1,9 @@
-import { BlockType, Page } from '@databyss-org/services/interfaces'
+import {
+  BlockType,
+  Page,
+  Source,
+  Topic,
+} from '@databyss-org/services/interfaces'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
 import {
@@ -204,6 +209,38 @@ export const getClosureTypeFromOpeningType = (type: BlockType): BlockType => {
   const _type: BlockType = _selector[type]
 
   return _type
+}
+
+export const atomicTypeToInlineRangeType = (type: BlockType): InlineTypes => {
+  const getSymbolObj = {
+    [BlockType.Source]: InlineTypes.InlineSource,
+    [BlockType.Topic]: InlineTypes.InlineTopic,
+  }
+
+  const inlineType: InlineTypes = getSymbolObj[type]
+
+  return inlineType
+}
+
+export const atomicTypeToSymbol = (type: BlockType): string => {
+  const getSymbolObj = {
+    [BlockType.Source]: '@',
+    [BlockType.Topic]: '#',
+  }
+
+  const symbol = getSymbolObj[type]
+
+  return symbol
+}
+
+export const inlineTypeToSymbol = (inlineType: InlineTypes): string => {
+  const getType = {
+    [InlineTypes.InlineSource]: BlockType.Source,
+    [InlineTypes.InlineTopic]: BlockType.Topic,
+  }
+  const type = getType[inlineType]
+
+  return atomicTypeToSymbol(type)
 }
 
 export const symbolToAtomicType = (symbol: string): BlockType => {
@@ -466,24 +503,28 @@ export const replaceInlineText = ({
   text,
   refId,
   newText,
+  type,
 }: {
   text: Text
   refId: string
   newText: Text
+  type: InlineTypes
 }): Text | null => {
+  const _symbol = inlineTypeToSymbol(type)
+
   const _textToInsert: Text = {
-    textValue: `#${newText.textValue}`,
+    textValue: `${_symbol}${newText.textValue}`,
     ranges: [
       {
         length: newText.textValue.length + 1,
         offset: 0,
-        marks: [[InlineTypes.InlineTopic, refId]],
+        marks: [[type, refId]],
       },
     ],
   }
 
   const _rangesWithId = text.ranges.filter(
-    (r) => r.marks[0][0] === InlineTypes.InlineTopic && r.marks[0][1] === refId
+    (r) => r.marks[0][0] === type && r.marks[0][1] === refId
   )
   // offset will be updated in loop
   let _cumulativeOffset = 0
@@ -586,9 +627,13 @@ export const convertInlineToAtomicBlocks = ({
   // check if text is inline atomic type
   const _atomicType =
     inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))
+
   if (inlineMarkupData && _atomicType) {
+    const _inlineType = atomicTypeToInlineRangeType(_atomicType)
+
     // text value with markup
-    let _atomicTextValue = inlineMarkupData?.text
+    const _atomicTextValue = inlineMarkupData?.text
+    let _atomicShortTextValue = _atomicTextValue
 
     // new Id for inline atomic
     let _atomicId = uid()
@@ -601,10 +646,18 @@ export const convertInlineToAtomicBlocks = ({
         inlineMarkupData.text.substring(1).toLowerCase()
       ]
 
+    let _isSuggestion = false
     // if suggestion exists in cache, grab values
     if (_suggestion?.type === _atomicType) {
+      let _shortName = _suggestion.text.textValue
+      const __sugestion = _suggestion as Source & Topic
+      if (__sugestion?.name) {
+        _shortName = __sugestion.name.textValue
+      }
+      const _symbol = atomicTypeToSymbol(_atomicType)
       _atomicId = _suggestion._id
-      _atomicTextValue = `#${_suggestion.text.textValue}`
+      _atomicShortTextValue = `${_symbol}${_shortName}`
+      _isSuggestion = true
     }
 
     // get value before offset
@@ -621,12 +674,12 @@ export const convertInlineToAtomicBlocks = ({
 
     // merge first block with atomic value, add mark and id to second block
     _textBefore = mergeText(_textBefore, {
-      textValue: _atomicTextValue,
+      textValue: _atomicShortTextValue,
       ranges: [
         {
           offset: 0,
-          length: _atomicTextValue.length,
-          marks: [[InlineTypes.InlineTopic, _atomicId]],
+          length: _atomicShortTextValue.length,
+          marks: [[_inlineType, _atomicId]],
         },
       ],
     })
@@ -652,13 +705,17 @@ export const convertInlineToAtomicBlocks = ({
     }
 
     draft.selection = _nextSelection
-    const _entity = {
-      type: _atomicType,
-      // remove atomic symbol
-      text: { textValue: _atomicTextValue.substring(1), ranges: [] },
-      _id: _atomicId,
+
+    // if suggestion exists do not create new entity
+    if (!_isSuggestion) {
+      const _entity = {
+        type: _atomicType,
+        // remove atomic symbol
+        text: { textValue: _atomicTextValue.substring(1), ranges: [] },
+        _id: _atomicId,
+      }
+      draft.newEntities.push(_entity)
     }
-    draft.newEntities.push(_entity)
   }
 }
 
@@ -676,7 +733,11 @@ export const getInlineOrAtomicsFromStateSelection = (
       b.text.ranges.filter(
         (r) =>
           r.marks.filter(
-            (m) => Array.isArray(m) && m.length === 2 && m[0] === 'inlineTopic'
+            (m) =>
+              Array.isArray(m) &&
+              m.length === 2 &&
+              (m[0] === InlineTypes.InlineTopic ||
+                m[0] === InlineTypes.InlineSource)
           ).length
       ).length
   )

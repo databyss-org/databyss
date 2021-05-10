@@ -170,6 +170,19 @@ const Element = ({ attributes, children, element, readOnly }) => {
             </View>
           )}
 
+          {block.__showInlineCitationMenu && (
+            <View contentEditable="false" suppressContentEditableWarning>
+              <SuggestMenu
+                inlineAtomic
+                onSuggestions={onSuggestions}
+                placeholder="type title and/or author for suggestions..."
+                suggestType="sources"
+              >
+                <SuggestSources inlineAtomic onSuggestions={onSuggestions} />
+              </SuggestMenu>
+            </View>
+          )}
+
           {block.__showInlineTopicMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu

@@ -98,6 +98,8 @@ describe('<EditSourceForm/>', () => {
 
     // reach publication title field
     await tabKey(actions)
+    await sleep(1000)
+    await tabKey(actions)
 
     // enter values to test later
     await sendKeys(actions, sourceTitle)

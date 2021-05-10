@@ -83,6 +83,7 @@ const SuggestMenu = ({
   })
   const [menuActive, setMenuActive] = useState(false)
   const [query, setQuery] = useState(null)
+
   const [hasSuggestions, setHasSuggestions] = useState(false)
   const [resultsMode, setResultsMode] = useState('')
 
@@ -192,6 +193,7 @@ const SuggestMenu = ({
           React.cloneElement(React.Children.only(children), {
             editor,
             editorContext,
+            activeIndexRef,
             dismiss: onDismiss,
             query,
             menuHeight: MENU_HEIGHT,

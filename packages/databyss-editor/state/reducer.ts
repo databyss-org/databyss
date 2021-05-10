@@ -1,6 +1,12 @@
 import { uid } from '@databyss-org/data/lib/uid'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
-import { FSA, BlockType, Block } from '@databyss-org/services/interfaces'
+import {
+  FSA,
+  BlockType,
+  Block,
+  Topic,
+  Source,
+} from '@databyss-org/services/interfaces'
 import {
   SPLIT,
   MERGE,
@@ -46,11 +52,16 @@ import {
   replaceInlineText,
   getRangesAtPoint,
   pushAtomicChangeUpstream,
+  getTextOffsetWithRange,
+  atomicTypeToInlineRangeType,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
 import mergeInlineAtomicMenuRange from '../lib/clipboardUtils/mergeInlineAtomicMenuRange'
-import { RangeType } from '../../databyss-services/interfaces/Range'
+import {
+  RangeType,
+  InlineTypes,
+} from '../../databyss-services/interfaces/Range'
 import { OnChangeArgs } from './EditorProvider'
 
 // if block at @index in @draft.blocks starts with an atomic identifier character,
@@ -70,7 +81,12 @@ export const bakeAtomicBlock = ({
   const _doesBlockHaveInlineAtomicRange = !!_block?.text.ranges.filter(
     (r) =>
       r.marks.length &&
-      r.marks.filter((i) => Array.isArray(i) && i[0] === 'inlineTopic').length
+      r.marks.filter(
+        (i) =>
+          Array.isArray(i) &&
+          (i[0] === InlineTypes.InlineTopic ||
+            i[0] === InlineTypes.InlineSource)
+      ).length
   ).length
 
   if (
@@ -352,7 +368,10 @@ export default (
               (r) =>
                 r.marks.length &&
                 r.marks.filter(
-                  (i) => Array.isArray(i) && i[0] === 'inlineTopic'
+                  (i) =>
+                    Array.isArray(i) &&
+                    (i[0] === InlineTypes.InlineTopic ||
+                      i[0] === InlineTypes.InlineSource)
                 ).length
             ).length
 
@@ -653,6 +672,7 @@ export default (
             // update node text
             let _block = draft.blocks[op.index]
             // if operation is ref entity, handle separately
+
             if (!op.isRefEntity) {
               _block.text = op.text
             }
@@ -671,7 +691,8 @@ export default (
             if (op.isRefEntity) {
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {
-                if (_b._id === op.isRefEntity) {
+                // block is top level atomic
+                if (_b._id === op.isRefEntity?._id) {
                   _block = draft.blocks[_idx]
                   _block.text = op.text
 
@@ -701,10 +722,15 @@ export default (
                   })
                 } else if (op.isRefEntity) {
                   // check text value to update any inline atomics found
+                  // use shortname if provided for inlines
+                  const _refText = op.isRefEntity?.shortName || op.text
+
                   const _newText = replaceInlineText({
                     text: _b.text,
-                    refId: op.isRefEntity,
-                    newText: op.text,
+                    refId: op.isRefEntity._id,
+                    newText: _refText,
+                    type: atomicTypeToInlineRangeType(op.isRefEntity.type),
+                    // type: InlineTypes.InlineTopic,
                   })
 
                   if (_newText) {
@@ -822,13 +848,23 @@ export default (
           break
         }
         case CACHE_ENTITY_SUGGESTIONS: {
-          const blocks: Block[] = payload.blocks
+          const blocks: Topic[] | Source[] = payload.blocks
           draft.entitySuggestionCache = draft.entitySuggestionCache || {}
+          // cache suggestions according to long name
           blocks.forEach((block) => {
             draft.entitySuggestionCache[
               block.text.textValue.toLowerCase()
             ] = block
           })
+          // cache suggestions according to short name
+          blocks.forEach((block) => {
+            if (block?.name) {
+              draft.entitySuggestionCache[
+                block.name.textValue.toLowerCase()
+              ] = block
+            }
+          })
+
           break
         }
         case SET_SELECTION: {
@@ -851,6 +887,7 @@ export default (
             const _activeInlineAfter = _activeRangesAfter.filter((r) =>
               r.marks.includes(RangeType.InlineAtomicInput)
             )
+
             // if active selection was 'inlineAtomicMenu and' before and not after, convert inlines to atomic
             if (_activeInlineBefore.length && !_activeInlineAfter.length) {
               const _index = draft.selection.anchor.index
@@ -888,7 +925,6 @@ export default (
           draft,
           index: state.selection.focus.index,
         })
-
         if (_baked && isAtomicInlineType(_baked.type)) {
           draft.newEntities.push(_baked)
         }
@@ -952,6 +988,7 @@ export default (
         block.__showNewBlockMenu = false
         block.__isActive = false
         block.__showInlineTopicMenu = false
+        block.__showInlineCitationMenu = false
       })
       const _selectedBlock = draft.blocks[draft.selection.focus.index]
 
@@ -961,16 +998,22 @@ export default (
           !selectionHasRange(draft.selection) &&
           !_selectedBlock.text.textValue.length
 
-        _selectedBlock.__showCitationMenu =
-          _selectedBlock.text.textValue.startsWith('@') &&
-          !_selectedBlock.text.textValue.match(`\n`)
-
         // block new topic menu if current range is inlineTopic
         const _doesBlockHaveInlineAtomicRange = !!_selectedBlock.text.ranges.filter(
           (r) =>
             r.marks.length &&
-            r.marks.filter((i) => Array.isArray(i) && i[0] === 'inlineTopic')
+            r.marks.filter(
+              (i) =>
+                Array.isArray(i) &&
+                (i[0] === InlineTypes.InlineTopic ||
+                  i[0] === InlineTypes.InlineSource)
+            )
         ).length
+
+        _selectedBlock.__showCitationMenu =
+          _selectedBlock.text.textValue.startsWith('@') &&
+          !_selectedBlock.text.textValue.match(`\n`) &&
+          !_doesBlockHaveInlineAtomicRange
 
         _selectedBlock.__showTopicMenu =
           _selectedBlock.text.textValue.startsWith('#') &&
@@ -991,9 +1034,25 @@ export default (
           false
         )
 
-        // show __showInlineTopicMenu if selection is collapsed, selection is within text precedded with a `#` and it is currently not tagged already
-        _selectedBlock.__showInlineTopicMenu =
-          !selectionHasRange(draft.selection) && _hasInlineMenuMark
+        // show __showInlineTopicMenu or __showInlineCitationMenu if selection is collapsed, selection is within text precedded with a `#` or `@` and it is currently not tagged already
+        if (_hasInlineMenuMark) {
+          // check to see if inline mark is source or topic
+          const inlineMarkupData = getTextOffsetWithRange({
+            text: _selectedBlock.text,
+            rangeType: RangeType.InlineAtomicInput,
+          })
+          // first character in atomic input range
+          const _symbol = inlineMarkupData?.text.substring(0, 1)
+          if (_symbol && !selectionHasRange(draft.selection)) {
+            const _inlineAtomicType = symbolToAtomicType(_symbol)
+            if (_inlineAtomicType === BlockType.Topic) {
+              _selectedBlock.__showInlineTopicMenu = true
+            }
+            if (_inlineAtomicType === BlockType.Source) {
+              _selectedBlock.__showInlineCitationMenu = true
+            }
+          }
+        }
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element
         _selectedBlock.__isActive =
