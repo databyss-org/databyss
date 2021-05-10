@@ -639,7 +639,8 @@ export default (
           const _mergingAtomic = isAtomicInlineType(
             state.blocks[payload.index + 1].type
           )
-          if (_mergingIntoAtomic || _mergingAtomic) {
+          const _mergingTitle = payload.index === 0
+          if (_mergingIntoAtomic || _mergingAtomic || _mergingTitle) {
             draft.preventDefault = true
             break
           }
@@ -821,17 +822,13 @@ export default (
         case CLEAR: {
           const _oldBlock = draft.blocks[payload.index]
           // create a new entity
-          let _block: Block = {
-            type: BlockType.Entry,
-            _id: uid(),
-            text: { textValue: '', ranges: [] },
-          }
+          let _block = blockValue(new Block())
           draft.blocks[payload.index] = _block
 
           // push update operation back to editor
           draft.operations.push({
             index: payload.index,
-            block: blockValue(_block),
+            block: _block,
           })
 
           /*
@@ -840,15 +837,11 @@ export default (
           const _idx = draft.blocks.findIndex((b) => b._id === _oldBlock._id)
 
           if (_idx > -1 && getClosureType(draft.blocks[_idx].type)) {
-            _block = {
-              type: BlockType.Entry,
-              _id: uid(),
-              text: { textValue: '', ranges: [] },
-            }
+            _block = blockValue(new Block())
             draft.blocks[_idx] = _block
             draft.operations.push({
               index: _idx,
-              block: blockValue(_block),
+              block: _block,
             })
           }
           pushAtomicChangeUpstream({ state, draft })
@@ -915,7 +908,12 @@ export default (
         draft.selection = nextSelection
       }
 
-      if (draft.selection.focus.index !== state.selection.focus.index) {
+      const _inTitleBlock =
+        draft.firstBlockIsTitle && state.selection.focus.index === 0
+      if (
+        !_inTitleBlock &&
+        draft.selection.focus.index !== state.selection.focus.index
+      ) {
         // check for atomic closure on block blur
         bakeAtomicClosureBlock({
           draft,

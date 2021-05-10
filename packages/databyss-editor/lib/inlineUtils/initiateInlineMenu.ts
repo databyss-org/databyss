@@ -12,9 +12,11 @@ import { flattenOffset, isCurrentlyInInlineAtomicField } from '../slateUtils'
 export const initiateInlineMenu = ({
   editor,
   event,
+  firstBlockIsTitle,
 }: {
   editor: ReactEditor & SlateEditor
   event: KeyboardEvent
+  firstBlockIsTitle: boolean
 }): boolean => {
   if (!editor.selection) {
     return false
@@ -24,6 +26,10 @@ export const initiateInlineMenu = ({
     (event.key === '#' || event.key === '@') &&
     Range.isCollapsed(editor.selection)
   ) {
+    // don't allow inline if we're in title block
+    if (firstBlockIsTitle && editor.selection.focus.path[0] === 0) {
+      return false
+    }
     // check if its not at the start of a block
     let _offset: string | number = flattenOffset(
       editor,

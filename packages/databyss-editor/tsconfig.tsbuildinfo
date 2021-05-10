@@ -231,147 +231,147 @@
         "signature": "081425611368b52c9c42d36ac1ac14287f20521f10447f7dd4f4174143e375fd",
         "affectsGlobalScope": true
       },
-      "../../node_modules/@databyss-org/slate/dist/create-editor.d.ts": {
+      "../../node_modules/slate/dist/create-editor.d.ts": {
         "version": "0c1503f920fc74def6465018a35c34213481829e6496f6b6d2261b467f378d6a",
         "signature": "0c1503f920fc74def6465018a35c34213481829e6496f6b6d2261b467f378d6a",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/interfaces/editor.d.ts": {
+      "../../node_modules/slate/dist/interfaces/editor.d.ts": {
         "version": "ddce35c96e4b5bdf3cb64a28d31ba497f85dd184a9ab16fb5c253e5ec95ff919",
         "signature": "ddce35c96e4b5bdf3cb64a28d31ba497f85dd184a9ab16fb5c253e5ec95ff919",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/interfaces/element.d.ts": {
+      "../../node_modules/slate/dist/interfaces/element.d.ts": {
         "version": "242b909d85dbefbed6f8599c8d451a865c5666791be620fee5c9786cb7fc1c13",
         "signature": "242b909d85dbefbed6f8599c8d451a865c5666791be620fee5c9786cb7fc1c13",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/interfaces/location.d.ts": {
+      "../../node_modules/slate/dist/interfaces/location.d.ts": {
         "version": "22f5545ab1033c4d2ac608a239de59dbc1f699d36755ebb9daaca12c5ab01656",
         "signature": "22f5545ab1033c4d2ac608a239de59dbc1f699d36755ebb9daaca12c5ab01656",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/interfaces/node.d.ts": {
+      "../../node_modules/slate/dist/interfaces/node.d.ts": {
         "version": "085242d1d113a9ad188b1faa676866928b1e636ec37fc39bb1d34d37210d09c1",
         "signature": "085242d1d113a9ad188b1faa676866928b1e636ec37fc39bb1d34d37210d09c1",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/interfaces/operation.d.ts": {
+      "../../node_modules/slate/dist/interfaces/operation.d.ts": {
         "version": "e84d3dc9d05c1d4478616c98bbc6547c67d9934e8e2f70aeaeec2f3151fe3012",
         "signature": "e84d3dc9d05c1d4478616c98bbc6547c67d9934e8e2f70aeaeec2f3151fe3012",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/interfaces/path.d.ts": {
+      "../../node_modules/slate/dist/interfaces/path.d.ts": {
         "version": "23195b18275c078c28351047fee044068f793e5dac86ae203966823d0179aec4",
         "signature": "23195b18275c078c28351047fee044068f793e5dac86ae203966823d0179aec4",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/interfaces/path-ref.d.ts": {
+      "../../node_modules/slate/dist/interfaces/path-ref.d.ts": {
         "version": "4bc9eb8928945ece0f9ba47c26b2ec98bde709e7c6f154943063f7351a4b9054",
         "signature": "4bc9eb8928945ece0f9ba47c26b2ec98bde709e7c6f154943063f7351a4b9054",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/interfaces/point.d.ts": {
+      "../../node_modules/slate/dist/interfaces/point.d.ts": {
         "version": "a880de7da692bb0598a7b9699ae37b05058a2c3516bc0507050207feaf8f475a",
         "signature": "a880de7da692bb0598a7b9699ae37b05058a2c3516bc0507050207feaf8f475a",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/interfaces/point-ref.d.ts": {
+      "../../node_modules/slate/dist/interfaces/point-ref.d.ts": {
         "version": "0127434fef691a5bb85886913d268944657bfba76db482657b7a22aff4dd8b5d",
         "signature": "0127434fef691a5bb85886913d268944657bfba76db482657b7a22aff4dd8b5d",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/interfaces/range.d.ts": {
+      "../../node_modules/slate/dist/interfaces/range.d.ts": {
         "version": "7439bf3165bee50ea18dcf852cc284b9fa34543bb73df7e11112cde3fb0072bb",
         "signature": "7439bf3165bee50ea18dcf852cc284b9fa34543bb73df7e11112cde3fb0072bb",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/interfaces/range-ref.d.ts": {
+      "../../node_modules/slate/dist/interfaces/range-ref.d.ts": {
         "version": "960383f50574523793817a43810418198f0f876a348ab5d48d3e5aa4ec6c7d49",
         "signature": "960383f50574523793817a43810418198f0f876a348ab5d48d3e5aa4ec6c7d49",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/interfaces/text.d.ts": {
+      "../../node_modules/slate/dist/interfaces/text.d.ts": {
         "version": "24388eab62c340211eafad35ea7066e405bd3efe7c761bbdf4542f9146477af8",
         "signature": "24388eab62c340211eafad35ea7066e405bd3efe7c761bbdf4542f9146477af8",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/transforms/index.d.ts": {
+      "../../node_modules/slate/dist/transforms/index.d.ts": {
         "version": "5a25176b32b7b9e6fddf9256f6df1468ce23e1165a53944268219dd98911d877",
         "signature": "5a25176b32b7b9e6fddf9256f6df1468ce23e1165a53944268219dd98911d877",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate/dist/index.d.ts": {
+      "../../node_modules/slate/dist/index.d.ts": {
         "version": "df1d39123003f128c52a03012aa32829487c48228bcdf681ad1e6fa22d9d2a1a",
         "signature": "df1d39123003f128c52a03012aa32829487c48228bcdf681ad1e6fa22d9d2a1a",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/components/editable.d.ts": {
+      "../../node_modules/slate-react/dist/components/editable.d.ts": {
         "version": "e8a766fc5cc7e90691a6a387f78acbed107caa2f4b437a4cac603dab4fc4f791",
         "signature": "e8a766fc5cc7e90691a6a387f78acbed107caa2f4b437a4cac603dab4fc4f791",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/components/element.d.ts": {
+      "../../node_modules/slate-react/dist/components/element.d.ts": {
         "version": "3efa3309d565500367dc8eb37d0a976153b65c7eb5eda250b5f8b895d16a611a",
         "signature": "3efa3309d565500367dc8eb37d0a976153b65c7eb5eda250b5f8b895d16a611a",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/components/leaf.d.ts": {
+      "../../node_modules/slate-react/dist/components/leaf.d.ts": {
         "version": "64c77589707dce320593a624260a480ee06159eea6ec51b3053b8fbb4d5e6c0e",
         "signature": "64c77589707dce320593a624260a480ee06159eea6ec51b3053b8fbb4d5e6c0e",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/utils/key.d.ts": {
+      "../../node_modules/slate-react/dist/utils/key.d.ts": {
         "version": "ec16991b52eb3e30184a6bcb5f5173c8f9774ea6143f8cee84231584d17b71d8",
         "signature": "ec16991b52eb3e30184a6bcb5f5173c8f9774ea6143f8cee84231584d17b71d8",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/utils/dom.d.ts": {
+      "../../node_modules/slate-react/dist/utils/dom.d.ts": {
         "version": "5a726a5840bde645a1dbc8f9d5d069842aedc64aee1c241e4f2d73e796b28c1b",
         "signature": "5a726a5840bde645a1dbc8f9d5d069842aedc64aee1c241e4f2d73e796b28c1b",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts": {
+      "../../node_modules/slate-react/dist/plugin/react-editor.d.ts": {
         "version": "f9ab56414f505fa948470bc7cb0e6f8aead6bb2cbe81d19d8acf72aea6edbcde",
         "signature": "f9ab56414f505fa948470bc7cb0e6f8aead6bb2cbe81d19d8acf72aea6edbcde",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/components/slate.d.ts": {
+      "../../node_modules/slate-react/dist/components/slate.d.ts": {
         "version": "01cc631fafb929b469ba3e22f74f4fa58504c952ed105800efc07b9d20f7445e",
         "signature": "01cc631fafb929b469ba3e22f74f4fa58504c952ed105800efc07b9d20f7445e",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-editor.d.ts": {
+      "../../node_modules/slate-react/dist/hooks/use-editor.d.ts": {
         "version": "50d84e02e774d7b44bebb67aa55a110e7140b7f5ca6215674540fe7dd609ab7e",
         "signature": "50d84e02e774d7b44bebb67aa55a110e7140b7f5ca6215674540fe7dd609ab7e",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-focused.d.ts": {
+      "../../node_modules/slate-react/dist/hooks/use-focused.d.ts": {
         "version": "a52a40e8c30e1cf4fd3300b1bbfc74e1adb4b868cec7503bd252f45166678f0c",
         "signature": "a52a40e8c30e1cf4fd3300b1bbfc74e1adb4b868cec7503bd252f45166678f0c",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-read-only.d.ts": {
+      "../../node_modules/slate-react/dist/hooks/use-read-only.d.ts": {
         "version": "5210f38f41e3f88392cf482c0e71f12eef1f8268ac0c16537c7bdabd878d5f8b",
         "signature": "5210f38f41e3f88392cf482c0e71f12eef1f8268ac0c16537c7bdabd878d5f8b",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-selected.d.ts": {
+      "../../node_modules/slate-react/dist/hooks/use-selected.d.ts": {
         "version": "a61fbb74cf3e0fd04c5c968a8a6e82e54c29b84ffd187b065f3cd6761fe19d69",
         "signature": "a61fbb74cf3e0fd04c5c968a8a6e82e54c29b84ffd187b065f3cd6761fe19d69",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-slate.d.ts": {
+      "../../node_modules/slate-react/dist/hooks/use-slate.d.ts": {
         "version": "45428510be31d084309aa57911b05aae199e5f1b691a320f9862e279438402b7",
         "signature": "45428510be31d084309aa57911b05aae199e5f1b691a320f9862e279438402b7",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/plugin/with-react.d.ts": {
+      "../../node_modules/slate-react/dist/plugin/with-react.d.ts": {
         "version": "70b4e74162fdd65f1e5e7ef39be90ae07660b00291ea1bc3a75a987a352019da",
         "signature": "70b4e74162fdd65f1e5e7ef39be90ae07660b00291ea1bc3a75a987a352019da",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@databyss-org/slate-react/dist/index.d.ts": {
+      "../../node_modules/slate-react/dist/index.d.ts": {
         "version": "739fd9b0f234501dbca1b9a1b102e46a2f8eeb87c351a2bbddb8aa6be1d270a7",
         "signature": "739fd9b0f234501dbca1b9a1b102e46a2f8eeb87c351a2bbddb8aa6be1d270a7",
         "affectsGlobalScope": false
@@ -2415,7 +2415,7 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/components/editable.d.ts": [
+      "../../node_modules/slate-react/dist/components/editable.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2424,8 +2424,8 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/components/element.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/components/editable.d.ts",
+      "../../node_modules/slate-react/dist/components/element.d.ts": [
+        "../../node_modules/slate-react/dist/components/editable.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2434,8 +2434,8 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/components/leaf.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/components/editable.d.ts",
+      "../../node_modules/slate-react/dist/components/leaf.d.ts": [
+        "../../node_modules/slate-react/dist/components/editable.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2444,8 +2444,8 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/components/slate.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts",
+      "../../node_modules/slate-react/dist/components/slate.d.ts": [
+        "../../node_modules/slate-react/dist/plugin/react-editor.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2454,8 +2454,8 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-editor.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts",
+      "../../node_modules/slate-react/dist/hooks/use-editor.d.ts": [
+        "../../node_modules/slate-react/dist/plugin/react-editor.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2464,7 +2464,7 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-focused.d.ts": [
+      "../../node_modules/slate-react/dist/hooks/use-focused.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2473,7 +2473,7 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-read-only.d.ts": [
+      "../../node_modules/slate-react/dist/hooks/use-read-only.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2482,7 +2482,7 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-selected.d.ts": [
+      "../../node_modules/slate-react/dist/hooks/use-selected.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2491,8 +2491,8 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-slate.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts",
+      "../../node_modules/slate-react/dist/hooks/use-slate.d.ts": [
+        "../../node_modules/slate-react/dist/plugin/react-editor.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2501,18 +2501,18 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/index.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/components/editable.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/components/element.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/components/leaf.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/components/slate.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-editor.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-focused.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-read-only.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-selected.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-slate.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/with-react.d.ts",
+      "../../node_modules/slate-react/dist/index.d.ts": [
+        "../../node_modules/slate-react/dist/components/editable.d.ts",
+        "../../node_modules/slate-react/dist/components/element.d.ts",
+        "../../node_modules/slate-react/dist/components/leaf.d.ts",
+        "../../node_modules/slate-react/dist/components/slate.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-editor.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-focused.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-read-only.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-selected.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-slate.d.ts",
+        "../../node_modules/slate-react/dist/plugin/react-editor.d.ts",
+        "../../node_modules/slate-react/dist/plugin/with-react.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2520,9 +2520,9 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/utils/dom.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/utils/key.d.ts",
+      "../../node_modules/slate-react/dist/plugin/react-editor.d.ts": [
+        "../../node_modules/slate-react/dist/utils/dom.d.ts",
+        "../../node_modules/slate-react/dist/utils/key.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2530,8 +2530,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/plugin/with-react.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts",
+      "../../node_modules/slate-react/dist/plugin/with-react.d.ts": [
+        "../../node_modules/slate-react/dist/plugin/react-editor.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2539,7 +2539,7 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/utils/dom.d.ts": [
+      "../../node_modules/slate-react/dist/utils/dom.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2547,7 +2547,7 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/utils/key.d.ts": [
+      "../../node_modules/slate-react/dist/utils/key.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2555,8 +2555,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/create-editor.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/create-editor.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2564,21 +2564,21 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/index.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/create-editor.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/editor.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/element.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/location.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/node.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/operation.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/path-ref.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/path.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/point-ref.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/point.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/range-ref.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/range.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/text.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/transforms/index.d.ts",
+      "../../node_modules/slate/dist/index.d.ts": [
+        "../../node_modules/slate/dist/create-editor.d.ts",
+        "../../node_modules/slate/dist/interfaces/editor.d.ts",
+        "../../node_modules/slate/dist/interfaces/element.d.ts",
+        "../../node_modules/slate/dist/interfaces/location.d.ts",
+        "../../node_modules/slate/dist/interfaces/node.d.ts",
+        "../../node_modules/slate/dist/interfaces/operation.d.ts",
+        "../../node_modules/slate/dist/interfaces/path-ref.d.ts",
+        "../../node_modules/slate/dist/interfaces/path.d.ts",
+        "../../node_modules/slate/dist/interfaces/point-ref.d.ts",
+        "../../node_modules/slate/dist/interfaces/point.d.ts",
+        "../../node_modules/slate/dist/interfaces/range-ref.d.ts",
+        "../../node_modules/slate/dist/interfaces/range.d.ts",
+        "../../node_modules/slate/dist/interfaces/text.d.ts",
+        "../../node_modules/slate/dist/transforms/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2586,8 +2586,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/editor.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/editor.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2595,8 +2595,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/element.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/element.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2604,8 +2604,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/location.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/location.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2613,8 +2613,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/node.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/node.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2622,8 +2622,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/operation.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/operation.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2631,8 +2631,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/path-ref.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/path-ref.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2640,8 +2640,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/path.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/path.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2649,8 +2649,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/point-ref.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/point-ref.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2658,8 +2658,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/point.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/point.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2667,8 +2667,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/range-ref.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/range-ref.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2676,8 +2676,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/range.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/range.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2685,8 +2685,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/text.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/text.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2694,8 +2694,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/transforms/index.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/transforms/index.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -4769,8 +4769,8 @@
         "../../node_modules/@types/react/index.d.ts"
       ],
       "./components/blockmenu.js": [
-        "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate-react/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -4783,8 +4783,8 @@
         "./state/util.ts"
       ],
       "./components/contenteditable.js": [
-        "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate-react/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/clone-deep/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
@@ -4809,8 +4809,8 @@
         "./state/util.ts"
       ],
       "./components/editor.js": [
-        "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate-react/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -4824,8 +4824,8 @@
         "./state/editorprovider.tsx"
       ],
       "./components/element.js": [
-        "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate-react/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -4841,8 +4841,8 @@
         "./state/editorprovider.tsx"
       ],
       "./components/formatmenu.js": [
-        "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate-react/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/lodash/ts3.1/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
@@ -4876,8 +4876,8 @@
         "../../node_modules/@types/react/index.d.ts"
       ],
       "./components/singleline.js": [
-        "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate-react/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -4925,8 +4925,8 @@
         "./components/suggest/suggesttopics.js"
       ],
       "./components/suggest/suggestmenu.js": [
-        "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate-react/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -4954,8 +4954,8 @@
         "./state/editorprovider.tsx"
       ],
       "./components/suggest/suggesttopics.js": [
-        "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate-react/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/clone-deep/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
@@ -5005,8 +5005,8 @@
         "./interfaces/editorstate.ts"
       ],
       "./lib/atomicmodal.js": [
-        "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate-react/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -5124,7 +5124,7 @@
         "./interfaces/index.ts"
       ],
       "./lib/editorshortcuts.js": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -5143,7 +5143,7 @@
         "../../node_modules/@types/node/util.d.ts"
       ],
       "./lib/inlineserializer.js": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -5152,7 +5152,7 @@
         "../../node_modules/@types/node/util.d.ts"
       ],
       "./lib/markup.js": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/clone-deep/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
@@ -5163,7 +5163,7 @@
         "./lib/slateutils.js"
       ],
       "./lib/slateutils.js": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/imurmurhash/index.d.ts",
         "../../node_modules/@types/lodash/ts3.1/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
@@ -5554,8 +5554,8 @@
         "./stories/fixtures/connectedstate.js"
       ],
       "./stories/editor.stories.js": [
-        "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate-react/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@storybook/react/dist/client/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
@@ -5676,8 +5676,8 @@
         "./stories/fixtures/connectedstate.js"
       ],
       "./stories/editorx.stories.js": [
-        "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate-react/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@storybook/react/dist/client/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
@@ -6797,7 +6797,7 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/components/editable.d.ts": [
+      "../../node_modules/slate-react/dist/components/editable.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6806,8 +6806,8 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/components/element.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/components/editable.d.ts",
+      "../../node_modules/slate-react/dist/components/element.d.ts": [
+        "../../node_modules/slate-react/dist/components/editable.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6816,8 +6816,8 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/components/leaf.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/components/editable.d.ts",
+      "../../node_modules/slate-react/dist/components/leaf.d.ts": [
+        "../../node_modules/slate-react/dist/components/editable.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6826,8 +6826,8 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/components/slate.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts",
+      "../../node_modules/slate-react/dist/components/slate.d.ts": [
+        "../../node_modules/slate-react/dist/plugin/react-editor.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6836,8 +6836,8 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-editor.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts",
+      "../../node_modules/slate-react/dist/hooks/use-editor.d.ts": [
+        "../../node_modules/slate-react/dist/plugin/react-editor.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6846,7 +6846,7 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-focused.d.ts": [
+      "../../node_modules/slate-react/dist/hooks/use-focused.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6855,7 +6855,7 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-read-only.d.ts": [
+      "../../node_modules/slate-react/dist/hooks/use-read-only.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6864,7 +6864,7 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-selected.d.ts": [
+      "../../node_modules/slate-react/dist/hooks/use-selected.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6873,8 +6873,8 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-slate.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts",
+      "../../node_modules/slate-react/dist/hooks/use-slate.d.ts": [
+        "../../node_modules/slate-react/dist/plugin/react-editor.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6883,18 +6883,18 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/index.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/components/editable.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/components/element.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/components/leaf.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/components/slate.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-editor.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-focused.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-read-only.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-selected.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-slate.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/with-react.d.ts",
+      "../../node_modules/slate-react/dist/index.d.ts": [
+        "../../node_modules/slate-react/dist/components/editable.d.ts",
+        "../../node_modules/slate-react/dist/components/element.d.ts",
+        "../../node_modules/slate-react/dist/components/leaf.d.ts",
+        "../../node_modules/slate-react/dist/components/slate.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-editor.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-focused.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-read-only.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-selected.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-slate.d.ts",
+        "../../node_modules/slate-react/dist/plugin/react-editor.d.ts",
+        "../../node_modules/slate-react/dist/plugin/with-react.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6902,9 +6902,9 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/utils/dom.d.ts",
-        "../../node_modules/@databyss-org/slate-react/dist/utils/key.d.ts",
+      "../../node_modules/slate-react/dist/plugin/react-editor.d.ts": [
+        "../../node_modules/slate-react/dist/utils/dom.d.ts",
+        "../../node_modules/slate-react/dist/utils/key.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6912,8 +6912,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/plugin/with-react.d.ts": [
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts",
+      "../../node_modules/slate-react/dist/plugin/with-react.d.ts": [
+        "../../node_modules/slate-react/dist/plugin/react-editor.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6921,7 +6921,7 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/utils/dom.d.ts": [
+      "../../node_modules/slate-react/dist/utils/dom.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6929,7 +6929,7 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate-react/dist/utils/key.d.ts": [
+      "../../node_modules/slate-react/dist/utils/key.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6937,8 +6937,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/create-editor.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/create-editor.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6946,21 +6946,21 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/index.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/create-editor.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/editor.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/element.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/location.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/node.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/operation.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/path-ref.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/path.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/point-ref.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/point.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/range-ref.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/range.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/interfaces/text.d.ts",
-        "../../node_modules/@databyss-org/slate/dist/transforms/index.d.ts",
+      "../../node_modules/slate/dist/index.d.ts": [
+        "../../node_modules/slate/dist/create-editor.d.ts",
+        "../../node_modules/slate/dist/interfaces/editor.d.ts",
+        "../../node_modules/slate/dist/interfaces/element.d.ts",
+        "../../node_modules/slate/dist/interfaces/location.d.ts",
+        "../../node_modules/slate/dist/interfaces/node.d.ts",
+        "../../node_modules/slate/dist/interfaces/operation.d.ts",
+        "../../node_modules/slate/dist/interfaces/path-ref.d.ts",
+        "../../node_modules/slate/dist/interfaces/path.d.ts",
+        "../../node_modules/slate/dist/interfaces/point-ref.d.ts",
+        "../../node_modules/slate/dist/interfaces/point.d.ts",
+        "../../node_modules/slate/dist/interfaces/range-ref.d.ts",
+        "../../node_modules/slate/dist/interfaces/range.d.ts",
+        "../../node_modules/slate/dist/interfaces/text.d.ts",
+        "../../node_modules/slate/dist/transforms/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6968,8 +6968,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/editor.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/editor.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6977,8 +6977,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/element.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/element.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6986,8 +6986,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/location.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/location.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -6995,8 +6995,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/node.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/node.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -7004,8 +7004,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/operation.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/operation.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -7013,8 +7013,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/path-ref.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/path-ref.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -7022,8 +7022,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/path.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/path.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -7031,8 +7031,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/point-ref.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/point-ref.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -7040,8 +7040,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/point.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/point.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -7049,8 +7049,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/range-ref.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/range-ref.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -7058,8 +7058,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/range.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/range.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -7067,8 +7067,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/interfaces/text.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/text.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -7076,8 +7076,8 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts",
         "../../node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@databyss-org/slate/dist/transforms/index.d.ts": [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/transforms/index.d.ts": [
+        "../../node_modules/slate/dist/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/process.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -9326,35 +9326,35 @@
       "../../../../../.nvm/versions/node/v12.16.3/lib/node_modules/typescript/lib/lib.esnext.string.d.ts",
       "../../node_modules/@babel/parser/typings/babel-parser.d.ts",
       "../../node_modules/@babel/types/lib/index.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/components/editable.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/components/element.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/components/leaf.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/components/slate.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-editor.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-focused.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-read-only.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-selected.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/hooks/use-slate.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/plugin/with-react.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/utils/dom.d.ts",
-      "../../node_modules/@databyss-org/slate-react/dist/utils/key.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/create-editor.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/index.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/interfaces/editor.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/interfaces/element.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/interfaces/location.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/interfaces/node.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/interfaces/operation.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/interfaces/path-ref.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/interfaces/path.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/interfaces/point-ref.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/interfaces/point.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/interfaces/range-ref.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/interfaces/range.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/interfaces/text.d.ts",
-      "../../node_modules/@databyss-org/slate/dist/transforms/index.d.ts",
+      "../../node_modules/slate-react/dist/components/editable.d.ts",
+      "../../node_modules/slate-react/dist/components/element.d.ts",
+      "../../node_modules/slate-react/dist/components/leaf.d.ts",
+      "../../node_modules/slate-react/dist/components/slate.d.ts",
+      "../../node_modules/slate-react/dist/hooks/use-editor.d.ts",
+      "../../node_modules/slate-react/dist/hooks/use-focused.d.ts",
+      "../../node_modules/slate-react/dist/hooks/use-read-only.d.ts",
+      "../../node_modules/slate-react/dist/hooks/use-selected.d.ts",
+      "../../node_modules/slate-react/dist/hooks/use-slate.d.ts",
+      "../../node_modules/slate-react/dist/index.d.ts",
+      "../../node_modules/slate-react/dist/plugin/react-editor.d.ts",
+      "../../node_modules/slate-react/dist/plugin/with-react.d.ts",
+      "../../node_modules/slate-react/dist/utils/dom.d.ts",
+      "../../node_modules/slate-react/dist/utils/key.d.ts",
+      "../../node_modules/slate/dist/create-editor.d.ts",
+      "../../node_modules/slate/dist/index.d.ts",
+      "../../node_modules/slate/dist/interfaces/editor.d.ts",
+      "../../node_modules/slate/dist/interfaces/element.d.ts",
+      "../../node_modules/slate/dist/interfaces/location.d.ts",
+      "../../node_modules/slate/dist/interfaces/node.d.ts",
+      "../../node_modules/slate/dist/interfaces/operation.d.ts",
+      "../../node_modules/slate/dist/interfaces/path-ref.d.ts",
+      "../../node_modules/slate/dist/interfaces/path.d.ts",
+      "../../node_modules/slate/dist/interfaces/point-ref.d.ts",
+      "../../node_modules/slate/dist/interfaces/point.d.ts",
+      "../../node_modules/slate/dist/interfaces/range-ref.d.ts",
+      "../../node_modules/slate/dist/interfaces/range.d.ts",
+      "../../node_modules/slate/dist/interfaces/text.d.ts",
+      "../../node_modules/slate/dist/transforms/index.d.ts",
       "../../node_modules/@emotion/cache/types/index.d.ts",
       "../../node_modules/@emotion/css/types/index.d.ts",
       "../../node_modules/@emotion/serialize/types/helper.d.ts",
@@ -9807,119 +9807,119 @@
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/components/editable.d.ts",
+        "../../node_modules/slate-react/dist/components/editable.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/components/element.d.ts",
+        "../../node_modules/slate-react/dist/components/element.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/components/leaf.d.ts",
+        "../../node_modules/slate-react/dist/components/leaf.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/components/slate.d.ts",
+        "../../node_modules/slate-react/dist/components/slate.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-editor.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-editor.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-focused.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-focused.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-read-only.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-read-only.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-selected.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-selected.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/hooks/use-slate.d.ts",
+        "../../node_modules/slate-react/dist/hooks/use-slate.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/index.d.ts",
+        "../../node_modules/slate-react/dist/index.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/react-editor.d.ts",
+        "../../node_modules/slate-react/dist/plugin/react-editor.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/plugin/with-react.d.ts",
+        "../../node_modules/slate-react/dist/plugin/with-react.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/utils/dom.d.ts",
+        "../../node_modules/slate-react/dist/utils/dom.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate-react/dist/utils/key.d.ts",
+        "../../node_modules/slate-react/dist/utils/key.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/create-editor.d.ts",
+        "../../node_modules/slate/dist/create-editor.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/index.d.ts",
+        "../../node_modules/slate/dist/index.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/interfaces/editor.d.ts",
+        "../../node_modules/slate/dist/interfaces/editor.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/interfaces/element.d.ts",
+        "../../node_modules/slate/dist/interfaces/element.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/interfaces/location.d.ts",
+        "../../node_modules/slate/dist/interfaces/location.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/interfaces/node.d.ts",
+        "../../node_modules/slate/dist/interfaces/node.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/interfaces/operation.d.ts",
+        "../../node_modules/slate/dist/interfaces/operation.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/interfaces/path-ref.d.ts",
+        "../../node_modules/slate/dist/interfaces/path-ref.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/interfaces/path.d.ts",
+        "../../node_modules/slate/dist/interfaces/path.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/interfaces/point-ref.d.ts",
+        "../../node_modules/slate/dist/interfaces/point-ref.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/interfaces/point.d.ts",
+        "../../node_modules/slate/dist/interfaces/point.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/interfaces/range-ref.d.ts",
+        "../../node_modules/slate/dist/interfaces/range-ref.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/interfaces/range.d.ts",
+        "../../node_modules/slate/dist/interfaces/range.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/interfaces/text.d.ts",
+        "../../node_modules/slate/dist/interfaces/text.d.ts",
         1
       ],
       [
-        "../../node_modules/@databyss-org/slate/dist/transforms/index.d.ts",
+        "../../node_modules/slate/dist/transforms/index.d.ts",
         1
       ],
       [

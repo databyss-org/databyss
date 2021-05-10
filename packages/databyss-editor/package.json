@@ -2,7 +2,7 @@
   "name": "@databyss-org/editor",
   "author": "databyss-org",
   "license": "MIT",
-  "version": "2.0.4",
+  "version": "2.1.0",
   "private": false,
   "repository": {
     "type": "git",
@@ -13,9 +13,9 @@
   },
   "main": "index.js",
   "peerDependencies": {
-    "@databyss-org/data": "2.0.4",
-    "@databyss-org/services": "2.0.4",
-    "@databyss-org/ui": "2.0.4",
+    "@databyss-org/data": "2.1.0",
+    "@databyss-org/services": "2.1.0",
+    "@databyss-org/ui": "2.1.0",
     "@storybook/react": "5.2.1",
     "react": "16.9.0",
     "react-dom": "16.9.0",
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@databyss-org/slate": "0.58.1-b2",
-    "@databyss-org/slate-react": "0.57.2-b5",
+    "@databyss-org/slate-react": "0.57.2-b6",
     "@styled-system/css": "^5.0.23",
     "@types/mongoose": "^5.10.1",
     "add": "^2.0.6",
@@ -37,12 +37,14 @@
     "fetch-mock": "^8.0.1",
     "immer": "^6.0.5",
     "imurmurhash": "^0.1.4",
+    "innertext": "^1.0.3",
     "is-hotkey": "^0.1.5",
     "lodash": "^4.17.15",
     "lorem-ipsum": "^2.0.3",
     "slate-dev-environment": "^0.2.2",
     "slate-hyperscript": "^0.57.2",
     "string.prototype.matchall": "^4.0.2",
+    "striptags": "^3.1.1",
     "yarn": "^1.22.4"
   }
 }

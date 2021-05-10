@@ -1,3 +1,4 @@
+import { uid } from '@databyss-org/data/lib/uid'
 import { SelectOption } from './UI'
 import { Text } from './Text'
 import { Document } from './Document'
@@ -15,15 +16,23 @@ export interface BlockReference {
   type: BlockType
 }
 
-export interface Block extends BlockReference {
+export class Block implements BlockReference {
+  _id: string
   page?: string
   text: Text
+  type: BlockType
   __showCitationMenu?: boolean
   __showTopicMenu?: boolean
   __showNewBlockMenu?: boolean
   __showInlineCitationMenu?: boolean
   __showInlineTopicMenu?: boolean
   __isActive?: boolean
+
+  constructor() {
+    this.type = BlockType.Entry
+    this._id = uid()
+    this.text = { textValue: '', ranges: [] }
+  }
 }
 
 export interface Author {

@@ -132,6 +132,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
             pb: 'small',
             mr: 'largest',
           })}
+          data-test-editor-element="true"
         >
           {block.__showNewBlockMenu && !readOnly && !_isPublic && (
             <View

@@ -13,16 +13,26 @@ import {
   tagButtonListClick,
   logIn,
   upKey,
-  rightKey,
   getElementsByTag,
   getElementByTag,
   logout,
+  downKey,
+  downShiftKey,
 } from './_helpers.selenium'
 
 let driver
 let actions
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
+
+export async function selectLinkInFirstBlock(actions) {
+  await upKey(actions)
+  await upKey(actions)
+  await upKey(actions)
+  await downKey(actions)
+  await downShiftKey(actions)
+  await downShiftKey(actions)
+}
 
 // TODO: THIS SHOULD BE ON THE PAGE SHARING  TEST
 // 6) Archiving a page removes that page from shared pages
@@ -120,7 +130,7 @@ describe('group sharings', () => {
     await paste(actions)
 
     // get public collection link
-    await selectAll(actions)
+    await selectLinkInFirstBlock(actions)
 
     const publicCollectionUrl = await driver.executeScript(
       'return window.getSelection().toString()'
@@ -155,9 +165,9 @@ describe('group sharings', () => {
     // click on clipboard
     await tagButtonListClick('data-test-element="page-sidebar-item"', 3, driver)
     // paste new link
-    await selectAll(actions)
+    await selectLinkInFirstBlock(actions)
     await paste(actions)
-    await selectAll(actions)
+    await selectLinkInFirstBlock(actions)
 
     const publicCollectionDeleteUrl = await driver.executeScript(
       'return window.getSelection().toString()'
@@ -190,9 +200,9 @@ describe('group sharings', () => {
     // click on clipboard
     await tagButtonListClick('data-test-element="page-sidebar-item"', 3, driver)
     // paste new link
-    await selectAll(actions)
+    await selectLinkInFirstBlock(actions)
     await paste(actions)
-    await selectAll(actions)
+    await selectLinkInFirstBlock(actions)
 
     const publicCollectionUnshareUrl = await driver.executeScript(
       'return window.getSelection().toString()'
@@ -272,10 +282,7 @@ describe('group sharings', () => {
     await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
 
     // update topic on first page page (it should update on shared page with same topic)    await upKey(actions)
-    await tagButtonClick('contenteditable="true"', driver)
-    await upKey(actions)
-    await upKey(actions)
-    await rightKey(actions)
+    await tagButtonClick('data-test-atomic-edit="open"', driver)
     await enterKey(actions)
     await selectAll(actions)
     await sendKeys(actions, 'New Topic')
@@ -293,7 +300,7 @@ describe('group sharings', () => {
     await tagButtonClick('data-test-element="archive-dropdown"', driver)
 
     await tagButtonClick('data-test-block-menu="archive"', driver)
-    await sleep(1000)
+    await sleep(3000)
 
     // log out
     await logout(driver)
