@@ -16,7 +16,6 @@ import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 
 import { useEditorContext } from '../../state/EditorProvider'
 
@@ -68,7 +67,6 @@ const SuggestSources = ({
   setResultsMode,
   inlineAtomic,
   activeIndexRef,
-  menuHeight,
   ...others
 }) => {
   const editor = useEditor()
@@ -146,6 +144,7 @@ const SuggestSources = ({
       .map(weightedSearch(query, 'name'))
       .filter(prefixSearchAll(query, 'name'))
       .sort((a, b) => (a.weight < b.weight ? 1 : -1))
+      .slice(0, 4)
       .map((s) => (
         <DropdownListItem
           data-test-element="suggested-menu-sources"
@@ -160,6 +159,7 @@ const SuggestSources = ({
         .map(weightedSearch(query))
         .filter(prefixSearchAll(query))
         .sort((a, b) => (a.weight < b.weight ? 1 : -1))
+        .slice(0, 4)
         .map((s) => (
           <DropdownListItem
             data-test-element="suggested-menu-sources"
@@ -238,30 +238,26 @@ const SuggestSources = ({
   }
 
   if (_mode === LOCAL_SOURCES) {
-    return (
-      <View overflowX="hidden" overflowY="auto" maxHeight={pxUnits(menuHeight)}>
-        {_composeLocalSources(Object.values(sourcesRes.data)).concat(
-          isOnline ? (
-            _menuItems.map((menuItem) => (
-              <DropdownListItem
-                {...menuItem}
-                key={menuItem.action}
-                data-test-element="suggest-dropdown"
-                onPress={() => {
-                  setResultsMode(menuItem.action)
-                  focusEditor()
-                }}
-              />
-            ))
-          ) : (
-            <View padding="tiny" pl="small">
-              <Text variant="uiTextSmall" color="text.3">
-                Go online to search source catalogs
-              </Text>
-            </View>
-          )
-        )}
-      </View>
+    return _composeLocalSources(Object.values(sourcesRes.data)).concat(
+      isOnline ? (
+        _menuItems.map((menuItem) => (
+          <DropdownListItem
+            {...menuItem}
+            key={menuItem.action}
+            data-test-element="suggest-dropdown"
+            onPress={() => {
+              setResultsMode(menuItem.action)
+              focusEditor()
+            }}
+          />
+        ))
+      ) : (
+        <View padding="tiny" pl="small">
+          <Text variant="uiTextSmall" color="text.3">
+            Go online to search source catalogs
+          </Text>
+        </View>
+      )
     )
   }
 
