@@ -11,17 +11,32 @@ import { getClosureType, getTextOffsetWithRange } from '../../state/util'
 
 const MENU_HEIGHT = 200
 
-export const getPosition = (editor, inlineAtomic) => {
+export const getPosition = (editor, inlineAtomic, inlineEmbed) => {
   if (editor.selection) {
     const _activeNode = editor.children[editor.selection.anchor.path[0]]
     const _node = ReactEditor.toDOMNode(editor, _activeNode)
 
     if (_node) {
       const _rect = _node.getBoundingClientRect()
-      if (inlineAtomic && document.getElementById('inline-atomic')) {
-        const _textNode = document
-          .getElementById('inline-atomic')
-          .getBoundingClientRect()
+
+      const _inlineAtomicMenuId =
+        inlineAtomic &&
+        document.getElementById('inline-atomic') &&
+        'inline-atomic'
+
+      const _inlineEmbedMenu =
+        inlineEmbed && document.getElementById('inline-embed-input')
+          ? 'inline-embed-input'
+          : null
+
+      const getInlineMenuId =
+        inlineAtomic && document.getElementById('inline-atomic')
+          ? 'inline-atomic'
+          : null
+      const _elId = _inlineEmbedMenu || getInlineMenuId
+
+      if (_elId) {
+        const _textNode = document.getElementById(_elId).getBoundingClientRect()
         const relativePos = {
           top: _textNode.top - _rect.top + 36,
           left: _textNode.left - _rect.left,
@@ -79,6 +94,7 @@ const SuggestMenu = ({
   onSuggestions,
   suggestType,
   inlineAtomic,
+  inlineEmbed,
 }) => {
   const activeIndexRef = useRef(-1)
   const [position, setPosition] = useState({
@@ -97,7 +113,7 @@ const SuggestMenu = ({
 
   // set position of dropdown
   const setMenuPosition = () => {
-    const _position = getPosition(editor, inlineAtomic)
+    const _position = getPosition(editor, inlineAtomic, inlineEmbed)
 
     if (_position) {
       setPosition(_position)

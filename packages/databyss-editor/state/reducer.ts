@@ -989,6 +989,7 @@ export default (
         block.__isActive = false
         block.__showInlineTopicMenu = false
         block.__showInlineCitationMenu = false
+        block.__showInlineEmbedMenu = false
       })
       const _selectedBlock = draft.blocks[draft.selection.focus.index]
 
@@ -1026,7 +1027,10 @@ export default (
             if (acc === true) {
               return true
             }
-            if (curr.marks.includes(RangeType.InlineAtomicInput)) {
+            if (
+              curr.marks.includes(RangeType.InlineAtomicInput) ||
+              curr.marks.includes(RangeType.InlineEmbedInput)
+            ) {
               return true
             }
             return false
@@ -1034,13 +1038,14 @@ export default (
           false
         )
 
-        // show __showInlineTopicMenu or __showInlineCitationMenu if selection is collapsed, selection is within text precedded with a `#` or `@` and it is currently not tagged already
+        // show __showInlineTopicMenu, __showInlineCitationMenu, or __showInlineEmbedMenu if selection is collapsed, selection is within text precedded with a `#` or `@` and it is currently not tagged already
         if (_hasInlineMenuMark) {
           // check to see if inline mark is source or topic
           const inlineMarkupData = getTextOffsetWithRange({
             text: _selectedBlock.text,
             rangeType: RangeType.InlineAtomicInput,
           })
+
           // first character in atomic input range
           const _symbol = inlineMarkupData?.text.substring(0, 1)
           if (_symbol && !selectionHasRange(draft.selection)) {
@@ -1052,6 +1057,16 @@ export default (
               _selectedBlock.__showInlineCitationMenu = true
             }
           }
+        }
+
+        // check if in active embed menu
+        const inlineEmbedData = getTextOffsetWithRange({
+          text: _selectedBlock.text,
+          rangeType: RangeType.InlineEmbedInput,
+        })
+
+        if (inlineEmbedData && !selectionHasRange(draft.selection)) {
+          _selectedBlock.__showInlineEmbedMenu = true
         }
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element

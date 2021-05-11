@@ -17,4 +17,5 @@ export enum RangeType {
   Location = 'location',
   Highlight = 'highlight',
   InlineAtomicInput = 'inlineAtomicMenu',
+  InlineEmbedInput = 'inlineEmbedInput',
 }

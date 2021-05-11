@@ -36,6 +36,7 @@ import {
   onInlineBackspaceOrEnter,
   preventInlineAtomicCharacters,
   initiateInlineMenu,
+  initiateEmbedInput,
   onInlineFieldBackspace,
   onEnterInlineField,
   onEscapeInInlineAtomicField,
@@ -441,6 +442,16 @@ const ContentEditable = ({
         editor.selection.focus.path[0] !== editor.selection.anchor.path[0]
       ) {
         event.preventDefault()
+        return
+      }
+
+      // check for embeds
+      const shouldInitiateEmbed = initiateEmbedInput({
+        editor,
+        event,
+        firstBlockIsTitle,
+      })
+      if (shouldInitiateEmbed) {
         return
       }
 

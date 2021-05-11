@@ -143,6 +143,7 @@ const allowedRanges = [
   'inlineAtomicMenu',
   'inlineTopic',
   'inlineCitation',
+  'inlineEmbedInput',
 ]
 
 const allowedInlines = ['inlineTopic', 'inlineCitation']

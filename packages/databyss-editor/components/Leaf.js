@@ -31,6 +31,22 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
+  if (leaf.inlineEmbedInput) {
+    _children = (
+      <span
+        id="inline-embed-input"
+        style={{
+          display: 'block',
+          backgroundColor: gray[6],
+          borderRadius: '3px',
+          //    padding: '3px',
+        }}
+      >
+        {_children}
+      </span>
+    )
+  }
+
   if (leaf.inlineTopic) {
     _children = (
       <span

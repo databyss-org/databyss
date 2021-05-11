@@ -183,6 +183,24 @@ const Element = ({ attributes, children, element, readOnly }) => {
             </View>
           )}
 
+          {block.__showInlineEmbedMenu && (
+            <View contentEditable="false" suppressContentEditableWarning>
+              <SuggestMenu
+                inlineEmbed
+                // onSuggestions={onSuggestions}
+                suggestType="embed"
+              >
+                <Text
+                  variant="uiTextSmall"
+                  color={`${isAtomicClosure(element.type) ? 'gray.4' : ''}`}
+                  display="inline"
+                >
+                  paste a link or embed code...
+                </Text>
+              </SuggestMenu>
+            </View>
+          )}
+
           {block.__showInlineTopicMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu
