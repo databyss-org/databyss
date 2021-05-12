@@ -61,9 +61,9 @@ const getIframeAttrs = (code: string) => {
       const parsed = new DOMParser().parseFromString(code.trim(), 'text/html')
 
       const _iframe = parsed.body
-      if (_iframe?.children.length !== 1) {
-        return false
-      }
+      // if (_iframe?.children.length !== 1) {
+      //   return false
+      // }
       const _firstNode = _iframe.children[0]
       if (_firstNode?.tagName === 'IFRAME') {
         // if iframe exists get all attribute properties
