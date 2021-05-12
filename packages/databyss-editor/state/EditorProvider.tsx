@@ -162,6 +162,22 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
    */
 
   const embedPaste = (e) => {
+    const htmlSrc = e.clipboardData!.getData('text/html')
+    if (htmlSrc) {
+      // if hmtl is pasted, attempt to retrieve the src tag from images
+      const doc = new DOMParser().parseFromString(htmlSrc, 'text/html')
+      const _el = doc.getElementsByTagName('img')
+      if (_el.length) {
+        // assume first element in array
+        const _src = _el[0].src
+        if (_src) {
+          dispatch({
+            type: PASTE_EMBED,
+            payload: _src,
+          })
+        }
+      }
+    }
     // plaintext text fragment
     const plainTextDataTransfer = e.clipboardData!.getData('text/plain')
 

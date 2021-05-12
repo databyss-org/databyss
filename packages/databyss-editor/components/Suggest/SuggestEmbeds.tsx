@@ -16,7 +16,7 @@ import {
   setAtomicWithoutSuggestion,
 } from '../../lib/inlineUtils'
 
-const _regExValidator = {
+export const _regExValidator = {
   twitter: /http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/,
   youtube: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/,
   image: /^((https?|ftp):)?\/\/.*(jpeg|jpg|png|gif|bmp)$/,
@@ -61,9 +61,7 @@ const getIframeAttrs = (code: string) => {
       const parsed = new DOMParser().parseFromString(code.trim(), 'text/html')
 
       const _iframe = parsed.body
-      // if (_iframe?.children.length !== 1) {
-      //   return false
-      // }
+
       const _firstNode = _iframe.children[0]
       if (_firstNode?.tagName === 'IFRAME') {
         // if iframe exists get all attribute properties
