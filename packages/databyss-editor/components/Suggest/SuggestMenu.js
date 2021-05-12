@@ -214,7 +214,7 @@ const SuggestMenu = ({
         open={_showMenu}
         widthVariant="dropdownMenuLarge"
         minHeight="32px"
-        p="small"
+        p={inlineEmbed ? 'none' : 'small'}
         orderKey={query + resultsMode}
         onActiveIndexChanged={onActiveIndexChanged}
       >

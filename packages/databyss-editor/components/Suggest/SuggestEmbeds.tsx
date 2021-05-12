@@ -10,10 +10,17 @@ import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorContext } from '../../state/EditorProvider'
+import { validURL } from '../../lib/inlineUtils/initiateEmbedInput'
 import {
   onBakeInlineAtomic,
   setAtomicWithoutSuggestion,
 } from '../../lib/inlineUtils'
+
+const _regExValidator = {
+  twitter: /http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/,
+  youtube: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/,
+  image: /^((https?|ftp):)?\/\/.*(jpeg|jpg|png|gif|bmp)$/,
+}
 
 const isHTML = (str: string) => {
   const doc = new DOMParser().parseFromString(str, 'text/html')
@@ -26,51 +33,113 @@ const _iFrameAllowList = {
   src: true,
   title: true,
   id: true,
+  border: true,
+  frameborder: true,
 }
 
 const getIframeAttrs = (code: string) => {
-  if (!isHTML(code)) {
+  if (!(isHTML(code) || validURL(code))) {
     return false
   }
+
   try {
-    // attempt to parse iframe
-    const parsed = new DOMParser().parseFromString(code.trim(), 'text/html')
+    const MAX_WIDTH = 484
+    const MAX_HEIGHT = 300
 
-    const _iframe = parsed.body
-    if (_iframe?.children.length !== 1) {
-      return false
-    }
-    const _firstNode = _iframe.children[0]
-    if (_firstNode?.tagName === 'IFRAME') {
-      // if iframe exists get all attribute properties
-      let _atts: {
-        width?: number
-        height?: number
-        title?: string
-        src?: string
-      } = {}
-      Array.from(_firstNode.attributes).forEach((i) => {
-        // only get properties in allow list
-        if (_iFrameAllowList[i.name]) _atts[i.name] = i.value
-      })
+    let _atts: {
+      width?: number
+      height?: number
+      title?: string
+      src?: string
+      border?: number
+      frameborder?: number
+    } = {}
 
-      // scale iframe for max width of 500 - 16 (padding)
-      const MAX_WIDTH = 484
-      if (_atts?.width && MAX_WIDTH < _atts.width) {
-        const _widthRatio = MAX_WIDTH / _atts.width
+    // get iframe attributes from html
+    if (isHTML(code)) {
+      // attempt to parse iframe
+      const parsed = new DOMParser().parseFromString(code.trim(), 'text/html')
 
-        _atts = {
-          ..._atts,
-          width: _atts.width * _widthRatio,
-          // scale height if height was property
-          ...(_atts?.height && { height: _atts.height * _widthRatio }),
+      const _iframe = parsed.body
+      if (_iframe?.children.length !== 1) {
+        return false
+      }
+      const _firstNode = _iframe.children[0]
+      if (_firstNode?.tagName === 'IFRAME') {
+        // if iframe exists get all attribute properties
+
+        Array.from(_firstNode.attributes).forEach((i) => {
+          // only get properties in allow list
+          if (_iFrameAllowList[i.name]) _atts[i.name] = i.value
+        })
+
+        // scale iframe for max width of 500 - 16 (padding)
+        if (_atts?.width && MAX_WIDTH < _atts.width) {
+          const _widthRatio = MAX_WIDTH / _atts.width
+
+          _atts = {
+            ..._atts,
+            width: _atts.width * _widthRatio,
+            // scale height if height was property
+            ...(_atts?.height && { height: _atts.height * _widthRatio }),
+          }
         }
+
+        return _atts
       }
 
-      return _atts
+      return false
     }
+    // convert link to iframe attrs
+    if (validURL(code)) {
+      // check for twitter link
+      if (_regExValidator.twitter.test(code)) {
+        // convert tweet to regex values
 
-    return false
+        // TODO: shouldnt use twitterframe
+        _atts = {
+          border: 0,
+          frameborder: 0,
+          width: MAX_WIDTH,
+          height: 220,
+          src: `https://twitframe.com/show?url=${encodeURI(code)}`,
+          title: 'tweet',
+        }
+        return _atts
+      }
+      // check for youtube links
+      if (_regExValidator.youtube.test(code)) {
+        // pull video id from url
+        const match = code.match(_regExValidator.youtube)
+        const _id = match && match[2].length === 11 ? match[2] : null
+
+        if (!_id) {
+          return false
+        }
+        _atts = {
+          border: 0,
+          frameborder: 0,
+          width: MAX_WIDTH,
+          height: 273,
+          src: `https://www.youtube.com/embed/${_id}`,
+          title: 'youtube',
+        }
+        return _atts
+      }
+
+      // check if image url
+      if (_regExValidator.image.test(code)) {
+        _atts = {
+          border: 0,
+          frameborder: 0,
+          width: MAX_WIDTH,
+          height: 300,
+          src: code,
+          title: 'image',
+        }
+        return _atts
+      }
+    }
   } catch (err) {
     console.log(err)
     return false
@@ -79,11 +148,11 @@ const getIframeAttrs = (code: string) => {
 
 const SuggestEmbeds = ({
   query,
-  dismiss,
-  onSuggestionsChanged,
-  inlineAtomic,
+  // dismiss,
+  // onSuggestionsChanged,
+  // inlineAtomic,
 }) => {
-  const editor = useEditor() as ReactEditor & Editor
+  // const editor = useEditor() as ReactEditor & Editor
 
   console.log(query)
   // const topicsRes = useBlocksInPages(BlockType.Topic)
@@ -171,40 +240,26 @@ const SuggestEmbeds = ({
     }
     const _iFrame = getIframeAttrs(query)
     if (_iFrame) {
-      return <iframe id={query} title={query} {..._iFrame} />
-
-      // return <RawHtml html={query} />
-
-      // console.log(_iFrame)
-      // return _iFrame
+      return (
+        <View p="small">
+          <iframe id={query} title={query} {..._iFrame} />
+        </View>
+      )
     }
 
     return null
-    // return query.length ? (
-    //   <Iframe
-    //     url={query}
-    //     width="450px"
-    //     height="450px"
-    //     id={query}
-    //     display="initial"
-    //     position="relative"
-    //   />
-    // ) : null
   }
 
   return (
     <View>
-      <Text variant="uiTextSmall" color="gray.3" display="inline">
-        paste a link or embed code...
+      <Text variant="uiTextSmall" color="gray.3" display="inline" p="small">
+        {query.length
+          ? 'press enter to embed...'
+          : 'paste a link or embed code...'}
       </Text>
       {query.length ? IFrame() : null}
     </View>
   )
 }
-
-// SuggestTopics.defaultProps = {
-//   onSuggestions: () => null,
-//   onSuggestionsChanged: () => null,
-// }
 
 export default SuggestEmbeds

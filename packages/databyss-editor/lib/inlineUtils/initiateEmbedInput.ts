@@ -9,7 +9,7 @@ import {
 } from '@databyss-org/slate'
 import { flattenOffset, isCurrentlyInInlineAtomicField } from '../slateUtils'
 
-const validURL = (str) => {
+export const validURL = (str) => {
   const pattern = new RegExp(
     '^(https?:\\/\\/)?' + // protocol
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
