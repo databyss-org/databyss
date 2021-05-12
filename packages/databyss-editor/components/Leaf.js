@@ -33,7 +33,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
 
   if (leaf.inlineEmbedInput) {
     _children = (
-      <span
+      <code
         id="inline-embed-input"
         style={{
           display: 'block',
@@ -43,7 +43,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
         }}
       >
         {_children}
-      </span>
+      </code>
     )
   }
 

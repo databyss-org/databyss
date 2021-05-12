@@ -19,11 +19,6 @@ export const getPosition = (editor, inlineAtomic, inlineEmbed) => {
     if (_node) {
       const _rect = _node.getBoundingClientRect()
 
-      const _inlineAtomicMenuId =
-        inlineAtomic &&
-        document.getElementById('inline-atomic') &&
-        'inline-atomic'
-
       const _inlineEmbedMenu =
         inlineEmbed && document.getElementById('inline-embed-input')
           ? 'inline-embed-input'
@@ -37,8 +32,9 @@ export const getPosition = (editor, inlineAtomic, inlineEmbed) => {
 
       if (_elId) {
         const _textNode = document.getElementById(_elId).getBoundingClientRect()
+
         const relativePos = {
-          top: _textNode.top - _rect.top + 36,
+          top: _textNode.top - _rect.top + _textNode.height + 12,
           left: _textNode.left - _rect.left,
         }
 
@@ -208,6 +204,7 @@ const SuggestMenu = ({
   return (
     <ClickAwayListener onClickAway={onClickAway}>
       <DropdownContainer
+        suggestMenu
         data-test-element="suggest-menu"
         position={{
           top: position.top,

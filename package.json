@@ -266,6 +266,7 @@
     "react-flexbox-grid": "^2.1.2",
     "react-google-login": "^5.0.4",
     "react-helmet": "^6.1.0",
+    "react-iframe": "^1.8.0",
     "react-jss": "^8.6.1",
     "react-native": "0.60.4",
     "react-router": "^5.0.1",

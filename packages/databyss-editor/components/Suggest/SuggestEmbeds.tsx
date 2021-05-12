@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
+import Iframe from 'react-iframe'
 import { Editor, Transforms } from '@databyss-org/slate'
 import { useEditor, ReactEditor } from '@databyss-org/slate-react'
-import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
+import { Text, Button, Icon, View, RawHtml } from '@databyss-org/ui/primitives'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { prefixSearchAll } from '@databyss-org/services/blocks'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
@@ -13,6 +14,68 @@ import {
   onBakeInlineAtomic,
   setAtomicWithoutSuggestion,
 } from '../../lib/inlineUtils'
+
+const isHTML = (str: string) => {
+  const doc = new DOMParser().parseFromString(str, 'text/html')
+  return Array.from(doc.body.childNodes).some((node) => node.nodeType === 1)
+}
+
+const _iFrameAllowList = {
+  width: true,
+  height: true,
+  src: true,
+  title: true,
+  id: true,
+}
+
+const getIframeAttrs = (code: string) => {
+  if (!isHTML(code)) {
+    return false
+  }
+  try {
+    // attempt to parse iframe
+    const parsed = new DOMParser().parseFromString(code.trim(), 'text/html')
+
+    const _iframe = parsed.body
+    if (_iframe?.children.length !== 1) {
+      return false
+    }
+    const _firstNode = _iframe.children[0]
+    if (_firstNode?.tagName === 'IFRAME') {
+      // if iframe exists get all attribute properties
+      let _atts: {
+        width?: number
+        height?: number
+        title?: string
+        src?: string
+      } = {}
+      Array.from(_firstNode.attributes).forEach((i) => {
+        // only get properties in allow list
+        if (_iFrameAllowList[i.name]) _atts[i.name] = i.value
+      })
+
+      // scale iframe for max width of 500 - 16 (padding)
+      const MAX_WIDTH = 484
+      if (_atts?.width && MAX_WIDTH < _atts.width) {
+        const _widthRatio = MAX_WIDTH / _atts.width
+
+        _atts = {
+          ..._atts,
+          width: _atts.width * _widthRatio,
+          // scale height if height was property
+          ...(_atts?.height && { height: _atts.height * _widthRatio }),
+        }
+      }
+
+      return _atts
+    }
+
+    return false
+  } catch (err) {
+    console.log(err)
+    return false
+  }
+}
 
 const SuggestEmbeds = ({
   query,
@@ -102,10 +165,40 @@ const SuggestEmbeds = ({
   //   setSuggestions(Object.values(topicsRes.data))
   // }
 
+  const IFrame = () => {
+    if (!query.length) {
+      return null
+    }
+    const _iFrame = getIframeAttrs(query)
+    if (_iFrame) {
+      return <iframe id={query} title={query} {..._iFrame} />
+
+      // return <RawHtml html={query} />
+
+      // console.log(_iFrame)
+      // return _iFrame
+    }
+
+    return null
+    // return query.length ? (
+    //   <Iframe
+    //     url={query}
+    //     width="450px"
+    //     height="450px"
+    //     id={query}
+    //     display="initial"
+    //     position="relative"
+    //   />
+    // ) : null
+  }
+
   return (
-    <Text variant="uiTextSmall" color="gray.3" display="inline">
-      paste a link or embed code...
-    </Text>
+    <View>
+      <Text variant="uiTextSmall" color="gray.3" display="inline">
+        paste a link or embed code...
+      </Text>
+      {query.length ? IFrame() : null}
+    </View>
   )
 }
 
