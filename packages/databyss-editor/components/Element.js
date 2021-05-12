@@ -13,7 +13,12 @@ import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
 import { showAtomicModal } from '../lib/atomicModal'
-import { SuggestMenu, SuggestSources, SuggestTopics } from './Suggest'
+import {
+  SuggestMenu,
+  SuggestSources,
+  SuggestTopics,
+  SuggestEmbeds,
+} from './Suggest'
 
 // browser still takes some time to process the spellcheck
 const SPELLCHECK_DEBOUNCE_TIME = 300
@@ -185,18 +190,8 @@ const Element = ({ attributes, children, element, readOnly }) => {
 
           {block.__showInlineEmbedMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
-              <SuggestMenu
-                inlineEmbed
-                // onSuggestions={onSuggestions}
-                suggestType="embed"
-              >
-                <Text
-                  variant="uiTextSmall"
-                  color={`${isAtomicClosure(element.type) ? 'gray.4' : ''}`}
-                  display="inline"
-                >
-                  paste a link or embed code...
-                </Text>
+              <SuggestMenu inlineEmbed suggestType="embed">
+                <SuggestEmbeds />
               </SuggestMenu>
             </View>
           )}

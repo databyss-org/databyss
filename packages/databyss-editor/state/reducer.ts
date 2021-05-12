@@ -22,6 +22,7 @@ import {
   UNDO,
   REDO,
   CACHE_ENTITY_SUGGESTIONS,
+  PASTE_EMBED,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -63,6 +64,7 @@ import {
   InlineTypes,
 } from '../../databyss-services/interfaces/Range'
 import { OnChangeArgs } from './EditorProvider'
+import { normalizeDatabyssBlock } from '../lib/clipboardUtils/databyssFragToHtmlString'
 
 // if block at @index in @draft.blocks starts with an atomic identifier character,
 // e.g. @ or #, convert the block to the appropriate atomic type and return it.
@@ -528,6 +530,54 @@ export default (
 
           break
         }
+        case PASTE_EMBED: {
+          const _currentOffset = draft.selection.anchor.offset
+
+          insertText({
+            block: draft.blocks[draft.selection.anchor.index],
+            text: {
+              textValue: payload,
+              ranges: [
+                {
+                  offset: 0,
+                  length: payload.length,
+                  marks: [RangeType.InlineEmbedInput],
+                },
+              ],
+            },
+            offset: _currentOffset,
+          })
+          // normalize node so ranges are unified
+
+          const _block = normalizeDatabyssBlock(
+            draft.blocks[draft.selection.anchor.index]
+          )
+          console.log(JSON.parse(JSON.stringify(_block)))
+          // replace current block
+          draft.blocks[draft.selection.anchor.index] = _block
+
+          // update cursor
+          const _cursor = {
+            index: draft.selection.anchor.index,
+            offset: _currentOffset + payload.length,
+          }
+
+          nextSelection = {
+            _id: draft.selection._id,
+            anchor: _cursor,
+            focus: _cursor,
+          }
+
+          draft.operations.push({
+            index: state.selection.anchor.index,
+            block: _block,
+          })
+
+          // draft.operations.reloadAll = true
+
+          break
+        }
+
         case SPLIT: {
           // don't allow SPLIT inside atomic
           if (

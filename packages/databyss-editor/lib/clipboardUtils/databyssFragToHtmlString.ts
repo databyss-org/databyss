@@ -9,7 +9,7 @@ import {
   Transforms,
 } from '@databyss-org/slate'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
-import { slateRangesToStateRanges } from '../slateUtils'
+import { slateRangesToStateRanges, stateBlockToSlateBlock } from '../slateUtils'
 import { uid } from '../../../databyss-data/lib/uid'
 import splitTextAtOffset from './splitTextAtOffset'
 
@@ -18,7 +18,7 @@ import splitTextAtOffset from './splitTextAtOffset'
  * @param block convert block to slate and back to databyss format in order to normalize and merge ranges
  */
 
-const normalizeSlateNode = (block: Node): Block => {
+export const normalizeSlateNode = (block: Node): Block => {
   const editor = createEditor()
   Transforms.insertNodes(editor, block)
 
@@ -33,6 +33,12 @@ const normalizeSlateNode = (block: Node): Block => {
     type: BlockType.Entry,
     _id: uid(),
   }
+  return _block
+}
+
+export const normalizeDatabyssBlock = (block: Block): Block => {
+  const _node = stateBlockToSlateBlock(block)
+  const _block = normalizeSlateNode(_node)
   return _block
 }
 

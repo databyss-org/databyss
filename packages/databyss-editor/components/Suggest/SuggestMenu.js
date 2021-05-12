@@ -125,7 +125,8 @@ const SuggestMenu = ({
       const _index = editorContext.state.selection.anchor.index
       const _node = editor.children[_index]
       const _stateBlock = editorContext.state.blocks[_index]
-      if (!inlineAtomic) {
+
+      if (!(inlineAtomic || inlineEmbed)) {
         // get current input value
         const _text = Node.string(_node)
         if (!isAtomicInlineType(_node.type)) {
@@ -137,14 +138,22 @@ const SuggestMenu = ({
           setMenuActive(false)
         }
       } else if (!isAtomicInlineType(_node.type)) {
-        // get current text with markup 'inlineAtomicMenu'
-        // get text with active `inlineAtomicMenu` mark
+        let _inline = { type: '', prefix: '' }
+        if (inlineEmbed) {
+          _inline = { type: 'inlineEmbedInput', prefixLength: 2 }
+        }
+        if (inlineAtomic) {
+          _inline = { type: 'inlineAtomicMenu', prefixLength: 1 }
+        }
+
+        // get current text with markup '_inlineType'
+        // get text with active `_inlineType` mark
         const innerText = getTextOffsetWithRange({
           text: _stateBlock.text,
-          rangeType: 'inlineAtomicMenu',
+          rangeType: _inline.type,
         })
         if (innerText) {
-          setQuery(innerText.text.substring(1))
+          setQuery(innerText.text.substring(_inline.prefixLength))
         }
 
         window.requestAnimationFrame(setMenuPosition)

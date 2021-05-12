@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
 import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { Text, Node } from '@databyss-org/slate'
+import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import styledCss from '@styled-system/css'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
@@ -29,7 +29,20 @@ const Editor = ({
   useBlocksInPages('SOURCE')
   useBlocksInPages('TOPIC')
 
-  const { copy, paste, cut } = useEditorContext()
+  const { copy, paste, cut, embedPaste } = useEditorContext()
+
+  // check if paste is an embed or regular paste
+  const pasteEventHandler = (e) => {
+    e.preventDefault()
+    const _activeMarks = SlateEditor.marks(editor)
+    // if pasting embed code handle seperatly
+    if (_activeMarks?.inlineEmbedInput) {
+      embedPaste(e)
+      return
+    }
+
+    paste(e)
+  }
 
   let searchTerm = ''
 
@@ -73,8 +86,9 @@ const Editor = ({
   const decorate = useCallback(
     ([node, path]) => {
       const ranges = []
+      if (Text.isText(node) && !node?.inlineEmbedInput) {
+        // do not apply markup
 
-      if (Text.isText(node)) {
         const _string = Node.string(node)
 
         // check for email addresses
@@ -167,10 +181,7 @@ const Editor = ({
           e.preventDefault()
           copy(e)
         }}
-        onPaste={(e) => {
-          e.preventDefault()
-          paste(e)
-        }}
+        onPaste={pasteEventHandler}
         onCut={(e) => {
           e.preventDefault()
           cut(e)
