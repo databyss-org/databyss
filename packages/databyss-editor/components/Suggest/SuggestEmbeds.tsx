@@ -11,6 +11,7 @@ import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorContext } from '../../state/EditorProvider'
 import { validURL } from '../../lib/inlineUtils/initiateEmbedInput'
+import { setEmbedMediaWithoutSuggestion } from '../../lib/inlineUtils/setEmbedMediaWithoutSuggestion'
 import {
   onBakeInlineAtomic,
   setAtomicWithoutSuggestion,
@@ -37,7 +38,25 @@ const _iFrameAllowList = {
   frameborder: true,
 }
 
-const getIframeAttrs = (code: string) => {
+enum MediaTypes {
+  IFRAME = 'iframe',
+  IMAGE = 'image',
+  YOUTUBE = 'youtube',
+  TWITTER = 'twitter',
+  CODE = 'CODE',
+}
+
+export type IframeAttributes = {
+  width?: number
+  height?: number
+  title?: string
+  src?: string
+  // border?: number
+  // frameborder?: number
+  mediaType?: MediaTypes
+}
+
+const getIframeAttrs = (code: string): IframeAttributes | false => {
   if (!(isHTML(code) || validURL(code))) {
     return false
   }
@@ -46,14 +65,7 @@ const getIframeAttrs = (code: string) => {
     const MAX_WIDTH = 484
     const MAX_HEIGHT = 300
 
-    let _atts: {
-      width?: number
-      height?: number
-      title?: string
-      src?: string
-      border?: number
-      frameborder?: number
-    } = {}
+    let _atts: IframeAttributes = {}
 
     // get iframe attributes from html
     if (isHTML(code)) {
@@ -76,6 +88,7 @@ const getIframeAttrs = (code: string) => {
           const _widthRatio = MAX_WIDTH / _atts.width
 
           _atts = {
+            mediaType: MediaTypes.IFRAME,
             ..._atts,
             width: _atts.width * _widthRatio,
             // scale height if height was property
@@ -96,12 +109,13 @@ const getIframeAttrs = (code: string) => {
 
         // TODO: shouldnt use twitterframe
         _atts = {
-          border: 0,
-          frameborder: 0,
+          // border: 0,
+          // frameborder: 0,
           width: MAX_WIDTH,
           height: 220,
           src: `https://twitframe.com/show?url=${encodeURI(code)}`,
           title: 'tweet',
+          mediaType: MediaTypes.TWITTER,
         }
         return _atts
       }
@@ -115,8 +129,9 @@ const getIframeAttrs = (code: string) => {
           return false
         }
         _atts = {
-          border: 0,
-          frameborder: 0,
+          mediaType: MediaTypes.YOUTUBE,
+          // border: 0,
+          // frameborder: 0,
           width: MAX_WIDTH,
           height: 273,
           src: `https://www.youtube.com/embed/${_id}`,
@@ -128,12 +143,13 @@ const getIframeAttrs = (code: string) => {
       // check if image url
       if (_regExValidator.image.test(code)) {
         _atts = {
-          border: 0,
-          frameborder: 0,
+          // border: 0,
+          // frameborder: 0,
           width: MAX_WIDTH,
           height: 300,
           src: code,
           title: 'image',
+          mediaType: MediaTypes.IMAGE,
         }
         return _atts
       }
@@ -142,6 +158,7 @@ const getIframeAttrs = (code: string) => {
     console.log(err)
     return false
   }
+  return false
 }
 
 const SuggestEmbeds = ({
@@ -150,14 +167,21 @@ const SuggestEmbeds = ({
   // onSuggestionsChanged,
   // inlineAtomic,
 }) => {
-  // const editor = useEditor() as ReactEditor & Editor
+  const editor = useEditor() as ReactEditor & Editor
 
   console.log(query)
+
+  const [iframeAtts, setIframeAtts] = useState<IframeAttributes | false>(false)
+  useEffect(() => {
+    const _iFrame = getIframeAttrs(query)
+    setIframeAtts(_iFrame)
+  }, [query])
+
   // const topicsRes = useBlocksInPages(BlockType.Topic)
 
-  // const { replace, state, setContent } = useEditorContext()
+  const { state, setContent } = useEditorContext()
 
-  // const pendingSetContent = useRef(false)
+  const pendingSetContent = useRef(false)
 
   // const [suggestions, setSuggestions] = useState<null | any[]>(null)
   // const [filteredSuggestions, setFilteredSuggestions] = useState([])
@@ -197,32 +221,34 @@ const SuggestEmbeds = ({
 
   // useEffect(updateSuggestions, [query, suggestions])
 
-  // const setCurrentTopicWithoutSuggestion = () =>
-  //   setAtomicWithoutSuggestion({
-  //     editor,
-  //     state,
-  //     setContent,
-  //   })
+  const setEmbedWithoutSuggestion = () =>
+    iframeAtts &&
+    setEmbedMediaWithoutSuggestion({
+      editor,
+      state,
+      setContent,
+      attributes: iframeAtts,
+    })
 
-  // useEventListener('keydown', (e) => {
-  //   /*
-  //   bake topic if arrow up or down without suggestion
-  //   */
-  //   if (
-  //     !filteredSuggestions.length &&
-  //     (e.key === 'ArrowDown' || e.key === 'ArrowUp')
-  //   ) {
-  //     setCurrentTopicWithoutSuggestion()
-  //   }
+  useEventListener('keydown', (e) => {
+    /*
+    bake topic if arrow up or down without suggestion
+    */
+    // if (
+    //   !filteredSuggestions.length &&
+    //   (e.key === 'ArrowDown' || e.key === 'ArrowUp')
+    // ) {
+    //   setCurrentTopicWithoutSuggestion()
+    // }
 
-  //   if (e.key === 'Enter') {
-  //     window.requestAnimationFrame(() => {
-  //       if (!pendingSetContent.current) {
-  //         setCurrentTopicWithoutSuggestion()
-  //       }
-  //     })
-  //   }
-  // })
+    if (e.key === 'Enter') {
+      window.requestAnimationFrame(() => {
+        if (!pendingSetContent.current) {
+          setEmbedWithoutSuggestion()
+        }
+      })
+    }
+  })
 
   // if (!topicsRes.isSuccess) {
   //   return <LoadingFallback queryObserver={topicsRes} />
@@ -233,19 +259,21 @@ const SuggestEmbeds = ({
   // }
 
   const IFrame = () => {
-    if (!query.length) {
+    if (!iframeAtts) {
       return null
     }
-    const _iFrame = getIframeAttrs(query)
-    if (_iFrame) {
-      return (
-        <View p="small">
-          <iframe id={query} title={query} {..._iFrame} />
-        </View>
-      )
-    }
 
-    return null
+    return (
+      <View p="small">
+        <iframe
+          id={query}
+          title={query}
+          // border="0px"
+          frameBorder="0px"
+          {...iframeAtts}
+        />
+      </View>
+    )
   }
 
   return (

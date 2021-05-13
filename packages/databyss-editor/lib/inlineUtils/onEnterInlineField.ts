@@ -50,8 +50,6 @@ export const onEnterInlineField = ({
       const _index = state.selection.anchor.index
       const _stateBlock = state.blocks[_index]
       // set the block with a re-render
-      console.log(currentLeaf)
-      console.log(_stateBlock)
       setContent({
         selection: state.selection,
         operations: [

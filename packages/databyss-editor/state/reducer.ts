@@ -50,6 +50,7 @@ import {
   trimRight,
   splitBlockAtEmptyLine,
   convertInlineToAtomicBlocks,
+  convertInlineToEmbed,
   replaceInlineText,
   getRangesAtPoint,
   pushAtomicChangeUpstream,
@@ -829,6 +830,13 @@ export default (
                 block: _block,
                 index: op.index,
                 draft,
+              })
+            } else if (op.convertInlineToEmbed) {
+              convertInlineToEmbed({
+                block: _block,
+                index: op.index,
+                draft,
+                attributes: op.convertInlineToEmbed,
               })
             } else if (op.withRerender) {
               // if operation requires re-render push operation upstream

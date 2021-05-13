@@ -3,17 +3,11 @@ import {
   Page,
   Source,
   Topic,
+  Block,
 } from '@databyss-org/services/interfaces'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
-import {
-  Selection,
-  Block,
-  Range,
-  EditorState,
-  Text,
-  Point,
-} from '../interfaces'
+import { Selection, Range, EditorState, Text, Point } from '../interfaces'
 import { OnChangeArgs } from './EditorProvider'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -24,10 +18,12 @@ import {
 } from '../lib/clipboardUtils'
 
 import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
+
 import {
   RangeType,
   InlineTypes,
 } from '../../databyss-services/interfaces/Range'
+import { IframeAttributes } from '../components/Suggest/SuggestEmbeds'
 
 /*
 takes a text object and a range type and returns the length of the range, the location of the offset and the text contained within the range, this fuction works when text block has of of that range type
@@ -599,7 +595,7 @@ export const convertInlineToAtomicBlocks = ({
   */
 
   // get the markup data, function returns: offset, length, text
-  let inlineMarkupData = getTextOffsetWithRange({
+  const inlineMarkupData = getTextOffsetWithRange({
     text: block.text,
     rangeType: RangeType.InlineAtomicInput,
   })
@@ -625,13 +621,12 @@ export const convertInlineToAtomicBlocks = ({
   }
 
   // same operation as above but with 'inlineEmbedInput' and checking for two characters
-  inlineMarkupData = getTextOffsetWithRange({
+  const inlineEmbedData = getTextOffsetWithRange({
     text: block.text,
     rangeType: RangeType.InlineEmbedInput,
   })
 
-  console.log('INLINE MARKUP DAT', inlineMarkupData)
-  if (inlineMarkupData?.length === 2) {
+  if (inlineEmbedData?.length === 2) {
     const ranges: Range[] = []
     block.text.ranges.forEach((r) => {
       if (!r.marks.includes(RangeType.InlineEmbedInput)) {
@@ -640,7 +635,7 @@ export const convertInlineToAtomicBlocks = ({
     })
 
     block.text.ranges = block.text.ranges.filter(
-      (r) => !r.marks.includes(RangeType.InlineAtomicInput)
+      (r) => !r.marks.includes(RangeType.InlineEmbedInput)
     )
     // force a re-render
     draft.operations.push({
@@ -742,6 +737,47 @@ export const convertInlineToAtomicBlocks = ({
       draft.newEntities.push(_entity)
     }
   }
+}
+
+/**
+ *
+ *  if flag `convertInlineToAtomic` is set, pull out text within range `inlineEmbedInput`, look up in entityCache and replace text with `[title]` attributes property, save block with `EMBED` type
+ */
+export const convertInlineToEmbed = ({
+  block,
+  index,
+  draft,
+  attributes,
+}: {
+  block: Block
+  index: Number
+  draft: EditorState
+  attributes: IframeAttributes
+}) => {
+  const _newId = uid()
+  const inlineEmbedData = getTextOffsetWithRange({
+    text: block.text,
+    rangeType: RangeType.InlineEmbedInput,
+  })
+  if (!inlineEmbedData) {
+    return
+  }
+  console.log(inlineEmbedData)
+  // trim text from block and replace with `[attributes.title]`
+  const splitText = splitTextAtOffset({
+    text: block.text,
+    offset: inlineEmbedData.offset,
+  })
+
+  const textAfter = splitTextAtOffset({
+    text: splitText.after,
+    offset: inlineEmbedData.length,
+  }).after
+
+  let mergedText = mergeText(splitText.before, {
+    textValue: `[${attributes.title}]`,
+    ranges: [{ marks: [['embed', _newId]] }],
+  })
 }
 
 export const getInlineOrAtomicsFromStateSelection = (
