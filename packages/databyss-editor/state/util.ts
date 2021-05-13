@@ -599,7 +599,7 @@ export const convertInlineToAtomicBlocks = ({
   */
 
   // get the markup data, function returns: offset, length, text
-  const inlineMarkupData = getTextOffsetWithRange({
+  let inlineMarkupData = getTextOffsetWithRange({
     text: block.text,
     rangeType: RangeType.InlineAtomicInput,
   })
@@ -624,6 +624,31 @@ export const convertInlineToAtomicBlocks = ({
     return
   }
 
+  // same operation as above but with 'inlineEmbedInput' and checking for two characters
+  inlineMarkupData = getTextOffsetWithRange({
+    text: block.text,
+    rangeType: RangeType.InlineEmbedInput,
+  })
+
+  console.log('INLINE MARKUP DAT', inlineMarkupData)
+  if (inlineMarkupData?.length === 2) {
+    const ranges: Range[] = []
+    block.text.ranges.forEach((r) => {
+      if (!r.marks.includes(RangeType.InlineEmbedInput)) {
+        ranges.push(r)
+      }
+    })
+
+    block.text.ranges = block.text.ranges.filter(
+      (r) => !r.marks.includes(RangeType.InlineAtomicInput)
+    )
+    // force a re-render
+    draft.operations.push({
+      index,
+      block,
+    })
+    return
+  }
   // check if text is inline atomic type
   const _atomicType =
     inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))

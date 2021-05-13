@@ -52,16 +52,16 @@ export const onEnterInlineField = ({
       // set the block with a re-render
       console.log(currentLeaf)
       console.log(_stateBlock)
-      // setContent({
-      //   selection: state.selection,
-      //   operations: [
-      //     {
-      //       index: _index,
-      //       text: _stateBlock.text,
-      //       convertInlineToAtomic: true,
-      //     },
-      //   ],
-      // })
+      setContent({
+        selection: state.selection,
+        operations: [
+          {
+            index: _index,
+            text: _stateBlock.text,
+            convertInlineToAtomic: true,
+          },
+        ],
+      })
     }
 
     event.preventDefault()
