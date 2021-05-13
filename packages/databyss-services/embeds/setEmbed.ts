@@ -3,7 +3,6 @@ import { DocumentType } from '../../databyss-data/pouchdb/interfaces'
 import { upsert } from '../../databyss-data/pouchdb/utils'
 
 export const setEmbed = async (data: Embed) => {
-  console.log(data)
   const { text, detail, _id, sharedWithGroups } = data as any
 
   const blockFields = {
@@ -15,7 +14,6 @@ export const setEmbed = async (data: Embed) => {
     type: BlockType.Embed,
   }
 
-  console.log('BLOCK FIELDS', blockFields)
   await upsert({
     doctype: DocumentType.Block,
     _id,

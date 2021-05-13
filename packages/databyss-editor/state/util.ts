@@ -768,25 +768,27 @@ export const convertInlineToEmbed = ({
   if (!inlineEmbedData) {
     return
   }
-  console.log(inlineEmbedData)
   // trim text from block and replace with `[attributes.title]`
   const splitText = splitTextAtOffset({
     text: block.text,
     offset: inlineEmbedData.offset,
   })
 
+  console.log('SPLIT TEXT', splitText)
+
   const textAfter = splitTextAtOffset({
     text: splitText.after,
     offset: inlineEmbedData.length,
   }).after
 
+  const _offset = splitText.before.textValue.length - 2 // compensate for removing <<
   let mergedText = mergeText(splitText.before, {
     textValue: `[${attributes.title}]`,
     ranges: [
       {
         marks: [[InlineTypes.Embed, _newId]],
         length: _attributes.title.length + 2,
-        offset: splitText.before.textValue.length,
+        offset: _offset,
       },
     ],
   })
@@ -795,6 +797,7 @@ export const convertInlineToEmbed = ({
 
   mergedText = mergeText(mergedText, textAfter)
 
+  console.log('REPLACE TEXT', mergedText)
   block.text = mergedText
 
   // force a re-render
@@ -830,7 +833,6 @@ export const convertInlineToEmbed = ({
     },
     _id: _newId,
   }
-  console.log('set this', _entity)
   draft.newEntities.push(_entity)
 }
 

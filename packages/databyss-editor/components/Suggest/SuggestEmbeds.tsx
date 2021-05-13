@@ -12,6 +12,7 @@ import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorContext } from '../../state/EditorProvider'
 import { validURL } from '../../lib/inlineUtils/initiateEmbedInput'
 import { setEmbedMediaWithoutSuggestion } from '../../lib/inlineUtils/setEmbedMediaWithoutSuggestion'
+import { MediaTypes } from '../../../databyss-services/interfaces/Block'
 import {
   onBakeInlineAtomic,
   setAtomicWithoutSuggestion,
@@ -34,14 +35,6 @@ const _iFrameAllowList = {
   src: true,
   title: true,
   id: true,
-}
-
-enum MediaTypes {
-  IFRAME = 'iframe',
-  IMAGE = 'image',
-  YOUTUBE = 'youtube',
-  TWITTER = 'twitter',
-  CODE = 'CODE',
 }
 
 export type IframeAttributes = {
@@ -167,8 +160,6 @@ const SuggestEmbeds = ({
   // inlineAtomic,
 }) => {
   const editor = useEditor() as ReactEditor & Editor
-
-  console.log(query)
 
   const [iframeAtts, setIframeAtts] = useState<IframeAttributes | false>(false)
   useEffect(() => {

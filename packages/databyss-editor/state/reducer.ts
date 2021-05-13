@@ -553,7 +553,6 @@ export default (
           const _block = normalizeDatabyssBlock(
             draft.blocks[draft.selection.anchor.index]
           )
-          console.log(JSON.parse(JSON.stringify(_block)))
           // replace current block
           draft.blocks[draft.selection.anchor.index] = _block
 
