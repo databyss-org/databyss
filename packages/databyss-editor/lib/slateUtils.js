@@ -294,6 +294,16 @@ export const isCurrentlyInInlineAtomicField = (editor) => {
   return false
 }
 
+export const isCurrentlyInInlineEmbedInput = (editor) => {
+  if (
+    isMarkActive(editor, 'inlineEmbedInput') &&
+    Range.isCollapsed(editor.selection)
+  ) {
+    return true
+  }
+  return false
+}
+
 /*
 returns all blocks which contain an inline or atomic block with provided id ignoring closure blocks
 */
