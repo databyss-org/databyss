@@ -34,8 +34,6 @@ const _iFrameAllowList = {
   src: true,
   title: true,
   id: true,
-  border: true,
-  frameborder: true,
 }
 
 enum MediaTypes {
@@ -51,6 +49,7 @@ export type IframeAttributes = {
   height?: number
   title?: string
   src?: string
+  code?: string
   // border?: number
   // frameborder?: number
   mediaType?: MediaTypes

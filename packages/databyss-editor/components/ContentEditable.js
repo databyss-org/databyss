@@ -3,6 +3,7 @@ import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { setSource } from '@databyss-org/services/sources'
+import { setEmbed } from '@databyss-org/services/embeds'
 import { setBlockRelations } from '@databyss-org/services/entries'
 import { setTopic } from '@databyss-org/services/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -143,6 +144,7 @@ const ContentEditable = ({
               ranges: entity.text.ranges,
             },
             sharedWithGroups,
+            detail: entity?.detail,
           }
         }
         const _types = {
@@ -154,6 +156,11 @@ const ContentEditable = ({
           TOPIC: () => {
             if (_data) {
               window.requestAnimationFrame(() => setTopic(_data))
+            }
+          },
+          EMBED: () => {
+            if (_data) {
+              window.requestAnimationFrame(() => setEmbed(_data))
             }
           },
         }

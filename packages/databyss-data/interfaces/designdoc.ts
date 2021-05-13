@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import { JSONSchema4 } from 'json-schema'
+import embedSchema from '../schemas/embedSchema'
 
 export interface DesignDocLibs {
   tv4: string
@@ -20,6 +21,7 @@ export interface DesignDoc {
   groupSchema: JSONSchema4
   entrySchema: JSONSchema4
   topicSchema: JSONSchema4
+  embedSchema: JSONSchema4
   userPreferenceSchema: JSONSchema4
   pointSchema: JSONSchema4
   notificationSchema: JSONSchema4

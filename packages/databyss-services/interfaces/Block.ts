@@ -9,6 +9,7 @@ export enum BlockType {
   Topic = 'TOPIC',
   EndSource = 'END_SOURCE',
   EndTopic = 'END_TOPIC',
+  Embed = 'EMBED',
 }
 
 export interface BlockReference {
@@ -44,6 +45,25 @@ export interface Author {
 export interface Citations {
   format: string
   text: Text
+}
+
+export enum MediaTypes {
+  IFRAME = 'iframe',
+  IMAGE = 'image',
+  YOUTUBE = 'youtube',
+  TWITTER = 'twitter',
+  CODE = 'CODE',
+}
+
+export interface EmbedDetail {
+  title: string
+  src: string
+  dimensions: {
+    width: number
+    height: number
+  }
+  mediaType: MediaTypes
+  embedCode?: string
 }
 
 export interface SourceDetail {
@@ -82,6 +102,10 @@ export interface SourceCitationHeader extends Source {
 export interface Source extends Block {
   detail: SourceDetail
   name?: Text
+}
+
+export interface Embed extends Block {
+  detail: EmbedDetail
 }
 
 export interface Topic extends Block {

@@ -750,11 +750,17 @@ export const convertInlineToEmbed = ({
   attributes,
 }: {
   block: Block
-  index: Number
+  index: number
   draft: EditorState
   attributes: IframeAttributes
 }) => {
+  const _attributes = attributes
+  if (!_attributes?.title?.length) {
+    _attributes.title = 'untitled'
+  }
+
   const _newId = uid()
+
   const inlineEmbedData = getTextOffsetWithRange({
     text: block.text,
     rangeType: RangeType.InlineEmbedInput,
@@ -776,8 +782,56 @@ export const convertInlineToEmbed = ({
 
   let mergedText = mergeText(splitText.before, {
     textValue: `[${attributes.title}]`,
-    ranges: [{ marks: [['embed', _newId]] }],
+    ranges: [
+      {
+        marks: [[InlineTypes.Embed, _newId]],
+        length: _attributes.title.length + 2,
+        offset: splitText.before.textValue.length,
+      },
+    ],
   })
+
+  const _caretOffest = mergedText.textValue.length
+
+  mergedText = mergeText(mergedText, textAfter)
+
+  block.text = mergedText
+
+  // force a re-render
+  draft.operations.push({
+    index,
+    block,
+  })
+
+  // update selection
+  const _nextSelection = {
+    _id: draft.selection._id,
+    anchor: { index, offset: _caretOffest },
+    focus: { index, offset: _caretOffest },
+  }
+
+  draft.selection = _nextSelection
+
+  // if suggestion exists do not create new entity
+
+  const _entity = {
+    type: BlockType.Embed,
+    // remove atomic symbol
+    text: { textValue: _attributes.title, ranges: [] },
+    detail: {
+      title: _attributes.title,
+      src: _attributes.src,
+      dimensions: {
+        width: _attributes.height,
+        height: _attributes.width,
+      },
+      ...(_attributes.code && { embedCode: _attributes.code }),
+      mediaType: _attributes.mediaType,
+    },
+    _id: _newId,
+  }
+  console.log('set this', _entity)
+  draft.newEntities.push(_entity)
 }
 
 export const getInlineOrAtomicsFromStateSelection = (
