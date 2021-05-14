@@ -6,17 +6,16 @@ export const EmbedMedia = ({ _children, attributes, _element }) => {
   const { gray } = colors
 
   return (
-    <span {...attributes}>
-      <span
-        contentEditable={false}
-        id="inline-embed-input"
-        style={{
-          display: 'block',
-          backgroundColor: gray[6],
-          borderRadius: '3px',
-          //    padding: '3px',
-        }}
-      >
+    <span
+      {...attributes}
+      style={{
+        display: 'block',
+        backgroundColor: gray[6],
+        borderRadius: '3px',
+        //    padding: '3px',
+      }}
+    >
+      <span contentEditable={false} id="inline-embed-input">
         {_element.character}
       </span>
       {_children}

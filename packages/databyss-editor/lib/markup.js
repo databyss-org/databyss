@@ -172,7 +172,6 @@ export const stateToSlateMarkup = (block) => {
       }
     }
   })
-  console.log(_children)
   return _children
 }
 

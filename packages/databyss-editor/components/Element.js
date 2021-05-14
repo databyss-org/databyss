@@ -105,7 +105,6 @@ const Element = ({ attributes, children, element, readOnly }) => {
       }
 
       if (element.embed) {
-        console.log(element)
         return (
           <EmbedMedia
             _children={children}
@@ -114,7 +113,6 @@ const Element = ({ attributes, children, element, readOnly }) => {
           />
         )
       }
-      console.log('EL', element)
 
       const blockMenuWidth = menuLauncherSize + 6
 

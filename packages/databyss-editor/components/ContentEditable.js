@@ -48,13 +48,6 @@ import { getTextFromSlateNode } from '../lib/markup'
 
 const withMedia = (editor) => {
   const { isInline, isVoid } = editor
-  // editor.isVoid = (element) => {
-  //   console.log(element)
-  //   return false
-  // }
-  // editor.isInline = (element) => {
-  //   return element.type === 'mention' ? true : isInline(element)
-  // }
   editor.isInline = (element) => (element.embed ? true : isInline(element))
 
   editor.isVoid = (element) => (element.embed ? true : isVoid(element))
@@ -256,8 +249,7 @@ const ContentEditable = ({
   }
 
   return useMemo(() => {
-    const onChange = (value, second) => {
-      console.log('value', JSON.parse(JSON.stringify(value)))
+    const onChange = (value) => {
       if (onDocumentChange) {
         onDocumentChange(editor)
       }
@@ -320,11 +312,6 @@ const ContentEditable = ({
         )
       ) {
         // update target node
-        console.log('HERE', value[focusIndex])
-        console.log('content', {
-          textValue: getTextFromSlateNode(value[focusIndex]),
-          ranges: slateRangesToStateRanges(value[focusIndex]),
-        })
 
         setContent({
           selection,
@@ -687,7 +674,6 @@ const ContentEditable = ({
 
     state.operations.forEach((op) => {
       const _block = stateBlockToSlateBlock(op.block)
-      console.log('CHANGE BLOCK', _block)
       // if new block was added in reducer
       if (!editor.children[op.index]) {
         Transforms.insertNodes(
@@ -701,7 +687,6 @@ const ContentEditable = ({
           at: [op.index],
         })
       } else {
-        console.log('IN ELSE')
         // clear current block
         editor.children[op.index].children.forEach(() => {
           Transforms.delete(editor, { at: [op.index, 0] })
