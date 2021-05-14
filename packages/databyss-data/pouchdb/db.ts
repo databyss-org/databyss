@@ -16,6 +16,7 @@ import {
   blockSchema,
   userPreferenceSchema,
   notificationSchema,
+  pointSchema,
 } from '@databyss-org/data/schemas'
 import {
   getPouchSecret,
@@ -373,6 +374,7 @@ export const pouchDataValidation = (data) => {
 
   // add $ref schemas, these schemas are reused
   tv4.addSchema('text', textSchema)
+  tv4.addSchema('point', pointSchema)
   tv4.addSchema('pouchDb', pouchDocSchema)
   tv4.addSchema('blockSchema', blockSchema)
   tv4.addSchema('notification', notificationSchema)

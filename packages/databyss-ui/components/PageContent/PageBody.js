@@ -46,6 +46,7 @@ const PageBody = ({
 
   // state from provider is out of date
   const onChange = (value) => {
+    console.log('[PageBody.onChange]', value)
     requestAnimationFrame(() => {
       if (editorStateRef.current?.pagePath) {
         onEditorPathChange(editorStateRef.current.pagePath)
@@ -54,9 +55,14 @@ const PageBody = ({
 
     // handle changes to page title block
     if (value?.patches?.length) {
-      const _patchValue = value.patches.find(
+      const _patch = value.patches.find(
         (_patch) => _patch.path?.[0] === 'blocks' && _patch.path?.[1] === 0
-      )?.value?.textValue
+      )
+      console.log('[PageBody.onChange] _patch', _patch)
+      const _patchValue =
+        _patch?.path?.[2] === 'text'
+          ? _patch?.value?.textValue
+          : _patch?.value?.text?.textValue
       if (_patchValue !== null && _patchValue !== undefined) {
         const _pageData = {
           name: _patchValue.trim() || UNTITLED_PAGE_NAME,
