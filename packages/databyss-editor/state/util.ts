@@ -779,7 +779,7 @@ export const convertInlineToEmbed = ({
     offset: inlineEmbedData.length,
   }).after
 
-  const _offset = splitText.before.textValue.length // compensate for removing <<
+  // const _offset = splitText.before.textValue.length // compensate for removing <<
 
   let mergedText = mergeText(splitText.before, {
     textValue: `[${attributes.title}]`,
@@ -796,7 +796,6 @@ export const convertInlineToEmbed = ({
 
   mergedText = mergeText(mergedText, textAfter)
 
-  console.log('REPLACE TEXT', mergedText)
   block.text = mergedText
 
   // force a re-render
@@ -811,8 +810,8 @@ export const convertInlineToEmbed = ({
     anchor: { index, offset: _caretOffest },
     focus: { index, offset: _caretOffest },
   }
-
-  draft.selection = _nextSelection
+  // TODO: WHAT WILL THE SELECTION BE
+  // draft.selection = _nextSelection
 
   // if suggestion exists do not create new entity
 
