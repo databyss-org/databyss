@@ -31,6 +31,46 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
+  if (leaf.inlineAtomicMenu) {
+    _children = (
+      <span
+        id="inline-atomic"
+        style={{
+          minWidth: '150px',
+          display: 'inline-block',
+          backgroundColor: gray[6],
+          borderRadius: '3px',
+          //    padding: '3px',
+        }}
+      >
+        {_children}
+      </span>
+    )
+  }
+
+  if (leaf.embed) {
+    console.log(leaf)
+    console.log(leaf.character)
+    console.log(_children)
+    _children = (
+      <span>
+        <span
+          contentEditable={false}
+          id="inline-embed-input"
+          style={{
+            display: 'block',
+            backgroundColor: gray[6],
+            borderRadius: '3px',
+            //    padding: '3px',
+          }}
+        >
+          {leaf.character}
+        </span>
+        {_children}
+      </span>
+    )
+  }
+
   if (leaf.inlineEmbedInput) {
     _children = (
       <code

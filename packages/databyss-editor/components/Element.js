@@ -19,7 +19,7 @@ import {
   SuggestTopics,
   SuggestEmbeds,
 } from './Suggest'
-
+import { EmbedMedia } from './EmbedMedia'
 // browser still takes some time to process the spellcheck
 const SPELLCHECK_DEBOUNCE_TIME = 300
 
@@ -103,6 +103,18 @@ const Element = ({ attributes, children, element, readOnly }) => {
       if (!block) {
         return null
       }
+
+      if (element.embed) {
+        console.log(element)
+        return (
+          <EmbedMedia
+            _children={children}
+            attributes={attributes}
+            _element={element}
+          />
+        )
+      }
+      console.log('EL', element)
 
       const blockMenuWidth = menuLauncherSize + 6
 

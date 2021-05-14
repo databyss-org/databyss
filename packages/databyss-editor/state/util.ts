@@ -774,21 +774,20 @@ export const convertInlineToEmbed = ({
     offset: inlineEmbedData.offset,
   })
 
-  console.log('SPLIT TEXT', splitText)
-
   const textAfter = splitTextAtOffset({
     text: splitText.after,
     offset: inlineEmbedData.length,
   }).after
 
-  const _offset = splitText.before.textValue.length - 2 // compensate for removing <<
+  const _offset = splitText.before.textValue.length // compensate for removing <<
+
   let mergedText = mergeText(splitText.before, {
     textValue: `[${attributes.title}]`,
     ranges: [
       {
         marks: [[InlineTypes.Embed, _newId]],
         length: _attributes.title.length + 2,
-        offset: _offset,
+        offset: 0,
       },
     ],
   })

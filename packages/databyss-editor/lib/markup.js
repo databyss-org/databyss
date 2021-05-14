@@ -1,4 +1,4 @@
-import { createEditor, Transforms } from '@databyss-org/slate'
+import { createEditor, Transforms, Node, Element } from '@databyss-org/slate'
 import cloneDeep from 'clone-deep'
 import { toggleMark } from './slateUtils'
 
@@ -141,19 +141,28 @@ export const stateToSlateMarkup = (block) => {
 
     const text = _text.substring(b.offset, b.offset + b.length)
 
+    let _childNode = { text }
+
     const ranges = {}
-    b.marks.forEach((m) => {
+    b.marks.forEach((m, i) => {
       // check if current mark is a tuple,
       if (Array.isArray(m)) {
+        // if inline and is embedded, replace text with empty string and add 'character' property
+
         // if so, mark both items: atomic type, and id in slate block
         ranges[m[0]] = true
         ranges.atomicId = m[1]
+        if (i === 0 && ranges.embed) {
+          // _childNode = { character: text, text: '' }
+          _childNode = { children: [{ text: '' }], character: text }
+        }
       } else {
         ranges[m] = true
       }
+      _childNode = { ..._childNode, ...ranges }
     })
     _currentIndex += b.length
-    _children.push({ text, ...ranges })
+    _children.push(_childNode)
     // if last element in array, check for left over text
     if (i === _ranges.length - 1) {
       const _len = _text.length - _currentIndex
@@ -163,6 +172,7 @@ export const stateToSlateMarkup = (block) => {
       }
     }
   })
+  console.log(_children)
   return _children
 }
 
@@ -198,4 +208,22 @@ export const getRangesFromBlock = (value) => {
       .filter((x) => x.length != null),
     textValue: text,
   }
+}
+
+export const getTextFromSlateNode = (node) => {
+  let _str = ''
+  node.children.forEach((n) => {
+    let _t
+    if (n.character) {
+      _t = n.character
+    } else {
+      _t = Node.string(n)
+    }
+
+    if (_t) {
+      _str += _t
+    }
+  })
+
+  return _str
 }

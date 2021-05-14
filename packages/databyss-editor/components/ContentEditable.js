@@ -44,6 +44,23 @@ import {
   preventMarksOnInline,
   enterAtEndOfInlineAtomic,
 } from '../lib/inlineUtils'
+import { getTextFromSlateNode } from '../lib/markup'
+
+const withMedia = (editor) => {
+  const { isInline, isVoid } = editor
+  // editor.isVoid = (element) => {
+  //   console.log(element)
+  //   return false
+  // }
+  // editor.isInline = (element) => {
+  //   return element.type === 'mention' ? true : isInline(element)
+  // }
+  editor.isInline = (element) => (element.embed ? true : isInline(element))
+
+  editor.isVoid = (element) => (element.embed ? true : isVoid(element))
+
+  return editor
+}
 
 const ContentEditable = ({
   onDocumentChange,
@@ -73,7 +90,7 @@ const ContentEditable = ({
     removeAtomicFromQueue,
   } = editorContext
 
-  const editor = useMemo(() => withReact(createEditor()), [])
+  const editor = useMemo(() => withMedia(withReact(createEditor())), [])
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
@@ -239,7 +256,8 @@ const ContentEditable = ({
   }
 
   return useMemo(() => {
-    const onChange = (value) => {
+    const onChange = (value, second) => {
+      console.log('value', JSON.parse(JSON.stringify(value)))
       if (onDocumentChange) {
         onDocumentChange(editor)
       }
@@ -302,6 +320,12 @@ const ContentEditable = ({
         )
       ) {
         // update target node
+        console.log('HERE', value[focusIndex])
+        console.log('content', {
+          textValue: getTextFromSlateNode(value[focusIndex]),
+          ranges: slateRangesToStateRanges(value[focusIndex]),
+        })
+
         setContent({
           selection,
           operations: [
@@ -309,7 +333,7 @@ const ContentEditable = ({
               ...payload,
               index: focusIndex,
               text: {
-                textValue: Node.string(value[focusIndex]),
+                textValue: getTextFromSlateNode(value[focusIndex]),
                 ranges: slateRangesToStateRanges(value[focusIndex]),
               },
             },
@@ -663,6 +687,7 @@ const ContentEditable = ({
 
     state.operations.forEach((op) => {
       const _block = stateBlockToSlateBlock(op.block)
+      console.log('CHANGE BLOCK', _block)
       // if new block was added in reducer
       if (!editor.children[op.index]) {
         Transforms.insertNodes(
@@ -676,6 +701,7 @@ const ContentEditable = ({
           at: [op.index],
         })
       } else {
+        console.log('IN ELSE')
         // clear current block
         editor.children[op.index].children.forEach(() => {
           Transforms.delete(editor, { at: [op.index, 0] })
@@ -689,6 +715,7 @@ const ContentEditable = ({
           }
         )
         // inserts node
+
         Transforms.insertFragment(editor, [_block], {
           at: [op.index],
         })
