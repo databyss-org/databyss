@@ -13,7 +13,6 @@ import {
   downKey,
   paste,
   copy,
-  selectAll,
   upShiftKey,
   rightShiftKey,
   leftShiftKey,
@@ -44,16 +43,19 @@ describe('editor clipboard', () => {
     // OSX and safari are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
+    actions = driver.actions({ bridge: true })
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
+    await enterKey(actions)
 
-    await tagButtonClick('data-test-id="continueButton"', driver)
+    // await tagButtonClick('data-test-id="continueButton"', driver)
 
     const codeField = await getElementByTag(driver, '[data-test-path="code"]')
     await codeField.sendKeys('test-code-42')
+    await enterKey(actions)
 
-    await tagButtonClick('data-test-id="continueButton"', driver)
+    // await tagButtonClick('data-test-id="continueButton"', driver)
 
     await getElementByTag(driver, '[data-test-id="logoutButton"]')
 
@@ -65,7 +67,6 @@ describe('editor clipboard', () => {
 
     editor.click()
 
-    actions = driver.actions({ bridge: true })
     await actions.click(editor)
 
     //   actions = driver.actions()
@@ -279,12 +280,14 @@ describe('editor clipboard', () => {
     await sendKeys(actions, '@this is another source text')
     await escapeKey(actions)
     await upKey(actions)
-    await selectAll(actions)
+    await upKey(actions)
+    await upKey(actions)
+    await downShiftKey(actions)
+    await downShiftKey(actions)
     await downShiftKey(actions)
     await leftShiftKey(actions)
     await leftShiftKey(actions)
     await copy(actions)
-    await downKey(actions)
     await downKey(actions)
     await paste(actions)
     await isSaved(driver)

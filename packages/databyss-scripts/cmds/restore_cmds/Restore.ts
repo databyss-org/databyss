@@ -100,6 +100,23 @@ export function getUserFromJson(
 }
 
 /**
+ * Given a string @text with line breaks, where there is one JSON array per line,
+ * returns a merged array with all the entries from the file.
+ * Example: mergeJsonArrayLines('['a', 'b']\n['c'])
+ * returns: ['a', 'b', 'c']
+ * @param text File contents
+ */
+export function jsonParseMultilineArray(text: string) {
+  const _lines = text.split('\n')
+  return _lines.reduce((arr, line) => {
+    if (!line.length) {
+      return arr
+    }
+    return arr.concat(JSON.parse(line))
+  }, [])
+}
+
+/**
  * Get the groups that belong to a user
  * @param backupDir Path to directory containing the 'group.json' backup file
  * @param userId user _id
@@ -109,7 +126,7 @@ export function getGroupsFromJson(
   backupDir: string,
   userId: string
 ): SysGroup[] {
-  const _groups = JSON.parse(
+  const _groups = jsonParseMultilineArray(
     fs.readFileSync(path.join(backupDir, 'groups.json')).toString()
   ) as SysGroup[]
   return _groups.filter((_g) => _g.belongsToUserId === userId)
