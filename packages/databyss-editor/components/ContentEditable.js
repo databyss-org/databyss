@@ -293,6 +293,11 @@ const ContentEditable = ({
             (op?.text?.length || op?.node?.text?.length)
         )
       ) {
+        const _editorTextValue = Node.string(value[focusIndex])
+        // skip setContent if text hasn't changed
+        if (state.blocks[focusIndex].text.textValue === _editorTextValue) {
+          return
+        }
         // update target node
         setContent({
           selection,
@@ -301,7 +306,7 @@ const ContentEditable = ({
               ...payload,
               index: focusIndex,
               text: {
-                textValue: Node.string(value[focusIndex]),
+                textValue: _editorTextValue,
                 ranges: slateRangesToStateRanges(value[focusIndex]),
               },
             },

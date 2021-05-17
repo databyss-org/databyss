@@ -5,12 +5,11 @@ import {
   sleep,
 } from '@databyss-org/scripts/lib'
 import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
-import { groupSchema } from '@databyss-org/data/schemas'
 import { DesignDoc } from '@databyss-org/data/interfaces'
 
 export class MigrateGroupDesignDocs extends ServerProcess {
   constructor(argv: ServerProcessArgs) {
-    super(argv, 'migrate.group-schemas')
+    super(argv, 'migrate.design-docs')
   }
   async run() {
     const _dbs = await cloudant.current.db.list()
@@ -20,7 +19,7 @@ export class MigrateGroupDesignDocs extends ServerProcess {
         continue
       }
       const _db = await cloudant.current.db.use<DesignDoc>(_dbName)
-      await updateDesignDoc({ schema: groupSchema, db: _db })
+      await updateDesignDoc({ db: _db })
       // dont exceed cloudant rate limit
       await sleep(100)
       this.log(`⬆️  migrated: ${_dbName}`)
@@ -28,7 +27,7 @@ export class MigrateGroupDesignDocs extends ServerProcess {
   }
 }
 
-exports.command = 'group-schemas'
+exports.command = 'design-docs'
 exports.desc = 'Update design docs on all group databases'
 exports.builder = {}
 exports.handler = (argv: ServerProcessArgs) => {
