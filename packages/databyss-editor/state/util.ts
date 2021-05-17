@@ -646,9 +646,12 @@ export const convertInlineToAtomicBlocks = ({
         inlineMarkupData.text.substring(1).toLowerCase()
       ]
 
+    console.log('SUGGEST', JSON.parse(JSON.stringify(_suggestion)))
+
     let _isSuggestion = false
     // if suggestion exists in cache, grab values
     if (_suggestion?.type === _atomicType) {
+      console.log('ONE')
       let _shortName = _suggestion.text.textValue
       const __sugestion = _suggestion as Source & Topic
       if (__sugestion?.name) {
@@ -706,16 +709,14 @@ export const convertInlineToAtomicBlocks = ({
 
     draft.selection = _nextSelection
 
-    // if suggestion exists do not create new entity
-    if (!_isSuggestion) {
-      const _entity = {
-        type: _atomicType,
-        // remove atomic symbol
-        text: { textValue: _atomicTextValue.substring(1), ranges: [] },
-        _id: _atomicId,
-      }
-      draft.newEntities.push(_entity)
+    const _entity = {
+      type: _atomicType,
+      // remove atomic symbol
+      text: { textValue: _atomicTextValue.substring(1), ranges: [] },
+      _id: _atomicId,
     }
+
+    draft.newEntities.push(_entity)
   }
 }
 
