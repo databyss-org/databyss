@@ -646,12 +646,8 @@ export const convertInlineToAtomicBlocks = ({
         inlineMarkupData.text.substring(1).toLowerCase()
       ]
 
-    console.log('SUGGEST', JSON.parse(JSON.stringify(_suggestion)))
-
-    let _isSuggestion = false
     // if suggestion exists in cache, grab values
     if (_suggestion?.type === _atomicType) {
-      console.log('ONE')
       let _shortName = _suggestion.text.textValue
       const __sugestion = _suggestion as Source & Topic
       if (__sugestion?.name) {
@@ -660,7 +656,6 @@ export const convertInlineToAtomicBlocks = ({
       const _symbol = atomicTypeToSymbol(_atomicType)
       _atomicId = _suggestion._id
       _atomicShortTextValue = `${_symbol}${_shortName}`
-      _isSuggestion = true
     }
 
     // get value before offset
