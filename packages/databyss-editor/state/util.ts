@@ -708,6 +708,7 @@ export const convertInlineToAtomicBlocks = ({
 
     draft.selection = _nextSelection
     // do not allow short name suggestion to overwrite details of source
+
     if (!(_isSuggestion && _atomicType === BlockType.Source)) {
       const _entity = {
         type: _atomicType,
