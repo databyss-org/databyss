@@ -709,11 +709,16 @@ const ContentEditable = ({
           }
         )
         // inserts node
-        console.log('OPERATION', op)
-        console.log('block', _block)
+
         Transforms.insertFragment(editor, [_block], {
           at: [op.index],
         })
+        // embedded media requires a nbsp, editor should move caret forward one position
+        if (op.setCaretAfter) {
+          window.requestAnimationFrame(() => {
+            Transforms.move(editor, { unit: 'character', distance: 1 })
+          })
+        }
       }
       // if reducer states to set the selection as an operation, perform seletion
       if (op.setSelection) {

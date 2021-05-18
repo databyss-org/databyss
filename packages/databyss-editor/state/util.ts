@@ -801,10 +801,11 @@ export const convertInlineToEmbed = ({
 
   block.text = mergedText
 
-  // force a re-render
+  // force a block re-render
   draft.operations.push({
     index,
     block,
+    setCaretAfter: true,
   })
 
   // update selection

@@ -163,7 +163,9 @@ export const slateRangesToStateRanges = (node) => {
     return _ranges
   }
   node.children.forEach((child) => {
-    const _textLength = child?.text?.length || child.character.length
+    const _textLength = Number.isInteger(child?.text?.length)
+      ? child?.text?.length
+      : child?.character.length
 
     // check if range is inline type
     const _inlineType = Object.keys(child).filter((prop) =>

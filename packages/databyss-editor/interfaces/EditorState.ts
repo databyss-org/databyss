@@ -24,6 +24,8 @@ export interface BackflowOperation {
   insertBefore?: Boolean
   setSelection?: Boolean
   reloadAll?: Boolean
+  // embed media requires cursor to move forward
+  setCaretAfter?: Boolean
 }
 
 export interface EditorState {
