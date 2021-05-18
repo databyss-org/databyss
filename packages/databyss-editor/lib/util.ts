@@ -17,6 +17,7 @@ import {
   InlineTypes,
   InlineRangeType,
 } from '../../databyss-services/interfaces/Range'
+import { delete } from 'fetch-mock'
 
 export const splice = (src: any, idx: number, rem: number, str: any) =>
   src.slice(0, idx) + str + src.slice(idx + Math.abs(rem))
@@ -355,4 +356,22 @@ export const slateBlockToHtmlWithSearch = (
   const _frag = stateBlockToHtml(_block)
 
   return _frag
+}
+
+/**
+ *
+ * only allow whitelisted properties
+ */
+export const cleanupAtomicData = (data: any) => {
+  const _data = data
+  const _propertiesToRemove = Object.keys(data).filter(
+    (i) => i.substring(0, 2) === '__'
+  )
+  _propertiesToRemove.forEach(i=> {
+    delete _data[i]
+  })
+  if(_data.weight){
+    delete data.weight
+  }
+  return _data
 }

@@ -169,6 +169,7 @@ export const bakeAtomicBlock = ({
           })
         }
       }
+
       return _suggestion || draft.blocks[index]
     }
   }
