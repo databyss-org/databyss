@@ -1,7 +1,7 @@
 import { uid } from '@databyss-org/data/lib/uid'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { DocumentType, PageDoc } from '@databyss-org/data/pouchdb/interfaces'
-import { Block, BlockType, Page } from '../interfaces'
+import { Block, BlockType, Page, UNTITLED_PAGE_NAME } from '../interfaces'
 import { getAccountFromLocation } from '../session/utils'
 
 export const newPage = (): Page => new Page()
@@ -17,13 +17,19 @@ export async function ensureTitleBlock(page: Page) {
   if (page.name === page.blocks[0].text.textValue) {
     return
   }
+  if (
+    page.name === UNTITLED_PAGE_NAME &&
+    page.blocks[0].text.textValue === ''
+  ) {
+    return
+  }
 
   const _blockId = uid()
   const _titleBlock: Block = {
     _id: _blockId,
     type: BlockType.Entry,
     text: {
-      textValue: page.name,
+      textValue: page.name === UNTITLED_PAGE_NAME ? '' : page.name,
       ranges: [],
     },
   }
@@ -48,6 +54,4 @@ export async function ensureTitleBlock(page: Page) {
 
   // add title block to Page object
   page.blocks.unshift(_titleBlock)
-
-  console.log('[ensureTitleBlock] added title block', page)
 }
