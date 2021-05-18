@@ -1,3 +1,5 @@
+import { fuzzysearch } from 'scored-fuzzysearch'
+
 import { Source, Topic } from '../interfaces'
 
 /**
@@ -29,4 +31,31 @@ export const prefixSearchAll = (query: string, searchPredicate?: string) => (
         true
       )
   )
+}
+
+/**
+ *
+ * @param query add weight score to suggest search results
+ * @param searchPredicate
+ */
+export const weightedSearch = (query: string, searchPredicate?: string) => (
+  block: Source & Topic
+) => {
+  let _text = block.text.textValue
+
+  if (searchPredicate) {
+    if (block[searchPredicate]?.textValue) {
+      // use `name` for the filtered suggestion
+      _text = block[searchPredicate].textValue
+    } else {
+      return { ...block, weight: 0 }
+    }
+  }
+
+  let _weight = fuzzysearch(query, _text)
+  // if exact match, weight heavy
+  if (_weight === true) {
+    _weight = 10
+  }
+  return { ...block, weight: _weight }
 }

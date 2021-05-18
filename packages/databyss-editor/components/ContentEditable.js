@@ -25,6 +25,7 @@ import {
   isAtomic,
   isEmpty,
   isAtomicInlineType,
+  cleanupAtomicData,
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
@@ -134,16 +135,15 @@ const ContentEditable = ({
 
       state.newEntities.forEach((entity) => {
         let _data = null
+        // suggestion blocks have extra data
+
         if (entity.text) {
-          _data = {
-            _id: entity._id,
-            text: {
-              textValue: entity.text.textValue,
-              ranges: entity.text.ranges,
-            },
+          _data = cleanupAtomicData({
+            ...entity,
             sharedWithGroups,
-          }
+          })
         }
+
         const _types = {
           SOURCE: () => {
             if (_data) {

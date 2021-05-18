@@ -356,3 +356,21 @@ export const slateBlockToHtmlWithSearch = (
 
   return _frag
 }
+
+/**
+ *
+ * only allow whitelisted properties
+ */
+export const cleanupAtomicData = (data: any) => {
+  const _data = data
+  const _propertiesToRemove = Object.keys(data).filter(
+    (i) => i.substring(0, 2) === '__'
+  )
+  _propertiesToRemove.forEach((i) => {
+    delete _data[i]
+  })
+  if (_data.weight) {
+    delete data.weight
+  }
+  return _data
+}

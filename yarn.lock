@@ -21966,6 +21966,11 @@ scope-eval@0.0.3:
   resolved "https://registry.yarnpkg.com/scope-eval/-/scope-eval-0.0.3.tgz#166f2ccd1f3754429dec511805501f9d6923b5ec"
   integrity sha1-Fm8szR83VEKd7FEYBVAfnWkjtew=
 
+scored-fuzzysearch@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/scored-fuzzysearch/-/scored-fuzzysearch-1.0.5.tgz#2857065ea4b3bc592eacbd269ab94c14b714ca77"
+  integrity sha512-cizxgu7/itYP5ve1+odEJnY5HMt8X5aEH2w4oCspzrrCNuBvgia8K42gqtg9snQq5olZGoGezSQp2kRx1N7Z1g==
+
 screenfull@^4.1.0:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/screenfull/-/screenfull-4.2.1.tgz#3245b7bc73d2b7c9a15bd8caaf6965db7cbc7f04"

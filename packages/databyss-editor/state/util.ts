@@ -647,8 +647,11 @@ export const convertInlineToAtomicBlocks = ({
       ]
 
     let _isSuggestion = false
+
     // if suggestion exists in cache, grab values
     if (_suggestion?.type === _atomicType) {
+      _isSuggestion = true
+
       let _shortName = _suggestion.text.textValue
       const __sugestion = _suggestion as Source & Topic
       if (__sugestion?.name) {
@@ -657,7 +660,6 @@ export const convertInlineToAtomicBlocks = ({
       const _symbol = atomicTypeToSymbol(_atomicType)
       _atomicId = _suggestion._id
       _atomicShortTextValue = `${_symbol}${_shortName}`
-      _isSuggestion = true
     }
 
     // get value before offset
@@ -705,15 +707,18 @@ export const convertInlineToAtomicBlocks = ({
     }
 
     draft.selection = _nextSelection
+    // do not allow short name suggestion to overwrite details of source
 
-    // if suggestion exists do not create new entity
-    if (!_isSuggestion) {
+    if (!(_isSuggestion && _atomicType === BlockType.Source)) {
       const _entity = {
         type: _atomicType,
         // remove atomic symbol
         text: { textValue: _atomicTextValue.substring(1), ranges: [] },
         _id: _atomicId,
       }
+      draft.newEntities.push(_entity)
+    } else {
+      const _entity = _suggestion
       draft.newEntities.push(_entity)
     }
   }

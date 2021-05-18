@@ -54,7 +54,7 @@ const SidebarList = ({
   onItemSelected,
   ...others
 }: PropsWithChildren<SidebarListProps>) => {
-  const { getAccountFromLocation } = useNavigationContext()
+  const { getAccountFromLocation, navigate } = useNavigationContext()
   const location = useLocation()
   const account = getAccountFromLocation()
 
@@ -80,6 +80,16 @@ const SidebarList = ({
       payload: item.data,
     }
   }
+
+  /**
+   *
+   * @param item if valid accountID is not provided, use navigate instead of href for BaseControl
+   */
+  const _pressSelector = (item) => ({
+    ...(account
+      ? { href: getHref(item) }
+      : { onPress: () => navigate(item.route) }),
+  })
 
   return (
     <ScrollView
@@ -124,11 +134,12 @@ const SidebarList = ({
             <SidebarListItem
               isActive={getActiveItem(item)}
               text={item.text}
-              href={getHref(item)}
+              // href={getHref(item)}
               key={`${item.type}-${index}`}
               draggable={getDraggable(item)}
               icon={item.icon ? item.icon : menuSvgs[item.type]}
               iconColor={item.iconColor}
+              {..._pressSelector(item)}
             />
           )
         })}

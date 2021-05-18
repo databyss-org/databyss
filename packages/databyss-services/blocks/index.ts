@@ -1,4 +1,4 @@
-export { prefixSearchAll } from './filter'
+export { prefixSearchAll, weightedSearch } from './filter'
 export { joinBlockRelations } from './joins'
 export { makeText } from './makeText'
 export { textToHtml } from './serialize'
