@@ -46,7 +46,6 @@ const PageBody = ({
 
   // state from provider is out of date
   const onChange = (value) => {
-    console.log('[PageBody.onChange]', value)
     requestAnimationFrame(() => {
       if (editorStateRef.current?.pagePath) {
         onEditorPathChange(editorStateRef.current.pagePath)
@@ -58,7 +57,6 @@ const PageBody = ({
       const _patch = value.patches.find(
         (_patch) => _patch.path?.[0] === 'blocks' && _patch.path?.[1] === 0
       )
-      console.log('[PageBody.onChange] _patch', _patch)
       const _patchValue =
         _patch?.path?.[2] === 'text'
           ? _patch?.value?.textValue
