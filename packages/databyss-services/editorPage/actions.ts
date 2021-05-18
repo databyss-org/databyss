@@ -16,7 +16,7 @@ import {
   CACHE_SHARED_WITH_GROUPS,
 } from './constants'
 
-export function fetchPage(_id: string) {
+export function fetchPage(_id: string, firstBlockIsTitle: boolean) {
   return async (dispatch: Function) => {
     const pPage = services.loadPage(_id)
     dispatch({
@@ -25,7 +25,7 @@ export function fetchPage(_id: string) {
     })
     pPage
       .then(async (page) => {
-        if (!(page instanceof ResourceNotFoundError)) {
+        if (firstBlockIsTitle && !(page instanceof ResourceNotFoundError)) {
           await ensureTitleBlock(page)
         }
         dispatch({
