@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import colors from '@databyss-org/ui/theming/colors'
 import { useBlocks } from '../../databyss-data/pouchdb/hooks/useBlocks'
 import { Embed } from '../../databyss-services/interfaces/Block'
 import LoadingFallback from '../../databyss-ui/components/Notify/LoadingFallback'
 import { IframeAttributes } from './Suggest/SuggestEmbeds'
+import _ from 'lodash'
 
 export const EmbedMedia = ({ _children, attributes, _element }) => {
   const blocksRes = useBlocks('EMBED')
   const [data, setData] = useState<null | Embed>()
-  console.log(blocksRes)
 
   useEffect(() => {
     if (blocksRes.status === 'success') {
       // load attributes
       const _data = blocksRes.data[_element.atomicId]
-      if (blocksRes.data[_element.atomicId]) {
+      if (_data && !_.isEqual(_data, data)) {
+        console.log('SET DATA', _data)
         setData(_data)
       }
     }
-  }, [blocksRes.status])
+  }, [blocksRes])
 
   const { gray } = colors
 
@@ -26,7 +27,6 @@ export const EmbedMedia = ({ _children, attributes, _element }) => {
     if (!data) {
       return null
     }
-    console.log(data)
     const _atts: IframeAttributes = {
       width: data.detail.dimensions.height,
       height: data.detail.dimensions.width,
@@ -44,19 +44,22 @@ export const EmbedMedia = ({ _children, attributes, _element }) => {
     )
   }
 
-  return (
-    <span
-      {...attributes}
-      style={{
-        display: 'block',
-        borderRadius: '3px',
-        //    padding: '3px',
-      }}
-    >
-      <span contentEditable={false} id="inline-embed-input">
-        {data ? <IFrame /> : <LoadingFallback />}
+  return useMemo(
+    () => (
+      <span
+        {...attributes}
+        style={{
+          display: 'block',
+          borderRadius: '3px',
+          //    padding: '3px',
+        }}
+      >
+        <span contentEditable={false} id="inline-embed-input">
+          {data ? <IFrame /> : <LoadingFallback />}
+        </span>
+        {_children}
       </span>
-      {_children}
-    </span>
+    ),
+    [data]
   )
 }

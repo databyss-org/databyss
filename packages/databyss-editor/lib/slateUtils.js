@@ -22,7 +22,6 @@ export const flattenNode = (node) => {
 }
 
 export const flattenNodeToPoint = (editor, point) => {
-  console.log('POINT', point)
   const anchor = {
     path: [point.path[0], 0],
     offset: 0,
@@ -33,8 +32,6 @@ export const flattenNodeToPoint = (editor, point) => {
   }
   const _frag = Editor.fragment(editor, { anchor, focus })
   const _string = Node.string({ children: _frag })
-  console.log('STRING', _string)
-  console.log('stringlength', _string.length)
 
   return _string
 }
@@ -68,7 +65,6 @@ export const stateSelectionToSlateSelection = (children, selection) => {
   if (_selection.focus.path.length === 1) {
     _selection.focus.path.push(0)
   }
-  console.log('returns this selection', _selection)
   return _selection
 }
 
@@ -127,7 +123,6 @@ export const stateBlockToSlateBlock = (block) => {
     _id: block._id,
   }
 
-  console.log('CONVERT', _data)
   return _data
 }
 
@@ -156,7 +151,6 @@ const allowedRanges = [
 const allowedInlines = ['inlineTopic', 'inlineCitation', 'embed']
 
 export const slateRangesToStateRanges = (node) => {
-  console.log('NODE', node)
   let _offset = 0
   const _ranges = []
   if (!node) {
@@ -189,7 +183,6 @@ export const slateRangesToStateRanges = (node) => {
 
     _offset += _textLength
   })
-  console.log('ranges', _ranges)
   return _ranges
 }
 

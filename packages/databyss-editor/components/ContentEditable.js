@@ -132,7 +132,6 @@ const ContentEditable = ({
         editor.children,
         _selection
       )
-      console.log('setting here')
 
       Transforms.select(editor, _slateSelection)
       // push selection to reducer
@@ -255,9 +254,7 @@ const ContentEditable = ({
       if (onDocumentChange) {
         onDocumentChange(editor)
       }
-      console.log('BEFORE')
       const selection = slateSelectionToStateSelection(editor)
-      console.log('AFTER')
 
       if (!selection) {
         return
@@ -716,20 +713,18 @@ const ContentEditable = ({
         // embedded media requires a nbsp, editor should move caret forward one position
         if (op.setCaretAfter) {
           window.requestAnimationFrame(() => {
-            Transforms.move(editor, { unit: 'character', distance: 1 })
+            Transforms.move(editor, { unit: 'character', distance: 2 })
           })
         }
       }
       // if reducer states to set the selection as an operation, perform seletion
       if (op.setSelection) {
-        console.log('setting here', op.setSelection)
         ReactEditor.focus(editor)
 
         const _sel = stateSelectionToSlateSelection(
           editor.children,
           state.selection
         )
-        console.log('setting here', _sel)
 
         window.requestAnimationFrame(() => {
           Transforms.select(editor, _sel)
@@ -740,12 +735,10 @@ const ContentEditable = ({
     // if there were any update operations,
     //   sync the Slate selection to the state selection
     if (state.operations.length) {
-      console.log('GETS NEXT', state.operations)
       nextSelection = stateSelectionToSlateSelection(
         editor.children,
         state.selection
       )
-      console.log('NEXT SELECTION SHALL BE', nextSelection)
     }
 
     valueRef.current = editor.children
@@ -769,15 +762,12 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
             editor.children,
             _selection
           )
-          console.log('setting here')
 
           Transforms.select(editor, _slateSelection)
           ReactEditor.focus(editor)
         }
       }, 5)
     }
-
-    console.log('NEXT SELECTION', nextSelection)
 
     return (
       <Editor
