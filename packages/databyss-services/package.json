@@ -12,6 +12,7 @@
   "license": "MIT",
   "private": true,
   "peerDependencies": {
+    "scored-fuzzysearch": "^1.0.5",
     "@bugsnag/browser": "^6.3.2",
     "@bugsnag/js": "^6.3.2",
     "@bugsnag/node": "^6.3.2",

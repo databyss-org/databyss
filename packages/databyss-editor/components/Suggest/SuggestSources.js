@@ -8,7 +8,7 @@ import {
   OPEN_LIBRARY,
 } from '@databyss-org/services/catalog/constants'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
-import { prefixSearchAll } from '@databyss-org/services/blocks'
+import { prefixSearchAll, weightedSearch } from '@databyss-org/services/blocks'
 import { Separator, Text, View } from '@databyss-org/ui/primitives'
 import { setSource } from '@databyss-org/services/sources'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
@@ -35,7 +35,9 @@ export const formatSource = (value) => {
   const _value = JSON.parse(JSON.stringify(value))
   // format year
   const year = value?.detail?.year?.textValue
-  if (year) {
+  // TODO: THIS SHOULD BE TRUTHY IF ZERO
+
+  if (typeof year === 'number' || year) {
     _value.detail.year.textValue = year.toString()
   }
   // ensure short name exists, if not create one
@@ -139,7 +141,9 @@ const SuggestSources = ({
     }
     // first attempt to search based on the name property
     let _sources = sources
+      .map(weightedSearch(query, 'name'))
       .filter(prefixSearchAll(query, 'name'))
+      .sort((a, b) => (a.weight < b.weight ? 1 : -1))
       .slice(0, 4)
       .map((s) => (
         <DropdownListItem
@@ -152,7 +156,9 @@ const SuggestSources = ({
     // fall back to searching the text property
     if (!_sources.length) {
       _sources = sources
+        .map(weightedSearch(query))
         .filter(prefixSearchAll(query))
+        .sort((a, b) => (a.weight < b.weight ? 1 : -1))
         .slice(0, 4)
         .map((s) => (
           <DropdownListItem
