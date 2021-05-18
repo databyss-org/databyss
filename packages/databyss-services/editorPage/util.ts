@@ -19,7 +19,8 @@ export async function ensureTitleBlock(page: Page) {
   }
   if (
     page.name === UNTITLED_PAGE_NAME &&
-    page.blocks[0].text.textValue === ''
+    page.blocks[0].text.textValue === '' &&
+    page.blocks.length > 1
   ) {
     return
   }
