@@ -17,7 +17,6 @@ import {
   InlineTypes,
   InlineRangeType,
 } from '../../databyss-services/interfaces/Range'
-import { delete } from 'fetch-mock'
 
 export const splice = (src: any, idx: number, rem: number, str: any) =>
   src.slice(0, idx) + str + src.slice(idx + Math.abs(rem))
@@ -367,10 +366,10 @@ export const cleanupAtomicData = (data: any) => {
   const _propertiesToRemove = Object.keys(data).filter(
     (i) => i.substring(0, 2) === '__'
   )
-  _propertiesToRemove.forEach(i=> {
+  _propertiesToRemove.forEach((i) => {
     delete _data[i]
   })
-  if(_data.weight){
+  if (_data.weight) {
     delete data.weight
   }
   return _data
