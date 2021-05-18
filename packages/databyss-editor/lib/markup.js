@@ -1,6 +1,7 @@
 import { createEditor, Transforms, Node, Element } from '@databyss-org/slate'
 import cloneDeep from 'clone-deep'
 import { toggleMark } from './slateUtils'
+import { withMedia } from '../components/ContentEditable'
 
 const moveToStart = (editor) => {
   const _zero = { path: [0], offset: 0 }
@@ -43,7 +44,7 @@ export const statePointToSlatePoint = (children, point) => {
     return { path: [0, 0], offset: 0 }
   }
 
-  const _editor = createEditor()
+  const _editor = withMedia(createEditor())
   const _text = {
     children: children[index].children,
   }

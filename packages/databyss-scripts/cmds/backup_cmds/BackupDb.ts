@@ -4,6 +4,7 @@ import {
   cloudantUrl,
   ServerProcess,
   ServerProcessArgs,
+  run,
 } from '@databyss-org/scripts/lib'
 
 export class BackupDb extends ServerProcess {
@@ -33,9 +34,9 @@ exports.command = 'database <dbName> [options]'
 exports.desc = 'Backup data from a single couch db'
 exports.builder = (yargs: ServerProcessArgs) =>
   yargs.example(
-    '$0 backup database g_8sozwot4jo1azq -f g_8sozwot4jo1azq.json',
-    'Backup `g_8sozwot4jo1azq` database to `g_8sozwot4jo1azq.json`'
+    '$0 backup database groups --path ../backups/groups.json',
+    'Backup `groups` database to `../backups/groups.json`'
   )
 exports.handler = (argv: ServerProcessArgs) => {
-  new BackupDb(argv).runCli()
+  run(new BackupDb(argv))
 }

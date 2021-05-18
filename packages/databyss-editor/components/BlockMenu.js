@@ -59,6 +59,7 @@ const BlockMenu = ({ element }) => {
       editor.children,
       _selection
     )
+    console.log('BLOCK MENU', _slateSelection)
 
     // selection needs to be reset because editor could loose focus
     Transforms.select(editor, _slateSelection)

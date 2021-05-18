@@ -46,7 +46,7 @@ import {
 } from '../lib/inlineUtils'
 import { getTextFromSlateNode } from '../lib/markup'
 
-const withMedia = (editor) => {
+export const withMedia = (editor) => {
   const { isInline, isVoid } = editor
   editor.isInline = (element) => (element.embed ? true : isInline(element))
 
@@ -132,6 +132,8 @@ const ContentEditable = ({
         editor.children,
         _selection
       )
+      console.log('setting here')
+
       Transforms.select(editor, _slateSelection)
       // push selection to reducer
       setSelection(_selection)
@@ -253,7 +255,9 @@ const ContentEditable = ({
       if (onDocumentChange) {
         onDocumentChange(editor)
       }
+      console.log('BEFORE')
       const selection = slateSelectionToStateSelection(editor)
+      console.log('AFTER')
 
       if (!selection) {
         return
@@ -311,6 +315,11 @@ const ContentEditable = ({
             (op?.text?.length || op?.node?.text?.length)
         )
       ) {
+        const _editorTextValue = getTextFromSlateNode(value[focusIndex])
+        // skip setContent if text hasn't changed
+        if (state.blocks[focusIndex].text.textValue === _editorTextValue) {
+          return
+        }
         // update target node
 
         setContent({
@@ -320,7 +329,7 @@ const ContentEditable = ({
               ...payload,
               index: focusIndex,
               text: {
-                textValue: getTextFromSlateNode(value[focusIndex]),
+                textValue: _editorTextValue,
                 ranges: slateRangesToStateRanges(value[focusIndex]),
               },
             },
@@ -700,19 +709,22 @@ const ContentEditable = ({
           }
         )
         // inserts node
-
+        console.log('OPERATION', op)
+        console.log('block', _block)
         Transforms.insertFragment(editor, [_block], {
           at: [op.index],
         })
       }
       // if reducer states to set the selection as an operation, perform seletion
       if (op.setSelection) {
+        console.log('setting here', op.setSelection)
         ReactEditor.focus(editor)
 
         const _sel = stateSelectionToSlateSelection(
           editor.children,
           state.selection
         )
+        console.log('setting here', _sel)
 
         window.requestAnimationFrame(() => {
           Transforms.select(editor, _sel)
@@ -723,10 +735,12 @@ const ContentEditable = ({
     // if there were any update operations,
     //   sync the Slate selection to the state selection
     if (state.operations.length) {
+      console.log('GETS NEXT', state.operations)
       nextSelection = stateSelectionToSlateSelection(
         editor.children,
         state.selection
       )
+      console.log('NEXT SELECTION SHALL BE', nextSelection)
     }
 
     valueRef.current = editor.children
@@ -750,11 +764,15 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
             editor.children,
             _selection
           )
+          console.log('setting here')
+
           Transforms.select(editor, _slateSelection)
           ReactEditor.focus(editor)
         }
       }, 5)
     }
+
+    console.log('NEXT SELECTION', nextSelection)
 
     return (
       <Editor

@@ -220,7 +220,7 @@ const SuggestEmbeds = ({
       attributes: iframeAtts,
     })
 
-  useEventListener('keydown', (e) => {
+  useEventListener('keydown', (e: KeyboardEvent) => {
     /*
     bake topic if arrow up or down without suggestion
     */
@@ -232,6 +232,8 @@ const SuggestEmbeds = ({
     // }
 
     if (e.key === 'Enter') {
+      e.preventDefault()
+      e.stopPropagation()
       window.requestAnimationFrame(() => {
         if (!pendingSetContent.current) {
           setEmbedWithoutSuggestion()

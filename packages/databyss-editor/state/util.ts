@@ -792,9 +792,12 @@ export const convertInlineToEmbed = ({
     ],
   })
 
-  const _caretOffest = mergedText.textValue.length
+  const _caretOffest = splitText.before.textValue.length
 
   mergedText = mergeText(mergedText, textAfter)
+  mergedText = mergeText(mergedText, { textValue: '\u00A0', ranges: [] })
+
+  //  add a
 
   block.text = mergedText
 
@@ -807,12 +810,13 @@ export const convertInlineToEmbed = ({
   // update selection
   const _nextSelection = {
     _id: draft.selection._id,
-    anchor: { index, offset: _caretOffest },
-    focus: { index, offset: _caretOffest },
+    anchor: { index, offset: _caretOffest + 1 },
+    focus: { index, offset: _caretOffest + 1 },
   }
-  // TODO: WHAT WILL THE SELECTION BE
-  // draft.selection = _nextSelection
 
+  // TODO: WHAT WILL THE SELECTION BE
+  draft.selection = _nextSelection
+  draft.preventDefault = true
   // if suggestion exists do not create new entity
 
   const _entity = {
