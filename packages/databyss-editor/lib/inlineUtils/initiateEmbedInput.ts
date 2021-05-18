@@ -50,9 +50,12 @@ export const initiateEmbedInput = ({
       editor.selection.focus
     ).toString()
 
+    console.log(_offset)
     // return if not <<
     _offset = parseInt(_offset, 10)
-    if (_offset < 2) {
+    console.log(_offset)
+
+    if (_offset < 1) {
       return false
     }
 

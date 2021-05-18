@@ -218,7 +218,7 @@ const SuggestMenu = ({
         orderKey={query + resultsMode}
         onActiveIndexChanged={onActiveIndexChanged}
       >
-        {query ? (
+        {query || inlineEmbed ? (
           React.cloneElement(React.Children.only(children), {
             editor,
             editorContext,

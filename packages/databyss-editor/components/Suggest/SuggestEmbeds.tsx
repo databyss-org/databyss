@@ -161,6 +161,7 @@ const SuggestEmbeds = ({
 }) => {
   const editor = useEditor() as ReactEditor & Editor
 
+  console.log('IN SUGGEST')
   const [iframeAtts, setIframeAtts] = useState<IframeAttributes | false>(false)
   useEffect(() => {
     const _iFrame = getIframeAttrs(query)
@@ -268,14 +269,15 @@ const SuggestEmbeds = ({
     )
   }
 
+  console.log('QUERY', query)
   return (
     <View>
       <Text variant="uiTextSmall" color="gray.3" display="inline" p="small">
-        {query.length
+        {query?.length
           ? 'press enter to embed...'
           : 'paste a link or embed code...'}
       </Text>
-      {query.length ? IFrame() : null}
+      {query?.length ? IFrame() : null}
     </View>
   )
 }

@@ -121,6 +121,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
       const vpad =
         block.type === 'ENTRY' || block.type === previousBlock?.type ? 1 : 3
 
+      console.log('ELEMENT', block)
       return (
         <View
           ref={(ref) => {
