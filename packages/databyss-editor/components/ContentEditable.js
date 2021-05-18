@@ -136,11 +136,7 @@ const ContentEditable = ({
         let _data = null
         if (entity.text) {
           _data = {
-            _id: entity._id,
-            text: {
-              textValue: entity.text.textValue,
-              ranges: entity.text.ranges,
-            },
+            ...entity,
             sharedWithGroups,
           }
         }

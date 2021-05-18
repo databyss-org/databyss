@@ -646,8 +646,12 @@ export const convertInlineToAtomicBlocks = ({
         inlineMarkupData.text.substring(1).toLowerCase()
       ]
 
+    let _isSuggestion = false
+
     // if suggestion exists in cache, grab values
     if (_suggestion?.type === _atomicType) {
+      _isSuggestion = true
+
       let _shortName = _suggestion.text.textValue
       const __sugestion = _suggestion as Source & Topic
       if (__sugestion?.name) {
@@ -703,15 +707,19 @@ export const convertInlineToAtomicBlocks = ({
     }
 
     draft.selection = _nextSelection
-
-    const _entity = {
-      type: _atomicType,
-      // remove atomic symbol
-      text: { textValue: _atomicTextValue.substring(1), ranges: [] },
-      _id: _atomicId,
+    // do not allow short name suggestion to overwrite details of source
+    if (!(_isSuggestion && _atomicType === BlockType.Source)) {
+      const _entity = {
+        type: _atomicType,
+        // remove atomic symbol
+        text: { textValue: _atomicTextValue.substring(1), ranges: [] },
+        _id: _atomicId,
+      }
+      draft.newEntities.push(_entity)
+    } else {
+      const _entity = _suggestion
+      draft.newEntities.push(_entity)
     }
-
-    draft.newEntities.push(_entity)
   }
 }
 
