@@ -36,8 +36,38 @@ export const applyRange = (editor, range) => {
   return editor
 }
 
+const normalizeSlateOffset = (offset, node) => {
+  // get all length and offsets of embedded inlines
+  const _embedRanges = []
+  let _offset = 0
+  node.children.forEach((i) => {
+    if (i.character) {
+      const _charLength = i.character.length
+      _embedRanges.push({ length: _charLength, offset: _offset })
+      _offset += i.character.length
+      return
+    }
+    _offset += i.text.length
+  })
+
+  // subtract all embedded ranges that fall below the offset threshold
+  let _normalizedOffset = offset
+  _embedRanges.forEach((r) => {
+    if (r.length + r.offset < offset) {
+      // subtract from normalized offset
+      // TODO: why is `-1` needed here?
+      _normalizedOffset -= r.length - 1
+    }
+  })
+  return _normalizedOffset
+}
+
 export const statePointToSlatePoint = (children, point) => {
-  const { index, offset: flatOffset } = point
+  const { index, offset: _flatOffset } = point
+
+  const flatOffset = normalizeSlateOffset(_flatOffset, children[index])
+
+  // normalize to compensate for embeds, in embeds `text` is in property `character`
 
   // if index does not exist in editor, reset selection at 0
   if (!children[index]) {

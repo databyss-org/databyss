@@ -15,13 +15,12 @@ export const EmbedMedia = ({ _children, attributes, _element }) => {
       // load attributes
       const _data = blocksRes.data[_element.atomicId]
       if (_data && !_.isEqual(_data, data)) {
-        console.log('SET DATA', _data)
         setData(_data)
       }
     }
   }, [blocksRes])
 
-  const { gray } = colors
+  // const { gray } = colors
 
   const IFrame = () => {
     if (!data) {

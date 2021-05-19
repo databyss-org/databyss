@@ -7,6 +7,7 @@ import {
   stateToSlateMarkup,
   statePointToSlatePoint,
   flattenRanges,
+  getTextFromSlateNode,
 } from './markup'
 
 export const flattenNode = (node) => {
@@ -31,7 +32,8 @@ export const flattenNodeToPoint = (editor, point) => {
     offset: point.offset,
   }
   const _frag = Editor.fragment(editor, { anchor, focus })
-  const _string = Node.string({ children: _frag })
+
+  const _string = getTextFromSlateNode(_frag[0])
 
   return _string
 }

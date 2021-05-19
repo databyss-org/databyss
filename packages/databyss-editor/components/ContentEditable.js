@@ -317,8 +317,9 @@ const ContentEditable = ({
         if (state.blocks[focusIndex].text.textValue === _editorTextValue) {
           return
         }
+        console.log('text content', _editorTextValue)
+        console.log('RANGES', slateRangesToStateRanges(value[focusIndex]))
         // update target node
-
         setContent({
           selection,
           operations: [
@@ -401,6 +402,7 @@ const ContentEditable = ({
         onInlineAtomicClick,
       })
       if (_isInlineBackspace) {
+        console.log('HERE')
         return
       }
 

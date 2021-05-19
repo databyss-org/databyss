@@ -1,9 +1,17 @@
 import { KeyboardEvent } from 'react'
 import { Node, Transforms, Editor as SlateEditor } from '@databyss-org/slate'
 import { ReactEditor } from '@databyss-org/slate-react'
-import { flattenOffset, isCurrentlyInInlineAtomicField } from '../slateUtils'
+import {
+  flattenOffset,
+  isCurrentlyInInlineAtomicField,
+  isCurrentlyInInlineEmbedInput,
+  isMarkActive,
+} from '../slateUtils'
 import { Block } from '../../../databyss-services/interfaces/Block'
-import { RangeType } from '../../../databyss-services/interfaces/Range'
+import {
+  RangeType,
+  InlineTypes,
+} from '../../../databyss-services/interfaces/Range'
 
 export const onInlineFieldBackspace = ({
   editor,
@@ -25,6 +33,7 @@ export const onInlineFieldBackspace = ({
     10
   )
 
+  // check for inline atomics fields
   if (
     isCurrentlyInInlineAtomicField(editor) &&
     _offset !== 0 &&
@@ -70,5 +79,43 @@ export const onInlineFieldBackspace = ({
     }
     event.preventDefault()
   }
+
+  if (
+    // check for inline embed fields
+    isCurrentlyInInlineEmbedInput(editor) &&
+    _offset !== 0 &&
+    _text.substring(0, 2) === '<<'
+  ) {
+    const _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
+    console.log(_currentLeaf)
+
+    if (_currentLeaf.inlineEmbedInput && _currentLeaf.text === '<<') {
+      const _inlineAtomicMenuRangeOffset = currentBlock.text.ranges.filter(
+        (r) => r.marks.includes(RangeType.InlineEmbedInput)
+      )[0].offset
+      if (!_inlineAtomicMenuRangeOffset) {
+        // inline at start of block
+      }
+      Transforms.delete(editor, {
+        distance: 1,
+        unit: 'character',
+        reverse: true,
+      })
+      Transforms.move(editor, {
+        unit: 'character',
+        distance: 1,
+        edge: 'anchor',
+        reverse: _offset !== 1,
+      })
+      SlateEditor.removeMark(editor, RangeType.InlineEmbedInput)
+      Transforms.collapse(editor, {
+        edge: _offset === 1 ? 'anchor' : 'focus',
+      })
+
+      event.preventDefault()
+      return true
+    }
+  }
+
   return false
 }

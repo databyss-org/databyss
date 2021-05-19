@@ -55,6 +55,8 @@ const deleteSelectionWithinBlock = ({
 
   // update text in block to merged results
   block.text = mergeText(_beforeAnchor, _afterFocus)
+
+  console.log('BLOCK', JSON.parse(JSON.stringify(block)))
 }
 
 // updates blocks with selected blocks removed
@@ -122,6 +124,8 @@ export default (draft: EditorState) => {
 
   adjustSelectionToIncludeInlineAtomics({ blocks, anchor, focus })
 
+  console.log(JSON.parse(JSON.stringify({ anchor, focus })))
+
   // adjust selection to not include title block
   if (draft.firstBlockIsTitle && anchor.index === 0 && focus.index !== 0) {
     draft.operations.reloadAll = true
@@ -131,6 +135,7 @@ export default (draft: EditorState) => {
 
   // check if selection is within a block
   if (focus.index === anchor.index) {
+    console.log('CHECK HERE')
     deleteSelectionWithinBlock({ blocks, anchor, focus })
   } else {
     deleteSelectionAcrossBlocks({
@@ -171,6 +176,8 @@ export default (draft: EditorState) => {
   // push removed entities upstream
   // eslint-disable-next-line prefer-spread
   draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
+
+  console.log(JSON.parse(JSON.stringify(draft)))
 
   // TODO: create operation for this mutation
 }
