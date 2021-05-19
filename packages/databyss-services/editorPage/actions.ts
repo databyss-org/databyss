@@ -1,8 +1,9 @@
 import * as services from '.'
 import { ResourcePending } from '../interfaces/ResourcePending'
-import { Page } from '../interfaces'
+import { Page, ResourceNotFoundError } from '../interfaces'
 import { removeAllGroupsFromPage } from '../../databyss-data/pouchdb/groups/index'
 import { PageDoc } from '../../databyss-data/pouchdb/interfaces'
+import { ensureTitleBlock } from './util'
 
 import {
   FETCH_PAGE,
@@ -15,7 +16,7 @@ import {
   CACHE_SHARED_WITH_GROUPS,
 } from './constants'
 
-export function fetchPage(_id: string) {
+export function fetchPage(_id: string, firstBlockIsTitle: boolean) {
   return async (dispatch: Function) => {
     const pPage = services.loadPage(_id)
     dispatch({
@@ -23,7 +24,10 @@ export function fetchPage(_id: string) {
       payload: { id: _id, promise: pPage },
     })
     pPage
-      .then((page) => {
+      .then(async (page) => {
+        if (firstBlockIsTitle && !(page instanceof ResourceNotFoundError)) {
+          await ensureTitleBlock(page)
+        }
         dispatch({
           type: CACHE_PAGE,
           payload: { page, id: _id },

@@ -30,10 +30,15 @@ export const getPosition = (editor, inlineAtomic) => {
         const _windowHeight = window.innerHeight
 
         // check if menu should be above text
-        const isMenuTop = _windowHeight < _rect.bottom + MENU_HEIGHT
+        const isMenuTop = _windowHeight < _textNode.bottom + MENU_HEIGHT
 
         if (isMenuTop) {
-          return { bottom: 40, left: _textNode.left - _rect.left }
+          const _distanceFromBottom =
+            _windowHeight - _textNode.bottom + _textNode.height
+          return {
+            bottom: _distanceFromBottom,
+            left: _textNode.left - _rect.left,
+          }
         }
 
         // if previous block is an atomic closure block move offest down 20px
@@ -83,6 +88,7 @@ const SuggestMenu = ({
   })
   const [menuActive, setMenuActive] = useState(false)
   const [query, setQuery] = useState(null)
+
   const [hasSuggestions, setHasSuggestions] = useState(false)
   const [resultsMode, setResultsMode] = useState('')
 
@@ -109,6 +115,7 @@ const SuggestMenu = ({
         if (!isAtomicInlineType(_node.type)) {
           setQuery(_text.substring(1))
           setMenuPosition()
+
           if (!menuActive) setMenuActive(true)
         } else if (menuActive) {
           setMenuActive(false)
@@ -123,7 +130,8 @@ const SuggestMenu = ({
         if (innerText) {
           setQuery(innerText.text.substring(1))
         }
-        setMenuPosition()
+
+        window.requestAnimationFrame(setMenuPosition)
         setMenuActive(true)
       }
     }
@@ -192,6 +200,7 @@ const SuggestMenu = ({
           React.cloneElement(React.Children.only(children), {
             editor,
             editorContext,
+            activeIndexRef,
             dismiss: onDismiss,
             query,
             menuHeight: MENU_HEIGHT,

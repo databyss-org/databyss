@@ -19,7 +19,7 @@ const SourceModal = ({ refId, visible, onUpdate, id, untitledPlaceholder }) => {
 
   const saveSource = useCallback(
     (values) => {
-      if (!values.text.textValue.length) {
+      if (!values?.text?.textValue.length) {
         values.text.textValue = untitledPlaceholder
       }
       setSource(values)
@@ -51,6 +51,7 @@ const SourceModal = ({ refId, visible, onUpdate, id, untitledPlaceholder }) => {
     if (!source.detail) {
       source.detail = buildSourceDetail()
     }
+
     setValues(source)
   }, [source])
 

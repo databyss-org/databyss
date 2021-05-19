@@ -1,6 +1,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
+import innerText from 'innertext'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getEditor,
@@ -14,10 +15,10 @@ import {
   logout,
   tagButtonClick,
   tagButtonListClick,
+  getEditorElements,
 } from './_helpers.selenium'
 
 let driver
-let editor
 let actions
 const LOCAL_URL = 'http://localhost:3000'
 const PROXY_URL = 'http://localhost:3000'
@@ -41,7 +42,6 @@ describe('notes app', () => {
 
     await tagButtonClick('data-test-id="continueButton"', driver)
 
-    editor = await getEditor(driver)
     actions = driver.actions()
 
     done()
@@ -157,9 +157,9 @@ describe('notes app', () => {
       '[data-test-element="page-header"]'
     )
 
-    headerField = await headerField.getAttribute('value')
+    headerField = await headerField.getAttribute('outerHTML')
 
-    assert.equal(headerField.trim(), 'First Test Page Title')
+    assert.equal(innerText(headerField), 'First Test Page Title')
 
     // Second page integrity test
     await tagButtonListClick('data-test-element="page-sidebar-item"', 1, driver)
@@ -169,14 +169,15 @@ describe('notes app', () => {
       '[data-test-element="page-header"]'
     )
 
-    headerField = await headerField.getAttribute('value')
+    headerField = await headerField.getAttribute('outerHTML')
 
-    editor = await getEditor(driver)
+    const editorElements = await getEditorElements(driver)
 
-    const editorField = await editor.getAttribute('innerText')
-
-    assert.equal(headerField.trim(), 'Second page title')
-    assert.equal(editorField.trim(), 'Editor test two')
+    assert.equal(innerText(headerField), 'Second page title')
+    assert.equal(
+      innerText(await editorElements[1].getAttribute('outerHTML')),
+      'Editor test two'
+    )
   })
 
   // it('disable in offline mode', async () => {

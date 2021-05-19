@@ -18,6 +18,8 @@ import {
   addMetaToPatches,
   pageToEditorState,
 } from '@databyss-org/editor/state/util'
+import { UNTITLED_PAGE_NAME } from '@databyss-org/services/interfaces'
+import _ from 'lodash'
 import { isMobile } from '../../lib/mediaQuery'
 
 const PageBody = ({
@@ -31,6 +33,7 @@ const PageBody = ({
 
   const { location } = useNavigationContext()
   const clearBlockDict = useEditorPageContext((c) => c.clearBlockDict)
+  const setPageHeader = useEditorPageContext((c) => c.setPageHeader)
   const sharedWithGroups = useEditorPageContext((c) => c.sharedWithGroups)
   const setPatches = useEditorPageContext((c) => c.setPatches)
 
@@ -39,6 +42,8 @@ const PageBody = ({
   const pageState = useRef(null)
   const editorStateRef = useRef()
 
+  const debouncedSetPageHeader = _.debounce(setPageHeader, 250)
+
   // state from provider is out of date
   const onChange = (value) => {
     requestAnimationFrame(() => {
@@ -46,6 +51,24 @@ const PageBody = ({
         onEditorPathChange(editorStateRef.current.pagePath)
       }
     })
+
+    // handle changes to page title block
+    if (value?.patches?.length) {
+      const _patch = value.patches.find(
+        (_patch) => _patch.path?.[0] === 'blocks' && _patch.path?.[1] === 0
+      )
+      const _patchValue =
+        _patch?.path?.[2] === 'text'
+          ? _patch?.value?.textValue
+          : _patch?.value?.text?.textValue
+      if (_patchValue !== null && _patchValue !== undefined) {
+        const _pageData = {
+          name: _patchValue.trim() || UNTITLED_PAGE_NAME,
+          _id: page._id,
+        }
+        debouncedSetPageHeader(_pageData)
+      }
+    }
 
     pageState.current = value.nextState
 
@@ -90,7 +113,10 @@ const PageBody = ({
             key={location.pathname}
             // if read only, disable on change
             onChange={(v) => !isReadOnly && onChange(v)}
-            initialState={pageToEditorState(withMetaData(page))}
+            initialState={{
+              ...pageToEditorState(withMetaData(page)),
+              firstBlockIsTitle: true,
+            }}
           >
             <PDFDropZoneManager />
             <ContentEditable
@@ -101,6 +127,7 @@ const PageBody = ({
               editorRef={editorRef}
               readonly={isReadOnly}
               sharedWithGroups={sharedWithGroups}
+              firstBlockIsTitle
             />
           </EditorProvider>
         </HistoryProvider>

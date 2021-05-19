@@ -125,8 +125,7 @@ export const defaultProps = {
   flexDirection: 'column',
 }
 
-export const desktopResetCss = {
-  boxSizing: 'border-box',
+export const scrollbarResetCss = {
   // webkit scrollbars
   '::-webkit-scrollbar': {
     width: '0.7em',
@@ -140,6 +139,11 @@ export const desktopResetCss = {
   },
   // firefox scrollbars
   'scrollbar-color': '#00000033 transparent !important',
+}
+
+export const desktopResetCss = {
+  boxSizing: 'border-box',
+  ...scrollbarResetCss,
 }
 
 const desktopCss = (props) => ({

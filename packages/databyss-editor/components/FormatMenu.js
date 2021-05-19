@@ -4,7 +4,6 @@ import { useEditor, ReactEditor, useSlate } from '@databyss-org/slate-react'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { Range } from '@databyss-org/slate'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
-import { throttle } from 'lodash'
 import HoveringToolbar from './HoveringToolbar'
 import {
   isFormatActive,
@@ -165,8 +164,8 @@ const FormatMenu = () => {
     const domSelection = window.getSelection()
 
     /*
-check if selection contains inline atomics or inline sources
-*/
+    check if selection contains inline atomics or inline sources
+    */
     const _atomics = getInlineOrAtomicsFromStateSelection(state)
 
     const dontShowMenu =
@@ -179,13 +178,6 @@ check if selection contains inline atomics or inline sources
     if (dontShowMenu) {
       setMenuActive(false)
     }
-
-    window.addEventListener(
-      'scroll',
-      throttle(() => {
-        setMenuActive(false)
-      }, 200)
-    )
   }, [editor.selection])
 
   const openFormatMenu = () => {

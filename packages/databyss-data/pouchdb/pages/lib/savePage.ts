@@ -15,6 +15,11 @@ export const savePage = async (data: Page) => {
     doc: { ...data.blocks[0] },
   })
   await upsertImmediate({
+    doctype: DocumentType.Block,
+    _id: data.blocks[1]._id,
+    doc: { ...data.blocks[1] },
+  })
+  await upsertImmediate({
     doctype: DocumentType.Page,
     _id: data._id,
     doc: normalizePage(data),

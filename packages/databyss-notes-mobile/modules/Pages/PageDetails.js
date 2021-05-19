@@ -42,7 +42,7 @@ const PageDetails = () => {
 
   const render = () => (
     <MobileView headerItems={buildHeaderItems(pageTitle, pageId)}>
-      <EditorPageLoader pageId={pageId} key={pageId}>
+      <EditorPageLoader pageId={pageId} key={pageId} firstBlockIsTitle>
         {(page) => {
           setPageTitle(page.name)
           return renderPageDetails(page)

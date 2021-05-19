@@ -11,7 +11,7 @@ export {
   UnexpectedServerError,
 } from './Errors'
 export type { PageHeader } from './Page'
-export { Page } from './Page'
+export { Page, UNTITLED_PAGE_NAME } from './Page'
 export { Point } from './Point'
 export { Selection } from './Selection'
 export { Text } from './Text'
@@ -22,13 +22,12 @@ export type {
   Topic,
   SourceCitationHeader,
   IndexPageResult,
-  Block,
   BlockReference,
   BlockRelationsServerResponse,
   BlockRelation,
 } from './Block'
 export type { Document, DocumentDict } from './Document'
-export { BlockType } from './Block'
+export { BlockType, Block } from './Block'
 export type { FSA } from './FSA'
 export { RangeType } from './Range'
 export type { Range } from './Range'

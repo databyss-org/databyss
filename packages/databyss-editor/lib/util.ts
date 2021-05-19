@@ -25,16 +25,23 @@ const getInlineAtomicFromBlock = (block: Block): Range[] => {
   const _inlineRanges = block.text.ranges.filter(
     (r) =>
       r.marks.filter(
-        (m) => Array.isArray(m) && m[0] === InlineTypes.InlineTopic
+        (m) =>
+          Array.isArray(m) &&
+          (m[0] === InlineTypes.InlineTopic ||
+            m[0] === InlineTypes.InlineSource)
       ).length
   )
   return _inlineRanges
 }
 
-export const getInlineAtomicType = (type: InlineTypes): BlockType | null => {
+export const getInlineAtomicType = (
+  type: InlineTypes | string
+): BlockType | null => {
   switch (type) {
     case InlineTypes.InlineTopic:
       return BlockType.Topic
+    case InlineTypes.InlineSource:
+      return BlockType.Source
     default:
       return null
   }
@@ -348,4 +355,22 @@ export const slateBlockToHtmlWithSearch = (
   const _frag = stateBlockToHtml(_block)
 
   return _frag
+}
+
+/**
+ *
+ * only allow whitelisted properties
+ */
+export const cleanupAtomicData = (data: any) => {
+  const _data = data
+  const _propertiesToRemove = Object.keys(data).filter(
+    (i) => i.substring(0, 2) === '__'
+  )
+  _propertiesToRemove.forEach((i) => {
+    delete _data[i]
+  })
+  if (_data.weight) {
+    delete data.weight
+  }
+  return _data
 }

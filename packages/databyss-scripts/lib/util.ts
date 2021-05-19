@@ -39,6 +39,24 @@ export function cloudantUrl(env: EnvDict) {
 
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 
+/**
+ * Returns true if @dbName is a system database (like 'users')
+ */
+export const isSystemDatabase = (dbName: string) =>
+  ['users', 'groups', 'logins'].includes(dbName)
+
+/**
+ * Generate createdAt and modifiedAt fields
+ */
+export const timestampFields = (doc?: any) => ({
+  createdAt: doc?.createdAt
+    ? new Date(doc.createdAt).getTime()
+    : new Date().getTime(),
+  modifiedAt: doc?.updatedAt
+    ? new Date(doc.updatedAt).getTime()
+    : new Date().getTime(),
+})
+
 // export async function getAllDbsForUser(userId: string) {
 //   const _dbNames = []
 

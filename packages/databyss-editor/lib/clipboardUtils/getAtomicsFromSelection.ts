@@ -1,8 +1,9 @@
 import _ from 'lodash'
-import { BlockReference, BlockType } from '@databyss-org/services/interfaces'
+import { InlineTypes } from '@databyss-org/services/interfaces/Range'
+import { BlockReference } from '@databyss-org/services/interfaces'
 import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
-import { isAtomicInlineType } from '../util'
+import { isAtomicInlineType, getInlineAtomicType } from '../util'
 
 export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
   const atomics: BlockReference[] = []
@@ -11,14 +12,22 @@ export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
       b.text.ranges.forEach((r) => {
         if (r.marks.length) {
           r.marks
-            .filter((i) => Array.isArray(i) && i[0] === 'inlineTopic')
+            .filter(
+              (i) =>
+                Array.isArray(i) &&
+                (i[0] === InlineTypes.InlineTopic ||
+                  i[0] === InlineTypes.InlineSource)
+            )
             .forEach((i) => {
               if (!atomics.some((a) => a._id === i[1])) {
-                const _inline: BlockReference = {
-                  type: BlockType.Topic,
-                  _id: i[1],
+                const atomicType = getInlineAtomicType(i[0])
+                if (atomicType) {
+                  const _inline: BlockReference = {
+                    type: atomicType,
+                    _id: i[1],
+                  }
+                  atomics.push(_inline)
                 }
-                atomics.push(_inline)
               }
             })
         }
