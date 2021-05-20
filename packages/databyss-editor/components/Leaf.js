@@ -50,25 +50,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
   }
 
   if (leaf.embed) {
-    _children = (
-      // <span style={{ position: 'relative', display: 'block' }}>
-      //   <span
-      //     contentEditable={false}
-      //     id="inline-embed-input"
-      //     style={{
-      //       position: 'relative',
-      //       zIndex: 1000,
-      //       display: 'block',
-      //       backgroundColor: gray[6],
-      //       borderRadius: '3px',
-      //       // height: '300px',
-      //       //    padding: '3px',
-      //     }}
-      //   >
-      <EmbedMedia _children={_children} _element={leaf} />
-      //   </span>
-      // </span>
-    )
+    _children = <EmbedMedia _children={_children} _element={leaf} />
   }
 
   if (leaf.inlineEmbedInput) {

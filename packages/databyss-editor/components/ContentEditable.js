@@ -307,8 +307,7 @@ const ContentEditable = ({
         if (state.blocks[focusIndex].text.textValue === _editorTextValue) {
           return
         }
-        console.log('text content', _editorTextValue)
-        console.log('RANGES', slateRangesToStateRanges(value[focusIndex]))
+
         // update target node
         setContent({
           selection,
@@ -392,7 +391,6 @@ const ContentEditable = ({
         onInlineAtomicClick,
       })
       if (_isInlineBackspace) {
-        console.log('HERE')
         return
       }
 
@@ -704,10 +702,11 @@ const ContentEditable = ({
         })
         // embedded media requires a nbsp, editor should move caret forward one position
         if (op.setCaretAfter) {
-          console.log('REPOSITION')
-          //   window.requestAnimationFrame(() => {
-          //     Transforms.move(editor, { unit: 'character', distance: 2 })
-          //   })
+          window.requestAnimationFrame(() => {
+            Transforms.insertNodes(editor, {
+              text: '\u00A0',
+            })
+          })
         }
       }
       // if reducer states to set the selection as an operation, perform seletion
@@ -762,7 +761,6 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
       }, 5)
     }
 
-    console.log(editor)
     return (
       <Editor
         onInlineAtomicClick={onInlineAtomicClick}

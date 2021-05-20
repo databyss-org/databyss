@@ -37,7 +37,7 @@ export const EmbedMedia = ({ _children, attributes, _element }) => {
     return (
       <iframe
         id={_element.atomicId}
-        title={_element.character}
+        title={_atts.title}
         // border="0px"
         frameBorder="0px"
         {..._atts}

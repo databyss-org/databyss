@@ -795,9 +795,6 @@ export const convertInlineToEmbed = ({
   const _caretOffest = mergedText.textValue.length
 
   mergedText = mergeText(mergedText, textAfter)
-  mergedText = mergeText(mergedText, { textValue: '\u00A0', ranges: [] })
-
-  //  add a
 
   block.text = mergedText
 
@@ -805,7 +802,8 @@ export const convertInlineToEmbed = ({
   draft.operations.push({
     index,
     block,
-    setCaretAfter: true,
+    //  if no text after add a nbsp
+    setCaretAfter: !textAfter.textValue.length,
   })
 
   // update selection
