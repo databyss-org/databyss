@@ -1,3 +1,4 @@
+import { CouchDb } from '@databyss-org/data/couchdb-client/couchdb'
 import { uid } from '@databyss-org/data/lib/uid'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
@@ -37,7 +38,7 @@ export async function ensureTitleBlock(page: Page) {
   }
   page.blocks.unshift(_titleBlock)
 
-  if (dbRef.readOnly) {
+  if (dbRef.readOnly || dbRef.current instanceof CouchDb) {
     return
   }
 
