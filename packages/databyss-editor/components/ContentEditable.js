@@ -45,15 +45,6 @@ import {
   enterAtEndOfInlineAtomic,
 } from '../lib/inlineUtils'
 
-export const withMedia = (editor) => {
-  const { isInline, isVoid } = editor
-  editor.isInline = (element) => (element.embed ? true : isInline(element))
-
-  editor.isVoid = (element) => (element.embed ? true : isVoid(element))
-
-  return editor
-}
-
 const ContentEditable = ({
   onDocumentChange,
   focusIndex,
@@ -82,7 +73,7 @@ const ContentEditable = ({
     removeAtomicFromQueue,
   } = editorContext
 
-  const editor = useMemo(() => withMedia(withReact(createEditor())), [])
+  const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
@@ -713,9 +704,10 @@ const ContentEditable = ({
         })
         // embedded media requires a nbsp, editor should move caret forward one position
         if (op.setCaretAfter) {
-          window.requestAnimationFrame(() => {
-            Transforms.move(editor, { unit: 'character', distance: 2 })
-          })
+          console.log('REPOSITION')
+          //   window.requestAnimationFrame(() => {
+          //     Transforms.move(editor, { unit: 'character', distance: 2 })
+          //   })
         }
       }
       // if reducer states to set the selection as an operation, perform seletion

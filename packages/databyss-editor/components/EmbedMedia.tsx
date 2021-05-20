@@ -22,6 +22,8 @@ export const EmbedMedia = ({ _children, attributes, _element }) => {
 
   const { gray } = colors
 
+  console.log('ELEMENT', _element)
+
   const IFrame = () => {
     if (!data) {
       return null
@@ -59,7 +61,8 @@ export const EmbedMedia = ({ _children, attributes, _element }) => {
           id="inline-embed-input"
           style={{
             position: 'relative',
-            zIndex: 1000,
+            // change  this back to a high number
+            zIndex: 0,
             display: 'block',
             backgroundColor: gray[6],
             borderRadius: '3px',

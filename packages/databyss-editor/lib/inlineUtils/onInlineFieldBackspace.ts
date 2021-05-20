@@ -4,14 +4,10 @@ import { ReactEditor } from '@databyss-org/slate-react'
 import {
   flattenOffset,
   isCurrentlyInInlineAtomicField,
-  isCurrentlyInInlineEmbedInput,
-  isMarkActive,
+  stateSelectionToSlateSelection,
 } from '../slateUtils'
 import { Block } from '../../../databyss-services/interfaces/Block'
-import {
-  RangeType,
-  InlineTypes,
-} from '../../../databyss-services/interfaces/Range'
+import { RangeType } from '../../../databyss-services/interfaces/Range'
 
 export const onInlineFieldBackspace = ({
   editor,
@@ -26,6 +22,7 @@ export const onInlineFieldBackspace = ({
     return false
   }
 
+  console.log('BACKSPACE')
   // check if `inlineAtomicMenu` is active and atomic symbol is going to be deleted, toggle mark and remove symbol
   const _text = Node.string(editor.children[editor.selection.focus.path[0]])
   const _offset = parseInt(
@@ -80,23 +77,16 @@ export const onInlineFieldBackspace = ({
     event.preventDefault()
   }
 
+  const _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
+
   if (
     // check for inline embed fields
-    isCurrentlyInInlineEmbedInput(editor) &&
-    _offset !== 0 &&
-    _text.substring(0, 2) === '<<'
+    _currentLeaf.inlineEmbedInput
   ) {
-    const _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
     console.log(_currentLeaf)
 
     // only << exist, remove mark on backspace
     if (_currentLeaf.inlineEmbedInput && _currentLeaf.text === '<<') {
-      const _inlineAtomicMenuRangeOffset = currentBlock.text.ranges.filter(
-        (r) => r.marks.includes(RangeType.InlineEmbedInput)
-      )[0].offset
-      if (!_inlineAtomicMenuRangeOffset) {
-        // inline at start of block
-      }
       Transforms.delete(editor, {
         distance: 1,
         unit: 'character',
@@ -113,6 +103,33 @@ export const onInlineFieldBackspace = ({
         edge: _offset === 1 ? 'anchor' : 'focus',
       })
 
+      event.preventDefault()
+      return true
+    }
+    //  check if offset falls within the first two characters of range inlineEmbedInput
+    const _inlineEmbedOffset = currentBlock.text.ranges.filter((r) =>
+      r.marks.includes(RangeType.InlineEmbedInput)
+    )[0].offset
+
+    if (
+      _inlineEmbedOffset + 1 === _offset ||
+      _inlineEmbedOffset + 2 === _offset
+    ) {
+      // remove inline embed range and allow backspace
+      Transforms.removeNodes(editor, {
+        match: (node) => node === _currentLeaf,
+      })
+      Transforms.insertText(editor, _currentLeaf.text.substring(1))
+
+      const point = {
+        index: editor.selection.focus.path[0],
+        offset: _offset - 1,
+      }
+      const _sel = stateSelectionToSlateSelection(editor.children, {
+        anchor: point,
+        focus: point,
+      })
+      Transforms.select(editor, _sel)
       event.preventDefault()
       return true
     }

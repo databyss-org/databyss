@@ -49,7 +49,6 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
-  console.log('LEAF', leaf)
   if (leaf.embed) {
     _children = (
       // <span style={{ position: 'relative', display: 'block' }}>

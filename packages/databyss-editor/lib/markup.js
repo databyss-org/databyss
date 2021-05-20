@@ -1,7 +1,6 @@
-import { createEditor, Transforms, Node, Element } from '@databyss-org/slate'
+import { createEditor, Transforms } from '@databyss-org/slate'
 import cloneDeep from 'clone-deep'
 import { toggleMark } from './slateUtils'
-import { withMedia } from '../components/ContentEditable'
 
 const moveToStart = (editor) => {
   const _zero = { path: [0], offset: 0 }
@@ -39,14 +38,12 @@ export const applyRange = (editor, range) => {
 export const statePointToSlatePoint = (children, point) => {
   const { index, offset: flatOffset } = point
 
-  // normalize to compensate for embeds, in embeds `text` is in property `character`
-
   // if index does not exist in editor, reset selection at 0
   if (!children[index]) {
     return { path: [0, 0], offset: 0 }
   }
 
-  const _editor = withMedia(createEditor())
+  const _editor = createEditor()
   const _text = {
     children: children[index].children,
   }
@@ -147,20 +144,12 @@ export const stateToSlateMarkup = (block) => {
     let _childNode = { text }
 
     const ranges = {}
-    b.marks.forEach((m, i) => {
+    b.marks.forEach((m) => {
       // check if current mark is a tuple,
       if (Array.isArray(m)) {
-        // if inline and is embedded, replace text with empty string and add 'character' property
-
         // if so, mark both items: atomic type, and id in slate block
         ranges[m[0]] = true
         ranges.atomicId = m[1]
-
-        // TODO: REPLACE THIS
-        // if (i === 0 && ranges.embed) {
-        //   // _childNode = { character: text, text: '' }
-        //   _childNode = { children: [{ text: '' }], character: text }
-        // }
       } else {
         ranges[m] = true
       }

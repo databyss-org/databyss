@@ -792,7 +792,7 @@ export const convertInlineToEmbed = ({
     ],
   })
 
-  const _caretOffest = splitText.before.textValue.length
+  const _caretOffest = mergedText.textValue.length
 
   mergedText = mergeText(mergedText, textAfter)
   mergedText = mergeText(mergedText, { textValue: '\u00A0', ranges: [] })
