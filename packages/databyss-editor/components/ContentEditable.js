@@ -34,7 +34,7 @@ import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import {
   onInlineFocusBlur,
-  onInlineBackspaceOrEnter,
+  onInlineKeyPress,
   preventInlineAtomicCharacters,
   initiateInlineMenu,
   initiateEmbedInput,
@@ -383,7 +383,7 @@ const ContentEditable = ({
         return
       }
 
-      const _isInlineBackspace = onInlineBackspaceOrEnter({
+      const _isInlineBackspace = onInlineKeyPress({
         event,
         editor,
         state,

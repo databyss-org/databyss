@@ -14,7 +14,7 @@ import {
 import { EditorState } from '../../interfaces/EditorState'
 import { symbolToAtomicType } from '../../state/util'
 
-export const onInlineBackspaceOrEnter = ({
+export const onInlineKeyPress = ({
   event,
   editor,
   state,
@@ -35,7 +35,8 @@ export const onInlineBackspaceOrEnter = ({
   if (
     (isCharacterKeyPress(event) || event.key === 'Backspace') &&
     (SlateEditor.marks(editor)?.inlineTopic ||
-      SlateEditor.marks(editor)?.inlineCitation) &&
+      SlateEditor.marks(editor)?.inlineCitation ||
+      SlateEditor.marks(editor)?.embed) &&
     Range.isCollapsed(editor.selection)
   ) {
     const _currentBlock = state.blocks[state.selection.anchor.index]
@@ -61,7 +62,11 @@ export const onInlineBackspaceOrEnter = ({
       _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
     }
     // if current or prevous leaf is inline
-    if (_currentLeaf.inlineTopic || _currentLeaf.inlineCitation) {
+    if (
+      _currentLeaf.inlineTopic ||
+      _currentLeaf.inlineCitation ||
+      _currentLeaf.embed
+    ) {
       // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
       if (
         !(_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf) ||

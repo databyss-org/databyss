@@ -318,7 +318,9 @@ export const getBlocksWithAtomicId = (blocks, id) => {
             (m) =>
               Array.isArray(m) &&
               m.length === 2 &&
-              (m[0] === 'inlineTopic' || m[0] === 'inlineCitation') &&
+              (m[0] === 'inlineTopic' ||
+                m[0] === 'inlineCitation' ||
+                m[0] === 'embed') &&
               m[1] === id
           ).length
       ).length
@@ -333,7 +335,9 @@ export const getInlineFromBlock = (block, id) =>
         (m) =>
           Array.isArray(m) &&
           m.length === 2 &&
-          (m[0] === 'inlineTopic' || m[0] === 'inlineCitation') &&
+          (m[0] === 'inlineTopic' ||
+            m[0] === 'inlineCitation' ||
+            m[0] === 'embed') &&
           m[1] === id
       )
     )
@@ -374,7 +378,9 @@ export const insertTextWithInilneCorrection = (text, editor) => {
     if (
       _atLeafStart &&
       !_atBlockStart &&
-      (_currentLeaf.inlineTopic || _currentLeaf.inlineCitation)
+      (_currentLeaf.inlineTopic ||
+        _currentLeaf.inlineCitation ||
+        _currentLeaf.embed)
     ) {
       Transforms.move(editor, {
         unit: 'character',
@@ -389,13 +395,18 @@ export const insertTextWithInilneCorrection = (text, editor) => {
     }
     Transforms.insertText(editor, text)
     // if inserted text has inline mark, remove mark
-    if (_currentLeaf.inlineTopic || _currentLeaf.inlineCitation) {
+    if (
+      _currentLeaf.inlineTopic ||
+      _currentLeaf.inlineCitation ||
+      _currentLeaf.embed
+    ) {
       Transforms.move(editor, {
         unit: 'character',
         distance: text.length,
         edge: 'anchor',
         reverse: true,
       })
+      Editor.removeMark(editor, 'embed')
       Editor.removeMark(editor, 'inlineCitation')
       Editor.removeMark(editor, 'inlineTopic')
       Editor.removeMark(editor, 'atomicId')
@@ -426,7 +437,6 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
       })
       return true
     }
-
     /*
     if offset is not zero and previous node is an atomic inline, move cursor to have active inline mark
     */
@@ -435,7 +445,8 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
       if (
         _prev?.length &&
         (Editor.previous(editor)[0]?.inlineTopic ||
-          Editor.previous(editor)[0]?.inlineCitation)
+          Editor.previous(editor)[0]?.inlineCitation ||
+          Editor.previous(editor)[0]?.embed)
       ) {
         Transforms.move(editor, {
           unit: 'character',
@@ -466,7 +477,11 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
       // move selection forward one
       if (
         _atLeafEnd &&
-        !(_currentLeaf.inlineTopic || _currentLeaf.inlineCitation)
+        !(
+          _currentLeaf.inlineTopic ||
+          _currentLeaf.inlineCitation ||
+          _currentLeaf.embed
+        )
       ) {
         Transforms.move(editor, {
           unit: 'character',
@@ -480,9 +495,14 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
         })
       }
       // remove marks before text is entered
-      if (_currentLeaf.inlineTopic || _currentLeaf.inlineCitation) {
+      if (
+        _currentLeaf.inlineTopic ||
+        _currentLeaf.inlineCitation ||
+        _currentLeaf.embed
+      ) {
         Editor.removeMark(editor, 'inlineTopic')
         Editor.removeMark(editor, 'inlineCitation')
+        Editor.removeMark(editor, 'embed')
         Editor.removeMark(editor, 'atomicId')
       }
     }

@@ -22,8 +22,6 @@ export const EmbedMedia = ({ _children, attributes, _element }) => {
 
   const { gray } = colors
 
-  console.log('ELEMENT', _element)
-
   const IFrame = () => {
     if (!data) {
       return null
