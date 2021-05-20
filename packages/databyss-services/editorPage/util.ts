@@ -1,6 +1,6 @@
 import { uid } from '@databyss-org/data/lib/uid'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
-import { DocumentType, PageDoc } from '@databyss-org/data/pouchdb/interfaces'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { Block, BlockType, Page, UNTITLED_PAGE_NAME } from '../interfaces'
 import { getAccountFromLocation } from '../session/utils'
 
@@ -25,6 +25,7 @@ export async function ensureTitleBlock(page: Page) {
     return
   }
 
+  // add title block to Page object
   const _blockId = uid()
   const _titleBlock: Block = {
     _id: _blockId,
@@ -34,6 +35,15 @@ export async function ensureTitleBlock(page: Page) {
       ranges: [],
     },
   }
+  page.blocks.unshift(_titleBlock)
+
+  if (dbRef.readOnly) {
+    return
+  }
+
+  // get pageDoc
+  console.log('[ensureTitleBlock] page._id', page._id)
+  const _pageDoc = await dbRef.current!.get(page._id)
 
   // create a title block
   await dbRef.current!.put({
@@ -41,18 +51,17 @@ export async function ensureTitleBlock(page: Page) {
     doctype: DocumentType.Block,
     createdAt: new Date().getTime(),
     belongsToGroup: getAccountFromLocation(),
+    sharedWithGroups: _pageDoc.sharedWithGroups,
   })
 
   // add title block to page document in db
-  await dbRef.current!.upsert(page._id, (oldDoc) => {
-    const _pageDoc = oldDoc as PageDoc
-    _pageDoc.blocks.unshift({
-      _id: _blockId,
-      type: BlockType.Entry,
-    })
-    return _pageDoc
+  _pageDoc.blocks.unshift({
+    _id: _blockId,
+    type: BlockType.Entry,
   })
 
-  // add title block to Page object
-  page.blocks.unshift(_titleBlock)
+  await dbRef.current!.upsert(page._id, (oldDoc) => ({
+    ...oldDoc,
+    blocks: _pageDoc.blocks,
+  }))
 }

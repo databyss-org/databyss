@@ -171,6 +171,7 @@ const SessionProvider = ({
             },
           },
         })
+        dbRef.readOnly = true
       } else {
         // if user has a default groupId in local storage, change url and retry session _init
         const _hasDefaultGroup = getDefaultGroup()
