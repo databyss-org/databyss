@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import { JSONSchema4 } from 'json-schema'
-import embedSchema from '../schemas/embedSchema'
 
 export interface DesignDocLibs {
   tv4: string

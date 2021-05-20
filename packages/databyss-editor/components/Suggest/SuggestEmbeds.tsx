@@ -1,22 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
-import Iframe from 'react-iframe'
-import { Editor, Transforms } from '@databyss-org/slate'
+import { Editor } from '@databyss-org/slate'
 import { useEditor, ReactEditor } from '@databyss-org/slate-react'
-import { Text, Button, Icon, View, RawHtml } from '@databyss-org/ui/primitives'
-import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
-import { prefixSearchAll } from '@databyss-org/services/blocks'
+import { Text, View } from '@databyss-org/ui/primitives'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
-import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
-import { BlockType } from '@databyss-org/services/interfaces'
-import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorContext } from '../../state/EditorProvider'
 import { validURL } from '../../lib/inlineUtils/initiateEmbedInput'
 import { setEmbedMediaWithoutSuggestion } from '../../lib/inlineUtils/setEmbedMediaWithoutSuggestion'
 import { MediaTypes } from '../../../databyss-services/interfaces/Block'
-import {
-  onBakeInlineAtomic,
-  setAtomicWithoutSuggestion,
-} from '../../lib/inlineUtils'
 
 export const _regExValidator = {
   twitter: /http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/,
@@ -55,7 +45,7 @@ const getIframeAttrs = (code: string): IframeAttributes | false => {
 
   try {
     const MAX_WIDTH = 484
-    const MAX_HEIGHT = 300
+    // const MAX_HEIGHT = 300
 
     let _atts: IframeAttributes = {}
 

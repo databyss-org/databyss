@@ -1,19 +1,19 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import colors from '@databyss-org/ui/theming/colors'
-import { useBlocks } from '../../databyss-data/pouchdb/hooks/useBlocks'
-import { Embed } from '../../databyss-services/interfaces/Block'
-import LoadingFallback from '../../databyss-ui/components/Notify/LoadingFallback'
-import { IframeAttributes } from './Suggest/SuggestEmbeds'
 import _ from 'lodash'
+import { useBlocks } from '@databyss-org/data/pouchdb/hooks/useBlocks'
+import { Embed, BlockType } from '@databyss-org/services/interfaces/Block'
+import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
+import { IframeAttributes } from './Suggest/SuggestEmbeds'
 
 export const EmbedMedia = ({ _children, attributes, _element }) => {
-  const blocksRes = useBlocks('EMBED')
+  const blocksRes = useBlocks(BlockType.Embed)
   const [data, setData] = useState<null | Embed>()
 
   useEffect(() => {
     if (blocksRes.status === 'success') {
       // load attributes
-      const _data = blocksRes.data[_element.atomicId]
+      const _data = blocksRes.data[_element.atomicId] as Embed
       if (_data && !_.isEqual(_data, data)) {
         setData(_data)
       }
