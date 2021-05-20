@@ -32,7 +32,10 @@ interface ContextType {
   setPage: (page: Page) => void
   deletePage: (id: string) => void
   setPageHeader: (page: Page) => void
-  getPage: (id: string) => Page | ResourcePending | null
+  getPage: (
+    id: string,
+    firstBlockIsTitle: boolean
+  ) => Page | ResourcePending | null
   clearBlockDict: () => void
   setPatches: (patches: PatchBatch) => void
   registerBlockRefByIndex: (
@@ -113,7 +116,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   }, [])
 
   const getPage = useCallback(
-    (id: string): ResourceResponse<Page> => {
+    (id: string, firstBlockIsTitle: boolean): ResourceResponse<Page> => {
       if (state.cache[id]) {
         const _pouchPage = pagesRes?.data?.[id]
 
@@ -123,7 +126,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         }
         return state.cache[id]
       }
-      dispatch(actions.fetchPage(id))
+      dispatch(actions.fetchPage(id, firstBlockIsTitle))
       return null
     },
     [JSON.stringify(state.cache), pagesRes.data]

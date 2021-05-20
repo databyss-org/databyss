@@ -22,7 +22,6 @@ export const onInlineFieldBackspace = ({
     return false
   }
 
-  console.log('BACKSPACE')
   // check if `inlineAtomicMenu` is active and atomic symbol is going to be deleted, toggle mark and remove symbol
   const _text = Node.string(editor.children[editor.selection.focus.path[0]])
   const _offset = parseInt(

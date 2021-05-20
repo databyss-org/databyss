@@ -24,7 +24,6 @@ export const onEnterInlineField = ({
     isCurrentlyInInlineAtomicField(editor) ||
     isCurrentlyInInlineEmbedInput(editor)
   ) {
-    console.log('current leaf', currentLeaf)
     // let suggest menu handle event if caret is inside of a new active inline atomic and currentLeaf has more than one character
 
     // if only one character is within the inline range, remove mark from character
@@ -62,7 +61,6 @@ export const onEnterInlineField = ({
         ],
       })
     }
-    console.log('prevents')
     event.preventDefault()
     return true
   }

@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useEditor } from '@databyss-org/slate-react'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
-import { prefixSearchAll } from '@databyss-org/services/blocks'
+import { prefixSearchAll, weightedSearch } from '@databyss-org/services/blocks'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
+import { View } from '@databyss-org/ui/primitives'
+import { pxUnits } from '@databyss-org/ui/theming/views'
+
 import { useEditorContext } from '../../state/EditorProvider'
 import {
   onBakeInlineAtomic,
@@ -16,6 +19,7 @@ const SuggestTopics = ({
   query,
   dismiss,
   onSuggestionsChanged,
+  menuHeight,
   inlineAtomic,
 }) => {
   const editor = useEditor()
@@ -49,7 +53,10 @@ const SuggestTopics = ({
     if (!_topics.length) {
       return []
     }
-    return _topics.filter(prefixSearchAll(query)).slice(0, 4)
+    return _topics
+      .map(weightedSearch(query))
+      .filter(prefixSearchAll(query))
+      .sort((a, b) => (a.weight < b.weight ? 1 : -1))
   }
 
   const updateSuggestions = () => {
@@ -97,14 +104,18 @@ const SuggestTopics = ({
     setSuggestions(Object.values(topicsRes.data))
   }
 
-  return filteredSuggestions.map((s) => (
-    // eslint-disable-next-line react/jsx-indent
-    <DropdownListItem
-      label={s.text.textValue}
-      key={s._id}
-      onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
-    />
-  ))
+  return (
+    <View overflowX="hidden" overflowY="auto" maxHeight={pxUnits(menuHeight)}>
+      {filteredSuggestions.map((s) => (
+        // eslint-disable-next-line react/jsx-indent
+        <DropdownListItem
+          label={s.text.textValue}
+          key={s._id}
+          onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
+        />
+      ))}
+    </View>
+  )
 }
 
 SuggestTopics.defaultProps = {

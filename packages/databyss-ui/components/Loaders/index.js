@@ -5,12 +5,12 @@ import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPa
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 
-export const EditorPageLoader = ({ children, pageId }) => {
+export const EditorPageLoader = ({ children, pageId, firstBlockIsTitle }) => {
   const { getPage, removePageFromCache } = useEditorPageContext()
 
   return (
     <MakeLoader
-      resources={getPage(pageId)}
+      resources={getPage(pageId, firstBlockIsTitle)}
       children={children}
       onUnload={() => removePageFromCache(pageId)}
     />

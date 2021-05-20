@@ -155,7 +155,7 @@ export const getDocuments = async <D>(
     const _doc: any = curr.docs[0]
     if (_doc.error) {
       console.warn('[getDocuments] error', _doc.error)
-      if (_doc.error.error !== 'not_found') {
+      if (_doc.error.name !== 'not_found' && _doc.error.error !== 'not_found') {
         throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error.error}`)
       }
       accum[curr.id] = null

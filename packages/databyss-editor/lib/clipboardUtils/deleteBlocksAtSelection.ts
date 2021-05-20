@@ -124,8 +124,6 @@ export default (draft: EditorState) => {
 
   adjustSelectionToIncludeInlineAtomics({ blocks, anchor, focus })
 
-  console.log(JSON.parse(JSON.stringify({ anchor, focus })))
-
   // adjust selection to not include title block
   if (draft.firstBlockIsTitle && anchor.index === 0 && focus.index !== 0) {
     draft.operations.reloadAll = true

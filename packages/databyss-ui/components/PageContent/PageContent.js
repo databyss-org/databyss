@@ -91,7 +91,7 @@ const PageContent = (others) => {
   return (
     <View flex="1" height="100%" backgroundColor="background.1">
       {id && (
-        <EditorPageLoader pageId={id} key={id}>
+        <EditorPageLoader pageId={id} key={id} firstBlockIsTitle>
           {(page) => (
             <PageContainer anchor={anchor} id={id} page={page} {...others} />
           )}

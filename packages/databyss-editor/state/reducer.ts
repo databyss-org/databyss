@@ -172,7 +172,8 @@ export const bakeAtomicBlock = ({
           })
         }
       }
-      return draft.blocks[index]
+
+      return _suggestion || draft.blocks[index]
     }
   }
   return null
@@ -1102,7 +1103,6 @@ export default (
             text: _selectedBlock.text,
             rangeType: RangeType.InlineAtomicInput,
           })
-
           // first character in atomic input range
           const _symbol = inlineMarkupData?.text.substring(0, 1)
           if (_symbol && !selectionHasRange(draft.selection)) {

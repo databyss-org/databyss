@@ -43,6 +43,7 @@ PouchDB.plugin(PouchDBUpsert)
 
 interface DbRef {
   current: PouchDB.Database<any> | null
+  readOnly: boolean
 }
 
 declare global {
@@ -68,6 +69,7 @@ export const getPouchDb = (groupId: string) => {
 }
 export const dbRef: DbRef = {
   current: null,
+  readOnly: false,
 }
 
 // try to load pouch_secrets from local storage to init db
