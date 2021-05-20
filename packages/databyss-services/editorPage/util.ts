@@ -1,6 +1,6 @@
 import { uid } from '@databyss-org/data/lib/uid'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
-import { DocumentType, PageDoc } from '@databyss-org/data/pouchdb/interfaces'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { Block, BlockType, Page, UNTITLED_PAGE_NAME } from '../interfaces'
 import { getAccountFromLocation } from '../session/utils'
 
@@ -37,7 +37,6 @@ export async function ensureTitleBlock(page: Page) {
   }
   page.blocks.unshift(_titleBlock)
 
-  console.log('[ensureTitleBlock] dbRef.readOnly', dbRef.readOnly)
   if (dbRef.readOnly) {
     return
   }
