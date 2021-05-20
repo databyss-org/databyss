@@ -7,7 +7,6 @@ import {
   stateToSlateMarkup,
   statePointToSlatePoint,
   flattenRanges,
-  getTextFromSlateNode,
 } from './markup'
 
 export const flattenNode = (node) => {
@@ -16,8 +15,6 @@ export const flattenNode = (node) => {
   }
   if (typeof node.text === 'string') {
     return node.text
-  } else if (typeof node.character === 'string') {
-    return node.character
   }
   return node.children.map(flattenNode).join('')
 }
@@ -33,7 +30,7 @@ export const flattenNodeToPoint = (editor, point) => {
   }
   const _frag = Editor.fragment(editor, { anchor, focus })
 
-  const _string = getTextFromSlateNode(_frag[0])
+  const _string = Node.string(_frag[0])
 
   return _string
 }
@@ -159,9 +156,7 @@ export const slateRangesToStateRanges = (node) => {
     return _ranges
   }
   node.children.forEach((child) => {
-    const _textLength = Number.isInteger(child?.text?.length)
-      ? child?.text?.length
-      : child?.character.length
+    const _textLength = child?.text.length
 
     // check if range is inline type
     const _inlineType = Object.keys(child).filter((prop) =>

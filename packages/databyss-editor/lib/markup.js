@@ -36,36 +36,8 @@ export const applyRange = (editor, range) => {
   return editor
 }
 
-const normalizeSlateOffset = (offset, node) => {
-  // get all length and offsets of embedded inlines
-  const _embedRanges = []
-  let _offset = 0
-  node.children.forEach((i) => {
-    if (i.character) {
-      const _charLength = i.character.length
-      _embedRanges.push({ length: _charLength, offset: _offset })
-      _offset += i.character.length
-      return
-    }
-    _offset += i.text.length
-  })
-
-  // subtract all embedded ranges that fall below the offset threshold
-  let _normalizedOffset = offset
-  _embedRanges.forEach((r) => {
-    if (r.length + r.offset < offset) {
-      // subtract from normalized offset
-      // TODO: why is `-1` needed here?
-      _normalizedOffset -= r.length - 1
-    }
-  })
-  return _normalizedOffset
-}
-
 export const statePointToSlatePoint = (children, point) => {
-  const { index, offset: _flatOffset } = point
-
-  const flatOffset = normalizeSlateOffset(_flatOffset, children[index])
+  const { index, offset: flatOffset } = point
 
   // normalize to compensate for embeds, in embeds `text` is in property `character`
 
@@ -183,10 +155,12 @@ export const stateToSlateMarkup = (block) => {
         // if so, mark both items: atomic type, and id in slate block
         ranges[m[0]] = true
         ranges.atomicId = m[1]
-        if (i === 0 && ranges.embed) {
-          // _childNode = { character: text, text: '' }
-          _childNode = { children: [{ text: '' }], character: text }
-        }
+
+        // TODO: REPLACE THIS
+        // if (i === 0 && ranges.embed) {
+        //   // _childNode = { character: text, text: '' }
+        //   _childNode = { children: [{ text: '' }], character: text }
+        // }
       } else {
         ranges[m] = true
       }
@@ -238,22 +212,4 @@ export const getRangesFromBlock = (value) => {
       .filter((x) => x.length != null),
     textValue: text,
   }
-}
-
-export const getTextFromSlateNode = (node) => {
-  let _str = ''
-  node.children.forEach((n) => {
-    let _t
-    if (n.character) {
-      _t = n.character
-    } else {
-      _t = Node.string(n)
-    }
-
-    if (_t) {
-      _str += _t
-    }
-  })
-
-  return _str
 }

@@ -20,7 +20,7 @@ export const EmbedMedia = ({ _children, attributes, _element }) => {
     }
   }, [blocksRes])
 
-  // const { gray } = colors
+  const { gray } = colors
 
   const IFrame = () => {
     if (!data) {
@@ -48,15 +48,37 @@ export const EmbedMedia = ({ _children, attributes, _element }) => {
       <span
         {...attributes}
         style={{
+          position: 'relative',
           display: 'block',
           borderRadius: '3px',
           //    padding: '3px',
         }}
       >
-        <span contentEditable={false} id="inline-embed-input">
+        <span
+          contentEditable={false}
+          id="inline-embed-input"
+          style={{
+            position: 'relative',
+            zIndex: 1000,
+            display: 'block',
+            backgroundColor: gray[6],
+            borderRadius: '3px',
+            // height: '300px',
+            //    padding: '3px',
+          }}
+        >
           {data ? <IFrame /> : <LoadingFallback />}
         </span>
-        {_children}
+        <span
+          style={{
+            zIndex: 0,
+            position: 'absolute',
+            left: 0,
+            top: 0,
+          }}
+        >
+          {_children}
+        </span>
       </span>
     ),
     [data]

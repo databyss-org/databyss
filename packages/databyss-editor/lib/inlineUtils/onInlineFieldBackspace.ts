@@ -89,6 +89,7 @@ export const onInlineFieldBackspace = ({
     const _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
     console.log(_currentLeaf)
 
+    // only << exist, remove mark on backspace
     if (_currentLeaf.inlineEmbedInput && _currentLeaf.text === '<<') {
       const _inlineAtomicMenuRangeOffset = currentBlock.text.ranges.filter(
         (r) => r.marks.includes(RangeType.InlineEmbedInput)

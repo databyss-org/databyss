@@ -44,7 +44,6 @@ import {
   preventMarksOnInline,
   enterAtEndOfInlineAtomic,
 } from '../lib/inlineUtils'
-import { getTextFromSlateNode } from '../lib/markup'
 
 export const withMedia = (editor) => {
   const { isInline, isVoid } = editor
@@ -312,7 +311,7 @@ const ContentEditable = ({
             (op?.text?.length || op?.node?.text?.length)
         )
       ) {
-        const _editorTextValue = getTextFromSlateNode(value[focusIndex])
+        const _editorTextValue = Node.string(value[focusIndex])
         // skip setContent if text hasn't changed
         if (state.blocks[focusIndex].text.textValue === _editorTextValue) {
           return
@@ -771,6 +770,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
       }, 5)
     }
 
+    console.log(editor)
     return (
       <Editor
         onInlineAtomicClick={onInlineAtomicClick}

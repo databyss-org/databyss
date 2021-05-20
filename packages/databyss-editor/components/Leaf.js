@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react'
 import colors from '@databyss-org/ui/theming/colors'
+import { EmbedMedia } from './EmbedMedia'
 
 // check for email addresses
 const _emailRegEx = new RegExp(
@@ -48,26 +49,26 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
+  console.log('LEAF', leaf)
   if (leaf.embed) {
-    console.log(leaf)
-    console.log(leaf.character)
-    console.log(_children)
     _children = (
-      <span>
-        <span
-          contentEditable={false}
-          id="inline-embed-input"
-          style={{
-            display: 'block',
-            backgroundColor: gray[6],
-            borderRadius: '3px',
-            //    padding: '3px',
-          }}
-        >
-          {leaf.character}
-        </span>
-        {_children}
-      </span>
+      // <span style={{ position: 'relative', display: 'block' }}>
+      //   <span
+      //     contentEditable={false}
+      //     id="inline-embed-input"
+      //     style={{
+      //       position: 'relative',
+      //       zIndex: 1000,
+      //       display: 'block',
+      //       backgroundColor: gray[6],
+      //       borderRadius: '3px',
+      //       // height: '300px',
+      //       //    padding: '3px',
+      //     }}
+      //   >
+      <EmbedMedia _children={_children} _element={leaf} />
+      //   </span>
+      // </span>
     )
   }
 
