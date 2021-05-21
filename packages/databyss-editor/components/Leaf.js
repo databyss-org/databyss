@@ -50,7 +50,13 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
   }
 
   if (leaf.embed) {
-    _children = <EmbedMedia _children={_children} _element={leaf} />
+    _children = (
+      <EmbedMedia
+        _children={_children}
+        _element={leaf}
+        onInlineClick={onInlineClick}
+      />
+    )
   }
 
   if (leaf.inlineEmbedInput) {

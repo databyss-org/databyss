@@ -233,6 +233,7 @@ export const inlineTypeToSymbol = (inlineType: InlineTypes): string => {
   const getType = {
     [InlineTypes.InlineSource]: BlockType.Source,
     [InlineTypes.InlineTopic]: BlockType.Topic,
+    [InlineTypes.Embed]: BlockType.Embed,
   }
   const type = getType[inlineType]
 
@@ -508,15 +509,33 @@ export const replaceInlineText = ({
 }): Text | null => {
   const _symbol = inlineTypeToSymbol(type)
 
-  const _textToInsert: Text = {
-    textValue: `${_symbol}${newText.textValue}`,
-    ranges: [
-      {
-        length: newText.textValue.length + 1,
-        offset: 0,
-        marks: [[type, refId]],
-      },
-    ],
+  const _isEmbed = type === InlineTypes.Embed
+  console.log(type)
+
+  let _textToInsert: null | Text = null
+  if (!_isEmbed) {
+    _textToInsert = {
+      textValue: `${_symbol}${newText.textValue}`,
+      ranges: [
+        {
+          length: newText.textValue.length + 1,
+          offset: 0,
+          marks: [[type, refId]],
+        },
+      ],
+    } as Text
+  } else {
+    // replace embed text
+    _textToInsert = {
+      textValue: `[${newText.textValue}]`,
+      ranges: [
+        {
+          length: newText.textValue.length + 2,
+          offset: 0,
+          marks: [[type, refId]],
+        },
+      ],
+    } as Text
   }
 
   const _rangesWithId = text.ranges.filter(
@@ -538,7 +557,7 @@ export const replaceInlineText = ({
     })
 
     // insert text at offset
-    let _mergedText = mergeText(_splitText.before, _textToInsert)
+    let _mergedText = mergeText(_splitText.before, _textToInsert!)
 
     // merge last half of text with new next
     _mergedText = mergeText(_mergedText, _textAfter.after)
@@ -548,7 +567,7 @@ export const replaceInlineText = ({
 
     // update offset to current offset
     // get difference of previous atomic to new atomic to update length of the atomic
-    const _diff = _textToInsert.textValue.length - r.length
+    const _diff = _textToInsert!.textValue.length - r.length
     _cumulativeOffset += _diff
   })
   if (_rangesWithId.length) {

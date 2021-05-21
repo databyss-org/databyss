@@ -24,6 +24,7 @@ export const updateInlines = async ({
   text: Text
   _id: string
 }) => {
+  console.log('update with this', text)
   const _relation = await findOne<BlockRelation>({
     doctype: DocumentType.BlockRelation,
     query: {
@@ -62,12 +63,13 @@ export const updateInlines = async ({
                 type: inlineType,
               })
               Object.assign(_block, { text: _newText })
+              console.log('new text', _newText)
             }
           }
         })
         if (_inlineRanges.length) {
           // update block
-
+          console.log('UPSERITN BLOCK', _block)
           await upsert({
             doctype: DocumentType.Block,
             _id: _block!._id,
