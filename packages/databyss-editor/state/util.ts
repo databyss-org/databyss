@@ -24,7 +24,6 @@ import {
   InlineTypes,
 } from '../../databyss-services/interfaces/Range'
 import { IframeAttributes } from '../components/Suggest/SuggestEmbeds'
-import { Embed } from '../../databyss-services/interfaces/Block'
 
 /*
 takes a text object and a range type and returns the length of the range, the location of the offset and the text contained within the range, this fuction works when text block has of of that range type

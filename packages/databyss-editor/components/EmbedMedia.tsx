@@ -1,16 +1,12 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { View, Icon, Button } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
-import { useEditor } from '@databyss-org/slate-react'
 import colors from '@databyss-org/ui/theming/colors'
 import _ from 'lodash'
 import { useBlocks } from '@databyss-org/data/pouchdb/hooks/useBlocks'
 import { Embed, BlockType } from '@databyss-org/services/interfaces/Block'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { IframeAttributes } from './Suggest/SuggestEmbeds'
-// import { showAtomicModal } from '../lib/atomicModal'
-// import { useEditorContext } from '../state/EditorProvider'
-// import { useNavigationContext } from '../../databyss-ui/components/Navigation/NavigationProvider/NavigationProvider'
 
 export const EmbedMedia = ({
   _children,
