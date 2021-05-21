@@ -8,9 +8,9 @@ import { useBlocks } from '@databyss-org/data/pouchdb/hooks/useBlocks'
 import { Embed, BlockType } from '@databyss-org/services/interfaces/Block'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { IframeAttributes } from './Suggest/SuggestEmbeds'
-import { showAtomicModal } from '../lib/atomicModal'
-import { useEditorContext } from '../state/EditorProvider'
-import { useNavigationContext } from '../../databyss-ui/components/Navigation/NavigationProvider/NavigationProvider'
+// import { showAtomicModal } from '../lib/atomicModal'
+// import { useEditorContext } from '../state/EditorProvider'
+// import { useNavigationContext } from '../../databyss-ui/components/Navigation/NavigationProvider/NavigationProvider'
 
 export const EmbedMedia = ({
   _children,
@@ -18,9 +18,9 @@ export const EmbedMedia = ({
   _element,
   onInlineClick,
 }) => {
-  const editorContext = useEditorContext()
-  const editor = useEditor()
-  const navigationContext = useNavigationContext()
+  // const editorContext = useEditorContext()
+  // const editor = useEditor()
+  // const navigationContext = useNavigationContext()
   const blocksRes = useBlocks(BlockType.Embed)
   const [data, setData] = useState<null | Embed>()
 
@@ -59,6 +59,7 @@ export const EmbedMedia = ({
       src: data.detail.src,
       title: data.detail.title,
     }
+
     return (
       <View position="relative" id="testing" width={_atts.width}>
         <View position="relative" zIndex={1}>
@@ -132,6 +133,6 @@ export const EmbedMedia = ({
         </span>
       </span>
     ),
-    [data]
+    [data?.text.textValue]
   )
 }

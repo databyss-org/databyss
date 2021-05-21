@@ -24,6 +24,7 @@ import {
   InlineTypes,
 } from '../../databyss-services/interfaces/Range'
 import { IframeAttributes } from '../components/Suggest/SuggestEmbeds'
+import { Embed } from '../../databyss-services/interfaces/Block'
 
 /*
 takes a text object and a range type and returns the length of the range, the location of the offset and the text contained within the range, this fuction works when text block has of of that range type
@@ -211,6 +212,7 @@ export const atomicTypeToInlineRangeType = (type: BlockType): InlineTypes => {
   const getSymbolObj = {
     [BlockType.Source]: InlineTypes.InlineSource,
     [BlockType.Topic]: InlineTypes.InlineTopic,
+    [BlockType.Embed]: InlineTypes.Embed,
   }
 
   const inlineType: InlineTypes = getSymbolObj[type]
@@ -510,7 +512,6 @@ export const replaceInlineText = ({
   const _symbol = inlineTypeToSymbol(type)
 
   const _isEmbed = type === InlineTypes.Embed
-  console.log(type)
 
   let _textToInsert: null | Text = null
   if (!_isEmbed) {
@@ -541,6 +542,7 @@ export const replaceInlineText = ({
   const _rangesWithId = text.ranges.filter(
     (r) => r.marks[0][0] === type && r.marks[0][1] === refId
   )
+
   // offset will be updated in loop
   let _cumulativeOffset = 0
   let _textToUpdate = text
@@ -850,8 +852,8 @@ export const convertInlineToEmbed = ({
       title: _attributes.title,
       src: _attributes.src,
       dimensions: {
-        width: _attributes.height,
-        height: _attributes.width,
+        width: _attributes.width,
+        height: _attributes.height,
       },
       ...(_attributes.code && { embedCode: _attributes.code }),
       mediaType: _attributes.mediaType,

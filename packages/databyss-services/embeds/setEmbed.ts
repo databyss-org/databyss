@@ -16,7 +16,6 @@ export const setEmbed = async (data: Embed) => {
     type: BlockType.Embed,
   }
 
-  console.log('block fields', blockFields)
   await upsert({
     doctype: DocumentType.Block,
     _id,

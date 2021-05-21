@@ -108,6 +108,8 @@ export const isAtomicInlineType = (type: BlockType) => {
       return true
     case BlockType.EndSource:
       return true
+    case BlockType.Embed:
+      return true
     default:
       return false
   }

@@ -705,7 +705,7 @@ const ContentEditable = ({
         if (op.setCaretAfter) {
           window.requestAnimationFrame(() => {
             Transforms.insertNodes(editor, {
-              text: '\u00A0',
+              text: '\n',
             })
           })
         }
