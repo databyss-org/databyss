@@ -516,6 +516,7 @@ const ContentEditable = ({
           if (_focusedBlock.__isActive && isAtomicClosure(_focusedBlock.type)) {
             event.preventDefault()
           }
+
           return
         }
         const _text = Node.string(
@@ -541,6 +542,7 @@ const ContentEditable = ({
           _nextIsDoubleBreak ||
           _prevIsDoubleBreak ||
           _text.length === 0
+
         if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
           // // edge case where enter is at the end of an inline atomic
           const isEnterAtEndOfInlineAtomic = enterAtEndOfInlineAtomic({

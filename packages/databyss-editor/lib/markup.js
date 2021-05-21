@@ -141,8 +141,6 @@ export const stateToSlateMarkup = (block) => {
 
     const text = _text.substring(b.offset, b.offset + b.length)
 
-    let _childNode = { text }
-
     const ranges = {}
     b.marks.forEach((m) => {
       // check if current mark is a tuple,
@@ -153,10 +151,9 @@ export const stateToSlateMarkup = (block) => {
       } else {
         ranges[m] = true
       }
-      _childNode = { ..._childNode, ...ranges }
     })
     _currentIndex += b.length
-    _children.push(_childNode)
+    _children.push({ text, ...ranges })
     // if last element in array, check for left over text
     if (i === _ranges.length - 1) {
       const _len = _text.length - _currentIndex

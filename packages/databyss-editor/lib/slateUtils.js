@@ -15,6 +15,8 @@ export const flattenNode = (node) => {
   }
   if (typeof node.text === 'string') {
     return node.text
+  } else if (typeof node.character === 'string') {
+    return node.character
   }
   return node.children.map(flattenNode).join('')
 }
@@ -30,8 +32,7 @@ export const flattenNodeToPoint = (editor, point) => {
   }
   const _frag = Editor.fragment(editor, { anchor, focus })
 
-  const _string = Node.string(_frag[0])
-
+  const _string = Node.string({ children: _frag })
   return _string
 }
 
@@ -156,8 +157,10 @@ export const slateRangesToStateRanges = (node) => {
     return _ranges
   }
   node.children.forEach((child) => {
-    const _textLength = child?.text.length
-
+    if (!child.text) {
+      return
+    }
+    const _textLength = child.text.length
     // check if range is inline type
     const _inlineType = Object.keys(child).filter((prop) =>
       allowedInlines.includes(prop)
@@ -393,6 +396,7 @@ export const insertTextWithInilneCorrection = (text, editor) => {
       })
       _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
     }
+
     Transforms.insertText(editor, text)
     // if inserted text has inline mark, remove mark
     if (
@@ -406,6 +410,7 @@ export const insertTextWithInilneCorrection = (text, editor) => {
         edge: 'anchor',
         reverse: true,
       })
+
       Editor.removeMark(editor, 'embed')
       Editor.removeMark(editor, 'inlineCitation')
       Editor.removeMark(editor, 'inlineTopic')

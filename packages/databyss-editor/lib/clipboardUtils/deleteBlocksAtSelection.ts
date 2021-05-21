@@ -133,7 +133,6 @@ export default (draft: EditorState) => {
 
   // check if selection is within a block
   if (focus.index === anchor.index) {
-    console.log('CHECK HERE')
     deleteSelectionWithinBlock({ blocks, anchor, focus })
   } else {
     deleteSelectionAcrossBlocks({
@@ -174,8 +173,6 @@ export default (draft: EditorState) => {
   // push removed entities upstream
   // eslint-disable-next-line prefer-spread
   draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
-
-  console.log(JSON.parse(JSON.stringify(draft)))
 
   // TODO: create operation for this mutation
 }
