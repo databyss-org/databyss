@@ -836,7 +836,10 @@ export default (
                 block: _block,
                 index: op.index,
                 draft,
-                attributes: op.convertInlineToEmbed,
+                // if suggestion is passed, append to suggest property, else append to attributes property
+                ...(op?.convertInlineToEmbed?.text
+                  ? { suggestion: op.convertInlineToEmbed }
+                  : { attributes: op.convertInlineToEmbed }),
               })
             } else if (op.withRerender) {
               // if operation requires re-render push operation upstream

@@ -5,15 +5,27 @@ import { Text, View } from '@databyss-org/ui/primitives'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import { useEditorContext } from '../../state/EditorProvider'
 import { validURL } from '../../lib/inlineUtils/initiateEmbedInput'
-import { setEmbedMediaWithoutSuggestion } from '../../lib/inlineUtils/setEmbedMediaWithoutSuggestion'
-import { MediaTypes } from '../../../databyss-services/interfaces/Block'
+
+import {
+  MediaTypes,
+  BlockType,
+} from '../../../databyss-services/interfaces/Block'
+import { useBlocksInPages } from '../../../databyss-data/pouchdb/hooks/useBlocksInPages'
+import LoadingFallback from '../../../databyss-ui/components/Notify/LoadingFallback'
+import {
+  weightedSearch,
+  prefixSearchAll,
+} from '../../../databyss-services/blocks/filter'
+import { Embed } from '../../../databyss-services/interfaces/Block'
+import { pxUnits } from '@databyss-org/ui/theming/theme'
+import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
+import { setEmbedMedia } from '../../lib/inlineUtils'
 
 export const _regExValidator = {
   twitter: /http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/,
   youtube: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/,
   image: /^((https?|ftp):)?\/\/.*(jpeg|jpg|png|gif|bmp)$/,
 }
-
 const isHTML = (str: string) => {
   const doc = new DOMParser().parseFromString(str, 'text/html')
   return Array.from(doc.body.childNodes).some((node) => node.nodeType === 1)
@@ -145,70 +157,67 @@ const getIframeAttrs = (code: string): IframeAttributes | false => {
 
 const SuggestEmbeds = ({
   query,
-  // dismiss,
-  // onSuggestionsChanged,
-  // inlineAtomic,
+  onSuggestionsChanged,
+  menuHeight,
+  dismiss,
 }) => {
   const editor = useEditor() as ReactEditor & Editor
+  const embedRes = useBlocksInPages(BlockType.Embed)
+  const { state, setContent } = useEditorContext()
 
+  const pendingSetContent = useRef(false)
+
+  const [suggestions, setSuggestions] = useState<null | Embed[]>(null)
+  const [filteredSuggestions, setFilteredSuggestions] = useState([])
   const [iframeAtts, setIframeAtts] = useState<IframeAttributes | false>(false)
+
   useEffect(() => {
     const _iFrame = getIframeAttrs(query)
     setIframeAtts(_iFrame)
   }, [query])
 
-  // const topicsRes = useBlocksInPages(BlockType.Topic)
+  const filterSuggestions = (_topics) => {
+    if (!_topics.length) {
+      return []
+    }
+    return query?.length
+      ? _topics
+          .map(weightedSearch(query))
+          .filter(prefixSearchAll(query))
+          .sort((a, b) => (a.weight < b.weight ? 1 : -1))
+      : []
+  }
 
-  const { state, setContent } = useEditorContext()
+  const updateSuggestions = () => {
+    if (!suggestions?.length) {
+      return
+    }
+    const _nextSuggestions = filterSuggestions(suggestions)
+    onSuggestionsChanged(_nextSuggestions)
+    setFilteredSuggestions(_nextSuggestions)
+  }
 
-  const pendingSetContent = useRef(false)
+  useEffect(updateSuggestions, [query, suggestions])
 
-  // const [suggestions, setSuggestions] = useState<null | any[]>(null)
-  // const [filteredSuggestions, setFilteredSuggestions] = useState([])
+  const setEmbed = (embed: Embed | void) => {
+    if (embed) {
+      setEmbedMedia({
+        editor,
+        state,
+        setContent,
+        hasSuggestion: embed,
+      })
+    }
 
-  // const onTopicSelected = (topic) => {
-  //   if (!inlineAtomic) {
-  //     replace([topic])
-  //   } else {
-  //     // if topic is provided, set the flag so the event listener will ignore command
-  //     pendingSetContent.current = true
-
-  //     onBakeInlineAtomic({
-  //       editor,
-  //       state,
-  //       suggestion: topic,
-  //       setContent,
-  //     })
-  //   }
-  //   dismiss()
-  // }
-
-  // const filterSuggestions = (_topics) => {
-  //   if (!_topics.length) {
-  //     return []
-  //   }
-  //   return _topics.filter(prefixSearchAll(query)).slice(0, 4)
-  // }
-
-  // const updateSuggestions = () => {
-  //   if (!suggestions?.length) {
-  //     return
-  //   }
-  //   const _nextSuggestions = filterSuggestions(suggestions)
-  //   onSuggestionsChanged(_nextSuggestions)
-  //   setFilteredSuggestions(_nextSuggestions)
-  // }
-
-  // useEffect(updateSuggestions, [query, suggestions])
-
-  const setEmbedWithoutSuggestion = () =>
-    iframeAtts &&
-    setEmbedMediaWithoutSuggestion({
-      editor,
-      state,
-      setContent,
-      attributes: iframeAtts,
-    })
+    if (iframeAtts) {
+      setEmbedMedia({
+        editor,
+        state,
+        setContent,
+        attributes: iframeAtts,
+      })
+    }
+  }
 
   useEventListener('keydown', (e: KeyboardEvent) => {
     /*
@@ -226,23 +235,45 @@ const SuggestEmbeds = ({
       e.stopPropagation()
       window.requestAnimationFrame(() => {
         if (!pendingSetContent.current) {
-          setEmbedWithoutSuggestion()
+          setEmbed()
         }
       })
     }
   })
 
-  // if (!topicsRes.isSuccess) {
-  //   return <LoadingFallback queryObserver={topicsRes} />
-  // }
+  if (!embedRes.isSuccess) {
+    return <LoadingFallback queryObserver={embedRes} />
+  }
 
-  // if (!suggestions) {
-  //   setSuggestions(Object.values(topicsRes.data))
-  // }
+  if (!suggestions) {
+    setSuggestions(Object.values(embedRes.data))
+  }
 
-  const IFrame = () => {
+  const onEmbedSelected = (embed) => {
+    setEmbed(embed)
+
+    dismiss()
+  }
+
+  const Suggestion = () => {
+    // if not iframe suggestion, check if suggestion with same title exists
     if (!iframeAtts) {
-      return null
+      return (
+        <View
+          overflowX="hidden"
+          overflowY="auto"
+          maxHeight={pxUnits(menuHeight)}
+        >
+          {filteredSuggestions.map((s: Embed) => (
+            // eslint-disable-next-line react/jsx-indent
+            <DropdownListItem
+              label={s.text.textValue}
+              key={s._id}
+              onPress={() => onEmbedSelected({ ...s, type: BlockType.Embed })}
+            />
+          ))}
+        </View>
+      )
     }
 
     return (
@@ -260,12 +291,19 @@ const SuggestEmbeds = ({
 
   return (
     <View>
-      <Text variant="uiTextSmall" color="gray.3" display="inline" p="small">
-        {query?.length
-          ? 'press enter to embed...'
-          : 'paste a link or embed code...'}
-      </Text>
-      {query?.length ? IFrame() : null}
+      {filteredSuggestions && query?.length ? (
+        Suggestion()
+      ) : (
+        <>
+          <Text variant="uiTextSmall" color="gray.3" display="inline" p="small">
+            {query?.length
+              ? 'press enter to embed...'
+              : 'paste a link or embed code...'}
+          </Text>
+
+          {query?.length ? Suggestion() : null}
+        </>
+      )}
     </View>
   )
 }

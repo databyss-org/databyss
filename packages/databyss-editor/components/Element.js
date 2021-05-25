@@ -200,7 +200,11 @@ const Element = ({ attributes, children, element, readOnly }) => {
 
           {block.__showInlineEmbedMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
-              <SuggestMenu inlineEmbed suggestType="embed">
+              <SuggestMenu
+                inlineEmbed
+                onSuggestions={onSuggestions}
+                suggestType="embed"
+              >
                 <SuggestEmbeds />
               </SuggestMenu>
             </View>

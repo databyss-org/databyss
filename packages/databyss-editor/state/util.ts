@@ -4,6 +4,7 @@ import {
   Source,
   Topic,
   Block,
+  Embed,
 } from '@databyss-org/services/interfaces'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
@@ -773,18 +774,45 @@ export const convertInlineToEmbed = ({
   index,
   draft,
   attributes,
+  suggestion,
 }: {
   block: Block
   index: number
   draft: EditorState
-  attributes: IframeAttributes
+  attributes?: IframeAttributes
+  suggestion?: Embed
 }) => {
-  const _attributes = attributes
+  const _newId = uid()
+
+  // initialize attribute title
+  const _attributes = attributes || { title: '' }
+
   if (!_attributes?.title?.length) {
     _attributes.title = 'untitled'
   }
 
-  const _newId = uid()
+  // embed text should be either from suggestions or from attributes
+  const _embedText =
+    ((suggestion?.text && {
+      textValue: `[${suggestion.text.textValue}]`,
+      ranges: [
+        {
+          marks: [[InlineTypes.Embed, suggestion._id]],
+          length: suggestion.text.textValue.length + 2,
+          offset: 0,
+        },
+      ],
+    }) as Text) ||
+    ({
+      textValue: `[${attributes?.title}]`,
+      ranges: [
+        {
+          marks: [[InlineTypes.Embed, _newId]],
+          length: _attributes ? _attributes?.title.length + 2 : 0,
+          offset: 0,
+        },
+      ],
+    } as Text)
 
   const inlineEmbedData = getTextOffsetWithRange({
     text: block.text,
@@ -806,16 +834,7 @@ export const convertInlineToEmbed = ({
 
   // const _offset = splitText.before.textValue.length // compensate for removing <<
 
-  let mergedText = mergeText(splitText.before, {
-    textValue: `[${attributes.title}]`,
-    ranges: [
-      {
-        marks: [[InlineTypes.Embed, _newId]],
-        length: _attributes.title.length + 2,
-        offset: 0,
-      },
-    ],
-  })
+  let mergedText = mergeText(splitText.before, _embedText)
 
   const _caretOffest = mergedText.textValue.length
 
@@ -842,23 +861,32 @@ export const convertInlineToEmbed = ({
   draft.selection = _nextSelection
   draft.preventDefault = true
   // if suggestion exists do not create new entity
+  let _entity
 
-  const _entity = {
-    type: BlockType.Embed,
-    // remove atomic symbol
-    text: { textValue: _attributes.title, ranges: [] },
-    detail: {
-      title: _attributes.title,
-      src: _attributes.src,
-      dimensions: {
-        width: _attributes.width,
-        height: _attributes.height,
+  // TODO: LOOK UP IF SUGGESTION ALREADY EXISTS
+  if (attributes) {
+    _entity = {
+      type: BlockType.Embed,
+      // remove atomic symbol
+      text: { textValue: _attributes.title, ranges: [] },
+      detail: {
+        title: _attributes.title,
+        src: _attributes.src,
+        dimensions: {
+          width: _attributes.width,
+          height: _attributes.height,
+        },
+        ...(_attributes.code && { embedCode: _attributes.code }),
+        mediaType: _attributes.mediaType,
       },
-      ...(_attributes.code && { embedCode: _attributes.code }),
-      mediaType: _attributes.mediaType,
-    },
-    _id: _newId,
+      _id: _newId,
+    }
   }
+
+  if (suggestion) {
+    _entity = suggestion
+  }
+
   draft.newEntities.push(_entity)
 }
 

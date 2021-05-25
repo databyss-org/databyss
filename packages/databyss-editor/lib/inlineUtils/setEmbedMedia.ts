@@ -4,17 +4,20 @@ import { EditorState } from '../../interfaces/EditorState'
 
 import { slateSelectionToStateSelection } from '../slateUtils'
 import { IframeAttributes } from '../../components/Suggest/SuggestEmbeds'
+import { Embed } from '@databyss-org/services/interfaces/Block'
 
-export const setEmbedMediaWithoutSuggestion = ({
+export const setEmbedMedia = ({
   editor,
   state,
   setContent,
   attributes,
+  hasSuggestion,
 }: {
   editor: ReactEditor & SlateEditor
   state: EditorState
   setContent: Function
-  attributes: IframeAttributes
+  attributes?: IframeAttributes
+  hasSuggestion?: Embed
 }) => {
   const _index = state.selection.anchor.index
   const _stateBlock = state.blocks[_index]
@@ -32,7 +35,7 @@ export const setEmbedMediaWithoutSuggestion = ({
       {
         index: _index,
         text: _stateBlock.text,
-        convertInlineToEmbed: attributes,
+        convertInlineToEmbed: attributes || hasSuggestion,
       },
     ],
   })

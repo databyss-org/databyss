@@ -32,19 +32,6 @@ export const EmbedMedia = ({
 
   const { gray } = colors
 
-  // const showModal = (e) => {
-  //   e.preventDefault()
-
-  //   const modalData = {
-  //     editorContextRef,
-  //     editorContext,
-  //     editor,
-  //     navigationContext,
-  //     inlineAtomicData,
-  //   }
-  //   showAtomicModal(modalData)
-  // }
-
   const IFrame = () => {
     if (!data) {
       return null
@@ -103,7 +90,7 @@ export const EmbedMedia = ({
       >
         <span
           contentEditable={false}
-          id="inline-embed-input"
+          id="inline-embed"
           style={{
             position: 'relative',
             // change  this back to a high number
