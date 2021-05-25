@@ -16,7 +16,8 @@ export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
               (i) =>
                 Array.isArray(i) &&
                 (i[0] === InlineTypes.InlineTopic ||
-                  i[0] === InlineTypes.InlineSource)
+                  i[0] === InlineTypes.InlineSource ||
+                  i[0] === InlineTypes.Embed)
             )
             .forEach((i) => {
               if (!atomics.some((a) => a._id === i[1])) {

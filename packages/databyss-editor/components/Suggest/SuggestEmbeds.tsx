@@ -1,25 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Editor } from '@databyss-org/slate'
+import { MediaTypes, BlockType, Embed } from '@databyss-org/services/interfaces'
+import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { useEditor, ReactEditor } from '@databyss-org/slate-react'
-import { Text, View } from '@databyss-org/ui/primitives'
-import useEventListener from '@databyss-org/ui/lib/useEventListener'
-import { useEditorContext } from '../../state/EditorProvider'
-import { validURL } from '../../lib/inlineUtils/initiateEmbedInput'
-
-import {
-  MediaTypes,
-  BlockType,
-} from '../../../databyss-services/interfaces/Block'
-import { useBlocksInPages } from '../../../databyss-data/pouchdb/hooks/useBlocksInPages'
-import LoadingFallback from '../../../databyss-ui/components/Notify/LoadingFallback'
+import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks/useBlocksInPages'
 import {
   weightedSearch,
   prefixSearchAll,
-} from '../../../databyss-services/blocks/filter'
-import { Embed } from '../../../databyss-services/interfaces/Block'
+} from '@databyss-org/services/blocks/filter'
+import { Text, View } from '@databyss-org/ui/primitives'
+import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import { pxUnits } from '@databyss-org/ui/theming/theme'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
+import { useEditorContext } from '../../state/EditorProvider'
+import { validURL } from '../../lib/inlineUtils/initiateEmbedInput'
+
 import { setEmbedMedia } from '../../lib/inlineUtils'
+import { Block } from '../../../databyss-services/interfaces/Block'
 
 export const _regExValidator = {
   twitter: /http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/,
@@ -167,7 +164,7 @@ const SuggestEmbeds = ({
 
   const pendingSetContent = useRef(false)
 
-  const [suggestions, setSuggestions] = useState<null | Embed[]>(null)
+  const [suggestions, setSuggestions] = useState<null | Block[]>(null)
   const [filteredSuggestions, setFilteredSuggestions] = useState([])
   const [iframeAtts, setIframeAtts] = useState<IframeAttributes | false>(false)
 
@@ -245,7 +242,7 @@ const SuggestEmbeds = ({
     return <LoadingFallback queryObserver={embedRes} />
   }
 
-  if (!suggestions) {
+  if (!suggestions && embedRes.data) {
     setSuggestions(Object.values(embedRes.data))
   }
 

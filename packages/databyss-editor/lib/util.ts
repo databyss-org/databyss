@@ -42,6 +42,8 @@ export const getInlineAtomicType = (
       return BlockType.Topic
     case InlineTypes.InlineSource:
       return BlockType.Source
+    case InlineTypes.Embed:
+      return BlockType.Embed
     default:
       return null
   }

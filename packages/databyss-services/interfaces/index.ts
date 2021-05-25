@@ -2,6 +2,7 @@ import React from 'react'
 import { ResourcePending } from './ResourcePending'
 
 export { ResourcePending } from './ResourcePending'
+export { MediaTypes } from './Block'
 export {
   NetworkUnavailableError,
   NotAuthorizedError,

@@ -1,10 +1,10 @@
 import { ReactEditor } from '@databyss-org/slate-react'
 import { Editor as SlateEditor } from '@databyss-org/slate'
+import { Embed } from '@databyss-org/services/interfaces'
 import { EditorState } from '../../interfaces/EditorState'
 
 import { slateSelectionToStateSelection } from '../slateUtils'
 import { IframeAttributes } from '../../components/Suggest/SuggestEmbeds'
-import { Embed } from '@databyss-org/services/interfaces/Block'
 
 export const setEmbedMedia = ({
   editor,
