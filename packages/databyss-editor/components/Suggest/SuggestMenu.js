@@ -24,6 +24,7 @@ export const getPosition = (editor, inlineAtomic, inlineEmbed) => {
           ? 'inline-embed-input'
           : null
 
+      console.log('INLINE EMBED', _inlineEmbedMenu)
       const getInlineMenuId =
         inlineAtomic && document.getElementById('inline-atomic')
           ? 'inline-atomic'

@@ -6,7 +6,7 @@ import _ from 'lodash'
 import { useBlocks } from '@databyss-org/data/pouchdb/hooks/useBlocks'
 import { Embed, BlockType } from '@databyss-org/services/interfaces/Block'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
-import { IframeAttributes } from './Suggest/SuggestEmbeds'
+import { IframeAttributes } from './Suggest/iframeUtils'
 
 export const EmbedMedia = ({
   _children,

@@ -4,7 +4,7 @@ import { Embed } from '@databyss-org/services/interfaces'
 import { EditorState } from '../../interfaces/EditorState'
 
 import { slateSelectionToStateSelection } from '../slateUtils'
-import { IframeAttributes } from '../../components/Suggest/SuggestEmbeds'
+import { IframeAttributes } from '../../components/Suggest/iframeUtils'
 
 export const setEmbedMedia = ({
   editor,
