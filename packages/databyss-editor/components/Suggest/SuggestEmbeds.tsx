@@ -17,6 +17,7 @@ import { useEditorContext } from '../../state/EditorProvider'
 import { setEmbedMedia } from '../../lib/inlineUtils'
 import { Block } from '../../../databyss-services/interfaces/Block'
 import { IframeAttributes, getIframeAttrs } from './iframeUtils'
+import { removeCurrentInlineInput } from '../../lib/inlineUtils/onEscapeInInlineAtomicField'
 
 const SuggestEmbeds = ({
   query,
@@ -31,7 +32,7 @@ const SuggestEmbeds = ({
   const pendingSetContent = useRef(false)
 
   const [suggestions, setSuggestions] = useState<null | Block[]>(null)
-  const [filteredSuggestions, setFilteredSuggestions] = useState([])
+  const [filteredSuggestions, setFilteredSuggestions] = useState<Embed[]>([])
   const [iframeAtts, setIframeAtts] = useState<IframeAttributes | false>(false)
 
   useEffect(() => {
@@ -70,6 +71,7 @@ const SuggestEmbeds = ({
         setContent,
         hasSuggestion: embed,
       })
+      return
     }
 
     if (iframeAtts) {
@@ -79,20 +81,28 @@ const SuggestEmbeds = ({
         setContent,
         attributes: iframeAtts,
       })
+      return
     }
+    // if enter was pressed without a selected embed, check if it exists as text in our embedded cache
+    if (
+      filteredSuggestions.length &&
+      filteredSuggestions[0].text.textValue === query
+    ) {
+      // assume its the first in the filtered suggestions
+      setEmbedMedia({
+        editor,
+        state,
+        setContent,
+        hasSuggestion: filteredSuggestions[0],
+      })
+      return
+    }
+
+    // if no suggestion or valid code, convert to plaintext
+    removeCurrentInlineInput({ state, setContent })
   }
 
   useEventListener('keydown', (e: KeyboardEvent) => {
-    /*
-    bake topic if arrow up or down without suggestion
-    */
-    // if (
-    //   !filteredSuggestions.length &&
-    //   (e.key === 'ArrowDown' || e.key === 'ArrowUp')
-    // ) {
-    //   setCurrentTopicWithoutSuggestion()
-    // }
-
     if (e.key === 'Enter') {
       e.preventDefault()
       e.stopPropagation()
@@ -121,20 +131,32 @@ const SuggestEmbeds = ({
   const Suggestion = () => {
     // if not iframe suggestion, check if suggestion with same title exists
     if (!iframeAtts) {
+      // check if filtered suggestions exist
       return (
         <View
           overflowX="hidden"
           overflowY="auto"
           maxHeight={pxUnits(menuHeight)}
         >
-          {filteredSuggestions.map((s: Embed) => (
-            // eslint-disable-next-line react/jsx-indent
-            <DropdownListItem
-              label={s.text.textValue}
-              key={s._id}
-              onPress={() => onEmbedSelected({ ...s, type: BlockType.Embed })}
-            />
-          ))}
+          {filteredSuggestions.length ? (
+            filteredSuggestions.map((s: Embed) => (
+              // eslint-disable-next-line react/jsx-indent
+              <DropdownListItem
+                label={s.text.textValue}
+                key={s._id}
+                onPress={() => onEmbedSelected({ ...s, type: BlockType.Embed })}
+              />
+            ))
+          ) : (
+            <Text
+              variant="uiTextSmall"
+              color="gray.3"
+              display="inline"
+              p="small"
+            >
+              Cannot Load Media
+            </Text>
+          )}
         </View>
       )
     }
@@ -151,6 +173,21 @@ const SuggestEmbeds = ({
       </View>
     )
   }
+
+  const suggestMenu =
+    filteredSuggestions && query?.length ? (
+      Suggestion()
+    ) : (
+      <>
+        <Text variant="uiTextSmall" color="gray.3" display="inline" p="small">
+          {query?.length
+            ? 'press enter to embed...'
+            : 'paste a link or embed code...'}
+        </Text>
+
+        {query?.length ? Suggestion() : null}
+      </>
+    )
 
   return (
     <View>

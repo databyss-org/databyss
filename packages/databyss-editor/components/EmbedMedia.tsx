@@ -14,9 +14,6 @@ export const EmbedMedia = ({
   _element,
   onInlineClick,
 }) => {
-  // const editorContext = useEditorContext()
-  // const editor = useEditor()
-  // const navigationContext = useNavigationContext()
   const blocksRes = useBlocks(BlockType.Embed)
   const [data, setData] = useState<null | Embed>()
 

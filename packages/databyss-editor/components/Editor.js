@@ -26,6 +26,7 @@ const Editor = ({
   const _searchTerm = useSearchContext((c) => c && c.searchTerm)
 
   // preloads source and topic cache to be used by the suggest menu
+  useBlocksInPages('EMBED')
   useBlocksInPages('SOURCE')
   useBlocksInPages('TOPIC')
 
