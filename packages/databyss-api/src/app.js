@@ -13,7 +13,7 @@ import authRoute from './routes/api/auth'
 import cloudantRoute from './routes/api/cloudant'
 import versionRoute from './routes/api/version'
 import errorRoute from './routes/api/error'
-
+import mediaRoute from './routes/api/media'
 // middleware
 import { versionChecker } from './middleware/versionCheckMiddleware'
 import { createRateController } from './middleware/rateControlMiddleware'
@@ -68,7 +68,7 @@ const run = async () => {
   app.use('/api/cloudant', versionChecker, cloudantRoute)
   app.use('/api/version', versionRoute)
   app.use('/api/error', errorRoute)
-
+  app.use('/api/media', mediaRoute)
   // deprecated routes
   app.use('/api/pages', versionChecker)
   app.use('/api/accounts', versionChecker)

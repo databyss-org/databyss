@@ -10,14 +10,15 @@ import {
 } from '@databyss-org/services/blocks/filter'
 import { Text, View } from '@databyss-org/ui/primitives'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
+import { useOpenGraph } from '@databyss-org/data/pouchdb/hooks/useOpenGraph'
 import { pxUnits } from '@databyss-org/ui/theming/theme'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { useEditorContext } from '../../state/EditorProvider'
-
 import { setEmbedMedia } from '../../lib/inlineUtils'
 import { Block } from '../../../databyss-services/interfaces/Block'
 import { IframeAttributes, getIframeAttrs } from './iframeUtils'
 import { removeCurrentInlineInput } from '../../lib/inlineUtils/onEscapeInInlineAtomicField'
+import { IframeComponent } from './IframeComponent'
 
 const SuggestEmbeds = ({
   query,
@@ -35,9 +36,19 @@ const SuggestEmbeds = ({
   const [filteredSuggestions, setFilteredSuggestions] = useState<Embed[]>([])
   const [iframeAtts, setIframeAtts] = useState<IframeAttributes | false>(false)
 
+  const graphRes = useOpenGraph(query)
+  // get title data from OG and set as attribute
+  useEffect(() => {
+    const _data = graphRes?.data
+    if (_data?.title) {
+      setIframeAtts({ ...iframeAtts, title: _data.title })
+    }
+  }, [graphRes.data])
+
+  // get attributes from query string
   useEffect(() => {
     const _iFrame = getIframeAttrs(query)
-    setIframeAtts(_iFrame)
+    setIframeAtts({ ...iframeAtts, ..._iFrame })
   }, [query])
 
   const filterSuggestions = (_topics) => {
@@ -63,6 +74,7 @@ const SuggestEmbeds = ({
 
   useEffect(updateSuggestions, [query, suggestions])
 
+  // save data
   const setEmbed = (embed: Embed | void) => {
     if (embed) {
       setEmbedMedia({
@@ -160,34 +172,11 @@ const SuggestEmbeds = ({
         </View>
       )
     }
-
+    const { src, height, width } = iframeAtts
     return (
-      <View p="small">
-        <iframe
-          id={query}
-          title={query}
-          // border="0px"
-          frameBorder="0px"
-          {...iframeAtts}
-        />
-      </View>
+      <IframeComponent height={height} width={width} query={query} src={src} />
     )
   }
-
-  const suggestMenu =
-    filteredSuggestions && query?.length ? (
-      Suggestion()
-    ) : (
-      <>
-        <Text variant="uiTextSmall" color="gray.3" display="inline" p="small">
-          {query?.length
-            ? 'press enter to embed...'
-            : 'paste a link or embed code...'}
-        </Text>
-
-        {query?.length ? Suggestion() : null}
-      </>
-    )
 
   return (
     <View>

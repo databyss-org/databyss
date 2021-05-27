@@ -1,4 +1,4 @@
-import { MediaTypes } from '../../../databyss-services/interfaces/Block'
+import { MediaTypes } from '@databyss-org/services/interfaces'
 import { validURL } from '../../lib/inlineUtils/initiateEmbedInput'
 
 export const _regExValidator = {
@@ -78,18 +78,26 @@ export const getIframeAttrs = (code: string): IframeAttributes | false => {
     }
     // convert link to iframe attrs
     if (validURL(code)) {
+      // scrape for open graph data
+
       // check for twitter link
       if (_regExValidator.twitter.test(code)) {
         // convert tweet to regex values
-
-        // TODO: shouldnt use twitterframe
+        const _regex = /https*:\/\/twitter\.com\/(?<USER>.+?)\/status\/(?<TID>\d+)/
+        const match = _regex.exec(code)
+        let username = ''
+        let tweetId = ''
+        if (match?.groups) {
+          username = match.groups.USER
+          tweetId = match.groups.TID
+        }
         _atts = {
           // border: 0,
           // frameborder: 0,
           width: MAX_WIDTH,
-          height: 220,
-          src: `https://twitframe.com/show?url=${encodeURI(code)}`,
-          title: 'tweet',
+          height: 205,
+          src: `https://platform.twitter.com/embed/Tweet.html?id=${tweetId}`,
+          title: `tweet by ${username} ${tweetId}`,
           mediaType: MediaTypes.TWITTER,
         }
         return _atts
@@ -110,7 +118,6 @@ export const getIframeAttrs = (code: string): IframeAttributes | false => {
           width: MAX_WIDTH,
           height: 273,
           src: `https://www.youtube.com/embed/${_id}`,
-          title: 'youtube',
         }
         return _atts
       }

@@ -16,7 +16,6 @@ export const EmbedMedia = ({
 }) => {
   const blocksRes = useBlocks(BlockType.Embed)
   const [data, setData] = useState<null | Embed>()
-
   useEffect(() => {
     if (blocksRes.status === 'success') {
       // load attributes
