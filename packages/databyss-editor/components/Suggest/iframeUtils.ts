@@ -122,19 +122,18 @@ export const getIframeAttrs = (code: string): IframeAttributes | false => {
         return _atts
       }
 
-      // check if image url
-      if (_regExValidator.image.test(code)) {
-        _atts = {
-          // border: 0,
-          // frameborder: 0,
-          width: MAX_WIDTH,
-          height: 300,
-          src: code,
-          title: 'image',
-          mediaType: MediaTypes.IMAGE,
-        }
-        return _atts
-      }
+      // // check if image url
+      // if (_regExValidator.image.test(code)) {
+      //   _atts = {
+      //     // border: 0,
+      //     // frameborder: 0,
+      //     width: MAX_WIDTH,
+      //     height: 300,
+      //     src: code,
+      //     mediaType: MediaTypes.IMAGE,
+      //   }
+      //   return _atts
+      // }
     }
   } catch (err) {
     console.log(err)

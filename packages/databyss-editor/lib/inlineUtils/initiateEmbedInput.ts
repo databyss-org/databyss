@@ -50,10 +50,8 @@ export const initiateEmbedInput = ({
       editor.selection.focus
     ).toString()
 
-    console.log(_offset)
     // return if not <<
     _offset = parseInt(_offset, 10)
-    console.log(_offset)
 
     if (_offset < 1) {
       return false
@@ -84,7 +82,6 @@ export const initiateEmbedInput = ({
           _text.charAt(_offset) === ' ' || _text.charAt(_offset) === '\n'
         // if next character is not a whitespace, swollow next word into mark `inlineAtomicMenu`
 
-        console.log(_nextCharIsWhitespace)
         if (!_nextCharIsWhitespace && !isCurrentlyInInlineAtomicField(editor)) {
           // get length of text to swollow
           // get word to swollow divided by white space, comma or period

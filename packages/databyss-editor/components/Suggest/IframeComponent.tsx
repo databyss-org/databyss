@@ -4,6 +4,7 @@ import { View } from '@databyss-org/ui/primitives'
 export const IframeComponent = ({ query, src, height, width }) => (
   <View p="small">
     <iframe
+      seamless
       id={query}
       title={query}
       src={src}

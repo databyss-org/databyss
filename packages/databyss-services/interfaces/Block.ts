@@ -53,6 +53,7 @@ export enum MediaTypes {
   YOUTUBE = 'youtube',
   TWITTER = 'twitter',
   CODE = 'CODE',
+  WEBSITE = 'website',
 }
 
 export interface EmbedDetail {

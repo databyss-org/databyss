@@ -1,4 +1,5 @@
 import { useQuery } from 'react-query'
+import { httpPost } from '../../../databyss-services/lib/requestApi'
 
 export interface QueryOptions {
   includeIds?: string[] | null
@@ -13,21 +14,14 @@ export const useRemoteMedia = (
   url: string,
   options: UseDocumentsOptions = { enabled: true }
 ) => {
-  const queryKey = url
+  const queryKey = `media-${url}`
 
   const query = useQuery(
     queryKey,
-    () =>
-      new Promise((resolve, reject) => {
-        // fetch media
-        fetch(queryKey)
-          .then((res: any) => {
-            console.log(res.headers.get('Content-Disposition'))
-            console.log(res.headers.get('Content-Type'))
-            return resolve(console.log(res.json()))
-          })
-          .catch((err) => reject(err))
-      }),
+    async () => {
+      const _res = await httpPost('/media/remote', { url })
+      return _res
+    },
     {
       enabled: options.enabled,
     }

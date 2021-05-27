@@ -278,6 +278,7 @@
     "react-use": "^11.0.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "request-image-size": "^2.2.0",
     "resolve": "^1.11.1",
     "rollup": "^1.31.0",
     "sanitize-html": "^2.3.3",
