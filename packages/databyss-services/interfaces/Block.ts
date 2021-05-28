@@ -52,7 +52,7 @@ export enum MediaTypes {
   IMAGE = 'image',
   YOUTUBE = 'youtube',
   TWITTER = 'twitter',
-  CODE = 'CODE',
+  HTML = 'html',
   WEBSITE = 'website',
   UNFETCHED = 'unfetchedMedia',
 }
@@ -66,6 +66,7 @@ export interface EmbedDetail {
   }
   mediaType: MediaTypes
   embedCode?: string
+  openGraphJson?: string
 }
 
 export interface SourceDetail {

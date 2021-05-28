@@ -19,14 +19,31 @@ export interface MediaResponse {
   height?: number | null
   width?: number | null
   src: string | null
+  openGraphJson?: string | null
 }
 
 const isHTML = (str: string) => {
   try {
-    const doc = new DOMParser().parseFromString(str, 'text/html')
-    return Array.from(doc.body.childNodes).some(
-      (node: any) => node.nodeType === 1
-    )
+    const _regEx = /<("[^"]*"|'[^']*'|[^'">])*>/
+    const index = str.search(_regEx)
+    if (index === -1) {
+      return false
+    }
+    new DOMParser({
+      errorHandler: {
+        // warning: (w) => {
+        //   throw new Error(w)
+        // },
+        error: (e) => {
+          throw new Error(e)
+        },
+        fatalError: (e) => {
+          throw new Error(e)
+        },
+      },
+    }).parseFromString(str, 'text/html')
+
+    return true
   } catch (err) {
     return false
   }

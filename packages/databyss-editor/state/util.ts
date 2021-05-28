@@ -886,6 +886,9 @@ export const convertInlineToEmbed = ({
         detail: {
           title: _attributes.title,
           src: _attributes.src,
+          ...(_attributes.openGraphJson && {
+            openGraphJson: _attributes.openGraphJson,
+          }),
           dimensions: {
             width: _attributes.width,
             height: _attributes.height,

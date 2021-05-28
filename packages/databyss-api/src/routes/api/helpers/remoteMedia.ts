@@ -1,4 +1,5 @@
 import requestImageSize from 'request-image-size'
+import { DOMParser } from 'xmldom'
 import ogs from 'open-graph-scraper'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
 import { MediaResponse, MAX_WIDTH, _regExValidator } from '../media'
@@ -23,6 +24,7 @@ export const getImageAttributes = async (url: string) => {
     src: null,
     width: null,
     height: null,
+    openGraphJson: null,
   }
 
   _response.src = url
@@ -54,36 +56,61 @@ export const getHtmlAttributes = (code: string) => {
     title: true,
     id: true,
   }
-  // attempt to parse iframe
-  const parsed = new DOMParser().parseFromString(code.trim(), 'text/html')
+  try {
+    // attempt to parse iframe
+    const parsed = new DOMParser({
+      errorHandler: {
+        // warning: (w) => {
+        //   throw new Error(w)
+        // },
+        error: (e) => {
+          throw new Error(e)
+        },
+        fatalError: (e) => {
+          throw new Error(e)
+        },
+      },
+    }).parseFromString(code.trim(), 'text/html')
 
-  const _iframe = parsed.body
+    const _iframe = parsed.getElementsByTagName('iframe')
+    if (_iframe.length) {
+      const _firstNode = _iframe[0]
 
-  const _firstNode = _iframe.children[0]
-  if (_firstNode?.tagName === 'IFRAME') {
-    // if iframe exists get all attribute properties
+      if (_firstNode?.tagName === 'iframe') {
+        // if iframe exists get all attribute properties
 
-    Array.from(_firstNode.attributes).forEach((i) => {
-      // only get properties in allow list
-      if (_iFrameAllowList[i.name]) _response[i.name] = i.value
-    })
+        Array.from(_firstNode.attributes).forEach((i: any) => {
+          // only get properties in allow list
+          if (_iFrameAllowList[i.name]) _response[i.name] = i.value
+        })
 
-    // scale iframe for max width of 500 - 16 (padding)
-    if (_response.width && MAX_WIDTH < _response.width) {
-      const _widthRatio = MAX_WIDTH / _response.width
+        // scale iframe for max width of 500 - 16 (padding)
+        if (_response.width && MAX_WIDTH < _response.width) {
+          const _widthRatio = MAX_WIDTH / _response.width
 
-      _response.mediaType = MediaTypes.IFRAME
-      _response.width *= _widthRatio
+          _response.mediaType = MediaTypes.IFRAME
+          _response.width *= _widthRatio
 
-      if (_response.height) {
-        _response.height *= _widthRatio
+          if (_response.height) {
+            _response.height *= _widthRatio
+          }
+        }
+
+        return _response
       }
     }
 
+    // parse as regular html
+    // TODO: what  are these dimension
+    _response.height = 200
+    _response.width = 300
+    _response.src = code
+    _response.mediaType = MediaTypes.HTML
+    _response.title = `html fragment ${Date.now()}`
+    return _response
+  } catch (err) {
     return _response
   }
-
-  return _response
 }
 
 export const getTwitterAttributes = (url: string) => {
@@ -139,8 +166,8 @@ export const getYoutubeAttributes = async (url) => {
       _response.title = result.ogTitle
       // TODO:_response.openGraphJson
     }
+    _response.openGraphJson = JSON.stringify(result)
   }
-
   return _response
 }
 
@@ -164,13 +191,8 @@ export const getWebsiteAttributes = async (url) => {
       _response.width = 480
       _response.height = 300
       _response.mediaType = MediaTypes.WEBSITE
+      _response.openGraphJson = JSON.stringify(result)
     }
-    // TODO: openGraphJson
-
-    // - try to match html title with regex:
-    // `/<title>(?<TITLE>.+?)<\/title>/i`
-    //     - fallback to first 40 characters of URL as `<TITLE>`
-    //     - block.text: `[web page: <TITLE>]`
 
     return _response
   } catch (err) {

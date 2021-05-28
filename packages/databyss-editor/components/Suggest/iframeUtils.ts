@@ -9,4 +9,5 @@ export type IframeAttributes = {
   // border?: number
   // frameborder?: number
   mediaType?: MediaTypes
+  openGraphJson?: string
 }

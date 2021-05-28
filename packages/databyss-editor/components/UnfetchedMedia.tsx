@@ -13,23 +13,28 @@ export const UnfetchedMedia = ({ atomicId, src }) => {
     if (graphRes.data) {
       const _attributes = graphRes.data
 
-      const _entity: Embed = {
-        type: BlockType.Embed,
-        // remove atomic symbol
-        text: { textValue: _attributes.title, ranges: [] },
-        detail: {
-          title: _attributes.title,
-          src: _attributes.src,
-          dimensions: {
-            width: _attributes.width,
-            height: _attributes.height,
+      if (_attributes?.mediaType) {
+        const _entity: Embed = {
+          type: BlockType.Embed,
+          // remove atomic symbol
+          text: { textValue: _attributes.title, ranges: [] },
+          detail: {
+            title: _attributes.title,
+            src: _attributes.src,
+            dimensions: {
+              width: _attributes.width,
+              height: _attributes.height,
+            },
+            ...(_attributes.code && { embedCode: _attributes.code }),
+            mediaType: _attributes.mediaType,
+            ...(_attributes.openGraphJson && {
+              openGraphJson: _attributes.openGraphJson,
+            }),
           },
-          ...(_attributes.code && { embedCode: _attributes.code }),
-          mediaType: _attributes.mediaType,
-        },
-        _id: atomicId,
+          _id: atomicId,
+        }
+        setEmbed(_entity)
       }
-      setEmbed(_entity)
 
       // if online, save details of embedded data
     }

@@ -173,9 +173,19 @@ const SuggestEmbeds = ({
         </View>
       )
     }
-    const { src, height, width } = iframeAtts
-    return (
-      <IframeComponent height={height} width={width} query={query} src={src} />
+    const { src, height, width, mediaType } = iframeAtts
+    return iframeAtts && iframeAtts?.mediaType === MediaTypes.UNFETCHED ? (
+      <View p="large">
+        <LoadingFallback />
+      </View>
+    ) : (
+      <IframeComponent
+        mediaType={mediaType}
+        height={height}
+        width={width}
+        query={query}
+        src={src}
+      />
     )
   }
 

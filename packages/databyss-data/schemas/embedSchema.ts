@@ -7,6 +7,9 @@ export const embedSchema: JSONSchema4 = {
     detail: {
       type: 'object',
       properties: {
+        openGraphJson: {
+          type: 'string',
+        },
         title: {
           type: 'string',
         },

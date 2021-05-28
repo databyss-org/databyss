@@ -55,8 +55,6 @@ const deleteSelectionWithinBlock = ({
 
   // update text in block to merged results
   block.text = mergeText(_beforeAnchor, _afterFocus)
-
-  console.log('BLOCK', JSON.parse(JSON.stringify(block)))
 }
 
 // updates blocks with selected blocks removed

@@ -19,6 +19,7 @@ export const EmbedMedia = ({
   _element,
   onInlineClick,
 }) => {
+  const { gray } = colors
   const blocksRes = useBlocks(BlockType.Embed)
   const [data, setData] = useState<null | Embed>()
   useEffect(() => {
@@ -43,10 +44,32 @@ export const EmbedMedia = ({
       mediaType: data.detail?.mediaType,
     }
 
-    const EmbedCompoenent = () =>
-      !_atts?.mediaType || _atts.mediaType === MediaTypes.UNFETCHED ? (
-        <UnfetchedMedia atomicId={_element.atomicId} src={_atts.src} />
-      ) : (
+    const EmbededComponent = () => {
+      const _isUnfetched =
+        !_atts?.mediaType || _atts.mediaType === MediaTypes.UNFETCHED
+
+      if (_isUnfetched) {
+        return <UnfetchedMedia atomicId={_element.atomicId} src={_atts.src} />
+      }
+
+      console.log(_atts)
+      if (_atts.mediaType === MediaTypes.HTML) {
+        return (
+          <View backgroundColor={gray[6]}>
+            <iframe
+              id={_element.atomicId}
+              title={_atts.title}
+              srcDoc={_atts.src}
+              width={_atts.width}
+              height={_atts.height}
+              // border="0px"
+              frameBorder="0px"
+            />
+          </View>
+        )
+      }
+
+      return (
         <iframe
           id={_element.atomicId}
           title={_atts.title}
@@ -57,11 +80,12 @@ export const EmbedMedia = ({
           frameBorder="0px"
         />
       )
+    }
 
     return (
       <View position="relative" id="testing" width={_atts.width}>
         <View position="relative" zIndex={1}>
-          <EmbedCompoenent />
+          <EmbededComponent />
         </View>
         <View
           zIndex={2}
