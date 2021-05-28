@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { View, Icon, Button, Text } from '@databyss-org/ui/primitives'
+import { View, Icon, Button } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import colors from '@databyss-org/ui/theming/colors'
 import _ from 'lodash'

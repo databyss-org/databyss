@@ -1,7 +1,7 @@
 import React from 'react'
 import { View } from '@databyss-org/ui/primitives'
-import { MediaTypes } from '../../../databyss-services/interfaces/Block'
 import colors from '@databyss-org/ui/theming/colors'
+import { MediaTypes } from '@databyss-org/services/interfaces/Block'
 
 const { gray } = colors
 export const IframeComponent = ({ query, src, height, width, mediaType }) =>
