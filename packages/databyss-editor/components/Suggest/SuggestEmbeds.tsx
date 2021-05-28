@@ -43,13 +43,10 @@ const SuggestEmbeds = ({
     }
   }, [query])
 
-  console.log('attributes', iframeAtts)
-
   const graphRes = useOpenGraph(query)
   // get title data from OG and set as attribute
   useEffect(() => {
     const _data = graphRes?.data
-    console.log('return data', _data)
     if (_data?.mediaType) {
       setIframeAtts({ ...iframeAtts, ..._data })
     }

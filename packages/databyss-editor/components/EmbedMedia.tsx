@@ -11,6 +11,7 @@ import {
 } from '@databyss-org/services/interfaces/Block'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { IframeAttributes } from './Suggest/iframeUtils'
+import { UnfetchedMedia } from './UnfetchedMedia'
 
 export const EmbedMedia = ({
   _children,
@@ -25,13 +26,10 @@ export const EmbedMedia = ({
       // load attributes
       const _data = blocksRes.data[_element.atomicId] as Embed
       if (_data && !_.isEqual(_data, data)) {
-        console.log('DATA', _data)
         setData(_data)
       }
     }
   }, [blocksRes])
-
-  const { gray } = colors
 
   const IFrame = () => {
     if (!data) {
@@ -45,14 +43,9 @@ export const EmbedMedia = ({
       mediaType: data.detail?.mediaType,
     }
 
-    console.log('attributes', _atts)
     const EmbedCompoenent = () =>
       !_atts?.mediaType || _atts.mediaType === MediaTypes.UNFETCHED ? (
-        <View p="medium" alignItems="center" backgroundColor={gray[6]}>
-          <Text variant="uiTextSmall" color="text.2">
-            unable to load media
-          </Text>
-        </View>
+        <UnfetchedMedia atomicId={_element.atomicId} src={_atts.src} />
       ) : (
         <iframe
           id={_element.atomicId}
