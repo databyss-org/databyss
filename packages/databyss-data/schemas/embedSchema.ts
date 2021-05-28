@@ -29,7 +29,7 @@ export const embedSchema: JSONSchema4 = {
           type: 'string',
         },
       },
-      required: ['title', 'src', 'dimensions', 'mediaType'],
+      required: ['src', 'mediaType'],
     },
   },
   required: ['detail'],

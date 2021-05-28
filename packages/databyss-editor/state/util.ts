@@ -5,6 +5,7 @@ import {
   Topic,
   Block,
   Embed,
+  MediaTypes,
 } from '@databyss-org/services/interfaces'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
@@ -786,11 +787,8 @@ export const convertInlineToEmbed = ({
   // initialize attribute title
   const _attributes = attributes || { title: '' }
 
-  if (!_attributes?.title?.length) {
-    _attributes.title = 'untitled'
-  }
+  const _timetstamp = Date.now()
 
-  // embed text should be either from suggestions or from attributes
   const _embedText =
     ((suggestion?.text && {
       textValue: `[${suggestion.text.textValue}]`,
@@ -803,11 +801,15 @@ export const convertInlineToEmbed = ({
       ],
     }) as Text) ||
     ({
-      textValue: `[${attributes?.title}]`,
+      textValue: `[${
+        attributes?.mediaType === MediaTypes.UNFETCHED
+          ? `unfetched media ${_timetstamp}`
+          : attributes?.title
+      }]`,
       ranges: [
         {
           marks: [[InlineTypes.Embed, _newId]],
-          length: _attributes ? _attributes?.title.length + 2 : 0,
+          length: _attributes?.title ? _attributes?.title.length + 2 : 31,
           offset: 0,
         },
       ],
@@ -864,21 +866,35 @@ export const convertInlineToEmbed = ({
 
   // TODO: LOOK UP IF SUGGESTION ALREADY EXISTS
   if (attributes) {
-    _entity = {
-      type: BlockType.Embed,
-      // remove atomic symbol
-      text: { textValue: _attributes.title, ranges: [] },
-      detail: {
-        title: _attributes.title,
-        src: _attributes.src,
-        dimensions: {
-          width: _attributes.width,
-          height: _attributes.height,
+    // first confirm remote media has been fetched
+    if (attributes.mediaType === MediaTypes.UNFETCHED) {
+      _entity = {
+        type: BlockType.Embed,
+        // remove atomic symbol
+        text: { textValue: `unfetched media ${_timetstamp}`, ranges: [] },
+        detail: {
+          src: _attributes.src,
+          mediaType: _attributes.mediaType,
         },
-        ...(_attributes.code && { embedCode: _attributes.code }),
-        mediaType: _attributes.mediaType,
-      },
-      _id: _newId,
+        _id: _newId,
+      }
+    } else {
+      _entity = {
+        type: BlockType.Embed,
+        // remove atomic symbol
+        text: { textValue: _attributes.title, ranges: [] },
+        detail: {
+          title: _attributes.title,
+          src: _attributes.src,
+          dimensions: {
+            width: _attributes.width,
+            height: _attributes.height,
+          },
+          ...(_attributes.code && { embedCode: _attributes.code }),
+          mediaType: _attributes.mediaType,
+        },
+        _id: _newId,
+      }
     }
   }
 

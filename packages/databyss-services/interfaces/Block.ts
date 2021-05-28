@@ -54,6 +54,7 @@ export enum MediaTypes {
   TWITTER = 'twitter',
   CODE = 'CODE',
   WEBSITE = 'website',
+  UNFETCHED = 'unfetchedMedia',
 }
 
 export interface EmbedDetail {

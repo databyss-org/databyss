@@ -16,10 +16,9 @@ import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { useEditorContext } from '../../state/EditorProvider'
 import { setEmbedMedia } from '../../lib/inlineUtils'
 import { Block, MediaTypes } from '../../../databyss-services/interfaces/Block'
-import { IframeAttributes, getIframeAttrs } from './iframeUtils'
+import { IframeAttributes } from './iframeUtils'
 import { removeCurrentInlineInput } from '../../lib/inlineUtils/onEscapeInInlineAtomicField'
 import { IframeComponent } from './IframeComponent'
-import { useRemoteMedia } from '../../../databyss-data/pouchdb/hooks/useRemoteMedia'
 
 const SuggestEmbeds = ({
   query,
@@ -37,34 +36,24 @@ const SuggestEmbeds = ({
   const [filteredSuggestions, setFilteredSuggestions] = useState<Embed[]>([])
   const [iframeAtts, setIframeAtts] = useState<IframeAttributes | false>(false)
 
+  // default attributes if not set already, this will be used in offline mode
+  useEffect(() => {
+    if (!iframeAtts || iframeAtts.mediaType === MediaTypes.UNFETCHED) {
+      setIframeAtts({ mediaType: MediaTypes.UNFETCHED, src: query })
+    }
+  }, [query])
+
+  console.log('attributes', iframeAtts)
+
   const graphRes = useOpenGraph(query)
   // get title data from OG and set as attribute
   useEffect(() => {
     const _data = graphRes?.data
-    // if youtube vid
-    if (_data?.mediaType === MediaTypes.YOUTUBE && _data?.title) {
-      setIframeAtts({ ...iframeAtts, title: _data.title })
-      return
-    }
-    // if website
-    if (_data?.mediaType === MediaTypes.WEBSITE) {
+    console.log('return data', _data)
+    if (_data?.mediaType) {
       setIframeAtts({ ...iframeAtts, ..._data })
     }
-  }, [graphRes.data])
-
-  const mediaRes = useRemoteMedia(query)
-  useEffect(() => {
-    const _data = mediaRes?.data
-    if (_data?.title) {
-      setIframeAtts({ ...iframeAtts, ..._data })
-    }
-  }, [mediaRes.data])
-
-  // get attributes from query string
-  useEffect(() => {
-    const _iFrame = getIframeAttrs(query)
-    setIframeAtts({ ...iframeAtts, ..._iFrame })
-  }, [query])
+  }, [graphRes.data, query])
 
   const filterSuggestions = (_topics) => {
     if (!_topics.length) {

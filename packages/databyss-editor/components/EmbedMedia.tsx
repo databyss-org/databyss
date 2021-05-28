@@ -1,10 +1,14 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { View, Icon, Button } from '@databyss-org/ui/primitives'
+import { View, Icon, Button, Text } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import colors from '@databyss-org/ui/theming/colors'
 import _ from 'lodash'
 import { useBlocks } from '@databyss-org/data/pouchdb/hooks/useBlocks'
-import { Embed, BlockType } from '@databyss-org/services/interfaces/Block'
+import {
+  Embed,
+  BlockType,
+  MediaTypes,
+} from '@databyss-org/services/interfaces/Block'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { IframeAttributes } from './Suggest/iframeUtils'
 
@@ -21,6 +25,7 @@ export const EmbedMedia = ({
       // load attributes
       const _data = blocksRes.data[_element.atomicId] as Embed
       if (_data && !_.isEqual(_data, data)) {
+        console.log('DATA', _data)
         setData(_data)
       }
     }
@@ -33,22 +38,37 @@ export const EmbedMedia = ({
       return null
     }
     const _atts: IframeAttributes = {
-      width: data.detail.dimensions.width,
-      height: data.detail.dimensions.height,
+      width: data.detail?.dimensions?.width,
+      height: data.detail?.dimensions?.height,
       src: data.detail.src,
-      title: data.detail.title,
+      title: data.detail?.title,
+      mediaType: data.detail?.mediaType,
     }
+
+    console.log('attributes', _atts)
+    const EmbedCompoenent = () =>
+      !_atts?.mediaType || _atts.mediaType === MediaTypes.UNFETCHED ? (
+        <View p="medium" alignItems="center" backgroundColor={gray[6]}>
+          <Text variant="uiTextSmall" color="text.2">
+            unable to load media
+          </Text>
+        </View>
+      ) : (
+        <iframe
+          id={_element.atomicId}
+          title={_atts.title}
+          src={_atts.src}
+          width={_atts.width}
+          height={_atts.height}
+          // border="0px"
+          frameBorder="0px"
+        />
+      )
 
     return (
       <View position="relative" id="testing" width={_atts.width}>
         <View position="relative" zIndex={1}>
-          <iframe
-            id={_element.atomicId}
-            title={_atts.title}
-            // border="0px"
-            frameBorder="0px"
-            {..._atts}
-          />
+          <EmbedCompoenent />
         </View>
         <View
           zIndex={2}
@@ -56,7 +76,7 @@ export const EmbedMedia = ({
           top="small"
           right="small"
           borderRadius="default"
-          backgroundColor={gray[6]}
+          // backgroundColor={gray[6]}
         >
           <Button
             variant="editSource"
@@ -90,7 +110,7 @@ export const EmbedMedia = ({
           style={{
             position: 'relative',
             // change  this back to a high number
-            zIndex: 0,
+            zIndex: 10,
             display: 'block',
             // backgroundColor: gray[6],
             borderRadius: '3px',

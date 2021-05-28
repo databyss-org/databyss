@@ -1,0 +1,179 @@
+import requestImageSize from 'request-image-size'
+import ogs from 'open-graph-scraper'
+import { MediaTypes } from '@databyss-org/services/interfaces/Block'
+import { MediaResponse, MAX_WIDTH, _regExValidator } from '../media'
+
+export const validURL = (str) => {
+  const pattern = new RegExp(
+    '^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$',
+    'i'
+  ) // fragment locator
+  return !!pattern.test(str)
+}
+
+export const getImageAttributes = async (url: string) => {
+  const _response: MediaResponse = {
+    mediaType: null,
+    title: null,
+    src: null,
+    width: null,
+    height: null,
+  }
+
+  _response.src = url
+  _response.mediaType = MediaTypes.IMAGE
+  // get title from image
+  const urlPath = url.split('/')
+  let _title = urlPath[urlPath.length - 1]
+  _title = _title.split('?')[0].split('.')[0]
+  _response.title = decodeURIComponent(_title)
+  const _dimensions = await requestImageSize(url)
+  _response.width = _dimensions.width
+  _response.height = _dimensions.height
+  return _response
+}
+
+export const getHtmlAttributes = (code: string) => {
+  const _response: MediaResponse = {
+    mediaType: null,
+    title: null,
+    src: null,
+    width: null,
+    height: null,
+  }
+
+  const _iFrameAllowList = {
+    width: true,
+    height: true,
+    src: true,
+    title: true,
+    id: true,
+  }
+  // attempt to parse iframe
+  const parsed = new DOMParser().parseFromString(code.trim(), 'text/html')
+
+  const _iframe = parsed.body
+
+  const _firstNode = _iframe.children[0]
+  if (_firstNode?.tagName === 'IFRAME') {
+    // if iframe exists get all attribute properties
+
+    Array.from(_firstNode.attributes).forEach((i) => {
+      // only get properties in allow list
+      if (_iFrameAllowList[i.name]) _response[i.name] = i.value
+    })
+
+    // scale iframe for max width of 500 - 16 (padding)
+    if (_response.width && MAX_WIDTH < _response.width) {
+      const _widthRatio = MAX_WIDTH / _response.width
+
+      _response.mediaType = MediaTypes.IFRAME
+      _response.width *= _widthRatio
+
+      if (_response.height) {
+        _response.height *= _widthRatio
+      }
+    }
+
+    return _response
+  }
+
+  return _response
+}
+
+export const getTwitterAttributes = (url: string) => {
+  const _response: MediaResponse = {
+    mediaType: null,
+    title: null,
+    src: null,
+    width: null,
+    height: null,
+  }
+  // convert tweet to regex values
+  const _regex = /https*:\/\/twitter\.com\/(?<USER>.+?)\/status\/(?<TID>\d+)/
+  const match = _regex.exec(url)
+  let username = ''
+  let tweetId = ''
+  if (match?.groups) {
+    username = match.groups.USER
+    tweetId = match.groups.TID
+  }
+  _response.width = 350
+  _response.height = 175
+  _response.src = `https://platform.twitter.com/embed/Tweet.html?id=${tweetId}`
+  _response.title = `tweet by ${username} ${tweetId}`
+  _response.mediaType = MediaTypes.TWITTER
+  return _response
+}
+
+export const getYoutubeAttributes = async (url) => {
+  const _response: MediaResponse = {
+    mediaType: null,
+    title: null,
+    src: null,
+    width: null,
+    height: null,
+  }
+  // pull video id from url
+  const match = url.match(_regExValidator.youtube)
+  const _id = match[2]
+  _response.mediaType = MediaTypes.YOUTUBE
+  _response.width = MAX_WIDTH
+  _response.height = 273
+  _response.src = `https://www.youtube.com/embed/${_id}`
+
+  // get open graph information
+
+  const options = { url }
+
+  const _data = await ogs(options)
+  const { result } = _data
+  if (result.success) {
+    // check if youtube link
+    if (result.ogSiteName === 'YouTube') {
+      _response.title = result.ogTitle
+      // TODO:_response.openGraphJson
+    }
+  }
+
+  return _response
+}
+
+export const getWebsiteAttributes = async (url) => {
+  const _response: MediaResponse = {
+    mediaType: null,
+    title: null,
+    src: null,
+    width: null,
+    height: null,
+  }
+  try {
+    const options = { url }
+
+    const _data = await ogs(options)
+    const { result } = _data
+
+    if (result.ogType === 'website' || result.ogType === 'article') {
+      _response.title = `web page: ${result.ogTitle}`
+      _response.src = url
+      _response.width = 480
+      _response.height = 300
+      _response.mediaType = MediaTypes.WEBSITE
+    }
+    // TODO: openGraphJson
+
+    // - try to match html title with regex:
+    // `/<title>(?<TITLE>.+?)<\/title>/i`
+    //     - fallback to first 40 characters of URL as `<TITLE>`
+    //     - block.text: `[web page: <TITLE>]`
+
+    return _response
+  } catch (err) {
+    return _response
+  }
+}
