@@ -13,6 +13,7 @@ import {
 } from '../slateUtils'
 import { EditorState } from '../../interfaces/EditorState'
 import { symbolToAtomicType } from '../../state/util'
+import { BlockType } from '../../../databyss-services/interfaces/Block'
 
 export const onInlineKeyPress = ({
   event,
@@ -111,7 +112,13 @@ export const onInlineKeyPress = ({
           if cursor is on an inline atomic and enter is pressed, launch modal
           */
         if (event.key === 'Enter') {
-          const _type = symbolToAtomicType(_currentLeaf.text.substring(0, 1))
+          let _type: string | BlockType = symbolToAtomicType(
+            _currentLeaf.text.substring(0, 1)
+          )
+          // check if inline embed
+          if (!_type && _currentLeaf?.embed) {
+            _type = BlockType.Embed
+          }
           const inlineAtomicData = {
             refId: _currentLeaf.atomicId,
             type: _type,

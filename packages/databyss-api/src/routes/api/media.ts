@@ -1,5 +1,6 @@
 import express from 'express'
 import { DOMParser } from 'xmldom'
+import request from 'request'
 import fetch from 'node-fetch'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
 import {
@@ -108,6 +109,19 @@ router.post('/opengraph', async (req, res) => {
     }
   }
   return res.status(200).json({}).send()
+})
+
+// @route    GET api/media/proxy
+// @desc     returns proxy info
+// @access   public
+router.get('/proxy', async (req, res) => {
+  let _url = req.query.url as string
+  _url = decodeURIComponent(_url)
+
+  if (_url) {
+    return request.get({ url: _url }).pipe(res)
+  }
+  return res.status(404).send()
 })
 
 export default router

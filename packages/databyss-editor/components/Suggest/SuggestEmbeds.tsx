@@ -47,6 +47,7 @@ const SuggestEmbeds = ({
   // get title data from OG and set as attribute
   useEffect(() => {
     const _data = graphRes?.data
+
     if (_data?.mediaType) {
       setIframeAtts({ ...iframeAtts, ..._data })
     }
@@ -174,6 +175,11 @@ const SuggestEmbeds = ({
       )
     }
     const { src, height, width, mediaType } = iframeAtts
+    // TODO: THIS IS THE PROXY
+    // const _src = `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(
+    //   src
+    // )}`
+
     return iframeAtts && iframeAtts?.mediaType === MediaTypes.UNFETCHED ? (
       <View p="large">
         <LoadingFallback />

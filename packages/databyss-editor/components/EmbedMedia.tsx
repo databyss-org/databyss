@@ -12,6 +12,7 @@ import {
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { IframeAttributes } from './Suggest/iframeUtils'
 import { UnfetchedMedia } from './UnfetchedMedia'
+import httpGet from '@databyss-org/services/lib/requestApi'
 
 export const EmbedMedia = ({
   _children,
@@ -51,7 +52,10 @@ export const EmbedMedia = ({
       if (_isUnfetched) {
         return <UnfetchedMedia atomicId={_element.atomicId} src={_atts.src} />
       }
-
+      // TODO: PROXY
+      // const _src = `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(
+      //   _atts.src
+      // )}`
       if (_atts.mediaType === MediaTypes.HTML) {
         return (
           <View backgroundColor={gray[6]}>
@@ -125,8 +129,8 @@ export const EmbedMedia = ({
           id="inline-embed"
           style={{
             position: 'relative',
-            // change  this back to a high number
-            zIndex: 10,
+            // TODO: change  this back to a high number
+            // zIndex: 10,
             display: 'block',
             // backgroundColor: gray[6],
             borderRadius: '3px',
@@ -138,7 +142,8 @@ export const EmbedMedia = ({
         </span>
         <span
           style={{
-            zIndex: 0,
+            // todo: change this back  to zero
+            zIndex: 10,
             position: 'absolute',
             left: 0,
             top: 0,

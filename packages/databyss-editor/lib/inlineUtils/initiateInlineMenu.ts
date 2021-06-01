@@ -7,7 +7,11 @@ import {
   Transforms,
   Editor as SlateEditor,
 } from '@databyss-org/slate'
-import { flattenOffset, isCurrentlyInInlineAtomicField } from '../slateUtils'
+import {
+  flattenOffset,
+  isCurrentlyInInlineAtomicField,
+  isCurrentlyInInlineEmbedInput,
+} from '../slateUtils'
 
 export const initiateInlineMenu = ({
   editor,
@@ -30,6 +34,11 @@ export const initiateInlineMenu = ({
     if (firstBlockIsTitle && editor.selection.focus.path[0] === 0) {
       return false
     }
+    // dont allow if in active embed field
+    if (isCurrentlyInInlineEmbedInput(editor)) {
+      return false
+    }
+
     // check if its not at the start of a block
     let _offset: string | number = flattenOffset(
       editor,
