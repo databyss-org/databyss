@@ -77,7 +77,7 @@
     "react-nl2br": "^0.6.0",
     "react-responsive": "^8.1.0",
     "react-scrolllock": "^4.0.1",
-    "react-select": "^3.0.4",
+    "react-select": "^4.3.1",
     "react-svg-loader": "^2.1.0",
     "react-textarea-autosize": "^8.3.0",
     "react-use": "^11.0.0",
