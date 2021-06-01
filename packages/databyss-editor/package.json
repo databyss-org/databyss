@@ -38,7 +38,7 @@
     "immer": "^6.0.5",
     "imurmurhash": "^0.1.4",
     "is-hotkey": "^0.1.5",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "lorem-ipsum": "^2.0.3",
     "slate-dev-environment": "^0.2.2",
     "slate-hyperscript": "^0.57.2",

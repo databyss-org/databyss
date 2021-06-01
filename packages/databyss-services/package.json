@@ -43,7 +43,7 @@
     "immer": "^6.0.5",
     "imurmurhash": "^0.1.4",
     "js-base64": "^3.6.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "mongoose": "^5.6.5",
     "p-cancelable": "^2.1.0",
     "react-use": "^11.0.0",
