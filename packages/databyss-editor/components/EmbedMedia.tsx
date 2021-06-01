@@ -52,7 +52,6 @@ export const EmbedMedia = ({
         return <UnfetchedMedia atomicId={_element.atomicId} src={_atts.src} />
       }
 
-      console.log(_atts)
       if (_atts.mediaType === MediaTypes.HTML) {
         return (
           <View backgroundColor={gray[6]}>

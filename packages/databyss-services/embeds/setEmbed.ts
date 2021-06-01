@@ -1,8 +1,8 @@
-import { Embed, BlockType } from '../interfaces/Block'
-import { DocumentType } from '../../databyss-data/pouchdb/interfaces'
-import { upsert } from '../../databyss-data/pouchdb/utils'
-import { updateInlines } from '../../databyss-editor/lib/inlineUtils/updateInlines'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { upsert } from '@databyss-org/data/pouchdb/utils'
+import { updateInlines } from '@databyss-org/editor/lib/inlineUtils/updateInlines'
 import { InlineTypes } from '../interfaces/Range'
+import { Embed, BlockType } from '../interfaces/Block'
 
 export const setEmbed = async (data: Embed) => {
   const { text, detail, _id, sharedWithGroups } = data as any

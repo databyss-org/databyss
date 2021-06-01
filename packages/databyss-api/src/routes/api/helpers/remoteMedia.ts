@@ -5,15 +5,11 @@ import { MediaTypes } from '@databyss-org/services/interfaces/Block'
 import { MediaResponse, MAX_WIDTH, _regExValidator } from '../media'
 
 export const validURL = (str) => {
-  const pattern = new RegExp(
-    '^(https?:\\/\\/)?' + // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-      '(\\#[-a-z\\d_]*)?$',
-    'i'
-  ) // fragment locator
+  const pattern = /^(?:http(s)?:\/\/)([\w.-])+(?:[\w.-]+)+([\w\-._~:/?#[\]@!$&'()*+,;=.])+$/
+  // const pattern = new RegExp(
+  //   `^(?:http(s)?:\/\/)([\w.-])+(?:[\w\.-]+)+([\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.])+$`,
+  //   'i'
+  // ) // fragment locator
   return !!pattern.test(str)
 }
 
@@ -171,7 +167,34 @@ export const getYoutubeAttributes = async (url) => {
   return _response
 }
 
+export const getDropboxAttributes = async (url) => {
+  const _response: MediaResponse = {
+    mediaType: null,
+    title: null,
+    src: null,
+    width: null,
+    height: null,
+  }
+
+  const match = _regExValidator.dropbox.exec(url)
+  let FID = ''
+  let FNAME = ''
+  if (match?.groups) {
+    FID = match.groups.FID
+    FNAME = match.groups.FNAME
+  }
+
+  // todo: FIND OUT DIMENSIONS
+  _response.width = 350
+  _response.height = 175
+  _response.src = `https://www.dropbox.com/s/${FID}/${FNAME}?raw=1`
+  _response.title = `dropbox file ${FNAME}`
+  _response.mediaType = MediaTypes.WEBSITE
+  return _response
+}
+
 export const getWebsiteAttributes = async (url) => {
+  console.log('in website att')
   const _response: MediaResponse = {
     mediaType: null,
     title: null,
@@ -185,7 +208,7 @@ export const getWebsiteAttributes = async (url) => {
     const _data = await ogs(options)
     const { result } = _data
 
-    if (result.ogType === 'website' || result.ogType === 'article') {
+    if (result.success) {
       _response.title = `web page: ${result.ogTitle}`
       _response.src = url
       _response.width = 480

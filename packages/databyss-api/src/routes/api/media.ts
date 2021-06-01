@@ -9,6 +9,7 @@ import {
   getImageAttributes,
   getHtmlAttributes,
   getTwitterAttributes,
+  getDropboxAttributes,
 } from './helpers/remoteMedia'
 
 const router = express.Router()
@@ -53,6 +54,7 @@ export const _regExValidator = {
   twitter: /http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/,
   youtube: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/,
   image: /^((https?|ftp):)?\/\/.*(jpeg|jpg|png|gif|bmp)$/,
+  dropbox: /https*:\/\/www\.dropbox\.com\/s\/(?<FID>.+?)\/(?<FNAME>.+?)\?dl=0/,
 }
 
 export const MAX_WIDTH = 484
@@ -62,7 +64,6 @@ export const MAX_WIDTH = 484
 // @access   public
 router.post('/opengraph', async (req, res) => {
   const _url = req.body.url
-
   if (_url) {
     if (!(isHTML(_url) || validURL(_url))) {
       return res.status(200).json({}).send()
@@ -96,6 +97,11 @@ router.post('/opengraph', async (req, res) => {
         return res.status(200).json(_response).send()
       }
 
+      if (_regExValidator.dropbox.test(_url)) {
+        const _response = await getDropboxAttributes(_url)
+        return res.status(200).json(_response).send()
+      }
+
       // assume regular url
       const _response = await getWebsiteAttributes(_url)
       return res.status(200).json(_response).send()
@@ -103,40 +109,5 @@ router.post('/opengraph', async (req, res) => {
   }
   return res.status(200).json({}).send()
 })
-
-// // @route    GET api/media/remote
-// // @desc     returns imaged data
-// // @access   public
-// router.post('/remote', async (req, res) => {
-//   const _url = req.body.url
-//   const imageResponse: MediaResponse = {
-//     mediaType: null,
-//     title: null,
-//     height: null,
-//     width: null,
-//     src: null,
-//   }
-
-//   if (_url) {
-//     const _response = await fetch(_url)
-
-//     const contentType = _response.headers.get('Content-Type')
-//     // is image
-//     if (contentType && contentType?.search('image') > -1) {
-//       imageResponse.src = _url
-//       imageResponse.mediaType = MediaTypes.IMAGE
-//       // get title from image
-//       let _title = _url.split('/')
-//       _title = _title[_title.length - 1]
-//       _title = _title.split('?')[0].split('.')[0]
-//       imageResponse.title = decodeURIComponent(_title)
-//       const _dimensions = await requestImageSize(_url)
-//       imageResponse.width = _dimensions.width
-//       imageResponse.height = _dimensions.height
-//     }
-//   }
-
-//   return res.status(200).json(imageResponse).send()
-// })
 
 export default router

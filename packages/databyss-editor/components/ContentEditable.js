@@ -139,7 +139,6 @@ const ContentEditable = ({
       state.newEntities.forEach((entity) => {
         let _data = null
         // suggestion blocks have extra data
-
         if (entity.text) {
           _data = cleanupAtomicData({
             ...entity,
