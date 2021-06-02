@@ -19,6 +19,7 @@ import { Block, MediaTypes } from '../../../databyss-services/interfaces/Block'
 import { IframeAttributes } from './iframeUtils'
 import { removeCurrentInlineInput } from '../../lib/inlineUtils/onEscapeInInlineAtomicField'
 import { IframeComponent } from './IframeComponent'
+import { isHttpInsecure } from '../EmbedMedia'
 
 const SuggestEmbeds = ({
   query,
@@ -180,6 +181,13 @@ const SuggestEmbeds = ({
     //   src
     // )}`
 
+    let _src
+    if (src) {
+      _src = isHttpInsecure(src)
+        ? `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(src)}`
+        : src
+    }
+
     return iframeAtts && iframeAtts?.mediaType === MediaTypes.UNFETCHED ? (
       <View p="large">
         <LoadingFallback />
@@ -190,7 +198,7 @@ const SuggestEmbeds = ({
         height={height}
         width={width}
         query={query}
-        src={src}
+        src={_src}
       />
     )
   }

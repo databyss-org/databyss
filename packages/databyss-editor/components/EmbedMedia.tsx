@@ -12,7 +12,11 @@ import {
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { IframeAttributes } from './Suggest/iframeUtils'
 import { UnfetchedMedia } from './UnfetchedMedia'
-import httpGet from '@databyss-org/services/lib/requestApi'
+
+export const isHttpInsecure = (url) => {
+  const _regEx = /^http:\/\//
+  return _regEx.test(url)
+}
 
 export const EmbedMedia = ({
   _children,
@@ -53,9 +57,12 @@ export const EmbedMedia = ({
         return <UnfetchedMedia atomicId={_element.atomicId} src={_atts.src} />
       }
       // TODO: PROXY
-      // const _src = `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(
-      //   _atts.src
-      // )}`
+
+      const _src = isHttpInsecure(_atts.src)
+        ? `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(
+            _atts.src!
+          )}`
+        : _atts.src
       if (_atts.mediaType === MediaTypes.HTML) {
         return (
           <View backgroundColor={gray[6]}>
@@ -76,7 +83,7 @@ export const EmbedMedia = ({
         <iframe
           id={_element.atomicId}
           title={_atts.title}
-          src={_atts.src}
+          src={_src}
           width={_atts.width}
           height={_atts.height}
           // border="0px"
