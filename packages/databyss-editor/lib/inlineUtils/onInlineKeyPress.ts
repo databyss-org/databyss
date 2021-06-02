@@ -112,12 +112,20 @@ export const onInlineKeyPress = ({
           if cursor is on an inline atomic and enter is pressed, launch modal
           */
         if (event.key === 'Enter') {
-          let _type: string | BlockType = symbolToAtomicType(
+          const _type: string | BlockType = symbolToAtomicType(
             _currentLeaf.text.substring(0, 1)
           )
           // check if inline embed
-          if (!_type && _currentLeaf?.embed) {
-            _type = BlockType.Embed
+          if (_currentLeaf?.embed) {
+            // if enter, move cursor to end of current leaf
+            const _leafOffset = _anchor.offset
+            Transforms.move(editor, {
+              distance: _currentLeaf.text.length - _leafOffset,
+              unit: 'character',
+            })
+            Transforms.insertNodes(editor, { text: '\uFEFF' })
+            event.preventDefault()
+            return true
           }
           const inlineAtomicData = {
             refId: _currentLeaf.atomicId,

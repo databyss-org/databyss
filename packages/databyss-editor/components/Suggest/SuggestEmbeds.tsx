@@ -176,10 +176,6 @@ const SuggestEmbeds = ({
       )
     }
     const { src, height, width, mediaType } = iframeAtts
-    // TODO: THIS IS THE PROXY
-    // const _src = `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(
-    //   src
-    // )}`
 
     let _src
     if (src) {

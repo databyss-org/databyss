@@ -1,4 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react'
+import {
+  useSelected,
+  useFocused,
+  useSlate,
+  ReactEditor,
+} from '@databyss-org/slate-react'
+import { Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { View, Icon, Button } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import colors from '@databyss-org/ui/theming/colors'
@@ -24,9 +31,26 @@ export const EmbedMedia = ({
   _element,
   onInlineClick,
 }) => {
-  const { gray } = colors
+  const { gray, orange } = colors
   const blocksRes = useBlocks(BlockType.Embed)
   const [data, setData] = useState<null | Embed>()
+  const [highlight, setHighlight] = useState(false)
+  const editor = useSlate() as ReactEditor & SlateEditor
+  const _isSelected = useSelected()
+
+  // only compute if current block is focused
+  const _isFocused = useFocused()
+  // check if embed should have anoutline
+  if (_isSelected && _isFocused && editor?.selection) {
+    // get current leaf value
+    const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+    if (_currentLeaf.embed && !highlight) {
+      setHighlight(true)
+    } else if (highlight && !_currentLeaf.embed) {
+      setHighlight(false)
+    }
+  }
+
   useEffect(() => {
     if (blocksRes.status === 'success') {
       // load attributes
@@ -49,48 +73,61 @@ export const EmbedMedia = ({
       mediaType: data.detail?.mediaType,
     }
 
-    const EmbededComponent = () => {
-      const _isUnfetched =
-        !_atts?.mediaType || _atts.mediaType === MediaTypes.UNFETCHED
+    const EmbededComponent = () =>
+      useMemo(() => {
+        const _isUnfetched =
+          !_atts?.mediaType || _atts.mediaType === MediaTypes.UNFETCHED
 
-      if (_isUnfetched) {
-        return <UnfetchedMedia atomicId={_element.atomicId} src={_atts.src} />
-      }
-      // TODO: PROXY
+        if (_isUnfetched) {
+          return <UnfetchedMedia atomicId={_element.atomicId} src={_atts.src} />
+        }
+        // TODO: PROXY
 
-      const _src = isHttpInsecure(_atts.src)
-        ? `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(
-            _atts.src!
-          )}`
-        : _atts.src
-      if (_atts.mediaType === MediaTypes.HTML) {
+        const _src = isHttpInsecure(_atts.src)
+          ? `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(
+              _atts.src!
+            )}`
+          : _atts.src
+        if (_atts.mediaType === MediaTypes.HTML) {
+          return (
+            <View backgroundColor={gray[6]}>
+              <iframe
+                id={_element.atomicId}
+                title={_atts.title}
+                srcDoc={_atts.src}
+                width={_atts.width}
+                height={_atts.height}
+                // border="0px"
+                frameBorder="0px"
+              />
+            </View>
+          )
+        }
         return (
-          <View backgroundColor={gray[6]}>
+          //
+          <div
+            style={{
+              width: _atts.width,
+              height: _atts.height,
+              border: 2,
+              borderStyle: 'solid',
+              borderColor: highlight ? orange[0] : `rgba(0,0,0,0.0)`,
+            }}
+          >
             <iframe
               id={_element.atomicId}
               title={_atts.title}
-              srcDoc={_atts.src}
+              src={_src}
               width={_atts.width}
               height={_atts.height}
               // border="0px"
               frameBorder="0px"
             />
-          </View>
+          </div>
         )
-      }
+      }, [highlight])
 
-      return (
-        <iframe
-          id={_element.atomicId}
-          title={_atts.title}
-          src={_src}
-          width={_atts.width}
-          height={_atts.height}
-          // border="0px"
-          frameBorder="0px"
-        />
-      )
-    }
+    //end
 
     return (
       <View position="relative" id="testing" width={_atts.width}>
@@ -137,12 +174,8 @@ export const EmbedMedia = ({
           style={{
             position: 'relative',
             // TODO: change  this back to a high number
-            // zIndex: 10,
+            zIndex: 10,
             display: 'block',
-            // backgroundColor: gray[6],
-            borderRadius: '3px',
-            // height: '300px',
-            //    padding: '3px',
           }}
         >
           {data ? <IFrame /> : <LoadingFallback />}
@@ -160,6 +193,6 @@ export const EmbedMedia = ({
         </span>
       </span>
     ),
-    [data?.text.textValue]
+    [data?.text.textValue, highlight]
   )
 }
