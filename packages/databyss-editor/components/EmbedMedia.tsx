@@ -41,15 +41,21 @@ export const EmbedMedia = ({
   // only compute if current block is focused
   const _isFocused = useFocused()
   // check if embed should have anoutline
-  if (_isSelected && _isFocused && editor?.selection) {
-    // get current leaf value
-    const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
-    if (_currentLeaf.embed && !highlight) {
-      setHighlight(true)
-    } else if (highlight && !_currentLeaf.embed) {
+  useEffect(() => {
+    if (!_isSelected && highlight) {
       setHighlight(false)
+      return
     }
-  }
+    if (_isSelected && _isFocused && editor?.selection) {
+      // get current leaf value
+      const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+      if (_currentLeaf.embed && !highlight) {
+        setHighlight(true)
+      } else if (highlight && !_currentLeaf.embed) {
+        setHighlight(false)
+      }
+    }
+  }, [editor?.selection, _isSelected, _isFocused])
 
   useEffect(() => {
     if (blocksRes.status === 'success') {
@@ -193,6 +199,6 @@ export const EmbedMedia = ({
         </span>
       </span>
     ),
-    [data?.text.textValue, highlight]
+    [data?.text.textValue, highlight, _isSelected]
   )
 }
