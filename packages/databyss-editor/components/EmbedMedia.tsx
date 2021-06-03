@@ -19,6 +19,7 @@ import {
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { IframeAttributes } from './Suggest/iframeUtils'
 import { UnfetchedMedia } from './UnfetchedMedia'
+import { IframeComponent } from './Suggest/IframeComponent'
 
 export const isHttpInsecure = (url) => {
   const _regEx = /^http:\/\//
@@ -87,53 +88,23 @@ export const EmbedMedia = ({
         if (_isUnfetched) {
           return <UnfetchedMedia atomicId={_element.atomicId} src={_atts.src} />
         }
-        // TODO: PROXY
 
         const _src = isHttpInsecure(_atts.src)
           ? `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(
               _atts.src!
             )}`
           : _atts.src
-        if (_atts.mediaType === MediaTypes.HTML) {
-          return (
-            <View backgroundColor={gray[6]}>
-              <iframe
-                id={_element.atomicId}
-                title={_atts.title}
-                srcDoc={_atts.src}
-                width={_atts.width}
-                height={_atts.height}
-                // border="0px"
-                frameBorder="0px"
-              />
-            </View>
-          )
-        }
+        const { height, width, mediaType } = _atts
         return (
-          //
-          <div
-            style={{
-              width: _atts.width,
-              height: _atts.height,
-              border: 2,
-              borderStyle: 'solid',
-              borderColor: highlight ? orange[0] : `rgba(0,0,0,0.0)`,
-            }}
-          >
-            <iframe
-              id={_element.atomicId}
-              title={_atts.title}
-              src={_src}
-              width={_atts.width}
-              height={_atts.height}
-              // border="0px"
-              frameBorder="0px"
-            />
-          </div>
+          <IframeComponent
+            highlight={highlight}
+            src={_src}
+            height={height}
+            width={width}
+            mediaType={mediaType}
+          />
         )
-      }, [highlight])
-
-    //end
+      }, [_atts.src])
 
     return (
       <View position="relative" id="testing" width={_atts.width}>
@@ -199,6 +170,6 @@ export const EmbedMedia = ({
         </span>
       </span>
     ),
-    [data?.text.textValue, highlight, _isSelected]
+    [data?.text.textValue, highlight]
   )
 }

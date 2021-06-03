@@ -191,10 +191,10 @@ const SuggestEmbeds = ({
       </View>
     ) : (
       <IframeComponent
+        highlight={false}
         mediaType={mediaType}
         height={height}
         width={width}
-        query={query}
         src={_src}
       />
     )
