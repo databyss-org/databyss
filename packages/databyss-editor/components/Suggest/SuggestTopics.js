@@ -89,8 +89,10 @@ const SuggestTopics = ({
     }
 
     if (e.key === 'Enter') {
+      console.log('set')
       window.requestAnimationFrame(() => {
         if (!pendingSetContent.current) {
+          console.log('SET HERE')
           setCurrentTopicWithoutSuggestion()
         }
       })

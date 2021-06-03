@@ -20,6 +20,7 @@ export const onEnterInlineField = ({
   state: EditorState
   setContent: Function
 }): boolean => {
+  console.log('CHECKING')
   if (
     isCurrentlyInInlineAtomicField(editor) ||
     isCurrentlyInInlineEmbedInput(editor)
@@ -44,8 +45,7 @@ export const onEnterInlineField = ({
     }
 
     // if two characters exist, check if on an embed input
-
-    if (currentLeaf.text.length === 2) {
+    if (currentLeaf.text.length === 2 && !currentLeaf?.inlineAtomicMenu) {
       const _index = state.selection.anchor.index
       const _stateBlock = state.blocks[_index]
       // set the block with a re-render
