@@ -150,18 +150,22 @@ export const getYoutubeAttributes = async (url) => {
   // get open graph information
 
   const options = { url }
-
-  const _data = await ogs(options)
-  const { result } = _data
-  if (result.success) {
-    // check if youtube link
-    if (result.ogSiteName === 'YouTube') {
-      _response.title = result.ogTitle
-      // TODO:_response.openGraphJson
+  try {
+    const _data = await ogs(options)
+    const { result } = _data
+    if (result.success) {
+      // check if youtube link
+      if (result.ogSiteName === 'YouTube') {
+        _response.title = result.ogTitle
+        // TODO:_response.openGraphJson
+      }
+      _response.openGraphJson = JSON.stringify(result)
     }
-    _response.openGraphJson = JSON.stringify(result)
+
+    return _response
+  } catch (err) {
+    return _response
   }
-  return _response
 }
 
 export const getDropboxAttributes = async (url) => {
@@ -191,7 +195,6 @@ export const getDropboxAttributes = async (url) => {
 }
 
 export const getWebsiteAttributes = async (url) => {
-  console.log('in website att')
   const _response: MediaResponse = {
     mediaType: null,
     title: null,
@@ -204,6 +207,8 @@ export const getWebsiteAttributes = async (url) => {
 
     const _data = await ogs(options)
     const { result } = _data
+
+    console.log(result)
 
     if (result.success) {
       _response.title = `web page: ${result.ogTitle}`
