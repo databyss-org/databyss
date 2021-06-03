@@ -80,6 +80,7 @@ const SuggestEmbeds = ({
   // save data
   const setEmbed = (embed: Embed | void) => {
     if (embed) {
+      pendingSetContent.current = true
       setEmbedMedia({
         editor,
         state,
@@ -145,7 +146,7 @@ const SuggestEmbeds = ({
 
   const Suggestion = () => {
     // if not iframe suggestion, check if suggestion with same title exists
-    if (!iframeAtts) {
+    if (!iframeAtts || filteredSuggestions.length) {
       // check if filtered suggestions exist
       return (
         <View

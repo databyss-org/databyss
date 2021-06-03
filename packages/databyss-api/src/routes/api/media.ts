@@ -24,7 +24,7 @@ export interface MediaResponse {
   openGraphJson?: string | null
 }
 
-const isHTML = (str: string) => {
+export const isHTML = (str: string) => {
   try {
     const _regEx = /<("[^"]*"|'[^']*'|[^'">])*>/
     const index = str.search(_regEx)

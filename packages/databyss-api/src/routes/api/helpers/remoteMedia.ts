@@ -6,10 +6,7 @@ import { MediaResponse, MAX_WIDTH, _regExValidator } from '../media'
 
 export const validURL = (str) => {
   const pattern = /^(?:http(s)?:\/\/)([\w.-])+(?:[\w.-]+)+([\w\-._~:/?#[\]@!$&'()*+,;=.])+$/
-  // const pattern = new RegExp(
-  //   `^(?:http(s)?:\/\/)([\w.-])+(?:[\w\.-]+)+([\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.])+$`,
-  //   'i'
-  // ) // fragment locator
+
   return !!pattern.test(str)
 }
 

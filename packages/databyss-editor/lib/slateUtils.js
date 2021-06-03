@@ -75,7 +75,8 @@ export const entities = (type) =>
 const slateBlockMap = {}
 
 export const stateBlockToHtml = (block) => {
-  const _text = block.text.textValue
+  // replace non width white space with a white space
+  const _text = block.text.textValue.replace('\uFEFF', ' ')
   const _ranges = flattenRanges(block.text.ranges)
   return textToHtml({
     textValue: _text,
