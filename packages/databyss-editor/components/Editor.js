@@ -87,7 +87,11 @@ const Editor = ({
   const decorate = useCallback(
     ([node, path]) => {
       const ranges = []
-      if (Text.isText(node) && !node?.inlineEmbedInput) {
+      if (node?.inlineEmbedInput || node?.embed) {
+        return ranges
+      }
+
+      if (Text.isText(node) && !(node?.inlineEmbedInput || node?.embed)) {
         // do not apply markup
 
         const _string = Node.string(node)
