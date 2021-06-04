@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { View, Text } from '@databyss-org/ui/primitives'
+import { View, Text, BaseControl } from '@databyss-org/ui/primitives'
 import colors from '@databyss-org/ui/theming/colors'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
 
@@ -30,7 +30,7 @@ const parseOgData = (serializedData: string | undefined) => {
   return ogData.title ? ogData : null
 }
 
-const { gray, orange } = colors
+const { gray, orange, blue } = colors
 export const IframeComponent = ({
   src,
   height,
@@ -66,11 +66,16 @@ export const IframeComponent = ({
 
       const ogData = parseOgData(openGraphData)
       if (mediaType === MediaTypes.WEBSITE && ogData) {
+        const onTitleClick = () => {
+          window.open(src)
+        }
         return (
           <View backgroundColor={gray[6]} p="small">
-            <View pr="medium">
-              <Text variant="heading4">{ogData.title}</Text>
-            </View>
+            <BaseControl pr="medium" onClick={onTitleClick}>
+              <Text variant="heading4" color={blue[0]}>
+                {ogData.title}
+              </Text>
+            </BaseControl>
             <View>
               <Text>{ogData.description}</Text>
             </View>
