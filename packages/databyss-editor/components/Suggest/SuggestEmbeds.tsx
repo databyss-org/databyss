@@ -176,7 +176,7 @@ const SuggestEmbeds = ({
         </View>
       )
     }
-    const { src, height, width, mediaType } = iframeAtts
+    const { src, height, width, mediaType, openGraphJson } = iframeAtts
 
     let _src
     if (src) {
@@ -184,17 +184,17 @@ const SuggestEmbeds = ({
         ? `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(src)}`
         : src
     }
-
     return iframeAtts && iframeAtts?.mediaType === MediaTypes.UNFETCHED ? (
       <View p="large">
         <LoadingFallback />
       </View>
     ) : (
       <IframeComponent
+        openGraphData={openGraphJson}
         highlight={false}
-        mediaType={mediaType}
-        height={height}
-        width={width}
+        mediaType={mediaType!}
+        height={height!}
+        width={width!}
         src={_src}
       />
     )

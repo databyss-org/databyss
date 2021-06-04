@@ -208,8 +208,6 @@ export const getWebsiteAttributes = async (url) => {
     const _data = await ogs(options)
     const { result } = _data
 
-    console.log(result)
-
     if (result.success) {
       _response.title = `web page: ${result.ogTitle}`
       _response.src = url

@@ -8,7 +8,6 @@ import {
 import { Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { View, Icon, Button } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
-import colors from '@databyss-org/ui/theming/colors'
 import _ from 'lodash'
 import { useBlocks } from '@databyss-org/data/pouchdb/hooks/useBlocks'
 import {
@@ -32,7 +31,6 @@ export const EmbedMedia = ({
   _element,
   onInlineClick,
 }) => {
-  const { gray, orange } = colors
   const blocksRes = useBlocks(BlockType.Embed)
   const [data, setData] = useState<null | Embed>()
   const [highlight, setHighlight] = useState(false)
@@ -78,6 +76,7 @@ export const EmbedMedia = ({
       src: data.detail.src,
       title: data.detail?.title,
       mediaType: data.detail?.mediaType,
+      openGraphJson: data.detail?.openGraphJson,
     }
 
     const EmbededComponent = () =>
@@ -94,14 +93,15 @@ export const EmbedMedia = ({
               _atts.src!
             )}`
           : _atts.src
-        const { height, width, mediaType } = _atts
+        const { height, width, mediaType, openGraphJson } = _atts
         return (
           <IframeComponent
+            openGraphData={openGraphJson}
             highlight={highlight}
-            src={_src}
-            height={height}
-            width={width}
-            mediaType={mediaType}
+            src={_src!}
+            height={height!}
+            width={width!}
+            mediaType={mediaType!}
           />
         )
       }, [_atts.src])
@@ -139,6 +139,7 @@ export const EmbedMedia = ({
       <span
         {...attributes}
         style={{
+          maxWidth: '480px',
           position: 'relative',
           display: 'block',
           borderRadius: '3px',
@@ -159,8 +160,9 @@ export const EmbedMedia = ({
         </span>
         <span
           style={{
+            padding: '8px',
             // todo: change this back  to zero
-            zIndex: 10,
+            zIndex: 0,
             position: 'absolute',
             left: 0,
             top: 0,
