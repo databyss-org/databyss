@@ -3,8 +3,8 @@ import { DOMParser } from 'xmldom'
 import request from 'request'
 import fetch from 'node-fetch'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
+import { validURL } from '@databyss-org/services/lib/util'
 import {
-  validURL,
   getYoutubeAttributes,
   getWebsiteAttributes,
   getImageAttributes,

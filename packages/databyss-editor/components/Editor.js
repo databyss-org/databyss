@@ -6,6 +6,7 @@ import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import styledCss from '@styled-system/css'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
+import { validUriRegex } from '@databyss-org/services/lib/util'
 import matchAll from 'string.prototype.matchall'
 import { useEditorContext } from '../state/EditorProvider'
 import { TitleElement } from './TitleElement'
@@ -101,14 +102,8 @@ const Editor = ({
           /\b([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)\b/,
           'gi'
         )
-        // check for url in text
-        // uri's must begin with "http:// or "https://"
-        // test it here: https://regexr.com/5jvei
-        const _uriRegEx = new RegExp(
-          /https?:\/\/[-a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF:.]{2,256}(\/?[-a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF@:%_+.~#&?/=,[\]()]*)?([-a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF@%_+~#&/=])/,
-          'gi'
-        )
-        ;[_emailRegEx, _uriRegEx].forEach((_regex) => {
+        const _validUri = new RegExp(validUriRegex, 'gi')
+        ;[_emailRegEx, _validUri].forEach((_regex) => {
           const _matches = [...matchAll(_string, _regex)]
           _matches.forEach((e) => {
             const _parts = _string.split(e[0])

@@ -4,12 +4,6 @@ import ogs from 'open-graph-scraper'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
 import { MediaResponse, MAX_WIDTH, _regExValidator } from '../media'
 
-export const validURL = (str) => {
-  const pattern = /^(?:http(s)?:\/\/)([\w.-])+(?:[\w.-]+)+([\w\-._~:/?#[\]@!$&'()*+,;=.])+$/
-
-  return !!pattern.test(str)
-}
-
 export const getImageAttributes = async (url: string) => {
   const _response: MediaResponse = {
     mediaType: null,
@@ -204,7 +198,6 @@ export const getWebsiteAttributes = async (url) => {
   }
   try {
     const options = { url }
-
     const _data = await ogs(options)
     const { result } = _data
 

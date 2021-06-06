@@ -362,8 +362,7 @@ export const slateBlockToHtmlWithSearch = (
 }
 
 /**
- *
- * only allow whitelisted properties
+ * only allow some properties
  */
 export const cleanupAtomicData = (data: any) => {
   const _data = data
