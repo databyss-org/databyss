@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { View, Text, BaseControl } from '@databyss-org/ui/primitives'
 import colors from '@databyss-org/ui/theming/colors'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
@@ -45,8 +45,10 @@ export const IframeComponent = ({
   mediaType: MediaTypes
   highlight: boolean
   openGraphData?: string
-}) =>
-  useMemo(() => {
+}) => {
+  const [mediaActive, setMediaActive] = useState(false)
+
+  return useMemo(() => {
     const IframeChildren = () => {
       if (mediaType === MediaTypes.HTML) {
         return (
@@ -86,6 +88,35 @@ export const IframeComponent = ({
         )
       }
 
+      if (mediaType === MediaTypes.YOUTUBE && ogData) {
+        const onPlayClick = () => {
+          setMediaActive(true)
+        }
+        return mediaActive ? (
+          <iframe
+            seamless
+            id={src}
+            title={src}
+            src={src}
+            // border="0px"
+            frameBorder="0px"
+            height={height}
+            width={width}
+          />
+        ) : (
+          <View backgroundColor={gray[6]} p="small">
+            <BaseControl pr="medium" onClick={onPlayClick}>
+              <Text variant="heading4" color={blue[0]}>
+                play video
+              </Text>
+            </BaseControl>
+            {ogData?.image ? (
+              <img src={ogData?.image} alt={ogData.title} />
+            ) : null}
+          </View>
+        )
+      }
+
       return (
         <iframe
           seamless
@@ -112,4 +143,5 @@ export const IframeComponent = ({
         <IframeChildren />
       </div>
     )
-  }, [src])
+  }, [src, mediaActive])
+}

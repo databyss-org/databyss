@@ -21,6 +21,8 @@ import { removeCurrentInlineInput } from '../../lib/inlineUtils/onEscapeInInline
 import { IframeComponent } from './IframeComponent'
 import { isHttpInsecure } from '../EmbedMedia'
 
+const TIMEOUT_LENGTH = 15000
+
 const SuggestEmbeds = ({
   query,
   onSuggestionsChanged,
@@ -34,13 +36,41 @@ const SuggestEmbeds = ({
   const pendingSetContent = useRef(false)
 
   const [suggestions, setSuggestions] = useState<null | Block[]>(null)
+  const filteredSuggestionLengthRef = useRef(0)
   const [filteredSuggestions, setFilteredSuggestions] = useState<Embed[]>([])
   const [iframeAtts, setIframeAtts] = useState<IframeAttributes | false>(false)
+  const [mediaUnavailable, setMediaUnavailable] = useState(false)
+
+  useEffect(() => {
+    filteredSuggestionLengthRef.current = filteredSuggestions.length
+  }, [filteredSuggestions.length])
+
+  const _timeoutRef = useRef<null | any>(null)
+
+  const toggleTimeout = () => {
+    if (_timeoutRef.current) {
+      clearTimeout(_timeoutRef.current)
+    }
+
+    _timeoutRef.current = setTimeout(() => {
+      if (
+        !filteredSuggestionLengthRef.current &&
+        iframeAtts &&
+        iframeAtts?.mediaType === MediaTypes.UNFETCHED
+      ) {
+        setMediaUnavailable(true)
+      }
+    }, TIMEOUT_LENGTH)
+    // restart 15 seconds
+  }
 
   // default attributes if not set already, this will be used in offline mode
   useEffect(() => {
+    setMediaUnavailable(false)
+
     if (!iframeAtts || iframeAtts.mediaType === MediaTypes.UNFETCHED) {
       setIframeAtts({ mediaType: MediaTypes.UNFETCHED, src: query })
+      toggleTimeout()
     }
   }, [query])
 
@@ -144,7 +174,16 @@ const SuggestEmbeds = ({
     dismiss()
   }
 
+  const MediaUnavailable = () => (
+    <Text variant="uiTextSmall" color="gray.3" display="inline" p="small">
+      Cannot Load Media
+    </Text>
+  )
+
   const Suggestion = () => {
+    if (mediaUnavailable) {
+      return <MediaUnavailable />
+    }
     // if not iframe suggestion, check if suggestion with same title exists
     if (!iframeAtts || filteredSuggestions.length) {
       // check if filtered suggestions exist
@@ -164,14 +203,7 @@ const SuggestEmbeds = ({
               />
             ))
           ) : (
-            <Text
-              variant="uiTextSmall"
-              color="gray.3"
-              display="inline"
-              p="small"
-            >
-              Cannot Load Media
-            </Text>
+            <MediaUnavailable />
           )}
         </View>
       )
