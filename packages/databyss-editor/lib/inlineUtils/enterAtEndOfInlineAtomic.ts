@@ -57,11 +57,11 @@ export const enterAtEndOfInlineAtomic = ({
 
       // if node has no text insert \n
       if (_leaf?.embed && !_leaf?.text.length) {
-        Transforms.delete(editor, {
-          distance: 1,
-          unit: 'character',
-          reverse: true,
-        })
+        // Transforms.delete(editor, {
+        //   distance: 1,
+        //   unit: 'character',
+        //   reverse: true,
+        // })
         _textToInsert = '\n'
       }
       // else add a non width white space (cursor is currently in active inline embed)
@@ -69,6 +69,7 @@ export const enterAtEndOfInlineAtomic = ({
 
       window.requestAnimationFrame(() => {
         Transforms.insertNodes(editor, { text: _textToInsert })
+        Transforms.move(editor, { distance: 1, unit: 'character' })
       })
 
       event.preventDefault()
