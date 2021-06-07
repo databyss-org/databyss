@@ -2,6 +2,7 @@ import { LoremIpsum } from 'lorem-ipsum'
 import words from 'an-array-of-english-words'
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
+import { validUriRegex } from '@databyss-org/services/lib/util'
 
 export const SMALL = 'SMALL'
 export const MED = 'MED'
@@ -126,3 +127,5 @@ export const sanitizeEditorChildren = (children) =>
       return _textNode
     }),
   }))
+
+export const cleanUrl = (url) => url.replace(/[\u{0080}-\u{FFFF}]/gu, '')
