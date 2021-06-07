@@ -85,7 +85,13 @@ export const EmbedMedia = ({
           !_atts?.mediaType || _atts.mediaType === MediaTypes.UNFETCHED
 
         if (_isUnfetched) {
-          return <UnfetchedMedia atomicId={_element.atomicId} src={_atts.src} />
+          return (
+            <UnfetchedMedia
+              atomicId={_element.atomicId}
+              src={_atts.src}
+              highlight={highlight}
+            />
+          )
         }
 
         const _src = isHttpInsecure(_atts.src)

@@ -5,6 +5,8 @@ import {
   Transforms,
   Range,
   Editor as SlateEditor,
+  Element,
+  Descendant,
 } from '@databyss-org/slate'
 import {
   isCharacterKeyPress,
@@ -14,6 +16,20 @@ import {
 import { EditorState } from '../../interfaces/EditorState'
 import { symbolToAtomicType } from '../../state/util'
 import { BlockType } from '../../../databyss-services/interfaces/Block'
+
+const getLowestLeaf = (children: Descendant[]) => {
+  if (children?.length === 1) {
+    const _child = children[0] as Element
+    if (_child?.children) {
+      const _firstChild = _child.children[0]
+      if (_firstChild) {
+        return getLowestLeaf([_firstChild])
+      }
+    }
+    return _child
+  }
+  return null
+}
 
 export const onInlineKeyPress = ({
   event,
@@ -78,6 +94,31 @@ export const onInlineKeyPress = ({
           */
         if (event.key === 'Backspace') {
           // remove inline node
+
+          /**
+           * if anchor is at end of embed leaf
+           * check if next node is a non-width white space
+           * if so, remove white space and move anchor back one
+           */
+          if (_currentLeaf.embed) {
+            // move forward one and check selection
+            Transforms.move(editor, { distance: 1, edge: 'focus' })
+            const _frag = SlateEditor.fragment(editor, editor.selection)
+            const _leaf = getLowestLeaf(_frag)
+            if (_leaf?.embed) {
+              // check if text is empty
+              if (!_leaf?.text?.length) {
+                // if node is empty and embed, remove node instead
+                Transforms.removeNodes(editor, {
+                  match: (node) => node === _leaf,
+                })
+                event.preventDefault()
+                return true
+              }
+            }
+
+            Transforms.collapse(editor, { edge: 'anchor' })
+          }
 
           Transforms.removeNodes(editor, {
             match: (node) => node === _currentLeaf,

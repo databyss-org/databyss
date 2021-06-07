@@ -5,7 +5,7 @@ import { setEmbed } from '@databyss-org/services/embeds/setEmbed'
 import { useOpenGraph } from '@databyss-org/data/pouchdb/hooks/useOpenGraph'
 import { BlockType, Embed } from '@databyss-org/services/interfaces/Block'
 
-export const UnfetchedMedia = ({ atomicId, src }) => {
+export const UnfetchedMedia = ({ atomicId, src, highlight }) => {
   //   const blocksRes = useBlocks(BlockType.Embed)
   const graphRes = useOpenGraph(src)
 
@@ -39,10 +39,19 @@ export const UnfetchedMedia = ({ atomicId, src }) => {
       // if online, save details of embedded data
     }
   }, [graphRes.data])
-  const { gray } = colors
+  const { gray, orange } = colors
 
   return (
-    <View p="medium" alignItems="center" backgroundColor={gray[6]}>
+    <View
+      p="medium"
+      alignItems="center"
+      backgroundColor={gray[6]}
+      style={{
+        border: 2,
+        borderStyle: 'solid',
+        borderColor: highlight ? orange[0] : `rgba(0,0,0,0.0)`,
+      }}
+    >
       <Text variant="uiTextSmall" color="text.2">
         unable to load media
       </Text>
