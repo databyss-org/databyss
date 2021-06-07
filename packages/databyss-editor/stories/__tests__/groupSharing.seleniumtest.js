@@ -132,9 +132,9 @@ describe('group sharings', () => {
     // get public collection link
     await selectLinkInFirstBlock(actions)
 
-    const publicCollectionUrl = await driver
-      .executeScript('return window.getSelection().toString()')
-      .replace('\n', '')
+    const publicCollectionUrl = (
+      await driver.executeScript('return window.getSelection().toString()')
+    ).replace('\n', '')
 
     // CREATE SECOND COLLECTION (delete)
 
@@ -169,9 +169,9 @@ describe('group sharings', () => {
     await paste(actions)
     await selectLinkInFirstBlock(actions)
 
-    const publicCollectionDeleteUrl = await driver
-      .executeScript('return window.getSelection().toString()')
-      .replace('\n', '')
+    const publicCollectionDeleteUrl = (
+      await driver.executeScript('return window.getSelection().toString()')
+    ).replace('\n', '')
 
     // THIRD COLLECTION WILL BE UNSHARED
 
@@ -204,9 +204,9 @@ describe('group sharings', () => {
     await paste(actions)
     await selectLinkInFirstBlock(actions)
 
-    const publicCollectionUnshareUrl = await driver
-      .executeScript('return window.getSelection().toString()')
-      .replace('\n', '')
+    const publicCollectionUnshareUrl = (
+      await driver.executeScript('return window.getSelection().toString()')
+    ).replace('\n', '')
     // allow pages to sync
     await sleep(5000)
 
