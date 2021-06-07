@@ -17,7 +17,7 @@ import { EditorState } from '../../interfaces/EditorState'
 import { symbolToAtomicType } from '../../state/util'
 import { BlockType } from '../../../databyss-services/interfaces/Block'
 
-const getLowestLeaf = (children: Descendant[]) => {
+export const getLowestLeaf = (children: Descendant[]) => {
   if (children?.length === 1) {
     const _child = children[0] as Element
     if (_child?.children) {

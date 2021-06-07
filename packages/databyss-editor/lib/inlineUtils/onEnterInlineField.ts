@@ -20,7 +20,6 @@ export const onEnterInlineField = ({
   state: EditorState
   setContent: Function
 }): boolean => {
-  console.log('CHECKING')
   if (
     isCurrentlyInInlineAtomicField(editor) ||
     isCurrentlyInInlineEmbedInput(editor)

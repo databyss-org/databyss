@@ -760,6 +760,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
       }, 5)
     }
 
+    console.log(editor.children)
     return (
       <Editor
         onInlineAtomicClick={onInlineAtomicClick}
