@@ -434,7 +434,10 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
     const _offset = parseInt(flattenOffset(editor, editor.selection.focus), 10)
 
     // check if previous character is a white space, if so, remove whitespace and recalculate text and offset
-    const _prevWhiteSpace = _text.charAt(_offset - 1) === '\u2060'
+    const _prevWhiteSpace =
+      _text.charAt(_offset - 1) === '\u2060' ||
+      _text.charAt(_offset - 1) === '\uFEFF'
+
     if (_prevWhiteSpace) {
       Transforms.delete(editor, {
         distance: 1,

@@ -655,7 +655,6 @@ const ContentEditable = ({
         }
 
         const currentBlock = state.blocks[_currentIndex]
-
         onInlineFieldBackspace({ editor, event, currentBlock })
       }
     }

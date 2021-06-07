@@ -36,7 +36,15 @@ export const enterAtEndOfInlineAtomic = ({
     Range.isCollapsed(editor.selection) &&
     (currentLeaf.inlineTopic || currentLeaf.inlineCitation || currentLeaf.embed)
   ) {
-    const _textToInsert = atBlockEnd ? '\n\u2060' : '\n'
+    /**
+     * check if enter at end of embed
+     */
+
+    let _textToInsert = atBlockEnd ? '\n\u2060' : '\n'
+    // enter non width white space if enter at end of embed
+    if (currentLeaf.embed) {
+      _textToInsert = '\uFEFF'
+    }
     const { text, offsetAfterInsert } = insertTextAtOffset({
       text: currentBlock.text,
       offset: _offset,

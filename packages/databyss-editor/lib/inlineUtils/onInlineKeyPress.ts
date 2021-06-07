@@ -112,6 +112,13 @@ export const onInlineKeyPress = ({
                 Transforms.removeNodes(editor, {
                   match: (node) => node === _leaf,
                 })
+                // move cursor back one space
+                Transforms.move(editor, {
+                  distance: 1,
+                  reverse: true,
+                  unit: 'character',
+                })
+
                 event.preventDefault()
                 return true
               }
@@ -166,6 +173,7 @@ export const onInlineKeyPress = ({
             })
             Transforms.insertNodes(editor, { text: '\uFEFF' })
             event.preventDefault()
+
             return true
           }
           const inlineAtomicData = {
@@ -176,6 +184,7 @@ export const onInlineKeyPress = ({
           onInlineAtomicClick(inlineAtomicData)
         }
         event.preventDefault()
+
         return true
       }
     }
