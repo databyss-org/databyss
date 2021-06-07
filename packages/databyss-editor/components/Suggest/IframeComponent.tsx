@@ -97,7 +97,8 @@ export const IframeComponent = ({
             seamless
             id={src}
             title={src}
-            src={src}
+            src={`${src}?autoplay=1`}
+            allow="autoplay"
             // border="0px"
             frameBorder="0px"
             height={height}

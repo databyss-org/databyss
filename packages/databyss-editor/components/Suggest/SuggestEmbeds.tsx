@@ -21,7 +21,7 @@ import { removeCurrentInlineInput } from '../../lib/inlineUtils/onEscapeInInline
 import { IframeComponent } from './IframeComponent'
 import { isHttpInsecure } from '../EmbedMedia'
 
-const TIMEOUT_LENGTH = 15000
+const TIMEOUT_LENGTH = 7000
 
 const SuggestEmbeds = ({
   query,
