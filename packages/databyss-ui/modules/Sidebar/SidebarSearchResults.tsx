@@ -64,6 +64,7 @@ const SidebarSearchResults = ({
   }
 
   const mappedSources = blocksToListItemData(sourcesRes.data!)
+  console.log('MAPPED SOURCES', mappedSources)
   const mappedTopics = blocksToListItemData(topicsRes.data!)
 
   const mappedAuthors = authorsToListItemData(Object.values(sourcesRes.data!))
@@ -77,7 +78,13 @@ const SidebarSearchResults = ({
     ...mappedTopics,
   ]
 
+  console.log('all results', allResults)
+
   const sortedSources = sortEntriesAtoZ(allResults, 'text')
+
+  console.log(filterQuery)
+  console.log('sorted sources', sortedSources)
+
   const filteredEntries = filterEntries(sortedSources, filterQuery)
 
   return (
