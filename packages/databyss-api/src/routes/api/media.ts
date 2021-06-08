@@ -78,6 +78,7 @@ router.post('/opengraph', async (req, res) => {
 
     if (validURL(_url)) {
       // check for image
+      // TODO: just fetch headers
       const _fetchRes = await fetch(_url)
 
       const contentType = _fetchRes.headers.get('Content-Type')
@@ -89,7 +90,7 @@ router.post('/opengraph', async (req, res) => {
 
       // if twitter url
       if (_regExValidator.twitter.test(_url)) {
-        const _response = getTwitterAttributes(_url)
+        const _response = await getTwitterAttributes(_url)
         return res.status(200).json(_response).send()
       }
       // get youtube attributes

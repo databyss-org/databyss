@@ -100,7 +100,7 @@ export const getHtmlAttributes = (code: string) => {
   }
 }
 
-export const getTwitterAttributes = (url: string) => {
+export const getTwitterAttributes = async (url: string) => {
   const _response: MediaResponse = {
     mediaType: null,
     title: null,
@@ -122,7 +122,28 @@ export const getTwitterAttributes = (url: string) => {
   _response.src = `https://platform.twitter.com/embed/Tweet.html?id=${tweetId}`
   _response.title = `tweet by ${username} ${tweetId}`
   _response.mediaType = MediaTypes.TWITTER
-  return _response
+
+  // add fetch with custom useragent
+  // https://stackoverflow.com/questions/62526483/twitter-website-doesnt-have-open-graph-tags
+  try {
+    const options = {
+      url,
+      headers: {
+        'user-agent': 'Googlebot/2.1 (+http://www.google.com/bot.html)',
+      },
+    }
+
+    const _data = await ogs(options)
+    const { result } = _data
+    if (result.success) {
+      // check if youtube link
+      _response.openGraphJson = JSON.stringify(result)
+    }
+
+    return _response
+  } catch (err) {
+    return _response
+  }
 }
 
 export const getYoutubeAttributes = async (url) => {
