@@ -50,7 +50,9 @@ export const enterAtEndOfInlineAtomic = ({
     // enter non width white space if enter at end of embed
 
     if (currentLeaf.embed) {
-      _textToInsert = '\uFEFF'
+      _textToInsert = '\n'
+
+      // _textToInsert = '\uFEFF'
       Transforms.move(editor, { distance: 1, edge: 'focus' })
       const _frag = SlateEditor.fragment(editor, editor.selection)
       const _leaf = getLowestLeaf(_frag)

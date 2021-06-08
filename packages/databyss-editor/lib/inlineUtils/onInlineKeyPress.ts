@@ -171,7 +171,8 @@ export const onInlineKeyPress = ({
               distance: _currentLeaf.text.length - _leafOffset,
               unit: 'character',
             })
-            Transforms.insertNodes(editor, { text: '\uFEFF' })
+            // Transforms.insertNodes(editor, { text: '\uFEFF' })
+            Transforms.insertNodes(editor, { text: '\n' })
             event.preventDefault()
 
             return true

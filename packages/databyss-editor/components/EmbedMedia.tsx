@@ -145,9 +145,10 @@ export const EmbedMedia = ({
       <span
         {...attributes}
         style={{
+          minWidth: '50%',
           maxWidth: '480px',
           position: 'relative',
-          display: 'block',
+          display: 'inline-block',
           borderRadius: '3px',
           //    padding: '3px',
         }}
@@ -159,7 +160,7 @@ export const EmbedMedia = ({
             position: 'relative',
             // TODO: change  this back to a high number
             zIndex: 10,
-            display: 'block',
+            display: 'inline-block',
           }}
         >
           {data ? <IFrame /> : <LoadingFallback />}
