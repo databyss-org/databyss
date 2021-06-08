@@ -479,13 +479,13 @@ const ContentEditable = ({
 
       if (event.key === 'Enter') {
         // carriage return in title advances selection to next line
-        if (firstBlockIsTitle) {
-          if (editor.selection.focus.path[0] === 0) {
-            event.preventDefault()
-            Transforms.move(editor, { unit: 'line', distance: 1 })
-            return
-          }
-        }
+        // if (firstBlockIsTitle) {
+        //   if (editor.selection.focus.path[0] === 0) {
+        //     event.preventDefault()
+        //     Transforms.move(editor, { unit: 'line', distance: 1 })
+        //     return
+        //   }
+        // }
 
         const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
         const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
@@ -535,6 +535,7 @@ const ContentEditable = ({
         const _atBlockStart = _offset === 0
         const _atBlockEnd = _offset === _text.length
         const _doubleLineBreak =
+          (firstBlockIsTitle && editor.selection.focus.path[0] === 0) ||
           (_atBlockEnd && _prevIsBreak) ||
           (_atBlockStart && _nextIsBreak) ||
           (_prevIsBreak && _nextIsBreak) ||
@@ -585,6 +586,19 @@ const ContentEditable = ({
           event.preventDefault()
           removeAtSelection()
           return
+        }
+
+        // handle backspace on empty line after title
+        if (
+          editor.selection.focus.path[0] === 1 &&
+          state.blocks.length > 2 &&
+          isEmpty(state.blocks[editor.selection.focus.path[0]])
+        ) {
+          event.preventDefault()
+          Transforms.delete(editor, {
+            distance: 1,
+            unit: 'character',
+          })
         }
 
         // handle start of atomic
@@ -689,7 +703,10 @@ const ContentEditable = ({
         // set block type
         Transforms.setNodes(
           editor,
-          { type: _block.type },
+          {
+            type: _block.type,
+            isTitle: op.index === 0,
+          },
           {
             at: [op.index],
           }

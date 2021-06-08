@@ -126,3 +126,5 @@ export const sanitizeEditorChildren = (children) =>
       return _textNode
     }),
   }))
+
+export const cleanUrl = (url) => url.replace(/[\u{0080}-\u{FFFF}]/gu, '')
