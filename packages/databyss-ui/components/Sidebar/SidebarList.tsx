@@ -91,7 +91,6 @@ const SidebarList = ({
       : { onPress: () => navigate(item.route) }),
   })
 
-  console.log('MENU ITEMS', menuItems)
   return (
     <ScrollView
       height={height}

@@ -1,5 +1,4 @@
 import { ReactNode } from 'react'
-import { Text } from '@databyss-org/editor/interfaces'
 
 export { LoadingFallback } from './Notify/LoadingFallback'
 export { default as SidebarList } from './Sidebar/SidebarList'
