@@ -34,7 +34,7 @@ export const getPosition = (editor, inlineAtomic, inlineEmbed) => {
         const _textNode = document.getElementById(_elId).getBoundingClientRect()
 
         const relativePos = {
-          top: _textNode.top - _rect.top + _textNode.height + 12,
+          top: _textNode.top - _rect.top + _textNode.height + 4,
           left: _textNode.left - _rect.left,
         }
 
@@ -44,10 +44,8 @@ export const getPosition = (editor, inlineAtomic, inlineEmbed) => {
         const isMenuTop = _windowHeight < _textNode.bottom + MENU_HEIGHT
 
         if (isMenuTop) {
-          const _distanceFromBottom =
-            _windowHeight - _textNode.bottom + _textNode.height
           return {
-            bottom: _distanceFromBottom,
+            bottom: '6px',
             left: _textNode.left - _rect.left,
           }
         }
@@ -69,7 +67,7 @@ export const getPosition = (editor, inlineAtomic, inlineEmbed) => {
       const isMenuTop = _windowHeight < _rect.bottom + MENU_HEIGHT
 
       if (isMenuTop) {
-        return { bottom: 40, left: 0 }
+        return { bottom: '6px', left: 0 }
       }
       // if previous block is an atomic closure block move offest down 15px
       const _prev = Editor.previous(editor)
@@ -81,7 +79,7 @@ export const getPosition = (editor, inlineAtomic, inlineEmbed) => {
       }
     }
   }
-  return { top: 40, left: 0 }
+  return { top: 32, left: 0 }
 }
 
 const SuggestMenu = ({
@@ -202,45 +200,47 @@ const SuggestMenu = ({
       : menuActive
 
   return (
-    <ClickAwayListener onClickAway={onClickAway}>
-      <DropdownContainer
-        suggestMenu
-        data-test-element="suggest-menu"
-        position={{
-          top: position.top,
-          left: position.left,
-          bottom: position.bottom,
-        }}
-        open={_showMenu}
-        widthVariant="dropdownMenuLarge"
-        minHeight="32px"
-        p={inlineEmbed ? 'none' : 'small'}
-        orderKey={query + resultsMode}
-        onActiveIndexChanged={onActiveIndexChanged}
-      >
-        {query || inlineEmbed ? (
-          React.cloneElement(React.Children.only(children), {
-            editor,
-            editorContext,
-            activeIndexRef,
-            dismiss: onDismiss,
-            query,
-            menuHeight: MENU_HEIGHT,
-            focusEditor: onFocusEditor,
-            active: menuActive,
-            onSuggestionsChanged,
-            resultsMode,
-            setResultsMode,
-          })
-        ) : (
-          <View p="small">
-            <Text variant="uiTextSmall" color="text.2">
-              {placeholder}
-            </Text>
-          </View>
-        )}
-      </DropdownContainer>
-    </ClickAwayListener>
+    <View position="absolute">
+      <ClickAwayListener onClickAway={onClickAway} position="inherit">
+        <DropdownContainer
+          suggestMenu
+          data-test-element="suggest-menu"
+          position={{
+            top: position.top,
+            left: position.left,
+            bottom: position.bottom,
+          }}
+          open={_showMenu}
+          widthVariant="dropdownMenuLarge"
+          minHeight="32px"
+          p={inlineEmbed ? 'none' : 'small'}
+          orderKey={query + resultsMode}
+          onActiveIndexChanged={onActiveIndexChanged}
+        >
+          {query || inlineEmbed ? (
+            React.cloneElement(React.Children.only(children), {
+              editor,
+              editorContext,
+              activeIndexRef,
+              dismiss: onDismiss,
+              query,
+              menuHeight: MENU_HEIGHT,
+              focusEditor: onFocusEditor,
+              active: menuActive,
+              onSuggestionsChanged,
+              resultsMode,
+              setResultsMode,
+            })
+          ) : (
+            <View p="small">
+              <Text variant="uiTextSmall" color="text.2">
+                {placeholder}
+              </Text>
+            </View>
+          )}
+        </DropdownContainer>
+      </ClickAwayListener>
+    </View>
   )
 }
 
