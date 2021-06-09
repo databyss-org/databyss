@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import {
   useSelected,
   useFocused,
   useSlate,
   ReactEditor,
 } from '@databyss-org/slate-react'
-import { Node, Editor as SlateEditor } from '@databyss-org/slate'
+import { Node, Editor as SlateEditor, Transforms } from '@databyss-org/slate'
 import { View, Icon, Button } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import _ from 'lodash'
@@ -34,6 +34,7 @@ export const EmbedMedia = ({
   const blocksRes = useBlocks(BlockType.Embed)
   const [data, setData] = useState<null | Embed>()
   const [highlight, setHighlight] = useState(false)
+  const textRef = useRef<any>()
   const editor = useSlate() as ReactEditor & SlateEditor
   const _isSelected = useSelected()
 
@@ -140,10 +141,26 @@ export const EmbedMedia = ({
     )
   }
 
+  const highlightEmbed = () => {
+    try {
+      const _el = textRef.current?.children?.[0]
+      console.log(_el)
+      const _node = ReactEditor.toSlateNode(editor, _el)
+      const _path = ReactEditor.findPath(editor, _node)
+      const _offset = _node.text.length
+      const _point = { path: _path, offset: _offset }
+      Transforms.select(editor, _point)
+    } catch {
+      console.log('unable to select')
+    }
+  }
+
   return useMemo(
     () => (
       <span
         {...attributes}
+        onClick={highlightEmbed}
+        aria-hidden="true"
         style={{
           minWidth: '50%',
           maxWidth: '480px',
@@ -167,6 +184,7 @@ export const EmbedMedia = ({
           {data ? <IFrame /> : <LoadingFallback />}
         </span>
         <span
+          ref={textRef}
           style={{
             padding: '8px',
             // todo: change this back  to zero
