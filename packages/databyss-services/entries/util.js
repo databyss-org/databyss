@@ -38,7 +38,11 @@ export const filterEntries = (entries, filterQuery) => {
       .split(' ')
       .reduce(
         (qacc, qcurr) =>
-          Boolean(qacc && entry.text.match(new RegExp(`\\b${qcurr}`, 'i'))),
+          Boolean(
+            qacc &&
+              (entry.text.match(new RegExp(`\\b${qcurr}`, 'i')) ||
+                entry?.name?.match(new RegExp(`\\b${qcurr}`, 'i')))
+          ),
         true
       )
   return entries.filter(findEntry(filterQuery))

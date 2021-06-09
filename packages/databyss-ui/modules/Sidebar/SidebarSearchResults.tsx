@@ -78,6 +78,7 @@ const SidebarSearchResults = ({
   ]
 
   const sortedSources = sortEntriesAtoZ(allResults, 'text')
+
   const filteredEntries = filterEntries(sortedSources, filterQuery)
 
   return (
