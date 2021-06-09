@@ -244,7 +244,6 @@ const ContentEditable = ({
         onDocumentChange(editor)
       }
       const selection = slateSelectionToStateSelection(editor)
-
       if (!selection) {
         return
       }
@@ -679,6 +678,7 @@ const ContentEditable = ({
     }
 
     // store selection because the Transforms below move it around
+
     let nextSelection = editor.selection
 
     state.operations.forEach((op) => {
@@ -718,11 +718,11 @@ const ContentEditable = ({
         })
         // embedded media requires a nbsp, editor should move caret forward one position
         if (op.setCaretAfter) {
-          window.requestAnimationFrame(() => {
-            Transforms.insertNodes(editor, {
-              text: '\n',
-            })
-          })
+          // window.requestAnimationFrame(() => {
+          //   Transforms.insertNodes(editor, {
+          //     text: '\n',
+          //   })
+          // })
         }
       }
       // if reducer states to set the selection as an operation, perform seletion
@@ -742,6 +742,7 @@ const ContentEditable = ({
 
     // if there were any update operations,
     //   sync the Slate selection to the state selection
+
     if (state.operations.length) {
       nextSelection = stateSelectionToSlateSelection(
         editor.children,
@@ -756,6 +757,7 @@ const ContentEditable = ({
     if (state.preventDefault) {
       editor.operations = []
     }
+
     /*
 if focus event is fired and editor.selection is null, set focus at origin. this is used when editorRef.focus() is called by a parent component
 */

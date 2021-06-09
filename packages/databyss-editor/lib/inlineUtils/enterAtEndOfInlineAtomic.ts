@@ -46,31 +46,48 @@ export const enterAtEndOfInlineAtomic = ({
      * check if enter at end of embed
      */
 
-    let _textToInsert = atBlockEnd ? '\n\u2060' : '\n'
+    const _textToInsert = '\n'
     // enter non width white space if enter at end of embed
 
+    let updateSelection = true
     if (currentLeaf.embed) {
-      _textToInsert = '\n'
-
-      // _textToInsert = '\uFEFF'
-      Transforms.move(editor, { distance: 1, edge: 'focus' })
-      const _frag = SlateEditor.fragment(editor, editor.selection)
-      const _leaf = getLowestLeaf(_frag)
-
-      // if node has no text insert \n
-      if (_leaf?.embed && !_leaf?.text.length) {
-        _textToInsert = '\n'
-      }
-      // else add a non width white space (cursor is currently in active inline embed)
-      Transforms.collapse(editor, { edge: 'anchor' })
+      updateSelection = false
 
       window.requestAnimationFrame(() => {
-        Transforms.insertNodes(editor, { text: _textToInsert })
-        Transforms.move(editor, { distance: 1, unit: 'character' })
-      })
+        // job selection back one and forward one to force selection to be within range
+        Transforms.move(editor, {
+          distance: 1,
+          unit: 'character',
+          reverse: true,
+        })
+        Transforms.move(editor, {
+          distance: 1,
+          unit: 'character',
+        })
 
-      event.preventDefault()
-      return true
+        const _nextNodePath = SlateEditor.next(editor, {
+          at: editor.selection?.anchor,
+        })
+        if (_nextNodePath?.length) {
+          const _textNode = _nextNodePath[0] as Text
+          const _newOffset = _textNode.text.length
+          const _newPath = _nextNodePath[1]
+          const _point = { path: _newPath, offset: _newOffset }
+          const _sel = { anchor: _point, focus: _point }
+          Transforms.select(editor, _sel)
+        }
+
+        // const _tempSelection = editor.selection
+        // const { path } = _tempSelection!.anchor
+        // path[1] += 1
+        // const _point = { path, offset: 1 }
+        // const _sel = { anchor: _point, focus: _point }
+        // try {
+        //   Transforms.select(editor, _sel)
+        // } catch (err) {
+        //   console.error('HAS ERROR', err)
+        // }
+      })
     }
 
     const { text, offsetAfterInsert } = insertTextAtOffset({
@@ -85,8 +102,10 @@ export const enterAtEndOfInlineAtomic = ({
     }
     //  update the selection
     const _sel = cloneDeep(state.selection)
-    _sel.anchor.offset = offsetAfterInsert
-    _sel.focus.offset = offsetAfterInsert
+    if (updateSelection) {
+      _sel.anchor.offset = offsetAfterInsert
+      _sel.focus.offset = offsetAfterInsert
+    }
 
     setContent({
       selection: _sel,

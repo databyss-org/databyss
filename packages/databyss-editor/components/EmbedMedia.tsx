@@ -157,6 +157,7 @@ export const EmbedMedia = ({
           contentEditable={false}
           id="inline-embed"
           style={{
+            // opacity: '50%',
             position: 'relative',
             // TODO: change  this back to a high number
             zIndex: 10,
