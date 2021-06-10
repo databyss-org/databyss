@@ -2,10 +2,11 @@ import React, { useCallback } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
 import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { Text, Node } from '@databyss-org/slate'
+import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import styledCss from '@styled-system/css'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
+import { validUriRegex } from '@databyss-org/services/lib/util'
 import matchAll from 'string.prototype.matchall'
 import { useEditorContext } from '../state/EditorProvider'
 import { TitleElement } from './TitleElement'
@@ -26,10 +27,24 @@ const Editor = ({
   const _searchTerm = useSearchContext((c) => c && c.searchTerm)
 
   // preloads source and topic cache to be used by the suggest menu
+  useBlocksInPages('EMBED')
   useBlocksInPages('SOURCE')
   useBlocksInPages('TOPIC')
 
-  const { copy, paste, cut } = useEditorContext()
+  const { copy, paste, cut, embedPaste } = useEditorContext()
+
+  // check if paste is an embed or regular paste
+  const pasteEventHandler = (e) => {
+    e.preventDefault()
+    const _activeMarks = SlateEditor.marks(editor)
+    // if pasting embed code handle seperatly
+    if (_activeMarks?.inlineEmbedInput) {
+      embedPaste(e)
+      return
+    }
+
+    paste(e)
+  }
 
   let searchTerm = ''
 
@@ -73,8 +88,13 @@ const Editor = ({
   const decorate = useCallback(
     ([node, path]) => {
       const ranges = []
+      if (node?.inlineEmbedInput || node?.embed) {
+        return ranges
+      }
 
-      if (Text.isText(node)) {
+      if (Text.isText(node) && !(node?.inlineEmbedInput || node?.embed)) {
+        // do not apply markup
+
         const _string = Node.string(node)
 
         // check for email addresses
@@ -82,14 +102,8 @@ const Editor = ({
           /\b([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)\b/,
           'gi'
         )
-        // check for url in text
-        // uri's must begin with "http:// or "https://"
-        // test it here: https://regexr.com/5jvei
-        const _uriRegEx = new RegExp(
-          /https?:\/\/[-a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF:.]{2,256}(\/?[-a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF@:%_+.~#&?/=,[\]()]*)?([-a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF@%_+~#&/=])/,
-          'gi'
-        )
-        ;[_emailRegEx, _uriRegEx].forEach((_regex) => {
+        const _validUri = new RegExp(validUriRegex, 'gi')
+        ;[_emailRegEx, _validUri].forEach((_regex) => {
           const _matches = [...matchAll(_string, _regex)]
           _matches.forEach((e) => {
             const _parts = _string.split(e[0])
@@ -167,10 +181,7 @@ const Editor = ({
           e.preventDefault()
           copy(e)
         }}
-        onPaste={(e) => {
-          e.preventDefault()
-          paste(e)
-        }}
+        onPaste={pasteEventHandler}
         onCut={(e) => {
           e.preventDefault()
           cut(e)

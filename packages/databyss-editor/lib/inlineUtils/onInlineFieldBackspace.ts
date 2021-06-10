@@ -1,7 +1,11 @@
 import { KeyboardEvent } from 'react'
 import { Node, Transforms, Editor as SlateEditor } from '@databyss-org/slate'
 import { ReactEditor } from '@databyss-org/slate-react'
-import { flattenOffset, isCurrentlyInInlineAtomicField } from '../slateUtils'
+import {
+  flattenOffset,
+  isCurrentlyInInlineAtomicField,
+  stateSelectionToSlateSelection,
+} from '../slateUtils'
 import { Block } from '../../../databyss-services/interfaces/Block'
 import { RangeType } from '../../../databyss-services/interfaces/Range'
 
@@ -25,6 +29,7 @@ export const onInlineFieldBackspace = ({
     10
   )
 
+  // check for inline atomics fields
   if (
     isCurrentlyInInlineAtomicField(editor) &&
     _offset !== 0 &&
@@ -70,5 +75,64 @@ export const onInlineFieldBackspace = ({
     }
     event.preventDefault()
   }
+
+  const _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
+
+  if (
+    // check for inline embed fields
+    _currentLeaf.inlineEmbedInput
+  ) {
+    console.log(_currentLeaf)
+
+    // only << exist, remove mark on backspace
+    if (_currentLeaf.inlineEmbedInput && _currentLeaf.text === '<<') {
+      Transforms.delete(editor, {
+        distance: 1,
+        unit: 'character',
+        reverse: true,
+      })
+      Transforms.move(editor, {
+        unit: 'character',
+        distance: 1,
+        edge: 'anchor',
+        reverse: _offset !== 1,
+      })
+      SlateEditor.removeMark(editor, RangeType.InlineEmbedInput)
+      Transforms.collapse(editor, {
+        edge: _offset === 1 ? 'anchor' : 'focus',
+      })
+
+      event.preventDefault()
+      return true
+    }
+    //  check if offset falls within the first two characters of range inlineEmbedInput
+    const _inlineEmbedOffset = currentBlock.text.ranges.filter((r) =>
+      r.marks.includes(RangeType.InlineEmbedInput)
+    )[0].offset
+
+    if (
+      _inlineEmbedOffset + 1 === _offset ||
+      _inlineEmbedOffset + 2 === _offset
+    ) {
+      // remove inline embed range and allow backspace
+      Transforms.removeNodes(editor, {
+        match: (node) => node === _currentLeaf,
+      })
+      Transforms.insertText(editor, _currentLeaf.text.substring(1))
+
+      const point = {
+        index: editor.selection.focus.path[0],
+        offset: _offset - 1,
+      }
+      const _sel = stateSelectionToSlateSelection(editor.children, {
+        anchor: point,
+        focus: point,
+      })
+      Transforms.select(editor, _sel)
+      event.preventDefault()
+      return true
+    }
+  }
+
   return false
 }

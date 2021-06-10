@@ -34,6 +34,7 @@ export const addMetaDataToBlocks = (init: EditorState) => {
     __showSourceMenu: false,
     __showInlineCitationMenu: false,
     __showInlineTopicMenu: false,
+    __showInlineEmbedMenu: false,
   }))
   init.blocks = _blocks
   return init

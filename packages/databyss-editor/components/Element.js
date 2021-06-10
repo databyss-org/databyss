@@ -13,8 +13,13 @@ import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
 import { showAtomicModal } from '../lib/atomicModal'
-import { SuggestMenu, SuggestSources, SuggestTopics } from './Suggest'
-
+import {
+  SuggestMenu,
+  SuggestSources,
+  SuggestTopics,
+  SuggestEmbeds,
+} from './Suggest'
+import { EmbedMedia } from './EmbedMedia'
 // browser still takes some time to process the spellcheck
 const SPELLCHECK_DEBOUNCE_TIME = 300
 
@@ -99,6 +104,16 @@ const Element = ({ attributes, children, element, readOnly }) => {
         return null
       }
 
+      if (element.embed) {
+        return (
+          <EmbedMedia
+            _children={children}
+            attributes={attributes}
+            _element={element}
+          />
+        )
+      }
+
       const blockMenuWidth = menuLauncherSize + 6
 
       const selHasRange = !Range.isCollapsed(editor.selection)
@@ -179,6 +194,18 @@ const Element = ({ attributes, children, element, readOnly }) => {
                 suggestType="sources"
               >
                 <SuggestSources inlineAtomic onSuggestions={onSuggestions} />
+              </SuggestMenu>
+            </View>
+          )}
+
+          {block.__showInlineEmbedMenu && (
+            <View contentEditable="false" suppressContentEditableWarning>
+              <SuggestMenu
+                inlineEmbed
+                onSuggestions={onSuggestions}
+                suggestType="embed"
+              >
+                <SuggestEmbeds />
               </SuggestMenu>
             </View>
           )}

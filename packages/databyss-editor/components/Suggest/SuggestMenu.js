@@ -11,19 +11,30 @@ import { getClosureType, getTextOffsetWithRange } from '../../state/util'
 
 const MENU_HEIGHT = 200
 
-export const getPosition = (editor, inlineAtomic) => {
+export const getPosition = (editor, inlineAtomic, inlineEmbed) => {
   if (editor.selection) {
     const _activeNode = editor.children[editor.selection.anchor.path[0]]
     const _node = ReactEditor.toDOMNode(editor, _activeNode)
 
     if (_node) {
       const _rect = _node.getBoundingClientRect()
-      if (inlineAtomic && document.getElementById('inline-atomic')) {
-        const _textNode = document
-          .getElementById('inline-atomic')
-          .getBoundingClientRect()
+
+      const _inlineEmbedMenu =
+        inlineEmbed && document.getElementById('inline-embed-input')
+          ? 'inline-embed-input'
+          : null
+
+      const getInlineMenuId =
+        inlineAtomic && document.getElementById('inline-atomic')
+          ? 'inline-atomic'
+          : null
+      const _elId = _inlineEmbedMenu || getInlineMenuId
+
+      if (_elId) {
+        const _textNode = document.getElementById(_elId).getBoundingClientRect()
+
         const relativePos = {
-          top: _textNode.top - _rect.top + 36,
+          top: _textNode.top - _rect.top + _textNode.height + 4,
           left: _textNode.left - _rect.left,
         }
 
@@ -33,10 +44,8 @@ export const getPosition = (editor, inlineAtomic) => {
         const isMenuTop = _windowHeight < _textNode.bottom + MENU_HEIGHT
 
         if (isMenuTop) {
-          const _distanceFromBottom =
-            _windowHeight - _textNode.bottom + _textNode.height
           return {
-            bottom: _distanceFromBottom,
+            bottom: '6px',
             left: _textNode.left - _rect.left,
           }
         }
@@ -58,7 +67,7 @@ export const getPosition = (editor, inlineAtomic) => {
       const isMenuTop = _windowHeight < _rect.bottom + MENU_HEIGHT
 
       if (isMenuTop) {
-        return { bottom: 40, left: 0 }
+        return { bottom: '6px', left: 0 }
       }
       // if previous block is an atomic closure block move offest down 15px
       const _prev = Editor.previous(editor)
@@ -70,7 +79,7 @@ export const getPosition = (editor, inlineAtomic) => {
       }
     }
   }
-  return { top: 40, left: 0 }
+  return { top: 32, left: 0 }
 }
 
 const SuggestMenu = ({
@@ -79,6 +88,7 @@ const SuggestMenu = ({
   onSuggestions,
   suggestType,
   inlineAtomic,
+  inlineEmbed,
 }) => {
   const activeIndexRef = useRef(-1)
   const [position, setPosition] = useState({
@@ -97,7 +107,7 @@ const SuggestMenu = ({
 
   // set position of dropdown
   const setMenuPosition = () => {
-    const _position = getPosition(editor, inlineAtomic)
+    const _position = getPosition(editor, inlineAtomic, inlineEmbed)
 
     if (_position) {
       setPosition(_position)
@@ -109,7 +119,8 @@ const SuggestMenu = ({
       const _index = editorContext.state.selection.anchor.index
       const _node = editor.children[_index]
       const _stateBlock = editorContext.state.blocks[_index]
-      if (!inlineAtomic) {
+
+      if (!(inlineAtomic || inlineEmbed)) {
         // get current input value
         const _text = Node.string(_node)
         if (!isAtomicInlineType(_node.type)) {
@@ -121,14 +132,22 @@ const SuggestMenu = ({
           setMenuActive(false)
         }
       } else if (!isAtomicInlineType(_node.type)) {
-        // get current text with markup 'inlineAtomicMenu'
-        // get text with active `inlineAtomicMenu` mark
+        let _inline = { type: '', prefix: '' }
+        if (inlineEmbed) {
+          _inline = { type: 'inlineEmbedInput', prefixLength: 2 }
+        }
+        if (inlineAtomic) {
+          _inline = { type: 'inlineAtomicMenu', prefixLength: 1 }
+        }
+
+        // get current text with markup '_inlineType'
+        // get text with active `_inlineType` mark
         const innerText = getTextOffsetWithRange({
           text: _stateBlock.text,
-          rangeType: 'inlineAtomicMenu',
+          rangeType: _inline.type,
         })
         if (innerText) {
-          setQuery(innerText.text.substring(1))
+          setQuery(innerText.text.substring(_inline.prefixLength))
         }
 
         window.requestAnimationFrame(setMenuPosition)
@@ -181,44 +200,47 @@ const SuggestMenu = ({
       : menuActive
 
   return (
-    <ClickAwayListener onClickAway={onClickAway}>
-      <DropdownContainer
-        data-test-element="suggest-menu"
-        position={{
-          top: position.top,
-          left: position.left,
-          bottom: position.bottom,
-        }}
-        open={_showMenu}
-        widthVariant="dropdownMenuLarge"
-        minHeight="32px"
-        p="small"
-        orderKey={query + resultsMode}
-        onActiveIndexChanged={onActiveIndexChanged}
-      >
-        {query ? (
-          React.cloneElement(React.Children.only(children), {
-            editor,
-            editorContext,
-            activeIndexRef,
-            dismiss: onDismiss,
-            query,
-            menuHeight: MENU_HEIGHT,
-            focusEditor: onFocusEditor,
-            active: menuActive,
-            onSuggestionsChanged,
-            resultsMode,
-            setResultsMode,
-          })
-        ) : (
-          <View p="small">
-            <Text variant="uiTextSmall" color="text.2">
-              {placeholder}
-            </Text>
-          </View>
-        )}
-      </DropdownContainer>
-    </ClickAwayListener>
+    <View position="absolute">
+      <ClickAwayListener onClickAway={onClickAway} position="inherit">
+        <DropdownContainer
+          suggestMenu
+          data-test-element="suggest-menu"
+          position={{
+            top: position.top,
+            left: position.left,
+            bottom: position.bottom,
+          }}
+          open={_showMenu}
+          widthVariant="dropdownMenuLarge"
+          minHeight="32px"
+          p={inlineEmbed ? 'none' : 'small'}
+          orderKey={query + resultsMode}
+          onActiveIndexChanged={onActiveIndexChanged}
+        >
+          {query || inlineEmbed ? (
+            React.cloneElement(React.Children.only(children), {
+              editor,
+              editorContext,
+              activeIndexRef,
+              dismiss: onDismiss,
+              query,
+              menuHeight: MENU_HEIGHT,
+              focusEditor: onFocusEditor,
+              active: menuActive,
+              onSuggestionsChanged,
+              resultsMode,
+              setResultsMode,
+            })
+          ) : (
+            <View p="small">
+              <Text variant="uiTextSmall" color="text.2">
+                {placeholder}
+              </Text>
+            </View>
+          )}
+        </DropdownContainer>
+      </ClickAwayListener>
+    </View>
   )
 }
 

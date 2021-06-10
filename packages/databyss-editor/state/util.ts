@@ -3,17 +3,13 @@ import {
   Page,
   Source,
   Topic,
+  Block,
+  Embed,
+  MediaTypes,
 } from '@databyss-org/services/interfaces'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
-import {
-  Selection,
-  Block,
-  Range,
-  EditorState,
-  Text,
-  Point,
-} from '../interfaces'
+import { Selection, Range, EditorState, Text, Point } from '../interfaces'
 import { OnChangeArgs } from './EditorProvider'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -24,6 +20,7 @@ import {
 } from '../lib/clipboardUtils'
 
 import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
+import { IframeAttributes } from '../components/Suggest/iframeUtils'
 import {
   RangeType,
   InlineTypes,
@@ -215,6 +212,7 @@ export const atomicTypeToInlineRangeType = (type: BlockType): InlineTypes => {
   const getSymbolObj = {
     [BlockType.Source]: InlineTypes.InlineSource,
     [BlockType.Topic]: InlineTypes.InlineTopic,
+    [BlockType.Embed]: InlineTypes.Embed,
   }
 
   const inlineType: InlineTypes = getSymbolObj[type]
@@ -237,6 +235,7 @@ export const inlineTypeToSymbol = (inlineType: InlineTypes): string => {
   const getType = {
     [InlineTypes.InlineSource]: BlockType.Source,
     [InlineTypes.InlineTopic]: BlockType.Topic,
+    [InlineTypes.Embed]: BlockType.Embed,
   }
   const type = getType[inlineType]
 
@@ -512,20 +511,38 @@ export const replaceInlineText = ({
 }): Text | null => {
   const _symbol = inlineTypeToSymbol(type)
 
-  const _textToInsert: Text = {
-    textValue: `${_symbol}${newText.textValue}`,
-    ranges: [
-      {
-        length: newText.textValue.length + 1,
-        offset: 0,
-        marks: [[type, refId]],
-      },
-    ],
+  const _isEmbed = type === InlineTypes.Embed
+
+  let _textToInsert: null | Text = null
+  if (!_isEmbed) {
+    _textToInsert = {
+      textValue: `${_symbol}${newText.textValue}`,
+      ranges: [
+        {
+          length: newText.textValue.length + 1,
+          offset: 0,
+          marks: [[type, refId]],
+        },
+      ],
+    } as Text
+  } else {
+    // replace embed text
+    _textToInsert = {
+      textValue: `[${newText.textValue}]`,
+      ranges: [
+        {
+          length: newText.textValue.length + 2,
+          offset: 0,
+          marks: [[type, refId]],
+        },
+      ],
+    } as Text
   }
 
   const _rangesWithId = text.ranges.filter(
     (r) => r.marks[0][0] === type && r.marks[0][1] === refId
   )
+
   // offset will be updated in loop
   let _cumulativeOffset = 0
   let _textToUpdate = text
@@ -542,7 +559,7 @@ export const replaceInlineText = ({
     })
 
     // insert text at offset
-    let _mergedText = mergeText(_splitText.before, _textToInsert)
+    let _mergedText = mergeText(_splitText.before, _textToInsert!)
 
     // merge last half of text with new next
     _mergedText = mergeText(_mergedText, _textAfter.after)
@@ -552,7 +569,7 @@ export const replaceInlineText = ({
 
     // update offset to current offset
     // get difference of previous atomic to new atomic to update length of the atomic
-    const _diff = _textToInsert.textValue.length - r.length
+    const _diff = _textToInsert!.textValue.length - r.length
     _cumulativeOffset += _diff
   })
   if (_rangesWithId.length) {
@@ -624,6 +641,30 @@ export const convertInlineToAtomicBlocks = ({
     return
   }
 
+  // same operation as above but with 'inlineEmbedInput' and checking for two characters
+  const inlineEmbedData = getTextOffsetWithRange({
+    text: block.text,
+    rangeType: RangeType.InlineEmbedInput,
+  })
+
+  if (inlineEmbedData?.length === 2) {
+    const ranges: Range[] = []
+    block.text.ranges.forEach((r) => {
+      if (!r.marks.includes(RangeType.InlineEmbedInput)) {
+        ranges.push(r)
+      }
+    })
+
+    block.text.ranges = block.text.ranges.filter(
+      (r) => !r.marks.includes(RangeType.InlineEmbedInput)
+    )
+    // force a re-render
+    draft.operations.push({
+      index,
+      block,
+    })
+    return
+  }
   // check if text is inline atomic type
   const _atomicType =
     inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))
@@ -722,6 +763,149 @@ export const convertInlineToAtomicBlocks = ({
       draft.newEntities.push(_entity)
     }
   }
+}
+
+/**
+ *
+ *  if flag `convertInlineToAtomic` is set, pull out text within range `inlineEmbedInput`, look up in entityCache and replace text with `[title]` attributes property, save block with `EMBED` type
+ */
+export const convertInlineToEmbed = ({
+  block,
+  index,
+  draft,
+  attributes,
+  suggestion,
+}: {
+  block: Block
+  index: number
+  draft: EditorState
+  attributes?: IframeAttributes
+  suggestion?: Embed
+}) => {
+  const _newId = uid()
+
+  // initialize attribute title
+  const _attributes = attributes || { title: '' }
+
+  const _timetstamp = Date.now()
+
+  const _embedText =
+    ((suggestion?.text && {
+      textValue: `[${suggestion.text.textValue}]`,
+      ranges: [
+        {
+          marks: [[InlineTypes.Embed, suggestion._id]],
+          length: suggestion.text.textValue.length + 2,
+          offset: 0,
+        },
+      ],
+    }) as Text) ||
+    ({
+      textValue: `[${
+        attributes?.mediaType === MediaTypes.UNFETCHED
+          ? `unfetched media ${_timetstamp}`
+          : attributes?.title
+      }]`,
+      ranges: [
+        {
+          marks: [[InlineTypes.Embed, _newId]],
+          length: _attributes?.title ? _attributes?.title.length + 2 : 31,
+          offset: 0,
+        },
+      ],
+    } as Text)
+
+  const inlineEmbedData = getTextOffsetWithRange({
+    text: block.text,
+    rangeType: RangeType.InlineEmbedInput,
+  })
+  if (!inlineEmbedData) {
+    return
+  }
+  // trim text from block and replace with `[attributes.title]`
+  const splitText = splitTextAtOffset({
+    text: block.text,
+    offset: inlineEmbedData.offset,
+  })
+
+  const textAfter = splitTextAtOffset({
+    text: splitText.after,
+    offset: inlineEmbedData.length,
+  }).after
+
+  // const _offset = splitText.before.textValue.length // compensate for removing <<
+
+  let mergedText = mergeText(splitText.before, _embedText)
+
+  const _caretOffest = mergedText.textValue.length
+
+  mergedText = mergeText(mergedText, textAfter)
+
+  block.text = mergedText
+
+  // force a block re-render
+  draft.operations.push({
+    index,
+    block,
+    //  if no text after add a nbsp
+    setCaretAfter: !textAfter.textValue.length,
+  })
+
+  // update selection
+  const _nextSelection = {
+    _id: draft.selection._id,
+    anchor: { index, offset: _caretOffest + 1 },
+    focus: { index, offset: _caretOffest + 1 },
+  }
+
+  // TODO: WHAT WILL THE SELECTION BE
+  draft.selection = _nextSelection
+  draft.preventDefault = true
+  // if suggestion exists do not create new entity
+  let _entity
+
+  // TODO: LOOK UP IF SUGGESTION ALREADY EXISTS
+  if (attributes) {
+    // first confirm remote media has been fetched
+    if (attributes.mediaType === MediaTypes.UNFETCHED) {
+      _entity = {
+        type: BlockType.Embed,
+        // remove atomic symbol
+        text: { textValue: `unfetched media ${_timetstamp}`, ranges: [] },
+        detail: {
+          src: _attributes.src,
+          mediaType: _attributes.mediaType,
+        },
+        _id: _newId,
+      }
+    } else {
+      _entity = {
+        type: BlockType.Embed,
+        // remove atomic symbol
+        text: { textValue: _attributes.title, ranges: [] },
+        detail: {
+          title: _attributes.title,
+          src: _attributes.src,
+          ...(_attributes.openGraphJson && {
+            openGraphJson: _attributes.openGraphJson,
+          }),
+          dimensions: {
+            width: _attributes.width,
+            height: _attributes.height,
+          },
+          ...(_attributes.code && { embedCode: _attributes.code }),
+          mediaType: _attributes.mediaType,
+        },
+        _id: _newId,
+      }
+    }
+  }
+
+  if (suggestion) {
+    _entity = suggestion
+  }
+
+  draft.newEntities.push(_entity)
 }
 
 export const getInlineOrAtomicsFromStateSelection = (

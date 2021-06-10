@@ -19,6 +19,7 @@ import {
   downKey,
   downShiftKey,
 } from './_helpers.selenium'
+import { cleanUrl } from './__helpers'
 
 let driver
 let actions
@@ -132,8 +133,8 @@ describe('group sharings', () => {
     // get public collection link
     await selectLinkInFirstBlock(actions)
 
-    const publicCollectionUrl = await driver.executeScript(
-      'return window.getSelection().toString()'
+    const publicCollectionUrl = cleanUrl(
+      await driver.executeScript('return window.getSelection().toString()')
     )
 
     // CREATE SECOND COLLECTION (delete)
@@ -169,8 +170,8 @@ describe('group sharings', () => {
     await paste(actions)
     await selectLinkInFirstBlock(actions)
 
-    const publicCollectionDeleteUrl = await driver.executeScript(
-      'return window.getSelection().toString()'
+    const publicCollectionDeleteUrl = cleanUrl(
+      await driver.executeScript('return window.getSelection().toString()')
     )
 
     // THIRD COLLECTION WILL BE UNSHARED
@@ -204,8 +205,8 @@ describe('group sharings', () => {
     await paste(actions)
     await selectLinkInFirstBlock(actions)
 
-    const publicCollectionUnshareUrl = await driver.executeScript(
-      'return window.getSelection().toString()'
+    const publicCollectionUnshareUrl = cleanUrl(
+      await driver.executeScript('return window.getSelection().toString()')
     )
     // allow pages to sync
     await sleep(5000)

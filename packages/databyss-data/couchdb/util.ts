@@ -23,6 +23,7 @@ import path from 'path'
 import { cloudant } from './cloudant'
 // import { UserPreference } from '../pouchdb/interfaces'
 // import { upsert } from '../pouchdb/utils'
+import embedSchema from '../schemas/embedSchema'
 
 const fs = require('fs')
 
@@ -62,6 +63,7 @@ export const updateDesignDoc = async ({
     groupSchema,
     entrySchema,
     topicSchema,
+    embedSchema,
     userPreferenceSchema,
     pointSchema,
     notificationSchema,

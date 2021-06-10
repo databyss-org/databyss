@@ -5,6 +5,8 @@ import {
   Transforms,
   Range,
   Editor as SlateEditor,
+  Element,
+  Descendant,
 } from '@databyss-org/slate'
 import {
   isCharacterKeyPress,
@@ -13,8 +15,23 @@ import {
 } from '../slateUtils'
 import { EditorState } from '../../interfaces/EditorState'
 import { symbolToAtomicType } from '../../state/util'
+import { BlockType } from '../../../databyss-services/interfaces/Block'
 
-export const onInlineBackspaceOrEnter = ({
+export const getLowestLeaf = (children: Descendant[]) => {
+  if (children?.length === 1) {
+    const _child = children[0] as Element
+    if (_child?.children) {
+      const _firstChild = _child.children[0]
+      if (_firstChild) {
+        return getLowestLeaf([_firstChild])
+      }
+    }
+    return _child
+  }
+  return null
+}
+
+export const onInlineKeyPress = ({
   event,
   editor,
   state,
@@ -35,7 +52,8 @@ export const onInlineBackspaceOrEnter = ({
   if (
     (isCharacterKeyPress(event) || event.key === 'Backspace') &&
     (SlateEditor.marks(editor)?.inlineTopic ||
-      SlateEditor.marks(editor)?.inlineCitation) &&
+      SlateEditor.marks(editor)?.inlineCitation ||
+      SlateEditor.marks(editor)?.embed) &&
     Range.isCollapsed(editor.selection)
   ) {
     const _currentBlock = state.blocks[state.selection.anchor.index]
@@ -61,7 +79,11 @@ export const onInlineBackspaceOrEnter = ({
       _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
     }
     // if current or prevous leaf is inline
-    if (_currentLeaf.inlineTopic || _currentLeaf.inlineCitation) {
+    if (
+      _currentLeaf.inlineTopic ||
+      _currentLeaf.inlineCitation ||
+      _currentLeaf.embed
+    ) {
       // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
       if (
         !(_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf) ||
@@ -72,6 +94,38 @@ export const onInlineBackspaceOrEnter = ({
           */
         if (event.key === 'Backspace') {
           // remove inline node
+
+          /**
+           * if anchor is at end of embed leaf
+           * check if next node is a non-width white space
+           * if so, remove white space and move anchor back one
+           */
+          if (_currentLeaf.embed) {
+            // move forward one and check selection
+            Transforms.move(editor, { distance: 1, edge: 'focus' })
+            const _frag = SlateEditor.fragment(editor, editor.selection)
+            const _leaf = getLowestLeaf(_frag)
+            if (_leaf?.embed) {
+              // check if text is empty
+              if (!_leaf?.text?.length) {
+                // if node is empty and embed, remove node instead
+                Transforms.removeNodes(editor, {
+                  match: (node) => node === _leaf,
+                })
+                // move cursor back one space
+                Transforms.move(editor, {
+                  distance: 1,
+                  reverse: true,
+                  unit: 'character',
+                })
+
+                event.preventDefault()
+                return true
+              }
+            }
+
+            Transforms.collapse(editor, { edge: 'anchor' })
+          }
 
           Transforms.removeNodes(editor, {
             match: (node) => node === _currentLeaf,
@@ -106,8 +160,23 @@ export const onInlineBackspaceOrEnter = ({
           if cursor is on an inline atomic and enter is pressed, launch modal
           */
         if (event.key === 'Enter') {
-          console.log('IN THIS ')
-          const _type = symbolToAtomicType(_currentLeaf.text.substring(0, 1))
+          const _type: string | BlockType = symbolToAtomicType(
+            _currentLeaf.text.substring(0, 1)
+          )
+          // check if inline embed
+          if (_currentLeaf?.embed) {
+            // if enter, move cursor to end of current leaf
+            const _leafOffset = _anchor.offset
+            Transforms.move(editor, {
+              distance: _currentLeaf.text.length - _leafOffset,
+              unit: 'character',
+            })
+            // Transforms.insertNodes(editor, { text: '\uFEFF' })
+            Transforms.insertNodes(editor, { text: '\n' })
+            event.preventDefault()
+
+            return true
+          }
           const inlineAtomicData = {
             refId: _currentLeaf.atomicId,
             type: _type,
@@ -116,6 +185,7 @@ export const onInlineBackspaceOrEnter = ({
           onInlineAtomicClick(inlineAtomicData)
         }
         event.preventDefault()
+
         return true
       }
     }

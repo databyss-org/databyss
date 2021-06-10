@@ -31,6 +31,7 @@ import { DocumentType } from './interfaces'
 import { searchText, setDbBusyDispatch, setDbBusy } from './utils'
 import { processGroupActionQ } from './groups/utils'
 import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
+import embedSchema from '../schemas/embedSchema'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
@@ -42,6 +43,7 @@ PouchDB.plugin(PouchDBUpsert)
 
 interface DbRef {
   current: PouchDB.Database<any> | null
+  readOnly: boolean
 }
 
 declare global {
@@ -67,6 +69,7 @@ export const getPouchDb = (groupId: string) => {
 }
 export const dbRef: DbRef = {
   current: null,
+  readOnly: false,
 }
 
 // try to load pouch_secrets from local storage to init db
@@ -365,6 +368,7 @@ export const pouchDataValidation = (data) => {
     [BlockType.Source]: sourceSchema,
     [BlockType.Entry]: entrySchema,
     [BlockType.Topic]: topicSchema,
+    [BlockType.Embed]: embedSchema,
     [DocumentType.Group]: groupSchema,
     [DocumentType.Page]: pageSchema,
     [DocumentType.Selection]: selectionSchema,

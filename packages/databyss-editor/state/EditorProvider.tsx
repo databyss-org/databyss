@@ -24,6 +24,7 @@ import {
   REMOVE_AT_SELECTION,
   CACHE_ENTITY_SUGGESTIONS,
   DEQUEUE_REMOVED_ENTITY,
+  PASTE_EMBED,
 } from './constants'
 import { Text, Selection, EditorState, Block, PagePath } from '../interfaces'
 import _initState, { addMetaDataToBlocks } from './initialState'
@@ -70,6 +71,7 @@ type ContextType = {
   clear: (index: number) => void
   copy: (event: ClipboardEvent) => void
   cut: (event: ClipboardEvent) => void
+  embedPaste: (code: string) => void
   paste: (event: ClipboardEvent) => void
   insert: (blocks: Block[]) => void
   replace: (blocks: Block[]) => void
@@ -154,6 +156,36 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
       type: SET_SELECTION,
       payload: { selection },
     })
+
+  /**
+   * paste event handler
+   */
+
+  const embedPaste = (e) => {
+    const htmlSrc = e.clipboardData!.getData('text/html')
+    if (htmlSrc) {
+      // if hmtl is pasted, attempt to retrieve the src tag from images
+      const doc = new DOMParser().parseFromString(htmlSrc, 'text/html')
+      const _el = doc.getElementsByTagName('img')
+      if (_el.length) {
+        // assume first element in array
+        const _src = _el[0].src
+        if (_src) {
+          dispatch({
+            type: PASTE_EMBED,
+            payload: _src,
+          })
+        }
+      }
+    }
+    // plaintext text fragment
+    const plainTextDataTransfer = e.clipboardData!.getData('text/plain')
+
+    dispatch({
+      type: PASTE_EMBED,
+      payload: plainTextDataTransfer,
+    })
+  }
 
   /**
    * Split the block at `index` into two blocks
@@ -301,6 +333,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
           insert,
           replace,
           paste,
+          embedPaste,
           setSelection,
           setContent,
           split,

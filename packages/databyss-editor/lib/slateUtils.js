@@ -31,6 +31,7 @@ export const flattenNodeToPoint = (editor, point) => {
     offset: point.offset,
   }
   const _frag = Editor.fragment(editor, { anchor, focus })
+
   const _string = Node.string({ children: _frag })
   return _string
 }
@@ -74,7 +75,8 @@ export const entities = (type) =>
 const slateBlockMap = {}
 
 export const stateBlockToHtml = (block) => {
-  const _text = block.text.textValue
+  // replace non width white space with a white space
+  const _text = block.text.textValue.replace('\uFEFF', ' ')
   const _ranges = flattenRanges(block.text.ranges)
   return textToHtml({
     textValue: _text,
@@ -143,9 +145,11 @@ const allowedRanges = [
   'inlineAtomicMenu',
   'inlineTopic',
   'inlineCitation',
+  'embed',
+  'inlineEmbedInput',
 ]
 
-const allowedInlines = ['inlineTopic', 'inlineCitation']
+const allowedInlines = ['inlineTopic', 'inlineCitation', 'embed']
 
 export const slateRangesToStateRanges = (node) => {
   let _offset = 0
@@ -158,7 +162,6 @@ export const slateRangesToStateRanges = (node) => {
       return
     }
     const _textLength = child.text.length
-
     // check if range is inline type
     const _inlineType = Object.keys(child).filter((prop) =>
       allowedInlines.includes(prop)
@@ -181,7 +184,6 @@ export const slateRangesToStateRanges = (node) => {
 
     _offset += _textLength
   })
-
   return _ranges
 }
 
@@ -293,6 +295,16 @@ export const isCurrentlyInInlineAtomicField = (editor) => {
   return false
 }
 
+export const isCurrentlyInInlineEmbedInput = (editor) => {
+  if (
+    isMarkActive(editor, 'inlineEmbedInput') &&
+    Range.isCollapsed(editor.selection)
+  ) {
+    return true
+  }
+  return false
+}
+
 /*
 returns all blocks which contain an inline or atomic block with provided id ignoring closure blocks
 */
@@ -310,7 +322,9 @@ export const getBlocksWithAtomicId = (blocks, id) => {
             (m) =>
               Array.isArray(m) &&
               m.length === 2 &&
-              (m[0] === 'inlineTopic' || m[0] === 'inlineCitation') &&
+              (m[0] === 'inlineTopic' ||
+                m[0] === 'inlineCitation' ||
+                m[0] === 'embed') &&
               m[1] === id
           ).length
       ).length
@@ -325,7 +339,9 @@ export const getInlineFromBlock = (block, id) =>
         (m) =>
           Array.isArray(m) &&
           m.length === 2 &&
-          (m[0] === 'inlineTopic' || m[0] === 'inlineCitation') &&
+          (m[0] === 'inlineTopic' ||
+            m[0] === 'inlineCitation' ||
+            m[0] === 'embed') &&
           m[1] === id
       )
     )
@@ -366,7 +382,9 @@ export const insertTextWithInilneCorrection = (text, editor) => {
     if (
       _atLeafStart &&
       !_atBlockStart &&
-      (_currentLeaf.inlineTopic || _currentLeaf.inlineCitation)
+      (_currentLeaf.inlineTopic ||
+        _currentLeaf.inlineCitation ||
+        _currentLeaf.embed)
     ) {
       Transforms.move(editor, {
         unit: 'character',
@@ -379,15 +397,22 @@ export const insertTextWithInilneCorrection = (text, editor) => {
       })
       _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
     }
+
     Transforms.insertText(editor, text)
     // if inserted text has inline mark, remove mark
-    if (_currentLeaf.inlineTopic || _currentLeaf.inlineCitation) {
+    if (
+      _currentLeaf.inlineTopic ||
+      _currentLeaf.inlineCitation ||
+      _currentLeaf.embed
+    ) {
       Transforms.move(editor, {
         unit: 'character',
         distance: text.length,
         edge: 'anchor',
         reverse: true,
       })
+
+      Editor.removeMark(editor, 'embed')
       Editor.removeMark(editor, 'inlineCitation')
       Editor.removeMark(editor, 'inlineTopic')
       Editor.removeMark(editor, 'atomicId')
@@ -409,7 +434,10 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
     const _offset = parseInt(flattenOffset(editor, editor.selection.focus), 10)
 
     // check if previous character is a white space, if so, remove whitespace and recalculate text and offset
-    const _prevWhiteSpace = _text.charAt(_offset - 1) === '\u2060'
+    const _prevWhiteSpace =
+      _text.charAt(_offset - 1) === '\u2060' ||
+      _text.charAt(_offset - 1) === '\uFEFF'
+
     if (_prevWhiteSpace) {
       Transforms.delete(editor, {
         distance: 1,
@@ -418,7 +446,6 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
       })
       return true
     }
-
     /*
     if offset is not zero and previous node is an atomic inline, move cursor to have active inline mark
     */
@@ -427,7 +454,8 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
       if (
         _prev?.length &&
         (Editor.previous(editor)[0]?.inlineTopic ||
-          Editor.previous(editor)[0]?.inlineCitation)
+          Editor.previous(editor)[0]?.inlineCitation ||
+          Editor.previous(editor)[0]?.embed)
       ) {
         Transforms.move(editor, {
           unit: 'character',
@@ -458,7 +486,11 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
       // move selection forward one
       if (
         _atLeafEnd &&
-        !(_currentLeaf.inlineTopic || _currentLeaf.inlineCitation)
+        !(
+          _currentLeaf.inlineTopic ||
+          _currentLeaf.inlineCitation ||
+          _currentLeaf.embed
+        )
       ) {
         Transforms.move(editor, {
           unit: 'character',
@@ -472,9 +504,14 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
         })
       }
       // remove marks before text is entered
-      if (_currentLeaf.inlineTopic || _currentLeaf.inlineCitation) {
+      if (
+        _currentLeaf.inlineTopic ||
+        _currentLeaf.inlineCitation ||
+        _currentLeaf.embed
+      ) {
         Editor.removeMark(editor, 'inlineTopic')
         Editor.removeMark(editor, 'inlineCitation')
+        Editor.removeMark(editor, 'embed')
         Editor.removeMark(editor, 'atomicId')
       }
     }

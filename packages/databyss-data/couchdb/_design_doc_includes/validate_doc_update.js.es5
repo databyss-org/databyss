@@ -18,6 +18,7 @@ function(newDoc) {
       SOURCE: this.sourceSchema,
       ENTRY: this.entrySchema,
       TOPIC: this.topicSchema,
+      EMBED: this.embedSchema,
       PAGE: this.pageSchema,
       GROUP: this.groupSchema,
       SELECTION: this.selectionSchema,

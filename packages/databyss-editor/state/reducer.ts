@@ -22,6 +22,7 @@ import {
   UNDO,
   REDO,
   CACHE_ENTITY_SUGGESTIONS,
+  PASTE_EMBED,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -49,6 +50,7 @@ import {
   trimRight,
   splitBlockAtEmptyLine,
   convertInlineToAtomicBlocks,
+  convertInlineToEmbed,
   replaceInlineText,
   getRangesAtPoint,
   pushAtomicChangeUpstream,
@@ -63,6 +65,7 @@ import {
   InlineTypes,
 } from '../../databyss-services/interfaces/Range'
 import { OnChangeArgs } from './EditorProvider'
+import { normalizeDatabyssBlock } from '../lib/clipboardUtils/databyssFragToHtmlString'
 
 // if block at @index in @draft.blocks starts with an atomic identifier character,
 // e.g. @ or #, convert the block to the appropriate atomic type and return it.
@@ -529,6 +532,53 @@ export default (
 
           break
         }
+        case PASTE_EMBED: {
+          const _currentOffset = draft.selection.anchor.offset
+
+          insertText({
+            block: draft.blocks[draft.selection.anchor.index],
+            text: {
+              textValue: payload,
+              ranges: [
+                {
+                  offset: 0,
+                  length: payload.length,
+                  marks: [RangeType.InlineEmbedInput],
+                },
+              ],
+            },
+            offset: _currentOffset,
+          })
+          // normalize node so ranges are unified
+
+          const _block = normalizeDatabyssBlock(
+            draft.blocks[draft.selection.anchor.index]
+          )
+          // replace current block
+          draft.blocks[draft.selection.anchor.index] = _block
+
+          // update cursor
+          const _cursor = {
+            index: draft.selection.anchor.index,
+            offset: _currentOffset + payload.length,
+          }
+
+          nextSelection = {
+            _id: draft.selection._id,
+            anchor: _cursor,
+            focus: _cursor,
+          }
+
+          draft.operations.push({
+            index: state.selection.anchor.index,
+            block: _block,
+          })
+
+          // draft.operations.reloadAll = true
+
+          break
+        }
+
         case SPLIT: {
           // don't allow SPLIT inside atomic
           if (
@@ -781,6 +831,16 @@ export default (
                 index: op.index,
                 draft,
               })
+            } else if (op.convertInlineToEmbed) {
+              convertInlineToEmbed({
+                block: _block,
+                index: op.index,
+                draft,
+                // if suggestion is passed, append to suggest property, else append to attributes property
+                ...(op?.convertInlineToEmbed?.text
+                  ? { suggestion: op.convertInlineToEmbed }
+                  : { attributes: op.convertInlineToEmbed }),
+              })
             } else if (op.withRerender) {
               // if operation requires re-render push operation upstream
               draft.operations.push({
@@ -990,6 +1050,7 @@ export default (
         block.__isActive = false
         block.__showInlineTopicMenu = false
         block.__showInlineCitationMenu = false
+        block.__showInlineEmbedMenu = false
       })
       const _selectedBlock = draft.blocks[draft.selection.focus.index]
 
@@ -1027,7 +1088,10 @@ export default (
             if (acc === true) {
               return true
             }
-            if (curr.marks.includes(RangeType.InlineAtomicInput)) {
+            if (
+              curr.marks.includes(RangeType.InlineAtomicInput) ||
+              curr.marks.includes(RangeType.InlineEmbedInput)
+            ) {
               return true
             }
             return false
@@ -1035,7 +1099,7 @@ export default (
           false
         )
 
-        // show __showInlineTopicMenu or __showInlineCitationMenu if selection is collapsed, selection is within text precedded with a `#` or `@` and it is currently not tagged already
+        // show __showInlineTopicMenu, __showInlineCitationMenu, or __showInlineEmbedMenu if selection is collapsed, selection is within text precedded with a `#` or `@` and it is currently not tagged already
         if (_hasInlineMenuMark) {
           // check to see if inline mark is source or topic
           const inlineMarkupData = getTextOffsetWithRange({
@@ -1053,6 +1117,16 @@ export default (
               _selectedBlock.__showInlineCitationMenu = true
             }
           }
+        }
+
+        // check if in active embed menu
+        const inlineEmbedData = getTextOffsetWithRange({
+          text: _selectedBlock.text,
+          rangeType: RangeType.InlineEmbedInput,
+        })
+
+        if (inlineEmbedData && !selectionHasRange(draft.selection)) {
+          _selectedBlock.__showInlineEmbedMenu = true
         }
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element
