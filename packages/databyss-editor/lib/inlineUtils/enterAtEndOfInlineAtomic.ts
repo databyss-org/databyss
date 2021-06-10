@@ -10,15 +10,14 @@ import insertTextAtOffset from '../clipboardUtils/insertTextAtOffset'
 import { Block } from '../../interfaces'
 import { flattenOffset } from '../slateUtils'
 import { EditorState } from '../../interfaces/EditorState'
-import { getLowestLeaf } from './onInlineKeyPress'
 
 export const enterAtEndOfInlineAtomic = ({
   editor,
   event,
   currentLeaf,
   setContent,
-  atBlockEnd,
   currentBlock,
+  atBlockEnd,
   state,
 }: {
   editor: ReactEditor & SlateEditor
@@ -46,7 +45,7 @@ export const enterAtEndOfInlineAtomic = ({
      * check if enter at end of embed
      */
 
-    const _textToInsert = '\n'
+    let _textToInsert = atBlockEnd ? '\n\u2060' : '\n'
     // enter non width white space if enter at end of embed
 
     let updateSelection = true
@@ -68,6 +67,7 @@ export const enterAtEndOfInlineAtomic = ({
         const _nextNodePath = SlateEditor.next(editor, {
           at: editor.selection?.anchor,
         })
+        // EDGE CASE: if cursor is at last position at the end of an embed, caret must be exlicitly set
         if (_nextNodePath?.length) {
           const _textNode = _nextNodePath[0] as Text
           const _newOffset = _textNode.text.length
@@ -76,17 +76,6 @@ export const enterAtEndOfInlineAtomic = ({
           const _sel = { anchor: _point, focus: _point }
           Transforms.select(editor, _sel)
         }
-
-        // const _tempSelection = editor.selection
-        // const { path } = _tempSelection!.anchor
-        // path[1] += 1
-        // const _point = { path, offset: 1 }
-        // const _sel = { anchor: _point, focus: _point }
-        // try {
-        //   Transforms.select(editor, _sel)
-        // } catch (err) {
-        //   console.error('HAS ERROR', err)
-        // }
       })
     }
 
