@@ -45,7 +45,7 @@ export const enterAtEndOfInlineAtomic = ({
      * check if enter at end of embed
      */
 
-    let _textToInsert = atBlockEnd ? '\n\u2060' : '\n'
+    const _textToInsert = atBlockEnd ? '\n\u2060' : '\n'
     // enter non width white space if enter at end of embed
 
     let updateSelection = true
