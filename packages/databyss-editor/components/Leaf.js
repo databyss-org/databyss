@@ -110,6 +110,23 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
+  if (leaf.inlineLinkInput) {
+    _children = (
+      <span
+        id="inline-link-input"
+        style={{
+          minWidth: '150px',
+          display: 'inline-block',
+          backgroundColor: gray[6],
+          borderRadius: '3px',
+          //    padding: '3px',
+        }}
+      >
+        {_children}
+      </span>
+    )
+  }
+
   if (leaf.italic) {
     _children = <em>{_children}</em>
   }

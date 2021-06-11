@@ -147,6 +147,7 @@ const allowedRanges = [
   'inlineCitation',
   'embed',
   'inlineEmbedInput',
+  'inlineLinkInput',
 ]
 
 const allowedInlines = ['inlineTopic', 'inlineCitation', 'embed']

@@ -210,6 +210,18 @@ const Element = ({ attributes, children, element, readOnly }) => {
             </View>
           )}
 
+          {block.__showInlineLinkMenu && (
+            <View contentEditable="false" suppressContentEditableWarning>
+              <SuggestMenu
+                inlineLink
+                onSuggestions={onSuggestions}
+                suggestType="embed"
+              >
+                <SuggestEmbeds />
+              </SuggestMenu>
+            </View>
+          )}
+
           {block.__showInlineTopicMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu

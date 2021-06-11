@@ -9,6 +9,9 @@ import {
 } from '@databyss-org/slate'
 import { validURL } from '@databyss-org/services/lib/util'
 import { flattenOffset, isCurrentlyInInlineAtomicField } from '../slateUtils'
+import { InlineInitializer } from '.'
+import { InlineTypes } from '@databyss-org/services/interfaces/Range'
+import { inlineTypeToSymbol, inlineTypeToInputFieldRange } from './helpers'
 
 /**
  *
@@ -27,7 +30,11 @@ export const initiateEmbedInput = ({
     return false
   }
 
-  if (event.key === '<' && Range.isCollapsed(editor.selection)) {
+  if (
+    (event.key === '<' || event.key === '>') &&
+    Range.isCollapsed(editor.selection)
+  ) {
+    const _inlineType = event.key === '<' ? InlineTypes.Embed : InlineTypes.Link
     // don't allow inline if we're in title block
     if (firstBlockIsTitle && editor.selection.focus.path[0] === 0) {
       return false
@@ -45,12 +52,11 @@ export const initiateEmbedInput = ({
       return false
     }
 
-    // const _atBlockStart = _offset === 0
-    // if (!_atBlockStart) {
     // make sure this isnt an atomic closure
     const _text = Node.string(editor.children[editor.selection.focus.path[0]])
 
-    const _shouldInitiate = _text.charAt(_offset - 1) === '<'
+    const _shouldInitiate =
+      _text.charAt(_offset - 1) === '<' || _text.charAt(_offset - 1) === '>'
 
     if (_shouldInitiate) {
       // const _isClosure = _text.charAt(_offset - 1) === '/'
@@ -95,7 +101,7 @@ export const initiateEmbedInput = ({
             })
             Transforms.delete(editor)
             Transforms.insertNodes(editor, {
-              text: `<<${_wordToSwollow}`,
+              text: `${InlineInitializer.embed}${_wordToSwollow}`,
               inlineEmbedInput: true,
             })
             event.preventDefault()
@@ -106,7 +112,7 @@ export const initiateEmbedInput = ({
       // toggle the inline atomic block
       // insert key manually to trigger an 'insert_text' command
       if (!isCurrentlyInInlineAtomicField(editor)) {
-        // remove previous `<`
+        // remove previous `<` or `>`
         Transforms.move(editor, {
           unit: 'character',
           distance: 1,
@@ -116,8 +122,8 @@ export const initiateEmbedInput = ({
         Transforms.delete(editor)
 
         Transforms.insertNodes(editor, {
-          text: '<<',
-          inlineEmbedInput: true,
+          text: inlineTypeToSymbol(_inlineType),
+          [inlineTypeToInputFieldRange(_inlineType)]: true,
         })
         event.preventDefault()
         return true

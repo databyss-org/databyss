@@ -1090,7 +1090,8 @@ export default (
             }
             if (
               curr.marks.includes(RangeType.InlineAtomicInput) ||
-              curr.marks.includes(RangeType.InlineEmbedInput)
+              curr.marks.includes(RangeType.InlineEmbedInput) ||
+              curr.marks.includes(RangeType.InlineLinkInput)
             ) {
               return true
             }
@@ -1127,6 +1128,16 @@ export default (
 
         if (inlineEmbedData && !selectionHasRange(draft.selection)) {
           _selectedBlock.__showInlineEmbedMenu = true
+        }
+
+        // check if active linke menu
+        const inlineLinkData = getTextOffsetWithRange({
+          text: _selectedBlock.text,
+          rangeType: RangeType.InlineLinkInput,
+        })
+
+        if (inlineLinkData && !selectionHasRange(draft.selection)) {
+          _selectedBlock.__showInlineLinkMenu = true
         }
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element
