@@ -889,10 +889,13 @@ export const convertInlineToEmbed = ({
           ...(_attributes.openGraphJson && {
             openGraphJson: _attributes.openGraphJson,
           }),
-          dimensions: {
-            width: _attributes.width,
-            height: _attributes.height,
-          },
+          ...(_attributes.width &&
+            _attributes.height && {
+              dimensions: {
+                width: _attributes.width,
+                height: _attributes.height,
+              },
+            }),
           ...(_attributes.code && { embedCode: _attributes.code }),
           mediaType: _attributes.mediaType,
         },

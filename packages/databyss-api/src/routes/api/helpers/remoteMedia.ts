@@ -2,15 +2,17 @@ import requestImageSize from 'request-image-size'
 import { DOMParser } from 'xmldom'
 import ogs from 'open-graph-scraper'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
-import { MediaResponse, MAX_WIDTH, _regExValidator } from '../media'
+import { MediaResponse, _regExValidator } from '../media'
 
 export const getImageAttributes = async (url: string) => {
   const _response: MediaResponse = {
     mediaType: null,
     title: null,
     src: null,
-    width: null,
-    height: null,
+    dimensions: {
+      width: null,
+      height: null,
+    },
     openGraphJson: null,
   }
 
@@ -21,9 +23,7 @@ export const getImageAttributes = async (url: string) => {
   let _title = urlPath[urlPath.length - 1]
   _title = _title.split('?')[0].split('.')[0]
   _response.title = decodeURIComponent(_title)
-  const _dimensions = await requestImageSize(url)
-  _response.width = _dimensions.width
-  _response.height = _dimensions.height
+  _response.dimensions = await requestImageSize(url)
   return _response
 }
 
@@ -32,8 +32,6 @@ export const getHtmlAttributes = (code: string) => {
     mediaType: null,
     title: null,
     src: null,
-    width: null,
-    height: null,
   }
 
   const _iFrameAllowList = {
@@ -71,26 +69,11 @@ export const getHtmlAttributes = (code: string) => {
           if (_iFrameAllowList[i.name]) _response[i.name] = i.value
         })
 
-        // scale iframe for max width of 500 - 16 (padding)
-        if (_response.width && MAX_WIDTH < _response.width) {
-          const _widthRatio = MAX_WIDTH / _response.width
-
-          _response.mediaType = MediaTypes.IFRAME
-          _response.width *= _widthRatio
-
-          if (_response.height) {
-            _response.height *= _widthRatio
-          }
-        }
-
         return _response
       }
     }
 
     // parse as regular html
-    // TODO: what  are these dimension
-    _response.height = 200
-    _response.width = 300
     _response.src = code
     _response.mediaType = MediaTypes.HTML
     _response.title = `html fragment ${Date.now()}`
@@ -105,8 +88,6 @@ export const getTwitterAttributes = async (url: string) => {
     mediaType: null,
     title: null,
     src: null,
-    width: null,
-    height: null,
   }
   // convert tweet to regex values
   const _regex = /https*:\/\/twitter\.com\/(?<USER>.+?)\/status\/(?<TID>\d+)/
@@ -117,8 +98,6 @@ export const getTwitterAttributes = async (url: string) => {
     username = match.groups.USER
     tweetId = match.groups.TID
   }
-  _response.width = 350
-  _response.height = 175
   _response.src = `https://platform.twitter.com/embed/Tweet.html?id=${tweetId}`
   _response.title = `tweet by ${username} ${tweetId}`
   _response.mediaType = MediaTypes.TWITTER
@@ -151,15 +130,11 @@ export const getYoutubeAttributes = async (url) => {
     mediaType: null,
     title: null,
     src: null,
-    width: null,
-    height: null,
   }
   // pull video id from url
   const match = url.match(_regExValidator.youtube)
   const _id = match[2]
   _response.mediaType = MediaTypes.YOUTUBE
-  _response.width = MAX_WIDTH
-  _response.height = 273
   _response.src = `https://www.youtube.com/embed/${_id}`
 
   // get open graph information
@@ -188,8 +163,6 @@ export const getDropboxAttributes = async (url) => {
     mediaType: null,
     title: null,
     src: null,
-    width: null,
-    height: null,
   }
 
   const match = _regExValidator.dropbox.exec(url)
@@ -200,9 +173,6 @@ export const getDropboxAttributes = async (url) => {
     FNAME = match.groups.FNAME
   }
 
-  // todo: FIND OUT DIMENSIONS
-  _response.width = 350
-  _response.height = 175
   _response.src = `https://www.dropbox.com/s/${FID}/${FNAME}?raw=1`
   _response.title = `dropbox file ${FNAME}`
   _response.mediaType = MediaTypes.WEBSITE
@@ -214,8 +184,6 @@ export const getWebsiteAttributes = async (url) => {
     mediaType: null,
     title: null,
     src: null,
-    width: null,
-    height: null,
   }
   try {
     const options = { url }
@@ -225,8 +193,6 @@ export const getWebsiteAttributes = async (url) => {
     if (result.success) {
       _response.title = `web page: ${result.ogTitle}`
       _response.src = url
-      _response.width = 480
-      _response.height = 300
       _response.mediaType = MediaTypes.WEBSITE
       _response.openGraphJson = JSON.stringify(result)
     }

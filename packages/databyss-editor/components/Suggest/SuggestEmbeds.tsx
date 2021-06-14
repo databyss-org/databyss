@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Editor } from '@databyss-org/slate'
-import { BlockType, Embed } from '@databyss-org/services/interfaces'
+import { BlockType } from '@databyss-org/services/interfaces'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { useEditor, ReactEditor } from '@databyss-org/slate-react'
 import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks/useBlocksInPages'
@@ -15,8 +15,12 @@ import { pxUnits } from '@databyss-org/ui/theming/theme'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { useEditorContext } from '../../state/EditorProvider'
 import { setEmbedMedia } from '../../lib/inlineUtils'
-import { Block, MediaTypes } from '../../../databyss-services/interfaces/Block'
-import { IframeAttributes } from './iframeUtils'
+import {
+  Block,
+  Embed,
+  EmbedDetail,
+  MediaTypes,
+} from '../../../databyss-services/interfaces/Block'
 import { removeCurrentInlineInput } from '../../lib/inlineUtils/onEscapeInInlineAtomicField'
 import { IframeComponent } from './IframeComponent'
 import { isHttpInsecure } from '../EmbedMedia'
@@ -38,7 +42,7 @@ const SuggestEmbeds = ({
   const [suggestions, setSuggestions] = useState<null | Block[]>(null)
   const filteredSuggestionLengthRef = useRef(0)
   const [filteredSuggestions, setFilteredSuggestions] = useState<Embed[]>([])
-  const [iframeAtts, setIframeAtts] = useState<IframeAttributes | false>(false)
+  const [embedDetail, setEmbedDetail] = useState<EmbedDetail | false>(false)
   const [mediaUnavailable, setMediaUnavailable] = useState(false)
 
   useEffect(() => {
@@ -55,8 +59,8 @@ const SuggestEmbeds = ({
     _timeoutRef.current = setTimeout(() => {
       if (
         !filteredSuggestionLengthRef.current &&
-        iframeAtts &&
-        iframeAtts?.mediaType === MediaTypes.UNFETCHED
+        embedDetail &&
+        embedDetail?.mediaType === MediaTypes.UNFETCHED
       ) {
         setMediaUnavailable(true)
       }
@@ -66,11 +70,11 @@ const SuggestEmbeds = ({
 
   // default attributes if not set already, this will be used in offline mode
   useEffect(() => {
-    console.log('IFRAME', iframeAtts)
+    console.log('IFRAME', embedDetail)
     setMediaUnavailable(false)
     if (
-      iframeAtts &&
-      iframeAtts?.mediaType !== MediaTypes.UNFETCHED &&
+      embedDetail &&
+      embedDetail?.mediaType !== MediaTypes.UNFETCHED &&
       _timeoutRef.current
     ) {
       console.log('clears')
@@ -79,15 +83,15 @@ const SuggestEmbeds = ({
     }
 
     if (
-      !iframeAtts ||
-      (iframeAtts.mediaType === MediaTypes.UNFETCHED &&
-        iframeAtts?.src !== query)
+      !embedDetail ||
+      (embedDetail.mediaType === MediaTypes.UNFETCHED &&
+        embedDetail?.src !== query)
     ) {
-      console.log('IN HERE', iframeAtts)
-      setIframeAtts({ mediaType: MediaTypes.UNFETCHED, src: query })
+      console.log('IN HERE', embedDetail)
+      setEmbedDetail({ mediaType: MediaTypes.UNFETCHED, src: query })
       toggleTimeout()
     }
-  }, [query, iframeAtts])
+  }, [query, embedDetail])
 
   const graphRes = useOpenGraph(query)
   // get title data from OG and set as attribute
@@ -95,7 +99,7 @@ const SuggestEmbeds = ({
     const _data = graphRes?.data
 
     if (_data?.mediaType) {
-      setIframeAtts({ ...iframeAtts, ..._data })
+      setEmbedDetail({ ...embedDetail, ..._data })
     }
   }, [graphRes.data, query])
 
@@ -135,12 +139,12 @@ const SuggestEmbeds = ({
       return
     }
 
-    if (iframeAtts) {
+    if (embedDetail) {
       setEmbedMedia({
         editor,
         state,
         setContent,
-        attributes: iframeAtts,
+        attributes: embedDetail,
       })
       return
     }
@@ -200,7 +204,7 @@ const SuggestEmbeds = ({
       return <MediaUnavailable />
     }
     // if not iframe suggestion, check if suggestion with same title exists
-    if (!iframeAtts || filteredSuggestions.length) {
+    if (!embedDetail || filteredSuggestions.length) {
       // check if filtered suggestions exist
       return (
         <View
@@ -223,27 +227,18 @@ const SuggestEmbeds = ({
         </View>
       )
     }
-    const { src, height, width, mediaType, openGraphJson } = iframeAtts
 
-    let _src
-    if (src) {
-      _src = isHttpInsecure(src)
-        ? `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(src)}`
-        : src
+    if (isHttpInsecure(embedDetail.src)) {
+      embedDetail.src = `${
+        process.env.API_URL
+      }/media/proxy?url=${encodeURIComponent(embedDetail.src)}`
     }
-    return iframeAtts && iframeAtts?.mediaType === MediaTypes.UNFETCHED ? (
+    return embedDetail && embedDetail?.mediaType === MediaTypes.UNFETCHED ? (
       <View p="large">
         <LoadingFallback />
       </View>
     ) : (
-      <IframeComponent
-        openGraphData={openGraphJson}
-        highlight={false}
-        mediaType={mediaType!}
-        height={height!}
-        width={width!}
-        src={_src}
-      />
+      <IframeComponent embedDetail={embedDetail} highlight={false} />
     )
   }
 

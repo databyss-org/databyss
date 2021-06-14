@@ -18,8 +18,10 @@ const router = express.Router()
 export interface MediaResponse {
   mediaType: MediaTypes | null
   title: string | null
-  height?: number | null
-  width?: number | null
+  dimensions?: {
+    height?: number | null
+    width?: number | null
+  }
   src: string | null
   openGraphJson?: string | null
 }

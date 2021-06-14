@@ -10,15 +10,9 @@ import { View, Icon, Button } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import _ from 'lodash'
 import { useBlocks } from '@databyss-org/data/pouchdb/hooks/useBlocks'
-import {
-  Embed,
-  BlockType,
-  MediaTypes,
-} from '@databyss-org/services/interfaces/Block'
-import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
-import { IframeAttributes } from './Suggest/iframeUtils'
-import { UnfetchedMedia } from './UnfetchedMedia'
-import { IframeComponent } from './Suggest/IframeComponent'
+import { Embed, BlockType } from '@databyss-org/services/interfaces/Block'
+import { InlineEmbed } from './InlineEmbed'
+import { ResolveEmbed } from './ResolveEmbed'
 
 export const isHttpInsecure = (url) => {
   const _regEx = /^http:\/\//
@@ -50,6 +44,7 @@ export const EmbedMedia = ({
       // get current leaf value
       const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
       if (_currentLeaf.embed && !highlight) {
+        console.log('[EmbedMedia] setHighlight true')
         setHighlight(true)
       } else if (highlight && !_currentLeaf.embed) {
         setHighlight(false)
@@ -67,57 +62,37 @@ export const EmbedMedia = ({
     }
   }, [blocksRes])
 
-  const IFrame = () => {
-    if (!data) {
-      return null
+  const highlightEmbed = () => {
+    console.log('[highlightEmbed]')
+    try {
+      const _el = textRef.current?.children?.[0]
+      console.log(_el)
+      const _node = ReactEditor.toSlateNode(editor, _el)
+      const _path = ReactEditor.findPath(editor, _node)
+      const _offset = _node.text.length
+      const _point = { path: _path, offset: _offset }
+      Transforms.select(editor, _point)
+    } catch {
+      console.log('unable to select')
     }
-    const _atts: IframeAttributes = {
-      width: data.detail?.dimensions?.width,
-      height: data.detail?.dimensions?.height,
-      src: data.detail.src,
-      title: data.detail?.title,
-      mediaType: data.detail?.mediaType,
-      openGraphJson: data.detail?.openGraphJson,
-    }
+  }
 
-    const EmbededComponent = () =>
-      useMemo(() => {
-        const _isUnfetched =
-          !_atts?.mediaType || _atts.mediaType === MediaTypes.UNFETCHED
-
-        if (_isUnfetched) {
-          return (
-            <UnfetchedMedia
-              atomicId={_element.atomicId}
-              src={_atts.src}
-              highlight={highlight}
-            />
-          )
-        }
-
-        const _src = isHttpInsecure(_atts.src)
-          ? `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(
-              _atts.src!
-            )}`
-          : _atts.src
-        const { height, width, mediaType, openGraphJson } = _atts
-        return (
-          <IframeComponent
-            openGraphData={openGraphJson}
-            highlight={highlight}
-            src={_src!}
-            height={height!}
-            width={width!}
-            mediaType={mediaType!}
-          />
-        )
-      }, [_atts.src])
-
-    return (
-      <View position="relative" id="testing" width={_atts.width}>
-        <View position="relative" zIndex={1}>
-          <EmbededComponent />
-        </View>
+  return (
+    <InlineEmbed
+      attributes={attributes}
+      embedData={data}
+      onClick={highlightEmbed}
+      _children={_children}
+      textRef={textRef}
+    >
+      <View position="relative">
+        <ResolveEmbed
+          data={data!}
+          highlight={highlight}
+          leaf={_element}
+          position="relative"
+          zIndex={1}
+        />
         <View
           zIndex={2}
           position="absolute"
@@ -138,66 +113,6 @@ export const EmbedMedia = ({
           </Button>
         </View>
       </View>
-    )
-  }
-
-  const highlightEmbed = () => {
-    try {
-      const _el = textRef.current?.children?.[0]
-      console.log(_el)
-      const _node = ReactEditor.toSlateNode(editor, _el)
-      const _path = ReactEditor.findPath(editor, _node)
-      const _offset = _node.text.length
-      const _point = { path: _path, offset: _offset }
-      Transforms.select(editor, _point)
-    } catch {
-      console.log('unable to select')
-    }
-  }
-
-  return useMemo(
-    () => (
-      <span
-        {...attributes}
-        onClick={highlightEmbed}
-        aria-hidden="true"
-        style={{
-          minWidth: '50%',
-          maxWidth: '480px',
-          position: 'relative',
-          display: 'inline-block',
-          borderRadius: '3px',
-          //    padding: '3px',
-        }}
-      >
-        <span
-          contentEditable={false}
-          id="inline-embed"
-          style={{
-            // opacity: '50%',
-            position: 'relative',
-            // TODO: change  this back to a high number
-            zIndex: 10,
-            display: 'inline-block',
-          }}
-        >
-          {data ? <IFrame /> : <LoadingFallback />}
-        </span>
-        <span
-          ref={textRef}
-          style={{
-            padding: '8px',
-            // todo: change this back  to zero
-            zIndex: 0,
-            position: 'absolute',
-            left: 0,
-            top: 0,
-          }}
-        >
-          {_children}
-        </span>
-      </span>
-    ),
-    [data?.text.textValue, highlight]
+    </InlineEmbed>
   )
 }

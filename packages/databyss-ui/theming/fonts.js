@@ -66,6 +66,7 @@ const uiText = (size) => ({
   fontFamily: fonts.uiFont,
   fontSize: size,
   fontWeight: fontWeights.normal,
+  lineHeight: pxUnits(size * 1.5),
 })
 
 const headingVariants = {

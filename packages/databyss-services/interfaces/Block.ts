@@ -58,9 +58,9 @@ export enum MediaTypes {
 }
 
 export interface EmbedDetail {
-  title: string
+  title?: string
   src: string
-  dimensions: {
+  dimensions?: {
     width: number
     height: number
   }
