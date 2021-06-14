@@ -913,13 +913,14 @@ export default (
           draft.entitySuggestionCache = draft.entitySuggestionCache || {}
           // cache suggestions according to long name
           blocks.forEach((block) => {
-            draft.entitySuggestionCache[
-              block.text.textValue.toLowerCase()
-            ] = block
+            // entity suggestion might be a page block
+            const _name = block?.text?.textValue?.toLowerCase() || block?.name
+
+            draft.entitySuggestionCache[_name] = block
           })
           // cache suggestions according to short name
           blocks.forEach((block) => {
-            if (block?.name) {
+            if (block?.name && block?.name?.textValue) {
               draft.entitySuggestionCache[
                 block.name.textValue.toLowerCase()
               ] = block
@@ -1051,6 +1052,7 @@ export default (
         block.__showInlineTopicMenu = false
         block.__showInlineCitationMenu = false
         block.__showInlineEmbedMenu = false
+        block.__showInlineLinkMenu = false
       })
       const _selectedBlock = draft.blocks[draft.selection.focus.index]
 

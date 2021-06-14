@@ -137,7 +137,7 @@ const SuggestMenu = ({
       const _node = editor.children[_index]
       const _stateBlock = editorContext.state.blocks[_index]
 
-      if (!(inlineAtomic || inlineEmbed)) {
+      if (!(inlineAtomic || inlineEmbed || inlineLink)) {
         // get current input value
         const _text = Node.string(_node)
         if (!isAtomicInlineType(_node.type)) {
@@ -152,6 +152,9 @@ const SuggestMenu = ({
         let _inline = { type: '', prefix: '' }
         if (inlineEmbed) {
           _inline = { type: 'inlineEmbedInput', prefixLength: 2 }
+        }
+        if (inlineLink) {
+          _inline = { type: 'inlineLinkInput', prefixLength: 2 }
         }
         if (inlineAtomic) {
           _inline = { type: 'inlineAtomicMenu', prefixLength: 1 }
