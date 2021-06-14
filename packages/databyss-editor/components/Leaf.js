@@ -93,6 +93,21 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
+  if (leaf.link) {
+    _children = (
+      <span
+        onClick={() => onInlineClick({ atomicType: 'LINK', id: leaf.atomicId })}
+        style={{
+          color: blue[1],
+          caretColor: 'black',
+          cursor: 'pointer',
+        }}
+      >
+        {_children}
+      </span>
+    )
+  }
+
   if (leaf.inlineCitation) {
     _children = (
       <span

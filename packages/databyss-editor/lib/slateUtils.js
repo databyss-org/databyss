@@ -142,6 +142,7 @@ const allowedRanges = [
   'bold',
   'italic',
   'location',
+  'link',
   'inlineAtomicMenu',
   'inlineTopic',
   'inlineCitation',
@@ -150,7 +151,7 @@ const allowedRanges = [
   'inlineLinkInput',
 ]
 
-const allowedInlines = ['inlineTopic', 'inlineCitation', 'embed']
+const allowedInlines = ['inlineTopic', 'inlineCitation', 'embed', 'link']
 
 export const slateRangesToStateRanges = (node) => {
   let _offset = 0
