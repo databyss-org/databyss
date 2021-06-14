@@ -10,7 +10,14 @@ const _emailRegEx = new RegExp(
   'gi'
 )
 
-const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
+const Leaf = ({
+  attributes,
+  children,
+  leaf,
+  readOnly,
+  onInlineClick,
+  onNavigationClick,
+}) => {
   const { blue, gray, orange, red } = colors
 
   let _children = children
@@ -96,7 +103,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
   if (leaf.link) {
     _children = (
       <span
-        onClick={() => onInlineClick({ atomicType: 'LINK', id: leaf.atomicId })}
+        onClick={() => onNavigationClick({ id: leaf.atomicId })}
         style={{
           color: blue[1],
           caretColor: 'black',
