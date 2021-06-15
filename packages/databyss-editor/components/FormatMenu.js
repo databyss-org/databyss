@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { Button, Text, View } from '@databyss-org/ui/primitives'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
+import { Button, Text, View, Icon } from '@databyss-org/ui/primitives'
 import { useEditor, ReactEditor, useSlate } from '@databyss-org/slate-react'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import { Range } from '@databyss-org/slate'
+import LinkSVG from '@databyss-org/ui/assets/external-link.svg'
+import { Range, Node } from '@databyss-org/slate'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import HoveringToolbar from './HoveringToolbar'
 import {
@@ -12,6 +13,7 @@ import {
 } from './../lib/slateUtils'
 import { getInlineOrAtomicsFromStateSelection } from '../state/util'
 import { useEditorContext } from '../state/EditorProvider'
+import { useNavigationContext } from '@databyss-org/ui/components'
 
 const formatActions = () => [
   {
@@ -34,9 +36,26 @@ const formatActions = () => [
   },
 ]
 
-const MarkButton = ({ type, label, variant, ...others }) => {
+const MarkButton = ({ type, label, variant, atomicId, ...others }) => {
+  const { navigate } = useNavigationContext()
+
+  const onNavigation = useCallback(() => {
+    // TODO: OPEN IN NEW TAB
+    navigate(`/pages/${atomicId}`)
+  }, [])
+
   const editor = useEditor()
   const isActive = isFormatActive(editor, type)
+
+  if (type === 'link') {
+    return (
+      <Button variant="editSource" onPress={onNavigation}>
+        <Icon sizeVariant="small" color="background.5">
+          <LinkSVG />
+        </Icon>
+      </Button>
+    )
+  }
 
   const toggleFormat = (format) => {
     toggleMark(editor, format)
@@ -76,37 +95,6 @@ const MarkButton = ({ type, label, variant, ...others }) => {
   )
 }
 
-const formatActionButtons = () => {
-  // FIXME: this should be replaced with a valid condition, or be removed
-  const PLACEHOLDER = true
-
-  // placeholder for mobile actions
-  return PLACEHOLDER
-    ? formatActions(true).reduce((acc, a, i) => {
-        if (a.type === 'DIVIDER') {
-          return acc.concat(
-            <View
-              key={i}
-              borderRightColor="border.1"
-              borderRightWidth={pxUnits(1)}
-              marginLeft="extraSmall"
-              marginRight="extraSmall"
-            />
-          )
-        }
-        return acc.concat(
-          <MarkButton
-            key={i}
-            index={i}
-            type={a.type}
-            label={a.label}
-            variant={a.variant}
-          />
-        )
-      }, [])
-    : []
-}
-
 const isBackwards = (stateSelection) => {
   if (stateSelection.anchor.index === stateSelection.focus.index) {
     return stateSelection.anchor.offset - stateSelection.focus.offset > 0
@@ -118,6 +106,7 @@ const FormatMenu = () => {
   const { state } = useEditorContext()
   const ref = useRef()
   const editor = useSlate()
+  const [linkMenuActive, setLinkMenuActive] = useState(false)
   const [menuActive, setMenuActive] = useState(false)
   const [isSelectionBackwards, setIsSelectionBackwards] = useState(false)
   const [position, setPosition] = useState({
@@ -151,6 +140,41 @@ const FormatMenu = () => {
     })
   }
 
+  const formatActionButtons = () =>
+    !linkMenuActive ? (
+      formatActions(true).reduce((acc, a, i) => {
+        if (a.type === 'DIVIDER') {
+          return acc.concat(
+            <View
+              key={i}
+              borderRightColor="border.1"
+              borderRightWidth={pxUnits(1)}
+              marginLeft="extraSmall"
+              marginRight="extraSmall"
+            />
+          )
+        }
+        return acc.concat(
+          <MarkButton
+            key={i}
+            index={i}
+            type={a.type}
+            label={a.label}
+            variant={a.variant}
+          />
+        )
+      }, [])
+    ) : (
+      <MarkButton
+        key="link"
+        index={0}
+        type="link"
+        label="icon"
+        atomicId={linkMenuActive}
+        variant="uiTextNormalItalic"
+      />
+    )
+
   useEffect(() => {
     const stateSelection = slateSelectionToStateSelection(editor)
 
@@ -159,6 +183,30 @@ const FormatMenu = () => {
       setIsSelectionBackwards(__isBackwards)
     }
   }, [domSelection.isCollapsed])
+
+  const openFormatMenu = () => {
+    const _atomics = getInlineOrAtomicsFromStateSelection(state)
+
+    if (Range.isCollapsed(selection) || _atomics.length) {
+      return
+    }
+    const domSelection = window.getSelection()
+    const isTextSelected = domSelection.isCollapsed === false
+
+    if (isTextSelected) {
+      const __isBackwards = isSelectionBackwards
+      updatePosition(domSelection, __isBackwards)
+      setMenuActive(true)
+    }
+  }
+
+  useEffect(() => {
+    // set link menu position
+    if (linkMenuActive && Range.isCollapsed(selection)) {
+      const domSelection = window.getSelection()
+      updatePosition(domSelection)
+    }
+  }, [linkMenuActive, selection])
 
   useEffect(() => {
     const domSelection = window.getSelection()
@@ -178,24 +226,18 @@ const FormatMenu = () => {
     if (dontShowMenu) {
       setMenuActive(false)
     }
+
+    const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+    // check if in an active link
+    if (_currentLeaf?.link) {
+      // setMenuActive(true)
+      setLinkMenuActive(_currentLeaf.atomicId)
+      openFormatMenu()
+    } else if (linkMenuActive) {
+      // setMenuActive(false)
+      setLinkMenuActive(false)
+    }
   }, [editor.selection])
-
-  const openFormatMenu = () => {
-    const _atomics = getInlineOrAtomicsFromStateSelection(state)
-
-    if (Range.isCollapsed(selection) || _atomics.length) {
-      return
-    }
-    const domSelection = window.getSelection()
-    const isTextSelected = domSelection.isCollapsed === false
-
-    if (isTextSelected) {
-      const __isBackwards = isSelectionBackwards
-
-      updatePosition(domSelection, __isBackwards)
-      setMenuActive(true)
-    }
-  }
 
   useEventListener('mouseup', () => {
     openFormatMenu()
@@ -212,7 +254,11 @@ const FormatMenu = () => {
   })
 
   return (
-    <HoveringToolbar showToolbar={menuActive} position={position} ref={ref}>
+    <HoveringToolbar
+      showToolbar={menuActive || linkMenuActive}
+      position={position}
+      ref={ref}
+    >
       {formatActionButtons()}
     </HoveringToolbar>
   )

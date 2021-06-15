@@ -103,11 +103,11 @@ const Leaf = ({
   if (leaf.link) {
     _children = (
       <span
-        onClick={() => onNavigationClick({ id: leaf.atomicId })}
+        // onClick={() => onNavigationClick({ id: leaf.atomicId })}
         style={{
           color: blue[1],
           caretColor: 'black',
-          cursor: 'pointer',
+          // cursor: 'pointer',
         }}
       >
         {_children}
