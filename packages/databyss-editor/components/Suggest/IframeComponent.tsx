@@ -1,17 +1,25 @@
-import React, { useMemo, useState } from 'react'
-import { View, Text, BaseControl } from '@databyss-org/ui/primitives'
+import React from 'react'
+import { View } from '@databyss-org/ui/primitives'
 import colors from '@databyss-org/ui/theming/colors'
 import {
   EmbedDetail,
   MediaTypes,
 } from '@databyss-org/services/interfaces/Block'
+// import IframeResizer from 'iframe-resizer-react'
+import { Tweet } from 'react-twitter-widgets'
 import { EmbedCard, EmbedCardProps } from '../EmbedCard'
+import { parseTweetUrl } from '@databyss-org/services/embeds'
 
 const embedCardPropsFromEmbedDetail = (
   embedDetail: EmbedDetail
 ): EmbedCardProps => {
   const props: EmbedCardProps = {
     src: embedDetail.src,
+    mediaType: embedDetail.mediaType,
+  }
+  if (embedDetail.mediaType === MediaTypes.IMAGE) {
+    props.imageSrc = embedDetail.src
+    return props
   }
   if (!embedDetail.openGraphJson) {
     return props
@@ -41,7 +49,7 @@ const embedCardPropsFromEmbedDetail = (
   return props
 }
 
-const { gray, orange, blue } = colors
+const { gray, orange } = colors
 export const IframeComponent = ({
   embedDetail,
   highlight,
@@ -50,8 +58,6 @@ export const IframeComponent = ({
   highlight: boolean
   embedDetail: EmbedDetail
 }) => {
-  const [mediaActive, setMediaActive] = useState(false)
-
   const IframeChildren = () => {
     if (embedDetail.mediaType === MediaTypes.HTML) {
       return (
@@ -60,8 +66,8 @@ export const IframeComponent = ({
             id={embedDetail.src}
             title={embedDetail.src}
             srcDoc={embedDetail.src}
-            width={embedDetail.dimensions?.width ?? 100}
-            height={embedDetail.dimensions?.height ?? 100}
+            // width={embedDetail.dimensions?.width ?? 100}
+            // height={embedDetail.dimensions?.height ?? 100}
             // border="0px"
             frameBorder="0px"
           />
@@ -69,14 +75,31 @@ export const IframeComponent = ({
       )
     }
 
-    const embedCardProps = embedCardPropsFromEmbedDetail(embedDetail)
-    if (
-      (embedDetail.mediaType === MediaTypes.WEBSITE ||
-        embedDetail.mediaType === MediaTypes.YOUTUBE) &&
-      embedDetail.openGraphJson
-    ) {
-      return <EmbedCard {...embedCardProps} {...others} />
+    const _tweetAttributes = parseTweetUrl(embedDetail.src)
+    if (embedDetail.mediaType === MediaTypes.TWITTER && _tweetAttributes) {
+      return (
+        <View backgroundColor={gray[6]} px="small" {...others}>
+          <Tweet
+            tweetId={_tweetAttributes.tweetId}
+            options={{ width: '350' }}
+          />
+        </View>
+        // <iframe
+        //   seamless
+        //   id={embedDetail.src}
+        //   title={embedDetail.src}
+        //   src={embedDetail.src}
+        //   // border="0px"
+        //   frameBorder="0px"
+        //   // height={height}
+        //   // width={width}
+        // />
+      )
     }
+    console.log('[iframe] embedDetail', embedDetail)
+    const embedCardProps = embedCardPropsFromEmbedDetail(embedDetail)
+
+    return <EmbedCard {...embedCardProps} {...others} />
 
     // if (
     //   embedDetail.mediaType === MediaTypes.YOUTUBE &&
@@ -101,19 +124,6 @@ export const IframeComponent = ({
     //     <EmbedCard {...embedCardProps} {...others} />
     //   )
     // }
-
-    return (
-      <iframe
-        seamless
-        id={embedDetail.src}
-        title={embedDetail.src}
-        src={embedDetail.src}
-        // border="0px"
-        frameBorder="0px"
-        // height={height}
-        // width={width}
-      />
-    )
   }
   return (
     <div

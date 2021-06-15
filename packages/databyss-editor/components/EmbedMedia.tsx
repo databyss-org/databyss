@@ -92,25 +92,27 @@ export const EmbedMedia = ({
           position="relative"
           zIndex={1}
         />
-        <View
-          zIndex={2}
-          position="absolute"
-          top="small"
-          right="small"
-          borderRadius="default"
-          // backgroundColor={gray[6]}
-        >
-          <Button
-            variant="editSource"
-            onPress={() =>
-              onInlineClick({ atomicType: 'EMBED', id: _element.atomicId })
-            }
+        {highlight && (
+          <View
+            zIndex={2}
+            position="absolute"
+            top="small"
+            right="small"
+            borderRadius="default"
+            // backgroundColor={gray[6]}
           >
-            <Icon sizeVariant="tiny" color="background.5">
-              <PenSVG />
-            </Icon>
-          </Button>
-        </View>
+            <Button
+              variant="editSource"
+              onPress={() =>
+                onInlineClick({ atomicType: 'EMBED', id: _element.atomicId })
+              }
+            >
+              <Icon sizeVariant="tiny" color="background.5">
+                <PenSVG />
+              </Icon>
+            </Button>
+          </View>
+        )}
       </View>
     </InlineEmbed>
   )

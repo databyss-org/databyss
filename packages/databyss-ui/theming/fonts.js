@@ -66,7 +66,6 @@ const uiText = (size) => ({
   fontFamily: fonts.uiFont,
   fontSize: size,
   fontWeight: fontWeights.normal,
-  lineHeight: pxUnits(size * 1.5),
 })
 
 const headingVariants = {
@@ -80,6 +79,10 @@ const uiTextVariants = {
   uiTextLarge: uiText(22),
   uiTextMedium: uiText(18),
   uiTextNormal: uiText(16),
+  uiTextMultiline: {
+    ...uiText(14),
+    lineHeight: pxUnits(17.5),
+  },
   uiTextSmall: uiText(14),
   uiTextTiny: uiText(10),
   uiTextHeading: {

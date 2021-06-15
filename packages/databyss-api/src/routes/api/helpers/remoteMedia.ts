@@ -1,14 +1,15 @@
-import requestImageSize from 'request-image-size'
+// import requestImageSize from 'request-image-size'
 import { DOMParser } from 'xmldom'
 import ogs from 'open-graph-scraper'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
+import { parseTweetUrl } from '@databyss-org/services/embeds/twitter'
 import { MediaResponse, _regExValidator } from '../media'
 
 export const getImageAttributes = async (url: string) => {
   const _response: MediaResponse = {
-    mediaType: null,
+    mediaType: MediaTypes.IMAGE,
     title: null,
-    src: null,
+    src: url,
     dimensions: {
       width: null,
       height: null,
@@ -16,14 +17,12 @@ export const getImageAttributes = async (url: string) => {
     openGraphJson: null,
   }
 
-  _response.src = url
-  _response.mediaType = MediaTypes.IMAGE
   // get title from image
   const urlPath = url.split('/')
   let _title = urlPath[urlPath.length - 1]
   _title = _title.split('?')[0].split('.')[0]
   _response.title = decodeURIComponent(_title)
-  _response.dimensions = await requestImageSize(url)
+  // _response.dimensions = await requestImageSize(url)
   return _response
 }
 
@@ -85,23 +84,15 @@ export const getHtmlAttributes = (code: string) => {
 
 export const getTwitterAttributes = async (url: string) => {
   const _response: MediaResponse = {
-    mediaType: null,
+    mediaType: MediaTypes.TWITTER,
     title: null,
-    src: null,
+    src: url,
   }
   // convert tweet to regex values
-  const _regex = /https*:\/\/twitter\.com\/(?<USER>.+?)\/status\/(?<TID>\d+)/
-  const match = _regex.exec(url)
-  let username = ''
-  let tweetId = ''
-  if (match?.groups) {
-    username = match.groups.USER
-    tweetId = match.groups.TID
+  const _tweetAttributes = parseTweetUrl(url)
+  if (_tweetAttributes) {
+    _response.title = `Tweet by ${_tweetAttributes.user} ${_tweetAttributes.tweetId}`
   }
-  _response.src = `https://platform.twitter.com/embed/Tweet.html?id=${tweetId}`
-  _response.title = `tweet by ${username} ${tweetId}`
-  _response.mediaType = MediaTypes.TWITTER
-
   // add fetch with custom useragent
   // https://stackoverflow.com/questions/62526483/twitter-website-doesnt-have-open-graph-tags
   try {
@@ -175,7 +166,13 @@ export const getDropboxAttributes = async (url) => {
 
   _response.src = `https://www.dropbox.com/s/${FID}/${FNAME}?raw=1`
   _response.title = `dropbox file ${FNAME}`
-  _response.mediaType = MediaTypes.WEBSITE
+
+  const _imageMatch = _regExValidator.image.exec(url)
+  if (_imageMatch) {
+    _response.mediaType = MediaTypes.IMAGE
+  } else {
+    _response.mediaType = MediaTypes.WEBSITE
+  }
   return _response
 }
 

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Embed, MediaTypes } from '@databyss-org/services/interfaces/Block'
 import { UnfetchedMedia } from './UnfetchedMedia'
 import { isHttpInsecure } from './EmbedMedia'
