@@ -3,6 +3,7 @@ import { Button, Text, View, Icon } from '@databyss-org/ui/primitives'
 import { useEditor, ReactEditor, useSlate } from '@databyss-org/slate-react'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import LinkSVG from '@databyss-org/ui/assets/external-link.svg'
+import { useNavigationContext } from '@databyss-org/ui/components'
 import { Range, Node } from '@databyss-org/slate'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import HoveringToolbar from './HoveringToolbar'
@@ -13,7 +14,6 @@ import {
 } from './../lib/slateUtils'
 import { getInlineOrAtomicsFromStateSelection } from '../state/util'
 import { useEditorContext } from '../state/EditorProvider'
-import { useNavigationContext } from '@databyss-org/ui/components'
 
 const formatActions = () => [
   {
@@ -102,6 +102,41 @@ const isBackwards = (stateSelection) => {
   return stateSelection.anchor.index > stateSelection.focus.index
 }
 
+const formatActionButtons = (linkMenuActive) =>
+  !linkMenuActive ? (
+    formatActions(true).reduce((acc, a, i) => {
+      if (a.type === 'DIVIDER') {
+        return acc.concat(
+          <View
+            key={i}
+            borderRightColor="border.1"
+            borderRightWidth={pxUnits(1)}
+            marginLeft="extraSmall"
+            marginRight="extraSmall"
+          />
+        )
+      }
+      return acc.concat(
+        <MarkButton
+          key={i}
+          index={i}
+          type={a.type}
+          label={a.label}
+          variant={a.variant}
+        />
+      )
+    }, [])
+  ) : (
+    <MarkButton
+      key="link"
+      index={0}
+      type="link"
+      label="icon"
+      atomicId={linkMenuActive}
+      variant="uiTextNormalItalic"
+    />
+  )
+
 const FormatMenu = () => {
   const { state } = useEditorContext()
   const ref = useRef()
@@ -139,41 +174,6 @@ const FormatMenu = () => {
       left: pxUnits(rect.left + (isBackwards ? 0 : rect.width)),
     })
   }
-
-  const formatActionButtons = () =>
-    !linkMenuActive ? (
-      formatActions(true).reduce((acc, a, i) => {
-        if (a.type === 'DIVIDER') {
-          return acc.concat(
-            <View
-              key={i}
-              borderRightColor="border.1"
-              borderRightWidth={pxUnits(1)}
-              marginLeft="extraSmall"
-              marginRight="extraSmall"
-            />
-          )
-        }
-        return acc.concat(
-          <MarkButton
-            key={i}
-            index={i}
-            type={a.type}
-            label={a.label}
-            variant={a.variant}
-          />
-        )
-      }, [])
-    ) : (
-      <MarkButton
-        key="link"
-        index={0}
-        type="link"
-        label="icon"
-        atomicId={linkMenuActive}
-        variant="uiTextNormalItalic"
-      />
-    )
 
   useEffect(() => {
     const stateSelection = slateSelectionToStateSelection(editor)
@@ -227,14 +227,15 @@ const FormatMenu = () => {
       setMenuActive(false)
     }
 
-    const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
-    // check if in an active link
-    if (_currentLeaf?.link) {
-      // setMenuActive(true)
-      setLinkMenuActive(_currentLeaf.atomicId)
-      openFormatMenu()
+    // check if range is collapsed and cursor is in a page link
+    if (Range.isCollapsed(selection)) {
+      const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+      if (_currentLeaf?.link) {
+        setLinkMenuActive(_currentLeaf.atomicId)
+      } else if (linkMenuActive) {
+        setLinkMenuActive(false)
+      }
     } else if (linkMenuActive) {
-      // setMenuActive(false)
       setLinkMenuActive(false)
     }
   }, [editor.selection])
@@ -259,7 +260,7 @@ const FormatMenu = () => {
       position={position}
       ref={ref}
     >
-      {formatActionButtons()}
+      {formatActionButtons(linkMenuActive)}
     </HoveringToolbar>
   )
 }

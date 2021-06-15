@@ -119,7 +119,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
         Suggestion()
       ) : (
         <>
-          <Text variant="uiTextSmall" color="gray.3" display="inline" p="small">
+          <Text variant="uiTextSmall" color="gray.3" display="inline" p="tiny">
             {!query?.length ? 'enter a page name' : Suggestion()}
           </Text>
         </>

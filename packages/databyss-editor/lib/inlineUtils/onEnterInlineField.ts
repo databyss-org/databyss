@@ -4,6 +4,7 @@ import { Text } from '@databyss-org/slate'
 import {
   isCurrentlyInInlineAtomicField,
   isCurrentlyInInlineEmbedInput,
+  isCurrentlyInInlineLinkInput,
 } from '../slateUtils'
 import { EditorState } from '../../interfaces/EditorState'
 
@@ -22,7 +23,8 @@ export const onEnterInlineField = ({
 }): boolean => {
   if (
     isCurrentlyInInlineAtomicField(editor) ||
-    isCurrentlyInInlineEmbedInput(editor)
+    isCurrentlyInInlineEmbedInput(editor) ||
+    isCurrentlyInInlineLinkInput(editor)
   ) {
     // let suggest menu handle event if caret is inside of a new active inline atomic and currentLeaf has more than one character
 

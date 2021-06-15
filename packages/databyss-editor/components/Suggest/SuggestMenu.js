@@ -214,6 +214,7 @@ const SuggestMenu = ({
 
   // if topics and has no suggestions, remove menu,
   // leave if sources for citations loader
+  console.log('suggest typoe', suggestType)
   const _showMenu =
     suggestType === 'topics'
       ? menuActive && (!query || hasSuggestions)
@@ -237,7 +238,7 @@ const SuggestMenu = ({
           orderKey={query + resultsMode}
           onActiveIndexChanged={onActiveIndexChanged}
         >
-          {query || inlineEmbed ? (
+          {query || inlineEmbed || inlineLink ? (
             React.cloneElement(React.Children.only(children), {
               editor,
               editorContext,
