@@ -63,7 +63,6 @@ export const EmbedMedia = ({
   }, [blocksRes])
 
   const highlightEmbed = () => {
-    console.log('[highlightEmbed]')
     try {
       const _el = textRef.current?.children?.[0]
       console.log(_el)

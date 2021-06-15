@@ -132,10 +132,10 @@ export const getYoutubeAttributes = async (url) => {
     src: null,
   }
   // pull video id from url
-  const match = url.match(_regExValidator.youtube)
-  const _id = match[2]
+  // const match = url.match(_regExValidator.youtube)
+  // const _id = match[2]
   _response.mediaType = MediaTypes.YOUTUBE
-  _response.src = `https://www.youtube.com/embed/${_id}`
+  _response.src = url
 
   // get open graph information
 

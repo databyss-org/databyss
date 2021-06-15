@@ -18,6 +18,7 @@ const embedCardPropsFromEmbedDetail = (
   }
 
   const _ogData = JSON.parse(embedDetail.openGraphJson)
+  console.log('[opengraph]', _ogData)
   if (_ogData.ogTitle) {
     props.title = _ogData?.ogTitle
   }
@@ -30,6 +31,12 @@ const embedCardPropsFromEmbedDetail = (
     } else if (Array.isArray(_ogData.ogImage)) {
       props.imageSrc = _ogData.ogImage[0].url
     }
+  }
+  if (_ogData.ogSiteName) {
+    props.siteName = _ogData.ogSiteName
+  }
+  if (_ogData.ogVideo) {
+    props.mediaSrc = _ogData.ogVideo.url
   }
   return props
 }
@@ -64,44 +71,36 @@ export const IframeComponent = ({
 
     const embedCardProps = embedCardPropsFromEmbedDetail(embedDetail)
     if (
-      embedDetail.mediaType === MediaTypes.WEBSITE &&
+      (embedDetail.mediaType === MediaTypes.WEBSITE ||
+        embedDetail.mediaType === MediaTypes.YOUTUBE) &&
       embedDetail.openGraphJson
     ) {
       return <EmbedCard {...embedCardProps} {...others} />
     }
 
-    if (
-      embedDetail.mediaType === MediaTypes.YOUTUBE &&
-      embedDetail.openGraphJson
-    ) {
-      const onPlayClick = () => {
-        setMediaActive(true)
-      }
-      return mediaActive ? (
-        <iframe
-          seamless
-          id={embedDetail.src}
-          title={embedDetail.src}
-          src={`${embedDetail.src}?autoplay=1`}
-          allow="autoplay"
-          // border="0px"
-          frameBorder="0px"
-          // height={height}
-          // width={width}
-        />
-      ) : (
-        <View backgroundColor={gray[6]} p="small">
-          <BaseControl pr="medium" onClick={onPlayClick}>
-            <Text variant="heading4" color={blue[0]}>
-              play video
-            </Text>
-          </BaseControl>
-          {embedDetail.src ? (
-            <img src={embedDetail.src} alt={embedDetail.title} />
-          ) : null}
-        </View>
-      )
-    }
+    // if (
+    //   embedDetail.mediaType === MediaTypes.YOUTUBE &&
+    //   embedDetail.openGraphJson
+    // ) {
+    //   const onPlayClick = () => {
+    //     setMediaActive(true)
+    //   }
+    //   return mediaActive ? (
+    //     <iframe
+    //       seamless
+    //       id={embedDetail.src}
+    //       title={embedDetail.src}
+    //       src={`${embedDetail.src}?autoplay=1`}
+    //       allow="autoplay"
+    //       // border="0px"
+    //       frameBorder="0px"
+    //       // height={height}
+    //       // width={width}
+    //     />
+    //   ) : (
+    //     <EmbedCard {...embedCardProps} {...others} />
+    //   )
+    // }
 
     return (
       <iframe
@@ -124,7 +123,7 @@ export const IframeComponent = ({
         border: 2,
         borderStyle: 'solid',
         borderColor: highlight ? orange[0] : `rgba(0,0,0,0.0)`,
-        opacity: 0.5,
+        // opacity: 0.8,
       }}
     >
       {IframeChildren()}

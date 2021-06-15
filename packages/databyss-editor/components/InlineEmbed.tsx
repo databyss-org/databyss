@@ -22,8 +22,6 @@ export const InlineEmbed = ({
     onClick={onClick}
     aria-hidden="true"
     style={{
-      // minWidth: '50%',
-      // maxWidth: '480px',
       width: '100%',
       position: 'relative',
       display: 'inline-block',
@@ -36,9 +34,7 @@ export const InlineEmbed = ({
       id="inline-embed"
       style={{
         position: 'relative',
-        // TODO: change  this back to a high number
         zIndex: 1,
-        // display: 'inline-block',
       }}
     >
       {embedData ? children : <LoadingFallback />}
@@ -47,7 +43,6 @@ export const InlineEmbed = ({
       ref={textRef}
       style={{
         padding: '8px',
-        // todo: change this back  to zero
         zIndex: 0,
         position: 'absolute',
         left: 0,
