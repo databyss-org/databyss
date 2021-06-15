@@ -64,7 +64,6 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
   const setPage = (page: Page | void) => {
     if (page) {
       pendingSetContent.current = true
-      console.log('page', page)
       setPageLink({
         editor,
         state,

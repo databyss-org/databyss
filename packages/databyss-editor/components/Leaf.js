@@ -10,14 +10,7 @@ const _emailRegEx = new RegExp(
   'gi'
 )
 
-const Leaf = ({
-  attributes,
-  children,
-  leaf,
-  readOnly,
-  onInlineClick,
-  onNavigationClick,
-}) => {
+const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
   const { blue, gray, orange, red } = colors
 
   let _children = children
