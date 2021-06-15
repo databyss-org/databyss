@@ -1,6 +1,6 @@
 import { ReactEditor } from '@databyss-org/slate-react'
 import { KeyboardEvent } from 'react'
-
+import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import {
   Node,
   Range,
@@ -10,7 +10,6 @@ import {
 import { validURL } from '@databyss-org/services/lib/util'
 import { flattenOffset, isCurrentlyInInlineAtomicField } from '../slateUtils'
 import { InlineInitializer } from '.'
-import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { inlineTypeToSymbol, inlineTypeToInputFieldRange } from './helpers'
 
 /**

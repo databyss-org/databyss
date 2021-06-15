@@ -13,7 +13,6 @@ import { TitleElement } from './TitleElement'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
-import { useNavigationContext } from '@databyss-org/ui/components'
 
 const Editor = ({
   children,
@@ -26,8 +25,6 @@ const Editor = ({
   ...others
 }) => {
   const _searchTerm = useSearchContext((c) => c && c.searchTerm)
-
-  const { navigate } = useNavigationContext()
 
   // preloads source and topic cache to be used by the suggest menu
   useBlocksInPages('EMBED')
@@ -78,19 +75,9 @@ const Editor = ({
     onInlineAtomicClick({ type: atomicType, refId: id })
   }, [])
 
-  const onNavigationClick = useCallback((atomic) => {
-    // TODO: OPEN IN NEW TAB
-    navigate(`/pages/${atomic.id}`)
-  }, [])
-
   const renderLeaf = useCallback(
     (props) => (
-      <Leaf
-        {...props}
-        readOnly={readOnly}
-        onInlineClick={onInlineClick}
-        onNavigationClick={onNavigationClick}
-      />
+      <Leaf {...props} readOnly={readOnly} onInlineClick={onInlineClick} />
     ),
     [searchTerm]
   )

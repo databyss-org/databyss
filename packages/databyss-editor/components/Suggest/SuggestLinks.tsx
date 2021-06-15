@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Editor } from '@databyss-org/slate'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { useEditor, ReactEditor } from '@databyss-org/slate-react'
+import { usePages } from '@databyss-org/data/pouchdb/hooks/usePages'
+import { Page } from '@databyss-org/services/interfaces/Page'
 import {
   weightedSearch,
   prefixSearchAll,
@@ -11,15 +13,7 @@ import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import { pxUnits } from '@databyss-org/ui/theming/theme'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { useEditorContext } from '../../state/EditorProvider'
-
-import { usePages } from '../../../databyss-data/pouchdb/hooks/usePages'
-import { Page } from '../../../databyss-services/interfaces/Page'
 import { setPageLink } from '../../lib/inlineUtils/setPageLink'
-
-// load pages
-// filter suggestions of page titles
-// select page or enter it manually
-// save  page and block relations of that page
 
 const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
   const editor = useEditor() as ReactEditor & Editor
