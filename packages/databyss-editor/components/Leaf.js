@@ -100,7 +100,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
         style={{
           color: blue[1],
           caretColor: 'black',
-          // cursor: 'pointer',
+          textDecoration: 'underline',
         }}
       >
         {_children}
