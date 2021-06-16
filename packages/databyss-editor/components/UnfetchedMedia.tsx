@@ -46,6 +46,8 @@ export const UnfetchedMedia = ({ atomicId, src, highlight }) => {
       p="medium"
       alignItems="center"
       backgroundColor={gray[6]}
+      zIndex={1}
+      position="relative"
       style={{
         border: 2,
         borderStyle: 'solid',

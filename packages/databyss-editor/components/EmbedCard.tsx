@@ -25,31 +25,48 @@ export const EmbedCard = React.memo(
     ...others
   }: EmbedCardProps) => {
     const [mediaActive, setMediaActive] = useState(false)
+    console.log('[EmbedCard] mediaType', mediaType)
+    console.log('[EmbedCard] imageSrc', imageSrc)
     return (
       <View backgroundColor="gray.6" p="small" {...others}>
         {mediaType !== MediaTypes.IMAGE && (
           <>
-            <Text variant="uiTextSmall" color="gray.3" userSelect="none">
-              {siteName ?? formatHostname(src)}
-            </Text>
+            {title ? (
+              <Text variant="uiTextSmall" color="gray.3" userSelect="none">
+                {siteName ?? formatHostname(src)}
+              </Text>
+            ) : (
+              <Button
+                variant="uiLink"
+                textVariant="uiTextSmall"
+                textColor="blue.0"
+                href={src}
+                target="_blank"
+              >
+                {siteName ?? formatHostname(src)}
+              </Button>
+            )}
             <Button
               variant="uiLink"
               textColor="blue.0"
               href={src}
               target="_blank"
+              mb="small"
             >
               {title}
             </Button>
           </>
         )}
         {description && (
-          <View pt="tiny" pb="small">
+          <View mb="small">
             <Text variant="uiTextMultiline">{description}</Text>
           </View>
         )}
         {imageSrc && (
           <View
-            maxHeight={mediaType === MediaTypes.IMAGE ? '350px' : '250px'}
+            maxHeight={
+              mediaType === MediaTypes.IMAGE || !description ? '350px' : '250px'
+            }
             title={title}
             backgroundColor="gray.0"
             justifyContent="center"
@@ -60,8 +77,7 @@ export const EmbedCard = React.memo(
                 : {
                     backgroundImage: `url(${imageSrc})`,
                     backgroundRepeat: 'no-repeat',
-                    backgroundSize:
-                      mediaType === MediaTypes.IMAGE ? 'contain' : 'cover',
+                    backgroundSize: 'contain',
                     backgroundPosition: 'center center',
                   }
             }
@@ -101,13 +117,18 @@ export const EmbedCard = React.memo(
                     opacity: 0,
                     width: '100%',
                     maxHeight:
-                      mediaType === MediaTypes.IMAGE ? '350px' : '250px',
+                      mediaType === MediaTypes.IMAGE || !description
+                        ? '350px'
+                        : '250px',
                   }}
                   onDragStart={(e) => e.preventDefault()}
                 />
               </>
             )}
           </View>
+        )}
+        {mediaType === MediaTypes.WEBSITE && !imageSrc && (
+          <iframe src={src} height="350px" title={src} frameBorder="0px" />
         )}
       </View>
     )

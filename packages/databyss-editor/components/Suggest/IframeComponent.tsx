@@ -61,14 +61,13 @@ export const IframeComponent = ({
   const IframeChildren = () => {
     if (embedDetail.mediaType === MediaTypes.HTML) {
       return (
-        <View backgroundColor={gray[6]}>
+        <View backgroundColor={gray[6]} px="small" {...others}>
           <iframe
             id={embedDetail.src}
             title={embedDetail.src}
             srcDoc={embedDetail.src}
             // width={embedDetail.dimensions?.width ?? 100}
-            // height={embedDetail.dimensions?.height ?? 100}
-            // border="0px"
+            height="350px"
             frameBorder="0px"
           />
         </View>
@@ -84,56 +83,19 @@ export const IframeComponent = ({
             options={{ width: '350' }}
           />
         </View>
-        // <iframe
-        //   seamless
-        //   id={embedDetail.src}
-        //   title={embedDetail.src}
-        //   src={embedDetail.src}
-        //   // border="0px"
-        //   frameBorder="0px"
-        //   // height={height}
-        //   // width={width}
-        // />
       )
     }
     console.log('[iframe] embedDetail', embedDetail)
     const embedCardProps = embedCardPropsFromEmbedDetail(embedDetail)
 
     return <EmbedCard {...embedCardProps} {...others} />
-
-    // if (
-    //   embedDetail.mediaType === MediaTypes.YOUTUBE &&
-    //   embedDetail.openGraphJson
-    // ) {
-    //   const onPlayClick = () => {
-    //     setMediaActive(true)
-    //   }
-    //   return mediaActive ? (
-    //     <iframe
-    //       seamless
-    //       id={embedDetail.src}
-    //       title={embedDetail.src}
-    //       src={`${embedDetail.src}?autoplay=1`}
-    //       allow="autoplay"
-    //       // border="0px"
-    //       frameBorder="0px"
-    //       // height={height}
-    //       // width={width}
-    //     />
-    //   ) : (
-    //     <EmbedCard {...embedCardProps} {...others} />
-    //   )
-    // }
   }
   return (
     <div
       style={{
-        // width,
-        // height,
         border: 2,
         borderStyle: 'solid',
         borderColor: highlight ? orange[0] : `rgba(0,0,0,0.0)`,
-        // opacity: 0.8,
       }}
     >
       {IframeChildren()}

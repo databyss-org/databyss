@@ -151,7 +151,7 @@ export const getYoutubeAttributes = async (url) => {
 
 export const getDropboxAttributes = async (url) => {
   const _response: MediaResponse = {
-    mediaType: null,
+    mediaType: MediaTypes.WEBSITE,
     title: null,
     src: null,
   }
@@ -166,21 +166,15 @@ export const getDropboxAttributes = async (url) => {
 
   _response.src = `https://www.dropbox.com/s/${FID}/${FNAME}?raw=1`
   _response.title = `dropbox file ${FNAME}`
-
-  const _imageMatch = _regExValidator.image.exec(url)
-  if (_imageMatch) {
-    _response.mediaType = MediaTypes.IMAGE
-  } else {
-    _response.mediaType = MediaTypes.WEBSITE
-  }
+  console.log('[getDropboxAttributes]', _response)
   return _response
 }
 
 export const getWebsiteAttributes = async (url) => {
   const _response: MediaResponse = {
-    mediaType: null,
-    title: null,
-    src: null,
+    mediaType: MediaTypes.WEBSITE,
+    title: `web url: ${url}`,
+    src: url,
   }
   try {
     const options = { url }
@@ -189,8 +183,6 @@ export const getWebsiteAttributes = async (url) => {
 
     if (result.success) {
       _response.title = `web page: ${result.ogTitle}`
-      _response.src = url
-      _response.mediaType = MediaTypes.WEBSITE
       _response.openGraphJson = JSON.stringify(result)
     }
 
