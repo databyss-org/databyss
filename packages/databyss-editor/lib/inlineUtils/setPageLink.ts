@@ -1,27 +1,13 @@
 import { ReactEditor } from '@databyss-org/slate-react'
 import { Editor as SlateEditor, Transforms, Node } from '@databyss-org/slate'
-import { Embed } from '@databyss-org/services/interfaces'
-import { EditorState } from '../../interfaces/EditorState'
-
-import {
-  slateSelectionToStateSelection,
-  stateSelectionToSlateSelection,
-  toggleMark,
-} from '../slateUtils'
-import { IframeAttributes } from '../../components/Suggest/iframeUtils'
+import { toggleMark } from '../slateUtils'
 import { Page } from '../../../databyss-services/interfaces/Page'
-import { getTextOffsetWithRange } from '../../state/util'
-import { RangeType } from '../../../databyss-services/interfaces/Range'
 
 export const setPageLink = ({
   editor,
-  state,
-  setContent,
   suggestion,
 }: {
   editor: ReactEditor & SlateEditor
-  state: EditorState
-  setContent: Function
   suggestion?: Page
 }) => {
   if (!editor?.selection) {
@@ -45,9 +31,7 @@ export const setPageLink = ({
   Transforms.insertNodes(editor, _textNode)
   const _activeMarks = SlateEditor.marks(editor)
   if (_activeMarks) {
-    Object.keys(_activeMarks).forEach((m) => {
-      toggleMark(editor, 'link')
-    })
+    toggleMark(editor, 'link')
   }
   Transforms.insertNodes(editor, { text: ' ' })
 }

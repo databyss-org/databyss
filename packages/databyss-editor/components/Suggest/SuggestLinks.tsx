@@ -12,14 +12,13 @@ import { Text, View } from '@databyss-org/ui/primitives'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import { pxUnits } from '@databyss-org/ui/theming/theme'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
-import { useEditorContext } from '../../state/EditorProvider'
+
 import { setPageLink } from '../../lib/inlineUtils/setPageLink'
 
 const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
   const editor = useEditor() as ReactEditor & Editor
   // const embedRes = useBlocksInPages(BlockType.Embed)
   const pagesRes = usePages()
-  const { state, setContent } = useEditorContext()
 
   const pendingSetContent = useRef(false)
 
@@ -60,8 +59,6 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
       pendingSetContent.current = true
       setPageLink({
         editor,
-        state,
-        setContent,
         suggestion: page,
       })
       // return

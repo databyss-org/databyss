@@ -3,6 +3,7 @@
 import React from 'react'
 import colors from '@databyss-org/ui/theming/colors'
 import { EmbedMedia } from './EmbedMedia'
+import { Link } from './Link'
 
 // check for email addresses
 const _emailRegEx = new RegExp(
@@ -94,18 +95,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
   }
 
   if (leaf.link) {
-    _children = (
-      <span
-        // onClick={() => onNavigationClick({ id: leaf.atomicId })}
-        style={{
-          color: blue[1],
-          caretColor: 'black',
-          textDecoration: 'underline',
-        }}
-      >
-        {_children}
-      </span>
-    )
+    _children = <Link _children={_children} atomicId={leaf.atomicId} />
   }
 
   if (leaf.inlineCitation) {

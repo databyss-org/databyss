@@ -1,4 +1,3 @@
-import { PageDoc } from '@databyss-org/data/pouchdb/interfaces'
 import { Text, PageHeader, Embed } from '@databyss-org/services/interfaces'
 import { Block, Selection } from './'
 import { BlockReference, BlockType } from '../../databyss-services/interfaces'
