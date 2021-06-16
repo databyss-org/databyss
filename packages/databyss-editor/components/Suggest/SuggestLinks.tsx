@@ -62,6 +62,16 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
         suggestion: page,
       })
       // return
+    } else {
+      // look up in filtered suggestiong
+      const _filtered = filteredSuggestions.filter((i) => i.name === query)
+      if (_filtered.length) {
+        const _page = _filtered[0]
+        setPageLink({
+          editor,
+          suggestion: _page,
+        })
+      }
     }
   }
 

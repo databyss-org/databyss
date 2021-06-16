@@ -3,6 +3,7 @@ import { Editor as SlateEditor } from '@databyss-org/slate'
 import {
   isCurrentlyInInlineAtomicField,
   isCurrentlyInInlineEmbedInput,
+  isCurrentlyInInlineLinkInput,
 } from '../slateUtils'
 import { EditorState } from '../../interfaces/EditorState'
 import { RangeType } from '../../../databyss-services/interfaces/Range'
@@ -20,7 +21,8 @@ export const removeCurrentInlineInput = ({
     (r) =>
       !(
         r.marks.includes(RangeType.InlineAtomicInput) ||
-        r.marks.includes(RangeType.InlineEmbedInput)
+        r.marks.includes(RangeType.InlineEmbedInput) ||
+        r.marks.includes(RangeType.InlineLinkInput)
       )
   )
 
@@ -57,7 +59,8 @@ export const onEscapeInInlineAtomicField = ({
   if (
     event.key === 'Escape' &&
     (isCurrentlyInInlineAtomicField(editor) ||
-      isCurrentlyInInlineEmbedInput(editor))
+      isCurrentlyInInlineEmbedInput(editor) ||
+      isCurrentlyInInlineLinkInput(editor))
   ) {
     removeCurrentInlineInput({ state, setContent })
     return true
