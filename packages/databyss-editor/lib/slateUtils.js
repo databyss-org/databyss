@@ -555,6 +555,9 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
         Editor.removeMark(editor, 'atomicId')
       }
     }
+  } else if (isMarkActive(editor, 'link')) {
+    // if range is not collapsed, check to see if active link markup, if so remove markup
+    toggleMark(editor, 'link')
   }
 
   return false
