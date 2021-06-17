@@ -1,5 +1,9 @@
 import React, { useCallback } from 'react'
+import colors from '@databyss-org/ui/theming/colors'
+
 import { useNavigationContext } from '../../databyss-ui/components/Navigation/NavigationProvider/NavigationProvider'
+
+const { blue } = colors
 
 export const Link = ({ _children, atomicId }) => {
   const { navigate } = useNavigationContext()
@@ -26,7 +30,7 @@ export const Link = ({ _children, atomicId }) => {
       }}
       // onClick={() => window.open(url, '_blank')}
       style={{
-        // color: blue[2],s
+        color: blue[2],
         cursor: 'pointer',
       }}
       href={url}

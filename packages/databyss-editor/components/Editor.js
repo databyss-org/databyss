@@ -88,7 +88,7 @@ const Editor = ({
   const decorate = useCallback(
     ([node, path]) => {
       const ranges = []
-      if (node?.inlineEmbedInput || node?.embed) {
+      if (node?.inlineEmbedInput || node?.embed || node?.link) {
         return ranges
       }
 
