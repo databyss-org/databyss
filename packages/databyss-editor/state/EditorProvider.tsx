@@ -161,7 +161,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
    * paste event handler
    */
 
-  const embedPaste = (e) => {
+  const embedPaste = ({ event: e, inlineType }) => {
     const htmlSrc = e.clipboardData!.getData('text/html')
     if (htmlSrc) {
       // if hmtl is pasted, attempt to retrieve the src tag from images
@@ -173,7 +173,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
         if (_src) {
           dispatch({
             type: PASTE_EMBED,
-            payload: _src,
+            payload: { data: _src, inlineType },
           })
         }
       }
@@ -183,7 +183,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
 
     dispatch({
       type: PASTE_EMBED,
-      payload: plainTextDataTransfer,
+      payload: { data: plainTextDataTransfer, inlineType },
     })
   }
 
