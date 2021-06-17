@@ -11,7 +11,12 @@ import { getClosureType, getTextOffsetWithRange } from '../../state/util'
 
 const MENU_HEIGHT = 200
 
-export const getPosition = (editor, inlineAtomic, inlineEmbed) => {
+export const getPosition = ({
+  editor,
+  inlineAtomic,
+  inlineEmbed,
+  inlineLink,
+}) => {
   if (editor.selection) {
     const _activeNode = editor.children[editor.selection.anchor.path[0]]
     const _node = ReactEditor.toDOMNode(editor, _activeNode)
@@ -28,7 +33,13 @@ export const getPosition = (editor, inlineAtomic, inlineEmbed) => {
         inlineAtomic && document.getElementById('inline-atomic')
           ? 'inline-atomic'
           : null
-      const _elId = _inlineEmbedMenu || getInlineMenuId
+
+      const _inlineLinkMenu =
+        inlineLink && document.getElementById('inline-link-input')
+          ? 'inline-link-input'
+          : null
+
+      const _elId = _inlineEmbedMenu || getInlineMenuId || _inlineLinkMenu
 
       if (_elId) {
         const _textNode = document.getElementById(_elId).getBoundingClientRect()
@@ -89,6 +100,7 @@ const SuggestMenu = ({
   suggestType,
   inlineAtomic,
   inlineEmbed,
+  inlineLink,
 }) => {
   const activeIndexRef = useRef(-1)
   const [position, setPosition] = useState({
@@ -107,7 +119,12 @@ const SuggestMenu = ({
 
   // set position of dropdown
   const setMenuPosition = () => {
-    const _position = getPosition(editor, inlineAtomic, inlineEmbed)
+    const _position = getPosition({
+      editor,
+      inlineAtomic,
+      inlineEmbed,
+      inlineLink,
+    })
 
     if (_position) {
       setPosition(_position)
@@ -120,7 +137,7 @@ const SuggestMenu = ({
       const _node = editor.children[_index]
       const _stateBlock = editorContext.state.blocks[_index]
 
-      if (!(inlineAtomic || inlineEmbed)) {
+      if (!(inlineAtomic || inlineEmbed || inlineLink)) {
         // get current input value
         const _text = Node.string(_node)
         if (!isAtomicInlineType(_node.type)) {
@@ -135,6 +152,9 @@ const SuggestMenu = ({
         let _inline = { type: '', prefix: '' }
         if (inlineEmbed) {
           _inline = { type: 'inlineEmbedInput', prefixLength: 2 }
+        }
+        if (inlineLink) {
+          _inline = { type: 'inlineLinkInput', prefixLength: 2 }
         }
         if (inlineAtomic) {
           _inline = { type: 'inlineAtomicMenu', prefixLength: 1 }
@@ -194,6 +214,7 @@ const SuggestMenu = ({
 
   // if topics and has no suggestions, remove menu,
   // leave if sources for citations loader
+  console.log('suggest typoe', suggestType)
   const _showMenu =
     suggestType === 'topics'
       ? menuActive && (!query || hasSuggestions)
@@ -217,7 +238,7 @@ const SuggestMenu = ({
           orderKey={query + resultsMode}
           onActiveIndexChanged={onActiveIndexChanged}
         >
-          {query || inlineEmbed ? (
+          {query || inlineEmbed || inlineLink ? (
             React.cloneElement(React.Children.only(children), {
               editor,
               editorContext,

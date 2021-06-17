@@ -926,7 +926,8 @@ export const getInlineOrAtomicsFromStateSelection = (
               Array.isArray(m) &&
               m.length === 2 &&
               (m[0] === InlineTypes.InlineTopic ||
-                m[0] === InlineTypes.InlineSource)
+                m[0] === InlineTypes.InlineSource ||
+                m[0] === InlineTypes.Link)
           ).length
       ).length
   )

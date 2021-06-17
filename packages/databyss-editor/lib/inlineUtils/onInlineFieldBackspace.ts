@@ -8,6 +8,7 @@ import {
 } from '../slateUtils'
 import { Block } from '../../../databyss-services/interfaces/Block'
 import { RangeType } from '../../../databyss-services/interfaces/Range'
+import { InlineInitializer } from '.'
 
 export const onInlineFieldBackspace = ({
   editor,
@@ -85,7 +86,10 @@ export const onInlineFieldBackspace = ({
     console.log(_currentLeaf)
 
     // only << exist, remove mark on backspace
-    if (_currentLeaf.inlineEmbedInput && _currentLeaf.text === '<<') {
+    if (
+      _currentLeaf.inlineEmbedInput &&
+      _currentLeaf.text === InlineInitializer.embed
+    ) {
       Transforms.delete(editor, {
         distance: 1,
         unit: 'character',
