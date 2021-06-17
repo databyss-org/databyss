@@ -71,6 +71,8 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
           editor,
           suggestion: _page,
         })
+      } else {
+        console.log('CREATE A NEW PAGE LINK')
       }
     }
   }

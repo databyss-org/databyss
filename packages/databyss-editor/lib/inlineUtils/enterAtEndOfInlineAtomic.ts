@@ -53,7 +53,7 @@ export const enterAtEndOfInlineAtomic = ({
       updateSelection = false
 
       window.requestAnimationFrame(() => {
-        // job selection back one and forward one to force selection to be within range
+        // jog selection back one and forward one to force selection to be within range
         Transforms.move(editor, {
           distance: 1,
           unit: 'character',
