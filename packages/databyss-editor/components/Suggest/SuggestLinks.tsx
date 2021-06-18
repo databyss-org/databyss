@@ -90,9 +90,10 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
         })
       } else {
         // assume page link is a url
+        const _suggestion = title ? { _id: query, name: title } : query
         setPageLink({
           editor,
-          suggestion: title || query,
+          suggestion: _suggestion,
         })
       }
     }
