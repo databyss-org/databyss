@@ -149,7 +149,7 @@ export const getTwitterAttributes = async (url: string) => {
 export const getYoutubeAttributes = async (url) => {
   const _response: MediaResponse = {
     mediaType: null,
-    title: null,
+    title: 'default title',
     src: null,
     width: null,
     height: null,
@@ -167,9 +167,7 @@ export const getYoutubeAttributes = async (url) => {
   const options = { url }
   try {
     const _data = await ogs(options)
-    const { result, error } = _data
-    console.log('error is', error)
-    console.log('result is', result)
+    const { result } = _data
     if (result.success) {
       // check if youtube link
       if (result.ogSiteName === 'YouTube') {
@@ -181,7 +179,6 @@ export const getYoutubeAttributes = async (url) => {
 
     return _response
   } catch (err) {
-    console.log('in catch', err)
     return _response
   }
 }
