@@ -167,7 +167,9 @@ export const getYoutubeAttributes = async (url) => {
   const options = { url }
   try {
     const _data = await ogs(options)
-    const { result } = _data
+    const { result, error } = _data
+    console.log('error is', error)
+    console.log('result is', result)
     if (result.success) {
       // check if youtube link
       if (result.ogSiteName === 'YouTube') {
