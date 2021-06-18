@@ -3,6 +3,7 @@ import { Editor } from '@databyss-org/slate'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { useEditor, ReactEditor } from '@databyss-org/slate-react'
 import { usePages } from '@databyss-org/data/pouchdb/hooks/usePages'
+import { validUriRegex } from '@databyss-org/services/lib/util'
 import { Page } from '@databyss-org/services/interfaces/Page'
 import {
   weightedSearch,
@@ -107,24 +108,34 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
     dismiss()
   }
 
-  const Suggestion = () => (
-    <View overflowX="hidden" overflowY="auto" maxHeight={pxUnits(menuHeight)}>
-      {filteredSuggestions.length ? (
-        filteredSuggestions.map((s: Page) => (
-          // eslint-disable-next-line react/jsx-indent
-          <DropdownListItem
-            label={s.name}
-            key={s._id}
-            onPress={() => onPageSelected(s)}
-          />
-        ))
-      ) : (
-        <Text variant="uiTextSmall" color="gray.3" display="inline">
-          no pages found
-        </Text>
-      )}
-    </View>
-  )
+  const Suggestion = () => {
+    // check if query is url
+    const _regex = new RegExp(validUriRegex, 'gi')
+    const isAtomicIdUrl = _regex.test(query)
+
+    return isAtomicIdUrl ? (
+      <Text variant="uiTextSmall" color="gray.3" display="inline">
+        press enter
+      </Text>
+    ) : (
+      <View overflowX="hidden" overflowY="auto" maxHeight={pxUnits(menuHeight)}>
+        {filteredSuggestions.length ? (
+          filteredSuggestions.map((s: Page) => (
+            // eslint-disable-next-line react/jsx-indent
+            <DropdownListItem
+              label={s.name}
+              key={s._id}
+              onPress={() => onPageSelected(s)}
+            />
+          ))
+        ) : (
+          <Text variant="uiTextSmall" color="gray.3" display="inline">
+            no pages found
+          </Text>
+        )}
+      </View>
+    )
+  }
 
   return (
     <View>
@@ -133,7 +144,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
       ) : (
         <>
           <Text variant="uiTextSmall" color="gray.3" display="inline" p="tiny">
-            {!query?.length ? 'enter a page name or url' : Suggestion()}
+            {!query?.length ? 'enter a page title or URL' : Suggestion()}
           </Text>
         </>
       )}
