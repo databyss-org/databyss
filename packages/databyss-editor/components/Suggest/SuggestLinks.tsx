@@ -72,7 +72,11 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
           suggestion: _page,
         })
       } else {
-        console.log('CREATE A NEW PAGE LINK')
+        // assume page link is a url
+        setPageLink({
+          editor,
+          suggestion: query,
+        })
       }
     }
   }
@@ -129,7 +133,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
       ) : (
         <>
           <Text variant="uiTextSmall" color="gray.3" display="inline" p="tiny">
-            {!query?.length ? 'enter a page name' : Suggestion()}
+            {!query?.length ? 'enter a page name or url' : Suggestion()}
           </Text>
         </>
       )}
