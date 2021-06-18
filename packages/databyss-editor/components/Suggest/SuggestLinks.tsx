@@ -15,17 +15,33 @@ import { pxUnits } from '@databyss-org/ui/theming/theme'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 
 import { setPageLink } from '../../lib/inlineUtils/setPageLink'
+import { useOpenGraph } from '../../../databyss-data/pouchdb/hooks/useOpenGraph'
 
 const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
   const editor = useEditor() as ReactEditor & Editor
   // const embedRes = useBlocksInPages(BlockType.Embed)
   const pagesRes = usePages()
-
+  const [isUrl, setIsUrl] = useState(false)
+  const [title, setTitle] = useState(null)
   const pendingSetContent = useRef(false)
 
   const [suggestions, setSuggestions] = useState<null | Page[]>(null)
   const filteredSuggestionLengthRef = useRef(0)
   const [filteredSuggestions, setFilteredSuggestions] = useState<Page[]>([])
+
+  const graphRes = useOpenGraph(query)
+
+  useEffect(() => {
+    if (graphRes?.data?.title.length) {
+      setTitle(graphRes?.data?.title)
+    }
+  }, [graphRes?.data])
+
+  useEffect(() => {
+    const _regex = new RegExp(validUriRegex, 'gi')
+    const isAtomicIdUrl = _regex.test(query)
+    setIsUrl(isAtomicIdUrl)
+  }, [query])
 
   useEffect(() => {
     filteredSuggestionLengthRef.current = filteredSuggestions.length
@@ -76,7 +92,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
         // assume page link is a url
         setPageLink({
           editor,
-          suggestion: query,
+          suggestion: title || query,
         })
       }
     }
@@ -108,12 +124,8 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
     dismiss()
   }
 
-  const Suggestion = () => {
-    // check if query is url
-    const _regex = new RegExp(validUriRegex, 'gi')
-    const isAtomicIdUrl = _regex.test(query)
-
-    return isAtomicIdUrl ? (
+  const Suggestion = () =>
+    isUrl ? (
       <Text variant="uiTextSmall" color="gray.3" display="inline">
         press enter
       </Text>
@@ -135,7 +147,6 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
         )}
       </View>
     )
-  }
 
   return (
     <View>
