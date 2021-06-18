@@ -128,7 +128,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
   const Suggestion = () =>
     isUrl ? (
       <Text variant="uiTextSmall" color="gray.3" display="inline">
-        press enter
+        {`press enter${title && `: ${title}`}`}
       </Text>
     ) : (
       <View overflowX="hidden" overflowY="auto" maxHeight={pxUnits(menuHeight)}>
