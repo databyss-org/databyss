@@ -181,6 +181,7 @@ export const getYoutubeAttributes = async (url) => {
 
     return _response
   } catch (err) {
+    console.log('in catch', err)
     return _response
   }
 }
