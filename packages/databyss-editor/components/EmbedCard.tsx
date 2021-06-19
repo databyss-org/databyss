@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { BaseControl, View, Text, Button, Icon } from '@databyss-org/ui'
 import PlaySvg from '@databyss-org/ui/assets/play.svg'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
+import { isHttpInsecure } from './EmbedMedia'
 
 export interface EmbedCardProps {
   src: string
@@ -128,7 +129,12 @@ export const EmbedCard = React.memo(
           </View>
         )}
         {mediaType === MediaTypes.WEBSITE && !imageSrc && (
-          <iframe src={src} height="350px" title={src} frameBorder="0px" />
+          <iframe
+            src={proxySrc(src)}
+            height="350px"
+            title={src}
+            frameBorder="0px"
+          />
         )}
       </View>
     )
@@ -139,4 +145,11 @@ export const EmbedCard = React.memo(
 function formatHostname(src: string) {
   const uri = new URL(src)
   return uri.hostname
+}
+
+function proxySrc(src: string) {
+  if (isHttpInsecure(src)) {
+    return `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(src!)}`
+  }
+  return src
 }

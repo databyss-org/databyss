@@ -30,11 +30,6 @@ export const ResolveEmbed = ({
     )
   }
 
-  if (isHttpInsecure(data.detail.src)) {
-    data.detail.src = `${
-      process.env.API_URL
-    }/media/proxy?url=${encodeURIComponent(data.detail.src!)}`
-  }
   return (
     <IframeComponent
       embedDetail={data.detail}
