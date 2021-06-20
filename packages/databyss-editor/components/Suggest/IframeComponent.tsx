@@ -26,7 +26,6 @@ const embedCardPropsFromEmbedDetail = (
   }
 
   const _ogData = JSON.parse(embedDetail.openGraphJson)
-  console.log('[opengraph]', _ogData)
   if (_ogData.ogTitle) {
     props.title = _ogData?.ogTitle
   }
@@ -85,7 +84,6 @@ export const IframeComponent = ({
         </View>
       )
     }
-    console.log('[iframe] embedDetail', embedDetail)
     const embedCardProps = embedCardPropsFromEmbedDetail(embedDetail)
 
     return <EmbedCard {...embedCardProps} {...others} />

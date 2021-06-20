@@ -29,7 +29,11 @@ import {
   cleanupAtomicData,
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
-import { symbolToAtomicType, selectionHasRange } from '../state/util'
+import {
+  symbolToAtomicType,
+  selectionHasRange,
+  getInlineOrAtomicsFromStateSelection,
+} from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
@@ -45,6 +49,7 @@ import {
   preventMarksOnInline,
   enterAtEndOfInlineAtomic,
 } from '../lib/inlineUtils'
+import { InlineTypes } from '../../databyss-services/interfaces/Range'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -354,9 +359,48 @@ const ContentEditable = ({
     }
 
     const onKeyDown = (event) => {
+      const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+
       // if a character has been entered, check if the position needs to be corrected for inline atomics
       if (isCharacterKeyPress(event) || event.key === 'Backspace') {
         inlineAtomicBlockCorrector(event, editor)
+      }
+
+      // HACK: because we make embeds display as 'inline-block', slate or contenteditable sees
+      // the block as one continous line (ignores line breaks) when using up/down arrows. We
+      // restore expected up/down arrow behavior by manipulating the selection
+      if (
+        event.key === 'ArrowDown' &&
+        _currentLeaf.embed &&
+        editor.children[editor.selection.focus.path[0]].children.length >
+          editor.selection.focus.path[1] + 1
+      ) {
+        event.preventDefault()
+        requestAnimationFrame(() => {
+          Transforms.select(editor, {
+            path: [
+              editor.selection.focus.path[0],
+              editor.selection.focus.path[1] + 1,
+            ],
+            offset: 1,
+          })
+        })
+      }
+      if (
+        event.key === 'ArrowUp' &&
+        _currentLeaf.embed &&
+        editor.selection.focus.path[1] > 0
+      ) {
+        event.preventDefault()
+        requestAnimationFrame(() => {
+          Transforms.select(editor, {
+            path: [
+              editor.selection.focus.path[0],
+              editor.selection.focus.path[1] - 1,
+            ],
+            offset: 0,
+          })
+        })
       }
 
       const escapeInInlineAtomicField = onEscapeInInlineAtomicField({
@@ -487,7 +531,6 @@ const ContentEditable = ({
         // }
 
         const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
-        const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
 
         const isCurrentlyInInlineAtomicField = onEnterInlineField({
           event,

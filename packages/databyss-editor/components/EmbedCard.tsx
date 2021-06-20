@@ -26,10 +26,8 @@ export const EmbedCard = React.memo(
     ...others
   }: EmbedCardProps) => {
     const [mediaActive, setMediaActive] = useState(false)
-    console.log('[EmbedCard] mediaType', mediaType)
-    console.log('[EmbedCard] imageSrc', imageSrc)
     return (
-      <View backgroundColor="gray.6" p="small" {...others}>
+      <View backgroundColor="gray.6" p="small" {...others} opacity={0.5}>
         {mediaType !== MediaTypes.IMAGE && (
           <>
             {title ? (

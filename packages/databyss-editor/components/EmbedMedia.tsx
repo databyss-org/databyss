@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import {
   useSelected,
   useFocused,
@@ -44,7 +44,6 @@ export const EmbedMedia = ({
       // get current leaf value
       const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
       if (_currentLeaf.embed && !highlight) {
-        console.log('[EmbedMedia] setHighlight true')
         setHighlight(true)
       } else if (highlight && !_currentLeaf.embed) {
         setHighlight(false)
