@@ -27,6 +27,7 @@ export class Block implements BlockReference {
   __showNewBlockMenu?: boolean
   __showInlineCitationMenu?: boolean
   __showInlineEmbedMenu?: boolean
+  __showInlineLinkMenu?: boolean
   __showInlineTopicMenu?: boolean
   __isActive?: boolean
 

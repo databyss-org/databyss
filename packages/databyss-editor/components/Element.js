@@ -20,6 +20,7 @@ import {
   SuggestEmbeds,
 } from './Suggest'
 import { EmbedMedia } from './EmbedMedia'
+import SuggestLinks from './Suggest/SuggestLinks'
 // browser still takes some time to process the spellcheck
 const SPELLCHECK_DEBOUNCE_TIME = 300
 
@@ -206,6 +207,18 @@ const Element = ({ attributes, children, element, readOnly }) => {
                 suggestType="embed"
               >
                 <SuggestEmbeds />
+              </SuggestMenu>
+            </View>
+          )}
+
+          {block.__showInlineLinkMenu && (
+            <View contentEditable="false" suppressContentEditableWarning>
+              <SuggestMenu
+                inlineLink
+                onSuggestions={onSuggestions}
+                suggestType="link"
+              >
+                <SuggestLinks />
               </SuggestMenu>
             </View>
           )}

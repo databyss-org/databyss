@@ -21,10 +21,6 @@ export const UnfetchedMedia = ({ atomicId, src, highlight }) => {
           detail: {
             title: _attributes.title,
             src: _attributes.src,
-            dimensions: {
-              width: _attributes.width,
-              height: _attributes.height,
-            },
             ...(_attributes.code && { embedCode: _attributes.code }),
             mediaType: _attributes.mediaType,
             ...(_attributes.openGraphJson && {

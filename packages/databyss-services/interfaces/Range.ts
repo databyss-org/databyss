@@ -8,6 +8,7 @@ export enum InlineTypes {
   InlineTopic = 'inlineTopic',
   InlineSource = 'inlineCitation',
   Embed = 'embed',
+  Link = 'link',
 }
 
 export type InlineRangeType = [InlineTypes, string]
@@ -19,4 +20,5 @@ export enum RangeType {
   Highlight = 'highlight',
   InlineAtomicInput = 'inlineAtomicMenu',
   InlineEmbedInput = 'inlineEmbedInput',
+  InlineLinkInput = 'inlineLinkInput',
 }

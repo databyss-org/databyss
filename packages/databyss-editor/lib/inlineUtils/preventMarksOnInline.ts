@@ -31,7 +31,8 @@ export const preventMarksOnInline = ({
       !(
         getInlineOrAtomicsFromStateSelection(state).length ||
         _currentLeaf.inlineAtomicMenu ||
-        _currentLeaf.inlineEmbedInput
+        _currentLeaf.inlineEmbedInput ||
+        _currentLeaf.inlineLinkInput
       )
     ) {
       if (Hotkeys.isBold(event)) {

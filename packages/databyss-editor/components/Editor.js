@@ -38,8 +38,8 @@ const Editor = ({
     e.preventDefault()
     const _activeMarks = SlateEditor.marks(editor)
     // if pasting embed code handle seperatly
-    if (_activeMarks?.inlineEmbedInput) {
-      embedPaste(e)
+    if (_activeMarks?.inlineEmbedInput || _activeMarks?.inlineLinkInput) {
+      embedPaste({ event: e, inlineType: Object.keys(_activeMarks)[0] })
       return
     }
 
@@ -88,7 +88,12 @@ const Editor = ({
   const decorate = useCallback(
     ([node, path]) => {
       const ranges = []
-      if (node?.inlineEmbedInput || node?.embed) {
+      if (
+        node?.inlineEmbedInput ||
+        node?.embed ||
+        node?.link ||
+        node?.inlineLinkInput
+      ) {
         return ranges
       }
 

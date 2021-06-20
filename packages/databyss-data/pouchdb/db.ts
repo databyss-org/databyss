@@ -397,7 +397,7 @@ export const pouchDataValidation = (data) => {
 
   // `this.schema &&` this will be removed when all schemas are implemented
   if (schema && !tv4.validate(data, schema, false, true)) {
-    console.log('TYPE', data)
+    console.log('[pouchDataValidation]', data)
     console.error(
       `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
     )

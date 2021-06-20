@@ -49,11 +49,38 @@ export const onInlineKeyPress = ({
     return false
   }
 
+  let _embedEdgeCase = false
+  if (event.key === 'Enter') {
+    /**
+     * edge case: check if next leaf is an embed and offset is and the end of current leaf. if so, jog editor forward and back one
+     */
+    const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+    const _anchor = editor.selection.anchor
+
+    const _isAnchorAtEndOfLeaf = _currentLeaf.text.length === _anchor.offset
+    if (_isAnchorAtEndOfLeaf) {
+      const _next = SlateEditor.next(editor)
+      if (_next?.[0]?.embed) {
+        _embedEdgeCase = true
+        Transforms.move(editor, {
+          unit: 'character',
+          distance: 1,
+        })
+        Transforms.move(editor, {
+          unit: 'character',
+          distance: 1,
+          reverse: true,
+        })
+      }
+    }
+  }
+
   if (
     (isCharacterKeyPress(event) || event.key === 'Backspace') &&
     (SlateEditor.marks(editor)?.inlineTopic ||
       SlateEditor.marks(editor)?.inlineCitation ||
-      SlateEditor.marks(editor)?.embed) &&
+      SlateEditor.marks(editor)?.embed ||
+      _embedEdgeCase) &&
     Range.isCollapsed(editor.selection)
   ) {
     const _currentBlock = state.blocks[state.selection.anchor.index]
@@ -64,7 +91,8 @@ export const onInlineKeyPress = ({
       (_anchor.path[1] !== 0 ||
         _currentBlock.text.textValue.length === _currentLeaf.text.length)
     const _isAnchorAtEndOfLeaf = _currentLeaf.text.length === _anchor.offset
-    if (_isAnchorAtStartOfLeaf) {
+
+    if (_isAnchorAtStartOfLeaf && !_embedEdgeCase) {
       // jog the caret back and forward to reset current leaf
       // current leaf will assume the end of last leaf
       Transforms.move(editor, {
@@ -87,7 +115,8 @@ export const onInlineKeyPress = ({
       // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
       if (
         !(_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf) ||
-        event.key === 'Backspace'
+        event.key === 'Backspace' ||
+        _embedEdgeCase
       ) {
         /*
           remove entire inline atomic, check page to see if its the last one, if so, remove from page
@@ -171,7 +200,7 @@ export const onInlineKeyPress = ({
               distance: _currentLeaf.text.length - _leafOffset,
               unit: 'character',
             })
-            // Transforms.insertNodes(editor, { text: '\uFEFF' })
+
             Transforms.insertNodes(editor, { text: '\n' })
             event.preventDefault()
 

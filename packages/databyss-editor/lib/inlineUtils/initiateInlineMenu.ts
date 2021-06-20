@@ -11,6 +11,7 @@ import {
   flattenOffset,
   isCurrentlyInInlineAtomicField,
   isCurrentlyInInlineEmbedInput,
+  isCurrentlyInInlineLinkInput,
 } from '../slateUtils'
 
 export const initiateInlineMenu = ({
@@ -35,7 +36,10 @@ export const initiateInlineMenu = ({
       return false
     }
     // dont allow if in active embed field
-    if (isCurrentlyInInlineEmbedInput(editor)) {
+    if (
+      isCurrentlyInInlineEmbedInput(editor) ||
+      isCurrentlyInInlineLinkInput(editor)
+    ) {
       return false
     }
 

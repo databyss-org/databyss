@@ -70,14 +70,12 @@ const SuggestEmbeds = ({
 
   // default attributes if not set already, this will be used in offline mode
   useEffect(() => {
-    console.log('IFRAME', embedDetail)
     setMediaUnavailable(false)
     if (
       embedDetail &&
       embedDetail?.mediaType !== MediaTypes.UNFETCHED &&
       _timeoutRef.current
     ) {
-      console.log('clears')
       clearTimeout(_timeoutRef.current)
       return
     }
@@ -87,7 +85,6 @@ const SuggestEmbeds = ({
       (embedDetail.mediaType === MediaTypes.UNFETCHED &&
         embedDetail?.src !== query)
     ) {
-      console.log('IN HERE', embedDetail)
       setEmbedDetail({ mediaType: MediaTypes.UNFETCHED, src: query })
       toggleTimeout()
     }

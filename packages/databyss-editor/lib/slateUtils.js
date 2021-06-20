@@ -142,14 +142,16 @@ const allowedRanges = [
   'bold',
   'italic',
   'location',
+  'link',
   'inlineAtomicMenu',
   'inlineTopic',
   'inlineCitation',
   'embed',
   'inlineEmbedInput',
+  'inlineLinkInput',
 ]
 
-const allowedInlines = ['inlineTopic', 'inlineCitation', 'embed']
+const allowedInlines = ['inlineTopic', 'inlineCitation', 'embed', 'link']
 
 export const slateRangesToStateRanges = (node) => {
   let _offset = 0
@@ -298,6 +300,16 @@ export const isCurrentlyInInlineAtomicField = (editor) => {
 export const isCurrentlyInInlineEmbedInput = (editor) => {
   if (
     isMarkActive(editor, 'inlineEmbedInput') &&
+    Range.isCollapsed(editor.selection)
+  ) {
+    return true
+  }
+  return false
+}
+
+export const isCurrentlyInInlineLinkInput = (editor) => {
+  if (
+    isMarkActive(editor, 'inlineLinkInput') &&
     Range.isCollapsed(editor.selection)
   ) {
     return true
@@ -469,6 +481,33 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
       }
     }
 
+    // move backwards and forward to get selection in previous leaf if previous node exist, this is to get the correct leaf
+    if (editor.selection.focus.offset === 0) {
+      const _prev = Editor.previous(editor)
+      if (_prev) {
+        Transforms.move(editor, {
+          distance: 1,
+          reverse: true,
+          unit: 'character',
+        })
+        Transforms.move(editor, { distance: 1, unit: 'character' })
+      }
+    }
+
+    let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+
+    /**
+     * if current text is in inline link, check if at start or beginning, if so toggle mark off
+     */
+    if (_currentLeaf?.link && event.key !== 'Backspace') {
+      const _atLeafEnd =
+        _currentLeaf.text.length === editor.selection.focus.offset
+      if (_atLeafEnd) {
+        Editor.removeMark(editor, 'link')
+        Editor.removeMark(editor, 'atomicId')
+      }
+    }
+
     // Edge case: check if between a `\n` new line and the start of an inline atomic
     const _prevNewLine = _text.charAt(_offset - 1) === '\n'
     const _atBlockEnd = _offset === _text.length
@@ -480,7 +519,8 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
       event.key !== 'Backspace' &&
       event.key !== 'Tab'
     ) {
-      let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+      _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+
       const _atLeafEnd =
         _currentLeaf.text.length === editor.selection.focus.offset
       // move selection forward one
@@ -515,6 +555,9 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
         Editor.removeMark(editor, 'atomicId')
       }
     }
+  } else if (isMarkActive(editor, 'link')) {
+    // if range is not collapsed, check to see if active link markup, if so remove markup
+    toggleMark(editor, 'link')
   }
 
   return false
