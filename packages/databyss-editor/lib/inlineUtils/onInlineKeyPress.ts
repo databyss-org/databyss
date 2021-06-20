@@ -131,7 +131,11 @@ export const onInlineKeyPress = ({
            */
           if (_currentLeaf.embed) {
             // move forward one and check selection
-            Transforms.move(editor, { distance: 1, edge: 'focus' })
+            Transforms.move(editor, {
+              distance: 1,
+              edge: 'focus',
+              reverse: true,
+            })
             const _frag = SlateEditor.fragment(editor, editor.selection)
             const _leaf = getLowestLeaf(_frag)
             if (_leaf?.embed) {

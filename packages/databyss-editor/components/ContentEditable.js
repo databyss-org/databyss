@@ -1,5 +1,11 @@
 import React, { useMemo, useRef, useEffect, useImperativeHandle } from 'react'
-import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
+import {
+  createEditor,
+  Node,
+  Transforms,
+  Point,
+  Range,
+} from '@databyss-org/slate'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { setSource } from '@databyss-org/services/sources'
@@ -29,11 +35,7 @@ import {
   cleanupAtomicData,
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
-import {
-  symbolToAtomicType,
-  selectionHasRange,
-  getInlineOrAtomicsFromStateSelection,
-} from '../state/util'
+import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
@@ -49,7 +51,6 @@ import {
   preventMarksOnInline,
   enterAtEndOfInlineAtomic,
 } from '../lib/inlineUtils'
-import { InlineTypes } from '../../databyss-services/interfaces/Range'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -227,6 +228,23 @@ const ContentEditable = ({
     }
   }, [state?.selection?.anchor.index])
 
+  const currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+
+  useEffect(() => {
+    if (
+      currentLeaf.embed &&
+      editor.selection.focus.offset < currentLeaf.text.length &&
+      Range.isCollapsed(editor.selection)
+    ) {
+      requestAnimationFrame(() =>
+        Transforms.select(editor, {
+          path: editor.selection.focus.path,
+          offset: currentLeaf.text.length,
+        })
+      )
+    }
+  }, [currentLeaf, editor.selection.focus.offset])
+
   const onInlineAtomicClick = (inlineData) => {
     // pass editorContext
     const inlineAtomicData = {
@@ -359,8 +377,6 @@ const ContentEditable = ({
     }
 
     const onKeyDown = (event) => {
-      const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
-
       // if a character has been entered, check if the position needs to be corrected for inline atomics
       if (isCharacterKeyPress(event) || event.key === 'Backspace') {
         inlineAtomicBlockCorrector(event, editor)
@@ -369,38 +385,121 @@ const ContentEditable = ({
       // HACK: because we make embeds display as 'inline-block', slate or contenteditable sees
       // the block as one continous line (ignores line breaks) when using up/down arrows. We
       // restore expected up/down arrow behavior by manipulating the selection
-      if (
-        event.key === 'ArrowDown' &&
-        _currentLeaf.embed &&
-        editor.children[editor.selection.focus.path[0]].children.length >
-          editor.selection.focus.path[1] + 1
-      ) {
-        event.preventDefault()
-        requestAnimationFrame(() => {
-          Transforms.select(editor, {
+      if (currentLeaf.embed) {
+        if (
+          event.key === 'ArrowDown' &&
+          editor.children[editor.selection.focus.path[0]].children.length >
+            editor.selection.focus.path[1] + 1
+        ) {
+          event.preventDefault()
+          const _fpoint = {
             path: [
               editor.selection.focus.path[0],
               editor.selection.focus.path[1] + 1,
             ],
             offset: 1,
+          }
+          requestAnimationFrame(() => {
+            Transforms.select(
+              editor,
+              Range.isCollapsed(editor.selection)
+                ? _fpoint
+                : {
+                    focus: _fpoint,
+                    anchor: editor.selection.anchor,
+                  }
+            )
           })
-        })
-      }
-      if (
-        event.key === 'ArrowUp' &&
-        _currentLeaf.embed &&
-        editor.selection.focus.path[1] > 0
-      ) {
-        event.preventDefault()
-        requestAnimationFrame(() => {
-          Transforms.select(editor, {
-            path: [
-              editor.selection.focus.path[0],
-              editor.selection.focus.path[1] - 1,
-            ],
-            offset: 0,
+        }
+        if (event.key === 'ArrowUp') {
+          event.preventDefault()
+          requestAnimationFrame(() => {
+            let _fpoint = null
+            if (editor.selection.focus.path[1] > 0) {
+              _fpoint = {
+                path: [
+                  editor.selection.focus.path[0],
+                  editor.selection.focus.path[1] - 1,
+                ],
+                offset: 0,
+              }
+            } else if (editor.selection.focus.path[0] > 0) {
+              _fpoint = {
+                path: [editor.selection.focus.path[0] - 1, 0],
+                offset: 0,
+              }
+            }
+            if (_fpoint) {
+              Transforms.select(
+                editor,
+                Range.isCollapsed(editor.selection)
+                  ? _fpoint
+                  : {
+                      focus: _fpoint,
+                      anchor: editor.selection.anchor,
+                    }
+              )
+            }
           })
-        })
+        }
+        if (event.key === 'ArrowLeft') {
+          if (editor.selection.focus.path[1] > 0) {
+            event.preventDefault()
+            Transforms.select(editor, {
+              path: [
+                editor.selection.focus.path[0],
+                editor.selection.focus.path[1] - 1,
+              ],
+              offset:
+                editor.children[editor.selection.focus.path[0]].children[
+                  editor.selection.focus.path[1] - 1
+                ].text.length,
+            })
+          } else if (editor.selection.focus.path[0] > 0) {
+            event.preventDefault()
+            const _prevIndexNode =
+              editor.children[editor.selection.focus.path[0] - 1]
+            Transforms.select(editor, {
+              path: [editor.selection.focus.path[0] - 1, 0],
+              offset:
+                _prevIndexNode.children[_prevIndexNode.children.length - 1].text
+                  .length,
+            })
+          } else {
+            event.preventDefault()
+            Transforms.select(editor, {
+              path: editor.selection.focus.path,
+              offset: 0,
+            })
+          }
+          // const _adjust = editor.selection.focus.path[0] > 0
+          // Transforms.select(editor, {
+          //   path: editor.selection.focus.path,
+          //   offset: 0,
+          // })
+          // if (_adjust) {
+          //   requestAnimationFrame(() => {
+          //     Transforms.move(editor, {
+          //       unit: 'character',
+          //       distance: 1,
+
+          //     })
+          //   })
+          // }
+          //   if (
+          //     editor.selection.focus.path[1] > 0 ||
+          //     editor.selection.focus.path[0] > 0
+          //     // editor.selection.focus.path[1] === 0
+          //   ) {
+          //     console.log('[ArrowLeft]')
+          //     Transforms.move(editor, {
+          //       unit: 'character',
+          //       distance: 1,
+          //       reverse: true,
+          //     })
+          //   }
+          // })
+        }
       }
 
       const escapeInInlineAtomicField = onEscapeInInlineAtomicField({
@@ -525,7 +624,7 @@ const ContentEditable = ({
 
         const isCurrentlyInInlineAtomicField = onEnterInlineField({
           event,
-          currentLeaf: _currentLeaf,
+          currentLeaf,
           state,
           setContent,
           editor,
@@ -581,7 +680,7 @@ const ContentEditable = ({
           const isEnterAtEndOfInlineAtomic = enterAtEndOfInlineAtomic({
             editor,
             event,
-            currentLeaf: _currentLeaf,
+            currentLeaf,
             setContent,
             atBlockEnd: _atBlockEnd,
             currentBlock: _focusedBlock,
