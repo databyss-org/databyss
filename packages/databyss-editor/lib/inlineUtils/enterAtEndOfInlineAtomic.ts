@@ -37,8 +37,6 @@ export const enterAtEndOfInlineAtomic = ({
     10
   )
 
-  console.log('[enterAtEndOfInlineAtomic]', atBlockEnd)
-
   if (currentLeaf.embed) {
     event.preventDefault()
     Transforms.select(editor, {

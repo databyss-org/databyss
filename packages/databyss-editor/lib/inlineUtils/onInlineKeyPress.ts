@@ -214,7 +214,11 @@ export const onInlineKeyPress = ({
             refId: _currentLeaf.atomicId,
             type: _type,
           }
-
+          if (_currentLeaf.text.length === _anchor.offset) {
+            Transforms.insertNodes(editor, { text: '\n' })
+            event.preventDefault()
+            return true
+          }
           onInlineAtomicClick(inlineAtomicData)
         }
         event.preventDefault()

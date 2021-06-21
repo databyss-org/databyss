@@ -603,6 +603,8 @@ const ContentEditable = ({
           _prevIsDoubleBreak ||
           _text.length === 0
 
+        console.log('[ContentEditable] _atBlockEnd', _atBlockEnd)
+
         if (!_atBlockEnd && isAtomic(_focusedBlock)) {
           if (
             ReactEditor.isFocused(editor) &&
