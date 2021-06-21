@@ -412,9 +412,9 @@ const ContentEditable = ({
           })
         }
         if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          let _fpoint = null
           if (editor.selection.focus.path[1] > 0) {
-            event.preventDefault()
-            Transforms.select(editor, {
+            _fpoint = {
               path: [
                 editor.selection.focus.path[0],
                 editor.selection.focus.path[1] - 1,
@@ -423,12 +423,11 @@ const ContentEditable = ({
                 editor.children[editor.selection.focus.path[0]].children[
                   editor.selection.focus.path[1] - 1
                 ].text.length,
-            })
+            }
           } else if (editor.selection.focus.path[0] > 0) {
-            event.preventDefault()
             const _prevIndexNode =
               editor.children[editor.selection.focus.path[0] - 1]
-            Transforms.select(editor, {
+            _fpoint = {
               path: [
                 editor.selection.focus.path[0] - 1,
                 _prevIndexNode.children.length - 1,
@@ -436,14 +435,23 @@ const ContentEditable = ({
               offset:
                 _prevIndexNode.children[_prevIndexNode.children.length - 1].text
                   .length,
-            })
+            }
           } else {
-            event.preventDefault()
-            Transforms.select(editor, {
+            _fpoint = {
               path: editor.selection.focus.path,
               offset: 0,
-            })
+            }
           }
+          event.preventDefault()
+          Transforms.select(
+            editor,
+            Range.isCollapsed(editor.selection)
+              ? _fpoint
+              : {
+                  focus: _fpoint,
+                  anchor: editor.selection.anchor,
+                }
+          )
         }
       }
 
@@ -602,8 +610,6 @@ const ContentEditable = ({
           _nextIsDoubleBreak ||
           _prevIsDoubleBreak ||
           _text.length === 0
-
-        console.log('[ContentEditable] _atBlockEnd', _atBlockEnd)
 
         if (!_atBlockEnd && isAtomic(_focusedBlock)) {
           if (
