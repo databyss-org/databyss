@@ -137,10 +137,10 @@ export const onInlineFieldBackspace = ({
   }
 
   if (
-    // check for inline embed fields
+    // check for inline link fields
     _currentLeaf.inlineLinkInput
   ) {
-    // only << exist, remove mark on backspace
+    // only >> exist, remove mark on backspace
     if (_currentLeaf.text === InlineInitializer.link) {
       Transforms.delete(editor, {
         distance: 1,
@@ -161,13 +161,13 @@ export const onInlineFieldBackspace = ({
       event.preventDefault()
       return true
     }
-    //  check if offset falls within the first two characters of range inlineEmbedInput
+    //  check if offset falls within the first two characters of range inlineLinkInput
     const _inlineLinkInput = currentBlock.text.ranges.filter((r) =>
       r.marks.includes(RangeType.InlineLinkInput)
     )[0].offset
 
     if (_inlineLinkInput + 1 === _offset || _inlineLinkInput + 2 === _offset) {
-      // remove inline embed range and allow backspace
+      // remove inline link range and allow backspace
       Transforms.removeNodes(editor, {
         match: (node) => node === _currentLeaf,
       })
