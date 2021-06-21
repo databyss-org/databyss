@@ -240,12 +240,10 @@ const ContentEditable = ({
       editor.selection.focus.offset < currentLeaf.text.length &&
       Range.isCollapsed(editor.selection)
     ) {
-      requestAnimationFrame(() =>
-        Transforms.select(editor, {
-          path: editor.selection.focus.path,
-          offset: currentLeaf.text.length,
-        })
-      )
+      Transforms.select(editor, {
+        path: editor.selection.focus.path,
+        offset: currentLeaf.text.length,
+      })
     }
   }, [currentLeaf, editor.selection.focus.offset])
 
