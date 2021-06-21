@@ -30,9 +30,6 @@ export const setPageLink = ({
         link: true,
         atomicId: suggestion,
       },
-      {
-        text: ' ',
-      },
     ]
   } else {
     _textNode = [
@@ -41,15 +38,11 @@ export const setPageLink = ({
         link: true,
         atomicId: suggestion!._id,
       },
-      {
-        text: ' ',
-      },
     ]
   }
 
   Transforms.insertNodes(editor, _textNode!)
   Transforms.removeNodes(editor, { at: path })
-  Transforms.move(editor, { distance: 1 })
   const _currentBlock = editor.children[path[0]]
 
   const _stateBlock = {
