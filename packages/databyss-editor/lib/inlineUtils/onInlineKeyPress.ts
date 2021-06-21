@@ -192,6 +192,7 @@ export const onInlineKeyPress = ({
           const _type: string | BlockType = symbolToAtomicType(
             _currentLeaf.text.substring(0, 1)
           )
+
           // check if inline embed
           if (_currentLeaf?.embed) {
             // if enter, move cursor to end of current leaf

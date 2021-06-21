@@ -1,11 +1,5 @@
 import { ReactEditor } from '@databyss-org/slate-react'
-import {
-  Editor as SlateEditor,
-  Transforms,
-  Node,
-  Text,
-} from '@databyss-org/slate'
-import { toggleMark } from '../slateUtils'
+import { Editor as SlateEditor, Transforms, Node } from '@databyss-org/slate'
 import { Page } from '../../../databyss-services/interfaces/Page'
 
 export const setPageLink = ({
@@ -19,35 +13,35 @@ export const setPageLink = ({
     return
   }
 
-  // remove node
-  const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+  const { path } = editor.selection.anchor
 
-  Transforms.removeNodes(editor, {
-    match: (node) => node === _currentLeaf,
-  })
-
-  let _textNode: Text | null
+  let _textNode: Node[] | null
 
   if (typeof suggestion === 'string') {
-    _textNode = {
-      text: suggestion,
-      link: true,
-      atomicId: suggestion,
-    }
+    _textNode = [
+      {
+        text: suggestion,
+        link: true,
+        atomicId: suggestion,
+      },
+      {
+        text: ' ',
+      },
+    ]
   } else {
-    _textNode = {
-      text: suggestion!.name,
-      link: true,
-      atomicId: suggestion!._id,
-    }
+    _textNode = [
+      {
+        text: suggestion!.name,
+        link: true,
+        atomicId: suggestion!._id,
+      },
+      {
+        text: ' ',
+      },
+    ]
   }
 
   Transforms.insertNodes(editor, _textNode)
-  const _activeMarks = SlateEditor.marks(editor)
-  // turn off mark
-  if (_activeMarks) {
-    toggleMark(editor, 'link')
-  }
-  // insert space
-  Transforms.insertNodes(editor, { text: ' ' })
+  Transforms.removeNodes(editor, { at: path })
+  Transforms.move(editor, { distance: 1 })
 }
