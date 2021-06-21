@@ -1,13 +1,19 @@
 import { ReactEditor } from '@databyss-org/slate-react'
 import { Editor as SlateEditor, Transforms, Node } from '@databyss-org/slate'
 import { Page } from '../../../databyss-services/interfaces/Page'
+import {
+  slateRangesToStateRanges,
+  slateSelectionToStateSelection,
+} from '../slateUtils'
 
 export const setPageLink = ({
   editor,
   suggestion,
+  setContent,
 }: {
   editor: ReactEditor & SlateEditor
   suggestion?: Page | string
+  setContent: Function
 }) => {
   if (!editor?.selection) {
     return
@@ -41,7 +47,25 @@ export const setPageLink = ({
     ]
   }
 
-  Transforms.insertNodes(editor, _textNode)
+  Transforms.insertNodes(editor, _textNode!)
   Transforms.removeNodes(editor, { at: path })
   Transforms.move(editor, { distance: 1 })
+  const _currentBlock = editor.children[path[0]]
+
+  const _stateBlock = {
+    textValue: Node.string(_currentBlock),
+    ranges: slateRangesToStateRanges(_currentBlock),
+  }
+
+  const selection = slateSelectionToStateSelection(editor)
+
+  setContent({
+    selection,
+    operations: [
+      {
+        index: path[0],
+        text: _stateBlock,
+      },
+    ],
+  })
 }

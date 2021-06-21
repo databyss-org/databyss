@@ -39,7 +39,10 @@ export const enterAtEndOfInlineAtomic = ({
 
   if (
     Range.isCollapsed(editor.selection) &&
-    (currentLeaf.inlineTopic || currentLeaf.inlineCitation || currentLeaf.embed)
+    (currentLeaf.inlineTopic ||
+      currentLeaf.inlineCitation ||
+      currentLeaf.embed ||
+      currentLeaf.link)
   ) {
     /**
      * check if enter at end of embed

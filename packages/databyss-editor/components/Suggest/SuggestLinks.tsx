@@ -16,8 +16,10 @@ import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 
 import { setPageLink } from '../../lib/inlineUtils/setPageLink'
 import { useOpenGraph } from '../../../databyss-data/pouchdb/hooks/useOpenGraph'
+import { useEditorContext } from '../../state/EditorProvider'
 
 const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
+  const { setContent } = useEditorContext()
   const editor = useEditor() as ReactEditor & Editor
   // const embedRes = useBlocksInPages(BlockType.Embed)
   const pagesRes = usePages()
@@ -77,6 +79,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
       setPageLink({
         editor,
         suggestion: page,
+        setContent,
       })
       // return
     } else {
@@ -87,6 +90,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
         setPageLink({
           editor,
           suggestion: _page,
+          setContent,
         })
       } else {
         // assume page link is a url
@@ -94,6 +98,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
         setPageLink({
           editor,
           suggestion: _suggestion,
+          setContent,
         })
       }
     }
