@@ -32,7 +32,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
   const graphRes = useOpenGraph(query)
 
   useEffect(() => {
-    if (graphRes?.data?.title.length) {
+    if (graphRes?.data?.title?.length) {
       setTitle(graphRes?.data?.title)
     }
   }, [graphRes?.data])
