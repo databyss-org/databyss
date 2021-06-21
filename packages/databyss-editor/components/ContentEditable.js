@@ -411,38 +411,7 @@ const ContentEditable = ({
             )
           })
         }
-        if (event.key === 'ArrowUp') {
-          event.preventDefault()
-          requestAnimationFrame(() => {
-            let _fpoint = null
-            if (editor.selection.focus.path[1] > 0) {
-              _fpoint = {
-                path: [
-                  editor.selection.focus.path[0],
-                  editor.selection.focus.path[1] - 1,
-                ],
-                offset: 0,
-              }
-            } else if (editor.selection.focus.path[0] > 0) {
-              _fpoint = {
-                path: [editor.selection.focus.path[0] - 1, 0],
-                offset: 0,
-              }
-            }
-            if (_fpoint) {
-              Transforms.select(
-                editor,
-                Range.isCollapsed(editor.selection)
-                  ? _fpoint
-                  : {
-                      focus: _fpoint,
-                      anchor: editor.selection.anchor,
-                    }
-              )
-            }
-          })
-        }
-        if (event.key === 'ArrowLeft') {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
           if (editor.selection.focus.path[1] > 0) {
             event.preventDefault()
             Transforms.select(editor, {
@@ -460,7 +429,10 @@ const ContentEditable = ({
             const _prevIndexNode =
               editor.children[editor.selection.focus.path[0] - 1]
             Transforms.select(editor, {
-              path: [editor.selection.focus.path[0] - 1, 0],
+              path: [
+                editor.selection.focus.path[0] - 1,
+                _prevIndexNode.children.length - 1,
+              ],
               offset:
                 _prevIndexNode.children[_prevIndexNode.children.length - 1].text
                   .length,
@@ -472,33 +444,6 @@ const ContentEditable = ({
               offset: 0,
             })
           }
-          // const _adjust = editor.selection.focus.path[0] > 0
-          // Transforms.select(editor, {
-          //   path: editor.selection.focus.path,
-          //   offset: 0,
-          // })
-          // if (_adjust) {
-          //   requestAnimationFrame(() => {
-          //     Transforms.move(editor, {
-          //       unit: 'character',
-          //       distance: 1,
-
-          //     })
-          //   })
-          // }
-          //   if (
-          //     editor.selection.focus.path[1] > 0 ||
-          //     editor.selection.focus.path[0] > 0
-          //     // editor.selection.focus.path[1] === 0
-          //   ) {
-          //     console.log('[ArrowLeft]')
-          //     Transforms.move(editor, {
-          //       unit: 'character',
-          //       distance: 1,
-          //       reverse: true,
-          //     })
-          //   }
-          // })
         }
       }
 
@@ -633,23 +578,6 @@ const ContentEditable = ({
           return
         }
 
-        if (isAtomic(_focusedBlock)) {
-          if (
-            ReactEditor.isFocused(editor) &&
-            !selectionHasRange(state.selection) &&
-            _focusedBlock.__isActive &&
-            !isAtomicClosure(_focusedBlock.type)
-          ) {
-            event.preventDefault()
-            showAtomicModal({ editorContext, navigationContext, editor })
-          }
-          // if closure block is highlighted prevent `enter` key
-          if (_focusedBlock.__isActive && isAtomicClosure(_focusedBlock.type)) {
-            event.preventDefault()
-          }
-
-          return
-        }
         const _text = Node.string(
           editor.children[editor.selection.focus.path[0]]
         )
@@ -674,6 +602,24 @@ const ContentEditable = ({
           _nextIsDoubleBreak ||
           _prevIsDoubleBreak ||
           _text.length === 0
+
+        if (!_atBlockEnd && isAtomic(_focusedBlock)) {
+          if (
+            ReactEditor.isFocused(editor) &&
+            !selectionHasRange(state.selection) &&
+            _focusedBlock.__isActive &&
+            !isAtomicClosure(_focusedBlock.type)
+          ) {
+            event.preventDefault()
+            showAtomicModal({ editorContext, navigationContext, editor })
+          }
+          // if closure block is highlighted prevent `enter` key
+          if (_focusedBlock.__isActive && isAtomicClosure(_focusedBlock.type)) {
+            event.preventDefault()
+          }
+
+          return
+        }
 
         if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
           // // edge case where enter is at the end of an inline atomic
