@@ -189,6 +189,10 @@ const ContentEditable = ({
   }, [state.newEntities.length])
 
   useImperativeHandle(editorRef, () => ({
+    resetSelection: () => {
+      const _zero = { path: [0], offset: 0 }
+      Transforms.setSelection(editor, { anchor: _zero, focus: _zero })
+    },
     focus: () => {
       ReactEditor.focus(editor)
       const _firstBlockText = state.blocks[0].text.textValue
@@ -399,17 +403,15 @@ const ContentEditable = ({
             ],
             offset: 1,
           }
-          requestAnimationFrame(() => {
-            Transforms.select(
-              editor,
-              Range.isCollapsed(editor.selection)
-                ? _fpoint
-                : {
-                    focus: _fpoint,
-                    anchor: editor.selection.anchor,
-                  }
-            )
-          })
+          Transforms.select(
+            editor,
+            Range.isCollapsed(editor.selection)
+              ? _fpoint
+              : {
+                  focus: _fpoint,
+                  anchor: editor.selection.anchor,
+                }
+          )
         }
         if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
           let _fpoint = null
