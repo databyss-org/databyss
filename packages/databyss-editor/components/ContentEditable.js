@@ -189,10 +189,6 @@ const ContentEditable = ({
   }, [state.newEntities.length])
 
   useImperativeHandle(editorRef, () => ({
-    resetSelection: () => {
-      const _zero = { path: [0], offset: 0 }
-      Transforms.setSelection(editor, { anchor: _zero, focus: _zero })
-    },
     focus: () => {
       ReactEditor.focus(editor)
       const _firstBlockText = state.blocks[0].text.textValue
@@ -232,7 +228,7 @@ const ContentEditable = ({
     }
   }, [state?.selection?.anchor.index])
 
-  const currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+  const currentLeaf = Node.leaf(editor, editor.selection?.focus.path)
 
   useEffect(() => {
     if (
