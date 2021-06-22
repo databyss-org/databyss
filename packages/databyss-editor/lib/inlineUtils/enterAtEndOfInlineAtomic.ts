@@ -39,7 +39,10 @@ export const enterAtEndOfInlineAtomic = ({
 
   if (
     Range.isCollapsed(editor.selection) &&
-    (currentLeaf.inlineTopic || currentLeaf.inlineCitation || currentLeaf.embed)
+    (currentLeaf.inlineTopic ||
+      currentLeaf.inlineCitation ||
+      currentLeaf.embed ||
+      currentLeaf.link)
   ) {
     /**
      * check if enter at end of embed
@@ -53,7 +56,7 @@ export const enterAtEndOfInlineAtomic = ({
       updateSelection = false
 
       window.requestAnimationFrame(() => {
-        // job selection back one and forward one to force selection to be within range
+        // jog selection back one and forward one to force selection to be within range
         Transforms.move(editor, {
           distance: 1,
           unit: 'character',
@@ -67,7 +70,7 @@ export const enterAtEndOfInlineAtomic = ({
         const _nextNodePath = SlateEditor.next(editor, {
           at: editor.selection?.anchor,
         })
-        // EDGE CASE: if cursor is at last position at the end of an embed, caret must be exlicitly set
+        // EDGE CASE: if cursor is at last position at the end of an embed, caret must be explicitly set
         if (_nextNodePath?.length) {
           const _textNode = _nextNodePath[0] as Text
           const _newOffset = _textNode.text.length

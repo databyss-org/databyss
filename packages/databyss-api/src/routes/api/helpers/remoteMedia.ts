@@ -149,7 +149,7 @@ export const getTwitterAttributes = async (url: string) => {
 export const getYoutubeAttributes = async (url) => {
   const _response: MediaResponse = {
     mediaType: null,
-    title: null,
+    title: 'default title',
     src: null,
     width: null,
     height: null,

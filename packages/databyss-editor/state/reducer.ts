@@ -538,12 +538,12 @@ export default (
           insertText({
             block: draft.blocks[draft.selection.anchor.index],
             text: {
-              textValue: payload,
+              textValue: payload.data,
               ranges: [
                 {
                   offset: 0,
-                  length: payload.length,
-                  marks: [RangeType.InlineEmbedInput],
+                  length: payload.data.length,
+                  marks: [payload.inlineType],
                 },
               ],
             },
@@ -560,7 +560,7 @@ export default (
           // update cursor
           const _cursor = {
             index: draft.selection.anchor.index,
-            offset: _currentOffset + payload.length,
+            offset: _currentOffset + payload.data.length,
           }
 
           nextSelection = {

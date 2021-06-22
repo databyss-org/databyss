@@ -8,7 +8,12 @@ import {
   Editor as SlateEditor,
 } from '@databyss-org/slate'
 import { validURL } from '@databyss-org/services/lib/util'
-import { flattenOffset, isCurrentlyInInlineAtomicField } from '../slateUtils'
+import {
+  flattenOffset,
+  isCurrentlyInInlineAtomicField,
+  isCurrentlyInInlineEmbedInput,
+  isCurrentlyInInlineLinkInput,
+} from '../slateUtils'
 import { InlineInitializer } from '.'
 import { inlineTypeToSymbol, inlineTypeToInputFieldRange } from './helpers'
 
@@ -110,7 +115,13 @@ export const initiateEmbedInput = ({
       }
       // toggle the inline atomic block
       // insert key manually to trigger an 'insert_text' command
-      if (!isCurrentlyInInlineAtomicField(editor)) {
+      if (
+        !(
+          isCurrentlyInInlineAtomicField(editor) ||
+          isCurrentlyInInlineEmbedInput(editor) ||
+          isCurrentlyInInlineLinkInput(editor)
+        )
+      ) {
         // remove previous `<` or `>`
         Transforms.move(editor, {
           unit: 'character',

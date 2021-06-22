@@ -477,15 +477,6 @@ const ContentEditable = ({
       }
 
       if (event.key === 'Enter') {
-        // carriage return in title advances selection to next line
-        // if (firstBlockIsTitle) {
-        //   if (editor.selection.focus.path[0] === 0) {
-        //     event.preventDefault()
-        //     Transforms.move(editor, { unit: 'line', distance: 1 })
-        //     return
-        //   }
-        // }
-
         const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
         const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
 
