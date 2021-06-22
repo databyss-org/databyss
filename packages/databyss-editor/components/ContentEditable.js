@@ -228,12 +228,16 @@ const ContentEditable = ({
     }
   }, [state?.selection?.anchor.index])
 
-  const currentLeaf = Node.leaf(editor, editor.selection?.focus.path)
+  let currentLeaf = null
+  if (editor.selection) {
+    currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+  }
 
   useEffect(() => {
     if (
+      currentLeaf &&
       currentLeaf.embed &&
-      editor.selection?.focus.offset < currentLeaf.text.length &&
+      editor.selection.focus.offset < currentLeaf.text.length &&
       Range.isCollapsed(editor.selection)
     ) {
       Transforms.select(editor, {
@@ -582,6 +586,24 @@ const ContentEditable = ({
           return
         }
 
+        if (isAtomic(_focusedBlock)) {
+          if (
+            ReactEditor.isFocused(editor) &&
+            !selectionHasRange(state.selection) &&
+            _focusedBlock.__isActive &&
+            !isAtomicClosure(_focusedBlock.type)
+          ) {
+            event.preventDefault()
+            showAtomicModal({ editorContext, navigationContext, editor })
+          }
+          // if closure block is highlighted prevent `enter` key
+          if (_focusedBlock.__isActive && isAtomicClosure(_focusedBlock.type)) {
+            event.preventDefault()
+          }
+
+          return
+        }
+
         const _text = Node.string(
           editor.children[editor.selection.focus.path[0]]
         )
@@ -606,24 +628,6 @@ const ContentEditable = ({
           _nextIsDoubleBreak ||
           _prevIsDoubleBreak ||
           _text.length === 0
-
-        if (isAtomic(_focusedBlock)) {
-          if (
-            ReactEditor.isFocused(editor) &&
-            !selectionHasRange(state.selection) &&
-            _focusedBlock.__isActive &&
-            !isAtomicClosure(_focusedBlock.type)
-          ) {
-            event.preventDefault()
-            showAtomicModal({ editorContext, navigationContext, editor })
-          }
-          // if closure block is highlighted prevent `enter` key
-          if (_focusedBlock.__isActive && isAtomicClosure(_focusedBlock.type)) {
-            event.preventDefault()
-          }
-
-          return
-        }
 
         if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
           // // edge case where enter is at the end of an inline atomic
