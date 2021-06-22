@@ -272,6 +272,7 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     // copy fraction of an inline
     await leftShiftKey(actions)
+    await leftShiftKey(actions)
     await copy(actions)
     await rightKey(actions)
     await enterKey(actions)
