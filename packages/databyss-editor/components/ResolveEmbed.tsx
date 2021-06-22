@@ -1,8 +1,8 @@
 import React from 'react'
 import { Embed, MediaTypes } from '@databyss-org/services/interfaces/Block'
+import { ViewProps } from '@databyss-org/ui'
 import { UnfetchedMedia } from './UnfetchedMedia'
 import { IframeComponent } from './Suggest/IframeComponent'
-import { ViewProps } from '@databyss-org/ui'
 
 interface ResolveEmbedProps extends ViewProps {
   data: Embed

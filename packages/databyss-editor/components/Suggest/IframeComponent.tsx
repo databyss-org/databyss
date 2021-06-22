@@ -7,8 +7,8 @@ import {
 } from '@databyss-org/services/interfaces/Block'
 // import IframeResizer from 'iframe-resizer-react'
 import { Tweet } from 'react-twitter-widgets'
-import { EmbedCard, EmbedCardProps } from '../EmbedCard'
 import { parseTweetUrl } from '@databyss-org/services/embeds'
+import { EmbedCard, EmbedCardProps } from '../EmbedCard'
 
 const embedCardPropsFromEmbedDetail = (
   embedDetail: EmbedDetail

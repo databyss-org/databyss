@@ -237,7 +237,7 @@ const ContentEditable = ({
   useEffect(() => {
     if (
       currentLeaf.embed &&
-      editor.selection.focus.offset < currentLeaf.text.length &&
+      editor.selection?.focus.offset < currentLeaf.text.length &&
       Range.isCollapsed(editor.selection)
     ) {
       Transforms.select(editor, {
@@ -245,7 +245,7 @@ const ContentEditable = ({
         offset: currentLeaf.text.length,
       })
     }
-  }, [currentLeaf, editor.selection.focus.offset])
+  }, [currentLeaf, editor.selection?.focus.offset])
 
   const onInlineAtomicClick = (inlineData) => {
     // pass editorContext
@@ -611,7 +611,7 @@ const ContentEditable = ({
           _prevIsDoubleBreak ||
           _text.length === 0
 
-        if (!_atBlockEnd && isAtomic(_focusedBlock)) {
+        if (isAtomic(_focusedBlock)) {
           if (
             ReactEditor.isFocused(editor) &&
             !selectionHasRange(state.selection) &&
