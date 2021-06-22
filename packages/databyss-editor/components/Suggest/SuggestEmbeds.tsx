@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Editor } from '@databyss-org/slate'
 import { BlockType, Embed } from '@databyss-org/services/interfaces'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
@@ -10,6 +10,7 @@ import {
 } from '@databyss-org/services/blocks/filter'
 import { Text, View } from '@databyss-org/ui/primitives'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
+import { debounce } from 'lodash'
 import { useOpenGraph } from '@databyss-org/data/pouchdb/hooks/useOpenGraph'
 import { pxUnits } from '@databyss-org/ui/theming/theme'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
@@ -21,7 +22,7 @@ import { removeCurrentInlineInput } from '../../lib/inlineUtils/onEscapeInInline
 import { IframeComponent } from './IframeComponent'
 import { isHttpInsecure } from '../EmbedMedia'
 
-const TIMEOUT_LENGTH = 7000
+const TIMEOUT_LENGTH = 9000
 
 const SuggestEmbeds = ({
   query,
@@ -38,6 +39,7 @@ const SuggestEmbeds = ({
   const [suggestions, setSuggestions] = useState<null | Block[]>(null)
   const filteredSuggestionLengthRef = useRef(0)
   const [filteredSuggestions, setFilteredSuggestions] = useState<Embed[]>([])
+  const [debounceQuery, setDebounceQuery] = useState('')
   const [iframeAtts, setIframeAtts] = useState<IframeAttributes | false>(false)
   const [mediaUnavailable, setMediaUnavailable] = useState(false)
 
@@ -46,6 +48,18 @@ const SuggestEmbeds = ({
   }, [filteredSuggestions.length])
 
   const _timeoutRef = useRef<null | any>(null)
+
+  // debounce the query search
+  const queryChange = useCallback(
+    debounce((q: string) => {
+      setDebounceQuery(q)
+    }, 1500),
+    []
+  )
+
+  useEffect(() => {
+    queryChange(query)
+  }, [query])
 
   const toggleTimeout = () => {
     if (_timeoutRef.current) {
@@ -86,7 +100,7 @@ const SuggestEmbeds = ({
     }
   }, [query, iframeAtts])
 
-  const graphRes = useOpenGraph(query)
+  const graphRes = useOpenGraph(debounceQuery)
   // get title data from OG and set as attribute
   useEffect(() => {
     const _data = graphRes?.data
