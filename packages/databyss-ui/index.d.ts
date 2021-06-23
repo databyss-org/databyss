@@ -217,6 +217,7 @@ declare const Switch: FC<SwitchProps>
 export interface ButtonProps extends BaseControlProps {
   variant?: string
   textVariant?: string
+  textColor?: string
 }
 
 declare const Button: RefForwardingFC<PropsWithChildren<ButtonProps>>

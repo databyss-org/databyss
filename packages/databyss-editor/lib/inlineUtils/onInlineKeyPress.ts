@@ -131,7 +131,11 @@ export const onInlineKeyPress = ({
            */
           if (_currentLeaf.embed) {
             // move forward one and check selection
-            Transforms.move(editor, { distance: 1, edge: 'focus' })
+            Transforms.move(editor, {
+              distance: 1,
+              edge: 'focus',
+              reverse: true,
+            })
             const _frag = SlateEditor.fragment(editor, editor.selection)
             const _leaf = getLowestLeaf(_frag)
             if (_leaf?.embed) {
@@ -211,7 +215,11 @@ export const onInlineKeyPress = ({
             refId: _currentLeaf.atomicId,
             type: _type,
           }
-
+          if (_currentLeaf.text.length === _anchor.offset) {
+            Transforms.insertNodes(editor, { text: '\n' })
+            event.preventDefault()
+            return true
+          }
           onInlineAtomicClick(inlineAtomicData)
         }
         event.preventDefault()
