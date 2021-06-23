@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Editor } from '@databyss-org/slate'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { useEditor, ReactEditor } from '@databyss-org/slate-react'
+import { debounce } from 'lodash'
 import { usePages } from '@databyss-org/data/pouchdb/hooks/usePages'
 import { validUriRegex } from '@databyss-org/services/lib/util'
 import { Page } from '@databyss-org/services/interfaces/Page'
@@ -39,7 +40,21 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
   const filteredSuggestionLengthRef = useRef(0)
   const [filteredSuggestions, setFilteredSuggestions] = useState<Page[]>([])
 
-  const graphRes = useOpenGraph(query)
+  const [debounceQuery, setDebounceQuery] = useState('')
+
+  // debounce the query search
+  const queryChange = useCallback(
+    debounce((q: string) => {
+      setDebounceQuery(q)
+    }, 1500),
+    []
+  )
+
+  useEffect(() => {
+    queryChange(query)
+  }, [query])
+
+  const graphRes = useOpenGraph(debounceQuery)
 
   useEffect(() => {
     if (graphRes?.data?.title?.length) {
@@ -105,7 +120,6 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
         const _suggestion = title
           ? { _id: query, name: removePrefixFromTitle(title) }
           : query
-
         setPageLink({
           editor,
           suggestion: _suggestion,

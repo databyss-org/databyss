@@ -41,8 +41,8 @@ export const setPageLink = ({
     ]
   }
 
-  Transforms.insertNodes(editor, _textNode!)
   Transforms.removeNodes(editor, { at: path })
+  Transforms.insertNodes(editor, _textNode!)
   const _currentBlock = editor.children[path[0]]
 
   const _stateBlock = {
