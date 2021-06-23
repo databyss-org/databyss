@@ -18,8 +18,10 @@ const router = express.Router()
 export interface MediaResponse {
   mediaType: MediaTypes | null
   title: string | null
-  height?: number | null
-  width?: number | null
+  dimensions?: {
+    height?: number | null
+    width?: number | null
+  }
   src: string | null
   openGraphJson?: string | null
 }
@@ -54,7 +56,7 @@ export const isHTML = (str: string) => {
 export const _regExValidator = {
   twitter: /http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/,
   youtube: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/,
-  image: /^((https?|ftp):)?\/\/.*(jpeg|jpg|png|gif|bmp)$/,
+  image: /^((https?|ftp):)?\/\/.*(jpeg|jpg|png|gif|bmp)/,
   dropbox: /https*:\/\/www\.dropbox\.com\/s\/(?<FID>.+?)\/(?<FNAME>.+?)\?dl=0/,
 }
 
