@@ -18,6 +18,7 @@ import {
   logout,
   downKey,
   downShiftKey,
+  backspaceKey,
 } from './_helpers.selenium'
 import { cleanUrl } from './__helpers'
 
@@ -167,6 +168,7 @@ describe('group sharings', () => {
     await tagButtonListClick('data-test-element="page-sidebar-item"', 3, driver)
     // paste new link
     await selectLinkInFirstBlock(actions)
+    await backspaceKey(actions)
     await paste(actions)
     await selectLinkInFirstBlock(actions)
 
@@ -202,6 +204,7 @@ describe('group sharings', () => {
     await tagButtonListClick('data-test-element="page-sidebar-item"', 3, driver)
     // paste new link
     await selectLinkInFirstBlock(actions)
+    await backspaceKey(actions)
     await paste(actions)
     await selectLinkInFirstBlock(actions)
 
