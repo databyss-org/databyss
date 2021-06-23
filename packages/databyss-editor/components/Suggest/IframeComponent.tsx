@@ -1,148 +1,102 @@
-import React, { useMemo, useState } from 'react'
-import { View, Text, BaseControl } from '@databyss-org/ui/primitives'
+import React from 'react'
+import { View } from '@databyss-org/ui/primitives'
 import colors from '@databyss-org/ui/theming/colors'
-import { MediaTypes } from '@databyss-org/services/interfaces/Block'
+import {
+  EmbedDetail,
+  MediaTypes,
+} from '@databyss-org/services/interfaces/Block'
+// import IframeResizer from 'iframe-resizer-react'
+import { Tweet } from 'react-twitter-widgets'
+import { parseTweetUrl } from '@databyss-org/services/embeds'
+import { EmbedCard, EmbedCardProps } from '../EmbedCard'
 
-const parseOgData = (serializedData: string | undefined) => {
-  if (!serializedData) {
-    return null
+const embedCardPropsFromEmbedDetail = (
+  embedDetail: EmbedDetail
+): EmbedCardProps => {
+  const props: EmbedCardProps = {
+    src: embedDetail.src,
+    mediaType: embedDetail.mediaType,
   }
-  const ogData = {
-    title: undefined,
-    description: undefined,
-    image: undefined,
+  if (embedDetail.mediaType === MediaTypes.IMAGE) {
+    props.imageSrc = embedDetail.src
+    return props
+  }
+  if (!embedDetail.openGraphJson) {
+    return props
   }
 
-  const _ogData = JSON.parse(serializedData)
+  const _ogData = JSON.parse(embedDetail.openGraphJson)
   if (_ogData.ogTitle) {
-    ogData.title = _ogData?.ogTitle
+    props.title = _ogData?.ogTitle
   }
   if (_ogData.ogDescription) {
-    ogData.description = _ogData?.ogDescription
+    props.description = _ogData?.ogDescription
   }
   if (_ogData.ogImage) {
     if (_ogData?.ogImage?.url) {
-      ogData.image = _ogData.ogImage.url
+      props.imageSrc = _ogData.ogImage.url
     } else if (Array.isArray(_ogData.ogImage)) {
-      ogData.image = _ogData.ogImage[0].url
+      props.imageSrc = _ogData.ogImage[0].url
     }
   }
-  return ogData.title ? ogData : null
+  if (_ogData.ogSiteName) {
+    props.siteName = _ogData.ogSiteName
+  }
+  if (_ogData.ogVideo) {
+    props.mediaSrc = _ogData.ogVideo.url
+  }
+  return props
 }
 
-const { gray, orange, blue } = colors
+const { gray, orange } = colors
 export const IframeComponent = ({
-  src,
-  height,
-  width,
-  mediaType,
+  embedDetail,
   highlight,
-  openGraphData,
+  ...others
 }: {
-  src: string
-  height: number
-  width: number
-  mediaType: MediaTypes
   highlight: boolean
-  openGraphData?: string
+  embedDetail: EmbedDetail
 }) => {
-  const [mediaActive, setMediaActive] = useState(false)
-
-  return useMemo(() => {
-    const IframeChildren = () => {
-      if (mediaType === MediaTypes.HTML) {
-        return (
-          <View backgroundColor={gray[6]}>
-            <iframe
-              id={src}
-              title={src}
-              srcDoc={src}
-              width={width}
-              height={height}
-              // border="0px"
-              frameBorder="0px"
-            />
-          </View>
-        )
-      }
-
-      const ogData = parseOgData(openGraphData)
-      if (mediaType === MediaTypes.WEBSITE && ogData) {
-        const onTitleClick = () => {
-          window.open(src)
-        }
-        return (
-          <View backgroundColor={gray[6]} p="small">
-            <BaseControl pr="medium" onClick={onTitleClick}>
-              <Text variant="heading4" color={blue[0]}>
-                {ogData.title}
-              </Text>
-            </BaseControl>
-            <View>
-              <Text>{ogData.description}</Text>
-            </View>
-            {ogData?.image ? (
-              <img src={ogData?.image} alt={ogData.title} />
-            ) : null}
-          </View>
-        )
-      }
-
-      if (mediaType === MediaTypes.YOUTUBE && ogData) {
-        const onPlayClick = () => {
-          setMediaActive(true)
-        }
-        return mediaActive ? (
-          <iframe
-            seamless
-            id={src}
-            title={src}
-            src={`${src}?autoplay=1`}
-            allow="autoplay"
-            // border="0px"
-            frameBorder="0px"
-            height={height}
-            width={width}
-          />
-        ) : (
-          <View backgroundColor={gray[6]} p="small">
-            <BaseControl pr="medium" onClick={onPlayClick}>
-              <Text variant="heading4" color={blue[0]}>
-                play video
-              </Text>
-            </BaseControl>
-            {ogData?.image ? (
-              <img src={ogData?.image} alt={ogData.title} />
-            ) : null}
-          </View>
-        )
-      }
-
+  const IframeChildren = () => {
+    if (embedDetail.mediaType === MediaTypes.HTML) {
       return (
-        <iframe
-          seamless
-          id={src}
-          title={src}
-          src={src}
-          // border="0px"
-          frameBorder="0px"
-          height={height}
-          width={width}
-        />
+        <View backgroundColor={gray[6]} px="small" {...others}>
+          <iframe
+            id={embedDetail.src}
+            title={embedDetail.src}
+            srcDoc={embedDetail.src}
+            // width={embedDetail.dimensions?.width ?? 100}
+            height="350px"
+            frameBorder="0px"
+          />
+        </View>
       )
     }
-    return (
-      <div
-        style={{
-          // width,
-          // height,
-          border: 2,
-          borderStyle: 'solid',
-          borderColor: highlight ? orange[0] : `rgba(0,0,0,0.0)`,
-        }}
-      >
-        <IframeChildren />
-      </div>
-    )
-  }, [src, mediaActive])
+
+    const _tweetAttributes = parseTweetUrl(embedDetail.src)
+    if (embedDetail.mediaType === MediaTypes.TWITTER && _tweetAttributes) {
+      return (
+        <View backgroundColor={gray[6]} px="small" {...others}>
+          <Tweet
+            tweetId={_tweetAttributes.tweetId}
+            options={{ width: '350' }}
+          />
+        </View>
+      )
+    }
+    const embedCardProps = embedCardPropsFromEmbedDetail(embedDetail)
+
+    return <EmbedCard {...embedCardProps} {...others} />
+  }
+  return (
+    <div
+      style={{
+        border: 2,
+        borderStyle: 'solid',
+        borderColor: highlight ? orange[0] : `rgba(0,0,0,0.0)`,
+      }}
+    >
+      {IframeChildren()}
+    </div>
+  )
 }

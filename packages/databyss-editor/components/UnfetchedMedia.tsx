@@ -21,10 +21,6 @@ export const UnfetchedMedia = ({ atomicId, src, highlight }) => {
           detail: {
             title: _attributes.title,
             src: _attributes.src,
-            dimensions: {
-              width: _attributes.width,
-              height: _attributes.height,
-            },
             ...(_attributes.code && { embedCode: _attributes.code }),
             mediaType: _attributes.mediaType,
             ...(_attributes.openGraphJson && {
@@ -46,6 +42,8 @@ export const UnfetchedMedia = ({ atomicId, src, highlight }) => {
       p="medium"
       alignItems="center"
       backgroundColor={gray[6]}
+      zIndex={1}
+      position="relative"
       style={{
         border: 2,
         borderStyle: 'solid',
