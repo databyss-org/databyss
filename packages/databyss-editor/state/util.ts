@@ -11,12 +11,13 @@ import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
 import { Selection, Range, EditorState, Text, Point } from '../interfaces'
 import { OnChangeArgs } from './EditorProvider'
-import { isAtomicInlineType } from '../lib/util'
+import { getInlineAtomicType, isAtomicInlineType } from '../lib/util'
 import {
   splitTextAtOffset,
   getFragmentAtSelection,
   mergeText,
   isSelectionCollapsed,
+  sortSelection,
 } from '../lib/clipboardUtils'
 
 import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
@@ -576,6 +577,51 @@ export const replaceInlineText = ({
     return _textToUpdate
   }
   return null
+}
+
+export const getAllRangesForSelection = ({
+  blocks,
+  selection,
+}: {
+  blocks: Block[]
+  selection: Selection
+}): Range[] => {
+  const _ranges: Range[] = []
+
+  const { anchor, focus } = sortSelection(selection)
+
+  for (let idx = anchor.index; idx <= focus.index; idx += 1) {
+    const _block = blocks[idx]
+    const _selectionExtendsAfterBlock = focus.index > idx
+    const _selectionExtendsBeforeBlock = anchor.index < idx
+    _ranges.push(
+      ..._block.text.ranges.filter(
+        ({ offset, length }) =>
+          (_selectionExtendsBeforeBlock || anchor.offset < offset + length) &&
+          (_selectionExtendsAfterBlock || focus.offset > offset)
+      )
+    )
+  }
+
+  return _ranges
+}
+
+export const selectionIncludesInlineAtomics = ({
+  blocks,
+  selection,
+}: {
+  blocks: Block[]
+  selection: Selection
+}): boolean => {
+  const _ranges = getAllRangesForSelection({ blocks, selection })
+  return (
+    _ranges.filter(
+      (r) =>
+        r.marks.length &&
+        r.marks.filter((i) => Array.isArray(i) && getInlineAtomicType(i[0]))
+          .length
+    ).length > 0
+  )
 }
 
 export const getRangesAtPoint = ({

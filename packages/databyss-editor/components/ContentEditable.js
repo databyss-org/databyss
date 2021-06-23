@@ -487,7 +487,9 @@ const ContentEditable = ({
         return
       }
 
-      // preventInlineAtomicCharacters(editor, event)
+      if (Range.isCollapsed(editor.selection)) {
+        preventInlineAtomicCharacters(editor, event)
+      }
 
       if (Hotkeys.isUndo(event) && historyContext) {
         event.preventDefault()

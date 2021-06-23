@@ -56,6 +56,7 @@ import {
   pushAtomicChangeUpstream,
   getTextOffsetWithRange,
   atomicTypeToInlineRangeType,
+  selectionIncludesInlineAtomics,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
@@ -714,6 +715,17 @@ export default (
                 isAtomicInlineType(state.blocks[op.index].type) &&
                 !op.isRefEntity
             )
+          ) {
+            draft.preventDefault = true
+            break
+          }
+
+          // preventDefault if operation inlcudes inline atomic
+          if (
+            selectionIncludesInlineAtomics({
+              blocks: draft.blocks,
+              selection: draft.selection,
+            })
           ) {
             draft.preventDefault = true
             break
