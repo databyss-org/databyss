@@ -21,28 +21,35 @@ export const setPageLink = ({
 
   const { path } = editor.selection.anchor
 
-  let _textNode: Node[] | null
+  let _textNode: Node | null
 
   if (typeof suggestion === 'string') {
-    _textNode = [
-      {
-        text: suggestion,
-        link: true,
-        atomicId: suggestion,
-      },
-    ]
+    _textNode = {
+      text: suggestion,
+      link: true,
+      atomicId: suggestion,
+    }
   } else {
-    _textNode = [
-      {
-        text: suggestion!.name,
-        link: true,
-        atomicId: suggestion!._id,
-      },
-    ]
+    _textNode = {
+      text: suggestion!.name,
+      link: true,
+      atomicId: suggestion!._id,
+    }
+  }
+
+  let isRoot = false
+  // edge case: if node is first node on block handle seperately
+  if (!path?.[1]) {
+    isRoot = true
   }
 
   Transforms.removeNodes(editor, { at: path })
-  Transforms.insertNodes(editor, _textNode!)
+  if (isRoot) {
+    Transforms.insertNodes(editor, _textNode!, { at: path })
+    Transforms.move(editor, { distance: _textNode.text.length + 1 })
+  } else {
+    Transforms.insertNodes(editor, _textNode!)
+  }
   const _currentBlock = editor.children[path[0]]
 
   const _stateBlock = {
@@ -51,7 +58,6 @@ export const setPageLink = ({
   }
 
   const selection = slateSelectionToStateSelection(editor)
-
   setContent({
     selection,
     operations: [
