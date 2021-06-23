@@ -6,15 +6,13 @@ import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import styledCss from '@styled-system/css'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
-import { validUriRegex, validURL } from '@databyss-org/services/lib/util'
+import { validUriRegex } from '@databyss-org/services/lib/util'
 import matchAll from 'string.prototype.matchall'
 import { useEditorContext } from '../state/EditorProvider'
 import { TitleElement } from './TitleElement'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
-import { isSelectionCollapsed } from '../lib/clipboardUtils'
-import { convertSelectionToLink } from '../lib/inlineUtils/setPageLink'
 
 const Editor = ({
   children,
@@ -33,7 +31,7 @@ const Editor = ({
   useBlocksInPages('SOURCE')
   useBlocksInPages('TOPIC')
 
-  const { copy, paste, cut, embedPaste, state } = useEditorContext()
+  const { copy, paste, cut, embedPaste } = useEditorContext()
 
   // check if paste is an embed or regular paste
   const pasteEventHandler = (e) => {
@@ -43,14 +41,6 @@ const Editor = ({
     if (_activeMarks?.inlineEmbedInput || _activeMarks?.inlineLinkInput) {
       embedPaste({ event: e, inlineType: Object.keys(_activeMarks)[0] })
       return
-    }
-    if (!isSelectionCollapsed(state.selection)) {
-      // check to see if url is being pasted
-      const plainTextDataTransfer = e.clipboardData.getData('text/plain')
-      if (validURL(plainTextDataTransfer)) {
-        convertSelectionToLink({ editor, link: plainTextDataTransfer })
-        return
-      }
     }
 
     paste(e)
