@@ -110,7 +110,6 @@ export const onInlineBackspaceOrEnter = ({
           if cursor is on an inline atomic and enter is pressed, launch modal
           */
         if (event.key === 'Enter') {
-          console.log('IN THIS ')
           const _type = symbolToAtomicType(_currentLeaf.text.substring(0, 1))
           const inlineAtomicData = {
             refId: _currentLeaf.atomicId,

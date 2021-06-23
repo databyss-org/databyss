@@ -16,13 +16,23 @@ import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 
 import { setPageLink } from '../../lib/inlineUtils/setPageLink'
 import { useOpenGraph } from '../../../databyss-data/pouchdb/hooks/useOpenGraph'
+import { useEditorContext } from '../../state/EditorProvider'
+
+const removePrefixFromTitle = (title: string) => {
+  const _substring = title.substr(0, 10)
+  if (_substring === 'web page: ') {
+    return title.substr(10)
+  }
+  return title
+}
 
 const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
+  const { setContent } = useEditorContext()
   const editor = useEditor() as ReactEditor & Editor
   // const embedRes = useBlocksInPages(BlockType.Embed)
   const pagesRes = usePages()
   const [isUrl, setIsUrl] = useState(false)
-  const [title, setTitle] = useState(null)
+  const [title, setTitle] = useState<null | string>(null)
   const pendingSetContent = useRef(false)
 
   const [suggestions, setSuggestions] = useState<null | Page[]>(null)
@@ -32,7 +42,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
   const graphRes = useOpenGraph(query)
 
   useEffect(() => {
-    if (graphRes?.data?.title.length) {
+    if (graphRes?.data?.title?.length) {
       setTitle(graphRes?.data?.title)
     }
   }, [graphRes?.data])
@@ -77,6 +87,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
       setPageLink({
         editor,
         suggestion: page,
+        setContent,
       })
       // return
     } else {
@@ -87,13 +98,18 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
         setPageLink({
           editor,
           suggestion: _page,
+          setContent,
         })
       } else {
         // assume page link is a url
-        const _suggestion = title ? { _id: query, name: title } : query
+        const _suggestion = title
+          ? { _id: query, name: removePrefixFromTitle(title) }
+          : query
+
         setPageLink({
           editor,
           suggestion: _suggestion,
+          setContent,
         })
       }
     }
@@ -128,7 +144,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
   const Suggestion = () =>
     isUrl ? (
       <Text variant="uiTextSmall" color="gray.3" display="inline">
-        {`press enter${title && `: ${title}`}`}
+        {`press enter${title ? `: ${title}` : ''}`}
       </Text>
     ) : (
       <View overflowX="hidden" overflowY="auto" maxHeight={pxUnits(menuHeight)}>
