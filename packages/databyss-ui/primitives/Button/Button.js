@@ -28,7 +28,7 @@ const StyledControl = styled(
 )
 
 const Button = forwardRef(
-  ({ onPress, variant, children, textVariant, ...others }, ref) => {
+  ({ onPress, variant, children, textVariant, textColor, ...others }, ref) => {
     let _children = children
     const { buttonVariants, buttonThemes } = buttons
     if (
@@ -41,7 +41,7 @@ const Button = forwardRef(
       _children = (
         <Text
           variant={textVariant}
-          color={buttonVariants[variant].color}
+          color={textColor ?? buttonVariants[variant].color}
           {...(buttonThemes[variant].textProps
             ? buttonThemes[variant].textProps
             : {})}

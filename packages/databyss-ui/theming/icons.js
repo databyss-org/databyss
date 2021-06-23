@@ -19,6 +19,9 @@ export const iconSizeVariants = {
   large: {
     ...icon(32),
   },
+  extraLarge: {
+    ...icon(64),
+  },
   title: {
     width: 108,
     height: 24,
