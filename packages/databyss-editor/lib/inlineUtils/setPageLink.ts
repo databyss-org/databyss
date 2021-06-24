@@ -68,3 +68,17 @@ export const setPageLink = ({
     ],
   })
 }
+
+export const convertSelectionToLink = ({
+  editor,
+  link,
+}: {
+  editor: ReactEditor & SlateEditor
+  link: string
+}) => {
+  if (!editor.selection) {
+    return
+  }
+  SlateEditor.addMark(editor, 'link', true)
+  SlateEditor.addMark(editor, 'atomicId', link)
+}
