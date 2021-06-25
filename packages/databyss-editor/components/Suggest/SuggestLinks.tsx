@@ -103,6 +103,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
         editor,
         suggestion: page,
         setContent,
+        isPage: true,
       })
       // return
     } else {
@@ -114,6 +115,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
           editor,
           suggestion: _page,
           setContent,
+          isPage: true,
         })
       } else {
         // assume page link is a url

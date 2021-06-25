@@ -2,6 +2,8 @@ import { uid } from '@databyss-org/data/lib/uid'
 import { SelectOption } from './UI'
 import { Text } from './Text'
 import { Document } from './Document'
+import { PageDoc } from '../../databyss-data/pouchdb/interfaces'
+import { InlineTypes } from './Range'
 
 export enum BlockType {
   Entry = 'ENTRY',
@@ -14,7 +16,7 @@ export enum BlockType {
 
 export interface BlockReference {
   _id: string
-  type: BlockType
+  type: BlockType | InlineTypes.Link
 }
 
 export class Block implements BlockReference {

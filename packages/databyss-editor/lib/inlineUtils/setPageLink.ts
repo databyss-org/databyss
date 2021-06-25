@@ -10,10 +10,12 @@ export const setPageLink = ({
   editor,
   suggestion,
   setContent,
+  isPage,
 }: {
   editor: ReactEditor & SlateEditor
   suggestion?: Page | string
   setContent: Function
+  isPage?: boolean
 }) => {
   if (!editor?.selection) {
     return
@@ -64,6 +66,7 @@ export const setPageLink = ({
       {
         index: path[0],
         text: _stateBlock,
+        checkAtomicDelta: true,
       },
     ],
   })

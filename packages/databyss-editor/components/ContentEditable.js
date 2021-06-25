@@ -141,7 +141,6 @@ const ContentEditable = ({
     const _process = async () => {
       // flush the queue processor in order to get up to date values
       await EM?.process()
-
       state.newEntities.forEach((entity) => {
         let _data = null
         // suggestion blocks have extra data
@@ -169,8 +168,9 @@ const ContentEditable = ({
               window.requestAnimationFrame(() => setEmbed(_data))
             }
           },
+          LINK: () => null,
         }
-        _types[entity.type]()
+        _types[entity.type.toUpperCase()]()
 
         // set BlockRelation property
         const _payload = {
@@ -179,6 +179,7 @@ const ContentEditable = ({
           _id: entity._id,
           page: state.pageHeader?._id,
         }
+
         setBlockRelations(_payload)
         removeEntityFromQueue(entity._id)
       })
