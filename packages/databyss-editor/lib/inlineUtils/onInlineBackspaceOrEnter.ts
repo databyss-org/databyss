@@ -32,8 +32,6 @@ export const onInlineBackspaceOrEnter = ({
     return false
   }
 
-  console.log('[InlineBackspace]', SlateEditor.marks(editor))
-
   if (
     (isCharacterKeyPress(event) || event.key === 'Backspace') &&
     (SlateEditor.marks(editor)?.inlineTopic ||
@@ -41,7 +39,6 @@ export const onInlineBackspaceOrEnter = ({
       SlateEditor.marks(editor)?.embed) &&
     Range.isCollapsed(editor.selection)
   ) {
-    console.log('[InlineBackspace]')
     const _currentBlock = state.blocks[state.selection.anchor.index]
     let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
     const _anchor = editor.selection.anchor
@@ -76,7 +73,6 @@ export const onInlineBackspaceOrEnter = ({
           */
         if (event.key === 'Backspace') {
           // remove inline node
-
           Transforms.removeNodes(editor, {
             match: (node) => node === _currentLeaf,
           })

@@ -50,6 +50,7 @@ import {
   onEscapeInInlineAtomicField,
   preventMarksOnInline,
   enterAtEndOfInlineAtomic,
+  onLinkBackspace,
 } from '../lib/inlineUtils'
 
 const ContentEditable = ({
@@ -757,8 +758,22 @@ const ContentEditable = ({
           })
         }
 
+        const _inlineLinkRemoved = onLinkBackspace({
+          state,
+          editor,
+          event,
+          setContent,
+        })
+        if (_inlineLinkRemoved) {
+          return
+        }
+
         const currentBlock = state.blocks[_currentIndex]
-        onInlineFieldBackspace({ editor, event, currentBlock })
+        onInlineFieldBackspace({
+          editor,
+          event,
+          currentBlock,
+        })
       }
     }
 

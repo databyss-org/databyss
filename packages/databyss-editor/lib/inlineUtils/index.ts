@@ -12,6 +12,7 @@ export { onEscapeInInlineAtomicField } from './onEscapeInInlineAtomicField'
 export { preventMarksOnInline } from './preventMarksOnInline'
 export { initiateEmbedInput } from './initiateEmbedInput'
 export { setEmbedMedia } from './setEmbedMedia'
+export { onLinkBackspace } from './onLinkBackspace'
 
 export enum InlineInitializer {
   embed = '<<',
