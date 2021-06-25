@@ -2,15 +2,10 @@ import { KeyboardEvent } from 'react'
 import { Node, Transforms, Editor as SlateEditor } from '@databyss-org/slate'
 import { ReactEditor } from '@databyss-org/slate-react'
 import {
-  flattenOffset,
-  isCurrentlyInInlineAtomicField,
-  stateSelectionToSlateSelection,
   slateSelectionToStateSelection,
   slateRangesToStateRanges,
 } from '../slateUtils'
 import { Block } from '../../../databyss-services/interfaces/Block'
-import { RangeType } from '../../../databyss-services/interfaces/Range'
-import { InlineInitializer } from '.'
 import { EditorState } from '../../interfaces/EditorState'
 
 export const onLinkBackspace = ({
@@ -31,13 +26,6 @@ export const onLinkBackspace = ({
   if (!editor?.selection) {
     return false
   }
-
-  // check if `inlineAtomicMenu` is active and atomic symbol is going to be deleted, toggle mark and remove symbol
-  const _text = Node.string(editor.children[editor.selection.focus.path[0]])
-  const _offset = parseInt(
-    flattenOffset(editor, editor.selection.focus).toString(),
-    10
-  )
 
   const _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
 

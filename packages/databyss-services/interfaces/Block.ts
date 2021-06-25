@@ -2,7 +2,7 @@ import { uid } from '@databyss-org/data/lib/uid'
 import { SelectOption } from './UI'
 import { Text } from './Text'
 import { Document } from './Document'
-import { PageDoc } from '../../databyss-data/pouchdb/interfaces'
+
 import { InlineTypes } from './Range'
 
 export enum BlockType {
@@ -136,7 +136,7 @@ export interface IndexPageResult {
   block: string
   relatedBlock: string
   relationshipType: BlockRelationshipType
-  relatedBlockType: BlockType
+  relatedBlockType: BlockType | InlineTypes.Link
   page: string
   blockIndex: number
   blockText: Text
