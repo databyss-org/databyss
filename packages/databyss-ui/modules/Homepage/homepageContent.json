@@ -3,7 +3,7 @@
   "meta": [
     {
       "name": "description",
-      "content": "Write and cite, research and re-search, and never get lost in Databyss. The word processor is dead, long live the word processor!"
+      "content": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word processor."
     }
   ],
   "sections": [
@@ -12,7 +12,7 @@
       "backgroundImgSrc": "/homepage/stone_bg.jpg",
       "logoSrc": "/homepage/logo_new.png",
       "title": "Databyss",
-      "headline": "Write and cite, research and re-search, and never get lost in Databyss. The word processor is dead, long live the word processor!",
+      "headline": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word processor.",
       "ctaButtons": [
         {
           "text": "Get Started",
