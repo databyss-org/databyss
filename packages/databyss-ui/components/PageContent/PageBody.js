@@ -1,6 +1,11 @@
 import React, { useEffect, useRef } from 'react'
 import { Helmet } from 'react-helmet'
-import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
+import {
+  PDFDropZoneManager,
+  useNavigationContext,
+  Grid,
+  View,
+} from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'
@@ -21,6 +26,7 @@ import {
 import { UNTITLED_PAGE_NAME } from '@databyss-org/services/interfaces'
 import _ from 'lodash'
 import { isMobile } from '../../lib/mediaQuery'
+import { PageLinks } from './PageLinks'
 
 const PageBody = ({
   page,
@@ -119,16 +125,21 @@ const PageBody = ({
             }}
           >
             <PDFDropZoneManager />
-            <ContentEditable
-              autofocus
-              focusIndex={focusIndex}
-              onNavigateUpFromTop={onNavigateUpFromEditor}
-              active={false}
-              editorRef={editorRef}
-              readonly={isReadOnly}
-              sharedWithGroups={sharedWithGroups}
-              firstBlockIsTitle
-            />
+            <Grid>
+              <ContentEditable
+                autofocus
+                focusIndex={focusIndex}
+                onNavigateUpFromTop={onNavigateUpFromEditor}
+                active={false}
+                editorRef={editorRef}
+                readonly={isReadOnly}
+                sharedWithGroups={sharedWithGroups}
+                firstBlockIsTitle
+              />
+              <View width="300px">
+                <PageLinks pageId={page._id} />
+              </View>
+            </Grid>
           </EditorProvider>
         </HistoryProvider>
       </CatalogProvider>
