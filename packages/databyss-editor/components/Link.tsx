@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react'
 import colors from '@databyss-org/ui/theming/colors'
 import { validUriRegex } from '@databyss-org/services/lib/util'
-
-import { useNavigationContext } from '../../databyss-ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 
 const { blue } = colors
