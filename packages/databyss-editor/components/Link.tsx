@@ -3,6 +3,7 @@ import colors from '@databyss-org/ui/theming/colors'
 import { validUriRegex } from '@databyss-org/services/lib/util'
 
 import { useNavigationContext } from '../../databyss-ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { EM } from '@databyss-org/data/pouchdb/utils'
 
 const { blue } = colors
 
@@ -22,7 +23,11 @@ export const Link = ({ _children, atomicId }) => {
 
   // internal redirect
   const onNavigation = useCallback(() => {
-    navigate(`/pages/${atomicId}`)
+    // save changes before switching pages
+    EM?.process()
+    requestAnimationFrame(() => {
+      navigate(`/pages/${atomicId}`)
+    })
   }, [])
 
   return (

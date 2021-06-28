@@ -18,7 +18,7 @@ export const PageLinks = ({ pageId }: { pageId: string }) => {
       if (_relation) {
         const _pages = _relation.pages
           .map((i) => pagesRes?.data[i])
-          .filter((i) => !!i)
+          .filter((i) => !!i && !i.archive)
           .map((i) => ({
             route: `/pages/${i._id}`,
             text: i.name,
