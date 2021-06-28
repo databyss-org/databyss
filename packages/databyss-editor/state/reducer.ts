@@ -722,6 +722,7 @@ export default (
 
           // preventDefault if operation inlcudes inline atomic
           if (
+            !payload.operations.find((op) => op.isRefEntity) &&
             selectionIncludesInlineAtomics({
               blocks: draft.blocks,
               selection: draft.selection,
