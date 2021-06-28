@@ -66,10 +66,7 @@ export const setPageLink = ({
       {
         index: path[0],
         text: _stateBlock,
-<<<<<<< HEAD
         checkAtomicDelta: isPage,
-=======
->>>>>>> main
       },
     ],
   })
