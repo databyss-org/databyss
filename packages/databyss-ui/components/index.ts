@@ -30,4 +30,5 @@ export interface SidebarListItemData<T> {
   icon?: ReactNode
   data?: T
   iconColor?: string | null
+  name?: string
 }

@@ -9,12 +9,12 @@ import { Source, Topic } from '../interfaces'
 export const prefixSearchAll = (query: string, searchPredicate?: string) => (
   block: Source & Topic
 ) => {
-  let _text = block.text.textValue
+  let _text = block?.text?.textValue
 
   if (searchPredicate) {
-    if (block[searchPredicate]?.textValue) {
+    if (block[searchPredicate]?.textValue || block[searchPredicate]) {
       // use `name` for the filtered suggestion
-      _text = block[searchPredicate].textValue
+      _text = block[searchPredicate]?.textValue || block[searchPredicate]
     } else {
       return false
     }
@@ -41,18 +41,19 @@ export const prefixSearchAll = (query: string, searchPredicate?: string) => (
 export const weightedSearch = (query: string, searchPredicate?: string) => (
   block: Source & Topic
 ) => {
-  let _text = block.text.textValue
+  let _text = block?.text?.textValue
 
   if (searchPredicate) {
-    if (block[searchPredicate]?.textValue) {
+    if (block[searchPredicate]?.textValue || block[searchPredicate]) {
       // use `name` for the filtered suggestion
-      _text = block[searchPredicate].textValue
+      _text = block[searchPredicate]?.textValue || block[searchPredicate]
     } else {
       return { ...block, weight: 0 }
     }
   }
 
   let _weight = fuzzysearch(query, _text)
+
   // if exact match, weight heavy
   if (_weight === true) {
     _weight = 10

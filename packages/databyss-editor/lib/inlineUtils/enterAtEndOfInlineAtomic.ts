@@ -1,4 +1,9 @@
-import { Text, Range, Editor as SlateEditor } from '@databyss-org/slate'
+import {
+  Text,
+  Range,
+  Editor as SlateEditor,
+  Transforms,
+} from '@databyss-org/slate'
 import cloneDeep from 'clone-deep'
 import { ReactEditor } from '@databyss-org/slate-react'
 import insertTextAtOffset from '../clipboardUtils/insertTextAtOffset'
@@ -11,8 +16,8 @@ export const enterAtEndOfInlineAtomic = ({
   event,
   currentLeaf,
   setContent,
-  atBlockEnd,
   currentBlock,
+  atBlockEnd,
   state,
 }: {
   editor: ReactEditor & SlateEditor
@@ -32,9 +37,24 @@ export const enterAtEndOfInlineAtomic = ({
     10
   )
 
+  if (currentLeaf.embed) {
+    event.preventDefault()
+    Transforms.select(editor, {
+      path: editor.selection!.focus.path,
+      offset: currentLeaf.text.length,
+    })
+    requestAnimationFrame(() => {
+      Transforms.insertNodes(editor, { text: '\n' })
+    })
+    return true
+  }
+
   if (
     Range.isCollapsed(editor.selection) &&
-    (currentLeaf.inlineTopic || currentLeaf.inlineCitation)
+    (currentLeaf.inlineTopic ||
+      currentLeaf.inlineCitation ||
+      currentLeaf.link ||
+      currentLeaf.inlineAtomicMenu)
   ) {
     const _textToInsert = atBlockEnd ? '\n\u2060' : '\n'
     const { text, offsetAfterInsert } = insertTextAtOffset({

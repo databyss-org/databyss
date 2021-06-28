@@ -67,7 +67,6 @@ export const updateInlines = async ({
         })
         if (_inlineRanges.length) {
           // update block
-
           await upsert({
             doctype: DocumentType.Block,
             _id: _block!._id,

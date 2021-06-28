@@ -2,6 +2,7 @@ import React from 'react'
 import { ResourcePending } from './ResourcePending'
 
 export { ResourcePending } from './ResourcePending'
+export { MediaTypes } from './Block'
 export {
   NetworkUnavailableError,
   NotAuthorizedError,
@@ -25,6 +26,7 @@ export type {
   BlockReference,
   BlockRelationsServerResponse,
   BlockRelation,
+  Embed,
 } from './Block'
 export type { Document, DocumentDict } from './Document'
 export { BlockType, Block } from './Block'

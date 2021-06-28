@@ -7,6 +7,8 @@ export interface Range {
 export enum InlineTypes {
   InlineTopic = 'inlineTopic',
   InlineSource = 'inlineCitation',
+  Embed = 'embed',
+  Link = 'link',
 }
 
 export type InlineRangeType = [InlineTypes, string]
@@ -17,4 +19,6 @@ export enum RangeType {
   Location = 'location',
   Highlight = 'highlight',
   InlineAtomicInput = 'inlineAtomicMenu',
+  InlineEmbedInput = 'inlineEmbedInput',
+  InlineLinkInput = 'inlineLinkInput',
 }

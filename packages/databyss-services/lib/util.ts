@@ -27,3 +27,11 @@ export async function asyncForEach(array, callback) {
   }
   /* eslint-enable no-plusplus */
 }
+
+/**
+ * Match any valid URI that starts with http:// or https://
+ * Test it here: https://regexr.com/5jvei
+ */
+export const validUriRegex = /https?:\/\/[-a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF:.]{2,256}(\/?[-a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF@:%_+.~#&?/=,[\]();]*)?([-a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF@%_+~#&/=])/i
+
+export const validURL = (str: string) => validUriRegex.test(str)

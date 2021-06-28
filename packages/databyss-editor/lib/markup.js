@@ -60,6 +60,7 @@ export const statePointToSlatePoint = (children, point) => {
   _path[0] = index
   const _point = { path: _path, offset }
   const selection = { anchor: _point, focus: _point }
+
   return selection.focus
 }
 

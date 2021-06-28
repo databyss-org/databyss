@@ -42,6 +42,8 @@ export const getInlineAtomicType = (
       return BlockType.Topic
     case InlineTypes.InlineSource:
       return BlockType.Source
+    case InlineTypes.Embed:
+      return BlockType.Embed
     default:
       return null
   }
@@ -107,6 +109,8 @@ export const isAtomicInlineType = (type: BlockType) => {
     case BlockType.EndTopic:
       return true
     case BlockType.EndSource:
+      return true
+    case BlockType.Embed:
       return true
     default:
       return false
@@ -358,8 +362,7 @@ export const slateBlockToHtmlWithSearch = (
 }
 
 /**
- *
- * only allow whitelisted properties
+ * only allow some properties
  */
 export const cleanupAtomicData = (data: any) => {
   const _data = data

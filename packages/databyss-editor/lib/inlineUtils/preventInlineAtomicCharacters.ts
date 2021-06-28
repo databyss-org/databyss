@@ -7,17 +7,17 @@ export const preventInlineAtomicCharacters = (
   editor: ReactEditor,
   event: KeyboardEvent
 ) => {
-  if (
-    isCharacterKeyPress(event) &&
-    isMarkActive(editor, InlineTypes.InlineTopic)
-  ) {
-    toggleMark(editor, InlineTypes.InlineTopic)
-  }
+  const marksToPrevent = [
+    InlineTypes.InlineSource,
+    InlineTypes.InlineTopic,
+    InlineTypes.Embed,
+  ]
 
-  if (
-    isCharacterKeyPress(event) &&
-    isMarkActive(editor, InlineTypes.InlineSource)
-  ) {
-    toggleMark(editor, InlineTypes.InlineSource)
+  if (isCharacterKeyPress(event)) {
+    marksToPrevent.forEach((m) => {
+      if (isMarkActive(editor, m)) {
+        toggleMark(editor, m)
+      }
+    })
   }
 }

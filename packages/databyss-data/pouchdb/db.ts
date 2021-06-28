@@ -31,6 +31,7 @@ import { DocumentType } from './interfaces'
 import { searchText, setDbBusyDispatch, setDbBusy } from './utils'
 import { processGroupActionQ } from './groups/utils'
 import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
+import embedSchema from '../schemas/embedSchema'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
@@ -367,6 +368,7 @@ export const pouchDataValidation = (data) => {
     [BlockType.Source]: sourceSchema,
     [BlockType.Entry]: entrySchema,
     [BlockType.Topic]: topicSchema,
+    [BlockType.Embed]: embedSchema,
     [DocumentType.Group]: groupSchema,
     [DocumentType.Page]: pageSchema,
     [DocumentType.Selection]: selectionSchema,
@@ -395,7 +397,7 @@ export const pouchDataValidation = (data) => {
 
   // `this.schema &&` this will be removed when all schemas are implemented
   if (schema && !tv4.validate(data, schema, false, true)) {
-    console.log('TYPE', data)
+    console.log('[pouchDataValidation]', data)
     console.error(
       `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
     )

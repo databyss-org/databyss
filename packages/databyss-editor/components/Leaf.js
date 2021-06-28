@@ -2,6 +2,8 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react'
 import colors from '@databyss-org/ui/theming/colors'
+import { EmbedMedia } from './EmbedMedia'
+import { Link } from './Link'
 
 // check for email addresses
 const _emailRegEx = new RegExp(
@@ -31,6 +33,50 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
+  if (leaf.inlineAtomicMenu) {
+    _children = (
+      <span
+        id="inline-atomic"
+        style={{
+          minWidth: '150px',
+          display: 'inline-block',
+          backgroundColor: gray[6],
+          borderRadius: '3px',
+          //    padding: '3px',
+        }}
+      >
+        {_children}
+      </span>
+    )
+  }
+
+  if (leaf.embed) {
+    _children = (
+      <EmbedMedia
+        attributes={attributes}
+        _children={_children}
+        _element={leaf}
+        onInlineClick={onInlineClick}
+      />
+    )
+  }
+
+  if (leaf.inlineEmbedInput) {
+    _children = (
+      <code
+        id="inline-embed-input"
+        style={{
+          display: 'block',
+          backgroundColor: gray[6],
+          borderRadius: '3px',
+          //    padding: '3px',
+        }}
+      >
+        {_children}
+      </code>
+    )
+  }
+
   if (leaf.inlineTopic) {
     _children = (
       <span
@@ -48,6 +94,10 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
+  if (leaf.link) {
+    _children = <Link _children={_children} atomicId={leaf.atomicId} />
+  }
+
   if (leaf.inlineCitation) {
     _children = (
       <span
@@ -58,6 +108,23 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
           color: red[2],
           caretColor: 'black',
           cursor: 'pointer',
+        }}
+      >
+        {_children}
+      </span>
+    )
+  }
+
+  if (leaf.inlineLinkInput) {
+    _children = (
+      <span
+        id="inline-link-input"
+        style={{
+          minWidth: '150px',
+          display: 'inline-block',
+          backgroundColor: gray[6],
+          borderRadius: '3px',
+          //    padding: '3px',
         }}
       >
         {_children}

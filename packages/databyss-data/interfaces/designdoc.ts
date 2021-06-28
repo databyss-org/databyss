@@ -20,6 +20,7 @@ export interface DesignDoc {
   groupSchema: JSONSchema4
   entrySchema: JSONSchema4
   topicSchema: JSONSchema4
+  embedSchema: JSONSchema4
   userPreferenceSchema: JSONSchema4
   pointSchema: JSONSchema4
   notificationSchema: JSONSchema4

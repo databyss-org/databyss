@@ -1,8 +1,15 @@
 import React, { useMemo, useRef, useEffect, useImperativeHandle } from 'react'
-import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
+import {
+  createEditor,
+  Node,
+  Transforms,
+  Point,
+  Range,
+} from '@databyss-org/slate'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { setSource } from '@databyss-org/services/sources'
+import { setEmbed } from '@databyss-org/services/embeds'
 import { setBlockRelations } from '@databyss-org/services/entries'
 import { setTopic } from '@databyss-org/services/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -34,9 +41,10 @@ import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import {
   onInlineFocusBlur,
-  onInlineBackspaceOrEnter,
+  onInlineKeyPress,
   preventInlineAtomicCharacters,
   initiateInlineMenu,
+  initiateEmbedInput,
   onInlineFieldBackspace,
   onEnterInlineField,
   onEscapeInInlineAtomicField,
@@ -121,6 +129,7 @@ const ContentEditable = ({
         editor.children,
         _selection
       )
+
       Transforms.select(editor, _slateSelection)
       // push selection to reducer
       setSelection(_selection)
@@ -136,11 +145,11 @@ const ContentEditable = ({
       state.newEntities.forEach((entity) => {
         let _data = null
         // suggestion blocks have extra data
-
         if (entity.text) {
           _data = cleanupAtomicData({
             ...entity,
             sharedWithGroups,
+            detail: entity?.detail,
           })
         }
 
@@ -153,6 +162,11 @@ const ContentEditable = ({
           TOPIC: () => {
             if (_data) {
               window.requestAnimationFrame(() => setTopic(_data))
+            }
+          },
+          EMBED: () => {
+            if (_data) {
+              window.requestAnimationFrame(() => setEmbed(_data))
             }
           },
         }
@@ -214,6 +228,25 @@ const ContentEditable = ({
     }
   }, [state?.selection?.anchor.index])
 
+  let currentLeaf = null
+  if (editor.selection) {
+    currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+  }
+
+  useEffect(() => {
+    if (
+      currentLeaf &&
+      currentLeaf.embed &&
+      editor.selection.focus.offset < currentLeaf.text.length &&
+      Range.isCollapsed(editor.selection)
+    ) {
+      Transforms.select(editor, {
+        path: editor.selection.focus.path,
+        offset: currentLeaf.text.length,
+      })
+    }
+  }, [currentLeaf, editor.selection?.focus.offset])
+
   const onInlineAtomicClick = (inlineData) => {
     // pass editorContext
     const inlineAtomicData = {
@@ -236,7 +269,6 @@ const ContentEditable = ({
         onDocumentChange(editor)
       }
       const selection = slateSelectionToStateSelection(editor)
-
       if (!selection) {
         return
       }
@@ -352,6 +384,77 @@ const ContentEditable = ({
         inlineAtomicBlockCorrector(event, editor)
       }
 
+      // HACK: because we make embeds display as 'inline-block', slate or contenteditable sees
+      // the block as one continous line (ignores line breaks) when using up/down arrows. We
+      // restore expected up/down arrow behavior by manipulating the selection
+      if (currentLeaf.embed) {
+        if (
+          event.key === 'ArrowDown' &&
+          editor.children[editor.selection.focus.path[0]].children.length >
+            editor.selection.focus.path[1] + 1
+        ) {
+          event.preventDefault()
+          const _fpoint = {
+            path: [
+              editor.selection.focus.path[0],
+              editor.selection.focus.path[1] + 1,
+            ],
+            offset: 1,
+          }
+          Transforms.select(
+            editor,
+            Range.isCollapsed(editor.selection)
+              ? _fpoint
+              : {
+                  focus: _fpoint,
+                  anchor: editor.selection.anchor,
+                }
+          )
+        }
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          let _fpoint = null
+          if (editor.selection.focus.path[1] > 0) {
+            _fpoint = {
+              path: [
+                editor.selection.focus.path[0],
+                editor.selection.focus.path[1] - 1,
+              ],
+              offset:
+                editor.children[editor.selection.focus.path[0]].children[
+                  editor.selection.focus.path[1] - 1
+                ].text.length,
+            }
+          } else if (editor.selection.focus.path[0] > 0) {
+            const _prevIndexNode =
+              editor.children[editor.selection.focus.path[0] - 1]
+            _fpoint = {
+              path: [
+                editor.selection.focus.path[0] - 1,
+                _prevIndexNode.children.length - 1,
+              ],
+              offset:
+                _prevIndexNode.children[_prevIndexNode.children.length - 1].text
+                  .length,
+            }
+          } else {
+            _fpoint = {
+              path: editor.selection.focus.path,
+              offset: 0,
+            }
+          }
+          event.preventDefault()
+          Transforms.select(
+            editor,
+            Range.isCollapsed(editor.selection)
+              ? _fpoint
+              : {
+                  focus: _fpoint,
+                  anchor: editor.selection.anchor,
+                }
+          )
+        }
+      }
+
       const escapeInInlineAtomicField = onEscapeInInlineAtomicField({
         editor,
         event,
@@ -373,7 +476,7 @@ const ContentEditable = ({
         return
       }
 
-      const _isInlineBackspace = onInlineBackspaceOrEnter({
+      const _isInlineBackspace = onInlineKeyPress({
         event,
         editor,
         state,
@@ -384,7 +487,9 @@ const ContentEditable = ({
         return
       }
 
-      preventInlineAtomicCharacters(editor, event)
+      if (Range.isCollapsed(editor.selection)) {
+        preventInlineAtomicCharacters(editor, event)
+      }
 
       if (Hotkeys.isUndo(event) && historyContext) {
         event.preventDefault()
@@ -449,6 +554,16 @@ const ContentEditable = ({
         return
       }
 
+      // check for embeds
+      const shouldInitiateEmbed = initiateEmbedInput({
+        editor,
+        event,
+        firstBlockIsTitle,
+      })
+      if (shouldInitiateEmbed) {
+        return
+      }
+
       // check for inline atomics
       const shouldInitiateMenu = initiateInlineMenu({
         editor,
@@ -460,21 +575,11 @@ const ContentEditable = ({
       }
 
       if (event.key === 'Enter') {
-        // carriage return in title advances selection to next line
-        if (firstBlockIsTitle) {
-          if (editor.selection.focus.path[0] === 0) {
-            event.preventDefault()
-            Transforms.move(editor, { unit: 'line', distance: 1 })
-            return
-          }
-        }
-
         const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
-        const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
 
         const isCurrentlyInInlineAtomicField = onEnterInlineField({
           event,
-          currentLeaf: _currentLeaf,
+          currentLeaf,
           state,
           setContent,
           editor,
@@ -497,8 +602,10 @@ const ContentEditable = ({
           if (_focusedBlock.__isActive && isAtomicClosure(_focusedBlock.type)) {
             event.preventDefault()
           }
+
           return
         }
+
         const _text = Node.string(
           editor.children[editor.selection.focus.path[0]]
         )
@@ -516,18 +623,20 @@ const ContentEditable = ({
         const _atBlockStart = _offset === 0
         const _atBlockEnd = _offset === _text.length
         const _doubleLineBreak =
+          (firstBlockIsTitle && editor.selection.focus.path[0] === 0) ||
           (_atBlockEnd && _prevIsBreak) ||
           (_atBlockStart && _nextIsBreak) ||
           (_prevIsBreak && _nextIsBreak) ||
           _nextIsDoubleBreak ||
           _prevIsDoubleBreak ||
           _text.length === 0
+
         if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
           // // edge case where enter is at the end of an inline atomic
           const isEnterAtEndOfInlineAtomic = enterAtEndOfInlineAtomic({
             editor,
             event,
-            currentLeaf: _currentLeaf,
+            currentLeaf,
             setContent,
             atBlockEnd: _atBlockEnd,
             currentBlock: _focusedBlock,
@@ -565,6 +674,19 @@ const ContentEditable = ({
           event.preventDefault()
           removeAtSelection()
           return
+        }
+
+        // handle backspace on empty line after title
+        if (
+          editor.selection.focus.path[0] === 1 &&
+          state.blocks.length > 2 &&
+          isEmpty(state.blocks[editor.selection.focus.path[0]])
+        ) {
+          event.preventDefault()
+          Transforms.delete(editor, {
+            distance: 1,
+            unit: 'character',
+          })
         }
 
         // handle start of atomic
@@ -635,7 +757,6 @@ const ContentEditable = ({
         }
 
         const currentBlock = state.blocks[_currentIndex]
-
         onInlineFieldBackspace({ editor, event, currentBlock })
       }
     }
@@ -646,6 +767,7 @@ const ContentEditable = ({
     }
 
     // store selection because the Transforms below move it around
+
     let nextSelection = editor.selection
 
     state.operations.forEach((op) => {
@@ -670,15 +792,27 @@ const ContentEditable = ({
         // set block type
         Transforms.setNodes(
           editor,
-          { type: _block.type },
+          {
+            type: _block.type,
+            isTitle: op.index === 0,
+          },
           {
             at: [op.index],
           }
         )
         // inserts node
+
         Transforms.insertFragment(editor, [_block], {
           at: [op.index],
         })
+        // embedded media requires a nbsp, editor should move caret forward one position
+        if (op.setCaretAfter) {
+          // window.requestAnimationFrame(() => {
+          //   Transforms.insertNodes(editor, {
+          //     text: '\n',
+          //   })
+          // })
+        }
       }
       // if reducer states to set the selection as an operation, perform seletion
       if (op.setSelection) {
@@ -697,6 +831,7 @@ const ContentEditable = ({
 
     // if there were any update operations,
     //   sync the Slate selection to the state selection
+
     if (state.operations.length) {
       nextSelection = stateSelectionToSlateSelection(
         editor.children,
@@ -711,6 +846,7 @@ const ContentEditable = ({
     if (state.preventDefault) {
       editor.operations = []
     }
+
     /*
 if focus event is fired and editor.selection is null, set focus at origin. this is used when editorRef.focus() is called by a parent component
 */
@@ -725,6 +861,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
             editor.children,
             _selection
           )
+
           Transforms.select(editor, _slateSelection)
           ReactEditor.focus(editor)
         }

@@ -1,6 +1,7 @@
-import { Text, PageHeader } from '@databyss-org/services/interfaces'
+import { Text, PageHeader, Embed } from '@databyss-org/services/interfaces'
 import { Block, Selection } from './'
 import { BlockReference, BlockType } from '../../databyss-services/interfaces'
+import { IframeAttributes } from '../components/Suggest/iframeUtils'
 
 export interface PayloadOperation {
   index: number
@@ -14,6 +15,7 @@ export interface PayloadOperation {
   checkAtomicDelta?: boolean
   withBakeAtomic?: boolean
   convertInlineToAtomic?: boolean
+  convertInlineToEmbed?: IframeAttributes & Embed
 }
 
 export interface BackflowOperation {
@@ -22,6 +24,8 @@ export interface BackflowOperation {
   insertBefore?: Boolean
   setSelection?: Boolean
   reloadAll?: Boolean
+  // embed media requires cursor to move forward
+  setCaretAfter?: Boolean
 }
 
 export interface EditorState {
