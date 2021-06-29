@@ -59,7 +59,7 @@ export const _regExValidator = {
   youtube: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/,
   image: /^((https?|ftp):)?\/\/.*(jpeg|jpg|png|gif|bmp)/,
   dropbox: /https*:\/\/www\.dropbox\.com\/s\/(?<FID>.+?)\/(?<FNAME>.+?)\?dl=0/,
-  instagram: /http(?:s)?:\/\/(?:www\.)?instagram\.com/,
+  instagram: /http(?:s)?:\/\/(?:www\.)?instagram\.com\/p\/(?<PID>[^/]+)\/?/,
 }
 
 export const MAX_WIDTH = 484

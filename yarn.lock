@@ -22616,6 +22616,11 @@ signals@^1.0.0:
   resolved "https://registry.yarnpkg.com/signals/-/signals-1.0.0.tgz#65f0c1599352b35372ecaae5a250e6107376ed69"
   integrity sha1-ZfDBWZNSs1Ny7KrlolDmEHN27Wk=
 
+simple-instagram-api@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/simple-instagram-api/-/simple-instagram-api-2.2.0.tgz#118783fb56ee4feb1a3327d6f27e86c5683f6a6f"
+  integrity sha512-HUkXFFQRNFp4Mqr0EoSnfaVPVlGjg+dCO/AksSrCbLlwpBBbLLmCo6uK3YUXG4hxBnxQy43gOPUXaz+QaHQ7RQ==
+
 simple-plist@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/simple-plist/-/simple-plist-1.1.0.tgz#8354ab63eb3922a054c78ce96c209c532e907a23"
