@@ -51,7 +51,7 @@ export const UnfetchedMedia = ({ atomicId, src, highlight }) => {
       }}
     >
       <Text variant="uiTextSmall" color="text.2">
-        unable to load media
+        Fetching media…
       </Text>
     </View>
   )

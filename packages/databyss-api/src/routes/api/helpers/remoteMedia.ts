@@ -145,6 +145,37 @@ export const getYoutubeAttributes = async (url) => {
 
     return _response
   } catch (err) {
+    console.log('[remoteMedia] YouTube OG fetch failed', err)
+    return _response
+  }
+}
+
+export const getInstagramAttributes = async (url) => {
+  const _response: MediaResponse = {
+    mediaType: MediaTypes.WEBSITE,
+    title: 'Instagram Post',
+    src: null,
+  }
+  _response.src = url
+
+  const options = { url }
+  try {
+    const _data = await ogs(options)
+    const { result } = _data
+    if (result.success) {
+      // rewrite ogImage.url
+      _response.title = result.ogTitle
+      if (result.ogImage?.url) {
+        result.ogImage.url = `${
+          process.env.API_URL
+        }/media/proxy?url=${encodeURIComponent(result.ogImage.url)}`
+      }
+      _response.openGraphJson = JSON.stringify(result)
+    }
+
+    return _response
+  } catch (err) {
+    console.log('[remoteMedia] Instagram OG fetch failed', err)
     return _response
   }
 }
