@@ -3,6 +3,8 @@ import { DOMParser } from 'xmldom'
 import ogs from 'open-graph-scraper'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
 import { parseTweetUrl } from '@databyss-org/services/embeds/twitter'
+import InstagramApi from 'simple-instagram-api'
+import { decode } from 'html-entities'
 import { MediaResponse, _regExValidator } from '../media'
 
 export const getImageAttributes = async (url: string) => {
@@ -145,6 +147,63 @@ export const getYoutubeAttributes = async (url) => {
 
     return _response
   } catch (err) {
+    console.log('[remoteMedia] YouTube OG fetch failed', err)
+    return _response
+  }
+}
+
+export const getInstagramAttributes = async (url) => {
+  const _response: MediaResponse = {
+    mediaType: MediaTypes.WEBSITE,
+    title: `Instagram ${Date.now()}`,
+    src: url,
+  }
+
+  const _matches = _regExValidator.instagram.exec(url)
+  if (!_matches?.groups?.PID) {
+    console.log('[getInstagramAttributes] no Post ID found')
+    return url
+  }
+  const _postId = _matches?.groups?.PID
+  console.log('[getInstagramAttributes] Post ID', _postId)
+
+  // const options = {
+  //   url,
+  //   headers: {
+  //     'user-agent': 'Googlebot/2.1 (+http://www.google.com/bot.html)',
+  //   },
+  // }
+  try {
+    // const _data = await ogs(options)
+    // const { result } = _data
+    // if (result.success) {
+    //   // rewrite ogImage.url
+    //   _response.title = result.ogTitle
+    //   if (result.ogImage?.url) {
+    //     result.ogImage.url = `${
+    //       process.env.API_URL
+    //     }/media/proxy?url=${encodeURIComponent(result.ogImage.url)}`
+    //   }
+    //   _response.openGraphJson = JSON.stringify(result)
+    // }
+
+    const _postData = await InstagramApi.get(_postId)
+    const _ogData = {
+      ogImage: {
+        url: `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(
+          _postData.url
+        )}`,
+      },
+      ogDescription: decode(_postData.caption),
+      ogSiteName: 'Instagram',
+      ogTitle: `Instagram post ${_postId}`,
+    }
+    _response.mediaType = MediaTypes.INSTAGRAM
+    _response.title = `Instagram post ${_postId}`
+    _response.openGraphJson = JSON.stringify(_ogData)
+    return _response
+  } catch (err) {
+    console.log('[remoteMedia] Instagram fetch failed', err)
     return _response
   }
 }

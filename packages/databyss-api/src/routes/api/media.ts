@@ -11,6 +11,7 @@ import {
   getHtmlAttributes,
   getTwitterAttributes,
   getDropboxAttributes,
+  getInstagramAttributes,
 } from './helpers/remoteMedia'
 
 const router = express.Router()
@@ -58,6 +59,7 @@ export const _regExValidator = {
   youtube: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/,
   image: /^((https?|ftp):)?\/\/.*(jpeg|jpg|png|gif|bmp)/,
   dropbox: /https*:\/\/www\.dropbox\.com\/s\/(?<FID>.+?)\/(?<FNAME>.+?)\?dl=0/,
+  instagram: /http(?:s)?:\/\/(?:www\.)?instagram\.com\/p\/(?<PID>[^/]+)\/?/,
 }
 
 export const MAX_WIDTH = 484
@@ -90,17 +92,18 @@ router.post('/opengraph', async (req, res) => {
         return res.status(200).json(_response).send()
       }
 
-      // if twitter url
       if (_regExValidator.twitter.test(_url)) {
         const _response = await getTwitterAttributes(_url)
         return res.status(200).json(_response).send()
       }
-      // get youtube attributes
       if (_regExValidator.youtube.test(_url)) {
         const _response = await getYoutubeAttributes(_url)
         return res.status(200).json(_response).send()
       }
-
+      if (_regExValidator.instagram.test(_url)) {
+        const _response = await getInstagramAttributes(_url)
+        return res.status(200).json(_response).send()
+      }
       if (_regExValidator.dropbox.test(_url)) {
         const _response = await getDropboxAttributes(_url)
         return res.status(200).json(_response).send()
@@ -121,8 +124,16 @@ router.get('/proxy', async (req, res) => {
   let _url = req.query.url as string
   _url = decodeURIComponent(_url)
 
+  const STRIP_HEADERS = ['cross-origin-resource-policy']
+
   if (_url) {
-    return request.get({ url: _url }).pipe(res)
+    return request(_url)
+      .on('response', (response) =>
+        STRIP_HEADERS.forEach((header) => {
+          delete response.headers[header]
+        })
+      )
+      .pipe(res)
   }
   return res.status(404).send()
 })
