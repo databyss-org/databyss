@@ -158,7 +158,12 @@ export const getInstagramAttributes = async (url) => {
   }
   _response.src = url
 
-  const options = { url }
+  const options = {
+    url,
+    headers: {
+      'user-agent': 'Googlebot/2.1 (+http://www.google.com/bot.html)',
+    },
+  }
   try {
     const _data = await ogs(options)
     const { result } = _data
