@@ -53,6 +53,7 @@ export enum MediaTypes {
   IMAGE = 'image',
   YOUTUBE = 'youtube',
   TWITTER = 'twitter',
+  INSTAGRAM = 'instagram',
   HTML = 'html',
   WEBSITE = 'website',
   UNFETCHED = 'unfetchedMedia',

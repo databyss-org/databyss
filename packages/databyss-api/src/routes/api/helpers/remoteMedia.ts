@@ -4,6 +4,7 @@ import ogs from 'open-graph-scraper'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
 import { parseTweetUrl } from '@databyss-org/services/embeds/twitter'
 import InstagramApi from 'simple-instagram-api'
+import { decode } from 'html-entities'
 import { MediaResponse, _regExValidator } from '../media'
 
 export const getImageAttributes = async (url: string) => {
@@ -193,10 +194,11 @@ export const getInstagramAttributes = async (url) => {
           _postData.url
         )}`,
       },
-      ogDescription: _postData.caption,
+      ogDescription: decode(_postData.caption),
       ogSiteName: 'Instagram',
       ogTitle: `Instagram post ${Date.now()}`,
     }
+    _response.mediaType = MediaTypes.INSTAGRAM
     _response.title = `Instagram post ${Date.now()}`
     _response.openGraphJson = JSON.stringify(_ogData)
     return _response
