@@ -196,10 +196,10 @@ export const getInstagramAttributes = async (url) => {
       },
       ogDescription: decode(_postData.caption),
       ogSiteName: 'Instagram',
-      ogTitle: `Instagram post ${Date.now()}`,
+      ogTitle: `Instagram post ${_postId}`,
     }
     _response.mediaType = MediaTypes.INSTAGRAM
-    _response.title = `Instagram post ${Date.now()}`
+    _response.title = `Instagram post ${_postId}`
     _response.openGraphJson = JSON.stringify(_ogData)
     return _response
   } catch (err) {
