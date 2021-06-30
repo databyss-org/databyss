@@ -12,9 +12,9 @@ import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { usePageReferences } from '@databyss-org/data/pouchdb/hooks'
 import { darkTheme } from '../../theming/theme'
 import { sidebar } from '../../theming/components'
-import { usePageReferences } from '@databyss-org/data/pouchdb/hooks'
 
 const SidebarCollapsed = () => {
   const {

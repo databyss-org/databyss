@@ -1,11 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { Helmet } from 'react-helmet'
-import {
-  PDFDropZoneManager,
-  useNavigationContext,
-  Grid,
-  View,
-} from '@databyss-org/ui'
+import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'
@@ -26,7 +21,6 @@ import {
 import { UNTITLED_PAGE_NAME } from '@databyss-org/services/interfaces'
 import _ from 'lodash'
 import { isMobile } from '../../lib/mediaQuery'
-import { PageLinks } from './PageLinks'
 
 const PageBody = ({
   page,
