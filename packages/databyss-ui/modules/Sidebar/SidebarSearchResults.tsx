@@ -80,7 +80,6 @@ const SidebarSearchResults = ({
   const sortedSources = sortEntriesAtoZ(allResults, 'text')
 
   const filteredEntries = filterEntries(sortedSources, filterQuery)
-  console.log(filteredEntries)
 
   return (
     <SidebarList

@@ -125,21 +125,16 @@ const PageBody = ({
             }}
           >
             <PDFDropZoneManager />
-            <Grid>
-              <ContentEditable
-                autofocus
-                focusIndex={focusIndex}
-                onNavigateUpFromTop={onNavigateUpFromEditor}
-                active={false}
-                editorRef={editorRef}
-                readonly={isReadOnly}
-                sharedWithGroups={sharedWithGroups}
-                firstBlockIsTitle
-              />
-              <View width="300px">
-                <PageLinks pageId={page._id} />
-              </View>
-            </Grid>
+            <ContentEditable
+              autofocus
+              focusIndex={focusIndex}
+              onNavigateUpFromTop={onNavigateUpFromEditor}
+              active={false}
+              editorRef={editorRef}
+              readonly={isReadOnly}
+              sharedWithGroups={sharedWithGroups}
+              firstBlockIsTitle
+            />
           </EditorProvider>
         </HistoryProvider>
       </CatalogProvider>

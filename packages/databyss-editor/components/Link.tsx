@@ -4,7 +4,7 @@ import { validUriRegex } from '@databyss-org/services/lib/util'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 
-const { blue } = colors
+const { purple } = colors
 
 export const Link = ({ _children, atomicId }) => {
   const { navigate } = useNavigationContext()
@@ -39,7 +39,7 @@ export const Link = ({ _children, atomicId }) => {
         }
       }}
       style={{
-        color: blue[2],
+        color: purple[1],
         cursor: 'pointer',
       }}
       href={url}
