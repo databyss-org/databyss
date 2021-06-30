@@ -84,10 +84,7 @@ export const onInlineFieldBackspace = ({
     _currentLeaf.inlineEmbedInput
   ) {
     // only << exist, remove mark on backspace
-    if (
-      _currentLeaf.inlineEmbedInput &&
-      _currentLeaf.text === InlineInitializer.embed
-    ) {
+    if (_currentLeaf.text === InlineInitializer.embed) {
       Transforms.delete(editor, {
         distance: 1,
         unit: 'character',
@@ -103,7 +100,6 @@ export const onInlineFieldBackspace = ({
       Transforms.collapse(editor, {
         edge: _offset === 1 ? 'anchor' : 'focus',
       })
-
       event.preventDefault()
       return true
     }

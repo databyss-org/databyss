@@ -6,7 +6,7 @@ import { EM } from '@databyss-org/data/pouchdb/utils'
 
 const { blue, purple } = colors
 
-export const Link = ({ _children, atomicId }) => {
+export const Link = ({ _children, atomicId, readOnly }) => {
   const { navigate } = useNavigationContext()
   const location = window.location
   // compose external url
@@ -32,6 +32,9 @@ export const Link = ({ _children, atomicId }) => {
   return (
     <a
       onClick={(e) => {
+        if (readOnly) {
+          e.preventDefault()
+        }
         if (e.metaKey || isAtomicIdUrl) {
           window.open(url, '_blank')
         } else {

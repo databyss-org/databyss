@@ -383,7 +383,7 @@ const ContentEditable = ({
     const onKeyDown = (event) => {
       // if a character has been entered, check if the position needs to be corrected for inline atomics
       if (isCharacterKeyPress(event) || event.key === 'Backspace') {
-        inlineAtomicBlockCorrector(event, editor)
+        inlineAtomicBlockCorrector({ event, editor, state })
       }
 
       // HACK: because we make embeds display as 'inline-block', slate or contenteditable sees

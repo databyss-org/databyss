@@ -105,7 +105,11 @@ export const initiateEmbedInput = ({
             })
             Transforms.delete(editor)
             Transforms.insertNodes(editor, {
-              text: `${InlineInitializer.embed}${_wordToSwollow}`,
+              text: `${
+                _inlineType === InlineTypes.Embed
+                  ? InlineInitializer.embed
+                  : InlineInitializer.link
+              }${_wordToSwollow}`,
               inlineEmbedInput: true,
             })
             event.preventDefault()

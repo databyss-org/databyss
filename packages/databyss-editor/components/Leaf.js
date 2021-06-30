@@ -95,7 +95,13 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
   }
 
   if (leaf.link) {
-    _children = <Link _children={_children} atomicId={leaf.atomicId} />
+    _children = (
+      <Link
+        _children={_children}
+        atomicId={leaf.atomicId}
+        readOnly={readOnly}
+      />
+    )
   }
 
   if (leaf.inlineCitation) {

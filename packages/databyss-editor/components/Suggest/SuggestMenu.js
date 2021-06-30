@@ -45,7 +45,7 @@ export const getPosition = ({
         const _textNode = document.getElementById(_elId).getBoundingClientRect()
 
         const relativePos = {
-          top: _textNode.top - _rect.top + _textNode.height + 4,
+          top: _textNode.top - _rect.top + _textNode.height + 10,
           left: _textNode.left - _rect.left,
         }
 
@@ -56,7 +56,7 @@ export const getPosition = ({
 
         if (isMenuTop) {
           return {
-            bottom: '6px',
+            bottom: '44px',
             left: _textNode.left - _rect.left,
           }
         }
@@ -78,7 +78,7 @@ export const getPosition = ({
       const isMenuTop = _windowHeight < _rect.bottom + MENU_HEIGHT
 
       if (isMenuTop) {
-        return { bottom: '6px', left: 0 }
+        return { bottom: '44px', left: 0 }
       }
       // if previous block is an atomic closure block move offest down 15px
       const _prev = Editor.previous(editor)
@@ -90,7 +90,7 @@ export const getPosition = ({
       }
     }
   }
-  return { top: 32, left: 0 }
+  return { top: 38, left: 0 }
 }
 
 const SuggestMenu = ({
@@ -220,7 +220,7 @@ const SuggestMenu = ({
       : menuActive
 
   return (
-    <View position="absolute">
+    <View>
       <ClickAwayListener onClickAway={onClickAway} position="inherit">
         <DropdownContainer
           suggestMenu
