@@ -64,7 +64,6 @@ export const EmbedMedia = ({
   const highlightEmbed = () => {
     try {
       const _el = textRef.current?.children?.[0]
-      console.log(_el)
       const _node = ReactEditor.toSlateNode(editor, _el)
       const _path = ReactEditor.findPath(editor, _node)
       const _offset = _node.text.length

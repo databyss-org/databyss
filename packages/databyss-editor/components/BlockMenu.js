@@ -42,7 +42,7 @@ const BlockMenu = ({ element }) => {
         Transforms.insertNodes(editor, { text: '>>', inlineLinkInput: true })
       },
       EMBED: () => {
-        Transforms.insertNodes(editor, { text: '<<', inlineEmbedInputs: true })
+        Transforms.insertNodes(editor, { text: '<<', inlineEmbedInput: true })
       },
       LOCATION: () => {
         Transforms.setNodes(
