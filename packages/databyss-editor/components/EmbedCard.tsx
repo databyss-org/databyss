@@ -35,7 +35,7 @@ export const EmbedCard = React.memo(
       >
         {mediaType !== MediaTypes.IMAGE && (
           <>
-            {title ? (
+            {mediaType !== MediaTypes.INSTAGRAM && title ? (
               <Text variant="uiTextSmall" color="gray.3" userSelect="none">
                 {siteName ?? formatHostname(src)}
               </Text>
@@ -50,15 +50,17 @@ export const EmbedCard = React.memo(
                 {siteName ?? formatHostname(src)}
               </Button>
             )}
-            <Button
-              variant="uiLink"
-              textColor="blue.0"
-              href={src}
-              target="_blank"
-              mb="small"
-            >
-              {title}
-            </Button>
+            {mediaType !== MediaTypes.INSTAGRAM && (
+              <Button
+                variant="uiLink"
+                textColor="blue.0"
+                href={src}
+                target="_blank"
+                mb="small"
+              >
+                {title}
+              </Button>
+            )}
           </>
         )}
         {description && (
@@ -69,7 +71,11 @@ export const EmbedCard = React.memo(
         {imageSrc && (
           <View
             maxHeight={
-              mediaType === MediaTypes.IMAGE || !description ? '350px' : '250px'
+              mediaType === MediaTypes.IMAGE ||
+              mediaType === MediaTypes.INSTAGRAM ||
+              !description
+                ? '350px'
+                : '250px'
             }
             title={title}
             backgroundColor="gray.0"
@@ -121,7 +127,9 @@ export const EmbedCard = React.memo(
                     opacity: 0,
                     width: '100%',
                     maxHeight:
-                      mediaType === MediaTypes.IMAGE || !description
+                      mediaType === MediaTypes.IMAGE ||
+                      mediaType === MediaTypes.INSTAGRAM ||
+                      !description
                         ? '350px'
                         : '250px',
                   }}
