@@ -29,8 +29,6 @@ export const onInlineFieldBackspace = ({
     flattenOffset(editor, editor.selection.focus).toString(),
     10
   )
-  console.log('TEXT', _text)
-  console.log('offset', _offset)
 
   // check for inline atomics fields
   if (
@@ -86,10 +84,7 @@ export const onInlineFieldBackspace = ({
     _currentLeaf.inlineEmbedInput
   ) {
     // only << exist, remove mark on backspace
-    if (
-      _currentLeaf.inlineEmbedInput &&
-      _currentLeaf.text === InlineInitializer.embed
-    ) {
+    if (_currentLeaf.text === InlineInitializer.embed) {
       Transforms.delete(editor, {
         distance: 1,
         unit: 'character',
@@ -105,7 +100,6 @@ export const onInlineFieldBackspace = ({
       Transforms.collapse(editor, {
         edge: _offset === 1 ? 'anchor' : 'focus',
       })
-      console.log('REMOVE MARK  ')
       event.preventDefault()
       return true
     }

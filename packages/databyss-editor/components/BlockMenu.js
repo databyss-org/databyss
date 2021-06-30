@@ -39,10 +39,10 @@ const BlockMenu = ({ element }) => {
       SOURCE: () => editor.insertText('@'),
       TOPIC: () => editor.insertText('#'),
       LINK: () => {
-        Transforms.insertNodes(editor, { text: '>>', inlineEmbedInput: true })
+        Transforms.insertNodes(editor, { text: '>>', inlineLinkInput: true })
       },
       EMBED: () => {
-        Transforms.insertNodes(editor, { text: '<<', inlineLinkInput: true })
+        Transforms.insertNodes(editor, { text: '<<', inlineEmbedInputs: true })
       },
       LOCATION: () => {
         Transforms.setNodes(
