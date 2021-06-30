@@ -439,7 +439,7 @@ export const insertTextWithInilneCorrection = (text, editor) => {
 /*
 if character is being entered, run the editor through the correction to make sure no atomic inline is entered manually
 */
-export const inlineAtomicBlockCorrector = (event, editor) => {
+export const inlineAtomicBlockCorrector = ({ event, editor, state }) => {
   if (Range.isCollapsed(editor.selection)) {
     // pressed key is a char
     const _text = Node.string(editor.children[editor.selection.focus.path[0]])
@@ -482,7 +482,10 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
     }
 
     // move backwards and forward to get selection in previous leaf if previous node exist, this is to get the correct leaf
-    if (editor.selection.focus.offset === 0) {
+    if (
+      editor.selection.focus.offset === 0 &&
+      state.selection.anchor.offset !== 0
+    ) {
       const _prev = Editor.previous(editor)
       if (_prev) {
         Transforms.move(editor, {

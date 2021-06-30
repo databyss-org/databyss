@@ -38,6 +38,12 @@ const BlockMenu = ({ element }) => {
       END_TOPIC: () => editor.insertText('/#'),
       SOURCE: () => editor.insertText('@'),
       TOPIC: () => editor.insertText('#'),
+      LINK: () => {
+        Transforms.insertNodes(editor, { text: '>>', inlineEmbedInput: true })
+      },
+      EMBED: () => {
+        Transforms.insertNodes(editor, { text: '<<', inlineLinkInput: true })
+      },
       LOCATION: () => {
         Transforms.setNodes(
           editor,
@@ -59,7 +65,6 @@ const BlockMenu = ({ element }) => {
       editor.children,
       _selection
     )
-    console.log('BLOCK MENU', _slateSelection)
 
     // selection needs to be reset because editor could loose focus
     Transforms.select(editor, _slateSelection)
@@ -112,6 +117,16 @@ const BlockMenu = ({ element }) => {
       action: 'LOCATION',
       textSymbol: '%',
       label: 'Location',
+    },
+    {
+      action: 'LINK',
+      textSymbol: '>>',
+      label: 'Link',
+    },
+    {
+      action: 'EMBED',
+      textSymbol: '<<',
+      label: 'Embed',
     },
   ]
 
