@@ -5,7 +5,6 @@ import {
   Transforms,
   Point,
   Range,
-  Editor as SlateEditor,
 } from '@databyss-org/slate'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
