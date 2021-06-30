@@ -382,8 +382,6 @@ const ContentEditable = ({
     }
 
     const onKeyDown = (event) => {
-      console.log('childsren', editor.children)
-      console.log('mark', SlateEditor.marks(editor))
       // if a character has been entered, check if the position needs to be corrected for inline atomics
       if (isCharacterKeyPress(event) || event.key === 'Backspace') {
         inlineAtomicBlockCorrector({ event, editor, state })
