@@ -76,7 +76,6 @@ export const onInlineBackspaceOrEnter = ({
           */
         if (event.key === 'Backspace') {
           // remove inline node
-
           Transforms.removeNodes(editor, {
             match: (node) => node === _currentLeaf,
           })

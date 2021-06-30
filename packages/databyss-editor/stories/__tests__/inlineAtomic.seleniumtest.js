@@ -18,6 +18,7 @@ import {
   logout,
   tagButtonClick,
   tagButtonListClick,
+  upKey,
 } from './_helpers.selenium'
 
 let driver
@@ -239,9 +240,10 @@ describe('inline atomic', () => {
     await tagButtonClick('data-test-sidebar-element="topics"', driver)
 
     await tagButtonClick('data-test-element="page-header"', driver)
-
-    await sleep(1000)
-    await enterKey(actions)
+    await upKey(actions)
+    await downKey(actions)
+    // await sleep(1000)
+    // await enterKey(actions)
     await rightKey(actions)
     await rightKey(actions)
 

@@ -3,6 +3,8 @@ import { SelectOption } from './UI'
 import { Text } from './Text'
 import { Document } from './Document'
 
+import { InlineTypes } from './Range'
+
 export enum BlockType {
   Entry = 'ENTRY',
   Source = 'SOURCE',
@@ -10,11 +12,12 @@ export enum BlockType {
   EndSource = 'END_SOURCE',
   EndTopic = 'END_TOPIC',
   Embed = 'EMBED',
+  Link = 'link',
 }
 
 export interface BlockReference {
   _id: string
-  type: BlockType
+  type: BlockType | InlineTypes.Link
 }
 
 export class Block implements BlockReference {
@@ -135,7 +138,7 @@ export interface IndexPageResult {
   block: string
   relatedBlock: string
   relationshipType: BlockRelationshipType
-  relatedBlockType: BlockType
+  relatedBlockType: BlockType | InlineTypes.Link
   page: string
   blockIndex: number
   blockText: Text

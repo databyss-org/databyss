@@ -6,11 +6,13 @@ import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
+import ReferencesSvg from '@databyss-org/ui/assets/references.svg'
 import GroupsImg from '@databyss-org/ui/assets/logo-thick.png'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { usePageReferences } from '@databyss-org/data/pouchdb/hooks'
 import { darkTheme } from '../../theming/theme'
 import { sidebar } from '../../theming/components'
 
@@ -20,9 +22,12 @@ const SidebarCollapsed = () => {
     getSidebarPath,
     isMenuOpen,
     setMenuOpen,
+    getTokensFromPath,
   } = useNavigationContext()
+  const { params: pageId } = getTokensFromPath()
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const activeItem = getSidebarPath()
+  const pageReferencesRes = usePageReferences(pageId)
 
   const onItemClick = (item) => {
     if (!isMenuOpen) {
@@ -73,6 +78,16 @@ const SidebarCollapsed = () => {
       icon: <TopicSvg />,
       onClick: () => onItemClick('topics'),
     },
+    {
+      name: 'references',
+      title: 'Backlinks',
+      icon: <ReferencesSvg />,
+      onClick: () => onItemClick('references'),
+      badgeText:
+        pageReferencesRes.data &&
+        pageReferencesRes.data.length > 0 &&
+        pageReferencesRes.data.length,
+    },
   ]
 
   if (!isPublicAccount()) {
@@ -107,6 +122,7 @@ const SidebarCollapsed = () => {
             key={item.name}
             title={item.title}
             icon={item.icon}
+            badgeText={item.badgeText}
             isActive={isIconButtonActive(item)}
             onClick={item.onClick}
             seperatorTop={

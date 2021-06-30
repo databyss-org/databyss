@@ -11,6 +11,7 @@ import SidebarCollapsed from './SidebarCollapsed'
 import { BlockList, PageList, GroupList } from './lists'
 import { authorsToListItemData } from './transforms'
 import Search from './Search'
+import { ReferencesList } from './lists/ReferencesList'
 
 export const Sidebar = () => {
   const { getSidebarPath, isMenuOpen } = useNavigationContext()
@@ -52,6 +53,7 @@ export const Sidebar = () => {
             {isPublicAccount() && <Header />}
             <Search />
             {(menuItem === 'pages' || !menuItem) && <PageList />}
+            {menuItem === 'references' && <ReferencesList />}
             {menuItem === 'sources' && (
               <BlockList
                 blockType={BlockType.Source}

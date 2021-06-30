@@ -1,6 +1,12 @@
 import React from 'react'
 
-import { Grid, View, Icon, BaseControl } from '@databyss-org/ui/primitives'
+import {
+  Grid,
+  View,
+  Icon,
+  BaseControl,
+  Text,
+} from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { timing } from '@databyss-org/ui/theming/theme'
 
@@ -62,6 +68,7 @@ const SidebarIconButton = ({
   title,
   seperatorTop,
   sizeVariant,
+  badgeText,
   ...others
 }) => (
   <>
@@ -71,10 +78,16 @@ const SidebarIconButton = ({
       alignItems="center"
       onClick={onClick}
       width="100%"
+      position="relative"
       {...others}
     >
       <View bg="purple.2" css={getDotStyles(isActive, isBottomNav)} />
-      <Grid singleRow css={getGridStyles(isBottomNav)}>
+      <Grid
+        singleRow
+        css={getGridStyles(isBottomNav)}
+        position="relative"
+        zIndex="1"
+      >
         <Icon
           sizeVariant={sizeVariant}
           color={getIconColor(isActive, isBottomNav)}
@@ -83,6 +96,25 @@ const SidebarIconButton = ({
           {icon}
         </Icon>
       </Grid>
+      {badgeText && (
+        <View
+          position="absolute"
+          zIndex="0"
+          top={pxUnits(4)}
+          right={pxUnits(4)}
+          borderRadius="round"
+          bg="purple.1"
+          minWidth={16}
+          height={16}
+          px={pxUnits(4)}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Text variant="uiTextTiny" color="gray.4">
+            {badgeText}
+          </Text>
+        </View>
+      )}
     </BaseControl>
   </>
 )
