@@ -2415,10 +2415,10 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
-"@databyss-org/slate-react@0.57.2-b6":
-  version "0.57.2-b6"
-  resolved "https://registry.yarnpkg.com/@databyss-org/slate-react/-/slate-react-0.57.2-b6.tgz#666eae7439d99233f37018e02aafd932826aeba8"
-  integrity sha512-xANuWLUwa7uBrS9EtDZHu5FalB1VD+w3KL1fh7ClAgQAdezqW+kHiUl2aG5JfIZXqibOuGsUStF6eqTvzvVFlA==
+"@databyss-org/slate-react@0.57.2-b7":
+  version "0.57.2-b7"
+  resolved "https://registry.yarnpkg.com/@databyss-org/slate-react/-/slate-react-0.57.2-b7.tgz#92678aa00e6d40b2a430b23cc5fc4da3e79b7b3c"
+  integrity sha512-zBYefY0LSeCoo8/i0BeKALfz6r8hX7UmkOS+1Jn01n9E3K7fAm093zJ3lnjE/vaHqksCECPCzxt4tsEgZtaHTg==
   dependencies:
     "@types/is-hotkey" "^0.1.1"
     "@types/lodash" "^4.14.149"
