@@ -34,7 +34,9 @@ export const SourcesContent = () => {
     getCitationStyleOption(preferredCitationStyle)
   )
   const sourcesRes = useBibliography({
-    styleId: citationStyleOption.id,
+    formatOptions: {
+      styleId: citationStyleOption.id,
+    },
   })
 
   const onCitationStyleChange = (value) => {

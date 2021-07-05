@@ -3,7 +3,7 @@ import React from 'react'
 import { BaseControl, RawHtml, Text, View } from '@databyss-org/ui/primitives'
 import { stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import { Citation, useNavigationContext } from '@databyss-org/ui/components'
+import { CitationView, useNavigationContext } from '@databyss-org/ui/components'
 import { pxUnits } from '../../theming/views'
 
 export const SourcesResults = ({ entries }) => {
@@ -16,19 +16,10 @@ export const SourcesResults = ({ entries }) => {
 
   // render methods
   const renderStyledCitation = (citation) => (
-    <Citation
+    <CitationView
       citation={citation}
       formatOptions={{ styleId: preferredCitationStyle }}
-      childViewProps={{
-        marginTop: pxUnits(10),
-        marginBottom: pxUnits(10),
-      }}
-      citationTextProps={{
-        color: 'gray.3',
-        style: {
-          lineHeight: 1.5,
-        },
-      }}
+      my={pxUnits(20)}
     />
   )
 

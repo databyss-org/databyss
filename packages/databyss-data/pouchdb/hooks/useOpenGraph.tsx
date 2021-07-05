@@ -1,18 +1,10 @@
-import { useQuery } from 'react-query'
+import { useQuery, UseQueryOptions } from 'react-query'
 import { httpPost } from '../../../databyss-services/lib/requestApi'
-
-export interface QueryOptions {
-  includeIds?: string[] | null
-}
-
-export interface UseDocumentsOptions extends QueryOptions {
-  enabled?: boolean
-}
 
 export const useOpenGraph = (
   // should be url
   url: string,
-  options: UseDocumentsOptions = { enabled: true }
+  options: UseQueryOptions
 ) => {
   const queryKey = url
 

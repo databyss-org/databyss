@@ -19,7 +19,8 @@ export {
   IndexResultTitle,
   IndexResultsContainer,
 } from './IndexPage'
-export { default as Citation } from './Citation/Citation'
+export { CitationView } from './Citation/CitationView'
+export { SourceCitationView } from './Citation/SourceCitationView'
 export { default as EditSourceForm } from './SourceForm/EditSourceForm'
 export { DropdownContainer } from '../'
 

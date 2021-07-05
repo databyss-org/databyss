@@ -1,9 +1,16 @@
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren, useCallback, useState } from 'react'
+import { debounce } from 'lodash'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Helmet } from 'react-helmet'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
-import { Block, BlockType } from '@databyss-org/services/interfaces'
-import { LoadingFallback, StickyHeader } from '@databyss-org/ui/components'
+import { Block, BlockType, Source } from '@databyss-org/services/interfaces'
+import {
+  LoadingFallback,
+  SourceCitationView,
+  StickyHeader,
+  TitleInput,
+} from '@databyss-org/ui/components'
 import { useDocuments } from '@databyss-org/data/pouchdb/hooks/useDocuments'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import {
@@ -13,13 +20,72 @@ import {
   ScrollViewProps,
 } from '@databyss-org/ui/primitives'
 import { IndexResults } from './IndexResults'
+import { isMobileOrMobileOs } from '../../lib/mediaQuery'
+import { setTopic } from '../../../databyss-data/pouchdb/topics'
+import { setSource } from '../../../databyss-data/pouchdb/sources'
+import { CitationOutputTypes } from '../../../databyss-services/citations/constants'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
+  block?: Block
+}
+
+export const IndexPageTitleInput = ({ path, block }: IndexPageViewProps) => {
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const [title, setTitle] = useState(
+    block ? block.text.textValue : path[path.length - 1]
+  )
+
+  const setBlockText = useCallback(
+    debounce((value: string) => {
+      block!.text.textValue = value
+      switch (block!.type) {
+        case BlockType.Topic:
+          setTopic(block!)
+          break
+        case BlockType.Source:
+          setSource(block! as Source)
+          break
+      }
+    }, 250),
+    [block]
+  )
+
+  const onChange = (value: string) => {
+    setTitle(value)
+    setBlockText(value)
+  }
+
+  if (!block) {
+    return (
+      <Text
+        data-test-element="index-results"
+        variant="bodyHeading1"
+        color="text.3"
+      >
+        {path[path.length - 1]}
+      </Text>
+    )
+  }
+
+  const indexName = {
+    [BlockType.Source]: 'source',
+    [BlockType.Topic]: 'topic',
+  }[block.type]
+  return (
+    <TitleInput
+      autoFocus
+      placeholder={`untitled ${indexName}`}
+      value={title}
+      readonly={isPublicAccount() || isMobileOrMobileOs()}
+      onChange={onChange}
+    />
+  )
 }
 
 export const IndexPageView = ({
   path,
+  block,
   children,
   ...others
 }: PropsWithChildren<IndexPageViewProps>) => (
@@ -35,13 +101,16 @@ export const IndexPageView = ({
         pb="medium"
         pl={{ _: 'small', mobile: 'medium' }}
       >
-        <Text
-          data-test-element="index-results"
-          variant="bodyHeading1"
-          color="text.3"
-        >
-          {path[path.length - 1]}
-        </Text>
+        <IndexPageTitleInput path={path} block={block} />
+        {block && (
+          <SourceCitationView
+            sourceId={block?._id}
+            formatOptions={{
+              outputType: CitationOutputTypes.BIBLIOGRAPHY,
+              styleId: 'mla',
+            }}
+          />
+        )}
       </View>
       <View px={{ _: 'small', mobile: 'medium' }} flexGrow={1}>
         {children}
@@ -82,7 +151,10 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   }
 
   return (
-    <IndexPageView path={getPathFromBlock(blocksRes.data![blockId])}>
+    <IndexPageView
+      path={getPathFromBlock(blocksRes.data![blockId])}
+      block={blocksRes.data![blockId]}
+    >
       <IndexResults
         blockType={blockType}
         relatedBlockId={blockId}
