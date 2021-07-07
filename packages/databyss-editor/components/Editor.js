@@ -75,12 +75,7 @@ const Editor = ({
     return <Element readOnly={readOnly} {...props} />
   }, [])
 
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-
   const onInlineClick = useCallback(({ atomicType, id }) => {
-    if (isPublicAccount()) {
-      return
-    }
     onInlineAtomicClick({ type: atomicType, refId: id })
   }, [])
 

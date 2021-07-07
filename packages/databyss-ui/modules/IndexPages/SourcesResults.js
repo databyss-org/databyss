@@ -4,7 +4,6 @@ import { BaseControl, RawHtml, Text, View } from '@databyss-org/ui/primitives'
 import { stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { CitationView, useNavigationContext } from '@databyss-org/ui/components'
-import { pxUnits } from '../../theming/views'
 
 export const SourcesResults = ({ entries }) => {
   const getPreferredCitationStyle = useSourceContext(
@@ -19,7 +18,6 @@ export const SourcesResults = ({ entries }) => {
     <CitationView
       citation={citation}
       formatOptions={{ styleId: preferredCitationStyle }}
-      my={pxUnits(20)}
     />
   )
 

@@ -52,6 +52,8 @@ import {
   enterAtEndOfInlineAtomic,
   onLinkBackspace,
 } from '../lib/inlineUtils'
+import { getAccountFromLocation } from '../../databyss-services/session/utils'
+import { BlockType } from '../interfaces'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -64,7 +66,7 @@ const ContentEditable = ({
   firstBlockIsTitle,
 }) => {
   const editorContext = useEditorContext()
-  const navigationContext = useNavigationContext()
+  const { navigate } = useNavigationContext()
 
   const historyContext = useHistoryContext()
 
@@ -250,19 +252,12 @@ const ContentEditable = ({
   }, [currentLeaf, editor.selection?.focus.offset])
 
   const onInlineAtomicClick = (inlineData) => {
-    // pass editorContext
-    const inlineAtomicData = {
-      refId: inlineData.refId,
-      type: inlineData.type,
-    }
-    const modalData = {
-      editorContextRef,
-      editorContext,
-      editor,
-      navigationContext,
-      inlineAtomicData,
-    }
-    showAtomicModal(modalData)
+    const _groupId = getAccountFromLocation()
+    const _blockPath = {
+      [BlockType.Source]: 'sources',
+      [BlockType.Topic]: 'topics',
+    }[inlineData.type]
+    navigate(`/${_groupId}/${_blockPath}/${inlineData.refId}`)
   }
 
   return useMemo(() => {
@@ -598,7 +593,10 @@ const ContentEditable = ({
             !isAtomicClosure(_focusedBlock.type)
           ) {
             event.preventDefault()
-            showAtomicModal({ editorContext, navigationContext, editor })
+            onInlineAtomicClick({
+              type: _focusedBlock.type,
+              refId: _focusedBlock._id,
+            })
           }
           // if closure block is highlighted prevent `enter` key
           if (_focusedBlock.__isActive && isAtomicClosure(_focusedBlock.type)) {

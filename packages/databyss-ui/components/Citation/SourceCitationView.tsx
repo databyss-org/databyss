@@ -18,6 +18,9 @@ export const SourceCitationView = ({ sourceId, formatOptions, ...others }) => {
   if (!bibliographyRes.isSuccess) {
     return <LoadingFallback queryObserver={bibliographyRes} />
   }
+  if (!bibliographyRes.data[sourceId]) {
+    return null
+  }
   return (
     <CitationView
       citation={bibliographyRes.data[sourceId].citation}

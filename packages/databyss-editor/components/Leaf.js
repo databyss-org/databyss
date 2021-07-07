@@ -4,6 +4,7 @@ import React from 'react'
 import colors from '@databyss-org/ui/theming/colors'
 import { EmbedMedia } from './EmbedMedia'
 import { Link } from './Link'
+import { getAccountFromLocation } from '../../databyss-services/session/utils'
 
 // check for email addresses
 const _emailRegEx = new RegExp(
@@ -12,26 +13,9 @@ const _emailRegEx = new RegExp(
 )
 
 const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
-  const { blue, gray, orange, red } = colors
+  const { blue, gray, orange, inlineTopic, inlineSource } = colors
 
   let _children = children
-
-  if (leaf.inlineAtomicMenu) {
-    _children = (
-      <span
-        id="inline-atomic"
-        style={{
-          minWidth: '150px',
-          display: 'inline-block',
-          backgroundColor: gray[6],
-          borderRadius: '3px',
-          //    padding: '3px',
-        }}
-      >
-        {_children}
-      </span>
-    )
-  }
 
   if (leaf.inlineAtomicMenu) {
     _children = (
@@ -77,20 +61,24 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
+  const _groupId = getAccountFromLocation()
+
   if (leaf.inlineTopic) {
     _children = (
-      <span
+      <a
+        href={`/${_groupId}/topics/${leaf.atomicId}`}
         onClick={() =>
           onInlineClick({ atomicType: 'TOPIC', id: leaf.atomicId })
         }
         style={{
-          color: red[1],
+          color: inlineTopic,
           caretColor: 'black',
           cursor: 'pointer',
+          textDecoration: 'none',
         }}
       >
         {_children}
-      </span>
+      </a>
     )
   }
 
@@ -106,18 +94,20 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
 
   if (leaf.inlineCitation) {
     _children = (
-      <span
+      <a
+        href={`/${_groupId}/sources/${leaf.atomicId}`}
         onClick={() =>
           onInlineClick({ atomicType: 'SOURCE', id: leaf.atomicId })
         }
         style={{
-          color: red[2],
+          color: inlineSource,
           caretColor: 'black',
           cursor: 'pointer',
+          textDecoration: 'none',
         }}
       >
         {_children}
-      </span>
+      </a>
     )
   }
 

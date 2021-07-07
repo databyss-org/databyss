@@ -50,6 +50,8 @@ _c = {
   activeTextInputBackground: _c.white,
   pageBackground: 'transparent',
   scrollShadow: '#bbb',
+  inlineSource: '#cc6633',
+  inlineTopic: '#B82F00',
 }
 
 // legacy (deprecated)

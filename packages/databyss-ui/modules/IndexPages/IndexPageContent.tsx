@@ -119,7 +119,7 @@ export const IndexPageView = ({
           pl={{ _: 'small', mobile: 'medium' }}
         >
           <IndexPageTitleInput path={path} block={block} />
-          {block && (
+          {block?.type === BlockType.Source && (
             <BaseControl onPress={onPressDetails}>
               <SourceCitationView
                 sourceId={block?._id}
