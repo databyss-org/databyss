@@ -1,6 +1,9 @@
 import React, { PropsWithChildren, useCallback, useState } from 'react'
 import { debounce } from 'lodash'
-import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
+import {
+  useNavigationContext,
+  useParams,
+} from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Helmet } from 'react-helmet'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
@@ -13,17 +16,18 @@ import {
 } from '@databyss-org/ui/components'
 import { useDocuments } from '@databyss-org/data/pouchdb/hooks/useDocuments'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { setTopic } from '@databyss-org/data/pouchdb/topics'
+import { setSource } from '@databyss-org/data/pouchdb/sources'
+import { CitationOutputTypes } from '@databyss-org/services/citations/constants'
 import {
   ScrollView,
   View,
   Text,
   ScrollViewProps,
+  BaseControl,
 } from '@databyss-org/ui/primitives'
+import { isMobileOrMobileOs } from '@databyss-org/ui/lib/mediaQuery'
 import { IndexResults } from './IndexResults'
-import { isMobileOrMobileOs } from '../../lib/mediaQuery'
-import { setTopic } from '../../../databyss-data/pouchdb/topics'
-import { setSource } from '../../../databyss-data/pouchdb/sources'
-import { CitationOutputTypes } from '../../../databyss-services/citations/constants'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -88,36 +92,52 @@ export const IndexPageView = ({
   block,
   children,
   ...others
-}: PropsWithChildren<IndexPageViewProps>) => (
-  <>
-    <StickyHeader path={path} />
-    <ScrollView px="em" flex="1" {...others}>
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>{path[path.length - 1]}</title>
-      </Helmet>
-      <View
-        pt={{ _: 'medium', mobile: 'small' }}
-        pb="medium"
-        pl={{ _: 'small', mobile: 'medium' }}
-      >
-        <IndexPageTitleInput path={path} block={block} />
-        {block && (
-          <SourceCitationView
-            sourceId={block?._id}
-            formatOptions={{
-              outputType: CitationOutputTypes.BIBLIOGRAPHY,
-              styleId: 'mla',
-            }}
-          />
-        )}
-      </View>
-      <View px={{ _: 'small', mobile: 'medium' }} flexGrow={1}>
-        {children}
-      </View>
-    </ScrollView>
-  </>
-)
+}: PropsWithChildren<IndexPageViewProps>) => {
+  const { showModal } = useNavigationContext()
+  const onUpdateBlock = (nextBlock: Block) => {}
+  const onPressDetails = () => {
+    showModal({
+      component: block?.type,
+      visible: true,
+      props: {
+        refId: block?._id,
+        onUpdate: onUpdateBlock,
+      },
+    })
+  }
+  return (
+    <>
+      <StickyHeader path={path} />
+      <ScrollView px="em" flex="1" {...others}>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>{path[path.length - 1]}</title>
+        </Helmet>
+        <View
+          pt={{ _: 'medium', mobile: 'small' }}
+          pb="medium"
+          pl={{ _: 'small', mobile: 'medium' }}
+        >
+          <IndexPageTitleInput path={path} block={block} />
+          {block && (
+            <BaseControl onPress={onPressDetails}>
+              <SourceCitationView
+                sourceId={block?._id}
+                formatOptions={{
+                  outputType: CitationOutputTypes.BIBLIOGRAPHY,
+                  styleId: 'mla',
+                }}
+              />
+            </BaseControl>
+          )}
+        </View>
+        <View px={{ _: 'small', mobile: 'medium' }} flexGrow={1}>
+          {children}
+        </View>
+      </ScrollView>
+    </>
+  )
+}
 
 interface IndexPageContentProps {
   blockType: BlockType

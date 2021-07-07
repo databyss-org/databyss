@@ -35,27 +35,34 @@ export const useBibliography = ({
     enabled: !!sourceIds,
   })
 
+  const sources =
+    blocksByIdRes.isSuccess && sourceIds
+      ? Object.values(blocksByIdRes.data!)
+      : blocksInPagesRes.data
+
   const queryKey = ['bibliography', formatOptions, sourceIds]
   const query = useQuery<BibliographyDict>(
     queryKey,
-    async () => {
-      const dict: BibliographyDict = {}
-      const sources = sourceIds
-        ? Object.values(blocksByIdRes.data!)
-        : blocksInPagesRes.data
-      for (const source of sources!) {
-        const citation = source.detail
-          ? await toCitation(source.detail, formatOptions)
-          : null
-        dict[source._id] = { citation, source }
-      }
-      return dict
-    },
+    () => bibliographyFromSources(sources!, formatOptions),
     {
       enabled: sourceIds ? blocksByIdRes.isSuccess : blocksInPagesRes.isSuccess,
       ...(otherOptions as UseQueryOptions<BibliographyDict>),
     }
   )
+
+  const updateBibliography = async () => {
+    if (!sources) {
+      return
+    }
+    const _bibDict = await bibliographyFromSources(sources!, formatOptions)
+    if (_bibDict) {
+      queryClient.setQueryData<BibliographyDict>(queryKey, _bibDict)
+    }
+  }
+
+  useEffect(() => {
+    updateBibliography()
+  }, [blocksByIdRes.dataUpdatedAt])
 
   useEffect(
     () => () => {
@@ -65,4 +72,21 @@ export const useBibliography = ({
   )
 
   return query
+}
+
+async function bibliographyFromSources(
+  sources: Source[],
+  formatOptions: CitationFormatOptions
+): Promise<BibliographyDict> {
+  if (!sources) {
+    return {}
+  }
+  const dict: BibliographyDict = {}
+  for (const source of sources!) {
+    const citation = source.detail
+      ? await toCitation(source.detail, formatOptions)
+      : null
+    dict[source._id] = { citation, source }
+  }
+  return dict
 }
