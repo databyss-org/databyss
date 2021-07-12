@@ -942,7 +942,6 @@ export const convertInlineToEmbed = ({
                 height: _attributes.height,
               },
             }),
-          ...(_attributes.code && { embedCode: _attributes.code }),
           mediaType: _attributes.mediaType,
         },
         _id: _newId,

@@ -17,11 +17,10 @@ export const UnfetchedMedia = ({ atomicId, src, highlight }) => {
         const _entity: Embed = {
           type: BlockType.Embed,
           // remove atomic symbol
-          text: { textValue: _attributes.title, ranges: [] },
+          text: { textValue: _attributes.title!, ranges: [] },
           detail: {
             title: _attributes.title,
             src: _attributes.src,
-            ...(_attributes.code && { embedCode: _attributes.code }),
             mediaType: _attributes.mediaType,
             ...(_attributes.openGraphJson && {
               openGraphJson: _attributes.openGraphJson,
