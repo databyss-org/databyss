@@ -1,12 +1,5 @@
 import React from 'react'
-import {
-  Text,
-  View,
-  BaseControl,
-  Grid,
-  Icon,
-} from '@databyss-org/ui/primitives'
-import { pxUnits } from '../../theming/views'
+import { Text, View, BaseControl, Icon } from '@databyss-org/ui/primitives'
 
 export const IndexResultsContainer = ({ children }) => (
   <View mb="medium" widthVariant="content">
@@ -24,13 +17,13 @@ export const IndexResultTitle = ({ href, text, icon, dataTestElement }) => (
   >
     <Icon
       sizeVariant="tiny"
-      color="gray.5"
+      color="gray.4"
       position="absolute"
       left="mediumNegative"
     >
       {icon}
     </Icon>
-    <Text color="text.3" variant="uiTextNormalSemibold">
+    <Text color="text.2" variant="uiTextNormalSemibold">
       {text}
     </Text>
   </BaseControl>

@@ -51,17 +51,23 @@ export const IndexPageTitleInput = ({
 }: IndexPageViewProps) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const [title, setTitle] = useState(
-    block ? block.text.textValue : path[path.length - 1]
+    block
+      ? {
+          [BlockType.Source]: (block as Source).name?.textValue,
+          [BlockType.Topic]: block.text.textValue,
+        }[block.type]
+      : path[path.length - 1]
   )
 
   const setBlockText = useCallback(
     debounce((value: string) => {
-      block!.text.textValue = value
       switch (block!.type) {
         case BlockType.Topic:
+          block!.text.textValue = value
           setTopic(block!)
           break
         case BlockType.Source:
+          ;(block as Source).name!.textValue = value
           setSource(block! as Source)
           break
       }
@@ -151,6 +157,7 @@ export const IndexPageView = ({
           pt={{ _: 'medium', mobile: 'small' }}
           pb="medium"
           pl={{ _: 'small', mobile: 'medium' }}
+          widthVariant="content"
         >
           <IndexPageTitleInput path={path} block={block} />
           {block?.type === BlockType.Source && (
@@ -158,19 +165,24 @@ export const IndexPageView = ({
               <Icon
                 position="absolute"
                 left="mediumNegative"
-                top={pxUnits(10)}
+                top={pxUnits(5)}
                 color="gray.5"
                 sizeVariant="tiny"
               >
                 <EditSvg />
               </Icon>
-              <SourceCitationView
-                sourceId={block?._id}
-                formatOptions={{
-                  outputType: CitationOutputTypes.BIBLIOGRAPHY,
-                  styleId: 'mla',
-                }}
-              />
+              <View>
+                <Text variant="bodyNormalUnderline" color="text.3">
+                  {block.text.textValue}
+                </Text>
+                <SourceCitationView
+                  sourceId={block?._id}
+                  formatOptions={{
+                    outputType: CitationOutputTypes.BIBLIOGRAPHY,
+                    styleId: 'mla',
+                  }}
+                />
+              </View>
             </BaseControl>
           )}
         </View>

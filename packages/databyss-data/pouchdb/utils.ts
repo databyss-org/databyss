@@ -382,8 +382,6 @@ export const updateGroupPreferences = async (
   dbRef.current!.put(_groupDoc)
 }
 
-const sleep = (m) => new Promise((r) => setTimeout(r, m))
-
 export class QueueProcessor extends EventEmitter {
   // on(event: string, listener: Function): this
   // emit(event: string): void
@@ -404,7 +402,6 @@ export class QueueProcessor extends EventEmitter {
         this.isProcessing = true
         const _upQdict = coallesceQ(upQdict.current)
         upQdict.current = []
-        // await sleep(5000)
         await bulkUpsert(_upQdict)
         this.isProcessing = false
 
