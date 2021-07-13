@@ -30,16 +30,25 @@ import {
   Text,
   ScrollViewProps,
   BaseControl,
+  Icon,
 } from '@databyss-org/ui/primitives'
 import { isMobileOrMobileOs } from '@databyss-org/ui/lib/mediaQuery'
+import TopicSvg from '@databyss-org/ui/assets/topic.svg'
+import SourceSvg from '@databyss-org/ui/assets/source.svg'
+import EditSvg from '@databyss-org/ui/assets/edit.svg'
 import { IndexResults } from './IndexResults'
+import { pxUnits } from '../../theming/views'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
   block?: Block
 }
 
-export const IndexPageTitleInput = ({ path, block }: IndexPageViewProps) => {
+export const IndexPageTitleInput = ({
+  path,
+  block,
+  ...others
+}: IndexPageViewProps) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const [title, setTitle] = useState(
     block ? block.text.textValue : path[path.length - 1]
@@ -83,6 +92,22 @@ export const IndexPageTitleInput = ({ path, block }: IndexPageViewProps) => {
     [BlockType.Source]: 'source',
     [BlockType.Topic]: 'topic',
   }[block.type]
+
+  const icon =
+    block &&
+    {
+      [BlockType.Source]: (
+        <Icon>
+          <SourceSvg />
+        </Icon>
+      ),
+      [BlockType.Topic]: (
+        <Icon>
+          <TopicSvg />
+        </Icon>
+      ),
+    }[block.type]
+
   return (
     <TitleInput
       autoFocus
@@ -90,6 +115,8 @@ export const IndexPageTitleInput = ({ path, block }: IndexPageViewProps) => {
       value={title}
       readonly={isPublicAccount() || isMobileOrMobileOs()}
       onChange={onChange}
+      icon={icon}
+      {...others}
     />
   )
 }
@@ -115,7 +142,7 @@ export const IndexPageView = ({
   return (
     <>
       <StickyHeader path={path} />
-      <ScrollView px="em" flex="1" {...others}>
+      <ScrollView pr="em" pl="large" flex="1" {...others}>
         <Helmet>
           <meta charSet="utf-8" />
           <title>{path[path.length - 1]}</title>
@@ -127,7 +154,16 @@ export const IndexPageView = ({
         >
           <IndexPageTitleInput path={path} block={block} />
           {block?.type === BlockType.Source && (
-            <BaseControl onPress={onPressDetails}>
+            <BaseControl onPress={onPressDetails} position="relative">
+              <Icon
+                position="absolute"
+                left="mediumNegative"
+                top={pxUnits(10)}
+                color="gray.5"
+                sizeVariant="tiny"
+              >
+                <EditSvg />
+              </Icon>
               <SourceCitationView
                 sourceId={block?._id}
                 formatOptions={{
