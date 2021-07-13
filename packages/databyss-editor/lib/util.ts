@@ -261,8 +261,9 @@ export const indexPage = ({
       } else if (_openerType) {
         currentAtomics[block.type] = block
       }
-      // if current block is not empty
-      else if (block.text?.textValue.length) {
+      // console.log('[indexPage]', block, currentAtomics)
+      // if not a closure block and current block is not empty
+      if (!_closureType && block.text?.textValue.length) {
         // before indexing the atomic, check if block contains any inline atomics
         let _inlineRelations: IndexPageResult[] = []
         // inline block indexing

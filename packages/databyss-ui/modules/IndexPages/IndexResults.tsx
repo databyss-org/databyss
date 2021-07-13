@@ -14,6 +14,7 @@ import { addPagesToBlockRelation } from '@databyss-org/services/blocks/joins'
 import {
   Block,
   BlockRelation,
+  BlockType,
   DocumentDict,
   Page,
 } from '@databyss-org/services/interfaces'
@@ -66,16 +67,29 @@ export const IndexResults = ({
 
         {groupedRelations[r]
           .filter((e) => e.blockText.textValue.length)
-          .map((e, k) => (
-            <IndexResultDetails
-              key={k}
-              href={`/${getAccountFromLocation()}/pages/${r}#${e.block}`}
-              text={
-                <RawHtml html={slateBlockToHtmlWithSearch(blocks[e.block])} />
-              }
-              dataTestElement="atomic-result-item"
-            />
-          ))}
+          .map((e, k) => {
+            const _variant = {
+              [BlockType.Topic]: 'bodyNormalSemibold',
+              [BlockType.Source]: 'bodyNormalUnderline',
+            }[blocks[e.block].type]
+            let _anchor = e.block
+            if (blocks[e.block].type !== BlockType.Entry) {
+              _anchor += `/${e.blockIndex}`
+            }
+            return (
+              <IndexResultDetails
+                key={k}
+                href={`/${getAccountFromLocation()}/pages/${r}#${_anchor}`}
+                text={
+                  <RawHtml
+                    html={slateBlockToHtmlWithSearch(blocks[e.block])}
+                    variant={_variant}
+                  />
+                }
+                dataTestElement="atomic-result-item"
+              />
+            )
+          })}
       </IndexResultsContainer>
     ))
 

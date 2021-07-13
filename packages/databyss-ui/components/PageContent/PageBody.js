@@ -29,6 +29,7 @@ const PageBody = ({
   editorRef,
   onEditorPathChange,
 }) => {
+  console.log('[PageBody] focusIndex', focusIndex)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   const { location } = useNavigationContext()

@@ -148,7 +148,7 @@ export const IndexPageView = ({
   return (
     <>
       <StickyHeader path={path} />
-      <ScrollView pr="em" pl="large" flex="1" {...others}>
+      <ScrollView pr="em" pl="large" flex="1" pb="extraLarge" {...others}>
         <Helmet>
           <meta charSet="utf-8" />
           <title>{path[path.length - 1]}</title>
