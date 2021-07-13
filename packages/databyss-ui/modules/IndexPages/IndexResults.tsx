@@ -9,30 +9,29 @@ import {
   LoadingFallback,
 } from '@databyss-org/ui/components'
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
-import { useBlockRelations } from '@databyss-org/data/pouchdb/hooks'
-import { BlockType } from '@databyss-org/editor/interfaces'
 import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
 import { addPagesToBlockRelation } from '@databyss-org/services/blocks/joins'
-import { Block, DocumentDict, Page } from '@databyss-org/services/interfaces'
+import {
+  Block,
+  BlockRelation,
+  DocumentDict,
+  Page,
+} from '@databyss-org/services/interfaces'
+import { useDocument } from '../../../databyss-data/pouchdb/hooks/useDocument'
 
 interface IndexResultsProps {
-  blockType: BlockType
   relatedBlockId: string
   blocks: DocumentDict<Block>
   pages: DocumentDict<Page>
 }
 
 export const IndexResults = ({
-  blockType,
   relatedBlockId,
   blocks,
   pages,
 }: IndexResultsProps) => {
-  // console.log('[IndexResults] pages', pages)
   const { getAccountFromLocation } = useNavigationContext()
-  const blockRelationRes = useBlockRelations(blockType, {
-    _id: `r_${relatedBlockId}`,
-  })
+  const blockRelationRes = useDocument<BlockRelation>(`r_${relatedBlockId}`)
 
   const queryRes = [blockRelationRes]
 
@@ -40,8 +39,7 @@ export const IndexResults = ({
     return <LoadingFallback queryObserver={queryRes} />
   }
 
-  const _blockRelation = blockRelationRes.data![`r_${relatedBlockId}`]
-  // console.log('[IndexResults] pages', pages)
+  const _blockRelation = blockRelationRes.data!
 
   const _relations = addPagesToBlockRelation({
     blockRelation: _blockRelation,

@@ -1,4 +1,9 @@
-import React, { PropsWithChildren, useCallback, useState } from 'react'
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useState,
+  useEffect,
+} from 'react'
 import { debounce } from 'lodash'
 import {
   useNavigationContext,
@@ -54,6 +59,8 @@ export const IndexPageTitleInput = ({ path, block }: IndexPageViewProps) => {
     }, 250),
     [block]
   )
+
+  useEffect(() => () => setBlockText.flush(), [])
 
   const onChange = (value: string) => {
     setTitle(value)
@@ -177,7 +184,6 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
       key={blockId}
     >
       <IndexResults
-        blockType={blockType}
         relatedBlockId={blockId}
         key={`${blockType}_${blockId}`}
         blocks={blocksRes.data!}
