@@ -170,10 +170,13 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
     return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
   }
 
+  const _path = getPathFromBlock(blocksRes.data![blockId])
+
   return (
     <IndexPageView
-      path={getPathFromBlock(blocksRes.data![blockId])}
+      path={_path}
       block={blocksRes.data![blockId]}
+      key={_path.join('/')}
     >
       <IndexResults
         blockType={blockType}
