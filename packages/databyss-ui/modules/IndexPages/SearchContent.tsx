@@ -3,7 +3,10 @@ import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProv
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import { Text, RawHtml } from '@databyss-org/ui/primitives'
-import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
+import {
+  getBlockPrefix,
+  slateBlockToHtmlWithSearch,
+} from '@databyss-org/editor/lib/util'
 import {
   IndexResultsContainer,
   IndexResultTitle,
@@ -40,6 +43,21 @@ export const SearchContent = () => {
             if (e.type !== BlockType.Entry) {
               _anchor += `/${e.index}`
             }
+
+            // build extra tags
+            const _extraTags: string[] = []
+            if (e.type === BlockType.Entry && e.activeHeadings?.length) {
+              _extraTags.push(
+                ...e.activeHeadings
+                  .filter((hr) => !!hr.relatedBlockText)
+                  .map((hr) => {
+                    const _prefix = getBlockPrefix(
+                      hr.relatedBlockType as BlockType
+                    )
+                    return _prefix + hr.relatedBlockText
+                  })
+              )
+            }
             return (
               <IndexResultDetails
                 key={k}
@@ -48,14 +66,23 @@ export const SearchContent = () => {
                   r.pageId
                 }#${_anchor}`}
                 text={
-                  <RawHtml
-                    variant={_variant}
-                    html={slateBlockToHtmlWithSearch(
-                      { text: e.text, type: BlockType.Entry, _id: e.entryId },
-                      // only allow alphanumeric, hyphen and space
-                      searchQuery.replace(/[^a-zA-Z0-9À-ž-' ]/gi, '')
-                    )}
-                  />
+                  <>
+                    <RawHtml
+                      variant={_variant}
+                      html={slateBlockToHtmlWithSearch(
+                        { text: e.text, type: BlockType.Entry, _id: e.entryId },
+                        // only allow alphanumeric, hyphen and space
+                        searchQuery.replace(/[^a-zA-Z0-9À-ž-' ]/gi, '')
+                      )}
+                      mr="tiny"
+                    />
+                    {_extraTags.map((_tagText, _idx) => (
+                      <Text display="inline-block" color="text.3">
+                        {_tagText}
+                        {_idx < _extraTags.length - 1 ? ',' : ''}&nbsp;
+                      </Text>
+                    ))}
+                  </>
                 }
               />
             )

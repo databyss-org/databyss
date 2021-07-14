@@ -11,7 +11,10 @@ import {
 import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import { EditorState, PagePath } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
-import { BlockRelationshipType } from '../../databyss-services/interfaces/Block'
+import {
+  BlockRelationshipType,
+  Source,
+} from '../../databyss-services/interfaces/Block'
 import {
   RangeType,
   InlineTypes,
@@ -285,11 +288,16 @@ export const indexPage = ({
         // collect heading relations
         for (const [, value] of Object.entries(currentAtomics)) {
           if (value) {
+            const _relatedBlockText = {
+              [BlockType.Topic]: value.text.textValue,
+              [BlockType.Source]: (value as Source).name?.textValue,
+            }[value.type]
             _headingRelations.push({
               block: block._id,
               relatedBlock: value._id,
               blockText: block.text,
               relatedBlockType: value.type,
+              relatedBlockText: _relatedBlockText,
               relationshipType: BlockRelationshipType.HEADING,
               page: pageId,
               blockIndex: index,

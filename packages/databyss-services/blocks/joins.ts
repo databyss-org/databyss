@@ -68,7 +68,7 @@ export const getBlocksFromBlockRelations = <T extends Block>(
   return blocks
 }
 
-const populatePage = ({
+export const populatePage = ({
   page,
   blocks,
 }: {

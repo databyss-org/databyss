@@ -139,6 +139,7 @@ export interface IndexPageResult {
   relatedBlock: string
   relationshipType: BlockRelationshipType
   relatedBlockType: BlockType | InlineTypes.Link
+  relatedBlockText?: string
   page: string
   blockIndex: number
   blockText: Text

@@ -1,7 +1,16 @@
 import PouchDB from 'pouchdb'
-import { BlockType, Page, Text } from '@databyss-org/services/interfaces'
+import {
+  Block,
+  BlockType,
+  DocumentDict,
+  IndexPageResult,
+  Page,
+  Text,
+} from '@databyss-org/services/interfaces'
 import { searchText } from '../../utils'
 import cloneDeep from 'clone-deep'
+import { populatePage } from '../../../../databyss-services/blocks/joins'
+import { indexPage } from '../../../../databyss-editor/lib/util'
 
 export interface SearchEntriesResultRow {
   entryId: string
@@ -9,6 +18,7 @@ export interface SearchEntriesResultRow {
   text: Text
   index: number
   textScore: number
+  activeHeadings?: IndexPageResult[]
 }
 
 export interface SearchEntriesResultPage {
@@ -23,11 +33,13 @@ interface SearchRow {
   index: number
   text: Text
   type: BlockType
+  activeHeadings?: IndexPageResult[]
 }
 
 const searchEntries = async (
   encodedQuery: string,
-  pages: Page[]
+  pages: Page[],
+  blocks: DocumentDict<Block>
 ): Promise<SearchEntriesResultPage[]> => {
   const _query = decodeURIComponent(encodedQuery)
 
@@ -41,7 +53,10 @@ const searchEntries = async (
 
   // create a dictionary of block to pages
   const _blockToPages: {
-    [blockId: string]: { page: Page; index: number }[]
+    [blockId: string]: {
+      page: Page
+      index: number
+    }[]
   } = {}
 
   pages.forEach((p) =>
@@ -67,9 +82,17 @@ const searchEntries = async (
         if (page.archive) {
           return
         }
+        const _populatedPage = populatePage({ page, blocks })
+        const _indexedPage = indexPage({
+          pageId: page._id,
+          blocks: _populatedPage.blocks,
+        })
         const _expandedSearchRow = cloneDeep(_result)
         _expandedSearchRow.doc.page = page
         _expandedSearchRow.doc.index = index
+        _expandedSearchRow.doc.activeHeadings = _indexedPage.find(
+          (p) => p.blockIndex === index
+        )?.activeHeadings
         _expandedQueryResponse.push(_expandedSearchRow)
       })
     }
@@ -104,7 +127,7 @@ const searchEntries = async (
               text: curr.text,
               index: curr.index,
               textScore: curr.score,
-              //  blockId: curr.block,
+              activeHeadings: curr.activeHeadings,
             },
           ],
         }
@@ -126,6 +149,7 @@ const searchEntries = async (
           index: curr.index,
           textScore: curr.score,
           type: curr.type,
+          activeHeadings: curr.activeHeadings,
         })
 
         // sort the entries by text score
