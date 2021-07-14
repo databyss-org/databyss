@@ -1,5 +1,5 @@
 import React from 'react'
-import { RawHtml } from '@databyss-org/ui/primitives'
+import { RawHtml, Text } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import {
@@ -8,7 +8,10 @@ import {
   IndexResultDetails,
   LoadingFallback,
 } from '@databyss-org/ui/components'
-import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
+import {
+  getBlockPrefix,
+  slateBlockToHtmlWithSearch,
+} from '@databyss-org/editor/lib/util'
 import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
 import { addPagesToBlockRelation } from '@databyss-org/services/blocks/joins'
 import {
@@ -17,6 +20,7 @@ import {
   BlockType,
   DocumentDict,
   Page,
+  Source,
 } from '@databyss-org/services/interfaces'
 import { useDocument } from '../../../databyss-data/pouchdb/hooks/useDocument'
 
@@ -76,15 +80,46 @@ export const IndexResults = ({
             if (blocks[e.block].type !== BlockType.Entry) {
               _anchor += `/${e.blockIndex}`
             }
+
+            // build extra tags
+            const _extraTags: string[] = []
+            if (
+              blocks[e.block].type === BlockType.Entry &&
+              e.activeHeadings?.length
+            ) {
+              _extraTags.push(
+                ...e.activeHeadings
+                  .filter((hr) => hr.relatedBlock !== relatedBlockId)
+                  .map((hr) => {
+                    const _type = blocks[hr.relatedBlock].type
+                    const _prefix = getBlockPrefix(_type)
+                    const _text = {
+                      [BlockType.Topic]: blocks[hr.relatedBlock].text.textValue,
+                      [BlockType.Source]: (blocks[hr.relatedBlock] as Source)
+                        .name?.textValue,
+                    }[_type]
+                    return _prefix + _text
+                  })
+              )
+            }
             return (
               <IndexResultDetails
                 key={k}
                 href={`/${getAccountFromLocation()}/pages/${r}#${_anchor}`}
                 text={
-                  <RawHtml
-                    html={slateBlockToHtmlWithSearch(blocks[e.block])}
-                    variant={_variant}
-                  />
+                  <>
+                    <RawHtml
+                      html={slateBlockToHtmlWithSearch(blocks[e.block])}
+                      variant={_variant}
+                      mr="tiny"
+                    />
+                    {_extraTags.map((_tagText, _idx) => (
+                      <Text display="inline-block" color="text.3">
+                        {_tagText}
+                        {_idx < _extraTags.length - 1 ? ',' : ''}&nbsp;
+                      </Text>
+                    ))}
+                  </>
                 }
                 dataTestElement="atomic-result-item"
               />

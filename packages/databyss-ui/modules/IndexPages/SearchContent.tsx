@@ -31,24 +31,35 @@ export const SearchContent = () => {
             dataTestElement="search-result-page"
           />
 
-          {r.entries.map((e, k) => (
-            <IndexResultDetails
-              key={k}
-              dataTestElement="search-result-entries"
-              href={`/${getAccountFromLocation()}/pages/${r.pageId}#${
-                e.entryId
-              }`}
-              text={
-                <RawHtml
-                  html={slateBlockToHtmlWithSearch(
-                    { text: e.text, type: BlockType.Entry, _id: e.entryId },
-                    // only allow alphanumeric, hyphen and space
-                    searchQuery.replace(/[^a-zA-Z0-9À-ž-' ]/gi, '')
-                  )}
-                />
-              }
-            />
-          ))}
+          {r.entries.map((e, k) => {
+            const _variant = {
+              [BlockType.Topic]: 'bodyNormalSemibold',
+              [BlockType.Source]: 'bodyNormalUnderline',
+            }[e.type]
+            let _anchor = e.entryId
+            if (e.type !== BlockType.Entry) {
+              _anchor += `/${e.index}`
+            }
+            return (
+              <IndexResultDetails
+                key={k}
+                dataTestElement="search-result-entries"
+                href={`/${getAccountFromLocation()}/pages/${
+                  r.pageId
+                }#${_anchor}`}
+                text={
+                  <RawHtml
+                    variant={_variant}
+                    html={slateBlockToHtmlWithSearch(
+                      { text: e.text, type: BlockType.Entry, _id: e.entryId },
+                      // only allow alphanumeric, hyphen and space
+                      searchQuery.replace(/[^a-zA-Z0-9À-ž-' ]/gi, '')
+                    )}
+                  />
+                }
+              />
+            )
+          })}
         </IndexResultsContainer>
       ))
     ) : (

@@ -142,6 +142,8 @@ export interface IndexPageResult {
   page: string
   blockIndex: number
   blockText: Text
+  activeInlines?: IndexPageResult[]
+  activeHeadings?: IndexPageResult[]
 }
 
 export interface BlockRelation extends Document {
