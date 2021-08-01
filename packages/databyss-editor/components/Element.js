@@ -1,13 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
-import {
-  Text,
-  Button,
-  Icon,
-  View,
-  BaseControl,
-} from '@databyss-org/ui/primitives'
+import { Text, View, BaseControl } from '@databyss-org/ui/primitives'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
-import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from '@databyss-org/slate-react'
 import { Range } from '@databyss-org/slate'
@@ -18,7 +11,6 @@ import { useEditorPageContext } from '@databyss-org/services'
 import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
-import { showAtomicModal } from '../lib/atomicModal'
 import {
   SuggestMenu,
   SuggestSources,

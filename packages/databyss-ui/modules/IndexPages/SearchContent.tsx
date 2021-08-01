@@ -35,6 +35,9 @@ export const SearchContent = () => {
           />
 
           {r.entries.map((e, k) => {
+            if (e.index === 0) {
+              return null
+            }
             const _variant = {
               [BlockType.Topic]: 'bodyNormalSemibold',
               [BlockType.Source]: 'bodyNormalUnderline',

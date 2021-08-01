@@ -127,6 +127,21 @@ export const IndexPageTitleInput = ({
   )
 }
 
+const SourceTitleAndCitation = ({ block }: { block: Block }) => (
+  <View>
+    <Text variant="bodyNormalUnderline" color="text.3">
+      {block.text.textValue}
+    </Text>
+    <SourceCitationView
+      sourceId={block?._id}
+      formatOptions={{
+        outputType: CitationOutputTypes.BIBLIOGRAPHY,
+        styleId: 'mla',
+      }}
+    />
+  </View>
+)
+
 export const IndexPageView = ({
   path,
   block,
@@ -134,7 +149,8 @@ export const IndexPageView = ({
   ...others
 }: PropsWithChildren<IndexPageViewProps>) => {
   const { showModal } = useNavigationContext()
-  const onUpdateBlock = (nextBlock: Block) => {}
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const onUpdateBlock = () => {}
   const onPressDetails = () => {
     showModal({
       component: block?.type,
@@ -160,31 +176,23 @@ export const IndexPageView = ({
           widthVariant="content"
         >
           <IndexPageTitleInput path={path} block={block} />
-          {block?.type === BlockType.Source && (
-            <BaseControl onPress={onPressDetails} position="relative">
-              <Icon
-                position="absolute"
-                left="mediumNegative"
-                top={pxUnits(5)}
-                color="gray.5"
-                sizeVariant="tiny"
-              >
-                <EditSvg />
-              </Icon>
-              <View>
-                <Text variant="bodyNormalUnderline" color="text.3">
-                  {block.text.textValue}
-                </Text>
-                <SourceCitationView
-                  sourceId={block?._id}
-                  formatOptions={{
-                    outputType: CitationOutputTypes.BIBLIOGRAPHY,
-                    styleId: 'mla',
-                  }}
-                />
-              </View>
-            </BaseControl>
-          )}
+          {block?.type === BlockType.Source &&
+            (isPublicAccount() ? (
+              <SourceTitleAndCitation block={block} />
+            ) : (
+              <BaseControl onPress={onPressDetails} position="relative">
+                <Icon
+                  position="absolute"
+                  left="mediumNegative"
+                  top={pxUnits(5)}
+                  color="gray.5"
+                  sizeVariant="tiny"
+                >
+                  <EditSvg />
+                </Icon>
+                <SourceTitleAndCitation block={block} />
+              </BaseControl>
+            ))}
         </View>
         <View px={{ _: 'small', mobile: 'medium' }} flexGrow={1}>
           {children}

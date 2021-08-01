@@ -67,9 +67,10 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     _children = (
       <a
         href={`/${_groupId}/topics/${leaf.atomicId}`}
-        onClick={() =>
+        onClick={(evt) => {
+          evt.preventDefault()
           onInlineClick({ atomicType: 'TOPIC', id: leaf.atomicId })
-        }
+        }}
         style={{
           color: inlineTopic,
           caretColor: 'black',
@@ -96,9 +97,10 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     _children = (
       <a
         href={`/${_groupId}/sources/${leaf.atomicId}`}
-        onClick={() =>
+        onClick={(evt) => {
+          evt.preventDefault()
           onInlineClick({ atomicType: 'SOURCE', id: leaf.atomicId })
-        }
+        }}
         style={{
           color: inlineSource,
           caretColor: 'black',
