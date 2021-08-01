@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useState,
   useEffect,
+  ReactNode,
 } from 'react'
 import { debounce } from 'lodash'
 import {
@@ -31,6 +32,7 @@ import {
   ScrollViewProps,
   BaseControl,
   Icon,
+  Grid,
 } from '@databyss-org/ui/primitives'
 import { isMobileOrMobileOs } from '@databyss-org/ui/lib/mediaQuery'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
@@ -42,6 +44,7 @@ import { pxUnits } from '../../theming/views'
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
   block?: Block
+  menuChild?: ReactNode
 }
 
 export const IndexPageTitleInput = ({
@@ -129,15 +132,18 @@ export const IndexPageTitleInput = ({
 
 const SourceTitleAndCitation = ({ block }: { block: Block }) => (
   <View>
-    <Text variant="bodyNormalUnderline" color="text.3">
-      {block.text.textValue}
-    </Text>
     <SourceCitationView
+      py="tiny"
       sourceId={block?._id}
       formatOptions={{
         outputType: CitationOutputTypes.BIBLIOGRAPHY,
         styleId: 'mla',
       }}
+      noCitationFallback={
+        <Text variant="bodyNormalUnderline" color="text.3">
+          {block.text.textValue}
+        </Text>
+      }
     />
   </View>
 )
@@ -146,6 +152,7 @@ export const IndexPageView = ({
   path,
   block,
   children,
+  menuChild,
   ...others
 }: PropsWithChildren<IndexPageViewProps>) => {
   const { showModal } = useNavigationContext()
@@ -175,7 +182,16 @@ export const IndexPageView = ({
           pl={{ _: 'small', mobile: 'medium' }}
           widthVariant="content"
         >
-          <IndexPageTitleInput path={path} block={block} />
+          {menuChild ? (
+            <Grid singleRow>
+              <View flexGrow={1}>
+                <IndexPageTitleInput path={path} block={block} />
+              </View>
+              <View>{menuChild}</View>
+            </Grid>
+          ) : (
+            <IndexPageTitleInput path={path} block={block} />
+          )}
           {block?.type === BlockType.Source &&
             (isPublicAccount() ? (
               <SourceTitleAndCitation block={block} />

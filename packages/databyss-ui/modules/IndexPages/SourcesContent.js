@@ -17,7 +17,6 @@ import styled from '../../primitives/styled'
 // styled components
 const CitationStyleDropDown = styled(DropDownControl, () => ({
   width: pxUnits(120),
-  alignSelf: 'end',
 }))
 
 export const SourcesContent = () => {
@@ -74,12 +73,17 @@ export const SourcesContent = () => {
   }
 
   return (
-    <IndexPageView path={['All Sources']}>
-      <CitationStyleDropDown
-        items={_citationStyleOptions}
-        value={citationStyleOption}
-        onChange={onCitationStyleChange}
-      />
+    <IndexPageView
+      path={['Bibliography']}
+      position="relative"
+      menuChild={
+        <CitationStyleDropDown
+          items={_citationStyleOptions}
+          value={citationStyleOption}
+          onChange={onCitationStyleChange}
+        />
+      }
+    >
       <SourcesResults entries={sortedSources} />
     </IndexPageView>
   )

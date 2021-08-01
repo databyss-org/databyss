@@ -66,7 +66,7 @@ export const Sidebar = () => {
                   },
                   {
                     type: 'sources',
-                    text: 'All sources',
+                    text: 'Bibliography',
                     route: '/sources',
                   },
                 ]}

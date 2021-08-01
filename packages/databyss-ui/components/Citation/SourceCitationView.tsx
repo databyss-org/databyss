@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { CitationFormatOptions } from '@databyss-org/services/interfaces'
@@ -8,9 +8,15 @@ import { ViewProps } from '../..'
 export interface SourceCitationViewProps extends ViewProps {
   sourceId: string
   formatOption: CitationFormatOptions
+  noCitationFallback?: ReactNode
 }
 
-export const SourceCitationView = ({ sourceId, formatOptions, ...others }) => {
+export const SourceCitationView = ({
+  sourceId,
+  formatOptions,
+  noCitationFallback,
+  ...others
+}) => {
   const bibliographyRes = useBibliography({
     formatOptions,
     sourceIds: [sourceId],
@@ -18,8 +24,12 @@ export const SourceCitationView = ({ sourceId, formatOptions, ...others }) => {
   if (!bibliographyRes.isSuccess) {
     return <LoadingFallback queryObserver={bibliographyRes} />
   }
-  if (!bibliographyRes.data[sourceId]) {
-    return null
+
+  if (
+    !bibliographyRes.data[sourceId] ||
+    !bibliographyRes.data[sourceId].citation?.length
+  ) {
+    return noCitationFallback
   }
   return (
     <CitationView

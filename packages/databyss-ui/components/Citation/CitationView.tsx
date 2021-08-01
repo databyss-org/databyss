@@ -24,11 +24,11 @@ export const CitationView = ({
     },
   },
   ...others
-}) => (
-  <View py="small" {...others}>
-    <RawHtml
-      html={pruneCitation(citation, formatOptions.styleId)}
-      {...textProps}
-    />
-  </View>
-)
+}) => {
+  const _citation = pruneCitation(citation, formatOptions.styleId)
+  return _citation?.trim().length ? (
+    <View py="small" {...others}>
+      <RawHtml html={_citation} {...textProps} />
+    </View>
+  ) : null
+}

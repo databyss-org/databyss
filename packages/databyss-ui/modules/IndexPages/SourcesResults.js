@@ -1,7 +1,6 @@
 import React from 'react'
 
-import { BaseControl, RawHtml, Text, View } from '@databyss-org/ui/primitives'
-import { stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils'
+import { BaseControl, Text, View } from '@databyss-org/ui/primitives'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { CitationView, useNavigationContext } from '@databyss-org/ui/components'
 
@@ -18,6 +17,7 @@ export const SourcesResults = ({ entries }) => {
     <CitationView
       citation={citation}
       formatOptions={{ styleId: preferredCitationStyle }}
+      textProps={{ color: 'text.0' }}
     />
   )
 
@@ -25,27 +25,25 @@ export const SourcesResults = ({ entries }) => {
     entries?.map((entry, index) => {
       if (entry.source?.text) {
         return (
-          <View key={index} mb="em" widthVariant="content">
-            <BaseControl
-              data-test-element="source-results"
-              href={`/${getAccountFromLocation()}/sources/${entry.source._id}`}
-              py="small"
-              hoverColor="background.2"
-              activeColor="background.3"
-              userSelect="auto"
-              childViewProps={{ flexDirection: 'row' }}
-            >
-              <Text variant="bodyNormalSemibold">
-                <RawHtml html={stateBlockToHtml(entry.source)} />
+          <BaseControl
+            key={index}
+            mb="em"
+            data-test-element="source-results"
+            href={`/${getAccountFromLocation()}/sources/${entry.source._id}`}
+            py="small"
+            userSelect="auto"
+          >
+            <View>
+              <Text variant="uiTextSmall" color="text.3">
+                {entry.source.name.textValue}
               </Text>
-            </BaseControl>
-
+            </View>
             {renderStyledCitation(entry.citation)}
-          </View>
+          </BaseControl>
         )
       }
       return null
     })
 
-  return render()
+  return <View widthVariant="content">{render()}</View>
 }

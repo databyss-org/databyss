@@ -3,7 +3,6 @@ import {
   BlockType,
   CitationFormatOptions,
   Source,
-  Text,
 } from '@databyss-org/services/interfaces'
 import { toCitation } from '@databyss-org/services/citations'
 import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
@@ -12,7 +11,7 @@ import { useDocuments } from './useDocuments'
 
 interface BibliographyDict {
   [blockId: string]: {
-    citation: Text
+    citation: string
     source: Source
   }
 }

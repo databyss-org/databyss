@@ -89,7 +89,12 @@ export async function formatCitation(csl: any, options: any) {
     template: styleId,
   })
 
-  return citation
+  const textCitation = cite.format(outputType, {
+    format: 'text',
+    template: styleId,
+  })
+
+  return textCitation?.trim().length ? citation : ''
 }
 
 // utils
