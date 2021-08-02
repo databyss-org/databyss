@@ -4,6 +4,9 @@ import React, {
   useState,
   useEffect,
   ReactNode,
+  useImperativeHandle,
+  useRef,
+  RefObject,
 } from 'react'
 import { debounce } from 'lodash'
 import {
@@ -45,22 +48,33 @@ export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
   block?: Block
   menuChild?: ReactNode
+  handlesRef?: RefObject<IndexPageTitleInputHandles>
 }
+
+export interface IndexPageTitleInputHandles {
+  updateTitle: (block: Block) => void
+}
+
+const getTitleFromBlock = (block: Block) =>
+  ({
+    [BlockType.Source]: (block as Source).name?.textValue,
+    [BlockType.Topic]: block.text.textValue,
+  }[block.type])
 
 export const IndexPageTitleInput = ({
   path,
   block,
+  handlesRef,
   ...others
 }: IndexPageViewProps) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const [title, setTitle] = useState(
-    block
-      ? {
-          [BlockType.Source]: (block as Source).name?.textValue,
-          [BlockType.Topic]: block.text.textValue,
-        }[block.type]
-      : path[path.length - 1]
+    block ? getTitleFromBlock(block) : path[path.length - 1]
   )
+
+  useImperativeHandle(handlesRef, () => ({
+    updateTitle: (block: Block) => setTitle(getTitleFromBlock(block)),
+  }))
 
   const setBlockText = useCallback(
     debounce((value: string) => {
@@ -156,8 +170,11 @@ export const IndexPageView = ({
   ...others
 }: PropsWithChildren<IndexPageViewProps>) => {
   const { showModal } = useNavigationContext()
+  const titleInputHandlesRef = useRef<IndexPageTitleInputHandles>(null)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  const onUpdateBlock = () => {}
+  const onUpdateBlock = (block: Block) => {
+    titleInputHandlesRef.current?.updateTitle(block)
+  }
   const onPressDetails = () => {
     showModal({
       component: block?.type,
@@ -185,12 +202,20 @@ export const IndexPageView = ({
           {menuChild ? (
             <Grid singleRow>
               <View flexGrow={1}>
-                <IndexPageTitleInput path={path} block={block} />
+                <IndexPageTitleInput
+                  path={path}
+                  block={block}
+                  handlesRef={titleInputHandlesRef}
+                />
               </View>
               <View>{menuChild}</View>
             </Grid>
           ) : (
-            <IndexPageTitleInput path={path} block={block} />
+            <IndexPageTitleInput
+              path={path}
+              block={block}
+              handlesRef={titleInputHandlesRef}
+            />
           )}
           {block?.type === BlockType.Source &&
             (isPublicAccount() ? (
