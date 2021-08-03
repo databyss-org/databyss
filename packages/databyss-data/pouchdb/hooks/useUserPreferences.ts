@@ -3,6 +3,7 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { Group } from '@databyss-org/services/interfaces'
 import { UserPreference } from '../interfaces'
 import { useDocument, UseDocumentOptions } from './useDocument'
+import { upsertUserPreferences } from '../utils'
 
 export const useUserPreferences = (
   options?: UseDocumentOptions
@@ -29,6 +30,7 @@ export const useUserPreferences = (
       ? () => null
       : (prefs: UserPreference) => {
           queryClient.setQueryData('user_preference', prefs)
+          upsertUserPreferences(() => prefs)
         },
   ]
 }

@@ -47,6 +47,7 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { IndexResults } from './IndexResults'
 import { pxUnits } from '../../theming/views'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
+import { useUserPreferencesContext } from '../../hooks'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -150,23 +151,26 @@ export const IndexPageTitleInput = ({
   )
 }
 
-const SourceTitleAndCitation = ({ block }: { block: Block }) => (
-  <View>
-    <SourceCitationView
-      py="tiny"
-      sourceId={block?._id}
-      formatOptions={{
-        outputType: CitationOutputTypes.BIBLIOGRAPHY,
-        styleId: 'mla',
-      }}
-      noCitationFallback={
-        <Text variant="bodyNormalUnderline" color="text.3">
-          {block.text.textValue}
-        </Text>
-      }
-    />
-  </View>
-)
+const SourceTitleAndCitation = ({ block }: { block: Block }) => {
+  const { getPreferredCitationStyle } = useUserPreferencesContext()
+  return (
+    <View>
+      <SourceCitationView
+        py="tiny"
+        sourceId={block?._id}
+        formatOptions={{
+          outputType: CitationOutputTypes.BIBLIOGRAPHY,
+          styleId: getPreferredCitationStyle(),
+        }}
+        noCitationFallback={
+          <Text variant="bodyNormalUnderline" color="text.3">
+            {block.text.textValue}
+          </Text>
+        }
+      />
+    </View>
+  )
+}
 
 export const IndexPageView = ({
   path,

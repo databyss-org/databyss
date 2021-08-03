@@ -55,4 +55,5 @@ export interface UserPreference {
   groups?: Array<UserGroup>
   createdAt: number
   notifications?: Notification[]
+  preferredCitationStyle?: string
 }

@@ -3,7 +3,6 @@ import { CitationStyleOptions } from '@databyss-org/services/citations/constants
 import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { DropDownControl } from '@databyss-org/ui/primitives'
@@ -16,6 +15,7 @@ import {
   composeAuthorName,
   isCurrentAuthor,
 } from '../../../databyss-services/sources/lib'
+import { useUserPreferencesContext } from '../../hooks'
 
 // styled components
 const CitationStyleDropDown = styled(DropDownControl, () => ({
@@ -25,12 +25,10 @@ const CitationStyleDropDown = styled(DropDownControl, () => ({
 export const SourcesContent = () => {
   const { isOnline } = useNotifyContext()
   const getQueryParams = useNavigationContext((c) => c.getQueryParams)
-  const getPreferredCitationStyle = useSourceContext(
-    (c) => c.getPreferredCitationStyle
-  )
-  const setPreferredCitationStyle = useSourceContext(
-    (c) => c.setPreferredCitationStyle
-  )
+  const {
+    getPreferredCitationStyle,
+    setPreferredCitationStyle,
+  } = useUserPreferencesContext()
   const preferredCitationStyle = getPreferredCitationStyle()
   const [citationStyleOption, setCitationStyleOption] = useState(
     getCitationStyleOption(preferredCitationStyle)

@@ -1,13 +1,11 @@
 import React from 'react'
 
 import { BaseControl, Text, View } from '@databyss-org/ui/primitives'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { CitationView, useNavigationContext } from '@databyss-org/ui/components'
+import { useUserPreferencesContext } from '../../hooks'
 
 export const SourcesResults = ({ entries }) => {
-  const getPreferredCitationStyle = useSourceContext(
-    (c) => c.getPreferredCitationStyle
-  )
+  const { getPreferredCitationStyle } = useUserPreferencesContext()
   const preferredCitationStyle = getPreferredCitationStyle()
 
   const { getAccountFromLocation } = useNavigationContext()
