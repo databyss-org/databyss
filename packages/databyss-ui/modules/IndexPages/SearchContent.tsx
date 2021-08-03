@@ -17,6 +17,7 @@ import { useSearchEntries } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { SearchEntriesResultPage } from '@databyss-org/data/pouchdb/entries/lib/searchEntries'
 import { IndexPageView } from './IndexPageContent'
+import { IndexResultTags } from './IndexResults'
 
 export const SearchContent = () => {
   const { getAccountFromLocation } = useNavigationContext()
@@ -79,12 +80,7 @@ export const SearchContent = () => {
                       )}
                       mr="tiny"
                     />
-                    {_extraTags.map((_tagText, _idx) => (
-                      <Text display="inline-block" color="text.3">
-                        {_tagText}
-                        {_idx < _extraTags.length - 1 ? ',' : ''}&nbsp;
-                      </Text>
-                    ))}
+                    <IndexResultTags tags={_extraTags} />
                   </>
                 }
               />

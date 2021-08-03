@@ -34,7 +34,7 @@ export const IndexResultDetails = ({ dataTestElement, text, ...others }) => (
     data-test-element={dataTestElement}
     hoverColor="background.2"
     activeColor="background.3"
-    py="tiny"
+    py="small"
     mt="tiny"
     {...others}
   >

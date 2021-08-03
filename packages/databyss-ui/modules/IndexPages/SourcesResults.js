@@ -27,14 +27,14 @@ export const SourcesResults = ({ entries }) => {
         return (
           <BaseControl
             key={index}
-            mb="em"
+            mb="small"
             data-test-element="source-results"
             href={`/${getAccountFromLocation()}/sources/${entry.source._id}`}
-            py="small"
-            userSelect="auto"
+            py="tiny"
+            userSelect="text"
           >
             <View>
-              <Text variant="uiTextSmall" color="text.3">
+              <Text variant="uiTextSmall" color="text.3" userSelect="none">
                 {entry.source.name.textValue}
               </Text>
             </View>

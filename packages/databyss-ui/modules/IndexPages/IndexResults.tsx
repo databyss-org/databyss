@@ -1,5 +1,5 @@
 import React from 'react'
-import { RawHtml, Text } from '@databyss-org/ui/primitives'
+import { RawHtml, Text, View } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import {
@@ -29,6 +29,23 @@ interface IndexResultsProps {
   blocks: DocumentDict<Block>
   pages: DocumentDict<Page>
 }
+
+export const IndexResultTags = ({ tags }: { tags: string[] }) => (
+  <View flexDirection="row" flexWrap="wrap">
+    {tags
+      .sort((_tagText) => (_tagText.startsWith('#') ? -1 : 1))
+      .map((_tagText, _idx) => (
+        <Text
+          variant="uiTextSmall"
+          key={_idx}
+          color={_tagText.startsWith('#') ? 'inlineTopic' : 'inlineSource'}
+        >
+          {_tagText}
+          {_idx < tags.length - 1 ? ',' : ''}&nbsp;
+        </Text>
+      ))}
+  </View>
+)
 
 export const IndexResults = ({
   relatedBlockId,
@@ -113,12 +130,7 @@ export const IndexResults = ({
                       variant={_variant}
                       mr="tiny"
                     />
-                    {_extraTags.map((_tagText, _idx) => (
-                      <Text display="inline-block" color="text.3">
-                        {_tagText}
-                        {_idx < _extraTags.length - 1 ? ',' : ''}&nbsp;
-                      </Text>
-                    ))}
+                    <IndexResultTags tags={_extraTags} />
                   </>
                 }
                 dataTestElement="atomic-result-item"

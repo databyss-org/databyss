@@ -40,9 +40,12 @@ import {
 import { isMobileOrMobileOs } from '@databyss-org/ui/lib/mediaQuery'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
+import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
+import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import EditSvg from '@databyss-org/ui/assets/edit.svg'
 import { IndexResults } from './IndexResults'
 import { pxUnits } from '../../theming/views'
+import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -71,6 +74,7 @@ export const IndexPageTitleInput = ({
   const [title, setTitle] = useState(
     block ? getTitleFromBlock(block) : path[path.length - 1]
   )
+  const { navigate } = useNavigationContext()
 
   useImperativeHandle(handlesRef, () => ({
     updateTitle: (block: Block) => setTitle(getTitleFromBlock(block)),
@@ -78,6 +82,9 @@ export const IndexPageTitleInput = ({
 
   const setBlockText = useCallback(
     debounce((value: string) => {
+      if (!block) {
+        return
+      }
       switch (block!.type) {
         case BlockType.Topic:
           block!.text.textValue = value
@@ -99,46 +106,43 @@ export const IndexPageTitleInput = ({
     setBlockText(value)
   }
 
-  if (!block) {
-    return (
-      <Text
-        data-test-element="index-results"
-        variant="bodyHeading1"
-        color="text.3"
-      >
-        {path[path.length - 1]}
-      </Text>
-    )
+  const onKeyDown = (evt: KeyboardEvent) => {
+    if (path[0] === 'Search' && evt.key === 'Enter') {
+      evt.preventDefault()
+      navigate(`/${getAccountFromLocation()}/search/${title}`)
+    }
   }
 
-  const indexName = {
-    [BlockType.Source]: 'source',
-    [BlockType.Topic]: 'topic',
-  }[block.type]
+  const indexName = block
+    ? {
+        [BlockType.Source]: 'source',
+        [BlockType.Topic]: 'topic',
+      }[block.type]
+    : path[path.length - 1]
 
-  const icon =
-    block &&
-    {
-      [BlockType.Source]: (
-        <Icon>
-          <SourceSvg />
-        </Icon>
-      ),
-      [BlockType.Topic]: (
-        <Icon>
-          <TopicSvg />
-        </Icon>
-      ),
-    }[block.type]
+  const icon = block
+    ? {
+        [BlockType.Source]: <SourceSvg />,
+        [BlockType.Topic]: <TopicSvg />,
+      }[block.type]
+    : {
+        Bibliography: <SourcesSvg />,
+        Search: <SearchSvg />,
+      }[path[0]]
 
   return (
     <TitleInput
       autoFocus
       placeholder={`untitled ${indexName}`}
       value={title}
-      readonly={isPublicAccount() || isMobileOrMobileOs()}
+      readonly={
+        isPublicAccount() ||
+        isMobileOrMobileOs() ||
+        (!block && path[0] !== 'Search')
+      }
       onChange={onChange}
-      icon={icon}
+      onKeyDown={onKeyDown}
+      icon={icon && <Icon>{icon}</Icon>}
       {...others}
     />
   )
