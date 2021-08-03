@@ -18,7 +18,7 @@ export const CitationView = ({
   citation,
   formatOptions,
   textProps = {
-    color: 'gray.4',
+    color: 'gray.3',
     style: {
       lineHeight: 1.5,
     },

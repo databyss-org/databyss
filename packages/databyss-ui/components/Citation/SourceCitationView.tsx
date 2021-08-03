@@ -22,7 +22,7 @@ export const SourceCitationView = ({
     sourceIds: [sourceId],
   })
   if (!bibliographyRes.isSuccess) {
-    return <LoadingFallback queryObserver={bibliographyRes} />
+    return null
   }
 
   if (

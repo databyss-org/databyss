@@ -151,12 +151,13 @@ export const IndexPageTitleInput = ({
   )
 }
 
-const SourceTitleAndCitation = ({ block }: { block: Block }) => {
+const SourceTitleAndCitation = ({ block, ...others }: { block: Block }) => {
   const { getPreferredCitationStyle } = useUserPreferencesContext()
   return (
     <View>
       <SourceCitationView
-        py="tiny"
+        py="none"
+        pb="small"
         sourceId={block?._id}
         formatOptions={{
           outputType: CitationOutputTypes.BIBLIOGRAPHY,
@@ -167,6 +168,7 @@ const SourceTitleAndCitation = ({ block }: { block: Block }) => {
             {block.text.textValue}
           </Text>
         }
+        {...others}
       />
     </View>
   )
@@ -231,18 +233,41 @@ export const IndexPageView = ({
             (isPublicAccount() ? (
               <SourceTitleAndCitation block={block} />
             ) : (
-              <BaseControl onPress={onPressDetails} position="relative">
-                <Icon
-                  position="absolute"
-                  left="mediumNegative"
-                  top={pxUnits(5)}
-                  color="gray.5"
-                  sizeVariant="tiny"
+              <View position="relative">
+                <BaseControl
+                  onPress={onPressDetails}
+                  position="relative"
+                  userSelect="text"
+                  css={{
+                    pointerEvents: 'none',
+                  }}
                 >
-                  <EditSvg />
-                </Icon>
-                <SourceTitleAndCitation block={block} />
-              </BaseControl>
+                  <Icon
+                    position="absolute"
+                    left="mediumNegative"
+                    top={pxUnits(5)}
+                    color="gray.4"
+                    sizeVariant="tiny"
+                    css={{
+                      pointerEvents: 'all',
+                    }}
+                  >
+                    <EditSvg />
+                  </Icon>
+                  <SourceTitleAndCitation
+                    block={block}
+                    opacity={0}
+                    zIndex={-1}
+                  />
+                </BaseControl>
+                <SourceTitleAndCitation
+                  block={block}
+                  position="absolute"
+                  zIndex={1}
+                  left={0}
+                  top={0}
+                />
+              </View>
             ))}
         </View>
         <View px={{ _: 'small', mobile: 'medium' }} flexGrow={1}>
