@@ -43,6 +43,7 @@ import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import EditSvg from '@databyss-org/ui/assets/edit.svg'
+import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { IndexResults } from './IndexResults'
 import { pxUnits } from '../../theming/views'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
@@ -128,6 +129,7 @@ export const IndexPageTitleInput = ({
     : {
         Bibliography: <SourcesSvg />,
         Search: <SearchSvg />,
+        Authors: <AuthorSvg />,
       }[path[0]]
 
   return (

@@ -7,12 +7,15 @@ import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { DropDownControl } from '@databyss-org/ui/primitives'
-import { AuthorsContent } from './AuthorsContent'
 
 import { IndexPageView } from './IndexPageContent'
 import { SourcesResults } from './SourcesResults'
 import { pxUnits } from '../../theming/views'
 import styled from '../../primitives/styled'
+import {
+  composeAuthorName,
+  isCurrentAuthor,
+} from '../../../databyss-services/sources/lib'
 
 // styled components
 const CitationStyleDropDown = styled(DropDownControl, () => ({
@@ -48,9 +51,15 @@ export const SourcesContent = () => {
   }
 
   // if author is provided in the url `.../sources?firstName=''&lastName='' render authors
+  let _authorFirstName = null
+  let _authorLastName = null
+  let _authorFullName = null
   const _queryParams = getQueryParams()
+  const params = new URLSearchParams(_queryParams)
   if (_queryParams.length) {
-    return <AuthorsContent query={_queryParams} />
+    _authorFirstName = decodeURIComponent(params.get('firstName'))
+    _authorLastName = decodeURIComponent(params.get('lastName'))
+    _authorFullName = composeAuthorName(_authorFirstName, _authorLastName)
   }
 
   const sortedSources = Object.values(sourcesRes.data).sort((a, b) =>
@@ -59,6 +68,16 @@ export const SourcesContent = () => {
       ? 1
       : -1
   )
+
+  const filteredSources = _authorFullName
+    ? sortedSources.filter((s) =>
+        isCurrentAuthor(
+          s.source.detail?.authors,
+          _authorFirstName,
+          _authorLastName
+        )
+      )
+    : sortedSources
 
   let _citationStyleOptions = CitationStyleOptions
   // if we're offline, only show the current option and a message to go online
@@ -74,7 +93,8 @@ export const SourcesContent = () => {
 
   return (
     <IndexPageView
-      path={['Bibliography']}
+      path={_authorFullName ? ['Authors', _authorFullName] : ['Bibliography']}
+      key={_authorFullName}
       position="relative"
       menuChild={
         <CitationStyleDropDown
@@ -84,7 +104,7 @@ export const SourcesContent = () => {
         />
       }
     >
-      <SourcesResults entries={sortedSources} />
+      <SourcesResults entries={filteredSources} />
     </IndexPageView>
   )
 }

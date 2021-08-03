@@ -4,6 +4,7 @@ import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvide
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
+import { View } from '../..'
 
 export const EditorPageLoader = ({ children, pageId, firstBlockIsTitle }) => {
   const { getPage, removePageFromCache } = useEditorPageContext()
