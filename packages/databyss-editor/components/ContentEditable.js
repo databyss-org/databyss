@@ -36,7 +36,6 @@ import {
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
-import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import {

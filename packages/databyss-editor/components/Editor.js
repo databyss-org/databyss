@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
 import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import styledCss from '@styled-system/css'

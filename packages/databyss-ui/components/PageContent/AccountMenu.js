@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Text, BaseControl, View, Separator } from '@databyss-org/ui/primitives'
 import LogoutSvg from '@databyss-org/ui/assets/log-out.svg'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'

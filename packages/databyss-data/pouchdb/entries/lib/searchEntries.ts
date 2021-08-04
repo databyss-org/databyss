@@ -7,10 +7,10 @@ import {
   Page,
   Text,
 } from '@databyss-org/services/interfaces'
+import { populatePage } from '@databyss-org/services/blocks/joins'
+import { indexPage } from '@databyss-org/editor/lib/util'
+import { cloneDeep } from 'lodash'
 import { searchText } from '../../utils'
-import cloneDeep from 'clone-deep'
-import { populatePage } from '../../../../databyss-services/blocks/joins'
-import { indexPage } from '../../../../databyss-editor/lib/util'
 
 export interface SearchEntriesResultRow {
   entryId: string

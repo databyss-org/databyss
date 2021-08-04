@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react'
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
-import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { CitationFormatOptions } from '@databyss-org/services/interfaces'
 import { CitationView } from './CitationView'
 import { ViewProps } from '../..'

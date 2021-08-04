@@ -11,7 +11,6 @@ import forkRef from '@databyss-org/ui/lib/forkRef'
 import styledCss from '@styled-system/css'
 import { Text } from '@databyss-org/editor/interfaces'
 import { isMobile } from '../../lib/mediaQuery'
-import { pxUnits } from '../../theming/views'
 
 interface TitleInputProps {
   /**

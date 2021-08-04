@@ -36,6 +36,7 @@ import {
   BaseControl,
   Icon,
   Grid,
+  ViewProps,
 } from '@databyss-org/ui/primitives'
 import { isMobileOrMobileOs } from '@databyss-org/ui/lib/mediaQuery'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
@@ -151,7 +152,14 @@ export const IndexPageTitleInput = ({
   )
 }
 
-const SourceTitleAndCitation = ({ block, ...others }: { block: Block }) => {
+interface SourceTitleAndCitationViewProps extends ViewProps {
+  block: Block
+}
+
+const SourceTitleAndCitationView = ({
+  block,
+  ...others
+}: SourceTitleAndCitationViewProps) => {
   const { getPreferredCitationStyle } = useUserPreferencesContext()
   return (
     <View>
@@ -231,7 +239,7 @@ export const IndexPageView = ({
           )}
           {block?.type === BlockType.Source &&
             (isPublicAccount() ? (
-              <SourceTitleAndCitation block={block} />
+              <SourceTitleAndCitationView block={block} />
             ) : (
               <View position="relative">
                 <BaseControl
@@ -254,13 +262,13 @@ export const IndexPageView = ({
                   >
                     <EditSvg />
                   </Icon>
-                  <SourceTitleAndCitation
+                  <SourceTitleAndCitationView
                     block={block}
                     opacity={0}
                     zIndex={-1}
                   />
                 </BaseControl>
-                <SourceTitleAndCitation
+                <SourceTitleAndCitationView
                   block={block}
                   position="absolute"
                   zIndex={1}
