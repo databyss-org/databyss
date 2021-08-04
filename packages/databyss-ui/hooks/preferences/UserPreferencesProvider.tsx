@@ -25,8 +25,9 @@ export const UserPreferencesContext = createContext<UserPreferencesContextType>(
 
 export const UserPreferencesProvider = ({ children }) => {
   const [queryRes, setUserPreferences] = useUserPreferences()
-  const { notifyConfirm } = useNotifyContext()
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const { notifyConfirm } = useNotifyContext() ?? {}
+  const isPublicAccount =
+    useSessionContext((c) => c && c.isPublicAccount) ?? (() => false)
   const [renderChildren, setRenderChildren] = useState(false)
 
   const userPreferences = queryRes.data! as UserPreference

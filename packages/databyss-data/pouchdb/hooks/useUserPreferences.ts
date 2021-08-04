@@ -11,8 +11,9 @@ export const useUserPreferences = (
   UseQueryResult<UserPreference | Group>,
   (prefs: UserPreference) => void
 ] => {
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  const getSession = useSessionContext((c) => c && c.getSession)
+  const isPublicAccount =
+    useSessionContext((c) => c && c.isPublicAccount) ?? (() => false)
+  const getSession = useSessionContext((c) => c && c.getSession) ?? (() => null)
   const queryClient = useQueryClient()
 
   const prefsRes = useDocument<UserPreference>('user_preference', {
