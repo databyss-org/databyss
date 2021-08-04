@@ -6,14 +6,6 @@ import { storiesOf } from '@storybook/react'
 import { View, Grid } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import fetchMock from 'fetch-mock'
-import SourceProvider from '@databyss-org/services/sources/SourceProvider'
-import sourceReducer, {
-  initialState as sourceInitialState,
-} from '@databyss-org/services/sources/reducer'
-// import TopicProvider from '@databyss-org/services/topics/TopicProvider'
-// import topicReducer, {
-//   initialState as topicInitialState,
-// } from '@databyss-org/services/topics/reducer'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ContentEditable from '../components/ContentEditable'
 import { stateToSlate } from '../lib/slateUtils'
@@ -23,6 +15,7 @@ import basicFixture from './fixtures/basic'
 import blankFixture from './fixtures/blankState'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import noAtomicsFixture from './fixtures/no-atomics'
+import { UserPreferencesProvider } from '../../databyss-ui/hooks'
 
 const queryClient = new QueryClient()
 
@@ -72,7 +65,7 @@ const SideBySide = ({ initialState }) => {
 
 const EditorWithModals = ({ initialState }) => (
   <QueryClientProvider client={queryClient}>
-    <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+    <UserPreferencesProvider>
       <NavigationProvider>
         <EditorWithProvider
           initialState={initialState}
@@ -81,7 +74,7 @@ const EditorWithModals = ({ initialState }) => (
           }}
         />
       </NavigationProvider>
-    </SourceProvider>
+    </UserPreferencesProvider>
   </QueryClientProvider>
 )
 

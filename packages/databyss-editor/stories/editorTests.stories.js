@@ -2,20 +2,14 @@ import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import {
-  ViewportDecorator,
-  NotifyDecorator,
-} from '@databyss-org/ui/stories/decorators'
+import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import fetchMock from 'fetch-mock'
-import SourceProvider from '@databyss-org/services/sources/SourceProvider'
-import sourceReducer, {
-  initialState as sourceInitialState,
-} from '@databyss-org/services/sources/reducer'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ContentEditable from '../components/ContentEditable'
 import EditorProvider from '../state/EditorProvider'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import blankState from './fixtures/blankState'
+import { UserPreferencesProvider } from '../../databyss-ui/hooks'
 
 const queryClient = new QueryClient()
 
@@ -72,11 +66,11 @@ const EditorWithProvider = ({ initialState }) => {
 
 const EditorWithModals = ({ initialState }) => (
   <QueryClientProvider client={queryClient}>
-    <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+    <UserPreferencesProvider>
       <NavigationProvider>
         <EditorWithProvider initialState={initialState} />
       </NavigationProvider>
-    </SourceProvider>
+    </UserPreferencesProvider>
   </QueryClientProvider>
 )
 

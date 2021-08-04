@@ -9,7 +9,6 @@ import {
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
 import ModalManager from '@databyss-org/ui/modules/Modals/ModalManager'
-import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
 import SessionProvider, {
   useSessionContext,
@@ -29,6 +28,7 @@ import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
 import { addMetaToPatches, pageToEditorState } from '../state/util'
+import { UserPreferencesProvider } from '../../databyss-ui/hooks'
 
 const queryClient = new QueryClient()
 
@@ -143,12 +143,12 @@ const EditorWithModals = () => (
     <SessionProvider unauthorizedChildren={<LoginRequired />}>
       <QueryClientProvider client={queryClient}>
         <EditorPageProvider>
-          <SourceProvider>
+          <UserPreferencesProvider>
             <CatalogProvider>
               <EditorWithProvider />
               <ModalManager />
             </CatalogProvider>
-          </SourceProvider>
+          </UserPreferencesProvider>
         </EditorPageProvider>
       </QueryClientProvider>
     </SessionProvider>
