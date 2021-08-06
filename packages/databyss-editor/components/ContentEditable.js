@@ -500,6 +500,24 @@ const ContentEditable = ({
         historyContext.redo()
       }
 
+      if (Hotkeys.isSelectAll(event)) {
+        console.log('[ContentEditable] isSelectAll')
+        event.preventDefault()
+        const _sel = {
+          anchor: { offset: 0, index: 1 },
+          focus: {
+            index: editor.children.length - 1,
+            offset: state.blocks[state.blocks.length - 1].text.textValue.length,
+          },
+        }
+        const _ssel = stateSelectionToSlateSelection(editor.children, _sel)
+
+        window.requestAnimationFrame(() => {
+          Transforms.select(editor, _ssel)
+        })
+        return
+      }
+
       // UI
       if (event.key === 'ArrowUp') {
         const _currentIndex = editor.selection.focus.path[0]

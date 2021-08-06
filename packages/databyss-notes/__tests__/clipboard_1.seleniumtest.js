@@ -2,11 +2,9 @@
 /* eslint-disable func-names */
 import assert from 'assert'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
-import { jsx as h } from './hyperscript'
-import { sanitizeEditorChildren } from './__helpers'
+import { sanitizeEditorChildren } from './util'
 import {
   getEditor,
-  getElementByTag,
   toggleBold,
   getElementById,
   enterKey,
@@ -21,79 +19,47 @@ import {
   rightKey,
   sendKeys,
   leftKey,
-  isSaved,
   escapeKey,
   leftShiftKey,
-  tagButtonClick,
-} from './_helpers.selenium'
+  jsx as h,
+  login,
+  isAppInNotesSaved,
+  upShiftKey,
+} from './util.selenium'
 
 let driver
-let editor
 let slateDocument
 let actions
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
-
-const LOCAL_URL_EDITOR =
-  'http://localhost:6006/iframe.html?id=services-page--slate-5'
-const PROXY_URL_EDITOR =
-  'http://localhost:8080/iframe.html?id=services-page--slate-5'
 
 describe('editor clipboard', () => {
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    // OSX and safari are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    await getElementByTag(driver, '[data-test-id="logoutButton"]')
-
-    await driver.get(
-      process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
-    )
-
-    editor = await getEditor(driver)
-
-    editor.click()
-
-    actions = driver.actions({ bridge: true })
-    await actions.click(editor)
-
-    //   actions = driver.actions()
-
+    await login(driver)
+    actions = driver.actions()
     done()
   })
 
   afterEach(async () => {
     await sleep(100)
     await driver.quit()
-    driver = null
     await sleep(100)
   })
 
   it('should copy a whole block and paste it at the end of the same block', async () => {
+    await downKey(actions)
     // TODO: FIX CURSOR POSITION FOR THIS TEST
     await sendKeys(actions, 'this text will be pasted with ')
 
     await toggleBold(actions)
     await sendKeys(actions, 'bold ')
-    await selectAll(actions)
+    await upShiftKey(actions)
+    await rightShiftKey(actions)
 
     await copy(actions)
 
     await rightKey(actions)
     await paste(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
 
@@ -103,6 +69,9 @@ describe('editor clipboard', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>this text will be pasted with </text>
           <text bold>bold </text>
@@ -122,10 +91,12 @@ describe('editor clipboard', () => {
   })
 
   it('should copy a whole block and paste it in the middle of a block', async () => {
+    await downKey(actions)
     await sendKeys(actions, 'this text will be pasted with ')
     await toggleBold(actions)
     await sendKeys(actions, 'bold ')
-    await selectAll(actions)
+    await upShiftKey(actions)
+    await rightShiftKey(actions)
 
     await copy(actions)
 
@@ -137,7 +108,7 @@ describe('editor clipboard', () => {
     await rightKey(actions)
 
     await paste(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
 
@@ -147,6 +118,9 @@ describe('editor clipboard', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>this this text will be pasted with </text>
           <text bold>
@@ -167,14 +141,16 @@ describe('editor clipboard', () => {
   })
 
   it('should copy a whole block and paste it at the start of a block', async () => {
+    await downKey(actions)
     await sendKeys(actions, 'this text will be pasted with ')
     await toggleBold(actions)
     await sendKeys(actions, 'bold ')
-    await selectAll(actions)
+    await upShiftKey(actions)
+    await rightShiftKey(actions)
     await copy(actions)
     await leftKey(actions)
     await paste(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
 
@@ -185,6 +161,9 @@ describe('editor clipboard', () => {
     // TODO: CURSOR PLACEMENT IS OFF
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>this text will be pasted with </text>
           <text bold>
@@ -205,6 +184,7 @@ describe('editor clipboard', () => {
   })
 
   it('should cut an atomic in a multi block selection', async () => {
+    await downKey(actions)
     await sendKeys(actions, 'this is an entry')
     await enterKey(actions)
     await enterKey(actions)
@@ -227,7 +207,7 @@ describe('editor clipboard', () => {
     await cut(actions)
     await downKey(actions)
     await paste(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
 
@@ -237,6 +217,9 @@ describe('editor clipboard', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>this is an </text>
         </block>
@@ -261,10 +244,12 @@ describe('editor clipboard', () => {
   })
 
   it('should test inline atomic functionality', async () => {
+    await downKey(actions)
     // paste in inline range
     await toggleBold(actions)
     await sendKeys(actions, 'some topic')
-    await selectAll(actions)
+    await upShiftKey(actions)
+    await rightShiftKey(actions)
     await copy(actions)
     await sendKeys(actions, 'and we append #')
     await paste(actions)
@@ -272,7 +257,7 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     // copy fraction of an inline
     await leftShiftKey(actions)
-    // await leftShiftKey(actions)
+    await leftShiftKey(actions)
     await copy(actions)
     await rightKey(actions)
     await enterKey(actions)
@@ -297,10 +282,13 @@ describe('editor clipboard', () => {
 
     const actual = JSON.parse(await slateDocument.getText())
 
-    const _id = actual.children[0].children[1].atomicId
+    const _id = actual.children[1].children[1].atomicId
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text bold>and we append </text>
           <text inlineTopic atomicId={_id}>
@@ -316,8 +304,9 @@ describe('editor clipboard', () => {
           <text />
         </block>
         <block type="ENTRY">
+          <text>this should block </text>
           <text>
-            this should block #<cursor />
+            #<cursor />
           </text>
         </block>
       </editor>

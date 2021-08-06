@@ -1,6 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
+import {
+  PDFDropZoneManager,
+  Text,
+  useNavigationContext,
+  View,
+} from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'
@@ -29,7 +34,6 @@ const PageBody = ({
   editorRef,
   onEditorPathChange,
 }) => {
-  console.log('[PageBody] focusIndex', focusIndex)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   const { location } = useNavigationContext()
@@ -44,6 +48,8 @@ const PageBody = ({
   const editorStateRef = useRef()
 
   const debouncedSetPageHeader = _.debounce(setPageHeader, 250)
+
+  const [_debugSlateState, _setDebugSlateState] = useState(null)
 
   // state from provider is out of date
   const onChange = (value) => {
@@ -98,6 +104,13 @@ const PageBody = ({
     }
   }
 
+  /**
+   * Only test env: put the Slate hyperscript doc in state to render for tests
+   */
+  const onDocumentChange = (val) => {
+    _setDebugSlateState(JSON.stringify(val, null, 2))
+  }
+
   const render = () => {
     const isReadOnly = isPublicAccount() || isMobile() || page.archive
 
@@ -129,7 +142,22 @@ const PageBody = ({
               readonly={isReadOnly}
               sharedWithGroups={sharedWithGroups}
               firstBlockIsTitle
+              {...(process.env.NODE_ENV === 'test' ? { onDocumentChange } : {})}
             />
+            {process.env.NODE_ENV === 'test' && (
+              <View height={300} overflow="scroll" bg="black" p="medium">
+                <Text
+                  color="white"
+                  variant="uiTextSmall"
+                  id="slateDocument"
+                  css={{
+                    whiteSpace: 'pre-wrap',
+                  }}
+                >
+                  {_debugSlateState}
+                </Text>
+              </View>
+            )}
           </EditorProvider>
         </HistoryProvider>
       </CatalogProvider>

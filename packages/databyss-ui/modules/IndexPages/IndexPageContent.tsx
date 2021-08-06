@@ -251,6 +251,7 @@ export const IndexPageView = ({
                   }}
                 >
                   <Icon
+                    data-test-button="open-source-modal"
                     position="absolute"
                     left="mediumNegative"
                     top={pxUnits(5)}

@@ -135,7 +135,7 @@
         "displayName": "test-selenium",
         "testEnvironment": "node",
         "testMatch": [
-          "<rootDir>/packages/databyss-editor/**/*.seleniumtest.js"
+          "<rootDir>/packages/**/*.seleniumtest.js"
         ],
         "moduleFileExtensions": [
           "js"

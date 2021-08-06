@@ -1,4 +1,17 @@
 import { Key, By, until } from 'selenium-webdriver'
+import { createHyperscript } from 'slate-hyperscript'
+
+export const jsx = createHyperscript({
+  elements: {
+    block: { isBlock: true },
+  },
+})
+
+// converts JSX string to Slate JSON value
+export const parse = (string) => {
+  const document = new DOMParser().parseFromString(string, 'text/html')
+  return jsx('editor', {}, document.body)
+}
 
 const LOCAL_URL = 'http://localhost:3000'
 const PROXY_URL = 'http://0.0.0.0:3000'
@@ -10,7 +23,7 @@ const MAX_RETRIES = 3
 
 // HACK: saucelabs environment double triggers meta key, use ctrl key instead
 
-const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
+export const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
 
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 
@@ -346,11 +359,12 @@ export const redo = async (actions) => {
   await sleep(SLEEP_TIME)
 }
 
-export const logIn = async (email, driver) => {
+export const login = async (driver, email) => {
   await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
   const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-  await emailField.sendKeys(email)
+  const random = Math.random().toString(36).substring(7)
+  await emailField.sendKeys(email ?? `${random}@test.com`)
 
   let continueButton = await getElementByTag(
     driver,
