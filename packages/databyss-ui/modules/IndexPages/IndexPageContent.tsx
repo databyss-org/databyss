@@ -46,9 +46,9 @@ import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import EditSvg from '@databyss-org/ui/assets/edit.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { IndexResults } from './IndexResults'
-import { pxUnits } from '../../theming/views'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 import { useUserPreferencesContext } from '../../hooks'
+import { pxUnits } from '../../theming/views'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -63,7 +63,7 @@ export interface IndexPageTitleInputHandles {
 
 const getTitleFromBlock = (block: Block) =>
   ({
-    [BlockType.Source]: (block as Source).name?.textValue,
+    [BlockType.Source]: block.text.textValue,
     [BlockType.Topic]: block.text.textValue,
   }[block.type])
 
@@ -94,7 +94,7 @@ export const IndexPageTitleInput = ({
           setTopic(block!)
           break
         case BlockType.Source:
-          ;(block as Source).name!.textValue = value
+          block!.text.textValue = value
           setSource(block! as Source)
           break
       }
@@ -110,9 +110,11 @@ export const IndexPageTitleInput = ({
   }
 
   const onKeyDown = (evt: KeyboardEvent) => {
-    if (path[0] === 'Search' && evt.key === 'Enter') {
+    if (evt.key === 'Enter') {
       evt.preventDefault()
-      navigate(`/${getAccountFromLocation()}/search/${title}`)
+      if (path[0] === 'Search') {
+        navigate(`/${getAccountFromLocation()}/search/${title}`)
+      }
     }
   }
 
@@ -147,6 +149,7 @@ export const IndexPageTitleInput = ({
       onChange={onChange}
       onKeyDown={onKeyDown}
       icon={icon && <Icon>{icon}</Icon>}
+      data-test-path="text"
       {...others}
     />
   )
@@ -162,7 +165,7 @@ const SourceTitleAndCitationView = ({
 }: SourceTitleAndCitationViewProps) => {
   const { getPreferredCitationStyle } = useUserPreferencesContext()
   return (
-    <View>
+    <View mt="small">
       <SourceCitationView
         py="none"
         pb="small"
@@ -254,8 +257,8 @@ export const IndexPageView = ({
                     data-test-button="open-source-modal"
                     position="absolute"
                     left="mediumNegative"
-                    top={pxUnits(5)}
                     color="gray.4"
+                    top={pxUnits(4)}
                     sizeVariant="tiny"
                     css={{
                       pointerEvents: 'all',

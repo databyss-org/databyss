@@ -145,7 +145,7 @@ const PageBody = ({
               {...(process.env.NODE_ENV === 'test' ? { onDocumentChange } : {})}
             />
             {process.env.NODE_ENV === 'test' && (
-              <View height={300} overflow="scroll" bg="black" p="medium">
+              <View height="25%" overflow="scroll" bg="black" p="medium">
                 <Text
                   color="white"
                   variant="uiTextSmall"

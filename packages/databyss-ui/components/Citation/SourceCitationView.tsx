@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
 import { CitationFormatOptions } from '@databyss-org/services/interfaces'
 import { CitationView } from './CitationView'
-import { ViewProps } from '../..'
+import { View, ViewProps } from '../..'
 
 export interface SourceCitationViewProps extends ViewProps {
   sourceId: string
@@ -28,7 +28,7 @@ export const SourceCitationView = ({
     !bibliographyRes.data[sourceId] ||
     !bibliographyRes.data[sourceId].citation?.length
   ) {
-    return noCitationFallback
+    return <View {...others}>{noCitationFallback}</View>
   }
   return (
     <CitationView

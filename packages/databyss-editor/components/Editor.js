@@ -5,7 +5,6 @@ import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import styledCss from '@styled-system/css'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
-import { View, Text as TextPrimitive } from '@databyss-org/ui'
 import { validUriRegex, validURL } from '@databyss-org/services/lib/util'
 import matchAll from 'string.prototype.matchall'
 import { useEditorContext } from '../state/EditorProvider'
@@ -15,7 +14,6 @@ import Element from './Element'
 import FormatMenu from './FormatMenu'
 import { isSelectionCollapsed } from '../lib/clipboardUtils'
 import { convertSelectionToLink } from '../lib/inlineUtils/setPageLink'
-import { UNTITLED_PAGE_NAME } from '../../databyss-services/interfaces'
 
 const Editor = ({
   children,
@@ -186,49 +184,34 @@ const Editor = ({
     <Slate editor={editor} {...slateProps}>
       {children}
       {!readonly && <FormatMenu />}
-      <View position="relative">
-        {!Node.string(editor.children[0])?.length && (
-          <View
-            position="absolute"
-            top="0"
-            left="em"
-            pl="medium"
-            css={{ pointerEvents: 'none', userSelect: 'none' }}
-          >
-            <TextPrimitive variant="bodyHeading1" color="text.3" opacity={0.5}>
-              {UNTITLED_PAGE_NAME}
-            </TextPrimitive>
-          </View>
-        )}
-        <Editable
-          onCopy={(e) => {
-            e.preventDefault()
-            copy(e)
-          }}
-          onPaste={pasteEventHandler}
-          onCut={(e) => {
-            e.preventDefault()
-            cut(e)
-          }}
-          onFocus={onFocus}
-          decorate={decorate}
-          spellCheck={process.env.NODE_ENV !== 'test'}
-          renderElement={renderElement}
-          renderLeaf={renderLeaf}
-          readOnly={readOnly}
-          autoFocus={autofocus}
-          onKeyDown={onKeyDown}
-          style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
-          css={styledCss({
-            flexGrow: 1,
-            overflowY: 'auto',
-            paddingLeft: 'em',
-            paddingRight: 'medium',
-            paddingBottom: 'extraLarge',
-            ...scrollbarResetCss,
-          })}
-        />
-      </View>
+      <Editable
+        onCopy={(e) => {
+          e.preventDefault()
+          copy(e)
+        }}
+        onPaste={pasteEventHandler}
+        onCut={(e) => {
+          e.preventDefault()
+          cut(e)
+        }}
+        onFocus={onFocus}
+        decorate={decorate}
+        spellCheck={process.env.NODE_ENV !== 'test'}
+        renderElement={renderElement}
+        renderLeaf={renderLeaf}
+        readOnly={readOnly}
+        autoFocus={autofocus}
+        onKeyDown={onKeyDown}
+        style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
+        css={styledCss({
+          flexGrow: 1,
+          overflowY: 'auto',
+          paddingLeft: 'em',
+          paddingRight: 'medium',
+          paddingBottom: 'extraLarge',
+          ...scrollbarResetCss,
+        })}
+      />
     </Slate>
   )
 }

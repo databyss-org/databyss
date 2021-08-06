@@ -61,6 +61,7 @@ export const TitleInput = forwardRef<HTMLElement, TitleInputProps>(
           React.cloneElement(icon, {
             position: 'absolute',
             left: 'largeNegative',
+            top: 'tiny',
             color: 'gray.5',
             sizeVariant: 'medium',
           })}
@@ -77,6 +78,7 @@ export const TitleInput = forwardRef<HTMLElement, TitleInputProps>(
               opacity: 0.6,
             },
           })(theme)}
+          multiline
           {...others}
         />
       </View>
