@@ -36,10 +36,6 @@ describe('EditSourceForm', () => {
     await sleep(100)
   })
 
-  afterEach(async () => {
-    await driver.quit()
-  })
-
   it('should be able to change source title', async () => {
     const sourceTitle = 'some source title'
 
@@ -70,6 +66,8 @@ describe('EditSourceForm', () => {
     await tabKey(actions)
     await sleep(1000)
     await tabKey(actions)
+    await sleep(1000)
+    await tabKey(actions)
 
     // enter values to test later
     await sendKeys(actions, sourceTitle)
@@ -85,8 +83,10 @@ describe('EditSourceForm', () => {
       driver
     )
 
+    await sleep(1000)
+
     // select source block anew
-    await upKey(actions)
+    // await upKey(actions)
     await rightKey(actions)
 
     // open modal
