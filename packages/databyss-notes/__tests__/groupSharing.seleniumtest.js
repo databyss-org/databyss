@@ -31,6 +31,7 @@ export async function selectLinkInFirstBlock(actions) {
   await downKey(actions)
   await downShiftKey(actions)
   await downShiftKey(actions)
+  await downShiftKey(actions)
 }
 
 // TODO: THIS SHOULD BE ON THE PAGE SHARING  TEST

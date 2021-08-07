@@ -22,7 +22,6 @@ describe('new block menu actions', () => {
     driver = await startSession()
     await login(driver)
     actions = driver.actions()
-    // await sleep(300)
     await downKey(actions)
     await sleep(500)
     done()

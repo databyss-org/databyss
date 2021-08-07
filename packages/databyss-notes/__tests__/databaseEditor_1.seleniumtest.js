@@ -1,7 +1,7 @@
 /** @jsx h */
 /* eslint-disable func-names */
 import assert from 'assert'
-import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import { sanitizeEditorChildren } from './util'
 import {
   getEditor,
@@ -26,7 +26,7 @@ let actions
 
 describe('connected editor', () => {
   beforeEach(async (done) => {
-    driver = await startSession({ platformName: OSX, browserName: CHROME })
+    driver = await startSession({ platformName: WIN, browserName: CHROME })
     await login(driver)
     actions = driver.actions()
     done()
