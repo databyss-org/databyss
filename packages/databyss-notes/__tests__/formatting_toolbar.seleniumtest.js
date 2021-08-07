@@ -2,7 +2,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import { sanitizeEditorChildren } from './util'
 import {
   sleep,
@@ -23,7 +23,7 @@ let actions
 
 describe('format text in editor', () => {
   beforeEach(async (done) => {
-    driver = await startSession()
+    driver = await startSession({ platformName: WIN, browserName: CHROME })
     await login(driver)
     actions = driver.actions()
     await downKey(actions)

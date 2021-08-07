@@ -154,7 +154,7 @@ const PageBody = ({
           </EditorProvider>
         </HistoryProvider>
         {process.env.NODE_ENV === 'test' && (
-          <View height="25%" overflow="scroll" bg="black" p="medium">
+          <View height="120px" overflow="scroll" bg="black" p="medium">
             <Text
               color="white"
               variant="uiTextSmall"

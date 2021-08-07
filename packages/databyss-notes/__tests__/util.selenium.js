@@ -23,7 +23,7 @@ const MAX_RETRIES = 3
 
 // HACK: saucelabs environment double triggers meta key, use ctrl key instead
 
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
+export const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
 
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 
