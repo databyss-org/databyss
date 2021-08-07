@@ -364,7 +364,8 @@ export const login = async (driver, email) => {
 
   const emailField = await getElementByTag(driver, '[data-test-path="email"]')
   const random = Math.random().toString(36).substring(7)
-  await emailField.sendKeys(email ?? `${random}@test.com`)
+  const _email = email ?? `${random}@test.com`
+  await emailField.sendKeys(_email)
 
   let continueButton = await getElementByTag(
     driver,
@@ -384,4 +385,6 @@ export const login = async (driver, email) => {
 
   // wait for editor to be visible
   await getEditor(driver)
+
+  return _email
 }
