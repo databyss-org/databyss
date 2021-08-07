@@ -304,9 +304,8 @@ describe('editor clipboard', () => {
           <text />
         </block>
         <block type="ENTRY">
-          <text>this should block </text>
           <text>
-            #<cursor />
+            this should block #<cursor />
           </text>
         </block>
       </editor>
