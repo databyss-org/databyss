@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import {
   PDFDropZoneManager,
@@ -24,7 +24,7 @@ import {
   pageToEditorState,
 } from '@databyss-org/editor/state/util'
 import { UNTITLED_PAGE_NAME } from '@databyss-org/services/interfaces'
-import _ from 'lodash'
+import _, { debounce } from 'lodash'
 import { isMobile } from '../../lib/mediaQuery'
 
 const PageBody = ({
@@ -107,9 +107,16 @@ const PageBody = ({
   /**
    * Only test env: put the Slate hyperscript doc in state to render for tests
    */
-  const onDocumentChange = (val) => {
-    _setDebugSlateState(JSON.stringify(val, null, 2))
-  }
+  const onDocumentChange = useCallback(
+    debounce(
+      (val) => {
+        const _valJson = JSON.stringify(val, null, 2)
+        _setDebugSlateState(_valJson)
+      },
+      100,
+      { trailing: true }
+    )
+  )
 
   const render = () => {
     const isReadOnly = isPublicAccount() || isMobile() || page.archive
@@ -144,22 +151,22 @@ const PageBody = ({
               firstBlockIsTitle
               {...(process.env.NODE_ENV === 'test' ? { onDocumentChange } : {})}
             />
-            {process.env.NODE_ENV === 'test' && (
-              <View height="25%" overflow="scroll" bg="black" p="medium">
-                <Text
-                  color="white"
-                  variant="uiTextSmall"
-                  id="slateDocument"
-                  css={{
-                    whiteSpace: 'pre-wrap',
-                  }}
-                >
-                  {_debugSlateState}
-                </Text>
-              </View>
-            )}
           </EditorProvider>
         </HistoryProvider>
+        {process.env.NODE_ENV === 'test' && (
+          <View height="25%" overflow="scroll" bg="black" p="medium">
+            <Text
+              color="white"
+              variant="uiTextSmall"
+              id="slateDocument"
+              css={{
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              {_debugSlateState}
+            </Text>
+          </View>
+        )}
       </CatalogProvider>
     )
   }
