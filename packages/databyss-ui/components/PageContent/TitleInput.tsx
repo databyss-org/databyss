@@ -1,4 +1,10 @@
-import React, { forwardRef, useCallback, useEffect, useRef } from 'react'
+import React, {
+  forwardRef,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react'
 import { View, TextInput } from '@databyss-org/ui/primitives'
 import { theme } from '@databyss-org/ui/theming'
 import forkRef from '@databyss-org/ui/lib/forkRef'
@@ -16,10 +22,11 @@ interface TitleInputProps {
   onChange?: (value: string) => void
   placeholder?: string
   readonly?: boolean
+  icon?: ReactElement
 }
 
 export const TitleInput = forwardRef<HTMLElement, TitleInputProps>(
-  ({ placeholder, autoFocus, value, onChange, ...others }, ref) => {
+  ({ placeholder, autoFocus, value, onChange, icon, ...others }, ref) => {
     const inputRef = useRef<HTMLElement>(null)
     useEffect(() => {
       if (!autoFocus || !inputRef) {
@@ -44,7 +51,20 @@ export const TitleInput = forwardRef<HTMLElement, TitleInputProps>(
     }
 
     return (
-      <View flexGrow={0} mb={isMobile() ? 'small' : 'none'}>
+      <View
+        flexGrow={0}
+        justifyContent="center"
+        mb={isMobile() ? 'small' : 'none'}
+        position="relative"
+      >
+        {icon &&
+          React.cloneElement(icon, {
+            position: 'absolute',
+            left: 'largeNegative',
+            top: 'tiny',
+            color: 'gray.5',
+            sizeVariant: 'medium',
+          })}
         <TextInput
           ref={forkRef(inputRef, ref)}
           value={{ textValue: _value }}
@@ -58,6 +78,7 @@ export const TitleInput = forwardRef<HTMLElement, TitleInputProps>(
               opacity: 0.6,
             },
           })(theme)}
+          multiline
           {...others}
         />
       </View>

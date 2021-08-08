@@ -1,5 +1,4 @@
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import innerText from 'innertext'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
@@ -15,49 +14,28 @@ import {
   backspaceKey,
   tagButtonClick,
   tagButtonListClick,
-} from './_helpers.selenium'
+  login,
+} from './util.selenium'
 
 import { selectLinkInFirstBlock } from './groupSharing.seleniumtest'
 
 let driver
 let editor
 let actions
-const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
-
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('page sharing', () => {
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    // OSX and chrome are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
-    await sleep(1000)
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    // wait for editor to be visible
-    await getEditor(driver)
+    await login(driver)
     actions = driver.actions()
-
+    await sleep(500)
     done()
   })
 
   afterEach(async () => {
-    if (driver) {
-      await driver.quit()
-      driver = null
-      await sleep(100)
-    }
+    await sleep(100)
+    await driver.quit()
+    await sleep(100)
   })
 
   it('should ensure page sharing integrity', async () => {

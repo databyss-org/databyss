@@ -1,6 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
+import {
+  PDFDropZoneManager,
+  Text,
+  useNavigationContext,
+  View,
+} from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'
@@ -19,7 +24,7 @@ import {
   pageToEditorState,
 } from '@databyss-org/editor/state/util'
 import { UNTITLED_PAGE_NAME } from '@databyss-org/services/interfaces'
-import _ from 'lodash'
+import _, { debounce } from 'lodash'
 import { isMobile } from '../../lib/mediaQuery'
 
 const PageBody = ({
@@ -43,6 +48,8 @@ const PageBody = ({
   const editorStateRef = useRef()
 
   const debouncedSetPageHeader = _.debounce(setPageHeader, 250)
+
+  const [_debugSlateState, _setDebugSlateState] = useState(null)
 
   // state from provider is out of date
   const onChange = (value) => {
@@ -97,6 +104,20 @@ const PageBody = ({
     }
   }
 
+  /**
+   * Only test env: put the Slate hyperscript doc in state to render for tests
+   */
+  const onDocumentChange = useCallback(
+    debounce(
+      (val) => {
+        const _valJson = JSON.stringify(val, null, 2)
+        _setDebugSlateState(_valJson)
+      },
+      100,
+      { trailing: true }
+    )
+  )
+
   const render = () => {
     const isReadOnly = isPublicAccount() || isMobile() || page.archive
 
@@ -128,9 +149,24 @@ const PageBody = ({
               readonly={isReadOnly}
               sharedWithGroups={sharedWithGroups}
               firstBlockIsTitle
+              {...(process.env.NODE_ENV === 'test' ? { onDocumentChange } : {})}
             />
           </EditorProvider>
         </HistoryProvider>
+        {process.env.NODE_ENV === 'test' && (
+          <View height="120px" overflow="scroll" bg="black" p="medium">
+            <Text
+              color="white"
+              variant="uiTextSmall"
+              id="slateDocument"
+              css={{
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              {_debugSlateState}
+            </Text>
+          </View>
+        )}
       </CatalogProvider>
     )
   }

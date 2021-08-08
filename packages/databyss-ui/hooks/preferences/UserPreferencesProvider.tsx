@@ -6,48 +6,53 @@ import {
 import semver from 'semver'
 import { version } from '@databyss-org/services'
 import { useUserPreferences } from '@databyss-org/data/pouchdb/hooks'
-import { upsertUserPreferences } from '@databyss-org/data/pouchdb/utils'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { LoadingFallback } from '../../components'
 import { useNotifyContext } from '../../components/Notify/NotifyProvider'
 
-export interface NotificationsContextType {
+export interface UserPreferencesContextType {
   getUnreadNotifications: (type?: NotificationType) => Partial<Notification>[]
   setNotificationRead: (id: string) => void
+  setPreferredCitationStyle: (style: string) => void
+  getPreferredCitationStyle: () => string
+  userPreferences: UserPreference
 }
 
-export const UserPreferencesContext = createContext<NotificationsContextType>(
+export const UserPreferencesContext = createContext<UserPreferencesContextType>(
   null!
 )
 
 export const UserPreferencesProvider = ({ children }) => {
   const [queryRes, setUserPreferences] = useUserPreferences()
-  const { notifyConfirm } = useNotifyContext()
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const { notifyConfirm } = useNotifyContext() ?? {}
+  const isPublicAccount =
+    useSessionContext((c) => c && c.isPublicAccount) ?? (() => false)
   const [renderChildren, setRenderChildren] = useState(false)
+
+  const userPreferences = queryRes.data! as UserPreference
 
   const setNotificationRead = (id: string) => {
     if (isPublicAccount()) {
       // TODO: save read history to localstorage
       return
     }
-    const _prefs = queryRes.data! as UserPreference
-    const _notification = _prefs.notifications?.find((_n) => _n.id === id)
+    const _notification = userPreferences.notifications?.find(
+      (_n) => _n.id === id
+    )
     if (!_notification) {
       console.error('Notification not found', id)
       return
     }
     _notification.viewedAt = Date.now()
-    setUserPreferences(_prefs)
-    upsertUserPreferences(() => _prefs)
+    setUserPreferences(userPreferences)
   }
 
   const getUnreadNotifications = (type?: NotificationType) => {
-    if (!queryRes.data?.notifications) {
+    if (!userPreferences?.notifications) {
       return []
     }
-    return queryRes.data!.notifications.filter((_notification) => {
+    return userPreferences.notifications.filter((_notification) => {
       if (type && type !== _notification.type) {
         return false
       }
@@ -114,6 +119,22 @@ export const UserPreferencesProvider = ({ children }) => {
     }
   }, [JSON.stringify(_notifications)])
 
+  const setPreferredCitationStyle = (styleId: string) => {
+    // error checks
+    const typeOfStyleId = typeof styleId
+    if (typeOfStyleId !== 'string') {
+      throw new Error(
+        `setPreferredCitationStyle() expected 'styleId' to be a string.
+          Received "${typeOfStyleId}".`
+      )
+    }
+    userPreferences.preferredCitationStyle = styleId
+    setUserPreferences(userPreferences)
+  }
+
+  const getPreferredCitationStyle = () =>
+    userPreferences?.preferredCitationStyle ?? 'mla'
+
   if (!queryRes.isSuccess) {
     return <LoadingFallback queryObserver={queryRes} />
   }
@@ -123,6 +144,9 @@ export const UserPreferencesProvider = ({ children }) => {
       value={{
         getUnreadNotifications,
         setNotificationRead,
+        setPreferredCitationStyle,
+        getPreferredCitationStyle,
+        userPreferences,
       }}
     >
       {renderChildren ? children : null}

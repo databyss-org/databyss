@@ -25,6 +25,7 @@ const HOTKEYS = {
   paste: `${metaKey}+v`,
   undo: `${metaKey}+z`,
   redo: `${metaKey}+shift+z`,
+  selectAll: `${metaKey}+a`,
   startOfLine: `ctrl+shift+left`,
   tab: 'tab',
   endOfLine: `ctrl+shift+right`,

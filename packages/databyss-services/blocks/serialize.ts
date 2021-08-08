@@ -10,8 +10,14 @@ const tags: { [mark: string]: string[] } = {
     'span',
   ],
   [RangeType.Location]: [`span style="color: ${colors.gray[4]}"`, 'span'],
-  [InlineTypes.InlineTopic]: [`span style="color: ${colors.red[1]}"`, 'span'],
-  [InlineTypes.InlineSource]: [`span style="color: ${colors.red[2]}"`, 'span'],
+  [InlineTypes.InlineTopic]: [
+    `span style="color: ${colors.inlineTopic}"`,
+    'span',
+  ],
+  [InlineTypes.InlineSource]: [
+    `span style="color: ${colors.inlineSource}"`,
+    'span',
+  ],
 }
 
 /**

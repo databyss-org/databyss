@@ -77,11 +77,12 @@ const NavigationProvider = ({
     const accountId = getAccountFromLocation()
     const hasAccount =
       options?.hasAccount || (accountId && url.match(`/${accountId}/`))
+    const replace = !!options?.replace
     if (hasAccount) {
-      navigateRouter(url)
+      navigateRouter(url, { replace })
       return
     }
-    navigateRouter(accountId ? `/${accountId}${url}` : url)
+    navigateRouter(accountId ? `/${accountId}${url}` : url, { replace })
   }
 
   const navigateSidebar = (options) =>

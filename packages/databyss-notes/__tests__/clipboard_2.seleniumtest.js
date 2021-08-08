@@ -2,11 +2,9 @@
 /* eslint-disable func-names */
 import assert from 'assert'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
-import { jsx as h } from './hyperscript'
-import { sanitizeEditorChildren } from './__helpers'
+import { sanitizeEditorChildren } from './util'
 import {
   getEditor,
-  getElementByTag,
   getElementById,
   enterKey,
   upKey,
@@ -19,58 +17,24 @@ import {
   downShiftKey,
   sendKeys,
   leftKey,
-  isSaved,
+  isAppInNotesSaved,
   escapeKey,
   sleep,
   tagButtonClick,
-} from './_helpers.selenium'
+  jsx as h,
+  login,
+  tagButtonListClick,
+} from './util.selenium'
 
 let driver
-let editor
 let slateDocument
 let actions
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
-
-const LOCAL_URL_EDITOR =
-  'http://localhost:6006/iframe.html?id=services-page--slate-5'
-const PROXY_URL_EDITOR =
-  'http://localhost:8080/iframe.html?id=services-page--slate-5'
 
 describe('editor clipboard', () => {
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    // OSX and safari are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-    actions = driver.actions({ bridge: true })
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-    await enterKey(actions)
-
-    // await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-    await enterKey(actions)
-
-    // await tagButtonClick('data-test-id="continueButton"', driver)
-
-    await getElementByTag(driver, '[data-test-id="logoutButton"]')
-
-    await driver.get(
-      process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
-    )
-
-    editor = await getEditor(driver)
-
-    editor.click()
-
-    await actions.click(editor)
-
-    //   actions = driver.actions()
-
+    await login(driver)
+    actions = driver.actions()
     done()
   })
 
@@ -78,11 +42,10 @@ describe('editor clipboard', () => {
     await sleep(100)
     await driver.quit()
     await sleep(100)
-    driver = null
-    await sleep(100)
   })
 
   it('should copy two entry fragments and paste them within an entry', async () => {
+    await downKey(actions)
     await sendKeys(actions, 'this is a test')
     await enterKey(actions)
     await enterKey(actions)
@@ -114,7 +77,7 @@ describe('editor clipboard', () => {
     await leftKey(actions)
     await leftKey(actions)
     await paste(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -126,6 +89,9 @@ describe('editor clipboard', () => {
     const expected = (
       <editor>
         <block type="ENTRY">
+          <text />
+        </block>
+        <block type="ENTRY">
           <text>this is a test</text>
         </block>
         <block type="ENTRY">
@@ -135,7 +101,7 @@ describe('editor clipboard', () => {
           <text>this is the third block</text>
         </block>
         <block type="ENTRY">
-          <text>is a test</text>
+          <text> is a test</text>
         </block>
         <block type="ENTRY">
           <text>
@@ -154,6 +120,7 @@ describe('editor clipboard', () => {
   })
 
   it('should copy an atomic block and maintain atomic id integrity', async () => {
+    await downKey(actions)
     await sendKeys(actions, '@this is a source test')
     await enterKey(actions)
     await upKey(actions)
@@ -165,23 +132,30 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await enterKey(actions)
     await paste(actions)
-    await isSaved(driver)
-
-    // double click
-    await tagButtonClick('data-test-atomic-edit="open"', driver)
+    await isAppInNotesSaved(driver)
 
     await tagButtonClick('data-test-atomic-edit="open"', driver)
+
+    await sleep(1000)
 
     await tagButtonClick('data-test-path="text"', driver)
+    await downKey(actions)
 
     await sendKeys(actions, ' with appended text')
 
-    await tagButtonClick('data-test-dismiss-modal="true"', driver)
+    await sleep(1000)
 
-    await isSaved(driver)
+    await tagButtonListClick(
+      'data-test-element="atomic-result-item"',
+      0,
+      driver
+    )
+
+    await isAppInNotesSaved(driver)
 
     await driver.navigate().refresh()
     await getEditor(driver)
+    upKey(actions)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -189,11 +163,13 @@ describe('editor clipboard', () => {
 
     const expected = (
       <editor>
-        <block type="SOURCE">
+        <block type="ENTRY">
           <text>
-            this is a source test with appended text
             <cursor />
           </text>
+        </block>
+        <block type="SOURCE">
+          <text>this is a source test with appended text</text>
         </block>
         <block type="ENTRY">
           <text>some inbetween text</text>
@@ -213,6 +189,7 @@ describe('editor clipboard', () => {
   })
 
   it('should copy atomic and entry fragment and paste it on an empty block', async () => {
+    await downKey(actions)
     await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
     await sendKeys(actions, 'with frag')
@@ -234,7 +211,7 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await enterKey(actions)
     await paste(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -245,6 +222,9 @@ describe('editor clipboard', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="SOURCE">
           <text>this is a source text</text>
         </block>
@@ -272,6 +252,7 @@ describe('editor clipboard', () => {
   })
 
   it('should select an atomic fragment and paste the whole atomic block', async () => {
+    await downKey(actions)
     await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
     await sendKeys(actions, 'in between text')
@@ -282,6 +263,7 @@ describe('editor clipboard', () => {
     await upKey(actions)
     await upKey(actions)
     await upKey(actions)
+    await downKey(actions)
     await downShiftKey(actions)
     await downShiftKey(actions)
     await downShiftKey(actions)
@@ -290,7 +272,7 @@ describe('editor clipboard', () => {
     await copy(actions)
     await downKey(actions)
     await paste(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -301,6 +283,9 @@ describe('editor clipboard', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="SOURCE">
           <text>this is a source text</text>
         </block>

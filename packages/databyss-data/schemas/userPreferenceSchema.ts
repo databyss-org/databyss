@@ -39,6 +39,9 @@ export const userPreferenceSchema: JSONSchema4 = {
         $ref: 'notification',
       },
     },
+    preferredCitationStyle: {
+      type: 'string',
+    },
   },
   required: ['groups', 'userId'],
   allOf: [{ $ref: 'pouchDb' }],

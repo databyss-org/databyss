@@ -7,7 +7,7 @@ let _c = {
     '#2F2E2D',
     '#3B3835',
     '#504d49',
-    '#A19A91',
+    '#958d83',
     '#D0CDC8',
     '#e3e1de',
     '#F0F0F0',
@@ -50,6 +50,8 @@ _c = {
   activeTextInputBackground: _c.white,
   pageBackground: 'transparent',
   scrollShadow: '#bbb',
+  inlineSource: '#cc6633',
+  inlineTopic: '#B82F00',
 }
 
 // legacy (deprecated)

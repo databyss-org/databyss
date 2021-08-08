@@ -1,10 +1,8 @@
 /** @jsx h */
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
-import { jsx as h } from './hyperscript'
-import { sanitizeEditorChildren } from './__helpers'
+import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { sanitizeEditorChildren } from './util'
 import {
   getEditor,
   getElementByTag,
@@ -17,66 +15,31 @@ import {
   upKey,
   downKey,
   backspaceKey,
-  isSaved,
-  tagButtonClick,
-} from './_helpers.selenium'
+  isAppInNotesSaved,
+  jsx as h,
+  login,
+} from './util.selenium'
 
 let driver
-let editor
 let slateDocument
 let actions
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
-
-const LOCAL_URL_EDITOR =
-  'http://localhost:6006/iframe.html?id=services-page--slate-5'
-const PROXY_URL_EDITOR =
-  'http://localhost:8080/iframe.html?id=services-page--slate-5'
-
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('connected editor', () => {
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    // OSX and safari are necessary
-    driver = await startSession({ platformName: OSX, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    await getElementByTag(driver, '[data-test-id="logoutButton"]')
-
-    await driver.get(
-      process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
-    )
-
-    editor = await getEditor(driver)
-
+    driver = await startSession({ platformName: WIN, browserName: CHROME })
+    await login(driver)
     actions = driver.actions()
-    await actions.click(editor)
-    await actions.perform()
-    await actions.clear()
-
     done()
   })
 
   afterEach(async () => {
     await sleep(100)
     await driver.quit()
-    driver = null
     await sleep(100)
   })
 
   it('should insert atomic source', async () => {
-    await sleep(300)
+    await downKey(actions)
 
     await sendKeys(actions, '@this is a test')
 
@@ -102,7 +65,7 @@ describe('connected editor', () => {
     await sendKeys(actions, '@this is a test')
     await enterKey(actions)
 
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await sleep(1000)
 
     slateDocument = await getElementById(driver, 'slateDocument')
@@ -111,6 +74,9 @@ describe('connected editor', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="SOURCE">
           <text>
             this is a test
@@ -143,7 +109,7 @@ describe('connected editor', () => {
   })
 
   it('should provide previously entered sources as suggestions', async () => {
-    await sleep(300)
+    await downKey(actions)
     await sendKeys(actions, '@this is a test')
     // verify if there are no suggestions the suggestion menu appears
     await getElementByTag(driver, '[data-test-block-menu="OPEN_LIBRARY"]')
@@ -163,11 +129,11 @@ describe('connected editor', () => {
     await sendKeys(actions, 'this is more dummy text')
     await enterKey(actions)
     await enterKey(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     await sendKeys(actions, '@test this')
 
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await sleep(1000)
 
     // FIXME: duration to wait to ensure suggestions length is availble is not consistent
@@ -184,7 +150,7 @@ describe('connected editor', () => {
   })
 
   it('should test data integrity in round trip testing', async () => {
-    await sleep(300)
+    await downKey(actions)
     await sendKeys(actions, 'this is an entry with ')
     await toggleBold(actions)
     await sendKeys(actions, 'bold')
@@ -220,7 +186,7 @@ describe('connected editor', () => {
     await downKey(actions)
     await downKey(actions)
     await sendKeys(actions, 'last entry')
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     // refresh page
     await driver.navigate().refresh()
@@ -232,6 +198,9 @@ describe('connected editor', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>this is an entry with </text>
           <text bold>bold</text>

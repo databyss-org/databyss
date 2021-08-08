@@ -4,7 +4,7 @@ import { indexPage } from '@databyss-org/editor/lib/util'
 import { getAtomicClosureText } from './'
 import { Block, IndexPageResult, DocumentDict } from '../interfaces'
 import { Page } from '../interfaces/Page'
-import { CacheDict } from '../interfaces/Block'
+import { BlockType, CacheDict } from '../interfaces/Block'
 
 interface JoinBlockRelationsArgs {
   blockRelationDict: CacheDict<BlockRelation>
@@ -68,7 +68,7 @@ export const getBlocksFromBlockRelations = <T extends Block>(
   return blocks
 }
 
-const populatePage = ({
+export const populatePage = ({
   page,
   blocks,
 }: {
@@ -119,7 +119,10 @@ export const addPagesToBlockRelation = ({
       blocks: p.blocks,
     }).forEach((r: IndexPageResult) => {
       // do not allow duplicates
-      if (!_duplicateDict[`${r.block + r.relatedBlock}`]) {
+      if (
+        blocks[r.block].type !== BlockType.Entry ||
+        !_duplicateDict[`${r.block + r.relatedBlock}`]
+      ) {
         relations.push(r)
         _duplicateDict[`${r.block + r.relatedBlock}`] = true
       }

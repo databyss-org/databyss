@@ -239,8 +239,7 @@ export const searchText = async (query) => {
     query,
     fields: ['text.textValue'],
     include_docs: true,
-    filter: (doc: any) =>
-      doc.type === BlockType.Entry && doc.doctype === DocumentType.Block,
+    filter: (doc: any) => doc.doctype === DocumentType.Block,
     mm: `${_percentageToMatch}%`,
   })
 

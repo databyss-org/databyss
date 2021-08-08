@@ -10,7 +10,7 @@ const IS_CI =
   (typeof process.env.CI !== 'string' ||
     process.env.CI.toLowerCase() !== 'false')
 
-const ARCHIVE_FILENAME = IS_CI ? 'sc-4.5.4-linux.tar.gz' : 'sc-4.5.4-osx.zip'
+const ARCHIVE_FILENAME = IS_CI ? 'sc-4.6.1-linux.tar.gz' : 'sc-4.6.1-osx.zip'
 const ARCHIVE_DIRNAME = ARCHIVE_FILENAME.replace(/\.zip|\.tar\.gz/, '')
 const ARCHIVE_PATH = `${os.tmpdir()}/${ARCHIVE_FILENAME}`
 const EXTRACTED_PATH = `${os.tmpdir()}/${ARCHIVE_DIRNAME}`

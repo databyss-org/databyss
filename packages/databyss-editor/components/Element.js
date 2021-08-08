@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
-import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
+import { Text, View, BaseControl } from '@databyss-org/ui/primitives'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
-import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from '@databyss-org/slate-react'
 import { Range } from '@databyss-org/slate'
@@ -12,7 +11,6 @@ import { useEditorPageContext } from '@databyss-org/services'
 import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
-import { showAtomicModal } from '../lib/atomicModal'
 import {
   SuggestMenu,
   SuggestSources,
@@ -21,6 +19,8 @@ import {
 } from './Suggest'
 import { EmbedMedia } from './EmbedMedia'
 import SuggestLinks from './Suggest/SuggestLinks'
+import { BlockType } from '../interfaces'
+import { getAccountFromLocation } from '../../databyss-services/session/utils'
 // browser still takes some time to process the spellcheck
 const SPELLCHECK_DEBOUNCE_TIME = 300
 
@@ -53,22 +53,29 @@ const Element = ({ attributes, children, element, readOnly }) => {
 
   const editorContext = useEditorContext()
 
-  const navigationContext = useNavigationContext()
+  const { navigate } = useNavigationContext()
 
   const registerBlockRefByIndex = useEditorPageContext(
     (c) => c && c.registerBlockRefByIndex
   )
-
-  const onAtomicMouseDown = (e) => {
-    e.preventDefault()
-    showAtomicModal({ editorContext, navigationContext, editor })
-  }
 
   const blockIndex = ReactEditor.findPath(editor, element)[0]
   const block = editorContext ? editorContext.state.blocks[blockIndex] : {}
   const previousBlock = editorContext
     ? editorContext.state.blocks[blockIndex - 1]
     : {}
+
+  const _groupId = getAccountFromLocation()
+  const _blockPath = {
+    [BlockType.Source]: 'sources',
+    [BlockType.Topic]: 'topics',
+  }[block.type]
+  const _href = `/${_groupId}/${_blockPath}/${block._id}`
+
+  const onAtomicMouseDown = (e) => {
+    e.preventDefault()
+    navigate(_href)
+  }
 
   // spellcheck is debounced on element change
   // state is used to trigger a re-render
@@ -237,7 +244,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
           )}
 
           {isAtomicInlineType(element.type) ? (
-            <View
+            <BaseControl
               alignSelf="flex-start"
               flexWrap="nowrap"
               display="inline"
@@ -254,11 +261,8 @@ const Element = ({ attributes, children, element, readOnly }) => {
                 cursor: selHasRange ? 'text' : 'pointer',
                 caretColor: block.__isActive ? 'transparent' : 'currentcolor',
               }}
-              {...(block.__isActive &&
-              !readOnly &&
-              !isAtomicClosure(element.type)
-                ? { onMouseDown: onAtomicMouseDown }
-                : {})}
+              onPress={onAtomicMouseDown}
+              href={_href}
             >
               <Text
                 variant={getAtomicStyle(element.type)}
@@ -267,16 +271,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
               >
                 {children}
               </Text>
-              {block.__isActive && !isAtomicClosure(element.type) && !readOnly && (
-                <View display="inline">
-                  <Button variant="editSource" onPress={onAtomicMouseDown}>
-                    <Icon sizeVariant="tiny" color="background.5">
-                      <PenSVG />
-                    </Icon>
-                  </Button>
-                </View>
-              )}
-            </View>
+            </BaseControl>
           ) : (
             <Text {...attributes}>{children}</Text>
           )}

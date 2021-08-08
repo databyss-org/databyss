@@ -1,34 +1,21 @@
 import React from 'react'
 
-import { BaseControl, RawHtml, Text, View } from '@databyss-org/ui/primitives'
-import { stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import { Citation, useNavigationContext } from '@databyss-org/ui/components'
-import { pxUnits } from '../../theming/views'
+import { BaseControl, Text, View } from '@databyss-org/ui/primitives'
+import { CitationView, useNavigationContext } from '@databyss-org/ui/components'
+import { useUserPreferencesContext } from '../../hooks'
 
 export const SourcesResults = ({ entries }) => {
-  const getPreferredCitationStyle = useSourceContext(
-    (c) => c.getPreferredCitationStyle
-  )
+  const { getPreferredCitationStyle } = useUserPreferencesContext()
   const preferredCitationStyle = getPreferredCitationStyle()
 
   const { getAccountFromLocation } = useNavigationContext()
 
   // render methods
   const renderStyledCitation = (citation) => (
-    <Citation
+    <CitationView
       citation={citation}
       formatOptions={{ styleId: preferredCitationStyle }}
-      childViewProps={{
-        marginTop: pxUnits(10),
-        marginBottom: pxUnits(10),
-      }}
-      citationTextProps={{
-        color: 'gray.3',
-        style: {
-          lineHeight: 1.5,
-        },
-      }}
+      textProps={{ color: 'text.0' }}
     />
   )
 
@@ -36,27 +23,25 @@ export const SourcesResults = ({ entries }) => {
     entries?.map((entry, index) => {
       if (entry.source?.text) {
         return (
-          <View key={index} mb="em" widthVariant="content">
-            <BaseControl
-              data-test-element="source-results"
-              href={`/${getAccountFromLocation()}/sources/${entry.source._id}`}
-              py="small"
-              hoverColor="background.2"
-              activeColor="background.3"
-              userSelect="auto"
-              childViewProps={{ flexDirection: 'row' }}
-            >
-              <Text variant="bodyNormalSemibold">
-                <RawHtml html={stateBlockToHtml(entry.source)} />
+          <BaseControl
+            key={index}
+            mb="small"
+            data-test-element="source-results"
+            href={`/${getAccountFromLocation()}/sources/${entry.source._id}`}
+            py="tiny"
+            userSelect="text"
+          >
+            <View>
+              <Text variant="uiTextSmall" color="text.3" userSelect="none">
+                {entry.source.name.textValue}
               </Text>
-            </BaseControl>
-
+            </View>
             {renderStyledCitation(entry.citation)}
-          </View>
+          </BaseControl>
         )
       }
       return null
     })
 
-  return render()
+  return <View widthVariant="content">{render()}</View>
 }

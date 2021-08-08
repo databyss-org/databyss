@@ -1,30 +1,21 @@
-import { useQuery } from 'react-query'
-import { httpPost } from '../../../databyss-services/lib/requestApi'
-
-export interface QueryOptions {
-  includeIds?: string[] | null
-}
-
-export interface UseDocumentsOptions extends QueryOptions {
-  enabled?: boolean
-}
+import { useQuery, UseQueryOptions } from 'react-query'
+import { EmbedDetail } from '@databyss-org/services/interfaces/Block'
+import { httpPost } from '@databyss-org/services/lib/requestApi'
 
 export const useOpenGraph = (
   // should be url
   url: string,
-  options: UseDocumentsOptions = { enabled: true }
+  options?: UseQueryOptions
 ) => {
   const queryKey = url
 
-  const query = useQuery(
+  const query = useQuery<EmbedDetail>(
     queryKey,
     async () => {
       const _res = await httpPost('/media/opengraph', { url })
       return _res
     },
-    {
-      enabled: options.enabled,
-    }
+    options as UseQueryOptions<EmbedDetail>
   )
 
   return query

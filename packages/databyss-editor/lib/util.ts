@@ -11,7 +11,10 @@ import {
 import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import { EditorState, PagePath } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
-import { BlockRelationshipType } from '../../databyss-services/interfaces/Block'
+import {
+  BlockRelationshipType,
+  Source,
+} from '../../databyss-services/interfaces/Block'
 import {
   RangeType,
   InlineTypes,
@@ -131,7 +134,7 @@ export const withMetaData = (state: EditorState) => ({
   operations: [],
 })
 
-const getBlockPrefix = (type: BlockType): string => {
+export const getBlockPrefix = (type: BlockType): string => {
   const _type: { [key: string]: string } = {
     [BlockType.Source]: '@',
     [BlockType.Topic]: '#',
@@ -248,10 +251,13 @@ export const indexPage = ({
     [BlockType.Source]: null,
     [BlockType.Topic]: null,
   }
-  const blockRelations: IndexPageResult[] = []
+  const _blockRelations: IndexPageResult[] = []
 
   if (pageId) {
     blocks.forEach((block, index) => {
+      let _inlineRelations: IndexPageResult[] = []
+      const _headingRelations: IndexPageResult[] = []
+
       const _closureType: BlockType = getClosureType(block.type)
 
       const _openerType = getClosureTypeFromOpeningType(block.type)
@@ -261,37 +267,63 @@ export const indexPage = ({
       } else if (_openerType) {
         currentAtomics[block.type] = block
       }
-      // if current block is not empty
-      else if (block.text?.textValue.length) {
+      // console.log('[indexPage]', block, currentAtomics)
+      // if not a closure block and current block is not empty
+      if (!_closureType && block.text?.textValue.length) {
         // before indexing the atomic, check if block contains any inline atomics
-        let _inlineRelations: IndexPageResult[] = []
+
         // inline block indexing
         if (pageId) {
           // returns an array of block relations
           _inlineRelations = getInlineBlockRelations(block, pageId, index)
         }
-        if (_inlineRelations.length) {
-          blockRelations.push(..._inlineRelations)
-        }
 
+        // if (_inlineRelations.length) {
+        //   _inlineRelations.forEach((r) => {
+        //     r.activeInlines = _inlineRelations
+        //   })
+        //   blockRelations.push(..._inlineRelations)
+        // }
+
+        // collect heading relations
         for (const [, value] of Object.entries(currentAtomics)) {
           if (value) {
-            blockRelations.push({
+            const _relatedBlockText = {
+              [BlockType.Topic]: value.text.textValue,
+              [BlockType.Source]: (value as Source).name?.textValue,
+            }[value.type]
+            _headingRelations.push({
               block: block._id,
               relatedBlock: value._id,
               blockText: block.text,
               relatedBlockType: value.type,
+              relatedBlockText: _relatedBlockText,
               relationshipType: BlockRelationshipType.HEADING,
               page: pageId,
               blockIndex: index,
             })
           }
         }
+
+        _blockRelations.push(
+          ..._headingRelations.map((hr) => ({
+            ...hr,
+            activeHeadings: _headingRelations,
+            activeInlines: _inlineRelations,
+          }))
+        )
+        _blockRelations.push(
+          ..._inlineRelations.map((ir) => ({
+            ...ir,
+            activeHeadings: _headingRelations,
+            activeInlines: _inlineRelations,
+          }))
+        )
       }
     })
   }
 
-  return blockRelations
+  return _blockRelations
 }
 
 export const slateBlockToHtmlWithSearch = (

@@ -24,7 +24,6 @@ import { PublicationTypes } from '@databyss-org/services/sources/constants/Publi
 import { SeasonOptions } from '@databyss-org/services/sources/constants/SeasonOptions'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { useCitationContext } from '@databyss-org/services/citations/CitationProvider'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
@@ -32,6 +31,7 @@ import EditAuthorFields from './EditAuthorFields'
 import LabeledDropDownControl from '../../primitives/Control/LabeledDropDownControl'
 
 import MakeLoader from '../Loaders/MakeLoader'
+import { useUserPreferencesContext } from '../../hooks'
 
 // consts
 const emptyText = { textValue: '', ranges: [] }
@@ -99,12 +99,10 @@ const EditSourceForm = (props) => {
 
   const { isOnline } = useNotifyContext()
   const { generateCitation } = useCitationContext()
-  const getPreferredCitationStyle = useSourceContext(
-    (c) => c.getPreferredCitationStyle
-  )
-  const setPreferredCitationStyle = useSourceContext(
-    (c) => c.setPreferredCitationStyle
-  )
+  const {
+    getPreferredCitationStyle,
+    setPreferredCitationStyle,
+  } = useUserPreferencesContext()
   const preferredCitationStyle = getPreferredCitationStyle()
 
   const [citationStyleOption, setCitationStyleOption] = useState(

@@ -36,7 +36,6 @@ import {
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
-import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import {
@@ -52,6 +51,8 @@ import {
   enterAtEndOfInlineAtomic,
   onLinkBackspace,
 } from '../lib/inlineUtils'
+import { getAccountFromLocation } from '../../databyss-services/session/utils'
+import { BlockType } from '../interfaces'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -64,7 +65,7 @@ const ContentEditable = ({
   firstBlockIsTitle,
 }) => {
   const editorContext = useEditorContext()
-  const navigationContext = useNavigationContext()
+  const { navigate } = useNavigationContext()
 
   const historyContext = useHistoryContext()
 
@@ -123,7 +124,9 @@ const ContentEditable = ({
 
   // if focus index is provides, move caret
   useEffect(() => {
+    console.log('[ContentEditable] focusIndex', focusIndex)
     if (typeof focusIndex === 'number' && editor.children) {
+      console.log('[ContentEditable] focusIndexIsNumber')
       const _point = { index: focusIndex, offset: 0 }
       const _selection = { anchor: _point, focus: _point }
       const _slateSelection = stateSelectionToSlateSelection(
@@ -250,19 +253,12 @@ const ContentEditable = ({
   }, [currentLeaf, editor.selection?.focus.offset])
 
   const onInlineAtomicClick = (inlineData) => {
-    // pass editorContext
-    const inlineAtomicData = {
-      refId: inlineData.refId,
-      type: inlineData.type,
-    }
-    const modalData = {
-      editorContextRef,
-      editorContext,
-      editor,
-      navigationContext,
-      inlineAtomicData,
-    }
-    showAtomicModal(modalData)
+    const _groupId = getAccountFromLocation()
+    const _blockPath = {
+      [BlockType.Source]: 'sources',
+      [BlockType.Topic]: 'topics',
+    }[inlineData.type]
+    navigate(`/${_groupId}/${_blockPath}/${inlineData.refId}`)
   }
 
   return useMemo(() => {
@@ -504,6 +500,24 @@ const ContentEditable = ({
         historyContext.redo()
       }
 
+      if (Hotkeys.isSelectAll(event)) {
+        console.log('[ContentEditable] isSelectAll')
+        event.preventDefault()
+        const _sel = {
+          anchor: { offset: 0, index: 1 },
+          focus: {
+            index: editor.children.length - 1,
+            offset: state.blocks[state.blocks.length - 1].text.textValue.length,
+          },
+        }
+        const _ssel = stateSelectionToSlateSelection(editor.children, _sel)
+
+        window.requestAnimationFrame(() => {
+          Transforms.select(editor, _ssel)
+        })
+        return
+      }
+
       // UI
       if (event.key === 'ArrowUp') {
         const _currentIndex = editor.selection.focus.path[0]
@@ -598,7 +612,10 @@ const ContentEditable = ({
             !isAtomicClosure(_focusedBlock.type)
           ) {
             event.preventDefault()
-            showAtomicModal({ editorContext, navigationContext, editor })
+            onInlineAtomicClick({
+              type: _focusedBlock.type,
+              refId: _focusedBlock._id,
+            })
           }
           // if closure block is highlighted prevent `enter` key
           if (_focusedBlock.__isActive && isAtomicClosure(_focusedBlock.type)) {

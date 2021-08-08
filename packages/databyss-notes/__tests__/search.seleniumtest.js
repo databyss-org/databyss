@@ -1,57 +1,33 @@
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getEditor,
   isAppInNotesSaved,
-  getElementByTag,
   getElementsByTag,
   sendKeys,
   enterKey,
   rightShiftKey,
   sleep,
-  logout,
   tagButtonClick,
-} from './_helpers.selenium'
+  login,
+} from './util.selenium'
 
 let driver
 let actions
-const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://localhost:3000'
-
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('entry search', () => {
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    // OSX and chrome are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    // wait for editor to be visible
-    await getEditor(driver)
-
+    await login(driver)
     actions = driver.actions()
-
     done()
   })
 
-  afterEach(async (done) => {
-    await logout(driver)
+  afterEach(async () => {
+    await sleep(100)
     await driver.quit()
-
-    done()
+    await sleep(100)
   })
 
   // should search an entry at the middle of an entry
@@ -103,7 +79,7 @@ describe('entry search', () => {
     )
 
     await sleep(6000)
-    assert.equal(searchPageEntryResults.length, 3)
+    assert.equal(searchPageEntryResults.length, 4)
 
     // get text from entry search results
     const results = await Promise.all(
@@ -112,13 +88,13 @@ describe('entry search', () => {
         return _text.trim()
       })
     )
-    assert.equal(results[0], 'this keyword something will be searched')
-
-    assert.equal(results[1], 'this will also have keyword something')
-
-    assert.equal(
-      results[2],
-      'something keyword appears at the start of an entry'
+    assert(results[0].startsWith('this keyword something will be searched'))
+    assert(results[1].startsWith('this will also have keyword something'))
+    assert(results[2].startsWith('this has keyword something in source'))
+    assert(
+      results[3].startsWith(
+        'something keyword appears at the start of an entry'
+      )
     )
 
     // clear the search element
@@ -257,8 +233,8 @@ describe('entry search', () => {
       })
     )
 
-    const _idx = entrySearchResultArray.findIndex(
-      (e) => e === 'keyword appears at the end of an entry something'
+    const _idx = entrySearchResultArray.findIndex((e) =>
+      e.startsWith('keyword appears at the end of an entry something')
     )
 
     await entrySearchResult[_idx].click()

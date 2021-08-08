@@ -1,9 +1,7 @@
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
-  getEditor,
   getElementByTag,
   isAppInNotesSaved,
   sleep,
@@ -13,46 +11,24 @@ import {
   downKey,
   logout,
   tagButtonClick,
-} from './_helpers.selenium'
+  login,
+} from './util.selenium'
 
 let driver
 // let editor
 let actions
-const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://localhost:3000'
 
-const random = Math.random().toString(36).substring(7)
-
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
-
-describe('app sticky header', () => {
+describe('editor sticky header', () => {
   beforeEach(async (done) => {
-    // OSX and chrome are necessary
     driver = await startSession({ platformName: OSX, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    // wait for editor to be visible
-    await getEditor(driver)
-
+    await login(driver)
     actions = driver.actions()
-
     done()
   })
 
   afterEach(async (done) => {
     await logout(driver)
     await driver.quit()
-
     done()
   })
 

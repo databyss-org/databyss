@@ -1,5 +1,4 @@
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import innerText from 'innertext'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
@@ -12,46 +11,28 @@ import {
   sendKeys,
   enterKey,
   backspaceKey,
-  logout,
   tagButtonClick,
   tagButtonListClick,
   getEditorElements,
-} from './_helpers.selenium'
+  login,
+} from './util.selenium'
 
 let driver
 let actions
-const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://localhost:3000'
-
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('notes app', () => {
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    // OSX and chrome are necessary
     driver = await startSession({ platformName: OSX, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
+    await login(driver)
     actions = driver.actions()
-
+    await sleep(500)
     done()
   })
 
-  afterEach(async (done) => {
-    await logout(driver)
+  afterEach(async () => {
+    await sleep(100)
     await driver.quit()
-
-    done()
+    await sleep(100)
   })
 
   it('should switch page names and verify atomics appear on the sidebar', async () => {
@@ -179,53 +160,4 @@ describe('notes app', () => {
       'Editor test two'
     )
   })
-
-  // it('disable in offline mode', async () => {
-  //   const newPageButton = await getElementByTag(
-  //     driver,
-  //     '[data-test-element="new-page-button"]'
-  //   )
-
-  //   await newPageButton.click()
-
-  //   const editor = await getEditor(driver)
-  //   editor.sendKeys('Offline test')
-  //   await sleep(3000)
-
-  //   // toggle offline
-  //   if (!process.env.LOCAL_ENV) {
-  //     await driver.executeScript('sauce:throttleNetwork', {
-  //       condition: 'offline',
-  //     })
-  //   }
-
-  //   let isEnabled
-
-  //   try {
-  //     await newPageButton.click()
-  //     isEnabled = true
-  //   } catch {
-  //     isEnabled = false
-  //   }
-
-  //   assert.equal(isEnabled, false)
-
-  //   //   toggle online
-  //   if (!process.env.LOCAL_ENV) {
-  //     await driver.executeScript('sauce:throttleNetwork', {
-  //       condition: 'online',
-  //     })
-  //   }
-
-  //   await sleep(500)
-
-  //   try {
-  //     await newPageButton.click()
-  //     isEnabled = true
-  //   } catch {
-  //     isEnabled = false
-  //   }
-
-  //   assert.equal(isEnabled, true)
-  // })
 })

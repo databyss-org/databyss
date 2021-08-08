@@ -3,7 +3,10 @@ import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProv
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import { Text, RawHtml } from '@databyss-org/ui/primitives'
-import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
+import {
+  getBlockPrefix,
+  slateBlockToHtmlWithSearch,
+} from '@databyss-org/editor/lib/util'
 import {
   IndexResultsContainer,
   IndexResultTitle,
@@ -14,6 +17,7 @@ import { useSearchEntries } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { SearchEntriesResultPage } from '@databyss-org/data/pouchdb/entries/lib/searchEntries'
 import { IndexPageView } from './IndexPageContent'
+import { IndexResultTags } from './IndexResults'
 
 export const SearchContent = () => {
   const { getAccountFromLocation } = useNavigationContext()
@@ -31,24 +35,57 @@ export const SearchContent = () => {
             dataTestElement="search-result-page"
           />
 
-          {r.entries.map((e, k) => (
-            <IndexResultDetails
-              key={k}
-              dataTestElement="search-result-entries"
-              href={`/${getAccountFromLocation()}/pages/${r.pageId}#${
-                e.entryId
-              }`}
-              text={
-                <RawHtml
-                  html={slateBlockToHtmlWithSearch(
-                    { text: e.text, type: BlockType.Entry, _id: e.entryId },
-                    // only allow alphanumeric, hyphen and space
-                    searchQuery.replace(/[^a-zA-Z0-9À-ž-' ]/gi, '')
-                  )}
-                />
-              }
-            />
-          ))}
+          {r.entries.map((e, k) => {
+            if (e.index === 0) {
+              return null
+            }
+            const _variant = {
+              [BlockType.Topic]: 'bodyNormalSemibold',
+              [BlockType.Source]: 'bodyNormalUnderline',
+            }[e.type]
+            let _anchor = e.entryId
+            if (e.type !== BlockType.Entry) {
+              _anchor += `/${e.index}`
+            }
+
+            // build extra tags
+            const _extraTags: string[] = []
+            if (e.type === BlockType.Entry && e.activeHeadings?.length) {
+              _extraTags.push(
+                ...e.activeHeadings
+                  .filter((hr) => !!hr.relatedBlockText)
+                  .map((hr) => {
+                    const _prefix = getBlockPrefix(
+                      hr.relatedBlockType as BlockType
+                    )
+                    return _prefix + hr.relatedBlockText
+                  })
+              )
+            }
+            return (
+              <IndexResultDetails
+                key={k}
+                dataTestElement="search-result-entries"
+                href={`/${getAccountFromLocation()}/pages/${
+                  r.pageId
+                }#${_anchor}`}
+                text={
+                  <>
+                    <RawHtml
+                      variant={_variant}
+                      html={slateBlockToHtmlWithSearch(
+                        { text: e.text, type: BlockType.Entry, _id: e.entryId },
+                        // only allow alphanumeric, hyphen and space
+                        searchQuery.replace(/[^a-zA-Z0-9À-ž-' ]/gi, '')
+                      )}
+                      mr="tiny"
+                    />
+                    <IndexResultTags tags={_extraTags} />
+                  </>
+                }
+              />
+            )
+          })}
         </IndexResultsContainer>
       ))
     ) : (
