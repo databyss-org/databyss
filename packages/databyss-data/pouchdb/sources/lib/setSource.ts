@@ -1,6 +1,6 @@
 import { Source, BlockType } from '@databyss-org/services/interfaces'
 import { DocumentType } from '../../interfaces'
-import { upsert } from '../../utils'
+import { upsertImmediate } from '../../utils'
 import { InlineTypes } from '../../../../databyss-services/interfaces/Range'
 import { updateInlines } from '../../../../databyss-editor/lib/inlineUtils/updateInlines'
 
@@ -21,7 +21,7 @@ export const setSource = async (data: Source) => {
     sharedWithGroups,
   }
 
-  await upsert({
+  await upsertImmediate({
     doctype: DocumentType.Block,
     _id,
     doc: blockFields,

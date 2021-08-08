@@ -44,15 +44,23 @@ export const PageContainer = React.memo(
     useEffect(() => {
       // if anchor link exists, scroll to anchor
       if (anchor) {
-        // get index value of anchor on page
-        const _index = page.blocks.findIndex((b) => b._id === anchor)
+        let _index = -1
+        // if anchor contains '/:blockIndex', use the block index
+        if (anchor.match('/')) {
+          _index = parseInt(anchor.split('/')[1], 10)
+        } else {
+          // get index value of anchor on page
+          _index = page.blocks.findIndex((b) => b._id === anchor)
+        }
+        console.log('[PageContent] index', _index)
         if (_index > -1) {
           setIndex(_index)
           const _ref = getBlockRefByIndex(_index)
+          console.log('[PageContent] REF', _ref)
           if (_ref) {
             window.requestAnimationFrame(() => {
               scrollIntoView(_ref)
-              navigate(location.pathname)
+              navigate(location.pathname, { replace: true })
             })
           }
         }

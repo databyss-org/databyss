@@ -2,13 +2,13 @@ import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import { Topic } from '@databyss-org/services/interfaces'
 import { DocumentType } from '../../interfaces'
-import { upsert } from '../../utils'
+import { upsertImmediate } from '../../utils'
 import { updateInlines } from '../../../../databyss-editor/lib/inlineUtils/updateInlines'
 
 const setTopic = async (data: Topic) => {
   const { text, _id } = data
 
-  await upsert({
+  await upsertImmediate({
     doctype: DocumentType.Block,
     _id,
     doc: {

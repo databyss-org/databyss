@@ -1,5 +1,4 @@
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
@@ -19,44 +18,25 @@ import {
   tagButtonClick,
   tagButtonListClick,
   upKey,
-} from './_helpers.selenium'
+  login,
+} from './util.selenium'
 
 let driver
 let actions
-const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://localhost:3000'
-
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('inline atomic', () => {
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    // OSX and chrome are necessary
     driver = await startSession({ platformName: OSX, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    await getEditor(driver)
-
+    await login(driver)
     actions = driver.actions()
-
     done()
   })
 
-  afterEach(async (done) => {
+  afterEach(async () => {
+    await sleep(100)
     await logout(driver)
     await driver.quit()
-
-    done()
+    await sleep(100)
   })
 
   it('should test the integrity of inline atomics', async () => {
@@ -127,8 +107,8 @@ describe('inline atomic', () => {
       '[data-test-element="atomic-result-item"]'
     )
 
-    // assure two results are listed under entry
-    assert.equal(topicEntries.length, 2)
+    // assure 3 results are listed under entry (2 entries, 1 heading)
+    assert.equal(topicEntries.length, 3)
 
     // change the name of the inline atomic
     await tagButtonListClick(
@@ -154,8 +134,6 @@ describe('inline atomic', () => {
 
     await sendKeys(actions, 'new topic')
 
-    await tagButtonClick('data-test-dismiss-modal="true"', driver)
-
     await tagButtonClick('data-test-element="search-input"', driver)
 
     await sleep(500)
@@ -178,8 +156,8 @@ describe('inline atomic', () => {
       '[data-test-element="search-result-entries"]'
     )
 
-    // assure two results are listed under entry
-    assert.equal(topicEntries.length, 2)
+    // assure 3 results are listed under entry
+    assert.equal(topicEntries.length, 3)
 
     // change the name of the inline atomic
     await tagButtonListClick(
@@ -210,7 +188,7 @@ describe('inline atomic', () => {
     await isAppInNotesSaved(driver)
 
     // check the sidebar for topic and see results
-    // only one result should be present
+    // only two results should be present (header and entry)
     await tagButtonListClick('data-test-element="page-sidebar-item"', 1, driver)
 
     topicResults = await await getElementsByTag(
@@ -226,7 +204,7 @@ describe('inline atomic', () => {
     )
 
     // assure two results are listed under entry
-    assert.equal(topicEntries.length, 1)
+    assert.equal(topicEntries.length, 2)
     await tagButtonListClick(
       'data-test-element="atomic-result-item"',
       0,

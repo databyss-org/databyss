@@ -1,12 +1,10 @@
 /** @jsx h */
 /* eslint-disable func-names */
-import { By, Key } from 'selenium-webdriver'
+import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession } from '@databyss-org/ui/lib/saucelabs'
-import { jsx as h } from './hyperscript'
-import { sanitizeEditorChildren } from './__helpers'
+import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { sanitizeEditorChildren } from './util'
 import {
-  getEditor,
   sleep,
   toggleBold,
   toggleItalic,
@@ -14,33 +12,27 @@ import {
   singleHighlight,
   getElementById,
   tagButtonClick,
-} from './_helpers.selenium'
+  jsx as h,
+  login,
+  downKey,
+} from './util.selenium'
 
 let driver
-let editor
 let slateDocument
 let actions
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=selenium-tests--slate-5'
-const PROXY_URL = 'http://localhost:8080/iframe.html?id=selenium-tests--slate-5'
-
-// export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('format text in editor', () => {
   beforeEach(async (done) => {
-    // OSX and safari are necessary
-    driver = await startSession()
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-    editor = await getEditor(driver)
-
-    slateDocument = await driver.findElement(By.id('slateDocument'))
+    driver = await startSession({ platformName: WIN, browserName: CHROME })
+    await login(driver)
     actions = driver.actions()
+    await downKey(actions)
     done()
   })
 
   afterEach(async () => {
     await sleep(100)
     await driver.quit()
-    driver = null
     await sleep(100)
   })
 
@@ -48,6 +40,7 @@ describe('format text in editor', () => {
     await sleep(300)
     await actions.sendKeys('first word should be italic')
     await actions.sendKeys(Key.ARROW_UP)
+    await singleHighlight(actions)
     await singleHighlight(actions)
     await singleHighlight(actions)
     await singleHighlight(actions)
@@ -66,6 +59,9 @@ describe('format text in editor', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text italic>
             <anchor />
@@ -94,6 +90,7 @@ describe('format text in editor', () => {
     await singleHighlight(actions)
     await singleHighlight(actions)
     await singleHighlight(actions)
+    await singleHighlight(actions)
     await actions.perform()
     await sleep(1000)
 
@@ -106,6 +103,9 @@ describe('format text in editor', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text location>
             <anchor />
@@ -141,6 +141,9 @@ describe('format text in editor', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="SOURCE">
           <text>this should be </text>
           <text bold>bold </text>
@@ -179,6 +182,9 @@ describe('format text in editor', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="SOURCE">
           <text>this should not be a location </text>
           <text bold italic>

@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "2.2.5",
+  "version": "2.3.0",
   "description": "Expressive database management tools for writers and researchers",
   "main": "index.js",
   "repository": {
@@ -135,7 +135,7 @@
         "displayName": "test-selenium",
         "testEnvironment": "node",
         "testMatch": [
-          "<rootDir>/packages/databyss-editor/**/*.seleniumtest.js"
+          "<rootDir>/packages/**/*.seleniumtest.js"
         ],
         "moduleFileExtensions": [
           "js"

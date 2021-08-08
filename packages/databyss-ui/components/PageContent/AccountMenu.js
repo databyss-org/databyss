@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Text, BaseControl, View, Separator } from '@databyss-org/ui/primitives'
 import LogoutSvg from '@databyss-org/ui/assets/log-out.svg'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
@@ -23,7 +23,6 @@ const AccountMenu = () => {
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [authToken, setAuthToken] = useState()
 
   const onLogout = () => {
     if (!isOnline || isDbBusy) {
@@ -39,18 +38,7 @@ const AccountMenu = () => {
     }
   }
 
-  /*
-  confirms a token is in local pouch in order to show account menu
-  */
-
-  useEffect(() => {
-    const _token = getAuthToken()
-    if (_token) {
-      setAuthToken(true)
-    }
-  }, [])
-
-  return authToken ? (
+  return getAuthToken() ? (
     <AccountLoader>
       {(userInfo) => {
         if (!userInfo) {
@@ -117,11 +105,11 @@ const AccountMenu = () => {
               data-test-element="account-menu"
             >
               <View
+                width={20}
+                height={20}
                 borderVariant="round"
                 borderRadius="50%"
                 backgroundColor="blue.0"
-                width={20}
-                height={20}
                 alignItems="center"
                 justifyContent="center"
               >
@@ -166,7 +154,9 @@ const AccountMenu = () => {
         )
       }}
     </AccountLoader>
-  ) : null
+  ) : (
+    <View width="38px" height="38px" />
+  )
 }
 
 export default AccountMenu

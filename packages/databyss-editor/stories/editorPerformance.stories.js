@@ -3,16 +3,13 @@ import { storiesOf } from '@storybook/react'
 import { View, Text, Button } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import fetchMock from 'fetch-mock'
-import SourceProvider from '@databyss-org/services/sources/SourceProvider'
-import sourceReducer, {
-  initialState as sourceInitialState,
-} from '@databyss-org/services/sources/reducer'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ContentEditable from '../components/ContentEditable'
 import EditorProvider from '../state/EditorProvider'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import { SMALL, MED, LARGE, generateState } from './__tests__/__helpers'
 import FPSStats from './__tests__/FPS'
+import { UserPreferencesProvider } from '../../databyss-ui/hooks'
 
 const _res = {
   totalItems: 1,
@@ -175,11 +172,11 @@ const EditorWithProvider = () => {
 }
 
 const EditorWithModals = () => (
-  <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+  <UserPreferencesProvider>
     <NavigationProvider>
       <EditorWithProvider initialState={generateState('SMALL')} />
     </NavigationProvider>
-  </SourceProvider>
+  </UserPreferencesProvider>
 )
 
 storiesOf('Selenium//Tests', module)

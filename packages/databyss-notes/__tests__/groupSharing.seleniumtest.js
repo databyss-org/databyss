@@ -1,5 +1,4 @@
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
@@ -11,7 +10,6 @@ import {
   selectAll,
   tagButtonClick,
   tagButtonListClick,
-  logIn,
   upKey,
   getElementsByTag,
   getElementByTag,
@@ -19,19 +17,19 @@ import {
   downKey,
   downShiftKey,
   backspaceKey,
-} from './_helpers.selenium'
-import { cleanUrl } from './__helpers'
+  login,
+} from './util.selenium'
+import { cleanUrl } from './util'
 
 let driver
 let actions
-
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 export async function selectLinkInFirstBlock(actions) {
   await upKey(actions)
   await upKey(actions)
   await upKey(actions)
   await downKey(actions)
+  await downShiftKey(actions)
   await downShiftKey(actions)
   await downShiftKey(actions)
 }
@@ -41,23 +39,16 @@ export async function selectLinkInFirstBlock(actions) {
 describe('group sharings', () => {
   let email
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    email = `${random}@test.com`
-    // OSX and chrome are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
-    await sleep(1000)
-    await logIn(email, driver)
+    email = await login(driver)
     actions = driver.actions()
-
     done()
   })
 
   afterEach(async () => {
-    if (driver) {
-      await driver.quit()
-      driver = null
-      await sleep(100)
-    }
+    await sleep(100)
+    await driver.quit()
+    await sleep(100)
   })
 
   it('should ensure group sharing integrity', async () => {
@@ -253,7 +244,7 @@ describe('group sharings', () => {
     await tagButtonListClick('data-test-element="atomic-results"', 0, driver)
 
     // log in again
-    await logIn(email, driver)
+    await login(driver, email)
 
     // go to collections, remove first page from collection
 
@@ -287,10 +278,10 @@ describe('group sharings', () => {
 
     // update topic on first page page (it should update on shared page with same topic)    await upKey(actions)
     await tagButtonClick('data-test-atomic-edit="open"', driver)
-    await enterKey(actions)
+    await sleep(1000)
+    await tagButtonClick('data-test-path="text"', driver)
     await selectAll(actions)
     await sendKeys(actions, 'New Topic')
-    await tagButtonClick('data-test-dismiss-modal="true"', driver)
 
     // allow sync
     await sleep(5000)
@@ -331,12 +322,8 @@ describe('group sharings', () => {
 
     // only  one page should appear
     assert.equal(_topicResults.length, 1)
-
-    let _title = await getElementByTag(
-      driver,
-      '[data-test-element="index-results"]'
-    )
-    _title = await _title.getAttribute('innerText')
+    let _title = await getElementByTag(driver, '[data-test-path="text"]')
+    _title = await _title.getAttribute('value')
 
     // should be updated topic
     assert.equal(_title, 'New Topic')

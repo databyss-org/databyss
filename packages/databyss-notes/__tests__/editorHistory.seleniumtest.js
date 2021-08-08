@@ -1,13 +1,10 @@
 /** @jsx h */
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
-import { jsx as h } from './hyperscript'
-import { sanitizeEditorChildren } from './__helpers'
+import { sanitizeEditorChildren } from './util'
 import {
   getEditor,
-  getElementByTag,
   sleep,
   getElementById,
   enterKey,
@@ -20,63 +17,28 @@ import {
   upKey,
   rightKey,
   downShiftKey,
-  isSaved,
-  tagButtonClick,
-} from './_helpers.selenium'
+  isAppInNotesSaved,
+  jsx as h,
+  login,
+  downKey,
+} from './util.selenium'
 
 let driver
-let editor
 let slateDocument
 let actions
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
-
-const LOCAL_URL_EDITOR =
-  'http://localhost:6006/iframe.html?id=services-page--slate-5'
-const PROXY_URL_EDITOR =
-  'http://localhost:8080/iframe.html?id=services-page--slate-5'
-
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('editor history', () => {
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    // OSX and safari are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    await getElementByTag(driver, '[data-test-id="logoutButton"]')
-
-    await driver.get(
-      process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
-    )
-
-    editor = await getEditor(driver)
-    editor.click()
-
+    await login(driver)
     actions = driver.actions()
-
-    actions = driver.actions({ bridge: true })
-    await actions.click(editor)
-    await actions.perform()
-    await actions.clear()
+    await downKey(actions)
     done()
   })
 
   afterEach(async () => {
     await sleep(100)
     await driver.quit()
-    driver = null
     await sleep(100)
   })
 
@@ -85,7 +47,7 @@ describe('editor history', () => {
     await sendKeys(actions, 'this entry should stay')
     await enterKey(actions)
     await enterKey(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
     await sendKeys(actions, 'this should eventually be undone')
@@ -108,7 +70,7 @@ describe('editor history', () => {
     await undo(actions)
     await undo(actions)
     await undo(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
 
@@ -118,6 +80,9 @@ describe('editor history', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>this entry should stay</text>
           <cursor />
@@ -143,7 +108,7 @@ describe('editor history', () => {
     await sendKeys(actions, 'this entry should stay')
     await enterKey(actions)
     await enterKey(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
     await sendKeys(actions, 'this should eventually be undone')
@@ -167,7 +132,7 @@ describe('editor history', () => {
     await undo(actions)
     await undo(actions)
     await undo(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     // checks before redo
     slateDocument = await getElementById(driver, 'slateDocument')
@@ -176,6 +141,9 @@ describe('editor history', () => {
 
     let expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>this entry should stay</text>
           <cursor />
@@ -210,7 +178,7 @@ describe('editor history', () => {
     await redo(actions)
     await redo(actions)
     await redo(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -221,6 +189,9 @@ describe('editor history', () => {
 
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>this entry should stay</text>
           <cursor />
@@ -283,7 +254,7 @@ describe('editor history', () => {
     await undo(actions)
     await sleep(2000)
     await undo(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     // checks before redo
     slateDocument = await getElementById(driver, 'slateDocument')
@@ -292,6 +263,9 @@ describe('editor history', () => {
 
     let expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>
             one
@@ -313,7 +287,7 @@ describe('editor history', () => {
 
     await redo(actions)
     await redo(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
 
@@ -323,6 +297,9 @@ describe('editor history', () => {
 
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>one</text>
         </block>

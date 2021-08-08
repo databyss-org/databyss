@@ -16,6 +16,7 @@ import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
+import { generateShortName } from '@databyss-org/services/sources/lib'
 
 import { useEditorContext } from '../../state/EditorProvider'
 
@@ -42,16 +43,7 @@ export const formatSource = (value) => {
   }
   // ensure short name exists, if not create one
   if (!value.name) {
-    const _name =
-      value?.detail?.authors[0]?.lastName.textValue ||
-      value?.detail?.authors[0]?.firstName.textValue
-
-    const _year = value?.detail?.year?.textValue
-
-    _value.name =
-      _name && _year
-        ? { textValue: `${_name} ${_year}`, ranges: [] }
-        : value.text
+    _value.name = generateShortName(value)
   }
 
   return _value

@@ -1,18 +1,11 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Button, RichTextInput } from '@databyss-org/ui/primitives'
-
-import SourceProvider, {
-  useSourceContext,
-} from '@databyss-org/services/sources/SourceProvider'
-
-import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
 import { _seedValue1, _seedValue2, _id1, _id2 } from './__tests__/initialValue'
+import { setSource } from '../../../databyss-services/sources'
 
 const EditFirstCitation = ({ source }) => {
-  const { setSource } = useSourceContext()
-
   const value = {
     textValue: source.detail.citations[0].textValue,
     ranges: source.detail.citations[0].ranges,
@@ -43,8 +36,6 @@ const EditFirstCitation = ({ source }) => {
 
 const SourcesDemo = () => {
   const [sourceId, setSourceState] = useState(_id1)
-
-  const { setSource } = useSourceContext()
 
   const valuesToSource = (values) => {
     const { authors, citations, ...blockFields } = values
@@ -86,13 +77,6 @@ const SourcesDemo = () => {
   )
 }
 
-const ProviderDecorator = (storyFn) => (
-  <SourceProvider initialState={initialState} reducer={reducer}>
-    {storyFn()}
-  </SourceProvider>
-)
-
 storiesOf('Services|Sources', module)
-  .addDecorator(ProviderDecorator)
   .addDecorator(ViewportDecorator)
   .add('Load and Save sources', () => <SourcesDemo />)

@@ -2,7 +2,6 @@ import express from 'express'
 import { DOMParser } from 'xmldom'
 import request from 'request'
 import fetch from 'node-fetch'
-import { MediaTypes } from '@databyss-org/services/interfaces/Block'
 import { validURL } from '@databyss-org/services/lib/util'
 import {
   getYoutubeAttributes,
@@ -15,17 +14,6 @@ import {
 } from './helpers/remoteMedia'
 
 const router = express.Router()
-
-export interface MediaResponse {
-  mediaType: MediaTypes | null
-  title: string | null
-  dimensions?: {
-    height?: number | null
-    width?: number | null
-  }
-  src: string | null
-  openGraphJson?: string | null
-}
 
 export const isHTML = (str: string) => {
   try {

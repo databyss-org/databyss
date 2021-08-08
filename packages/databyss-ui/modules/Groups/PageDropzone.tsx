@@ -47,7 +47,7 @@ export const PageDropzone = ({
   onChange,
   ...others
 }: PageDropzoneProps) => {
-  const _inTestEnv = !!process.env.CI
+  const _inTestEnv = process.env.NODE_ENV === 'test'
   const [showMenu, setShowMenu] = useState(false)
 
   let _pagesList

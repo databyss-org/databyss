@@ -1,22 +1,19 @@
 // import requestImageSize from 'request-image-size'
 import { DOMParser } from 'xmldom'
 import ogs from 'open-graph-scraper'
-import { MediaTypes } from '@databyss-org/services/interfaces/Block'
+import {
+  EmbedDetail,
+  MediaTypes,
+} from '@databyss-org/services/interfaces/Block'
 import { parseTweetUrl } from '@databyss-org/services/embeds/twitter'
 import InstagramApi from 'simple-instagram-api'
 import { decode } from 'html-entities'
-import { MediaResponse, _regExValidator } from '../media'
+import { _regExValidator } from '../media'
 
 export const getImageAttributes = async (url: string) => {
-  const _response: MediaResponse = {
+  const _response: EmbedDetail = {
     mediaType: MediaTypes.IMAGE,
-    title: null,
     src: url,
-    dimensions: {
-      width: null,
-      height: null,
-    },
-    openGraphJson: null,
   }
 
   // get title from image
@@ -29,10 +26,9 @@ export const getImageAttributes = async (url: string) => {
 }
 
 export const getHtmlAttributes = (code: string) => {
-  const _response: MediaResponse = {
-    mediaType: null,
-    title: null,
-    src: null,
+  const _response: EmbedDetail = {
+    mediaType: MediaTypes.HTML,
+    src: code,
   }
 
   const _iFrameAllowList = {
@@ -75,8 +71,6 @@ export const getHtmlAttributes = (code: string) => {
     }
 
     // parse as regular html
-    _response.src = code
-    _response.mediaType = MediaTypes.HTML
     _response.title = `html fragment ${Date.now()}`
     return _response
   } catch (err) {
@@ -85,9 +79,8 @@ export const getHtmlAttributes = (code: string) => {
 }
 
 export const getTwitterAttributes = async (url: string) => {
-  const _response: MediaResponse = {
+  const _response: EmbedDetail = {
     mediaType: MediaTypes.TWITTER,
-    title: null,
     src: url,
   }
   // convert tweet to regex values
@@ -119,19 +112,13 @@ export const getTwitterAttributes = async (url: string) => {
 }
 
 export const getYoutubeAttributes = async (url) => {
-  const _response: MediaResponse = {
-    mediaType: null,
+  const _response: EmbedDetail = {
+    mediaType: MediaTypes.YOUTUBE,
     title: 'default title',
-    src: null,
+    src: url,
   }
-  // pull video id from url
-  // const match = url.match(_regExValidator.youtube)
-  // const _id = match[2]
-  _response.mediaType = MediaTypes.YOUTUBE
-  _response.src = url
 
   // get open graph information
-
   const options = { url }
   try {
     const _data = await ogs(options)
@@ -140,7 +127,6 @@ export const getYoutubeAttributes = async (url) => {
       // check if youtube link
       if (result.ogSiteName === 'YouTube') {
         _response.title = result.ogTitle
-        // TODO:_response.openGraphJson
       }
       _response.openGraphJson = JSON.stringify(result)
     }
@@ -153,7 +139,7 @@ export const getYoutubeAttributes = async (url) => {
 }
 
 export const getInstagramAttributes = async (url) => {
-  const _response: MediaResponse = {
+  const _response: EmbedDetail = {
     mediaType: MediaTypes.WEBSITE,
     title: `Instagram ${Date.now()}`,
     src: url,
@@ -167,26 +153,7 @@ export const getInstagramAttributes = async (url) => {
   const _postId = _matches?.groups?.PID
   console.log('[getInstagramAttributes] Post ID', _postId)
 
-  // const options = {
-  //   url,
-  //   headers: {
-  //     'user-agent': 'Googlebot/2.1 (+http://www.google.com/bot.html)',
-  //   },
-  // }
   try {
-    // const _data = await ogs(options)
-    // const { result } = _data
-    // if (result.success) {
-    //   // rewrite ogImage.url
-    //   _response.title = result.ogTitle
-    //   if (result.ogImage?.url) {
-    //     result.ogImage.url = `${
-    //       process.env.API_URL
-    //     }/media/proxy?url=${encodeURIComponent(result.ogImage.url)}`
-    //   }
-    //   _response.openGraphJson = JSON.stringify(result)
-    // }
-
     const _postData = await InstagramApi.get(_postId)
     const _ogData = {
       ogImage: {
@@ -209,10 +176,9 @@ export const getInstagramAttributes = async (url) => {
 }
 
 export const getDropboxAttributes = async (url) => {
-  const _response: MediaResponse = {
+  const _response: EmbedDetail = {
     mediaType: MediaTypes.WEBSITE,
-    title: null,
-    src: null,
+    src: url,
   }
 
   const match = _regExValidator.dropbox.exec(url)
@@ -225,12 +191,11 @@ export const getDropboxAttributes = async (url) => {
 
   _response.src = `https://www.dropbox.com/s/${FID}/${FNAME}?raw=1`
   _response.title = `dropbox file ${FNAME}`
-  console.log('[getDropboxAttributes]', _response)
   return _response
 }
 
 export const getWebsiteAttributes = async (url) => {
-  const _response: MediaResponse = {
+  const _response: EmbedDetail = {
     mediaType: MediaTypes.WEBSITE,
     title: `web url: ${url}`,
     src: url,

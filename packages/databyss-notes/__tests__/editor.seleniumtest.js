@@ -1,44 +1,37 @@
 /** @jsx h */
 /* eslint-disable func-names */
-import { By, Key } from 'selenium-webdriver'
+import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession } from '@databyss-org/ui/lib/saucelabs'
-import { jsx as h } from './hyperscript'
-import { sanitizeEditorChildren } from './__helpers'
-import { getEditor, sleep, getElementById } from './_helpers.selenium'
+import { sanitizeEditorChildren } from './util'
+import {
+  getEditor,
+  sleep,
+  getElementById,
+  jsx as h,
+  login,
+} from './util.selenium'
 
 let driver
 let editor
 let slateDocument
 
-// let actions
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=selenium-tests--slate-5'
-const PROXY_URL = 'http://localhost:8080/iframe.html?id=selenium-tests--slate-5'
-
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
-
 describe('editor selenium', () => {
   beforeEach(async (done) => {
-    // OSX and safari are necessary
     driver = await startSession()
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
+    await login(driver)
     editor = await getEditor(driver)
-
-    slateDocument = await driver.findElement(By.id('slateDocument'))
-    //   actions = driver.actions()
+    await editor.sendKeys(Key.ARROW_DOWN)
     done()
   })
 
   afterEach(async () => {
     await sleep(100)
     await driver.quit()
-    driver = null
     await sleep(100)
   })
 
   it('should test basic editor functionality', async () => {
-    await sleep(300)
     await editor.sendKeys('this is an example of an entry text')
     // allow a single return within an entry
     await editor.sendKeys(Key.ENTER)
@@ -57,6 +50,9 @@ describe('editor selenium', () => {
 
     let expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be on the same
           block
@@ -88,6 +84,9 @@ describe('editor selenium', () => {
 
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be on the same
           block
@@ -131,6 +130,9 @@ describe('editor selenium', () => {
     expected = (
       <editor>
         <block type="ENTRY">
+          <text />
+        </block>
+        <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be on the same
           <cursor />
         </block>
@@ -167,6 +169,9 @@ describe('editor selenium', () => {
 
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be on the same
         </block>
@@ -205,6 +210,9 @@ describe('editor selenium', () => {
     expected = (
       <editor>
         <block type="ENTRY">
+          <text />
+        </block>
+        <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be on the same
         </block>
         <block type="SOURCE">this is an example of a source text</block>
@@ -239,6 +247,9 @@ describe('editor selenium', () => {
     let expected = (
       <editor>
         <block type="ENTRY">
+          <text />
+        </block>
+        <block type="ENTRY">
           this is an example of an entry text{'\n'}this should{' '}
           <text inlineAtomicMenu>
             #<cursor />
@@ -255,6 +266,9 @@ describe('editor selenium', () => {
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should #<cursor />
         </block>
@@ -285,6 +299,9 @@ describe('editor selenium', () => {
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this{' '}
           <text inlineAtomicMenu>
@@ -317,6 +334,9 @@ describe('editor selenium', () => {
     expected = (
       <editor>
         <block type="ENTRY">
+          <text />
+        </block>
+        <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the mid
           <text inlineAtomicMenu>
             #dle
@@ -341,6 +361,9 @@ describe('editor selenium', () => {
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the mid#dle
           <cursor />
@@ -373,6 +396,9 @@ describe('editor selenium', () => {
     expected = (
       <editor>
         <block type="ENTRY">
+          <text />
+        </block>
+        <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the #
           plaintext
           <cursor />
@@ -401,6 +427,9 @@ describe('editor selenium', () => {
     expected = (
       <editor>
         <block type="ENTRY">
+          <text />
+        </block>
+        <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the #
           plaintext append <cursor />
           this
@@ -426,6 +455,9 @@ describe('editor selenium', () => {
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the #
           plaintext append #<cursor /> this
@@ -457,6 +489,9 @@ describe('editor selenium', () => {
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the #
           plaintext append # this
@@ -504,6 +539,9 @@ describe('editor selenium', () => {
     expected = (
       <editor>
         <block type="ENTRY">
+          <text />
+        </block>
+        <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the #
           plaintext append # this add text
           <cursor />
@@ -535,12 +573,16 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.ARROW_LEFT)
     await editor.sendKeys(Key.ARROW_LEFT)
     await editor.sendKeys(Key.ENTER)
+    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the #
           plaintext append # this add text
@@ -573,6 +615,9 @@ describe('editor selenium', () => {
     actual = JSON.parse(await slateDocument.getText())
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the #
           plaintext append # this add text

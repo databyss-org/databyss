@@ -1,47 +1,39 @@
 /** @jsx h */
 /* eslint-disable func-names */
-import { By, Key } from 'selenium-webdriver'
+import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession } from '@databyss-org/ui/lib/saucelabs'
-import { jsx as h } from './hyperscript'
-import { sanitizeEditorChildren } from './__helpers'
+import { sanitizeEditorChildren } from './util'
 import {
-  getEditor,
   sleep,
   getElementById,
   tagButtonClick,
-} from './_helpers.selenium'
+  jsx as h,
+  login,
+  downKey,
+} from './util.selenium'
 
 let driver
-let editor
 let slateDocument
 let actions
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=selenium-tests--slate-5'
-const PROXY_URL = 'http://localhost:8080/iframe.html?id=selenium-tests--slate-5'
 
 describe('new block menu actions', () => {
   beforeEach(async (done) => {
-    // OSX and safari are necessary
     driver = await startSession()
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-    editor = await getEditor(driver)
-
-    slateDocument = await driver.findElement(By.id('slateDocument'))
-    await editor.click()
+    await login(driver)
     actions = driver.actions()
+    await downKey(actions)
+    await sleep(500)
     done()
   })
 
   afterEach(async () => {
     await sleep(100)
     await driver.quit()
-    driver = null
     await sleep(100)
   })
 
   it('should toggle a new atomics', async () => {
-    await sleep(300)
-
     await tagButtonClick('data-test-block-menu="open"', driver)
 
     await tagButtonClick('data-test-block-menu="SOURCE"', driver)
@@ -68,6 +60,9 @@ describe('new block menu actions', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="SOURCE">
           <text>this should be a new source</text>
         </block>

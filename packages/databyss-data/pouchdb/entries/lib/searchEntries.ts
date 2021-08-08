@@ -1,12 +1,24 @@
 import PouchDB from 'pouchdb'
-import { Page, Text } from '@databyss-org/services/interfaces'
+import {
+  Block,
+  BlockType,
+  DocumentDict,
+  IndexPageResult,
+  Page,
+  Text,
+} from '@databyss-org/services/interfaces'
+import { populatePage } from '@databyss-org/services/blocks/joins'
+import { indexPage } from '@databyss-org/editor/lib/util'
+import { cloneDeep } from 'lodash'
 import { searchText } from '../../utils'
 
 export interface SearchEntriesResultRow {
   entryId: string
+  type: BlockType
   text: Text
   index: number
   textScore: number
+  activeHeadings?: IndexPageResult[]
 }
 
 export interface SearchEntriesResultPage {
@@ -20,11 +32,14 @@ interface SearchRow {
   page: Page | null
   index: number
   text: Text
+  type: BlockType
+  activeHeadings?: IndexPageResult[]
 }
 
 const searchEntries = async (
   encodedQuery: string,
-  pages: Page[]
+  pages: Page[],
+  blocks: DocumentDict<Block>
 ): Promise<SearchEntriesResultPage[]> => {
   const _query = decodeURIComponent(encodedQuery)
 
@@ -37,32 +52,57 @@ const searchEntries = async (
   // if results are found, look up page and append to result
 
   // create a dictionary of block to pages
-  const _blockToPages: { [blockId: string]: { page: Page; index: number } } = {}
+  const _blockToPages: {
+    [blockId: string]: {
+      page: Page
+      index: number
+    }[]
+  } = {}
 
   pages.forEach((p) =>
-    p.blocks.forEach((b, index) => (_blockToPages[b._id] = { page: p, index }))
+    p.blocks.forEach((b, index) => {
+      if (b.type.match(/^END_/)) {
+        return
+      }
+      if (!_blockToPages[b._id]) {
+        _blockToPages[b._id] = []
+      }
+      _blockToPages[b._id].push({ page: p, index })
+    })
   )
 
-  // add page to block results
+  // expand results
+  const _expandedQueryResponse: PouchDB.SearchRow<SearchRow>[] = []
   for (const _result of _queryResponse) {
     const _entryId = _result.id
-    const _page = _blockToPages[_entryId]?.page
+    const _pages = _blockToPages[_entryId]
 
-    if (_page) {
-      if (!_page.archive) {
-        _result.doc.page = _page
-        _result.doc.index = _blockToPages[_entryId]?.index
-      } else {
-        _result.doc.page = null
-      }
+    if (_pages) {
+      _pages.forEach(({ page, index }) => {
+        if (page.archive) {
+          return
+        }
+        const _populatedPage = populatePage({ page, blocks })
+        const _indexedPage = indexPage({
+          pageId: page._id,
+          blocks: _populatedPage.blocks,
+        })
+        const _expandedSearchRow = cloneDeep(_result)
+        _expandedSearchRow.doc.page = page
+        _expandedSearchRow.doc.index = index
+        _expandedSearchRow.doc.activeHeadings = _indexedPage.find(
+          (p) => p.blockIndex === index
+        )?.activeHeadings
+        _expandedQueryResponse.push(_expandedSearchRow)
+      })
     }
   }
 
   let _results = {}
 
-  if (_queryResponse.length) {
+  if (_expandedQueryResponse.length) {
     // normalize response
-    const _searchResults = _queryResponse.map((q) => ({
+    const _searchResults = _expandedQueryResponse.map((q) => ({
       ...q.doc,
       score: q.score,
     }))
@@ -83,10 +123,11 @@ const searchEntries = async (
           entries: [
             {
               entryId: curr._id,
+              type: curr.type,
               text: curr.text,
               index: curr.index,
               textScore: curr.score,
-              //  blockId: curr.block,
+              activeHeadings: curr.activeHeadings,
             },
           ],
         }
@@ -107,6 +148,8 @@ const searchEntries = async (
           text: curr.text,
           index: curr.index,
           textScore: curr.score,
+          type: curr.type,
+          activeHeadings: curr.activeHeadings,
         })
 
         // sort the entries by text score

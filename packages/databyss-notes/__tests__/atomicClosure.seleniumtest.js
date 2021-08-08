@@ -1,13 +1,10 @@
 /** @jsx h */
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
-import { jsx as h } from './hyperscript'
-import { sanitizeEditorChildren } from './__helpers'
+import { sanitizeEditorChildren } from './util'
 import {
   getEditor,
-  getElementByTag,
   sendKeys,
   enterKey,
   sleep,
@@ -15,54 +12,20 @@ import {
   upKey,
   backspaceKey,
   leftKey,
-  isSaved,
-  tagButtonClick,
-} from './_helpers.selenium'
+  jsx as h,
+  login,
+  isAppInNotesSaved,
+} from './util.selenium'
 
 let driver
-let editor
 let slateDocument
 let actions
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
-
-const LOCAL_URL_EDITOR =
-  'http://localhost:6006/iframe.html?id=services-page--slate-5'
-const PROXY_URL_EDITOR =
-  'http://localhost:8080/iframe.html?id=services-page--slate-5'
-
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('atomic closure', () => {
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    // OSX and safari are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    await getElementByTag(driver, '[data-test-id="logoutButton"]')
-
-    await driver.get(
-      process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
-    )
-
-    editor = await getEditor(driver)
-
+    await login(driver)
     actions = driver.actions()
-    await actions.click(editor)
-    await actions.perform()
-    await actions.clear()
-
     done()
   })
 
@@ -74,6 +37,7 @@ describe('atomic closure', () => {
   })
 
   it('should open, close, overwrite and delete source and topics', async () => {
+    await enterKey(actions)
     await sendKeys(actions, '@this is an opening source')
     await enterKey(actions)
     await sendKeys(actions, 'this is an entry')
@@ -90,7 +54,7 @@ describe('atomic closure', () => {
     await sendKeys(actions, '/#')
     await sleep(1000)
 
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -101,6 +65,9 @@ describe('atomic closure', () => {
 
     let expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="SOURCE">
           <text>this is an opening source</text>
         </block>
@@ -139,7 +106,7 @@ describe('atomic closure', () => {
     await sendKeys(actions, '/@')
     await sleep(1000)
 
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -150,6 +117,9 @@ describe('atomic closure', () => {
 
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="SOURCE">
           <text>this is an opening source</text>
         </block>
@@ -198,7 +168,7 @@ describe('atomic closure', () => {
     await backspaceKey(actions)
     await sleep(1000)
 
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -209,6 +179,9 @@ describe('atomic closure', () => {
 
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="SOURCE">
           <text>this is an opening source</text>
         </block>
@@ -248,7 +221,7 @@ describe('atomic closure', () => {
     // should overwrite a previously closed atomic
     await sleep(300)
     await sendKeys(actions, '/@')
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -259,6 +232,9 @@ describe('atomic closure', () => {
 
     expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="SOURCE">
           <text>this is an opening source</text>
         </block>

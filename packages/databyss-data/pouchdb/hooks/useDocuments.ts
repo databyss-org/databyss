@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 import { EM } from '@databyss-org/data/pouchdb/utils'
@@ -8,38 +8,29 @@ import { dbRef } from '../db'
 import { CouchDb } from '../../couchdb-client/couchdb'
 import { DocumentArrayToDict } from './utils'
 
-export interface QueryOptions {
-  includeIds?: string[] | null
-}
-
-export interface UseDocumentsOptions extends QueryOptions {
-  enabled?: boolean
-}
-
 const subscriptionDict: { [selector: string]: PouchDB.Core.Changes<any> } = {}
 
 export const useDocuments = <T extends Document>(
-  selector: PouchDB.Find.Selector,
-  options: UseDocumentsOptions = { enabled: true }
+  selectorOrIdList: PouchDB.Find.Selector | string[],
+  options?: UseQueryOptions
 ) => {
   const queryClient = useQueryClient()
-  const queryOptions: QueryOptions = {
-    includeIds: options.includeIds,
-  }
 
   useEffect(() => {
     EM.process()
   }, [])
 
-  if (queryOptions.includeIds) {
-    selector._id = {
-      $in: queryOptions.includeIds,
-    }
+  let docIds: string[]
+  let selector: PouchDB.Find.Selector | undefined
+  if (Array.isArray(selectorOrIdList)) {
+    docIds = selectorOrIdList
+  } else {
+    selector = selectorOrIdList
   }
 
-  const selectorString = JSON.stringify(selector)
-
-  const queryKey = selectorString
+  const queryKey = selector
+    ? JSON.stringify(selector)
+    : JSON.stringify(`documents_${docIds!}`)
 
   // console.log('useDocuments.selector', selector)
   const query = useQuery<DocumentDict<T>>(
@@ -47,14 +38,24 @@ export const useDocuments = <T extends Document>(
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) => {
         // console.log('useDocuments.fetch', selector)
-        dbRef.current
-          ?.find({ selector })
-          .then((res: any) => resolve(DocumentArrayToDict(res.docs)))
-          .catch((err) => reject(err))
+        if (docIds) {
+          dbRef.current
+            ?.allDocs({
+              include_docs: true,
+              keys: docIds,
+            })
+            .then((res) =>
+              resolve(DocumentArrayToDict(res.rows.map((r) => r.doc)))
+            )
+            .catch((err) => reject(err))
+        } else {
+          dbRef.current
+            ?.find({ selector: selector! })
+            .then((res) => resolve(DocumentArrayToDict(res.docs)))
+            .catch((err) => reject(err))
+        }
       }),
-    {
-      enabled: options.enabled,
-    }
+    options as UseQueryOptions<DocumentDict<T>>
   )
 
   useEffect(() => {
@@ -63,15 +64,21 @@ export const useDocuments = <T extends Document>(
     }
     // console.log('useDocuments.subscribe', queryKey, selector)
 
-    if (subscriptionDict[selectorString]) {
+    if (subscriptionDict[queryKey]) {
       return
     }
-    subscriptionDict[selectorString] = dbRef.current
+    subscriptionDict[queryKey] = dbRef.current
       ?.changes({
         since: 'now',
         live: true,
         include_docs: true,
-        selector,
+        ...(docIds
+          ? {
+              doc_ids: docIds,
+            }
+          : {
+              selector: selector!,
+            }),
       })
       .on('change', (change) => {
         queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {

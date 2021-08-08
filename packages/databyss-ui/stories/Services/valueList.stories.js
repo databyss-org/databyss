@@ -6,12 +6,8 @@ import ValueListProvider, {
 import { View, List, Grid, TextControl } from '@databyss-org/ui/primitives'
 import { uid } from '@databyss-org/data/lib/uid'
 
-import SourceProvider, {
-  useSourceContext,
-} from '@databyss-org/services/sources/SourceProvider'
-
-import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
+import { setSource } from '../../../databyss-services/sources'
 
 const _id = uid()
 
@@ -59,7 +55,6 @@ const valuesToSource = (values) => {
 
 const SourceForm = ({ source }) => {
   const [values, setValues] = useState(source)
-  const { setSource } = useSourceContext()
 
   const onChange = (_value) => {
     // update internal state
@@ -143,8 +138,6 @@ const SourceForm = ({ source }) => {
 }
 
 const SourcesDemo = () => {
-  const { setSource } = useSourceContext()
-
   // set initial value
   useEffect(() => {
     setSource(_initialValue)
@@ -159,13 +152,6 @@ const SourcesDemo = () => {
   )
 }
 
-const ProviderDecorator = (storyFn) => (
-  <SourceProvider initialState={initialState} reducer={reducer}>
-    {storyFn()}
-  </SourceProvider>
-)
-
 storiesOf('Services|Sources', module)
-  .addDecorator(ProviderDecorator)
   .addDecorator(ViewportDecorator)
   .add('Update to DB', () => <SourcesDemo />)

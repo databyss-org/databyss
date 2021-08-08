@@ -3,38 +3,40 @@ import { CitationStyleOptions } from '@databyss-org/services/citations/constants
 import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { DropDownControl } from '@databyss-org/ui/primitives'
-import { AuthorsContent } from './AuthorsContent'
 
 import { IndexPageView } from './IndexPageContent'
 import { SourcesResults } from './SourcesResults'
 import { pxUnits } from '../../theming/views'
 import styled from '../../primitives/styled'
+import {
+  composeAuthorName,
+  isCurrentAuthor,
+} from '../../../databyss-services/sources/lib'
+import { useUserPreferencesContext } from '../../hooks'
 
 // styled components
 const CitationStyleDropDown = styled(DropDownControl, () => ({
   width: pxUnits(120),
-  alignSelf: 'end',
 }))
 
 export const SourcesContent = () => {
   const { isOnline } = useNotifyContext()
   const getQueryParams = useNavigationContext((c) => c.getQueryParams)
-  const getPreferredCitationStyle = useSourceContext(
-    (c) => c.getPreferredCitationStyle
-  )
-  const setPreferredCitationStyle = useSourceContext(
-    (c) => c.setPreferredCitationStyle
-  )
+  const {
+    getPreferredCitationStyle,
+    setPreferredCitationStyle,
+  } = useUserPreferencesContext()
   const preferredCitationStyle = getPreferredCitationStyle()
   const [citationStyleOption, setCitationStyleOption] = useState(
     getCitationStyleOption(preferredCitationStyle)
   )
   const sourcesRes = useBibliography({
-    styleId: citationStyleOption.id,
+    formatOptions: {
+      styleId: citationStyleOption.id,
+    },
   })
 
   const onCitationStyleChange = (value) => {
@@ -47,9 +49,15 @@ export const SourcesContent = () => {
   }
 
   // if author is provided in the url `.../sources?firstName=''&lastName='' render authors
+  let _authorFirstName = null
+  let _authorLastName = null
+  let _authorFullName = null
   const _queryParams = getQueryParams()
+  const params = new URLSearchParams(_queryParams)
   if (_queryParams.length) {
-    return <AuthorsContent query={_queryParams} />
+    _authorFirstName = decodeURIComponent(params.get('firstName'))
+    _authorLastName = decodeURIComponent(params.get('lastName'))
+    _authorFullName = composeAuthorName(_authorFirstName, _authorLastName)
   }
 
   const sortedSources = Object.values(sourcesRes.data).sort((a, b) =>
@@ -58,6 +66,16 @@ export const SourcesContent = () => {
       ? 1
       : -1
   )
+
+  const filteredSources = _authorFullName
+    ? sortedSources.filter((s) =>
+        isCurrentAuthor(
+          s.source.detail?.authors,
+          _authorFirstName,
+          _authorLastName
+        )
+      )
+    : sortedSources
 
   let _citationStyleOptions = CitationStyleOptions
   // if we're offline, only show the current option and a message to go online
@@ -72,13 +90,19 @@ export const SourcesContent = () => {
   }
 
   return (
-    <IndexPageView path={['All Sources']}>
-      <CitationStyleDropDown
-        items={_citationStyleOptions}
-        value={citationStyleOption}
-        onChange={onCitationStyleChange}
-      />
-      <SourcesResults entries={sortedSources} />
+    <IndexPageView
+      path={_authorFullName ? ['Authors', _authorFullName] : ['Bibliography']}
+      key={_authorFullName}
+      position="relative"
+      menuChild={
+        <CitationStyleDropDown
+          items={_citationStyleOptions}
+          value={citationStyleOption}
+          onChange={onCitationStyleChange}
+        />
+      }
+    >
+      <SourcesResults entries={filteredSources} />
     </IndexPageView>
   )
 }

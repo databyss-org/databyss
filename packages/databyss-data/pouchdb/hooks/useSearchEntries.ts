@@ -7,6 +7,8 @@ import { SearchEntriesResultPage } from '../entries/lib/searchEntries'
 import { DocumentType } from '../interfaces'
 import { usePages } from './'
 import { CouchDb } from '../../couchdb-client/couchdb'
+import { useDocuments } from './useDocuments'
+import { Block } from '../../../databyss-services/interfaces'
 
 const changesRef: { current: PouchDB.Core.Changes<any> | undefined } = {
   current: undefined,
@@ -14,6 +16,9 @@ const changesRef: { current: PouchDB.Core.Changes<any> | undefined } = {
 
 export const useSearchEntries = (searchQuery: string) => {
   const pagesRes = usePages()
+  const blocksRes = useDocuments<Block>({
+    doctype: DocumentType.Block,
+  })
   const queryClient = useQueryClient()
 
   const queryKey = ['searchEntries', searchQuery]
@@ -22,12 +27,13 @@ export const useSearchEntries = (searchQuery: string) => {
     async () => {
       const results = await searchEntries(
         searchQuery,
-        Object.values(pagesRes.data!)
+        Object.values(pagesRes.data!),
+        blocksRes.data!
       )
       return results
     },
     {
-      enabled: pagesRes.isSuccess,
+      enabled: pagesRes.isSuccess && blocksRes.isSuccess,
     }
   )
 

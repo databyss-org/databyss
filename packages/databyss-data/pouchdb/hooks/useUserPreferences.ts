@@ -3,6 +3,7 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { Group } from '@databyss-org/services/interfaces'
 import { UserPreference } from '../interfaces'
 import { useDocument, UseDocumentOptions } from './useDocument'
+import { upsertUserPreferences } from '../utils'
 
 export const useUserPreferences = (
   options?: UseDocumentOptions
@@ -10,8 +11,9 @@ export const useUserPreferences = (
   UseQueryResult<UserPreference | Group>,
   (prefs: UserPreference) => void
 ] => {
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  const getSession = useSessionContext((c) => c && c.getSession)
+  const isPublicAccount =
+    useSessionContext((c) => c && c.isPublicAccount) ?? (() => false)
+  const getSession = useSessionContext((c) => c && c.getSession) ?? (() => null)
   const queryClient = useQueryClient()
 
   const prefsRes = useDocument<UserPreference>('user_preference', {
@@ -29,6 +31,7 @@ export const useUserPreferences = (
       ? () => null
       : (prefs: UserPreference) => {
           queryClient.setQueryData('user_preference', prefs)
+          upsertUserPreferences(() => prefs)
         },
   ]
 }

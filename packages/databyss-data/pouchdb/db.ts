@@ -28,7 +28,7 @@ import tv4 from 'tv4'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { checkNetwork } from '@databyss-org/services/lib/request'
 import { DocumentType } from './interfaces'
-import { searchText, setDbBusyDispatch, setDbBusy } from './utils'
+import { setDbBusyDispatch, setDbBusy } from './utils'
 import { processGroupActionQ } from './groups/utils'
 import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
 import embedSchema from '../schemas/embedSchema'
@@ -132,16 +132,16 @@ export const initiatePouchDbIndexes = async () => {
   // })
 
   // if search index doesnt exist, add search index
-  try {
-    const _dbs = await window.indexedDB.databases()
+  // try {
+  //   const _dbs = await window.indexedDB.databases()
 
-    if (!_dbs.find((_db) => _db.name.includes('_pouch_local-search'))) {
-      console.log('building search index')
-      await searchText('xxxxx')
-    }
-  } catch (err) {
-    console.log(err)
-  }
+  //   if (!_dbs.find((_db) => _db.name.includes('_pouch_local-search'))) {
+  //     console.log('building search index')
+  //     await searchText('xxxxx')
+  //   }
+  // } catch (err) {
+  //   console.log(err)
+  // }
   // await dbRef.current.createIndex({
   //   index: {
   //     fields: ['doctype', 'blocks.[]._id'],

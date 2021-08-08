@@ -2,11 +2,9 @@
 /* eslint-disable func-names */
 import assert from 'assert'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
-import { jsx as h } from './hyperscript'
-import { sanitizeEditorChildren } from './__helpers'
+import { sanitizeEditorChildren } from './util'
 import {
   getEditor,
-  getElementByTag,
   getElementById,
   enterKey,
   upKey,
@@ -19,55 +17,22 @@ import {
   rightKey,
   sendKeys,
   leftKey,
-  isSaved,
+  isAppInNotesSaved,
   sleep,
-  tagButtonClick,
-} from './_helpers.selenium'
+  jsx as h,
+  login,
+} from './util.selenium'
 
 let driver
 let editor
 let slateDocument
 let actions
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
-
-const LOCAL_URL_EDITOR =
-  'http://localhost:6006/iframe.html?id=services-page--slate-5'
-const PROXY_URL_EDITOR =
-  'http://localhost:8080/iframe.html?id=services-page--slate-5'
 
 describe('editor clipboard', () => {
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    // OSX and safari are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    await getElementByTag(driver, '[data-test-id="logoutButton"]')
-
-    await driver.get(
-      process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
-    )
-
-    editor = await getEditor(driver)
-
-    editor.click()
-
-    actions = driver.actions({ bridge: true })
-    await actions.click(editor)
-
-    //   actions = driver.actions()
-
+    await login(driver)
+    actions = driver.actions()
     done()
   })
 
@@ -75,11 +40,10 @@ describe('editor clipboard', () => {
     await sleep(100)
     await driver.quit()
     await sleep(100)
-    driver = null
-    await sleep(100)
   })
 
   it('should have a multi-block selection with atomics and paste the whole atomic blocks', async () => {
+    await downKey(actions)
     await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
     await sendKeys(actions, 'in between text')
@@ -92,7 +56,7 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await downKey(actions)
     await paste(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
 
@@ -102,6 +66,9 @@ describe('editor clipboard', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="SOURCE">
           <text>this is a source text</text>
         </block>
@@ -135,6 +102,7 @@ describe('editor clipboard', () => {
   })
 
   it('should prevent a paste from occuring in an atomic', async () => {
+    await downKey(actions)
     await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
     await sendKeys(actions, 'entry text')
@@ -144,16 +112,18 @@ describe('editor clipboard', () => {
     await leftShiftKey(actions)
     await copy(actions)
     await upKey(actions)
-    await upKey(actions)
     await paste(actions)
     await rightKey(actions)
     await rightKey(actions)
     await rightKey(actions)
     await rightKey(actions)
     await paste(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
+
+    await upKey(actions)
+    await upKey(actions)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -161,11 +131,13 @@ describe('editor clipboard', () => {
 
     const expected = (
       <editor>
-        <block type="SOURCE">
+        <block type="ENTRY">
           <text>
-            this
-            <cursor /> is a source text
+            <cursor />
           </text>
+        </block>
+        <block type="SOURCE">
+          <text>this is a source text</text>
         </block>
         <block type="ENTRY">
           <text>entry text</text>
@@ -182,6 +154,7 @@ describe('editor clipboard', () => {
   })
 
   it('should remove an atomic fragment on a cut', async () => {
+    await downKey(actions)
     await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
     await leftKey(actions)
@@ -190,11 +163,18 @@ describe('editor clipboard', () => {
     await leftShiftKey(actions)
     await leftShiftKey(actions)
     await cut(actions)
-    await actions.click(editor).perform()
-    await actions.clear()
+    // await sleep(1000)
+    // await actions.click(editor).perform()
+    // await actions.clear()
+    await isAppInNotesSaved(driver)
+    await driver.navigate().refresh()
+    await getEditor(driver)
+
+    await downKey(actions)
     await downKey(actions)
     await paste(actions)
-    await isSaved(driver)
+
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
 
@@ -204,6 +184,9 @@ describe('editor clipboard', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text />
         </block>
@@ -225,6 +208,7 @@ describe('editor clipboard', () => {
   })
 
   it('should remove a multi-line atomic fragment on a cut', async () => {
+    await downKey(actions)
     await sendKeys(actions, 'this is an entry')
     await enterKey(actions)
     await enterKey(actions)
@@ -246,7 +230,7 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await downKey(actions)
     await paste(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
 
@@ -256,6 +240,9 @@ describe('editor clipboard', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>this is an entry</text>
         </block>

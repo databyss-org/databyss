@@ -1,80 +1,45 @@
 /** @jsx h */
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
-import { jsx as h } from './hyperscript'
-import { sanitizeEditorChildren } from './__helpers'
+import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { sanitizeEditorChildren } from './util'
 import {
   getEditor,
-  getElementByTag,
   sendKeys,
   sleep,
   toggleBold,
   toggleItalic,
   toggleLocation,
   getElementById,
-  isSaved,
+  isAppInNotesSaved,
   enterKey,
   backspaceKey,
-  tagButtonClick,
-} from './_helpers.selenium'
+  jsx as h,
+  login,
+  downKey,
+} from './util.selenium'
 
 let driver
 let editor
 let slateDocument
 let actions
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
-
-const LOCAL_URL_EDITOR =
-  'http://localhost:6006/iframe.html?id=services-page--slate-5'
-const PROXY_URL_EDITOR =
-  'http://localhost:8080/iframe.html?id=services-page--slate-5'
-
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('connected editor', () => {
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    // OSX and safari are necessary
-    driver = await startSession({ platformName: OSX, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    await getElementByTag(driver, '[data-test-id="logoutButton"]')
-
-    await driver.get(
-      process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
-    )
-
-    editor = await getEditor(driver)
-
+    driver = await startSession({ platformName: WIN, browserName: CHROME })
+    await login(driver)
     actions = driver.actions()
-    await actions.click(editor)
-    await actions.perform()
-    await actions.clear()
-
     done()
   })
 
   afterEach(async () => {
     await sleep(100)
     await driver.quit()
-    driver = null
     await sleep(100)
   })
 
   it('should test editor and database sync and functionality', async () => {
+    await downKey(actions)
     await sleep(300)
     await sendKeys(actions, 'the following text should be ')
     await toggleBold(actions)
@@ -87,7 +52,7 @@ describe('connected editor', () => {
     await sendKeys(actions, ' and the final text should be a ')
     await toggleLocation(actions)
     await sendKeys(actions, 'location')
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -98,6 +63,9 @@ describe('connected editor', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>the following text should be </text>
           <text bold>bold</text>
@@ -119,6 +87,7 @@ describe('connected editor', () => {
   })
 
   it('should toggle location bold and italic in entry using hotkeys', async () => {
+    await downKey(actions)
     await sleep(300)
     await sendKeys(actions, 'following text should be ')
     await toggleBold(actions)
@@ -130,7 +99,7 @@ describe('connected editor', () => {
     await sendKeys(actions, 'and location with bold')
     await enterKey(actions)
     await backspaceKey(actions)
-    await isSaved(driver)
+    await isAppInNotesSaved(driver)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -141,6 +110,9 @@ describe('connected editor', () => {
 
     const expected = (
       <editor>
+        <block type="ENTRY">
+          <text />
+        </block>
         <block type="ENTRY">
           <text>following text should be </text>
           <text bold italic>

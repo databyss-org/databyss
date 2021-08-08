@@ -10,7 +10,6 @@ import { getBlocksFromBlockRelations } from '@databyss-org/services/blocks/joins
 
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
-import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
 import {
@@ -140,16 +139,14 @@ const SourcesIndex = () => {
     const details = parseLocation(location)
 
     return (
-      <SourceProvider>
-        <MobileView headerItems={headerItems}>
-          <TabbedContent
-            tabItems={SourcesTabItems}
-            panels={[renderSourcesList(), renderAuthorsList()]}
-            onChange={onTabbedContentChange}
-            selectedIndex={details.navDepth}
-          />
-        </MobileView>
-      </SourceProvider>
+      <MobileView headerItems={headerItems}>
+        <TabbedContent
+          tabItems={SourcesTabItems}
+          panels={[renderSourcesList(), renderAuthorsList()]}
+          onChange={onTabbedContentChange}
+          selectedIndex={details.navDepth}
+        />
+      </MobileView>
     )
   }
 

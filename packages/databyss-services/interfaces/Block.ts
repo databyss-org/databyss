@@ -139,9 +139,12 @@ export interface IndexPageResult {
   relatedBlock: string
   relationshipType: BlockRelationshipType
   relatedBlockType: BlockType | InlineTypes.Link
+  relatedBlockText?: string
   page: string
   blockIndex: number
   blockText: Text
+  activeInlines?: IndexPageResult[]
+  activeHeadings?: IndexPageResult[]
 }
 
 export interface BlockRelation extends Document {

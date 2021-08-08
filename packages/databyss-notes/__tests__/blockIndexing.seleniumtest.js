@@ -1,9 +1,7 @@
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, CHROME, WIN } from '@databyss-org/ui/lib/saucelabs'
 import {
-  getElementByTag,
   getElementsByTag,
   sleep,
   sendKeys,
@@ -20,43 +18,23 @@ import {
   tagButtonClick,
   tagButtonListClick,
   tabKey,
-} from './_helpers.selenium'
+  login,
+} from './util.selenium'
 
 let driver
 let actions
-const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://localhost:3000'
-
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('block indexing', () => {
   beforeEach(async (done) => {
-    const random = Math.random().toString(36).substring(7)
-    // WIN and SAFARI are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
-    await emailField.sendKeys(`${random}@test.com`)
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    const codeField = await getElementByTag(driver, '[data-test-path="code"]')
-    await codeField.sendKeys('test-code-42')
-
-    await tagButtonClick('data-test-id="continueButton"', driver)
-
-    await getEditor(driver)
-
+    await login(driver)
     actions = driver.actions()
-
     done()
   })
 
   afterEach(async (done) => {
     await logout(driver)
     await driver.quit()
-
     done()
   })
 
@@ -82,6 +60,9 @@ describe('block indexing', () => {
     await enterKey(actions)
     await sleep(1000)
 
+    await tagButtonClick('data-test-button="open-source-modal"', driver)
+    await sleep(1000)
+
     await tagButtonClick('data-test-path="text"', driver)
 
     await rightKey(actions)
@@ -101,13 +82,23 @@ describe('block indexing', () => {
 
     await sendKeys(actions, 'Derrida')
 
-    await tagButtonClick('data-test-path="detail.authors[0].firstName"', driver)
+    // await tagButtonClick('data-test-path="detail.authors[0].firstName"', driver)
+    await tabKey(actions)
 
-    await sendKeys(actions, 'Jaques')
+    await sendKeys(actions, 'Jacques')
 
     await tagButtonClick('data-test-dismiss-modal="true"', driver)
 
     await sleep(500)
+
+    await tagButtonListClick(
+      'data-test-element="atomic-result-item"',
+      0,
+      driver
+    )
+
+    await sleep(1000)
+
     await downKey(actions)
     await sendKeys(actions, 'this is an entry')
     await enterKey(actions)
@@ -169,12 +160,12 @@ describe('block indexing', () => {
       '[data-test-element="atomic-result-item"]'
     )
 
-    // assure two results are listed under entry
-    assert.equal(topicEntries.length, 2)
+    // assure 3 results are listed under entry (heading + 2 entries)
+    assert.equal(topicEntries.length, 3)
 
     await tagButtonListClick(
       'data-test-element="atomic-result-item"',
-      1,
+      2,
       driver
     )
 
@@ -212,7 +203,7 @@ describe('block indexing', () => {
       '[data-test-element="atomic-result-item"]'
     )
 
-    assert.equal(citationsResults.length, 4)
+    assert.equal(citationsResults.length, 6)
 
     // remove author from page
     await tagButtonListClick(
@@ -223,7 +214,8 @@ describe('block indexing', () => {
 
     await getEditor(driver)
     await leftKey(actions)
-
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
     await backspaceKey(actions)
     await sleep(3000)
     await isAppInNotesSaved(driver)
