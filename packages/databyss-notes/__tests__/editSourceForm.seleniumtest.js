@@ -56,6 +56,7 @@ describe('EditSourceForm', () => {
     await enterKey(actions)
     await sleep(1000)
     await tagButtonClick('data-test-button="open-source-modal"', driver)
+    await sleep(1000)
 
     // FIXME: focus should be set to modal component on open
 
