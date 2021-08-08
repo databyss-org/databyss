@@ -122,7 +122,10 @@ describe('inline atomic', () => {
     await leftKey(actions)
     await enterKey(actions)
 
-    const textInput = await getElementByTag(driver, '[data-test-path="text"]')
+    const textInput = await getElementByTag(
+      driver,
+      '[data-test-path="index-text"]'
+    )
     await textInput.click()
 
     // await selectAll(actions)

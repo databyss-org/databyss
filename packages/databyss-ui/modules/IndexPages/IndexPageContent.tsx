@@ -149,7 +149,7 @@ export const IndexPageTitleInput = ({
       onChange={onChange}
       onKeyDown={onKeyDown}
       icon={icon && <Icon>{icon}</Icon>}
-      data-test-path="text"
+      data-test-path="index-text"
       {...others}
     />
   )

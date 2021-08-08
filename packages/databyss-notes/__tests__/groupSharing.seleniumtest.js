@@ -322,7 +322,7 @@ describe('group sharings', () => {
 
     // only  one page should appear
     assert.equal(_topicResults.length, 1)
-    let _title = await getElementByTag(driver, '[data-test-path="text"]')
+    let _title = await getElementByTag(driver, '[data-test-path="index-text"]')
     _title = await _title.getAttribute('value')
 
     // should be updated topic
