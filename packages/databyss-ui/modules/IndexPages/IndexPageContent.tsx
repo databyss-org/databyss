@@ -149,7 +149,7 @@ export const IndexPageTitleInput = ({
       onChange={onChange}
       onKeyDown={onKeyDown}
       icon={icon && <Icon>{icon}</Icon>}
-      data-test-path="index-text"
+      data-test-path="text"
       {...others}
     />
   )
@@ -165,7 +165,7 @@ const SourceTitleAndCitationView = ({
 }: SourceTitleAndCitationViewProps) => {
   const { getPreferredCitationStyle } = useUserPreferencesContext()
   return (
-    <View mt="small">
+    <View>
       <SourceCitationView
         py="none"
         pb="small"
@@ -244,7 +244,7 @@ export const IndexPageView = ({
             (isPublicAccount() ? (
               <SourceTitleAndCitationView block={block} />
             ) : (
-              <View position="relative">
+              <View position="relative" mt="small">
                 <BaseControl
                   onPress={onPressDetails}
                   position="relative"

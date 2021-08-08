@@ -61,9 +61,11 @@ describe('EditSourceForm', () => {
     // FIXME: focus should be set to modal component on open
 
     // HACK: select element to be able to start keyboard navigation
-    await tagButtonClick('data-test-path="text"', driver)
+    // await tagButtonClick('data-test-path="text"', driver)
 
     // reach publication title field
+    await tabKey(actions)
+    await sleep(1000)
     await tabKey(actions)
     await sleep(1000)
     await tabKey(actions)
