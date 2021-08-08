@@ -63,9 +63,9 @@ const dialogs = {
         key="help"
         variant="uiLink"
         alignItems="center"
-        href="https://forms.gle/z5Jcp4WK8MCwfpzy7"
+        href="https://discord.gg/KKrjNdwV7K"
       >
-        Support Request Form
+        Discord Support Channel
       </Button>,
       <Button key="ok" onPress={() => window.location.reload()}>
         Refresh and try again

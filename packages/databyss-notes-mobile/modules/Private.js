@@ -7,6 +7,7 @@ import { QueryClientProvider, QueryClient } from 'react-query'
 import { View } from '@databyss-org/ui/primitives'
 import { EditorPageProvider } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { UserPreferencesProvider } from '@databyss-org/ui/hooks'
 import NavBar from '../components/NavBar'
 import Tabs from '../constants/Tabs'
 
@@ -54,49 +55,51 @@ const Private = () => {
   // render methods
   const render = () => (
     <QueryClientProvider client={queryClient}>
-      <View
-        position="absolute"
-        top="0"
-        bottom="0"
-        width="100%"
-        backgroundColor="background.1"
-      >
-        <Router>
-          <Redirect noThrow from="/signup" to="/" />
-          <RouterGroup path="/:accountId">
-            <RouterGroup path="pages">
-              <PagesIndex path="/" />
-              <EditorPageProvider path=":pageId">
-                <PageDetails default />
-              </EditorPageProvider>
-            </RouterGroup>
-
-            <RouterGroup path="sources">
-              <SourcesIndex path="/" />
-              <RouterGroup path="/authors">
-                <SourcesIndex path="/" />
-                <AuthorDetails path="/:query" />
+      <UserPreferencesProvider>
+        <View
+          position="absolute"
+          top="0"
+          bottom="0"
+          width="100%"
+          backgroundColor="background.1"
+        >
+          <Router>
+            <Redirect noThrow from="/signup" to="/" />
+            <RouterGroup path="/:accountId">
+              <RouterGroup path="pages">
+                <PagesIndex path="/" />
+                <EditorPageProvider path=":pageId">
+                  <PageDetails default />
+                </EditorPageProvider>
               </RouterGroup>
-              <SourceDetails path="/:blockId" />
+
+              <RouterGroup path="sources">
+                <SourcesIndex path="/" />
+                <RouterGroup path="/authors">
+                  <SourcesIndex path="/" />
+                  <AuthorDetails path="/:query" />
+                </RouterGroup>
+                <SourceDetails path="/:blockId" />
+              </RouterGroup>
+
+              <RouterGroup path="topics">
+                <TopicsIndex path="/" />
+                <TopicDetails path="/:blockId" />
+              </RouterGroup>
+
+              <RouterGroup path="config">
+                <ConfigIndex path="/" />
+              </RouterGroup>
+
+              <Redirect noThrow from="*" to="pages" />
             </RouterGroup>
 
-            <RouterGroup path="topics">
-              <TopicsIndex path="/" />
-              <TopicDetails path="/:blockId" />
-            </RouterGroup>
+            <Redirect noThrow from="*" to={`${defaultGroupId}/pages`} />
+          </Router>
 
-            <RouterGroup path="config">
-              <ConfigIndex path="/" />
-            </RouterGroup>
-
-            <Redirect noThrow from="*" to="pages" />
-          </RouterGroup>
-
-          <Redirect noThrow from="*" to={`${defaultGroupId}/pages`} />
-        </Router>
-
-        <NavBar onChange={onNavBarChange} />
-      </View>
+          <NavBar onChange={onNavBarChange} />
+        </View>
+      </UserPreferencesProvider>
     </QueryClientProvider>
   )
 

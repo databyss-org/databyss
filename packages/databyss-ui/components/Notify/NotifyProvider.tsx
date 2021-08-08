@@ -409,10 +409,10 @@ class NotifyProvider extends React.Component {
         key="help"
         variant="uiLink"
         alignItems="center"
-        href="https://forms.gle/z5Jcp4WK8MCwfpzy7"
+        href="https://discord.gg/KKrjNdwV7K"
         target="_blank"
       >
-        Support Request Form
+        Discord Support Channel
       </Button>,
       <Button key="ok" onPress={() => window.location.reload(true)}>
         Refresh and try again

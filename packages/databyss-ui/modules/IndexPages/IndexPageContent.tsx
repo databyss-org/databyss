@@ -38,7 +38,7 @@ import {
   Grid,
   ViewProps,
 } from '@databyss-org/ui/primitives'
-import { isMobileOrMobileOs } from '@databyss-org/ui/lib/mediaQuery'
+import { isMobile, isMobileOrMobileOs } from '@databyss-org/ui/lib/mediaQuery'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
@@ -241,7 +241,7 @@ export const IndexPageView = ({
             />
           )}
           {block?.type === BlockType.Source &&
-            (isPublicAccount() ? (
+            (isPublicAccount() || isMobile() ? (
               <SourceTitleAndCitationView block={block} />
             ) : (
               <View position="relative" mt="small">
