@@ -1,3 +1,4 @@
+import 'core-js/features/string/replace-all'
 import { uid } from '@databyss-org/data/lib/uid'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
 import {

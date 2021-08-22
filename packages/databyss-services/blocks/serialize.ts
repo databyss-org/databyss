@@ -1,3 +1,4 @@
+import 'core-js/features/string/replace-all'
 import colors from '@databyss-org/ui/theming/colors'
 import { Text } from '../interfaces'
 import { RangeType, InlineTypes } from '../interfaces/Range'
