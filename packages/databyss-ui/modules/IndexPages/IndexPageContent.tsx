@@ -61,11 +61,13 @@ export interface IndexPageTitleInputHandles {
   updateTitle: (block: Block) => void
 }
 
-const getTitleFromBlock = (block: Block) =>
-  ({
-    [BlockType.Source]: block.text.textValue,
-    [BlockType.Topic]: block.text.textValue,
-  }[block.type])
+const getTitleFromBlock = (block: Block | undefined, path: string[]) =>
+  block
+    ? {
+        [BlockType.Source]: block.text.textValue,
+        [BlockType.Topic]: block.text.textValue,
+      }[block.type]
+    : path[path.length - 1]
 
 export const IndexPageTitleInput = ({
   path,
@@ -74,14 +76,16 @@ export const IndexPageTitleInput = ({
   ...others
 }: IndexPageViewProps) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  const [title, setTitle] = useState(
-    block ? getTitleFromBlock(block) : path[path.length - 1]
-  )
+  const [title, setTitle] = useState(getTitleFromBlock(block, path))
   const { navigate } = useNavigationContext()
 
   useImperativeHandle(handlesRef, () => ({
-    updateTitle: (block: Block) => setTitle(getTitleFromBlock(block)),
+    updateTitle: (block: Block) => setTitle(getTitleFromBlock(block, path)),
   }))
+
+  useEffect(() => {
+    setTitle(getTitleFromBlock(block, path))
+  }, [path])
 
   const setBlockText = useCallback(
     debounce((value: string) => {
