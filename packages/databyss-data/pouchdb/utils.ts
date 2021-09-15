@@ -241,6 +241,7 @@ export const searchText = async (query) => {
     include_docs: true,
     filter: (doc: any) => doc.doctype === DocumentType.Block,
     mm: `${_percentageToMatch}%`,
+    stale: 'update_after',
   })
 
   return _res
