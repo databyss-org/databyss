@@ -50,9 +50,9 @@ export const setDbBusy = (isBusy: boolean, writesPending?: number) => {
 export const addTimeStamp = (doc: any): any => {
   // if document has been created add a modifiedAt timestamp
   if (doc.createdAt) {
-    return { ...doc, modifiedAt: Date.now() }
+    return { modifiedAt: Date.now(), ...doc }
   }
-  return { ...doc, createdAt: Date.now() }
+  return { createdAt: Date.now(), ...doc }
 }
 
 interface Patch {

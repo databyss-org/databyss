@@ -22,7 +22,11 @@ const applyPatch = (node, path, value) => {
 }
 
 // same as Object.assign, but filters out unwanted fields
-const assignPatchValue = (obj, value, allowed = ['text', 'type', '_id']) => {
+const assignPatchValue = (
+  obj,
+  value,
+  allowed = ['text', 'type', '_id', 'createdAt', 'modifiedAt']
+) => {
   Object.keys(value).forEach((key) => {
     if (allowed.includes(key)) {
       obj[key] = value[key]
@@ -31,6 +35,7 @@ const assignPatchValue = (obj, value, allowed = ['text', 'type', '_id']) => {
 }
 
 const addOrReplaceBlock = async (p) => {
+  console.log('[addOrReplaceBlock]', p)
   // if the blockId isn't in the patch, get it from the page
   const { _id, textValue, ranges, type } = p.value
   const _blockId = _id
@@ -47,11 +52,10 @@ const addOrReplaceBlock = async (p) => {
   if (p.op === 'add' || p.path.length === 2) {
     assignPatchValue(_block, p.value)
   } else {
+    console.log('[addOrReplaceBlock] applyPatch', p)
     applyPatch(_block, p.path.slice(2), { textValue, ranges })
     _block.type = type
   }
-
-  // console.log('[addOrReplaceBlock]', _id, p.sharedWithGroups)
 
   upsert({
     doctype: DocumentType.Block,

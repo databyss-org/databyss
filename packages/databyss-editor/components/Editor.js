@@ -216,7 +216,7 @@ const Editor = ({
         />
       </Slate>
     ),
-    [editor, selection]
+    [editor, editor.children, selection]
   )
 }
 

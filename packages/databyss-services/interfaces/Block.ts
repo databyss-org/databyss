@@ -26,6 +26,8 @@ export class Block implements BlockReference {
   page?: string
   text: Text
   type: BlockType
+  createdAt?: number
+  modifiedAt?: number
   __showCitationMenu?: boolean
   __showTopicMenu?: boolean
   __showNewBlockMenu?: boolean

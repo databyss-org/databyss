@@ -96,6 +96,48 @@ const ContentEditable = ({
   const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
+  const lastChangeSeqRef = useRef(0)
+
+  dbRef.current
+    ?.changes({
+      since: lastChangeSeqRef.current,
+      include_docs: true,
+    })
+    .then((changes) => {
+      lastChangeSeqRef.current = changes.last_seq
+      changes.results.forEach((change) => {
+        if (change.id === state.pageHeader._id) {
+          // reload the page
+        }
+        const _blockIndex = state.blocks.findIndex(
+          (block) => block._id === change.id
+        )
+        if (_blockIndex < 0) {
+          return
+        }
+        if (
+          change.doc.modifiedAt <=
+          stateRef.current.blocks[_blockIndex].modifiedAt
+        ) {
+          return
+        }
+        console.log(
+          '[ContentEditable] setContent',
+          change.doc.modifiedAt,
+          stateRef.current.blocks[_blockIndex].modifiedAt
+        )
+        setContent({
+          operations: [
+            {
+              fromSync: true,
+              withRerender: true,
+              index: _blockIndex,
+              text: change.doc.text,
+            },
+          ],
+        })
+      })
+    })
 
   // useEffect(() => {
   //   dbRef.current
@@ -114,6 +156,17 @@ const ContentEditable = ({
   //       if (_blockIndex < 0) {
   //         return
   //       }
+  //       if (
+  //         change.doc.modifiedAt <=
+  //         stateRef.current.blocks[_blockIndex].modifiedAt
+  //       ) {
+  //         return
+  //       }
+  //       console.log(
+  //         '[ContentEditable] setContent',
+  //         change.doc.modifiedAt,
+  //         stateRef.current.blocks[_blockIndex].modifiedAt
+  //       )
   //       setContent({
   //         operations: [
   //           {
@@ -847,6 +900,7 @@ const ContentEditable = ({
     let nextSelection = editor.selection
 
     state.operations.forEach((op) => {
+      ReactEditor.focus(editor)
       const _block = stateBlockToSlateBlock(op.block)
       // if new block was added in reducer
       if (!editor.children[op.index]) {
@@ -877,7 +931,6 @@ const ContentEditable = ({
           }
         )
         // inserts node
-
         Transforms.insertFragment(editor, [_block], {
           at: [op.index],
         })

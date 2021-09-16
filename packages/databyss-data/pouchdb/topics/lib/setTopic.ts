@@ -8,6 +8,7 @@ import { updateInlines } from '../../../../databyss-editor/lib/inlineUtils/updat
 const setTopic = async (data: Topic, caches?: DocumentCacheDict) => {
   console.log('[setTopic] caches', caches)
   const { text, _id } = data
+  const _newTopic = !caches?.blocks?.[_id]
 
   await upsertImmediate({
     doctype: DocumentType.Block,
@@ -18,12 +19,14 @@ const setTopic = async (data: Topic, caches?: DocumentCacheDict) => {
     },
   })
 
-  await updateInlines({
-    inlineType: InlineTypes.InlineTopic,
-    text,
-    _id,
-    caches,
-  })
+  if (!caches?.blocks || !_newTopic) {
+    await updateInlines({
+      inlineType: InlineTypes.InlineTopic,
+      text,
+      _id,
+      caches,
+    })
+  }
 }
 
 export default setTopic

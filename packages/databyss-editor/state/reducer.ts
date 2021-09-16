@@ -631,6 +631,7 @@ export default (
             // do not allow content change if previous block is closure type
             if (!getClosureType(draft.blocks[_insertAt].type)) {
               draft.blocks[_insertAt].text = _previousBlock.text
+              draft.blocks[_insertAt].modifiedAt = Date.now()
             }
 
             // if 2nd block in split has text, insert an empty block before it
@@ -705,6 +706,7 @@ export default (
           // update node text
           if (!_mergingIntoAtomic) {
             draft.blocks[payload.index].text = payload.text
+            draft.blocks[payload.index].modifiedAt = Date.now()
           }
 
           // remove block(s)
@@ -728,7 +730,7 @@ export default (
 
           // preventDefault if operation inlcudes inline atomic
           if (
-            !payload.operations.find((op) => op.isRefEntity) &&
+            !payload.operations.find((op) => op.isRefEntity || op.fromSync) &&
             selectionIncludesInlineAtomics({
               blocks: draft.blocks,
               selection: draft.selection,
@@ -741,6 +743,9 @@ export default (
           payload.operations.forEach((op: PayloadOperation) => {
             // update node text
             let _block = draft.blocks[op.index]
+            const _ts = Date.now()
+            _block.modifiedAt = _ts
+            console.log('[reducer] modifiedAt', _ts)
 
             // // stop fromSync if no changes
             // if (op.fromSync && fastDeepEqual(op.text, _block.text)) {

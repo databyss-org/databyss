@@ -47,6 +47,7 @@ export const updateInlines = async ({
     if (!_page) {
       continue
     }
+    let _inlineFound = false
     for (const _blockRef of _page!.blocks) {
       if (_blockRef.type === BlockType.Entry) {
         // get the block to scan
@@ -58,6 +59,8 @@ export const updateInlines = async ({
         const _inlineRanges = _block!.text.ranges.filter(
           (r) => r.marks.filter((m) => m.includes(inlineType)).length
         )
+
+        _inlineFound = false
 
         // eslint-disable-next-line no-loop-func
         _inlineRanges.forEach((r) => {
@@ -72,11 +75,12 @@ export const updateInlines = async ({
                 newText: text,
                 type: inlineType,
               })
-              Object.assign(_block, { text: _newText })
+              Object.assign(_block, { text: _newText, modifiedAt: Date.now() })
+              _inlineFound = true
             }
           }
         })
-        if (_inlineRanges.length) {
+        if (_inlineFound) {
           // update block
           await upsert({
             doctype: DocumentType.Block,

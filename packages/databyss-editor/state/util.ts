@@ -307,17 +307,21 @@ export const addMetaToPatches = ({
       _p.value = { ..._p.value, _id: nextState.selection._id }
     }
     // adds _id for patch system to consume
-    if (_p.path[0] === 'blocks') {
-      if (_p.op === 'remove') {
-        const _id = previousState.blocks[_p.path[1]]._id
-        _p.value = { ..._p.value, _id }
-      }
-      if (_p.op === 'replace') {
-        const { _id, type, text } = nextState.blocks[_p.path[1]]
-        if (typeof _p.value !== 'string') {
-          _p.value = { ...text, ..._p.value, _id, type }
-        }
-      }
+    if (_p.path[0] === 'blocks' && _p.path.length > 2) {
+      // if (_p.op === 'remove') {
+      //   const _id = previousState.blocks[_p.path[1]]._id
+      //   _p.value = { ..._p.value, _id }
+      // }
+      // if (_p.op === 'replace') {
+      //   const { _id, type, text } = nextState.blocks[_p.path[1]]
+      //   if (typeof _p.value !== 'string') {
+      //     _p.value = { ...text, ..._p.value, _id, type }
+      //   }
+      // }
+      const _block = nextState.blocks[_p.path[1]]
+      _p.value = _block
+      _p.path = ['blocks', _p.path[1]]
+      _p.op = 'replace'
     }
     return _p
   })
