@@ -31,6 +31,7 @@ export const setDbBusyDispatch = (dispatch: Function) => {
  */
 
 export const setDbBusy = (isBusy: boolean, writesPending?: number) => {
+  return
   if (!dbBusyDispatchRef.current) {
     return
   }
@@ -74,7 +75,7 @@ export const upsert = async ({
   doc: any
 }) => {
   upQdict.current.push({ ...doc, _id, doctype })
-  // setDbBusy(!!upQdict.current.length)
+  setDbBusy(!!upQdict.current.length)
 }
 
 export const findAll = async ({
@@ -225,7 +226,10 @@ export const getGroupSession = async (
     _getGroup()
   })
 
-export const searchText = async (query) => {
+export const searchText = async (
+  query: string,
+  onUpdated: (res: PouchDB.SearchResponse<{}>) => void
+) => {
   // calculate how strict we want the search to be
 
   // will require at least one word to be in the results
@@ -235,13 +239,20 @@ export const searchText = async (query) => {
   _percentageToMatch *= 100
   _percentageToMatch = +_percentageToMatch.toFixed(0)
 
-  const _res = await (dbRef.current as PouchDB.Database).search({
+  const _params = {
     query,
     fields: ['text.textValue'],
     include_docs: true,
     filter: (doc: any) => doc.doctype === DocumentType.Block,
     mm: `${_percentageToMatch}%`,
+  }
+
+  const _res = await (dbRef.current as PouchDB.Database).search({
+    ..._params,
+    stale: 'ok',
   })
+
+  ;(dbRef.current as PouchDB.Database).search(_params).then(onUpdated)
 
   return _res
 }

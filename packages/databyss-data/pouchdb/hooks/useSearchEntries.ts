@@ -28,7 +28,10 @@ export const useSearchEntries = (searchQuery: string) => {
       const results = await searchEntries(
         searchQuery,
         Object.values(pagesRes.data!),
-        blocksRes.data!
+        blocksRes.data!,
+        (_results) => {
+          queryClient.setQueryData(queryKey, _results)
+        }
       )
       return results
     },

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
 import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
@@ -23,6 +23,7 @@ const Editor = ({
   onFocus,
   onInlineAtomicClick,
   firstBlockIsTitle,
+  selection,
   ...others
 }) => {
   const _searchTerm = useSearchContext((c) => c && c.searchTerm)
@@ -180,39 +181,42 @@ const Editor = ({
     },
     [searchTerm]
   )
-  return (
-    <Slate editor={editor} {...slateProps}>
-      {children}
-      {!readonly && <FormatMenu />}
-      <Editable
-        onCopy={(e) => {
-          e.preventDefault()
-          copy(e)
-        }}
-        onPaste={pasteEventHandler}
-        onCut={(e) => {
-          e.preventDefault()
-          cut(e)
-        }}
-        onFocus={onFocus}
-        decorate={decorate}
-        spellCheck={process.env.NODE_ENV !== 'test'}
-        renderElement={renderElement}
-        renderLeaf={renderLeaf}
-        readOnly={readOnly}
-        autoFocus={autofocus}
-        onKeyDown={onKeyDown}
-        style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
-        css={styledCss({
-          flexGrow: 1,
-          overflowY: 'auto',
-          paddingLeft: 'em',
-          paddingRight: 'medium',
-          paddingBottom: 'extraLarge',
-          ...scrollbarResetCss,
-        })}
-      />
-    </Slate>
+  return useMemo(
+    () => (
+      <Slate editor={editor} selection={selection} {...slateProps}>
+        {children}
+        {!readonly && <FormatMenu />}
+        <Editable
+          onCopy={(e) => {
+            e.preventDefault()
+            copy(e)
+          }}
+          onPaste={pasteEventHandler}
+          onCut={(e) => {
+            e.preventDefault()
+            cut(e)
+          }}
+          onFocus={onFocus}
+          decorate={decorate}
+          spellCheck={process.env.NODE_ENV !== 'test'}
+          renderElement={renderElement}
+          renderLeaf={renderLeaf}
+          readOnly={readOnly}
+          autoFocus={autofocus}
+          onKeyDown={onKeyDown}
+          style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
+          css={styledCss({
+            flexGrow: 1,
+            overflowY: 'auto',
+            paddingLeft: 'em',
+            paddingRight: 'medium',
+            paddingBottom: 'extraLarge',
+            ...scrollbarResetCss,
+          })}
+        />
+      </Slate>
+    ),
+    [editor, selection]
   )
 }
 

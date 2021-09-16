@@ -5,6 +5,7 @@ import React, {
   useImperativeHandle,
   useRef,
   useMemo,
+  Ref,
 } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { Patch } from 'immer'
@@ -59,7 +60,9 @@ export type TransformArray = {
 }
 
 type ContextType = {
-  state: any
+  state: EditorState
+  stateRef: Ref<EditorState>
+  selectionUpdatedAtRef: Ref<number>
   split: (transform: Transform) => void
   merge: (transform: Transform) => void
   setContent: (transformArray: TransformArray) => void
@@ -109,6 +112,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
   // get the current page header
 
   const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
+  const selectionLastUpdatedAtRef = useRef<number>(Date.now())
 
   /*
     intercepts onChange props and runs the block relations algorithm, dispatches block relations
@@ -121,7 +125,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
     }
   }
 
-  const [state, dispatch] = useReducer(
+  const [state, dispatch, stateRef] = useReducer(
     reducer,
     addMetaDataToBlocks(initialState),
     {
@@ -151,11 +155,13 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
     [pagePathRef.current]
   )
 
-  const setSelection = (selection: Selection) =>
+  const setSelection = (selection: Selection) => {
+    selectionLastUpdatedAtRef.current = Date.now()
     dispatch({
       type: SET_SELECTION,
       payload: { selection },
     })
+  }
 
   /**
    * paste event handler
@@ -212,6 +218,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
    * Set block content at `index` to `text`
    */
   const setContent = (transformArray: TransformArray): void => {
+    selectionLastUpdatedAtRef.current = Date.now()
     // recalculate block relations
     // onBlockRelationsChange(pagePathRef.current.blockRelations)
     dispatch({
@@ -328,6 +335,8 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
       <EditorContext.Provider
         value={{
           state,
+          stateRef,
+          selectionUpdatedAtRef: selectionLastUpdatedAtRef,
           copy,
           cut,
           insert,

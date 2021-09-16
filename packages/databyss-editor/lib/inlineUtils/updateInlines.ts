@@ -44,6 +44,9 @@ export const updateInlines = async ({
   for (const _pageId of _relation!.pages) {
     const _page = caches?.pages?.[_pageId] ?? (await getDocument<Page>(_pageId))
 
+    if (!_page) {
+      continue
+    }
     for (const _blockRef of _page!.blocks) {
       if (_blockRef.type === BlockType.Entry) {
         // get the block to scan

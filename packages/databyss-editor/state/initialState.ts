@@ -17,6 +17,7 @@ const initialState: EditorState = {
       offset: 0,
     },
   },
+  selectionUpdatedAt: Date.now(),
   newEntities: [],
   removedEntities: [],
   blocks: [],

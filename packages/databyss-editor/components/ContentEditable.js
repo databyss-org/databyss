@@ -80,10 +80,12 @@ const ContentEditable = ({
 
   const {
     state,
+    stateRef,
     split,
     merge,
     setContent,
     setSelection,
+    selectionUpdatedAtRef,
     clear,
     remove,
     removeAtSelection,
@@ -163,9 +165,7 @@ const ContentEditable = ({
 
   // if focus index is provides, move caret
   useEffect(() => {
-    console.log('[ContentEditable] focusIndex', focusIndex)
     if (typeof focusIndex === 'number' && editor.children) {
-      console.log('[ContentEditable] focusIndexIsNumber')
       const _point = { index: focusIndex, offset: 0 }
       const _selection = { anchor: _point, focus: _point }
       const _slateSelection = stateSelectionToSlateSelection(
@@ -545,7 +545,6 @@ const ContentEditable = ({
       }
 
       if (Hotkeys.isSelectAll(event)) {
-        console.log('[ContentEditable] isSelectAll')
         event.preventDefault()
         const _sel = {
           anchor: { offset: 0, index: 1 },
@@ -892,7 +891,10 @@ const ContentEditable = ({
         }
       }
       // if reducer states to set the selection as an operation, perform seletion
-      if (op.setSelection) {
+      if (
+        op.setSelection &&
+        state.selectionUpdatedAt > selectionUpdatedAtRef.current
+      ) {
         ReactEditor.focus(editor)
 
         const _sel = stateSelectionToSlateSelection(
@@ -902,6 +904,7 @@ const ContentEditable = ({
 
         window.requestAnimationFrame(() => {
           Transforms.select(editor, _sel)
+          selectionUpdatedAtRef.current = Date.now()
         })
       }
     })
@@ -909,11 +912,15 @@ const ContentEditable = ({
     // if there were any update operations,
     //   sync the Slate selection to the state selection
 
-    if (state.operations.length) {
+    if (
+      state.operations.length &&
+      state.selectionUpdatedAt > selectionUpdatedAtRef.current
+    ) {
       nextSelection = stateSelectionToSlateSelection(
         editor.children,
         state.selection
       )
+      selectionUpdatedAtRef.current = Date.now()
     }
 
     valueRef.current = editor.children

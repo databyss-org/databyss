@@ -41,7 +41,7 @@ declare namespace PouchDB {
   }
 
   interface Database<Content extends {} = {}> {
-    search(query: SearchQuery<Content>): SearchResponse<Content>
+    search(query: SearchQuery<Content>): Promise<SearchResponse<Content>>
   }
 
   // TODO: remove this next line
