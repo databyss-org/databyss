@@ -1,4 +1,5 @@
 import 'core-js/features/string/replace-all'
+import fastDeepEqual from 'fast-deep-equal'
 import { uid } from '@databyss-org/data/lib/uid'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
 import {
@@ -595,24 +596,27 @@ export default (
 
           const _leadingNext = trimLeft(payload.text)
 
+          const _newBlockFields = () => ({
+            _id: uid(),
+            createdAt: Date.now(),
+            type: BlockType.Entry,
+          })
+
           // add or insert a new block
           const _payloadBlock: Block = {
-            type: BlockType.Entry,
-            _id: uid(),
+            ..._newBlockFields(),
             text: payload.text,
           }
           trim(_payloadBlock)
           const _previousBlock: Block = {
-            type: BlockType.Entry,
-            _id: uid(),
+            ..._newBlockFields(),
             text: payload.previous,
           }
           trim(_previousBlock)
 
           // add or insert a new block
           const _block: Block = {
-            type: BlockType.Entry,
-            _id: uid(),
+            ..._newBlockFields(),
             text: _payloadBlock.text,
           }
 
@@ -631,8 +635,7 @@ export default (
             // if 2nd block in split has text, insert an empty block before it
             if (_block.text.textValue.length) {
               const _emptyBlock: Block = {
-                type: BlockType.Entry,
-                _id: uid(),
+                ..._newBlockFields(),
                 text: { textValue: '', ranges: [] },
               }
               if (_insertAt === draft.blocks.length - 1) {
@@ -714,7 +717,8 @@ export default (
             payload.operations.find(
               (op: PayloadOperation) =>
                 isAtomicInlineType(state.blocks[op.index].type) &&
-                !op.isRefEntity
+                !op.isRefEntity &&
+                !op.fromSync
             )
           ) {
             draft.preventDefault = true
@@ -736,11 +740,19 @@ export default (
           payload.operations.forEach((op: PayloadOperation) => {
             // update node text
             let _block = draft.blocks[op.index]
+
+            // // stop fromSync if no changes
+            // if (op.fromSync && fastDeepEqual(op.text, _block.text)) {
+            //   return
+            // }
+
             // if operation is ref entity, handle separately
 
             if (!op.isRefEntity) {
               _block.text = op.text
             }
+
+            console.log('[SET_CONTENT]', JSON.stringify(_block))
 
             // check for atomic closure
             if (bakeAtomicClosureBlock({ draft, index: op.index })) {

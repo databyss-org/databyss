@@ -11,7 +11,7 @@ import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { setSource } from '@databyss-org/services/sources'
 import { setEmbed } from '@databyss-org/services/embeds'
 import { setBlockRelations } from '@databyss-org/services/entries'
-import { setTopic } from '@databyss-org/services/topics'
+import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
@@ -53,6 +53,13 @@ import {
 } from '../lib/inlineUtils'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
 import { BlockType } from '../interfaces'
+import {
+  useBlocks,
+  useDocuments,
+  usePages,
+} from '../../databyss-data/pouchdb/hooks'
+import { DocumentType } from '../../databyss-data/pouchdb/interfaces'
+import { dbRef } from '../../databyss-data/pouchdb/db'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -64,6 +71,8 @@ const ContentEditable = ({
   sharedWithGroups,
   firstBlockIsTitle,
 }) => {
+  const blocksRes = useBlocks()
+  const pagesRes = usePages()
   const editorContext = useEditorContext()
   const { navigate } = useNavigationContext()
 
@@ -85,6 +94,36 @@ const ContentEditable = ({
   const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
+
+  // useEffect(() => {
+  //   dbRef.current
+  //     ?.changes({
+  //       since: 'now',
+  //       live: true,
+  //       include_docs: true,
+  //     })
+  //     .on('change', (change) => {
+  //       if (change.id === state.pageHeader._id) {
+  //         // reload the page
+  //       }
+  //       const _blockIndex = state.blocks.findIndex(
+  //         (block) => block._id === change.id
+  //       )
+  //       if (_blockIndex < 0) {
+  //         return
+  //       }
+  //       setContent({
+  //         operations: [
+  //           {
+  //             fromSync: true,
+  //             withRerender: true,
+  //             index: _blockIndex,
+  //             text: change.doc.text,
+  //           },
+  //         ],
+  //       })
+  //     })
+  // }, [])
 
   try {
     if (!valueRef.current || state.operations.reloadAll) {
@@ -164,7 +203,12 @@ const ContentEditable = ({
           },
           TOPIC: () => {
             if (_data) {
-              window.requestAnimationFrame(() => setTopic(_data))
+              window.requestAnimationFrame(() =>
+                setTopic(_data, {
+                  pages: pagesRes.data,
+                  blocks: blocksRes.data,
+                })
+              )
             }
           },
           EMBED: () => {

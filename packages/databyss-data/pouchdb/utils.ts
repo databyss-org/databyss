@@ -74,7 +74,7 @@ export const upsert = async ({
   doc: any
 }) => {
   upQdict.current.push({ ...doc, _id, doctype })
-  setDbBusy(!!upQdict.current.length)
+  // setDbBusy(!!upQdict.current.length)
 }
 
 export const findAll = async ({

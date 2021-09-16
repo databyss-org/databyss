@@ -15,7 +15,7 @@ import {
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Helmet } from 'react-helmet'
-import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import { useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { Block, BlockType, Source } from '@databyss-org/services/interfaces'
 import {
   LoadingFallback,
@@ -78,6 +78,8 @@ export const IndexPageTitleInput = ({
     block ? getTitleFromBlock(block) : path[path.length - 1]
   )
   const { navigate } = useNavigationContext()
+  const blocksRes = useBlocks(BlockType._ANY)
+  const pagesRes = usePages()
 
   useImperativeHandle(handlesRef, () => ({
     updateTitle: (block: Block) => setTitle(getTitleFromBlock(block)),
@@ -91,7 +93,7 @@ export const IndexPageTitleInput = ({
       switch (block!.type) {
         case BlockType.Topic:
           block!.text.textValue = value
-          setTopic(block!)
+          setTopic(block!, { pages: pagesRes.data, blocks: blocksRes.data })
           break
         case BlockType.Source:
           block!.text.textValue = value
@@ -308,9 +310,7 @@ export const getPathFromBlock = (block: Block) => {
 
 export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const { blockId } = useParams()
-  const blocksRes = useDocuments<Block>({
-    doctype: DocumentType.Block,
-  })
+  const blocksRes = useBlocks(BlockType._ANY)
   const pagesRes = usePages()
 
   if (
