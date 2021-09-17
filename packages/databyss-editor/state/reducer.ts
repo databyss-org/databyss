@@ -743,7 +743,7 @@ export default (
           payload.operations.forEach((op: PayloadOperation) => {
             // update node text
             let _block = draft.blocks[op.index]
-            const _ts = Date.now()
+            const _ts = op.fromSync ? op.modifiedAt : Date.now()
             _block.modifiedAt = _ts
             console.log('[reducer] modifiedAt', _ts)
 

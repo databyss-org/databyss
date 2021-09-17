@@ -133,6 +133,7 @@ const ContentEditable = ({
               withRerender: true,
               index: _blockIndex,
               text: change.doc.text,
+              modifiedAt: change.doc.modifiedAt,
             },
           ],
         })

@@ -333,6 +333,10 @@ const bulkUpsert = async (upQdict: any) => {
     const { _id, doctype, ...docFields } = upQdict[_docId]
     const _oldDoc = _oldDocs[_id]
     if (_oldDoc) {
+      if (_oldDoc.modifiedAt === docFields.modifiedAt) {
+        console.log('[bulkUpsert] skip upsert for identical modifiedAt', _id)
+        continue
+      }
       const { sharedWithGroups } = _oldDoc
 
       const _groupSet = new Set(

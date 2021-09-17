@@ -17,6 +17,7 @@ export interface PayloadOperation {
   convertInlineToAtomic?: boolean
   convertInlineToEmbed?: IframeAttributes & Embed
   fromSync?: boolean
+  modifiedAt?: number
 }
 
 export interface BackflowOperation {
