@@ -35,7 +35,7 @@ export default (_id: string) =>
           return resolve(new ResourceNotFoundError(`page ${_id} not found`))
         }
 
-        const _page: PageDoc | null = await getDocument(_id)
+        const _page: PageDoc | null = await getDocument(_id, true)
 
         if (!_page) {
           console.log('[populatePage] page missing, retry')

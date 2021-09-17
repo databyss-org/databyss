@@ -20,6 +20,7 @@ export class Page implements PageHeader {
   blocks: Block[]
   name: string
   archive?: boolean
+  lastSequence?: number
   constructor(id?: string, options?: PageConstructorOptions) {
     this._id = id || uidlc()
     this.selection = {

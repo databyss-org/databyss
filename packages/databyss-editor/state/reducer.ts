@@ -1,5 +1,4 @@
 import 'core-js/features/string/replace-all'
-import fastDeepEqual from 'fast-deep-equal'
 import { uid } from '@databyss-org/data/lib/uid'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
 import {
@@ -239,7 +238,6 @@ export const bakeAtomicClosureBlock = ({
           focus: _cursor,
           _id: draft.selection._id,
         }
-        draft.selectionUpdatedAt = Date.now()
       }
 
       // get the atomic block which is being closed
@@ -743,14 +741,7 @@ export default (
           payload.operations.forEach((op: PayloadOperation) => {
             // update node text
             let _block = draft.blocks[op.index]
-            const _ts = op.fromSync ? op.modifiedAt : Date.now()
-            _block.modifiedAt = _ts
-            console.log('[reducer] modifiedAt', _ts)
-
-            // // stop fromSync if no changes
-            // if (op.fromSync && fastDeepEqual(op.text, _block.text)) {
-            //   return
-            // }
+            _block.modifiedAt = op.fromSync ? op.modifiedAt : Date.now()
 
             // if operation is ref entity, handle separately
 
@@ -1000,7 +991,6 @@ export default (
       // update the selection unless we're doing `preventDefault`
       if (nextSelection && !draft.preventDefault) {
         draft.selection = nextSelection
-        draft.selectionUpdatedAt = Date.now()
       }
 
       const _inTitleBlock =
@@ -1073,7 +1063,6 @@ export default (
           anchor: { offset: 0, index: 0 },
           focus: { offset: 0, index: 0 },
         }
-        draft.selectionUpdatedAt = Date.now()
       }
 
       // UPDATE BLOCK UI FLAGS

@@ -35,7 +35,7 @@ const assignPatchValue = (
 }
 
 const addOrReplaceBlock = async (p) => {
-  console.log('[addOrReplaceBlock]', p)
+  // console.log('[addOrReplaceBlock]', p)
   // if the blockId isn't in the patch, get it from the page
   const { _id, textValue, ranges, type } = p.value
   const _blockId = _id
@@ -52,7 +52,7 @@ const addOrReplaceBlock = async (p) => {
   if (p.op === 'add' || p.path.length === 2) {
     assignPatchValue(_block, p.value)
   } else {
-    console.log('[addOrReplaceBlock] applyPatch', p)
+    // console.log('[addOrReplaceBlock] applyPatch', p)
     applyPatch(_block, p.path.slice(2), { textValue, ranges })
     _block.type = type
   }

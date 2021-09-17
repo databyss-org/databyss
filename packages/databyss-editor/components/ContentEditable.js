@@ -53,12 +53,7 @@ import {
 } from '../lib/inlineUtils'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
 import { BlockType } from '../interfaces'
-import {
-  useBlocks,
-  useDocuments,
-  usePages,
-} from '../../databyss-data/pouchdb/hooks'
-import { DocumentType } from '../../databyss-data/pouchdb/interfaces'
+import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
 import { dbRef } from '../../databyss-data/pouchdb/db'
 
 const ContentEditable = ({
@@ -85,7 +80,6 @@ const ContentEditable = ({
     merge,
     setContent,
     setSelection,
-    selectionUpdatedAtRef,
     clear,
     remove,
     removeAtSelection,
@@ -96,7 +90,7 @@ const ContentEditable = ({
   const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
-  const lastChangeSeqRef = useRef(0)
+  const lastChangeSeqRef = useRef(stateRef.current.lastSequence)
 
   dbRef.current
     ?.changes({
@@ -107,7 +101,7 @@ const ContentEditable = ({
       lastChangeSeqRef.current = changes.last_seq
       changes.results.forEach((change) => {
         if (change.id === state.pageHeader._id) {
-          // reload the page
+          // TODO: reload the page
         }
         const _blockIndex = state.blocks.findIndex(
           (block) => block._id === change.id
@@ -121,11 +115,6 @@ const ContentEditable = ({
         ) {
           return
         }
-        console.log(
-          '[ContentEditable] setContent',
-          change.doc.modifiedAt,
-          stateRef.current.blocks[_blockIndex].modifiedAt
-        )
         setContent({
           operations: [
             {
@@ -139,47 +128,6 @@ const ContentEditable = ({
         })
       })
     })
-
-  // useEffect(() => {
-  //   dbRef.current
-  //     ?.changes({
-  //       since: 'now',
-  //       live: true,
-  //       include_docs: true,
-  //     })
-  //     .on('change', (change) => {
-  //       if (change.id === state.pageHeader._id) {
-  //         // reload the page
-  //       }
-  //       const _blockIndex = state.blocks.findIndex(
-  //         (block) => block._id === change.id
-  //       )
-  //       if (_blockIndex < 0) {
-  //         return
-  //       }
-  //       if (
-  //         change.doc.modifiedAt <=
-  //         stateRef.current.blocks[_blockIndex].modifiedAt
-  //       ) {
-  //         return
-  //       }
-  //       console.log(
-  //         '[ContentEditable] setContent',
-  //         change.doc.modifiedAt,
-  //         stateRef.current.blocks[_blockIndex].modifiedAt
-  //       )
-  //       setContent({
-  //         operations: [
-  //           {
-  //             fromSync: true,
-  //             withRerender: true,
-  //             index: _blockIndex,
-  //             text: change.doc.text,
-  //           },
-  //         ],
-  //       })
-  //     })
-  // }, [])
 
   try {
     if (!valueRef.current || state.operations.reloadAll) {
@@ -788,6 +736,7 @@ const ContentEditable = ({
         // if there is a selection, handle the delete operation in our state
         if (!Point.equals(editor.selection.focus, editor.selection.anchor)) {
           event.preventDefault()
+          console.log('[ContentEditable] removeAtSelection')
           removeAtSelection()
           return
         }
@@ -945,10 +894,7 @@ const ContentEditable = ({
         }
       }
       // if reducer states to set the selection as an operation, perform seletion
-      if (
-        op.setSelection &&
-        state.selectionUpdatedAt > selectionUpdatedAtRef.current
-      ) {
+      if (op.setSelection) {
         ReactEditor.focus(editor)
 
         const _sel = stateSelectionToSlateSelection(
@@ -958,7 +904,6 @@ const ContentEditable = ({
 
         window.requestAnimationFrame(() => {
           Transforms.select(editor, _sel)
-          selectionUpdatedAtRef.current = Date.now()
         })
       }
     })
@@ -966,15 +911,11 @@ const ContentEditable = ({
     // if there were any update operations,
     //   sync the Slate selection to the state selection
 
-    if (
-      state.operations.length &&
-      state.selectionUpdatedAt > selectionUpdatedAtRef.current
-    ) {
+    if (state.operations.length) {
       nextSelection = stateSelectionToSlateSelection(
         editor.children,
         state.selection
       )
-      selectionUpdatedAtRef.current = Date.now()
     }
 
     valueRef.current = editor.children

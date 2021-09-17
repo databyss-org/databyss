@@ -127,10 +127,15 @@ export const findOne = async <T extends Document>(args: {
  * @returns Promise, resolves to document or null if not found
  */
 export const getDocument = async <T extends Document>(
-  id: string
+  id: string,
+  includeSequence?: boolean
 ): Promise<T | null> => {
   try {
-    return await dbRef.current!.get(id)
+    const _doc = await dbRef.current!.get(id)
+    if (includeSequence) {
+      _doc.lastSequence = (await dbRef.current!.info()).update_seq
+    }
+    return _doc
   } catch (err) {
     if (err.name === 'not_found') {
       return null
@@ -280,6 +285,7 @@ export const upsertImmediate = async ({
   _id: string
   doc: any
 }) => {
+  // console.log('[upsertImmediate] doc', doc)
   const { sharedWithGroups, ...docFields } = doc
   return dbRef.current!.upsert(_id, (oldDoc) => {
     const _groupSet = new Set(
@@ -334,7 +340,7 @@ const bulkUpsert = async (upQdict: any) => {
     const _oldDoc = _oldDocs[_id]
     if (_oldDoc) {
       if (_oldDoc.modifiedAt === docFields.modifiedAt) {
-        console.log('[bulkUpsert] skip upsert for identical modifiedAt', _id)
+        // console.log('[bulkUpsert] skip upsert for identical modifiedAt', _id)
         continue
       }
       const { sharedWithGroups } = _oldDoc
@@ -361,7 +367,7 @@ const bulkUpsert = async (upQdict: any) => {
       }
 
       pouchDataValidation(_doc)
-
+      // console.log('[bulkUpsert] doc', _doc)
       _docs.push(_doc)
     }
   }

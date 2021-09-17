@@ -37,12 +37,12 @@ export interface EditorState {
   showNewBlockMenu?: boolean
   operations: BackflowOperation[] & { reloadAll?: boolean }
   selection: Selection
-  selectionUpdatedAt: number
   newEntities: Array<BlockReference | Block>
   removedEntities: BlockReference[]
   blocks: Block[]
   pageHeader?: PageHeader
   firstBlockIsTitle?: boolean
+  lastSequence: number
   /**
    * Dictionary
    * - keys are entity names (e.g. topic or source text)

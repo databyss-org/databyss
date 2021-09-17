@@ -17,11 +17,11 @@ const initialState: EditorState = {
       offset: 0,
     },
   },
-  selectionUpdatedAt: Date.now(),
   newEntities: [],
   removedEntities: [],
   blocks: [],
   entitySuggestionCache: {},
+  lastSequence: 0,
 }
 
 export const addMetaDataToBlocks = (init: EditorState) => {
