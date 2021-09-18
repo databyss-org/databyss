@@ -1173,6 +1173,18 @@ export default (
           draft.selection.focus.offset > 0
       }
 
+      // update modifiedAt if reloadAll
+      if (
+        draft.operations.reloadAll ||
+        draft.blocks.length !== state.blocks.length
+      ) {
+        draft.modifiedAt = Date.now()
+        console.log(
+          '[EditorProvider.reducer] modifiedAt',
+          JSON.stringify(draft.modifiedAt)
+        )
+      }
+
       return draft
     }
   )

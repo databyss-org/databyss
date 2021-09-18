@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
@@ -7,6 +7,7 @@ import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 
 export const EditorPageLoader = ({ children, pageId, firstBlockIsTitle }) => {
   const { getPage, removePageFromCache } = useEditorPageContext()
+  const [editorPage, setEditorPage] = useState(null)
 
   return (
     <MakeLoader

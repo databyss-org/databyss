@@ -43,6 +43,7 @@ export interface EditorState {
   pageHeader?: PageHeader
   firstBlockIsTitle?: boolean
   lastSequence: number
+  modifiedAt: number
   /**
    * Dictionary
    * - keys are entity names (e.g. topic or source text)

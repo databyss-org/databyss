@@ -3,6 +3,7 @@ import { createContext, useContextSelector } from 'use-context-selector'
 import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
 import { setPublicPage } from '@databyss-org/data/pouchdb/groups'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
@@ -32,6 +33,7 @@ interface ContextType {
   setPage: (page: Page) => void
   deletePage: (id: string) => void
   setPageHeader: (page: Page) => void
+  refetchPage: (id: string) => Page | ResourcePending | null
   getPage: (
     id: string,
     firstBlockIsTitle: boolean
@@ -115,6 +117,18 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(actions.savePageHeader(page))
   }, [])
 
+  const refetchPage = useCallback(
+    (id: string) => {
+      const _pouchPage = pagesRes?.data?.[id]
+      if (!_pouchPage && pagesRes.isSuccess) {
+        // page was removed from pouch
+        return new ResourceNotFoundError('')
+      }
+      dispatch(actions.fetchPage(id, true))
+      return null
+    },
+    [pagesRes.data]
+  )
   const getPage = useCallback(
     (id: string, firstBlockIsTitle: boolean): ResourceResponse<Page> => {
       if (state.cache[id]) {
@@ -182,9 +196,30 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     [JSON.stringify(state.cache)]
   )
 
+  // if (state.cache[pageId]) {
+  //   dbRef.current
+  //     ?.changes({
+  //       since: state.cache[pageId].lastSequence,
+  //       include_docs: true,
+  //     })
+  //     .then((changes) => {
+  //       lastChangeSeqRef.current = changes.last_seq as number
+  //       changes.results.forEach((change) => {
+  //         if (change.id !== pageId) {
+  //           return
+  //         }
+  //         if (change.doc.modifiedAt <= state.cache[pageId].modifiedAt) {
+  //           return
+  //         }
+  //         dispatch(actions.fetchPage(pageId, true))
+  //       })
+  //     })
+  // }
+
   return (
     <EditorPageContext.Provider
       value={{
+        refetchPage,
         getPage,
         setPage,
         setPageHeader,

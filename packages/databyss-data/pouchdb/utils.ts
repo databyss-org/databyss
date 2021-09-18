@@ -322,13 +322,14 @@ const bulkUpsert = async (upQdict: any) => {
       if (_docResponse?.ok) {
         const _oldDoc = _docResponse.ok
         _oldDocs[_oldDoc._id] = _oldDoc
-      } else {
-        // new document has been created
-        const _id = oldDocRes.id
-        if (_id && upQdict[_id]) {
-          _oldDocs[_id] = upQdict[_id]
-        }
       }
+      // else {
+      //   // new document has been created
+      //   const _id = oldDocRes.id
+      //   if (_id && upQdict[_id]) {
+      //     _oldDocs[_id] = upQdict[_id]
+      //   }
+      // }
     })
   }
 
@@ -337,39 +338,41 @@ const bulkUpsert = async (upQdict: any) => {
 
   for (const _docId of Object.keys(upQdict)) {
     const { _id, doctype, ...docFields } = upQdict[_docId]
-    const _oldDoc = _oldDocs[_id]
-    if (_oldDoc) {
-      if (_oldDoc.modifiedAt === docFields.modifiedAt) {
-        // console.log('[bulkUpsert] skip upsert for identical modifiedAt', _id)
-        continue
-      }
-      const { sharedWithGroups } = _oldDoc
-
-      const _groupSet = new Set(
-        (_oldDoc?.sharedWithGroups ?? []).concat(sharedWithGroups ?? [])
-      )
-      const _doc = {
-        ..._oldDoc,
-        ...addTimeStamp({ ..._oldDoc, ...docFields, doctype }),
-        // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
-        sharedWithGroups:
-          doctype === DocumentType.Page
-            ? sharedWithGroups ?? _oldDoc?.sharedWithGroups
-            : Array.from(_groupSet),
-        belongsToGroup: getAccountFromLocation(),
-      }
-      // EDGE CASE
-      /**
-       * if undo on a block that went from entry -> source, validator will fail because entry will contain `name` property, in this case set `name` to null
-       */
-      if (_doc.type === BlockType.Entry && _doc?.name) {
-        delete _doc.name
-      }
-
-      pouchDataValidation(_doc)
-      // console.log('[bulkUpsert] doc', _doc)
-      _docs.push(_doc)
+    let _doc = _oldDocs[_id] ?? upQdict[_id]
+    if (!_doc) {
+      console.log('[bulkUpsert] warning, doc missing', _id)
+      continue
     }
+    if (_oldDocs[_id] && _doc.modifiedAt === docFields.modifiedAt) {
+      console.log('[bulkUpsert] skip upsert for identical modifiedAt', _id)
+      continue
+    }
+    const { sharedWithGroups } = _doc
+    const _groupSet = new Set(
+      (_doc?.sharedWithGroups ?? []).concat(sharedWithGroups ?? [])
+    )
+    _doc = {
+      ..._doc,
+      ...addTimeStamp({ ..._doc, ...docFields, doctype }),
+      // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
+      sharedWithGroups:
+        doctype === DocumentType.Page
+          ? sharedWithGroups ?? _doc?.sharedWithGroups
+          : Array.from(_groupSet),
+      belongsToGroup: getAccountFromLocation(),
+    }
+    console.log('[bulkUpsert]', _doc)
+    // EDGE CASE
+    /**
+     * if undo on a block that went from entry -> source, validator will fail because entry will contain `name` property, in this case set `name` to null
+     */
+    if (_doc.type === BlockType.Entry && _doc?.name) {
+      delete _doc.name
+    }
+
+    pouchDataValidation(_doc)
+    // console.log('[bulkUpsert] doc', _doc)
+    _docs.push(_doc)
   }
   await dbRef.current!.bulkDocs(_docs)
 }

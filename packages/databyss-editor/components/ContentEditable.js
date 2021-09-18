@@ -13,6 +13,7 @@ import { setEmbed } from '@databyss-org/services/embeds'
 import { setBlockRelations } from '@databyss-org/services/entries'
 import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useEditorPageContext } from '@databyss-org/services'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -70,6 +71,7 @@ const ContentEditable = ({
   const pagesRes = usePages()
   const editorContext = useEditorContext()
   const { navigate } = useNavigationContext()
+  const refetchPage = useEditorPageContext((c) => c.refetchPage)
 
   const historyContext = useHistoryContext()
 
@@ -101,7 +103,11 @@ const ContentEditable = ({
       lastChangeSeqRef.current = changes.last_seq
       changes.results.forEach((change) => {
         if (change.id === state.pageHeader._id) {
-          // TODO: reload the page
+          if (change.doc.modifiedAt > stateRef.current.modifiedAt) {
+            console.log('[ContentEditable] refetch page')
+            refetchPage(state.pageHeader._id)
+          }
+          return
         }
         const _blockIndex = state.blocks.findIndex(
           (block) => block._id === change.id

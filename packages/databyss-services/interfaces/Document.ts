@@ -3,6 +3,8 @@ export interface Document {
   sharedWithGroups?: string[]
   belongsToGroup?: string
   lastSequence?: number
+  modifiedAt?: number
+  createdAt?: number
 }
 
 export interface DocumentDict<T extends Document> {
