@@ -62,7 +62,10 @@ const PageBody = ({
     // handle changes to page title block
     if (value?.patches?.length) {
       const _patch = value.patches.find(
-        (_patch) => _patch.path?.[0] === 'blocks' && _patch.path?.[1] === 0
+        (_patch) =>
+          _patch.path?.[0] === 'blocks' &&
+          _patch.path?.[1] === 0 &&
+          _patch.path?.[2] !== 'modifiedAt'
       )
       const _patchValue =
         _patch?.path?.[2] === 'text'
