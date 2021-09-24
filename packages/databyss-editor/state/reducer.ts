@@ -499,6 +499,8 @@ export default (
                 offset: draft.selection.anchor.offset,
               })
 
+              draft.blocks[draft.selection.anchor.index].modifiedAt = Date.now()
+
               // merge 'inlineAtomicMenu Ranges'
 
               mergeInlineAtomicMenuRange({
@@ -510,6 +512,7 @@ export default (
                 text: _frag[0].text,
                 offset: draft.selection.anchor.offset,
               })
+              draft.blocks[draft.selection.anchor.index].modifiedAt = Date.now()
             }
 
             const _cursor = {
@@ -570,6 +573,8 @@ export default (
             focus: _cursor,
           }
 
+          draft.blocks[state.selection.anchor.index].modifiedAt = Date.now()
+
           draft.operations.push({
             index: state.selection.anchor.index,
             block: _block,
@@ -628,7 +633,6 @@ export default (
             // do not allow content change if previous block is closure type
             if (!getClosureType(draft.blocks[_insertAt].type)) {
               draft.blocks[_insertAt].text = _previousBlock.text
-              draft.blocks[_insertAt].modifiedAt = Date.now()
             }
 
             // if 2nd block in split has text, insert an empty block before it
@@ -669,6 +673,10 @@ export default (
               draft.blocks.splice(_insertAt + 1, 0, _block)
             }
           }
+
+          // update modifiedAt
+          draft.blocks[_insertAt].modifiedAt = Date.now()
+          draft.blocks[_insertAt + 1].modifiedAt = Date.now()
 
           // push updates to both blocks involved in split
           draft.operations.push({

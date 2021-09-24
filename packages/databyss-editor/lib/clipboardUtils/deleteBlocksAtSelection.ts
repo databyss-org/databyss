@@ -55,6 +55,7 @@ const deleteSelectionWithinBlock = ({
 
   // update text in block to merged results
   block.text = mergeText(_beforeAnchor, _afterFocus)
+  block.modifiedAt = Date.now()
 }
 
 // updates blocks with selected blocks removed
@@ -84,6 +85,7 @@ const deleteSelectionAcrossBlocks = ({
     })
     // and update anchor block text
     blocks[anchor.index].text = _beforeAnchor
+    blocks[anchor.index].modifiedAt = Date.now()
   }
 
   // if focus block is atomic, we can just ignore it and let it get deleted entirely
@@ -97,6 +99,7 @@ const deleteSelectionAcrossBlocks = ({
       blocks[anchor.index].text,
       _afterFocus
     )
+    blocks[anchor.index].modifiedAt = Date.now()
   }
 
   // remove all the the blocks in the selection except the anchor block
