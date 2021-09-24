@@ -37,8 +37,10 @@ export const normalizeSlateNode = (block: Node): Block => {
 }
 
 export const normalizeDatabyssBlock = (block: Block): Block => {
+  const _id = block._id
   const _node = stateBlockToSlateBlock(block)
   const _block = normalizeSlateNode(_node)
+  _block._id = _id
   return _block
 }
 

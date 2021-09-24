@@ -552,7 +552,6 @@ export default (
             offset: _currentOffset,
           })
           // normalize node so ranges are unified
-
           const _block = normalizeDatabyssBlock(
             draft.blocks[draft.selection.anchor.index]
           )
