@@ -31,7 +31,6 @@ export const setDbBusyDispatch = (dispatch: Function) => {
  */
 
 export const setDbBusy = (isBusy: boolean, writesPending?: number) => {
-  return
   if (!dbBusyDispatchRef.current) {
     return
   }

@@ -42,8 +42,8 @@ export interface EditorState {
   blocks: Block[]
   pageHeader?: PageHeader
   firstBlockIsTitle?: boolean
-  lastSequence: number
-  modifiedAt: number
+  lastSequence?: number
+  modifiedAt?: number
   /**
    * Dictionary
    * - keys are entity names (e.g. topic or source text)

@@ -11,7 +11,7 @@ import { Role } from '../interfaces/sysUser'
 export interface DocumentCacheDict {
   pages: DocumentDict<Page> | null | undefined
   blocks: DocumentDict<Block> | null | undefined
-  blockRelations: DocumentDict<BlockRelation> | null
+  blockRelations?: DocumentDict<BlockRelation> | null
 }
 
 export interface PageDoc extends PageHeader {

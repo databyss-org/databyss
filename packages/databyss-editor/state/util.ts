@@ -296,11 +296,7 @@ export const cleanupPatches = (patches: Patch[]) =>
       )
   )
 
-export const addMetaToPatches = ({
-  nextState,
-  previousState,
-  patches,
-}: OnChangeArgs) =>
+export const addMetaToPatches = ({ nextState, patches }: OnChangeArgs) =>
   cleanupPatches(patches)?.map((_p) => {
     // add selection
     if (_p.path[0] === 'selection') {
