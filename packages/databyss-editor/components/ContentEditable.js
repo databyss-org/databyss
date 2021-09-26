@@ -924,6 +924,20 @@ const ContentEditable = ({
       )
     }
 
+    // if readonly, force selection to zeros to avoid errors
+    if (readonly) {
+      nextSelection = stateSelectionToSlateSelection(editor.children, {
+        anchor: {
+          index: 0,
+          offset: 0,
+        },
+        focus: {
+          index: 0,
+          offset: 0,
+        },
+      })
+    }
+
     valueRef.current = editor.children
 
     selectionRef.current = nextSelection
