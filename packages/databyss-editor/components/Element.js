@@ -66,15 +66,19 @@ const Element = ({ attributes, children, element, readOnly }) => {
     : {}
 
   const _groupId = getAccountFromLocation()
-  const _blockPath = {
-    [BlockType.Source]: 'sources',
-    [BlockType.Topic]: 'topics',
-  }[block.type]
-  const _href = `/${_groupId}/${_blockPath}/${block._id}`
+  const _blockPath =
+    block &&
+    {
+      [BlockType.Source]: 'sources',
+      [BlockType.Topic]: 'topics',
+    }[block.type]
+  const _href = block && `/${_groupId}/${_blockPath}/${block._id}`
 
   const onAtomicMouseDown = (e) => {
     e.preventDefault()
-    navigate(_href)
+    if (block) {
+      navigate(_href)
+    }
   }
 
   // spellcheck is debounced on element change

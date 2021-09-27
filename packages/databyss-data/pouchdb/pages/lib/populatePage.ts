@@ -57,7 +57,10 @@ export default (_id: string) =>
         // get all blocks in one request using bulk getDocuments
         let _blocksDict
         try {
-          _blocksDict = await getDocuments<Block>(Object.keys(_blocksToGetDict))
+          _blocksDict = await getDocuments<Block>(
+            Object.keys(_blocksToGetDict),
+            true
+          )
         } catch (err) {
           console.log(`[populatePage] getDocuments error: `, err)
           if (err instanceof ResourceNotFoundError) {

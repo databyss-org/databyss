@@ -1,7 +1,11 @@
 import PouchDB from 'pouchdb'
 import { throttle } from 'lodash'
 import EventEmitter from 'es-event-emitter'
-import { Document, Group } from '@databyss-org/services/interfaces'
+import {
+  Document,
+  Group,
+  ResourceNotFoundError,
+} from '@databyss-org/services/interfaces'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
@@ -149,7 +153,8 @@ export const getDocument = async <T extends Document>(
  * @returns dictionary of { docId => null | doc } (null if doc not found)
  */
 export const getDocuments = async <D>(
-  ids: string[]
+  ids: string[],
+  throwErrorForMissingDocs?: boolean
 ): Promise<{ [docId: string]: D | null }> => {
   if (!ids.length) {
     return {}
@@ -162,6 +167,9 @@ export const getDocuments = async <D>(
       console.warn('[getDocuments] error', _doc.error)
       if (_doc.error.name !== 'not_found' && _doc.error.error !== 'not_found') {
         throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error.error}`)
+      }
+      if (throwErrorForMissingDocs) {
+        throw new ResourceNotFoundError(_doc.error)
       }
       accum[curr.id] = null
     }

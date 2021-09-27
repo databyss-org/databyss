@@ -13,26 +13,28 @@ import { getAtomicDifference } from './getAtomicsFromSelection'
 
 // updates block with selection removed
 const deleteSelectionWithinBlock = ({
-  blocks,
+  draft,
   anchor,
   focus,
 }: {
-  blocks: Block[]
+  draft: EditorState
   anchor: Point
   focus: Point
 }) => {
   const { index } = anchor
-  const block = blocks[index]
+  const block = draft.blocks[index]
 
   // if selection spans over entire block, delete block contents
   if (focus.offset - anchor.offset === block.text.textValue.length) {
-    blocks[index] = makeEmptyBlock(block._id)
+    draft.blocks[index] = makeEmptyBlock(block._id)
+    draft.modifiedAt = Date.now()
     return
   }
 
   // if block is atomic, delete block contents and reset id
   if (isAtomicInlineType(block.type)) {
-    blocks[index] = makeEmptyBlock()
+    draft.blocks[index] = makeEmptyBlock()
+    draft.modifiedAt = Date.now()
     return
   }
 
@@ -134,7 +136,7 @@ export default (draft: EditorState) => {
 
   // check if selection is within a block
   if (focus.index === anchor.index) {
-    deleteSelectionWithinBlock({ blocks, anchor, focus })
+    deleteSelectionWithinBlock({ draft, anchor, focus })
   } else {
     deleteSelectionAcrossBlocks({
       blocks,

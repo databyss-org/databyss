@@ -324,7 +324,7 @@ export default (
           payload.patches.forEach((p: Patch) => {
             if (p.path[0] === 'blocks' || p.path[0] === 'selection') {
               applyPatches(draft, [p])
-              if (p.path[0] === 'blocks') {
+              if (p.path[0] === 'blocks' && draft.blocks[p.path[1]]) {
                 draft.blocks[p.path[1]].modifiedAt = Date.now()
               }
             }
@@ -337,7 +337,7 @@ export default (
           payload.patches.forEach((p: Patch) => {
             if (p.path[0] === 'blocks' || p.path[0] === 'selection') {
               applyPatches(draft, [p])
-              if (p.path[0] === 'blocks') {
+              if (p.path[0] === 'blocks' && draft.blocks[p.path[1]]) {
                 draft.blocks[p.path[1]].modifiedAt = Date.now()
               }
             }
@@ -914,6 +914,7 @@ export default (
         }
         case REMOVE: {
           draft.blocks.splice(payload.index, 1)
+          draft.modifiedAt = Date.now()
           break
         }
         case CLEAR: {
@@ -941,6 +942,7 @@ export default (
               block: _block,
             })
           }
+          draft.modifiedAt = Date.now()
           pushAtomicChangeUpstream({ state, draft })
           break
         }
