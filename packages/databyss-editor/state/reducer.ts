@@ -1038,6 +1038,7 @@ export default (
             index: state.selection.focus.index,
             block: blockValue(draft.blocks[state.selection.focus.index]),
           })
+          draft.blocks[state.selection.focus.index].modifiedAt = Date.now()
         }
 
         // if there are any empty lines in the block, split it into two
@@ -1054,6 +1055,9 @@ export default (
             block: blockValue(draft.blocks[state.selection.focus.index + 1]),
             insertBefore: true,
           })
+          draft.blocks[state.selection.focus.index].modifiedAt = Date.now()
+          draft.blocks[state.selection.focus.index + 1].modifiedAt = Date.now()
+          draft.modifiedAt = Date.now()
 
           // if new selection index is greater than previous, increment by one
           //   to accommodate the split
