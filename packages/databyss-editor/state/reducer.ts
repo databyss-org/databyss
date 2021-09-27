@@ -316,6 +316,26 @@ export default (
 
       const { payload } = action
 
+      if (payload?.operations?.length) {
+        const _ops: any[] = []
+        payload.operations.forEach((op) => {
+          const _block = state.blocks[op.index]
+          if (
+            op.fromSync &&
+            _block &&
+            op.modifiedAt <= (_block.modifiedAt ?? 0)
+          ) {
+            console.log('[reducer] skip op', op.index)
+            return
+          }
+          _ops.push(op)
+        })
+        if (!_ops.length) {
+          return
+        }
+        payload.operations = _ops
+      }
+
       // default nextSelection to `payload.selection` (which may be undef)
       let nextSelection = payload?.selection
 
