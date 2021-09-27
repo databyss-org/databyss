@@ -861,12 +861,14 @@ export default (
               // reset block relations
               clearBlockRelations = true
               bakeAtomicBlock({ draft, index: op.index })
+              draft.modifiedAt = Date.now()
             } else if (op.convertInlineToAtomic) {
               convertInlineToAtomicBlocks({
                 block: _block,
                 index: op.index,
                 draft,
               })
+              draft.modifiedAt = Date.now()
             } else if (op.convertInlineToEmbed) {
               convertInlineToEmbed({
                 block: _block,
@@ -877,6 +879,7 @@ export default (
                   ? { suggestion: op.convertInlineToEmbed }
                   : { attributes: op.convertInlineToEmbed }),
               })
+              draft.modifiedAt = Date.now()
             } else if (op.withRerender) {
               // if operation requires re-render push operation upstream
               draft.operations.push({
@@ -886,6 +889,7 @@ export default (
               pushAtomicChangeUpstream({ state, draft })
             } else if (op.checkAtomicDelta) {
               pushAtomicChangeUpstream({ state, draft })
+              draft.modifiedAt = Date.now()
             }
           })
           break

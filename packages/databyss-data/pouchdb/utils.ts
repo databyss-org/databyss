@@ -55,6 +55,7 @@ export const addTimeStamp = (doc: any): any => {
   if (doc.createdAt) {
     return { modifiedAt: Date.now(), ...doc }
   }
+  delete doc.createdAt
   return { createdAt: Date.now(), ...doc }
 }
 
@@ -358,16 +359,17 @@ const bulkUpsert = async (upQdict: any) => {
     const _groupSet = new Set(
       (_doc?.sharedWithGroups ?? []).concat(sharedWithGroups ?? [])
     )
-    _doc = {
+    _doc = addTimeStamp({
       ..._doc,
-      ...addTimeStamp({ ..._doc, ...docFields, doctype }),
+      ...docFields,
+      doctype,
       // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
       sharedWithGroups:
         doctype === DocumentType.Page
           ? sharedWithGroups ?? _doc?.sharedWithGroups
           : Array.from(_groupSet),
       belongsToGroup: getAccountFromLocation(),
-    }
+    })
     console.log('[bulkUpsert]', _doc)
     // EDGE CASE
     /**
