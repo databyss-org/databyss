@@ -36,7 +36,12 @@ export const resetIds = (fragment: Block[]): Block[] =>
   }))
 
 export const addBlockUIFields = (frag: Block[]): Block[] =>
-  frag.map((b) => ({ ...b, __showNewBlockMenu: false, __isActive: false }))
+  frag.map((b) => ({
+    ...b,
+    __showNewBlockMenu: false,
+    __isActive: false,
+    modifiedAt: Date.now(),
+  }))
 
 // always have the anchor come before the focus
 export const sortSelection = (selection: Selection): Selection => {

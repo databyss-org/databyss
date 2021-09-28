@@ -144,6 +144,7 @@ export const bakeAtomicBlock = ({
         },
         type: _atomicType,
         _id: _atomicId,
+        modifiedAt: Date.now(),
       }
 
       draft.operations.push({
@@ -246,6 +247,7 @@ export const bakeAtomicClosureBlock = ({
       )
 
       if (_openAtomic) {
+        console.log('[bakeAtomicClosureBlock] openAtomic')
         // replace block in state.blocks and push editor operation
         draft.blocks[index] = {
           text: {
@@ -257,6 +259,7 @@ export const bakeAtomicClosureBlock = ({
           type: _atomicClosureType,
           // duplicate id for atomic which block is closing
           _id: _openAtomic._id,
+          modifiedAt: Date.now(),
         }
         // perform a closure block lookahead to see if current block has already been closed and remove that block
         if (draft.blocks.length > index + 1) {
@@ -315,26 +318,6 @@ export default (
       // if flag is set, atomics were added or removed, blockRelations must be refreshed upstream and the headers must be reset
 
       const { payload } = action
-
-      if (payload?.operations?.length) {
-        const _ops: any[] = []
-        payload.operations.forEach((op) => {
-          const _block = state.blocks[op.index]
-          if (
-            op.fromSync &&
-            _block &&
-            op.modifiedAt <= (_block.modifiedAt ?? 0)
-          ) {
-            console.log('[reducer] skip op', op.index)
-            return
-          }
-          _ops.push(op)
-        })
-        if (!_ops.length) {
-          return
-        }
-        payload.operations = _ops
-      }
 
       // default nextSelection to `payload.selection` (which may be undef)
       let nextSelection = payload?.selection
@@ -465,6 +448,11 @@ export default (
 
             // insert blocks at index
             draft.blocks.splice(_spliceIndex, _replace ? 1 : 0, ..._frag)
+
+            // ensure `createdAt` and `modifiedAt`
+            // _frag.forEach((_fblock) => {
+            //   _fblock.modifiedAt = Date.now()
+            // })
 
             // bake atomic blocks if there were any in the paste
             // this is useful when importing from external source, like PDF
@@ -1222,10 +1210,6 @@ export default (
         draft.blocks.length !== state.blocks.length
       ) {
         draft.modifiedAt = Date.now()
-        console.log(
-          '[EditorProvider.reducer] modifiedAt',
-          JSON.stringify(draft.modifiedAt)
-        )
       }
 
       return draft
