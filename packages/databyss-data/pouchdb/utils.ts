@@ -348,11 +348,15 @@ const bulkUpsert = async (upQdict: any) => {
     const { _id, doctype, ...docFields } = upQdict[_docId]
     let _doc = _oldDocs[_id] ?? upQdict[_id]
     if (!_doc) {
-      console.log('[bulkUpsert] warning, doc missing', _id)
+      console.warn('[bulkUpsert] warning, doc missing', _id)
       continue
     }
-    if (_oldDocs[_id] && _doc.modifiedAt === docFields.modifiedAt) {
-      // console.log('[bulkUpsert] skip upsert for identical modifiedAt', _id)
+    if (
+      _doc.doctype !== 'SELECTION' &&
+      _oldDocs[_id] &&
+      _doc.modifiedAt === docFields.modifiedAt
+    ) {
+      // console.log('[bulkUpsert] skip upsert for identical modifiedAt', _doc)
       continue
     }
     const { sharedWithGroups } = _doc

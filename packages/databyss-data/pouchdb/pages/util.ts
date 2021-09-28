@@ -75,6 +75,7 @@ const replacePatch = async (p) => {
       break
     }
     case 'selection': {
+      console.log('[replacePatch]', p)
       const _id = p.value._id
       if (_id) {
         upsert({ doctype: DocumentType.Selection, _id, doc: p.value })
