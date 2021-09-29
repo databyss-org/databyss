@@ -112,7 +112,7 @@ const ContentEditable = ({
             stateRef.current.modifiedAt &&
             change.doc.modifiedAt > stateRef.current.modifiedAt
           ) {
-            console.log('[ContentEditable] refetch page')
+            // console.log('[ContentEditable] refetch page')
             refetchPage(state.pageHeader._id)
           }
           return
@@ -123,11 +123,7 @@ const ContentEditable = ({
         if (_blockIndex < 0) {
           return
         }
-        // console.log(
-        //   '[ContentEditable] block change',
-        //   change.doc.modifiedAt,
-        //   stateRef.current.blocks[_blockIndex].modifiedAt
-        // )
+        // console.log('[ContentEditable] block change', change.doc)
         if (
           !change.doc.modifiedAt ||
           change.doc.modifiedAt <=

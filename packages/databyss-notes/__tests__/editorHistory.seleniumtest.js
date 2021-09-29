@@ -133,6 +133,7 @@ describe('editor history', () => {
     await undo(actions)
     await undo(actions)
     await undo(actions)
+    await undo(actions)
     await isAppInNotesSaved(driver)
 
     // checks before redo

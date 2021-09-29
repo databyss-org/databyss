@@ -247,7 +247,7 @@ export const bakeAtomicClosureBlock = ({
       )
 
       if (_openAtomic) {
-        console.log('[bakeAtomicClosureBlock] openAtomic')
+        // console.log('[bakeAtomicClosureBlock] openAtomic')
         // replace block in state.blocks and push editor operation
         draft.blocks[index] = {
           text: {
@@ -261,6 +261,7 @@ export const bakeAtomicClosureBlock = ({
           _id: _openAtomic._id,
           modifiedAt: Date.now(),
         }
+        draft.modifiedAt = Date.now()
         // perform a closure block lookahead to see if current block has already been closed and remove that block
         if (draft.blocks.length > index + 1) {
           // find next index where same id exists

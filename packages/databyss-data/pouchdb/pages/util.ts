@@ -121,7 +121,6 @@ const removePatches = async (p) => {
 }
 
 export const runPatches = (p: ExtendedPatch) => {
-  console.log('[runPatches]', p)
   switch (p.op) {
     case 'replace': {
       replacePatch(p)

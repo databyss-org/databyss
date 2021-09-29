@@ -35,6 +35,7 @@ export const setDbBusyDispatch = (dispatch: Function) => {
  */
 
 export const setDbBusy = (isBusy: boolean, writesPending?: number) => {
+  return
   if (!dbBusyDispatchRef.current) {
     return
   }
@@ -356,7 +357,7 @@ const bulkUpsert = async (upQdict: any) => {
       _oldDocs[_id] &&
       _doc.modifiedAt === docFields.modifiedAt
     ) {
-      // console.log('[bulkUpsert] skip upsert for identical modifiedAt', _doc)
+      console.log('[bulkUpsert] skip upsert for identical modifiedAt', _doc)
       continue
     }
     const { sharedWithGroups } = _doc
