@@ -70,6 +70,7 @@ describe('editor history', () => {
     await undo(actions)
     await undo(actions)
     await undo(actions)
+    await undo(actions)
     await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)

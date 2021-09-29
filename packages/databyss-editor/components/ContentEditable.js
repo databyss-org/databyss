@@ -108,7 +108,10 @@ const ContentEditable = ({
           //   change.doc.modifiedAt,
           //   stateRef.current.modifiedAt
           // )
-          if (change.doc.modifiedAt > stateRef.current.modifiedAt) {
+          if (
+            stateRef.current.modifiedAt &&
+            change.doc.modifiedAt > stateRef.current.modifiedAt
+          ) {
             console.log('[ContentEditable] refetch page')
             refetchPage(state.pageHeader._id)
           }
