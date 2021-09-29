@@ -340,7 +340,8 @@ export const pageToEditorState = (page: Page): EditorState => {
 export const filterInversePatches = (patches: Patch[]): Patch[] => {
   const _patches = patches.filter(
     (p) =>
-      (p.path[0] === 'blocks' || p.path[0] === 'selection') &&
+      ((p.path[0] === 'blocks' && p.path[2] !== 'modifiedAt') ||
+        p.path[0] === 'selection') &&
       !p.path.find((_p) => typeof _p === 'string' && _p.search('__') !== -1)
   )
   // if only a selection patch was sent dont return any patches

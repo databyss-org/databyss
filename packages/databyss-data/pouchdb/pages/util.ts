@@ -75,7 +75,6 @@ const replacePatch = async (p) => {
       break
     }
     case 'selection': {
-      console.log('[replacePatch]', p)
       const _id = p.value._id
       if (_id) {
         upsert({ doctype: DocumentType.Selection, _id, doc: p.value })
@@ -122,6 +121,7 @@ const removePatches = async (p) => {
 }
 
 export const runPatches = (p: ExtendedPatch) => {
+  console.log('[runPatches]', p)
   switch (p.op) {
     case 'replace': {
       replacePatch(p)
