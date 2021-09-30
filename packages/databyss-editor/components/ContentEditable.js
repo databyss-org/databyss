@@ -56,6 +56,7 @@ import { getAccountFromLocation } from '../../databyss-services/session/utils'
 import { BlockType } from '../interfaces'
 import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
 import { dbRef } from '../../databyss-data/pouchdb/db'
+import { didBlocksChange } from '../../databyss-data/pouchdb/pages/util'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -110,7 +111,11 @@ const ContentEditable = ({
           // )
           if (
             stateRef.current.modifiedAt &&
-            change.doc.modifiedAt > stateRef.current.modifiedAt
+            change.doc.modifiedAt > stateRef.current.modifiedAt &&
+            didBlocksChange({
+              blocksBefore: change.doc.blocks,
+              blocksAfter: stateRef.current.blocks,
+            })
           ) {
             // console.log('[ContentEditable] refetch page')
             refetchPage(state.pageHeader._id)

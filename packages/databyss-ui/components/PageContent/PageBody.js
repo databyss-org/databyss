@@ -107,6 +107,7 @@ const PageBody = ({
         _id,
         modifiedAt: value.nextState.modifiedAt,
       }
+      // console.log('[PageBody] upsert page', _page)
       upsert({ doctype: DocumentType.Page, _id: _page._id, doc: _page })
     }
   }

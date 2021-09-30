@@ -692,6 +692,8 @@ export default (
           // update modifiedAt
           draft.blocks[_insertAt].modifiedAt = Date.now()
           draft.blocks[_insertAt + 1].modifiedAt = Date.now()
+          draft.modifiedAt = Date.now()
+          // console.log('[SPLIT] modifiedAt', JSON.stringify(draft.modifiedAt))
 
           // push updates to both blocks involved in split
           draft.operations.push({
@@ -782,6 +784,11 @@ export default (
 
               clearBlockRelations = true
               return
+            }
+
+            // update page modified if first block is edited
+            if (op.index === 0) {
+              draft.modifiedAt = Date.now()
             }
 
             if (op.isRefEntity) {

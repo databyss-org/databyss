@@ -49,7 +49,6 @@ export function fetchPage(_id: string, firstBlockIsTitle: boolean) {
 
 export function savePageHeader(page: Page) {
   const id = page._id
-
   return (dispatch: Function) => {
     dispatch({
       type: CACHE_PAGE,
