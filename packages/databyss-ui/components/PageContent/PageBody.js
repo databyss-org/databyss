@@ -75,6 +75,11 @@ const PageBody = ({
         const _pageData = {
           name: _patchValue.trim() || UNTITLED_PAGE_NAME,
           _id: page._id,
+          // HACK: we have to subtract one ms so that during a SPLIT from the title
+          //  block (pressing ENTER from the title), the page is saved once for the name
+          //  and once for the blocks change. The title update should really be moved to
+          //  the editor reducer.
+          modifiedAt: value.nextState.modifiedAt - 1,
         }
         debouncedSetPageHeader(_pageData)
       }

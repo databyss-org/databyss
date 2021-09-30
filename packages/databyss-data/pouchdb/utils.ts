@@ -299,16 +299,17 @@ export const upsertImmediate = async ({
     const _groupSet = new Set(
       (oldDoc?.sharedWithGroups ?? []).concat(sharedWithGroups ?? [])
     )
-    const _doc = {
+    const _doc = addTimeStamp({
       ...oldDoc,
-      ...addTimeStamp({ ...oldDoc, ...docFields, doctype }),
+      ...docFields,
+      doctype,
       // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
       sharedWithGroups:
         doctype === DocumentType.Page
           ? sharedWithGroups ?? oldDoc?.sharedWithGroups
           : Array.from(_groupSet),
       belongsToGroup: getAccountFromLocation(),
-    }
+    })
 
     pouchDataValidation(_doc)
     return _doc
