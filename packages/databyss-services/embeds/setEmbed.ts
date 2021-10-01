@@ -14,6 +14,7 @@ export const setEmbed = async (data: Embed) => {
     sharedWithGroups,
     doctype: DocumentType.Block,
     type: BlockType.Embed,
+    modifiedAt: Date.now(),
   }
 
   await upsert({

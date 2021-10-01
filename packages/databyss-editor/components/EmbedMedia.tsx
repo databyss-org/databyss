@@ -61,7 +61,13 @@ export const EmbedMedia = ({
     }
   }, [blocksRes])
 
-  const highlightEmbed = () => {
+  const highlightEmbed = (e) => {
+    if (ReactEditor.isReadOnly(editor)) {
+      if (e) {
+        e.preventDefault()
+      }
+      return
+    }
     try {
       const _el = textRef.current?.children?.[0]
       const _node = ReactEditor.toSlateNode(editor, _el)

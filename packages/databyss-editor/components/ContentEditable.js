@@ -138,8 +138,8 @@ const ContentEditable = ({
         // console.log('[ContentEditable] block change', change.doc)
         if (
           !change.doc?.modifiedAt ||
-          change.doc.modifiedAt <=
-            stateRef.current.blocks[_blockIndex].modifiedAt
+          change.doc?.modifiedAt <=
+            stateRef.current.blocks[_blockIndex]?.modifiedAt
         ) {
           return
         }
@@ -764,7 +764,7 @@ const ContentEditable = ({
         // if there is a selection, handle the delete operation in our state
         if (!Point.equals(editor.selection.focus, editor.selection.anchor)) {
           event.preventDefault()
-          console.log('[ContentEditable] removeAtSelection')
+          // console.log('[ContentEditable] removeAtSelection')
           removeAtSelection()
           return
         }

@@ -568,6 +568,7 @@ export default (
           const _block = normalizeDatabyssBlock(
             draft.blocks[draft.selection.anchor.index]
           )
+          _block.modifiedAt = Date.now()
           // replace current block
           draft.blocks[draft.selection.anchor.index] = _block
 
@@ -582,8 +583,6 @@ export default (
             anchor: _cursor,
             focus: _cursor,
           }
-
-          draft.blocks[state.selection.anchor.index].modifiedAt = Date.now()
 
           draft.operations.push({
             index: state.selection.anchor.index,
@@ -881,6 +880,7 @@ export default (
               })
               draft.modifiedAt = Date.now()
             } else if (op.convertInlineToEmbed) {
+              console.log('[SET_CONTENT] convertInlineToEmbed')
               convertInlineToEmbed({
                 block: _block,
                 index: op.index,
@@ -891,6 +891,7 @@ export default (
                   : { attributes: op.convertInlineToEmbed }),
               })
               draft.modifiedAt = Date.now()
+              _block.modifiedAt = Date.now()
             } else if (op.withRerender) {
               // if operation requires re-render push operation upstream
               draft.operations.push({

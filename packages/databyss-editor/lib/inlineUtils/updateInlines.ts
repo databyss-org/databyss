@@ -5,6 +5,7 @@ import {
   Page,
   Text,
 } from '@databyss-org/services/interfaces/'
+import fastCompare from 'react-fast-compare'
 import { replicateSharedPage } from '@databyss-org/data/pouchdb/groups'
 import {
   DocumentType,
@@ -75,8 +76,13 @@ export const updateInlines = async ({
                 newText: text,
                 type: inlineType,
               })
-              Object.assign(_block, { text: _newText, modifiedAt: Date.now() })
-              _inlineFound = true
+              if (!fastCompare(_block!.text, _newText)) {
+                Object.assign(_block, {
+                  text: _newText,
+                  modifiedAt: Date.now(),
+                })
+                _inlineFound = true
+              }
             }
           }
         })
