@@ -5,6 +5,7 @@ import React, {
   useImperativeHandle,
   useCallback,
 } from 'react'
+import { debounce } from 'lodash'
 import {
   createEditor,
   Node,
@@ -62,8 +63,6 @@ import { getAccountFromLocation } from '../../databyss-services/session/utils'
 import { BlockType } from '../interfaces'
 import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
 import { dbRef } from '../../databyss-data/pouchdb/db'
-import { didBlocksChange } from '../../databyss-data/pouchdb/pages/util'
-import { debounce } from 'lodash'
 
 const ContentEditable = ({
   onDocumentChange,
