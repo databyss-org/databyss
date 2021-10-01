@@ -274,6 +274,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
 
   const copy = (e: ClipboardEvent) => {
     const _frag = getFragmentAtSelection(state)
+    console.log('[EditorProvider] copy', _frag)
     cutOrCopyEventHandler(e, _frag)
 
     dispatch({

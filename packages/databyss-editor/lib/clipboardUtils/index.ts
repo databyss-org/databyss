@@ -40,7 +40,6 @@ export const addBlockUIFields = (frag: Block[]): Block[] =>
     ...b,
     __showNewBlockMenu: false,
     __isActive: false,
-    modifiedAt: Date.now(),
   }))
 
 // always have the anchor come before the focus

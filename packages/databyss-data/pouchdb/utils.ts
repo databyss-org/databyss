@@ -353,7 +353,7 @@ const bulkUpsert = async (upQdict: any) => {
       continue
     }
     if (
-      (_doc.doctype === 'PAGE' || _doc.doctype === 'ENTRY') &&
+      (_doc.doctype === 'PAGE' || _doc.doctype === 'BLOCK') &&
       _oldDocs[_id] &&
       _doc.modifiedAt === docFields.modifiedAt
     ) {

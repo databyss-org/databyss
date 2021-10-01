@@ -1,4 +1,4 @@
-import { EditorState, Block } from '../../interfaces'
+import { EditorState, Block, BlockType } from '../../interfaces'
 import {
   isSelectionCollapsed,
   sortSelection,
@@ -8,6 +8,10 @@ import {
 } from './'
 import { isAtomicInlineType } from '../util'
 import adjustSelectionToIncludeInlineAtomics from './adjustSelectionToIncludeInlineAtomics'
+
+const getTimestamps = (block: Block) => ({
+  modifiedAt: block.type === BlockType.Entry ? Date.now() : block.modifiedAt,
+})
 
 // returns fragment in state selection
 export default (state: EditorState): Block[] => {
@@ -56,6 +60,7 @@ export default (state: EditorState): Block[] => {
         text: _textFrag,
         type: _block.type,
         _id: fragmentId(_block.type, _block._id),
+        ...getTimestamps(_block),
       })
     }
   }
@@ -77,6 +82,7 @@ export default (state: EditorState): Block[] => {
             text: firstTextFrag,
             type: block.type,
             _id: fragmentId(block.type, block._id),
+            ...getTimestamps(block),
           })
         }
       }
@@ -88,6 +94,7 @@ export default (state: EditorState): Block[] => {
             text: block.text,
             type: block.type,
             _id: fragmentId(block.type, block._id),
+            ...getTimestamps(block),
           })
         }
       }
@@ -106,6 +113,7 @@ export default (state: EditorState): Block[] => {
             text: lastTextFrag,
             type: block.type,
             _id: fragmentId(block.type, block._id),
+            ...getTimestamps(block),
           })
         }
       }

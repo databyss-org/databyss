@@ -450,11 +450,6 @@ export default (
             // insert blocks at index
             draft.blocks.splice(_spliceIndex, _replace ? 1 : 0, ..._frag)
 
-            // ensure `createdAt` and `modifiedAt`
-            // _frag.forEach((_fblock) => {
-            //   _fblock.modifiedAt = Date.now()
-            // })
-
             // bake atomic blocks if there were any in the paste
             // this is useful when importing from external source, like PDF
             draft.blocks.forEach((_, index: number) => {

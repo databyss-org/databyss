@@ -137,7 +137,7 @@ const ContentEditable = ({
         }
         // console.log('[ContentEditable] block change', change.doc)
         if (
-          !change.doc.modifiedAt ||
+          !change.doc?.modifiedAt ||
           change.doc.modifiedAt <=
             stateRef.current.blocks[_blockIndex].modifiedAt
         ) {
