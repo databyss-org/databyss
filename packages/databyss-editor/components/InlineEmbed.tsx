@@ -13,7 +13,7 @@ export const InlineEmbed = ({
   embedData: Embed | null | undefined
   attributes: any
   children: ReactNode
-  onClick: () => void
+  onClick: (e?: Event) => void
   _children: any
   textRef: Ref<any>
 }) => (
