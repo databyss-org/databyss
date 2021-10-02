@@ -83,9 +83,9 @@ export const IndexPageTitleInput = ({
     updateTitle: (block: Block) => setTitle(getTitleFromBlock(block, path)),
   }))
 
-  useEffect(() => {
-    setTitle(getTitleFromBlock(block, path))
-  }, [path])
+  // useEffect(() => {
+  //   debouncedSetTitle(getTitleFromBlock(block, path))
+  // }, [path])
 
   const setBlockText = useCallback(
     debounce((value: string) => {
@@ -105,13 +105,14 @@ export const IndexPageTitleInput = ({
           })
           break
       }
-    }, 250),
+    }, 3000),
     [block]
   )
 
   useEffect(() => () => setBlockText.flush(), [])
 
   const onChange = (value: string) => {
+    // console.log('[IndexPageContent] onChange', value)
     setTitle(value)
     setBlockText(value)
   }
