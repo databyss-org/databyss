@@ -53,13 +53,7 @@ import {
 } from '../lib/inlineUtils'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
 import { BlockType } from '../interfaces'
-import {
-  useBlocks,
-  useDocuments,
-  usePages,
-} from '../../databyss-data/pouchdb/hooks'
-import { DocumentType } from '../../databyss-data/pouchdb/interfaces'
-import { dbRef } from '../../databyss-data/pouchdb/db'
+import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -80,7 +74,6 @@ const ContentEditable = ({
 
   const {
     state,
-    stateRef,
     split,
     merge,
     setContent,
@@ -96,36 +89,6 @@ const ContentEditable = ({
   const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
-
-  // useEffect(() => {
-  //   dbRef.current
-  //     ?.changes({
-  //       since: 'now',
-  //       live: true,
-  //       include_docs: true,
-  //     })
-  //     .on('change', (change) => {
-  //       if (change.id === state.pageHeader._id) {
-  //         // reload the page
-  //       }
-  //       const _blockIndex = state.blocks.findIndex(
-  //         (block) => block._id === change.id
-  //       )
-  //       if (_blockIndex < 0) {
-  //         return
-  //       }
-  //       setContent({
-  //         operations: [
-  //           {
-  //             fromSync: true,
-  //             withRerender: true,
-  //             index: _blockIndex,
-  //             text: change.doc.text,
-  //           },
-  //         ],
-  //       })
-  //     })
-  // }, [])
 
   try {
     if (!valueRef.current || state.operations.reloadAll) {
@@ -198,7 +161,12 @@ const ContentEditable = ({
         const _types = {
           SOURCE: () => {
             if (_data) {
-              window.requestAnimationFrame(() => setSource(_data))
+              window.requestAnimationFrame(() =>
+                setSource(_data, {
+                  pages: pagesRes.data,
+                  blocks: blocksRes.data,
+                })
+              )
             }
           },
           TOPIC: () => {

@@ -36,7 +36,7 @@ export interface EditorState {
   showNewBlockMenu?: boolean
   operations: BackflowOperation[] & { reloadAll?: boolean }
   selection: Selection
-  selectionUpdatedAt: number
+  selectionUpdatedAt?: number
   newEntities: Array<BlockReference | Block>
   removedEntities: BlockReference[]
   blocks: Block[]

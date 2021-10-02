@@ -23,8 +23,6 @@ import {
   StickyHeader,
   TitleInput,
 } from '@databyss-org/ui/components'
-import { useDocuments } from '@databyss-org/data/pouchdb/hooks/useDocuments'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import { setSource } from '@databyss-org/data/pouchdb/sources'
 import { CitationOutputTypes } from '@databyss-org/services/citations/constants'
@@ -101,7 +99,10 @@ export const IndexPageTitleInput = ({
           break
         case BlockType.Source:
           block!.text.textValue = value
-          setSource(block! as Source)
+          setSource(block! as Source, {
+            pages: pagesRes.data,
+            blocks: blocksRes.data,
+          })
           break
       }
     }, 250),
