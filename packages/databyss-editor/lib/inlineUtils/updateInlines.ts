@@ -54,6 +54,10 @@ export const updateInlines = async ({
           caches?.blocks?.[_blockRef._id] ??
           (await getDocument<Block>(_blockRef._id))
 
+        if (!_block) {
+          continue
+        }
+
         // get all inline ranges from block
         const _inlineRanges = _block!.text.ranges.filter(
           (r) => r.marks.filter((m) => m.includes(inlineType)).length

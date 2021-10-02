@@ -238,7 +238,6 @@ export const bakeAtomicClosureBlock = ({
           focus: _cursor,
           _id: draft.selection._id,
         }
-        draft.selectionUpdatedAt = Date.now()
       }
 
       // get the atomic block which is being closed
@@ -994,7 +993,6 @@ export default (
       // update the selection unless we're doing `preventDefault`
       if (nextSelection && !draft.preventDefault) {
         draft.selection = nextSelection
-        draft.selectionUpdatedAt = Date.now()
       }
 
       const _inTitleBlock =
@@ -1067,7 +1065,6 @@ export default (
           anchor: { offset: 0, index: 0 },
           focus: { offset: 0, index: 0 },
         }
-        draft.selectionUpdatedAt = Date.now()
       }
 
       // UPDATE BLOCK UI FLAGS

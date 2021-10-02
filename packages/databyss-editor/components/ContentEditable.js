@@ -78,7 +78,6 @@ const ContentEditable = ({
     merge,
     setContent,
     setSelection,
-    selectionUpdatedAtRef,
     clear,
     remove,
     removeAtSelection,
@@ -859,10 +858,7 @@ const ContentEditable = ({
         }
       }
       // if reducer states to set the selection as an operation, perform seletion
-      if (
-        op.setSelection &&
-        state.selectionUpdatedAt > selectionUpdatedAtRef.current
-      ) {
+      if (op.setSelection) {
         ReactEditor.focus(editor)
 
         const _sel = stateSelectionToSlateSelection(
@@ -872,7 +868,6 @@ const ContentEditable = ({
 
         window.requestAnimationFrame(() => {
           Transforms.select(editor, _sel)
-          selectionUpdatedAtRef.current = Date.now()
         })
       }
     })
@@ -880,15 +875,11 @@ const ContentEditable = ({
     // if there were any update operations,
     //   sync the Slate selection to the state selection
 
-    if (
-      state.operations.length &&
-      state.selectionUpdatedAt > selectionUpdatedAtRef.current
-    ) {
+    if (state.operations.length) {
       nextSelection = stateSelectionToSlateSelection(
         editor.children,
         state.selection
       )
-      selectionUpdatedAtRef.current = Date.now()
     }
 
     valueRef.current = editor.children

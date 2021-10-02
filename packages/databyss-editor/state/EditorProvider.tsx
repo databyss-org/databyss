@@ -62,7 +62,6 @@ export type TransformArray = {
 type ContextType = {
   state: EditorState
   stateRef: Ref<EditorState>
-  selectionUpdatedAtRef: Ref<number>
   split: (transform: Transform) => void
   merge: (transform: Transform) => void
   setContent: (transformArray: TransformArray) => void
@@ -336,7 +335,6 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
         value={{
           state,
           stateRef,
-          selectionUpdatedAtRef: selectionLastUpdatedAtRef,
           copy,
           cut,
           insert,
