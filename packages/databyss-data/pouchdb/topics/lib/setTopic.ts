@@ -1,11 +1,11 @@
 import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import { Topic } from '@databyss-org/services/interfaces'
-import { DocumentType } from '../../interfaces'
+import { DocumentType, DocumentCacheDict } from '../../interfaces'
 import { upsertImmediate } from '../../utils'
 import { updateInlines } from '../../../../databyss-editor/lib/inlineUtils/updateInlines'
 
-const setTopic = async (data: Topic) => {
+const setTopic = async (data: Topic, caches?: DocumentCacheDict) => {
   const { text, _id } = data
 
   await upsertImmediate({
@@ -21,6 +21,7 @@ const setTopic = async (data: Topic) => {
     inlineType: InlineTypes.InlineTopic,
     text,
     _id,
+    caches,
   })
 }
 

@@ -15,7 +15,7 @@ import {
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Helmet } from 'react-helmet'
-import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import { useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { Block, BlockType, Source } from '@databyss-org/services/interfaces'
 import {
   LoadingFallback,
@@ -23,8 +23,6 @@ import {
   StickyHeader,
   TitleInput,
 } from '@databyss-org/ui/components'
-import { useDocuments } from '@databyss-org/data/pouchdb/hooks/useDocuments'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import { setSource } from '@databyss-org/data/pouchdb/sources'
 import { CitationOutputTypes } from '@databyss-org/services/citations/constants'
@@ -78,14 +76,16 @@ export const IndexPageTitleInput = ({
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const [title, setTitle] = useState(getTitleFromBlock(block, path))
   const { navigate } = useNavigationContext()
+  const blocksRes = useBlocks(BlockType._ANY)
+  const pagesRes = usePages()
 
   useImperativeHandle(handlesRef, () => ({
     updateTitle: (block: Block) => setTitle(getTitleFromBlock(block, path)),
   }))
 
-  useEffect(() => {
-    setTitle(getTitleFromBlock(block, path))
-  }, [path])
+  // useEffect(() => {
+  //   debouncedSetTitle(getTitleFromBlock(block, path))
+  // }, [path])
 
   const setBlockText = useCallback(
     debounce((value: string) => {
@@ -95,20 +95,24 @@ export const IndexPageTitleInput = ({
       switch (block!.type) {
         case BlockType.Topic:
           block!.text.textValue = value
-          setTopic(block!)
+          setTopic(block!, { pages: pagesRes.data, blocks: blocksRes.data })
           break
         case BlockType.Source:
           block!.text.textValue = value
-          setSource(block! as Source)
+          setSource(block! as Source, {
+            pages: pagesRes.data,
+            blocks: blocksRes.data,
+          })
           break
       }
-    }, 250),
+    }, 3000),
     [block]
   )
 
   useEffect(() => () => setBlockText.flush(), [])
 
   const onChange = (value: string) => {
+    // console.log('[IndexPageContent] onChange', value)
     setTitle(value)
     setBlockText(value)
   }
@@ -312,9 +316,7 @@ export const getPathFromBlock = (block: Block) => {
 
 export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const { blockId } = useParams()
-  const blocksRes = useDocuments<Block>({
-    doctype: DocumentType.Block,
-  })
+  const blocksRes = useBlocks(BlockType._ANY)
   const pagesRes = usePages()
 
   if (

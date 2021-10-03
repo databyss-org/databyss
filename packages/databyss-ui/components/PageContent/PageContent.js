@@ -52,11 +52,9 @@ export const PageContainer = React.memo(
           // get index value of anchor on page
           _index = page.blocks.findIndex((b) => b._id === anchor)
         }
-        console.log('[PageContent] index', _index)
         if (_index > -1) {
           setIndex(_index)
           const _ref = getBlockRefByIndex(_index)
-          console.log('[PageContent] REF', _ref)
           if (_ref) {
             window.requestAnimationFrame(() => {
               scrollIntoView(_ref)

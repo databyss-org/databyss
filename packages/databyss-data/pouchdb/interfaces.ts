@@ -1,6 +1,18 @@
 import { PageHeader } from '@databyss-org/services/interfaces/Page'
 import { BlockReference } from '@databyss-org/services/interfaces/Block'
+import {
+  Block,
+  BlockRelation,
+  DocumentDict,
+  Page,
+} from '@databyss-org/services/interfaces'
 import { Role } from '../interfaces/sysUser'
+
+export interface DocumentCacheDict {
+  pages: DocumentDict<Page> | null | undefined
+  blocks: DocumentDict<Block> | null | undefined
+  blockRelations?: DocumentDict<BlockRelation> | null
+}
 
 export interface PageDoc extends PageHeader {
   blocks: BlockReference[]

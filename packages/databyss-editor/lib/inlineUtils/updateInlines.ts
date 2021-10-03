@@ -6,7 +6,10 @@ import {
   Text,
 } from '@databyss-org/services/interfaces/'
 import { replicateSharedPage } from '@databyss-org/data/pouchdb/groups'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import {
+  DocumentType,
+  DocumentCacheDict,
+} from '@databyss-org/data/pouchdb/interfaces'
 import { findOne, getDocument, upsert } from '@databyss-org/data/pouchdb/utils'
 import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { replaceInlineText } from '../../state/util'
@@ -19,10 +22,12 @@ export const updateInlines = async ({
   inlineType,
   text,
   _id,
+  caches,
 }: {
   inlineType: InlineTypes
   text: Text
   _id: string
+  caches?: DocumentCacheDict
 }) => {
   const _relation = await findOne<BlockRelation>({
     doctype: DocumentType.BlockRelation,
@@ -37,14 +42,21 @@ export const updateInlines = async ({
   }
 
   for (const _pageId of _relation!.pages) {
-    const _page = await getDocument<Page>(_pageId)
+    const _page = caches?.pages?.[_pageId] ?? (await getDocument<Page>(_pageId))
+
     if (!_page) {
       continue
     }
     for (const _blockRef of _page!.blocks) {
       if (_blockRef.type === BlockType.Entry) {
         // get the block to scan
-        const _block = await getDocument<Block>(_blockRef._id)
+        const _block =
+          caches?.blocks?.[_blockRef._id] ??
+          (await getDocument<Block>(_blockRef._id))
+
+        if (!_block) {
+          continue
+        }
 
         // get all inline ranges from block
         const _inlineRanges = _block!.text.ranges.filter(

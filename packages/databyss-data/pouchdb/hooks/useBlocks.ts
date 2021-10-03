@@ -11,7 +11,9 @@ interface UseBlocksOptions extends QueryOptions {
 export const useBlocks = (blockType: BlockType, options?: UseBlocksOptions) => {
   let _selectorOrIds: PouchDB.Find.Selector | string[] = {
     doctype: DocumentType.Block,
-    type: blockType,
+  }
+  if (blockType !== BlockType._ANY) {
+    _selectorOrIds.type = blockType
   }
   if (options && options.includeIds) {
     _selectorOrIds = [options.includeIds]

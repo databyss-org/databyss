@@ -13,6 +13,7 @@ export enum BlockType {
   EndTopic = 'END_TOPIC',
   Embed = 'EMBED',
   Link = 'link',
+  _ANY = '_ANY',
 }
 
 export interface BlockReference {

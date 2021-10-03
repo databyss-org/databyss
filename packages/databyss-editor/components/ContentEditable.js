@@ -11,7 +11,7 @@ import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { setSource } from '@databyss-org/services/sources'
 import { setEmbed } from '@databyss-org/services/embeds'
 import { setBlockRelations } from '@databyss-org/services/entries'
-import { setTopic } from '@databyss-org/services/topics'
+import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
@@ -53,6 +53,7 @@ import {
 } from '../lib/inlineUtils'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
 import { BlockType } from '../interfaces'
+import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -64,6 +65,8 @@ const ContentEditable = ({
   sharedWithGroups,
   firstBlockIsTitle,
 }) => {
+  const blocksRes = useBlocks()
+  const pagesRes = usePages()
   const editorContext = useEditorContext()
   const { navigate } = useNavigationContext()
 
@@ -124,9 +127,7 @@ const ContentEditable = ({
 
   // if focus index is provides, move caret
   useEffect(() => {
-    console.log('[ContentEditable] focusIndex', focusIndex)
     if (typeof focusIndex === 'number' && editor.children) {
-      console.log('[ContentEditable] focusIndexIsNumber')
       const _point = { index: focusIndex, offset: 0 }
       const _selection = { anchor: _point, focus: _point }
       const _slateSelection = stateSelectionToSlateSelection(
@@ -159,12 +160,22 @@ const ContentEditable = ({
         const _types = {
           SOURCE: () => {
             if (_data) {
-              window.requestAnimationFrame(() => setSource(_data))
+              window.requestAnimationFrame(() =>
+                setSource(_data, {
+                  pages: pagesRes.data,
+                  blocks: blocksRes.data,
+                })
+              )
             }
           },
           TOPIC: () => {
             if (_data) {
-              window.requestAnimationFrame(() => setTopic(_data))
+              window.requestAnimationFrame(() =>
+                setTopic(_data, {
+                  pages: pagesRes.data,
+                  blocks: blocksRes.data,
+                })
+              )
             }
           },
           EMBED: () => {
@@ -501,7 +512,6 @@ const ContentEditable = ({
       }
 
       if (Hotkeys.isSelectAll(event)) {
-        console.log('[ContentEditable] isSelectAll')
         event.preventDefault()
         const _sel = {
           anchor: { offset: 0, index: 1 },

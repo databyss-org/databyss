@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { setTopic } from '@databyss-org/services/topics'
+import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'

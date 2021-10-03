@@ -30,7 +30,7 @@ const createReducer = (...middlewares) => {
 
     const dispatch = useCallback(
       (action) => {
-        action.meta = { provider: options?.name }
+        action.meta = { provider: options?.name, createdAt: Date.now() }
         ref.current = reducer(ref.current, action, options?.onChange)
         setState(ref.current)
         return action
