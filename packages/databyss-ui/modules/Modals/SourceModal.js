@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { buildSourceDetail } from '@databyss-org/services/sources/lib'
 import { ModalWindow } from '@databyss-org/ui/primitives'
-import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
+import { useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { setSource } from '@databyss-org/services/sources'
 import CitationProvider from '@databyss-org/services/citations/CitationProvider'
@@ -11,18 +11,20 @@ import { LoadingFallback, EditSourceForm } from '@databyss-org/ui/components'
 const SourceModal = ({ refId, visible, onUpdate, id, untitledPlaceholder }) => {
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
-  const sourcesRes = useBlocks(BlockType.Source, {
-    includeIds: [refId],
-  })
+  const blocksRes = useBlocks(BlockType._ANY)
+  const pagesRes = usePages()
 
-  const source = sourcesRes.isSuccess && sourcesRes.data[refId]
+  const source = blocksRes.isSuccess && blocksRes.data[refId]
 
   const saveSource = useCallback(
     (values) => {
       if (!values?.text?.textValue.length) {
         values.text.textValue = untitledPlaceholder
       }
-      setSource(values)
+      setSource(values, {
+        pages: pagesRes.data,
+        blocks: blocksRes.data,
+      })
     },
     [setSource]
   )
@@ -69,12 +71,12 @@ const SourceModal = ({ refId, visible, onUpdate, id, untitledPlaceholder }) => {
       dismissChild="done"
       canDismiss
     >
-      {sourcesRes.isSuccess && values ? (
+      {blocksRes.isSuccess && values ? (
         <CitationProvider>
           <EditSourceForm values={values} onChange={onChange} />
         </CitationProvider>
       ) : (
-        <LoadingFallback queryObserver={sourcesRes} />
+        <LoadingFallback queryObserver={blocksRes} />
       )}
     </ModalWindow>
   )

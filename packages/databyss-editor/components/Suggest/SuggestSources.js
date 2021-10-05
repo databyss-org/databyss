@@ -12,7 +12,11 @@ import { prefixSearchAll, weightedSearch } from '@databyss-org/services/blocks'
 import { Separator, Text, View } from '@databyss-org/ui/primitives'
 import { setSource } from '@databyss-org/services/sources'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
-import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
+import {
+  useBlocks,
+  useBlocksInPages,
+  usePages,
+} from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
@@ -71,6 +75,8 @@ const SuggestSources = ({
   const sharedWithGroups = useEditorPageContext((c) => c && c.sharedWithGroups)
   const [suggestions, setSuggestsions] = useState()
   const [filteredSuggestions, setFilteredSuggestions] = useState([])
+  const blocksRes = useBlocks(BlockType._ANY)
+  const pagesRes = usePages()
 
   const { isOnline } = useNotifyContext() || { isOnline: false }
 
@@ -102,7 +108,13 @@ const SuggestSources = ({
     if (!inlineAtomic) {
       if (!source._id) {
         source._id = uid()
-        setSource({ ...formatSource(source), sharedWithGroups })
+        setSource(
+          { ...formatSource(source), sharedWithGroups },
+          {
+            pages: pagesRes.data,
+            blocks: blocksRes.data,
+          }
+        )
       }
 
       replace([source])
@@ -112,7 +124,10 @@ const SuggestSources = ({
       }
       const _formatteSource = { ...formatSource(source), sharedWithGroups }
 
-      setSource(_formatteSource)
+      setSource(_formatteSource, {
+        pages: pagesRes.data,
+        blocks: blocksRes.data,
+      })
 
       pendingSetContent.current = true
 
