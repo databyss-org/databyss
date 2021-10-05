@@ -1,0 +1,246 @@
+{
+  "doctype": "PAGE",
+  "name": "Page to be exported",
+  "archive": false,
+  "sharedWithGroups": ["p_82aviszukm4oo5"],
+  "blocks": [
+    {
+      "type": "ENTRY",
+      "text": {
+        "textValue": "Page to be exported",
+        "ranges": []
+      },
+      "doctype": "BLOCK",
+      "createdAt": 1626199062168,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "modifiedAt": 1633340568618,
+      "_id": "ikLrYcS8S4XD",
+      "_rev": "8-48cdce15c72fbeadb89ad05205c27c26"
+    },
+    {
+      "text": {
+        "textValue": "A short page with all of the possible hypertextual elements in Databyss.",
+        "ranges": []
+      },
+      "type": "ENTRY",
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633340569068,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633344600697,
+      "_id": "QsyVPoXXDSSb",
+      "_rev": "9-76022ce79e663fa08ed64cf69b4f6922"
+    },
+    {
+      "doctype": "BLOCK",
+      "type": "SOURCE",
+      "text": {
+        "textValue": "Berners-Lee. Worldwideweb (1990)",
+        "ranges": []
+      },
+      "detail": {
+        "title": {
+          "textValue": "Worldwideweb: Proposal for a hypertext project"
+        },
+        "authors": [
+          {
+            "firstName": {
+              "textValue": "Tim"
+            },
+            "lastName": {
+              "textValue": "Berners-Lee"
+            }
+          }
+        ],
+        "editors": [],
+        "translators": [],
+        "publicationType": {
+          "id": "journalArticle",
+          "label": "Journal Article"
+        },
+        "month": {
+          "id": 0,
+          "label": "None"
+        },
+        "url": {
+          "textValue": ""
+        },
+        "year": {
+          "textValue": "1990"
+        },
+        "volume": {
+          "textValue": ""
+        }
+      },
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "createdAt": 1610310881000,
+      "modifiedAt": 1633344602697,
+      "sharedWithGroups": ["p_lpf3e11clj17y0", "p_82aviszukm4oo5"],
+      "name": {
+        "ranges": [],
+        "textValue": "Berners-Lee 1990"
+      },
+      "_id": "V9mzztUU5ZU9",
+      "_rev": "36-3e395c6c7c590efb098923f002af772e"
+    },
+    {
+      "text": {
+        "textValue": "CERN: \"Link to Living\"\n⁠The web never implemented #Link to living universally. We might consider this for the collections architecture, though.",
+        "ranges": [
+          {
+            "offset": 0,
+            "length": 22,
+            "marks": [
+              [
+                "link",
+                "http://info.cern.ch/hypertext/WWW/DesignIssues/LinkToLiving.html"
+              ]
+            ]
+          },
+          {
+            "offset": 50,
+            "length": 15,
+            "marks": [["inlineTopic", "RKikJtiaDRHX"]]
+          }
+        ]
+      },
+      "type": "ENTRY",
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633340611594,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633341099567,
+      "_id": "HOqaJWX2sTGd",
+      "_rev": "13-cec67bcc7849be05a8e2dbb291792840"
+    },
+    {
+      "text": {
+        "textValue": "Is Databyss a \"hyperindexing\" system? (@Bruza 1992)",
+        "ranges": [
+          {
+            "length": 11,
+            "offset": 39,
+            "marks": [["inlineCitation", "b9uXVnaeztqE"]]
+          }
+        ]
+      },
+      "type": "ENTRY",
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633340668596,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633344158674,
+      "_id": "YEwstgLbQV23",
+      "_rev": "30-2e49e7ae7f078a2739c2762e24cd8266"
+    },
+    {
+      "type": "TOPIC",
+      "text": {
+        "textValue": "Structured Documents",
+        "ranges": []
+      },
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633341065576,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633341098757,
+      "_id": "lrEC5qBXNzPo",
+      "_rev": "17-9b93013f2bfd42f5b92776e5ee641024"
+    },
+    {
+      "text": {
+        "textValue": "TBL addresses an early W3 debate about whether to standardize the structure of a hypertext document or not. I think what's interesting about Databyss is that it allows free-form documents but gives readers and authors some standard, built-in ways to understand and navigate the texts - it's not all left to the whims of the hyperlink author.",
+        "ranges": []
+      },
+      "type": "ENTRY",
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633341143565,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633341258569,
+      "_id": "Wx25NwjKhNSL",
+      "_rev": "11-4c1839012815545d67d504266275f0c6"
+    },
+    {
+      "_id": "lrEC5qBXNzPo",
+      "type": "END_TOPIC",
+      "text": {
+        "textValue": "/# Structured Documents",
+        "ranges": []
+      }
+    },
+    {
+      "text": {
+        "textValue": "TBL also analyzed the benefits and challenges of what we call the automatic motif linking in r2c. \nHe called it \"generic linking\", and in another document describes how #Microcosm uses disambiguation menus for generic links like we do in r2c.",
+        "ranges": [
+          {
+            "offset": 138,
+            "length": 16,
+            "marks": [
+              [
+                "link",
+                "http://info.cern.ch/hypertext/Products/Microcosm/Microcosm.html"
+              ]
+            ]
+          },
+          {
+            "offset": 169,
+            "length": 10,
+            "marks": [["inlineTopic", "QwlDs6nxMPxL"]]
+          }
+        ]
+      },
+      "type": "ENTRY",
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633341221420,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633343014644,
+      "_id": "ylcmw7y1kMDc",
+      "_rev": "10-f5269bbd14d13260790648c808d67f1c"
+    },
+    {
+      "text": {
+        "textValue": "But what happens when it all falls apart?",
+        "ranges": [
+          {
+            "offset": 22,
+            "length": 18,
+            "marks": [["link", "ps0l5pmchhmimt"]]
+          }
+        ]
+      },
+      "type": "ENTRY",
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633340573589,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633437368826,
+      "_id": "1MaxTcfltARK",
+      "_rev": "29-9fc2d64b1aff3ba306da6e87c448b686"
+    }
+  ],
+  "selection": {
+    "doctype": "SELECTION",
+    "focus": {
+      "index": 6,
+      "offset": 115
+    },
+    "anchor": {
+      "index": 6,
+      "offset": 115
+    },
+    "belongsToGroup": "g_3ce6hg2yqktrfj",
+    "createdAt": 1602951269000,
+    "modifiedAt": 1633439539832,
+    "sharedWithGroups": ["p_82aviszukm4oo5"],
+    "_id": "tKaRpc6QPjxp",
+    "_rev": "125-dc61469410a202bd540ef985208170f8"
+  },
+  "belongsToGroup": "g_3ce6hg2yqktrfj",
+  "createdAt": 1602951269000,
+  "modifiedAt": 1633344730430,
+  "_id": "82aviszukm4oo5",
+  "_rev": "29-d58263e33d461b6e10c3715392bcb641"
+}
