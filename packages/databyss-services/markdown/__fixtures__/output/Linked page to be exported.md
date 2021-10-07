@@ -4,4 +4,4 @@ This page is linked to [[Page to be exported]]
 Users turn to Twitter after Facebook outage. Jokes and venting ensue.
 <span style="color: gray">New York Times</span>
 
-But what happens when it [[Page to be exported|all falls apart]]?
+[![# Music for when you are stressed🍀](https://i.ytimg.com/vi/t_i_Dq2GjAI/maxresdefault.jpg)](https://www.youtube.com/watch?v=t_i_Dq2GjAI)

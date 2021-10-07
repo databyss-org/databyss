@@ -1,0 +1,40 @@
+[
+  {
+    "_id": "8Su6HnzJQNM9",
+    "_rev": "6-7291c77c44c54e660b8c03abc2426671",
+    "text": {
+      "textValue": "A woman checking her Instagram account in New York on Monday.",
+      "ranges": []
+    },
+    "detail": {
+      "title": "A woman checking her Instagram account in New York on Monday.",
+      "src": "https://static01.nyt.com/images/2021/10/04/world/04xp-facebook-reax1/merlin_195810030_ff69c307-bb69-4643-8b10-569bd4b62a1f-articleLarge.jpg?quality=75&auto=webp&disable=upscale",
+      "mediaType": "image"
+    },
+    "sharedWithGroups": ["p_82aviszukm4oo5"],
+    "doctype": "BLOCK",
+    "type": "EMBED",
+    "createdAt": 1633437595763,
+    "belongsToGroup": "g_3ce6hg2yqktrfj"
+  },
+  {
+    "_id": "l9fE8SyiaBe7",
+    "_rev": "3-134fa0462f3bb2fe1e8a63f926b1d333",
+    "text": {
+      "textValue": "Music for when you are stressed🍀",
+      "ranges": []
+    },
+    "detail": {
+      "title": "Music for when you are stressed🍀",
+      "src": "https://www.youtube.com/watch?v=t_i_Dq2GjAI",
+      "mediaType": "youtube",
+      "openGraphJson": "{\"ogSiteName\":\"YouTube\",\"ogUrl\":\"https://www.youtube.com/watch?v=t_i_Dq2GjAI\",\"ogTitle\":\"Music for when you are stressed🍀\",\"ogDescription\":\"𝕞𝕦𝕤𝕚𝕔 𝕗𝕠𝕣 ...Have you been stressed recently, when you are stressed bunny is here :(- I think this is my third bunny customizationHopefully Mellow Fo...\",\"alIosAppStoreId\":\"544007664\",\"alIosAppName\":\"YouTube\",\"alIosUrl\":\"vnd.youtube://www.youtube.com/watch?v=t_i_Dq2GjAI&feature=applinks\",\"alAndroidUrl\":\"vnd.youtube://www.youtube.com/watch?v=t_i_Dq2GjAI&feature=applinks\",\"alWebUrl\":\"http://www.youtube.com/watch?v=t_i_Dq2GjAI&feature=applinks\",\"ogType\":\"video.other\",\"alAndroidAppName\":\"YouTube\",\"alAndroidPackage\":\"com.google.android.youtube\",\"twitterCard\":\"player\",\"twitterSite\":\"@youtube\",\"twitterUrl\":\"https://www.youtube.com/watch?v=t_i_Dq2GjAI\",\"twitterTitle\":\"Music for when you are stressed🍀\",\"twitterDescription\":\"𝕞𝕦𝕤𝕚𝕔 𝕗𝕠𝕣 ...Have you been stressed recently, when you are stressed bunny is here :(- I think this is my third bunny customizationHopefully Mellow Fo...\",\"twitterAppNameiPhone\":\"YouTube\",\"twitterAppIdiPhone\":\"544007664\",\"twitterAppNameiPad\":\"YouTube\",\"twitterAppIdiPad\":\"544007664\",\"twitterAppUrliPhone\":\"vnd.youtube://www.youtube.com/watch?v=t_i_Dq2GjAI&feature=applinks\",\"twitterAppUrliPad\":\"vnd.youtube://www.youtube.com/watch?v=t_i_Dq2GjAI&feature=applinks\",\"twitterAppNameGooglePlay\":\"YouTube\",\"twitterAppIdGooglePlay\":\"com.google.android.youtube\",\"twitterAppUrlGooglePlay\":\"https://www.youtube.com/watch?v=t_i_Dq2GjAI\",\"ogImage\":{\"url\":\"https://i.ytimg.com/vi/t_i_Dq2GjAI/maxresdefault.jpg\",\"width\":\"1280\",\"height\":\"720\",\"type\":\"jpg\"},\"ogVideo\":{\"url\":\"https://www.youtube.com/embed/t_i_Dq2GjAI\",\"width\":\"1280\",\"height\":\"720\",\"type\":\"text/html\"},\"twitterImage\":{\"url\":\"https://i.ytimg.com/vi/t_i_Dq2GjAI/maxresdefault.jpg\",\"width\":null,\"height\":null,\"alt\":null},\"twitterPlayer\":{\"url\":\"https://www.youtube.com/embed/t_i_Dq2GjAI\",\"width\":\"1280\",\"height\":\"720\",\"stream\":null},\"ogLocale\":\"es-ES\",\"ogDate\":\"2021-06-04\",\"charset\":\"utf8\",\"requestUrl\":\"https://www.youtube.com/watch?v=t_i_Dq2GjAI\",\"success\":true}"
+    },
+    "sharedWithGroups": ["p_82aviszukm4oo5"],
+    "doctype": "BLOCK",
+    "type": "EMBED",
+    "createdAt": 1633452146277,
+    "belongsToGroup": "g_3ce6hg2yqktrfj",
+    "modifiedAt": 1633452148191
+  }
+]
