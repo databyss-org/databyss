@@ -1,19 +1,19 @@
 import { textToMarkdown } from '../blocks/serialize'
-import { Block, BlockType, Source } from '../interfaces'
+import { Block, BlockType, Document, DocumentDict, Source } from '../interfaces'
 
 export function blockToMarkdown({
   block,
-  linkedBlocks,
+  linkedDocs,
 }: {
   block: Block
-  linkedBlocks?: { [id: string]: Block }
+  linkedDocs?: DocumentDict<Document>
 }) {
   switch (block.type) {
     case BlockType.Topic: {
       return `# [[t/${block.text.textValue}]]`
     }
     case BlockType.Source: {
-      const _shortName = (linkedBlocks![block._id] as Source).name?.textValue
+      const _shortName = (linkedDocs![block._id] as Source).name?.textValue
       return `# [[s/${_shortName}]]`
     }
     case BlockType.EndTopic: {
@@ -23,5 +23,5 @@ export function blockToMarkdown({
       return `[/s/${block.text.textValue.substr(3)}]`
     }
   }
-  return textToMarkdown(block.text)
+  return textToMarkdown(block.text, linkedDocs)
 }

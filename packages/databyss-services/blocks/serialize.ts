@@ -1,14 +1,18 @@
 import 'core-js/features/string/replace-all'
 import colors from '@databyss-org/ui/theming/colors'
-import { Block, BlockType, Text } from '../interfaces'
+import { Document, DocumentDict, Embed, Page, Text } from '../interfaces'
 import { RangeType, InlineTypes } from '../interfaces/Range'
+import { validUriRegex } from '../lib/util'
 
 export interface StringTransformFn {
   (t: string): string
 }
 
 export interface TagMapFnType {
-  (mark: string[]): (string | StringTransformFn)[]
+  (mark: string[], linkedDocs: DocumentDict<Document>): (
+    | string
+    | StringTransformFn
+  )[]
 }
 
 const markToHtml: TagMapFnType = (mark) =>
@@ -33,23 +37,41 @@ const markToHtml: TagMapFnType = (mark) =>
     ],
   }[mark[0]] ?? ['', ''])
 
-const markToMarkdown: TagMapFnType = (mark) =>
-  ({
-    [RangeType.Bold]: ['**', '**'],
-    [RangeType.Italic]: ['_', '_'],
-    [RangeType.Location]: [`<span style="color:gray">`, '</span>'],
-    [InlineTypes.Link]: ['[', `](${mark[1]})`],
-    [InlineTypes.InlineSource]: [
-      '[[s/',
-      ']]',
-      ((_t: string) => _t.substr(1)) as StringTransformFn,
-    ],
-    [InlineTypes.InlineTopic]: [
-      '[[t/',
-      ']]',
-      ((_t: string) => _t.substr(1)) as StringTransformFn,
-    ],
-  }[mark[0]] ?? ['', ''])
+const markToMarkdown: TagMapFnType = (mark, linkedDocs) => {
+  switch (mark[0]) {
+    case RangeType.Bold:
+      return ['**', '**']
+    case RangeType.Italic:
+      return ['_', '_']
+    case RangeType.Location:
+      return [`<span style="color:gray">`, '</span>']
+    case InlineTypes.Link:
+      if (mark[1].match(validUriRegex)) {
+        return ['[', `](${mark[1]})`]
+      }
+      const _pageName = (linkedDocs[mark[1]] as Page).name
+      return [
+        '[[',
+        `]]`,
+        (_t: string) => (_t === _pageName ? _t : `${_pageName}|${_t}`),
+      ]
+    case InlineTypes.InlineSource:
+      return ['[[s/', ']]', ((_t: string) => _t.substr(1)) as StringTransformFn]
+    case InlineTypes.InlineTopic:
+      return ['[[t/', ']]', ((_t: string) => _t.substr(1)) as StringTransformFn]
+    case InlineTypes.Embed:
+      const _embedBlock = linkedDocs[mark[1]] as Embed
+      if (_embedBlock.detail.openGraphJson) {
+        const _og = JSON.parse(_embedBlock.detail.openGraphJson)
+        if (_og.ogImage?.url) {
+          return ['[!', `(${_og.ogImage.url})](${_embedBlock.detail.src})`]
+        }
+      }
+      return ['!', `(${_embedBlock.detail.src})`]
+    default:
+      return ['', '']
+  }
+}
 
 /**
  * Renders Text as HTML
@@ -61,14 +83,21 @@ export function textToHtml(text: Text): string {
 /**
  * Renders Text as Markdown
  */
-export function textToMarkdown(text: Text): string {
-  return renderText(text, markToMarkdown)
+export function textToMarkdown(
+  text: Text,
+  linkedDocs?: DocumentDict<Document>
+): string {
+  return renderText(text, markToMarkdown, linkedDocs).replaceAll('\n', '  \n')
 }
 
 /**
  * Renders Text as markup/markdown
  */
-export function renderText(text: Text, tagMapFn: TagMapFnType): string {
+export function renderText(
+  text: Text,
+  tagMapFn: TagMapFnType,
+  linkedDocs?: DocumentDict<Document>
+): string {
   let _html = text.textValue
 
   if (!text.ranges.length) {
@@ -105,7 +134,10 @@ export function renderText(text: Text, tagMapFn: TagMapFnType): string {
       _range.marks.forEach((_mark) => {
         // mark can be a tuple or string; coerce to tuple
         const __mark: string[] = Array.isArray(_mark) ? _mark : [_mark]
-        const [__open, __close, __transform] = tagMapFn(__mark)
+        const [__open, __close, __transform] = tagMapFn(
+          __mark,
+          linkedDocs ?? {}
+        )
         _openTags += __open
         _closeTags = `${__close}${_closeTags}`
         if (__transform) {
@@ -114,6 +146,7 @@ export function renderText(text: Text, tagMapFn: TagMapFnType): string {
       })
       _html = `${_before}${_openTags}${_segment}${_closeTags}${_after}`
     } catch (err) {
+      console.warn('[renderText]', err)
       _html = `${_before}${_segment}${_after}`
     }
   })

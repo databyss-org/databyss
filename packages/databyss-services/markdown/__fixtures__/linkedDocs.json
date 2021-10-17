@@ -1,5 +1,87 @@
 [
   {
+    "_id": "V9mzztUU5ZU9",
+    "_rev": "37-c983fae2b230109ce08d2d664690faff",
+    "doctype": "BLOCK",
+    "type": "SOURCE",
+    "text": {
+      "textValue": "Berners-Lee. Worldwideweb (1990)",
+      "ranges": []
+    },
+    "detail": {
+      "title": {
+        "textValue": "Worldwideweb: Proposal for a hypertext project"
+      },
+      "authors": [
+        {
+          "firstName": {
+            "textValue": "Tim"
+          },
+          "lastName": {
+            "textValue": "Berners-Lee"
+          }
+        }
+      ],
+      "editors": [],
+      "translators": [],
+      "publicationType": {
+        "id": "journalArticle",
+        "label": "Journal Article"
+      },
+      "month": {
+        "id": 0,
+        "label": "None"
+      },
+      "url": {
+        "textValue": ""
+      },
+      "year": {
+        "textValue": "1990"
+      },
+      "volume": {
+        "textValue": ""
+      }
+    },
+    "belongsToGroup": "g_3ce6hg2yqktrfj",
+    "createdAt": 1610310881000,
+    "modifiedAt": 1633344602697,
+    "sharedWithGroups": ["p_lpf3e11clj17y0", "p_82aviszukm4oo5"],
+    "name": {
+      "ranges": [],
+      "textValue": "Berners-Lee 1990"
+    }
+  },
+  {
+    "_id": "ps0l5pmchhmimt",
+    "_rev": "27-24d9f559a4b43a575123ae0dca50ddef",
+    "blocks": [
+      {
+        "_id": "jv2Rc49ZzAZk",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "6aFKLfovGh0v",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "G4lHmvqlOtGd",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "IC44KbEcqVjO",
+        "type": "ENTRY"
+      }
+    ],
+    "selection": "xdG1B9s7NbW1",
+    "name": "Linked page to be exported",
+    "archive": false,
+    "doctype": "PAGE",
+    "createdAt": 1633436280801,
+    "belongsToGroup": "g_3ce6hg2yqktrfj",
+    "modifiedAt": 1633452145186,
+    "sharedWithGroups": ["p_82aviszukm4oo5"]
+  },
+  {
     "_id": "8Su6HnzJQNM9",
     "_rev": "6-7291c77c44c54e660b8c03abc2426671",
     "text": {
@@ -36,5 +118,55 @@
     "createdAt": 1633452146277,
     "belongsToGroup": "g_3ce6hg2yqktrfj",
     "modifiedAt": 1633452148191
+  },
+  {
+    "_id": "82aviszukm4oo5",
+    "_rev": "37-c6d0f91c1e6b791dadb8e4665346ac04",
+    "doctype": "PAGE",
+    "name": "Page to be exported",
+    "archive": false,
+    "sharedWithGroups": ["p_82aviszukm4oo5"],
+    "blocks": [
+      {
+        "_id": "ikLrYcS8S4XD",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "QsyVPoXXDSSb",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "V9mzztUU5ZU9",
+        "type": "SOURCE"
+      },
+      {
+        "_id": "HOqaJWX2sTGd",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "YEwstgLbQV23",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "lrEC5qBXNzPo",
+        "type": "TOPIC"
+      },
+      {
+        "_id": "Wx25NwjKhNSL",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "lrEC5qBXNzPo",
+        "type": "END_TOPIC"
+      },
+      {
+        "_id": "gEdOPXXIgHO6",
+        "type": "ENTRY"
+      }
+    ],
+    "selection": "tKaRpc6QPjxp",
+    "belongsToGroup": "g_3ce6hg2yqktrfj",
+    "createdAt": 1602951269000,
+    "modifiedAt": 1633617283856
   }
 ]

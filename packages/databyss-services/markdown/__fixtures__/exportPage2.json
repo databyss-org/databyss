@@ -36,7 +36,7 @@
     },
     {
       "text": {
-        "textValue": "[A woman checking her Instagram account in New York on Monday.]\nUsers turn to Twitter after Facebook outage. Jokes and venting ensue. \nNew York Times",
+        "textValue": "[A woman checking her Instagram account in New York on Monday.]\nUsers turn to Twitter after Facebook outage. Jokes and venting ensue.\nNew York Times",
         "ranges": [
           {
             "offset": 0,
@@ -44,7 +44,7 @@
             "marks": [["embed", "8Su6HnzJQNM9"]]
           },
           {
-            "offset": 140,
+            "offset": 134,
             "length": 14,
             "marks": ["location"]
           }

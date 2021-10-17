@@ -4,14 +4,26 @@ import path from 'path'
 import { blockToMarkdown } from '../'
 
 let page1json
+let page2json
 let page1md
-let linkedBlocks
+let page2md
+let linkedDocs
 
 describe('markdown converter', () => {
   beforeAll(() => {
     page1md = fs
       .readFileSync(
         path.resolve(__dirname, '../__fixtures__/output/Page to be exported.md')
+      )
+      .toString()
+      .split('\n')
+      .filter((ln) => ln.length)
+    page2md = fs
+      .readFileSync(
+        path.resolve(
+          __dirname,
+          '../__fixtures__/output/Linked page to be exported.md'
+        )
       )
       .toString()
       .split('\n')
@@ -23,10 +35,17 @@ describe('markdown converter', () => {
         )
         .toString()
     )
-    linkedBlocks = JSON.parse(
+    page2json = JSON.parse(
       fs
         .readFileSync(
-          path.resolve(__dirname, '../__fixtures__/linkedBlocks.json')
+          path.resolve(__dirname, '../__fixtures__/exportPage2.json')
+        )
+        .toString()
+    )
+    linkedDocs = JSON.parse(
+      fs
+        .readFileSync(
+          path.resolve(__dirname, '../__fixtures__/linkedDocs.json')
         )
         .toString()
     ).reduce((dict, curr) => ({ ...dict, [curr._id]: curr }), {})
@@ -45,9 +64,10 @@ describe('markdown converter', () => {
     const _mdExpected = page1md[2]
     assert.deepEqual(_mdActual, _mdExpected)
   })
-  it('should convert a block with an internal link', () => {
+  it('should convert a block with a renamed internal link', () => {
     const _mdActual = blockToMarkdown({
       block: page1json.blocks[8],
+      linkedDocs,
     })
     const _mdExpected = page1md[7]
     assert.deepEqual(_mdActual, _mdExpected)
@@ -83,9 +103,33 @@ describe('markdown converter', () => {
   it('should convert a SOURCE block', () => {
     const _mdActual = blockToMarkdown({
       block: page1json.blocks[2],
-      linkedBlocks,
+      linkedDocs,
     })
     const _mdExpected = page1md[1]
+    assert.deepEqual(_mdActual, _mdExpected)
+  })
+  it('should convert a block with an internal link', () => {
+    const _mdActual = blockToMarkdown({
+      block: page2json.blocks[1],
+      linkedDocs,
+    })
+    const _mdExpected = page2md[0]
+    assert.deepEqual(_mdActual, _mdExpected)
+  })
+  it('should convert a block with an image EMBED', () => {
+    const _mdActual = blockToMarkdown({
+      block: page2json.blocks[2],
+      linkedDocs,
+    })
+    const _mdExpected = [page2md[1], page2md[2], page2md[3]].join('\n')
+    assert.deepEqual(_mdActual, _mdExpected)
+  })
+  it('should convert a block with a YouTube EMBED', () => {
+    const _mdActual = blockToMarkdown({
+      block: page2json.blocks[3],
+      linkedDocs,
+    })
+    const _mdExpected = page2md[4]
     assert.deepEqual(_mdActual, _mdExpected)
   })
 })
