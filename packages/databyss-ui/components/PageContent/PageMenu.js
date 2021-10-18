@@ -17,6 +17,7 @@ import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import HelpSvg from '@databyss-org/ui/assets/help.svg'
+import SaveSvg from '@databyss-org/ui/assets/save.svg'
 // import { saveGroup } from '@databyss-org/services/groups'
 // import { Group } from '@databyss-org/services/interfaces'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
@@ -68,6 +69,7 @@ const PageMenu = () => {
 
   const archivePage = useEditorPageContext((c) => c.archivePage)
   const deletePage = useEditorPageContext((c) => c.deletePage)
+  const exportPage = useEditorPageContext((c) => c.exportPage)
 
   const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
 
@@ -167,6 +169,13 @@ const PageMenu = () => {
       // shortcut: 'Ctrl + Del',
     })
   }
+
+  menuItems.push({
+    icon: <SaveSvg />,
+    label: 'Export page',
+    action: () => exportPage(params),
+    actionType: 'exportPage',
+  })
 
   if (menuItems.length > 0) {
     menuItems.push({ separator: true })

@@ -14,9 +14,15 @@ import {
   PatchBatch,
   ResourceResponse,
   ResourceNotFoundError,
+  Document,
+  DocumentDict,
 } from '../interfaces'
 import { PageReplicator } from './PageReplicator'
 import * as actions from './actions'
+import { loadPage } from './'
+import { validUriRegex } from '../lib/util'
+import { getDocuments } from '../../databyss-data/pouchdb/utils'
+import { blockToMarkdown } from '../markdown'
 
 interface PropsType {
   children: JSX.Element
@@ -47,6 +53,7 @@ interface ContextType {
   archivePage: (id: string, boolean: boolean) => Promise<void>
   onPageCached: (id: string, callback: Function) => void
   removePageFromCache: (id: string) => void
+  exportPage: (id: string) => void
   sharedWithGroups?: string[]
 }
 
@@ -182,6 +189,40 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     [JSON.stringify(state.cache)]
   )
 
+  const exportPage = async (id: string) => {
+    const _page = (await loadPage(id)) as Page
+
+    // load page dependencies (linked documents)
+    const _docIdsToFetch: string[] = []
+    _page.blocks.forEach((_block) => {
+      _docIdsToFetch.push(_block._id)
+      _block.text.ranges.forEach((_range) => {
+        _range.marks.forEach((_mark) => {
+          if (
+            Array.isArray(_mark) &&
+            _mark.length > 1 &&
+            !_mark[1].match(validUriRegex)
+          ) {
+            _docIdsToFetch.push(_mark[1])
+          }
+        })
+      })
+    })
+    const _linkedDocs = (await getDocuments<Document>(
+      _docIdsToFetch
+    )) as DocumentDict<Document>
+
+    // serialize the blocks to markdown
+    const _markdownDoc: string[] = []
+    _page.blocks.forEach((_block) => {
+      _markdownDoc.push(
+        blockToMarkdown({ block: _block, linkedDocs: _linkedDocs })
+      )
+    })
+
+    console.log('[EditorPageProvider] exportPage markdownDoc', _markdownDoc)
+  }
+
   return (
     <EditorPageContext.Provider
       value={{
@@ -199,6 +240,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         removePageFromCache,
         getPublicAccount,
         sharedWithGroups: sharedWithGroupsRef.current ?? [],
+        exportPage,
       }}
     >
       <PageReplicator key={pageId} pageId={pageId}>
