@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
+import fileDownload from 'js-file-download'
 import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
 import { setPublicPage } from '@databyss-org/data/pouchdb/groups'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
@@ -220,7 +221,8 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
       )
     })
 
-    console.log('[EditorPageProvider] exportPage markdownDoc', _markdownDoc)
+    // console.log('[EditorPageProvider] exportPage markdownDoc', _markdownDoc)
+    fileDownload(_markdownDoc.slice(1).join('\n\n'), `${_page.name}.md`)
   }
 
   return (
