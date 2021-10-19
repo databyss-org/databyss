@@ -13,6 +13,7 @@ import { setEmbed } from '@databyss-org/services/embeds'
 import { setBlockRelations } from '@databyss-org/services/entries'
 import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { copyToClipboard } from '@databyss-org/ui/components/PageContent/PageMenu'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -54,6 +55,7 @@ import {
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
 import { BlockType } from '../interfaces'
 import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
+import { loadPage } from '../../databyss-services/editorPage'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -524,6 +526,15 @@ const ContentEditable = ({
 
         window.requestAnimationFrame(() => {
           Transforms.select(editor, _ssel)
+        })
+        return
+      }
+
+      if (Hotkeys.isCopyPageState(event)) {
+        event.preventDefault()
+        loadPage(state.pageHeader._id).then((page) => {
+          copyToClipboard(JSON.stringify(page, null, 2))
+          console.log('[ContentEditable] state copied to clipboard')
         })
         return
       }

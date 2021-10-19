@@ -1,0 +1,243 @@
+{
+  "doctype": "PAGE",
+  "name": "Page to be exported",
+  "archive": false,
+  "sharedWithGroups": ["p_82aviszukm4oo5"],
+  "blocks": [
+    {
+      "type": "ENTRY",
+      "text": {
+        "textValue": "Page to be exported",
+        "ranges": []
+      },
+      "doctype": "BLOCK",
+      "createdAt": 1626199062168,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "modifiedAt": 1633340568618,
+      "_id": "ikLrYcS8S4XD",
+      "_rev": "9-2846108d3b736fc1d1977f919f20ea88"
+    },
+    {
+      "text": {
+        "textValue": "A short page with all of the possible hypertextual elements in Databyss.",
+        "ranges": [
+          {
+            "offset": 38,
+            "length": 12,
+            "marks": ["italic"]
+          },
+          {
+            "offset": 63,
+            "length": 8,
+            "marks": ["bold"]
+          }
+        ]
+      },
+      "type": "ENTRY",
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633340569068,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633451716135,
+      "_id": "QsyVPoXXDSSb",
+      "_rev": "12-d9b936088351653d13c1dfa009c3e55d"
+    },
+    {
+      "doctype": "BLOCK",
+      "type": "SOURCE",
+      "text": {
+        "textValue": "Berners-Lee. Worldwideweb (1990)",
+        "ranges": []
+      },
+      "detail": {
+        "title": {
+          "textValue": "Worldwideweb: Proposal for a hypertext project"
+        },
+        "authors": [
+          {
+            "firstName": {
+              "textValue": "Tim"
+            },
+            "lastName": {
+              "textValue": "Berners-Lee"
+            }
+          }
+        ],
+        "editors": [],
+        "translators": [],
+        "publicationType": {
+          "id": "journalArticle",
+          "label": "Journal Article"
+        },
+        "month": {
+          "id": 0,
+          "label": "None"
+        },
+        "url": {
+          "textValue": ""
+        },
+        "year": {
+          "textValue": "1990"
+        },
+        "volume": {
+          "textValue": ""
+        }
+      },
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "createdAt": 1610310881000,
+      "modifiedAt": 1633344602697,
+      "sharedWithGroups": ["p_lpf3e11clj17y0", "p_82aviszukm4oo5"],
+      "name": {
+        "ranges": [],
+        "textValue": "Berners-Lee 1990"
+      },
+      "_id": "V9mzztUU5ZU9",
+      "_rev": "37-c983fae2b230109ce08d2d664690faff"
+    },
+    {
+      "text": {
+        "textValue": "⁠The web never implemented \"Link to Living\" universally. We might consider this for the collections architecture, though.",
+        "ranges": [
+          {
+            "offset": 27,
+            "length": 16,
+            "marks": [
+              [
+                "link",
+                "http://info.cern.ch/hypertext/WWW/DesignIssues/LinkToLiving.html"
+              ]
+            ]
+          }
+        ]
+      },
+      "type": "ENTRY",
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633340611594,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633553880529,
+      "_id": "HOqaJWX2sTGd",
+      "_rev": "23-05247cff7e7eadcc0524bcf3eaae3286"
+    },
+    {
+      "text": {
+        "textValue": "Is Databyss a hyperindexing system? (@Bruza 1992)",
+        "ranges": [
+          {
+            "offset": 14,
+            "length": 13,
+            "marks": ["italic"]
+          },
+          {
+            "length": 11,
+            "offset": 37,
+            "marks": [["inlineCitation", "b9uXVnaeztqE"]]
+          }
+        ]
+      },
+      "type": "ENTRY",
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633340668596,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633548172487,
+      "_id": "YEwstgLbQV23",
+      "_rev": "38-a943a8f1c4a68035a7f303d9e837808b"
+    },
+    {
+      "type": "TOPIC",
+      "text": {
+        "textValue": "Structured Documents",
+        "ranges": []
+      },
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633341065576,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633341098757,
+      "_id": "lrEC5qBXNzPo",
+      "_rev": "18-6f404b2c894ca21c3d633a45216cc13f"
+    },
+    {
+      "text": {
+        "textValue": "TBL addresses an early W3 debate about whether to standardize the structure of a #hypertext document or not.",
+        "ranges": [
+          {
+            "offset": 22,
+            "length": 1,
+            "marks": ["italic"]
+          },
+          {
+            "offset": 25,
+            "length": 1,
+            "marks": ["italic"]
+          },
+          {
+            "length": 10,
+            "offset": 81,
+            "marks": [["inlineTopic", "jbD6gUaUCfjV"]]
+          }
+        ]
+      },
+      "type": "ENTRY",
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633341143565,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633609195532,
+      "_id": "Wx25NwjKhNSL",
+      "_rev": "23-939d04b1dc6d66db3c9078cc3759c1d4"
+    },
+    {
+      "_id": "lrEC5qBXNzPo",
+      "type": "END_TOPIC",
+      "text": {
+        "textValue": "/# Structured Documents",
+        "ranges": []
+      }
+    },
+    {
+      "type": "ENTRY",
+      "text": {
+        "textValue": "How about some embedded media?",
+        "ranges": [
+          {
+            "offset": 15,
+            "length": 14,
+            "marks": [["link", "ps0l5pmchhmimt"]]
+          }
+        ]
+      },
+      "sharedWithGroups": ["p_82aviszukm4oo5"],
+      "doctype": "BLOCK",
+      "createdAt": 1633554454769,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1633554832711,
+      "_id": "gEdOPXXIgHO6",
+      "_rev": "22-a1a85b2d4d7972fe4a63492de5295116"
+    }
+  ],
+  "selection": {
+    "doctype": "SELECTION",
+    "focus": {
+      "index": 6,
+      "offset": 94
+    },
+    "anchor": {
+      "index": 6,
+      "offset": 94
+    },
+    "belongsToGroup": "g_3ce6hg2yqktrfj",
+    "createdAt": 1602951269000,
+    "modifiedAt": 1633609196536,
+    "sharedWithGroups": ["p_82aviszukm4oo5"],
+    "_id": "tKaRpc6QPjxp",
+    "_rev": "332-fec30273485fdb2d37145b0e6b99d23d"
+  },
+  "belongsToGroup": "g_3ce6hg2yqktrfj",
+  "createdAt": 1602951269000,
+  "modifiedAt": 1633554456789,
+  "_id": "82aviszukm4oo5",
+  "_rev": "35-e450d2a99918d445f23da42e0c2b65f2"
+}

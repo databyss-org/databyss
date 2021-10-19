@@ -26,6 +26,7 @@ const HOTKEYS = {
   undo: `${metaKey}+z`,
   redo: `${metaKey}+shift+z`,
   selectAll: `${metaKey}+a`,
+  copyPageState: `${metaKey}+shift+s`,
   startOfLine: `ctrl+shift+left`,
   tab: 'tab',
   endOfLine: `ctrl+shift+right`,

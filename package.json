@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Expressive database management tools for writers and researchers",
   "main": "index.js",
   "repository": {
@@ -40,6 +40,7 @@
     "serve": "serve build -c ../config/serve.json -l 3000 -s",
     "test": "ENV_PREFIX=API_ NPM_BUILD_TARGET=TEST node scripts/test.js --maxWorkers=5",
     "test:local": "LOCAL_ENV=true yarn test",
+    "test:units": "yarn test --selectProjects test",
     "test:selenium": "yarn test seleniumtest",
     "test:selenium:local": "SAUCE=no LOCAL_ENV=true yarn test seleniumtest",
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
