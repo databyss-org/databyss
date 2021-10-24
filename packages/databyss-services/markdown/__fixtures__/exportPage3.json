@@ -1,0 +1,85 @@
+{
+  "blocks": [
+    {
+      "type": "ENTRY",
+      "text": {
+        "textValue": "Edge case exports",
+        "ranges": []
+      },
+      "doctype": "BLOCK",
+      "createdAt": 1635074754581,
+      "sharedWithGroups": [],
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1635074766650,
+      "_id": "UYREH6fDEyjb",
+      "_rev": "7-88dca175e72eb781de5927d894a17982"
+    },
+    {
+      "type": "ENTRY",
+      "text": {
+        "textValue": "This is a normal entry.",
+        "ranges": []
+      },
+      "sharedWithGroups": [],
+      "doctype": "BLOCK",
+      "createdAt": 1635074766650,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1635074771651,
+      "_id": "bQyatPth6yXC",
+      "_rev": "6-fb55a2db1442344db268747646c03235"
+    },
+    {
+      "type": "ENTRY",
+      "text": {
+        "textValue": "\tThis entry should have\tall\tthe\ttabs\tremoved.",
+        "ranges": []
+      },
+      "sharedWithGroups": [],
+      "doctype": "BLOCK",
+      "createdAt": 1635074771651,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1635074796654,
+      "_id": "5sU2eG5ja8Zr",
+      "_rev": "19-5b82bea3100af6a3499db11fb05c1077"
+    },
+    {
+      "type": "ENTRY",
+      "text": {
+        "textValue": "All of the [square brackets] should be converted to [curly braces].",
+        "ranges": []
+      },
+      "doctype": "BLOCK",
+      "createdAt": 1635074754696,
+      "sharedWithGroups": [],
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1635074819650,
+      "_id": "opLa4QY8EOWl",
+      "_rev": "16-816fba7d637ce82077800371c7e64f04"
+    }
+  ],
+  "selection": {
+    "anchor": {
+      "index": 3,
+      "offset": 67
+    },
+    "focus": {
+      "index": 3,
+      "offset": 67
+    },
+    "doctype": "SELECTION",
+    "createdAt": 1635074754543,
+    "sharedWithGroups": [],
+    "belongsToGroup": "g_3ce6hg2yqktrfj",
+    "modifiedAt": 1635074819650,
+    "_id": "csFms82nFm8y",
+    "_rev": "47-912b40b930bb43e3fabb227992b25864"
+  },
+  "name": "Edge case exports",
+  "archive": false,
+  "doctype": "PAGE",
+  "createdAt": 1635074755109,
+  "belongsToGroup": "g_3ce6hg2yqktrfj",
+  "modifiedAt": 1635074793657,
+  "_id": "oi2phiop6j7twr",
+  "_rev": "6-8eda6b5cb1daed3bd8775190bcef53a5"
+}

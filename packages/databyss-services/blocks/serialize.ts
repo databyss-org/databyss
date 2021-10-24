@@ -60,14 +60,21 @@ const markToMarkdown: TagMapFnType = (mark, linkedDocs) => {
     case InlineTypes.InlineTopic:
       return ['[[t/', ']]', ((_t: string) => _t.substr(1)) as StringTransformFn]
     case InlineTypes.Embed:
+      const trimCurlies =
+        // remove leading and trailing curlies
+        (_t: string) => _t.replaceAll(/^{/g, '').replaceAll(/}$/g, '')
       const _embedBlock = linkedDocs[mark[1]] as Embed
       if (_embedBlock.detail.openGraphJson) {
         const _og = JSON.parse(_embedBlock.detail.openGraphJson)
         if (_og.ogImage?.url) {
-          return ['[!', `(${_og.ogImage.url})](${_embedBlock.detail.src})`]
+          return [
+            '[![',
+            `](${_og.ogImage.url})](${_embedBlock.detail.src})`,
+            trimCurlies,
+          ]
         }
       }
-      return ['!', `(${_embedBlock.detail.src})`]
+      return ['![', `](${_embedBlock.detail.src})`, trimCurlies]
     default:
       return ['', '']
   }
@@ -87,7 +94,15 @@ export function textToMarkdown(
   text: Text,
   linkedDocs?: DocumentDict<Document>
 ): string {
-  return renderText(text, markToMarkdown, linkedDocs).replaceAll('\n', '  \n')
+  const preprocessed: Text = {
+    ...text,
+    textValue: text.textValue.replaceAll('[', '{').replaceAll(']', '}'),
+  }
+  return renderText(preprocessed, markToMarkdown, linkedDocs)
+    .replaceAll(/ +/g, ' ')
+    .replaceAll('\n', '  \n')
+    .replaceAll('\t', ' ')
+    .trimStart()
 }
 
 /**
