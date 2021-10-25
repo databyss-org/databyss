@@ -7,7 +7,7 @@ import {
 } from '@databyss-org/scripts/lib'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import yargs from 'yargs'
-import findRemoveSync from 'find-remove'
+import findRemoveSync from '@databyss-org/find-remove'
 import { BackupDb } from './BackupDb'
 import { fileFriendlyDateTime } from '../../lib/ServerProcess'
 
@@ -18,16 +18,20 @@ export class Backup extends ServerProcess {
     super(argv, 'backup.instance')
   }
   async run() {
-    this.logInfo('Clean?', this.args.clean)
     if (this.args.clean) {
-      findRemoveSync(this.args.path, {
+      this.logInfo('Cleaning old directories')
+      const _cleanRes = findRemoveSync(this.args.path, {
+        dir: '^instance_',
+        regex: true,
         age: {
           seconds: this.args.clean * SECONDS_PER_DAY,
         },
-        prefix: 'instance_',
-        limit: 100,
       })
+      this.logSuccess(
+        `Cleanup removed ${Object.keys(_cleanRes).length} instance directories`
+      )
     }
+
     const outputPath = path.join(
       this.args.path,
       `instance_${fileFriendlyDateTime()}`
