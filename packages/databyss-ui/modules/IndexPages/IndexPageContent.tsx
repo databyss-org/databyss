@@ -277,12 +277,8 @@ export const IndexPageView = ({
                   >
                     <EditSvg />
                   </Icon>
-                  <Text
-                    variant="uiTextSmall"
-                    color="gray.3"
-                    css={{ textDecoration: 'underline' }}
-                  >
-                    Edit Source
+                  <Text variant="uiTextSmall" color="gray.3">
+                    View/Edit Citation
                   </Text>
                 </Button>
                 <SourceTitleAndCitationView
