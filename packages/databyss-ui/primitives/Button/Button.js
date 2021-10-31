@@ -61,6 +61,7 @@ const Button = forwardRef(
         onPress={onPress}
         hoverColor={buttonThemes[variant].hoverColor}
         activeColor={buttonThemes[variant].activeColor}
+        pressedColor={buttonThemes[variant].pressedColor}
         ref={ref}
         {...others}
       >

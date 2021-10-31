@@ -33,7 +33,7 @@ export const SourcesResults = ({ entries }) => {
           >
             <View>
               <Text variant="uiTextSmall" color="text.3" userSelect="none">
-                {entry.source.name.textValue}
+                {entry.source.name?.textValue}
               </Text>
             </View>
             {renderStyledCitation(entry.citation)}

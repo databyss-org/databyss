@@ -51,6 +51,12 @@ const buttonVariants = {
     ...textButton(),
     color: 'secondary.3',
   },
+  uiTextButtonShaded: {
+    py: 'tiny',
+    px: 'small',
+    borderRadius,
+    backgroundColor: 'gray.6',
+  },
   uiLink: {
     padding: space.none,
     color: 'secondary.3',
@@ -93,6 +99,10 @@ const buttonThemes = {
   uiTextButton: {
     hoverColor: 'background.1',
     activeColor: 'background.2',
+  },
+  uiTextButtonShaded: {
+    hoverColor: 'gray.5',
+    pressedColor: 'gray.4',
   },
   externalLink: {},
   formatButton: {

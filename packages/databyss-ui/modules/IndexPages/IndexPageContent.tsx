@@ -31,10 +31,10 @@ import {
   View,
   Text,
   ScrollViewProps,
-  BaseControl,
   Icon,
   Grid,
   ViewProps,
+  Button,
 } from '@databyss-org/ui/primitives'
 import { isMobile, isMobileOrMobileOs } from '@databyss-org/ui/lib/mediaQuery'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
@@ -46,7 +46,6 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 import { useUserPreferencesContext } from '../../hooks'
-import { pxUnits } from '../../theming/views'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -176,7 +175,7 @@ const SourceTitleAndCitationView = ({
     <View>
       <SourceCitationView
         py="none"
-        pb="small"
+        pb="tiny"
         sourceId={block?._id}
         formatOptions={{
           outputType: CitationOutputTypes.BIBLIOGRAPHY,
@@ -250,36 +249,36 @@ export const IndexPageView = ({
           )}
           {block?.type === BlockType.Source &&
             (isPublicAccount() || isMobile() ? (
-              <SourceTitleAndCitationView block={block} />
+              <SourceTitleAndCitationView block={block} mb="small" />
             ) : (
-              <View position="relative" mt="small">
-                <BaseControl
+              <View position="relative" mt="em" mb="small">
+                <SourceTitleAndCitationView
+                  block={block}
+                  opacity={0}
+                  zIndex={-1}
+                />
+                <Button
                   onPress={onPressDetails}
-                  position="relative"
-                  userSelect="text"
-                  css={{
-                    pointerEvents: 'none',
+                  variant="uiTextButtonShaded"
+                  alignSelf="flex-start"
+                  childViewProps={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
                   }}
+                  mt="small"
                 >
                   <Icon
                     data-test-button="open-source-modal"
-                    position="absolute"
-                    left="mediumNegative"
-                    color="gray.4"
-                    top={pxUnits(4)}
+                    color="gray.3"
                     sizeVariant="tiny"
-                    css={{
-                      pointerEvents: 'all',
-                    }}
+                    pr="tiny"
                   >
                     <EditSvg />
                   </Icon>
-                  <SourceTitleAndCitationView
-                    block={block}
-                    opacity={0}
-                    zIndex={-1}
-                  />
-                </BaseControl>
+                  <Text variant="uiTextSmall" color="gray.3">
+                    View/Edit Citation
+                  </Text>
+                </Button>
                 <SourceTitleAndCitationView
                   block={block}
                   position="absolute"
