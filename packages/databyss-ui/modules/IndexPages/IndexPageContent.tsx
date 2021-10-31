@@ -31,7 +31,6 @@ import {
   View,
   Text,
   ScrollViewProps,
-  BaseControl,
   Icon,
   Grid,
   ViewProps,
@@ -47,7 +46,6 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 import { useUserPreferencesContext } from '../../hooks'
-import { pxUnits } from '../../theming/views'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
