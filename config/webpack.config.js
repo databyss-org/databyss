@@ -5,7 +5,6 @@ const path = require('path')
 const hasha = require('hasha')
 const webpack = require('webpack')
 // const resolve = require('resolve')
-const PnpWebpackPlugin = require('pnp-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin')
@@ -13,8 +12,7 @@ const TerserPlugin = require('terser-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 // const ManifestPlugin = require('webpack-manifest-plugin')
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
-const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
+// const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
 const paths = require('./paths')
 const modules = require('./modules')
 const getClientEnvironment = require('./env')
@@ -24,6 +22,7 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const packageJson = require(paths.appPackageJson)
 const { InjectManifest } = require('workbox-webpack-plugin')
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false'
@@ -65,6 +64,7 @@ module.exports = (webpackEnv) => {
   console.log('CLIENT ENV', env)
 
   return {
+    // stats: 'verbose',
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
     // Stop compilation early in production
     bail: isEnvProduction,
@@ -104,9 +104,7 @@ module.exports = (webpackEnv) => {
       // In development, it does not produce real files.
       filename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].js'
-        : isEnvDevelopment && 'static/js/bundle.js',
-      // TODO: remove this when upgrading to webpack 5
-      futureEmitAssets: true,
+        : isEnvDevelopment && 'static/js/[name].js',
       // There are also additional JS chunk files if you use code splitting.
       chunkFilename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].chunk.js'
@@ -191,6 +189,19 @@ module.exports = (webpackEnv) => {
         slate: '@databyss-org/slate',
         react: require.resolve('react'),
       },
+      // Some libraries import Node modules but don't use them in the browser.
+      // Tell Webpack to provide empty mocks for them so importing them works.
+      fallback: {
+        fs: false,
+        module: false,
+        dgram: false,
+        dns: 'mock',
+        http2: false,
+        net: false,
+        tls: false,
+        child_process: false,
+        crypto: false,
+      },
       // This allows you to set a fallback for where Webpack should look for modules.
       // We placed these paths second because we want `node_modules` to "win"
       // if there are any conflicts. This matches Node resolution mechanism.
@@ -207,31 +218,27 @@ module.exports = (webpackEnv) => {
       extensions: paths.moduleFileExtensions
         .map((ext) => `.${ext}`)
         .filter((ext) => useTypeScript || !ext.includes('ts')),
-      plugins: [
-        // Adds support for installing with Plug'n'Play, leading to faster installs and adding
-        // guards against forgotten dependencies and such.
-        PnpWebpackPlugin,
-        // Prevents users from importing files from outside of src/ (or node_modules/).
-        // This often causes confusion because we only process files within src/ with babel.
-        // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
-        // please link the files into your node_modules/ and let module-resolution kick in.
-        // Make sure your source files are compiled, as they will not be processed in any way.
-        new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
-      ],
+      // plugins: [
+      //   // Prevents users from importing files from outside of src/ (or node_modules/).
+      //   // This often causes confusion because we only process files within src/ with babel.
+      //   // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
+      //   // please link the files into your node_modules/ and let module-resolution kick in.
+      //   // Make sure your source files are compiled, as they will not be processed in any way.
+      //   new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
+      // ],
     },
-    resolveLoader: {
-      plugins: [
-        // Also related to Plug'n'Play, but this time it tells Webpack to load its loaders
-        // from the current package.
-        PnpWebpackPlugin.moduleLoader(module),
-      ],
-    },
+    // resolveLoader: {
+    //   plugins: [
+    //     // Also related to Plug'n'Play, but this time it tells Webpack to load its loaders
+    //     // from the current package.
+    //     PnpWebpackPlugin.moduleLoader(module),
+    //   ],
+    // },
     module: {
       strictExportPresence: true,
+      // Disable require.ensure as it's not a standard language feature.
+      parser: { javascript: { requireEnsure: false } },
       rules: [
-        // Disable require.ensure as it's not a standard language feature.
-        { parser: { requireEnsure: false } },
-
         // First, run the linter.
         // It's important to do this before Babel processes the JS.
         // {
@@ -248,6 +255,21 @@ module.exports = (webpackEnv) => {
         //   ],
         //   include: paths.appSrc,
         // },
+        {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
+        // We have to override the builtin Webpack JSON loader with the json-loader
+        // plugin because Webpack >= 5.x fails on named exports from JSON files.
+        // While we can refactor our own code to avoid this, many of our dependencies still
+        // use these named imports.
+        {
+          test: /\.json$/,
+          loader: require.resolve('json-loader'),
+          type: 'javascript/auto',
+        },
         {
           // "oneOf" will traverse all following loaders until one will
           // match the requirements. When no loader matches it will fall
@@ -362,7 +384,8 @@ module.exports = (webpackEnv) => {
               // its runtime that would otherwise be processed through "file" loader.
               // Also exclude `html` and `json` extensions so they get processed
               // by webpacks internal loaders.
-              exclude: [/\.(js|jsx)$/, /\.html$/, /\.json$/, /\.ejs$/],
+              exclude: [/(^|\.(svg|js|jsx|ts|tsx|html|json))$/],
+              type: 'asset/resource',
               options: {
                 name: 'static/media/[name].[hash:8].[ext]',
               },
@@ -374,31 +397,31 @@ module.exports = (webpackEnv) => {
       ],
     },
     plugins: [
+      // This plugin restores the very useful Node polyfills (like `process`) that
+      // Webpack 5 was kind enough to remove for us :)
+      new NodePolyfillPlugin(),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(
-        Object.assign(
-          {},
-          {
-            inject: true,
-            template: paths.appHtml,
-          }
-          // isEnvProduction
-          //   ? {
-          //       minify: {
-          //         removeComments: true,
-          //         collapseWhitespace: true,
-          //         removeRedundantAttributes: true,
-          //         useShortDoctype: true,
-          //         removeEmptyAttributes: true,
-          //         removeStyleLinkTypeAttributes: true,
-          //         keepClosingSlash: true,
-          //         minifyJS: true,
-          //         minifyCSS: true,
-          //         minifyURLs: true,
-          //       },
-          //     }
-          //   : undefined
-        )
+        {
+          inject: true,
+          template: paths.appHtml,
+        }
+        // isEnvProduction
+        //   ? {
+        //       minify: {
+        //         removeComments: true,
+        //         collapseWhitespace: true,
+        //         removeRedundantAttributes: true,
+        //         useShortDoctype: true,
+        //         removeEmptyAttributes: true,
+        //         removeStyleLinkTypeAttributes: true,
+        //         keepClosingSlash: true,
+        //         minifyJS: true,
+        //         minifyCSS: true,
+        //         minifyURLs: true,
+        //       },
+        //     }
+        //   : undefined
       ),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
@@ -431,8 +454,8 @@ module.exports = (webpackEnv) => {
       // to restart the development server for Webpack to discover it. This plugin
       // makes the discovery automatic so you don't have to restart.
       // See https://github.com/facebook/create-react-app/issues/186
-      isEnvDevelopment &&
-        new WatchMissingNodeModulesPlugin(paths.appNodeModules),
+      // isEnvDevelopment &&
+      //   new WatchMissingNodeModulesPlugin(paths.appNodeModules),
       isEnvProduction &&
         new MiniCssExtractPlugin({
           // Options similar to the same options in webpackOptions.output
@@ -481,7 +504,10 @@ module.exports = (webpackEnv) => {
       // solution that requires the user to opt into importing specific locales.
       // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
       // You can remove this if you don't use Moment.js:
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/,
+        contextRegExp: /moment$/,
+      }),
       // Generate a service worker script that will precache, and keep up to date,
       // the HTML & assets that are part of the Webpack build.
       isEnvProduction &&
@@ -532,18 +558,6 @@ module.exports = (webpackEnv) => {
       //     formatter: isEnvProduction ? typescriptFormatter : undefined,
       //   }),
     ].filter(Boolean),
-    // Some libraries import Node modules but don't use them in the browser.
-    // Tell Webpack to provide empty mocks for them so importing them works.
-    node: {
-      module: 'empty',
-      dgram: 'empty',
-      dns: 'mock',
-      fs: 'empty',
-      http2: 'empty',
-      net: 'empty',
-      tls: 'empty',
-      child_process: 'empty',
-    },
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
     performance: false,

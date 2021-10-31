@@ -21,7 +21,7 @@ module.exports = {
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, '../../build/api'),
-    library: '',
+    // library: '',
     libraryTarget: 'commonjs',
   },
   optimization: {
@@ -56,6 +56,17 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.m?js/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      {
+        test: /\.json$/,
+        loader: require.resolve('json-loader'),
+        type: 'javascript/auto',
+      },
       {
         test: /\.(js|ts)$/,
         exclude: /node_modules/,

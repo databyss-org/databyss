@@ -58,7 +58,7 @@
     "simple-instagram-api": "^2.2.0",
     "supertest": "^4.0.2",
     "webpack": "^4.33.0",
-    "webpack-bugsnag-plugins": "^1.4.3",
-    "webpack-node-externals": "^1.7.2"
+    "webpack-bugsnag-plugins": "1.8.0",
+    "webpack-node-externals": "3.0.0"
   }
 }
