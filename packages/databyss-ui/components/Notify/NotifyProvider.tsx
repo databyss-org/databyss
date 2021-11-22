@@ -120,8 +120,8 @@ class NotifyProvider extends React.Component {
     super(props)
     const _options = props.bugsnagOptions ?? {}
     _options.endpoints = {
-      sessions: 'http://localhost:5000/api/log/sessions',
-      notify: 'http://localhost:5000/api/log/notify',
+      sessions: `${process.env.API_URL}/log/sessions`,
+      notify: `${process.env.API_URL}/log/notify`,
     }
     startBugsnag(_options)
 
