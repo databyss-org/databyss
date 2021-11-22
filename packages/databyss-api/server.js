@@ -1,6 +1,7 @@
 import chokidar from 'chokidar'
 import path from 'path'
 import http from 'http'
+// import { onShutdown } from 'node-graceful-shutdown'
 import '../../config/env'
 
 const watchPaths = [
@@ -23,6 +24,8 @@ const start = () =>
 const restart = async () => {
   console.log('closing database connections...')
 
+  console.log('clearing mongoose caches...')
+
   console.log('Reloading...')
   Object.keys(require.cache).forEach((id) => {
     watchPaths.forEach((path) => {
@@ -38,6 +41,10 @@ const restart = async () => {
     start()
   })
 }
+
+// onShutdown('database', async () => {
+//   console.log('closing database connections...')
+// })
 
 start().then(() => {
   // watch for changes
