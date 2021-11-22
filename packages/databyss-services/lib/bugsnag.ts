@@ -3,14 +3,6 @@ import { BrowserConfig } from '@bugsnag/browser'
 import { NodeConfig } from '@bugsnag/node'
 import packageJson from '../package.json'
 
-// if (window?.fetch) {
-//   console.log('[Bugsnag] Patching window.fetch')
-//   const _fetch = window.fetch
-//   window.fetch = function () {
-//     console.log('[Bugsnag] fetch.arguments', arguments)
-//   }
-// }
-
 export const startBugsnag = (
   options?: Partial<BrowserConfig> | Partial<NodeConfig>
 ) => {
