@@ -111,11 +111,19 @@ const initialStickyState: StickyOptions = {
   children: null,
 }
 
+// Global last error to avoid logging duplicates
+let lastErrorLogged: Error | null = null
+
 // TODO: update to functional component when `componentDidCatch` hook is added
 class NotifyProvider extends React.Component {
   constructor(props: NotifyProviderProps) {
     super(props)
-    startBugsnag(props.bugsnagOptions ?? {})
+    const _options = props.bugsnagOptions ?? {}
+    _options.endpoints = {
+      sessions: `${process.env.API_URL}/log/sessions`,
+      notify: `${process.env.API_URL}/log/notify`,
+    }
+    startBugsnag(_options)
 
     // native fails TS
     // if (IS_NATIVE) {
@@ -215,12 +223,26 @@ class NotifyProvider extends React.Component {
       return
     }
 
-    if (IS_NATIVE) {
-      Bugsnag.notify(e)
-    } else {
-      Bugsnag.notify(e, (event) => {
-        enhanceBugsnagEvent(event, info)
-      })
+    let _bserr = e
+    if (!(e instanceof Error)) {
+      _bserr = e.error
+    }
+    if (!(e instanceof Error)) {
+      _bserr = e.reason
+    }
+
+    if (
+      _bserr instanceof Error &&
+      _bserr.message !== lastErrorLogged?.message
+    ) {
+      lastErrorLogged = _bserr
+      if (IS_NATIVE) {
+        Bugsnag.notify(e)
+      } else {
+        Bugsnag.notify(e, (event) => {
+          enhanceBugsnagEvent(event, info)
+        })
+      }
     }
 
     this.showUnhandledErrorDialog()
