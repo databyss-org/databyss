@@ -15,6 +15,9 @@ export const newPage = (): Page => new Page()
  * @param page Page to ensure
  */
 export async function ensureTitleBlock(page: Page) {
+  if (!page.blocks[0]) {
+    return
+  }
   if (page.name === page.blocks[0].text.textValue) {
     return
   }
