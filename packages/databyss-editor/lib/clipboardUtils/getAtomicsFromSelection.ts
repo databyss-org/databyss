@@ -4,7 +4,6 @@ import { BlockReference } from '@databyss-org/services/interfaces'
 import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
 import { isAtomicInlineType, getInlineAtomicType } from '../util'
-import { validURL } from '../../../databyss-services/lib/util'
 
 export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
   const atomics: BlockReference[] = []
@@ -18,15 +17,10 @@ export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
                 Array.isArray(i) &&
                 (i[0] === InlineTypes.InlineTopic ||
                   i[0] === InlineTypes.InlineSource ||
-                  i[0] === InlineTypes.Embed ||
-                  i[0] === InlineTypes.Link)
+                  i[0] === InlineTypes.Embed)
             )
             .forEach((i) => {
               if (!atomics.some((a) => a._id === i[1])) {
-                // inline page link
-                if (i[0] === InlineTypes.Link && !validURL(i[1])) {
-                  atomics.push({ type: InlineTypes.Link, _id: i[1] })
-                }
                 const atomicType = getInlineAtomicType(i[0])
                 if (atomicType) {
                   const _inline: BlockReference = {
