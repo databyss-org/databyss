@@ -42,3 +42,10 @@ export class VersionConflictError extends Error {
     this.message = message
   }
 }
+
+export class UnauthorizedDatabaseReplication extends Error {
+  constructor(message = '[Error]') {
+    super()
+    this.message = `${message} Unauthorized Database Replication`
+  }
+}

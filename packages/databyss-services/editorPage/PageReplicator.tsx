@@ -12,7 +12,11 @@ import {
   NotAuthorizedError,
   NetworkUnavailableError,
 } from '../interfaces/Errors'
-import { dbRef, REMOTE_CLOUDANT_URL } from '../../databyss-data/pouchdb/db'
+import {
+  dbRef,
+  MakePouchReplicationErrorHandler,
+  REMOTE_CLOUDANT_URL,
+} from '../../databyss-data/pouchdb/db'
 import { setDbBusy } from '../../databyss-data/pouchdb/utils'
 
 const INTERVAL_TIME = 5000
@@ -75,6 +79,7 @@ export const PageReplicator = ({
           return !doc._id.includes('design/')
         },
       })
+      .on('error', MakePouchReplicationErrorHandler('[startReplication]'))
       // keeps track of the loader wheel
       .on('change', () => {
         setDbBusy(true)

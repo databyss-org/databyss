@@ -21,7 +21,11 @@ import {
   BlockType,
 } from '../../../databyss-services/interfaces/Block'
 import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/getAtomicsFromSelection'
-import { dbRef, REMOTE_CLOUDANT_URL } from '../db'
+import {
+  dbRef,
+  MakePouchReplicationErrorHandler,
+  REMOTE_CLOUDANT_URL,
+} from '../db'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import {
   setGroupAction,
@@ -227,11 +231,13 @@ const upsertReplication = async ({
   // console.log('[upsertReplication] doc ids', _docIds)
 
   // upsert replication
-  dbRef.current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
-    ...opts,
-    doc_ids: _docIds,
-    batch_size: 1000,
-  })
+  dbRef
+    .current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
+      ...opts,
+      doc_ids: _docIds,
+      batch_size: 1000,
+    })
+    .on('error', MakePouchReplicationErrorHandler('[upsertReplication]'))
 }
 
 /**
