@@ -32,6 +32,7 @@ import { setDbBusyDispatch, setDbBusy } from './utils'
 import { processGroupActionQ } from './groups/utils'
 import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
 import embedSchema from '../schemas/embedSchema'
+import { UnauthorizedDatabaseReplication } from '../../databyss-services/interfaces/Errors'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
@@ -89,87 +90,21 @@ export const areIndexBuilt = {
   current: false,
 }
 
+export const MakePouchReplicationErrorHandler = (action: string) => (
+  pouchError: any
+) => {
+  if (pouchError.name === 'forbidden' || pouchError.name === 'unauthorized') {
+    throw new UnauthorizedDatabaseReplication(action)
+  }
+  throw pouchError
+}
+
 export const initiatePouchDbIndexes = async () => {
   if (dbRef.current instanceof CouchDb) {
     return
   }
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['doctype'],
-  //     ddoc: 'fetch-all',
-  //   },
-  // })
 
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['doctype', '_id'],
-  //     ddoc: 'fetch-one',
-  //   },
-  // })
-
-  // initiate search index
-  // await searchText('xxxxxx')
-
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['doctype', 'relatedBlock'],
-  //     ddoc: 'block-relations',
-  //   },
-  // })
-
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['doctype', 'relatedBlock', 'block'],
-  //     ddoc: 'block-relation',
-  //   },
-  // })
-
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['doctype', 'page'],
-  //     ddoc: 'block-relations-page',
-  //   },
-  // })
-
-  // if search index doesnt exist, add search index
-  // try {
-  //   const _dbs = await window.indexedDB.databases()
-
-  //   if (!_dbs.find((_db) => _db.name.includes('_pouch_local-search'))) {
-  //     console.log('building search index')
-  //     await searchText('xxxxx')
-  //   }
-  // } catch (err) {
-  //   console.log(err)
-  // }
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['doctype', 'blocks.[]._id'],
-  //     ddoc: 'page-blocks',
-  //   },
-  // })
-
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['doctype', 'type'],
-  //     ddoc: 'fetch-atomic',
-  //   },
-  // })
-
-  // // THIS INDEX CAN BE OPTIONAL USING THE ABOVE INDEX 'fetch-atomic'
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['doctype', 'type', '_id'],
-  //     ddoc: 'fetch-atomic-id',
-  //   },
-  // })
-
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['doctype', 'relatedBlock', 'relationshipType'],
-  //     ddoc: 'inline-atomics',
-  //   },
-  // })
+  // TODO: indexing
 
   console.log('indexes built')
   areIndexBuilt.current = true
@@ -199,6 +134,10 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
       ?.from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
         ...opts,
       })
+      .on(
+        'error',
+        MakePouchReplicationErrorHandler('[replicatePublicGroup:replicate]')
+      )
       .on('complete', () => {
         // console.log('[replicatePublicGroup] complete')
         const _opts = {
@@ -214,14 +153,10 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
           .on('paused', () => {
             resolve(true)
           })
-          .on('error', () => {
-            setTimeout(() => {
-              // first reset DB then reload
-              resetPouchDb().then(() => {
-                window.location.href = '/'
-              })
-            }, 1000)
-          })
+          .on(
+            'error',
+            MakePouchReplicationErrorHandler('[replicatePublicGroup:sync]')
+          )
       })
       .on('error', (err) => {
         reject(err)
@@ -282,8 +217,11 @@ export const replicateDbFromRemote = ({
           .current!.replicate.from(_couchUrl, {
             ...opts,
           })
+          .on(
+            'error',
+            MakePouchReplicationErrorHandler('[replicateDbFromRemote]')
+          )
           .on('complete', () => resolve(true))
-          .on('error', (err) => reject(err))
       } else {
         resolve(false)
       }
@@ -327,7 +265,7 @@ export const syncPouchDb = ({
       // do not replciate design docs
       filter: (doc) => !doc._id.includes('design/'),
     })
-    .on('error', (err) => console.log(`REPLICATE.TO ERROR - ${err}`))
+    .on('error', MakePouchReplicationErrorHandler('[syncPouchDb:replicate.to]'))
     .on('change', (info) => {
       setDbBusy(true, info.docs.length)
     })
@@ -341,7 +279,10 @@ export const syncPouchDb = ({
     })
   ;(dbRef.current as PouchDB.Database).replicate
     .from(`${REMOTE_CLOUDANT_URL}/${groupId}`, { ...opts })
-    .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
+    .on(
+      'error',
+      MakePouchReplicationErrorHandler('[syncPouchDb:replicate.from]')
+    )
     .on('change', (info) => {
       setDbBusy(true, info.docs.length)
     })

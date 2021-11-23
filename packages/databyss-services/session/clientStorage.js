@@ -103,7 +103,6 @@ export async function deletePouchDbs(matchName) {
       )
     )
   }
-  clearLocalStorage()
 }
 
 export function setDefaultGroup(groupId) {
@@ -219,6 +218,28 @@ export async function cleanupDefaultGroup() {
     return
   }
   await deletePouchDbs(groupId)
-
+  clearLocalStorage()
   await deletePouchSecret(groupId)
+}
+
+/**
+ * Cleans up the session/local storage for the groupId in the URL
+ * - if the groupId in the url is the local defaultGroup, effectively log the user out
+ *   but, unlike logout, leave the local PouchDb intact so it can be synched once re-authenticated
+ * - if the groupId is not the defaultGroup, wipe the local db for the groupId (assume public)
+ */
+export async function cleanupGroupFromUrl() {
+  const groupId = getAccountFromLocation()
+  if (!groupId) {
+    return
+  }
+  const defaultGroupId = getDefaultGroup()
+  if (defaultGroupId === groupId) {
+    localStorage.removeItem('default_group')
+    localStorage.removeItem('token')
+    localStorage.removeItem('userId')
+    await deletePouchSecret(groupId)
+  } else {
+    await deletePouchDbs(groupId)
+  }
 }

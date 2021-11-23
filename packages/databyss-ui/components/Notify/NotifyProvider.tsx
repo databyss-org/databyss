@@ -17,9 +17,10 @@ import Bugsnag, { BrowserConfig } from '@bugsnag/js'
 import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
 import { checkNetwork } from '@databyss-org/services/lib/request'
-import { cleanupDefaultGroup } from '@databyss-org/services/session/clientStorage'
+import { cleanupGroupFromUrl } from '@databyss-org/services/session/clientStorage'
 import IS_NATIVE from '../../lib/isNative'
 import StickyMessage from './StickyMessage'
+import { UnauthorizedDatabaseReplication } from '../../../databyss-services/interfaces/Errors'
 
 declare module '@bugsnag/plugin-react' {
   export const formatComponentStack: (str: string) => string
@@ -190,10 +191,10 @@ class NotifyProvider extends React.Component {
     // handle pouch "access denied" by deleting pouchdb for default group
     //   and redirecting to login
     if (
-      e.reason?.constructor?.name === 'PouchError' &&
-      e.reason?.name === 'forbidden'
+      e &&
+      instanceofAny([e, e.reason, e.error], [UnauthorizedDatabaseReplication])
     ) {
-      cleanupDefaultGroup().then(() => {
+      cleanupGroupFromUrl().then(() => {
         window.location.pathname = '/'
       })
       return

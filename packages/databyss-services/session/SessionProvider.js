@@ -107,6 +107,7 @@ const SessionProvider = ({
     const _init = async () => {
       const _sesionFromLocalStorage = await localStorageHasSession()
       if (_sesionFromLocalStorage) {
+        console.log('[SessionProvider] 2nd pass')
         // 2nd pass: load session from local_storage
         // replicate from cloudant
         const groupId = _sesionFromLocalStorage.defaultGroupId
@@ -142,10 +143,12 @@ const SessionProvider = ({
       // do we have a public group in localstorage
       let _publicSession = await localStorageHasPublicSession()
       if (_publicSession) {
+        console.log('[SessionProvider] has public session')
         // start replication on public group
         await replicateGroup(_publicSession.belongsToGroup)
       } else {
         // try to get public access
+        console.log('[SessionProvider] get public access')
         const unauthenticatedGroupId = await hasUnathenticatedAccess()
 
         if (unauthenticatedGroupId) {
@@ -173,14 +176,18 @@ const SessionProvider = ({
         })
         dbRef.readOnly = true
       } else {
+        console.log('[SessionProvider] no public session')
         // if user has a default groupId in local storage, change url and retry session _init
         const _hasDefaultGroup = getDefaultGroup()
+        const _hasSession = await localStorageHasSession()
         if (
           _hasDefaultGroup &&
+          _hasSession &&
           // && !_hasRetriedSession
           !process.env.STORYBOOK
         ) {
           // user is logged in
+          console.log('[SessionProvider] already logged in')
           window.location.href = '/'
         } else {
           // pass 1: get session from API
