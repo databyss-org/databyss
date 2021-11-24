@@ -33,8 +33,13 @@ import { processGroupActionQ } from './groups/utils'
 import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
 import embedSchema from '../schemas/embedSchema'
 import { UnauthorizedDatabaseReplication } from '../../databyss-services/interfaces/Errors'
+// import PouchWorker from './pouchdb.worker'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
+
+// const pouchWorker = new PouchWorker()
+// console.log('[Db] pouchWorker', pouchWorker)
+PouchDB.adapter('worker', require('worker-pouch'))
 
 // add plugins
 PouchDB.plugin(PouchDBTransform)
@@ -66,6 +71,8 @@ export const getPouchDb = (groupId: string) => {
   }
   return new PouchDB(groupId, {
     auto_compaction: true,
+    adapter: 'worker',
+    // worker: pouchWorker,
   })
 }
 export const dbRef: DbRef = {

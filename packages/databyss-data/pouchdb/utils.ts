@@ -31,19 +31,19 @@ export const setDbBusyDispatch = (dispatch: Function) => {
  */
 
 export const setDbBusy = (isBusy: boolean, writesPending?: number) => {
-  if (!dbBusyDispatchRef.current) {
-    return
-  }
-  const _writesPending =
-    upQdict.current.length + Object.keys(getGroupActionQ()).length
-  // only set busy to false if no writes are left in queue
-  dbBusyDispatchRef.current({
-    type: 'DB_BUSY',
-    payload: {
-      isBusy: !!(_writesPending || writesPending) || isBusy,
-      writesPending: writesPending || _writesPending,
-    },
-  })
+  // if (!dbBusyDispatchRef.current) {
+  //   return
+  // }
+  // const _writesPending =
+  //   upQdict.current.length + Object.keys(getGroupActionQ()).length
+  // // only set busy to false if no writes are left in queue
+  // dbBusyDispatchRef.current({
+  //   type: 'DB_BUSY',
+  //   payload: {
+  //     isBusy: !!(_writesPending || writesPending) || isBusy,
+  //     writesPending: writesPending || _writesPending,
+  //   },
+  // })
 }
 
 export const addTimeStamp = (doc: any): any => {
