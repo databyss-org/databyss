@@ -251,7 +251,10 @@ export const searchText = async (
     stale: 'ok',
   })
 
-  ;(dbRef.current as PouchDB.Database).search(_params).then(onUpdated)
+  setTimeout(
+    () => (dbRef.current as PouchDB.Database).search(_params).then(onUpdated),
+    100
+  )
 
   return _res
 }
