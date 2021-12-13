@@ -39,7 +39,7 @@ export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
 // const pouchWorker = new PouchWorker()
 // console.log('[Db] pouchWorker', pouchWorker)
-PouchDB.adapter('worker', require('worker-pouch'))
+// PouchDB.adapter('worker', require('worker-pouch'))
 
 // add plugins
 PouchDB.plugin(PouchDBTransform)
@@ -71,7 +71,7 @@ export const getPouchDb = (groupId: string) => {
   }
   return new PouchDB(groupId, {
     auto_compaction: true,
-    adapter: 'worker',
+    // adapter: 'worker',
     // worker: pouchWorker,
   })
 }
