@@ -309,6 +309,7 @@
     "workbox-precaching": "6.1.2",
     "workbox-routing": "6.1.2",
     "workbox-webpack-plugin": "6.1.2",
+    "worker-loader": "^3.0.8",
     "xmldom": "^0.6.0",
     "xss": "^1.0.6"
   },

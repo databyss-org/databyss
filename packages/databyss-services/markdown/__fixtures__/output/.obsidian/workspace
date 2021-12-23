@@ -1,0 +1,97 @@
+{
+  "main": {
+    "id": "a201fae4dcb706dd",
+    "type": "split",
+    "children": [
+      {
+        "id": "0ef91674fe487419",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "Page to be exported.md",
+            "mode": "source"
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "392cfc75e586a6f0",
+    "type": "split",
+    "children": [
+      {
+        "id": "3e8152d5297122af",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "af6801378d23893e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "95646f6144dd4f6e",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "07427f8451418a23",
+    "type": "split",
+    "children": [
+      {
+        "id": "f9abb701cf4d1459",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b28db0fb0ba8b7de",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Page to be exported.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "active": "0ef91674fe487419",
+  "lastOpenFiles": [
+    "Page to be exported.md",
+    "Linked page to be exported.md",
+    "Edge case exports.md",
+    "s/Berners-Lee 1990.md",
+    "t/Structured Documents.md",
+    "t/Link to living.md"
+  ]
+}
