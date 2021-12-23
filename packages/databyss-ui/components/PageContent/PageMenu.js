@@ -70,7 +70,7 @@ const PageMenu = () => {
 
   const archivePage = useEditorPageContext((c) => c.archivePage)
   const deletePage = useEditorPageContext((c) => c.deletePage)
-  const exportPage = useEditorPageContext((c) => c.exportPage)
+  const exportSinglePage = useEditorPageContext((c) => c.exportSinglePage)
 
   const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
 
@@ -180,7 +180,7 @@ const PageMenu = () => {
     icon: <SaveSvg />,
     label: 'Export page',
     subLabel: 'Including references',
-    action: () => exportPage(params),
+    action: () => exportSinglePage(params),
     actionType: 'exportPage',
   })
 
@@ -188,7 +188,7 @@ const PageMenu = () => {
     icon: <ExportAllSvg />,
     label: 'Export everything',
     subLabel: 'Download the whole collection',
-    action: () => exportPage(params),
+    action: () => exportSinglePage(params),
     actionType: 'exportAll',
   })
 
@@ -213,9 +213,9 @@ const PageMenu = () => {
   }
 
   const DropdownList = () =>
-    menuItems.map(({ separator, ...menuItem }) =>
+    menuItems.map(({ separator, ...menuItem }, idx) =>
       separator ? (
-        <Separator {...menuItem} />
+        <Separator {...menuItem} key={idx} />
       ) : (
         <DropdownListItem
           {...menuItem}

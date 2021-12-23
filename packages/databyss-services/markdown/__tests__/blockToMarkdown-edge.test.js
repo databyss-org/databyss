@@ -27,14 +27,14 @@ describe('markdown converter', () => {
     const _mdActual = blockToMarkdown({
       block: page1json.blocks[2],
     })
-    const _mdExpected = page1md[1]
+    const _mdExpected = page1md[2]
     assert.deepEqual(_mdActual, _mdExpected)
   })
   it('should convert square to curly braces', () => {
     const _mdActual = blockToMarkdown({
       block: page1json.blocks[3],
     })
-    const _mdExpected = page1md[2]
+    const _mdExpected = page1md[3]
     assert.deepEqual(_mdActual, _mdExpected)
   })
 })

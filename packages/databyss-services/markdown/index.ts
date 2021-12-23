@@ -1,36 +1,37 @@
-// import html2md from 'html-to-markdown'
 import { textToMarkdown } from '../blocks/serialize'
-import {
-  CitationOutputTypes,
-  CitationStyle,
-  StyleTypeId,
-} from '../citations/constants'
-import { formatCitation, pruneCitation, toJsonCsl } from '../citations/lib'
+import { CitationOutputTypes, CitationStyle } from '../citations/constants'
+import { formatCitation, toJsonCsl } from '../citations/lib'
 import { Block, BlockType, Document, DocumentDict, Source } from '../interfaces'
 
 export function blockToMarkdown({
   block,
   linkedDocs,
+  isTitle,
 }: {
   block: Block
   linkedDocs?: DocumentDict<Document>
+  isTitle: boolean
 }) {
+  const _c = cleanFilename
+
   switch (block.type) {
     case BlockType.Topic: {
-      return `# [[t/${block.text.textValue}]]`
+      return `## [[t/${_c(block.text.textValue)}]]`
     }
     case BlockType.Source: {
-      const _shortName = (linkedDocs![block._id] as Source).name?.textValue
-      return `# [[s/${_shortName}]]`
+      const _source = linkedDocs![block._id] as Source
+      const _shortName = _source.name?.textValue ?? _source.text.textValue
+      return `## [[s/${_c(_shortName)}]]`
     }
     case BlockType.EndTopic: {
-      return `[/t/${block.text.textValue.substr(3)}]`
+      return `[/t/${_c(block.text.textValue.substr(3))}]`
     }
     case BlockType.EndSource: {
-      return `[/s/${block.text.textValue.substr(3)}]`
+      return `[/s/${_c(block.text.textValue.substr(3))}]`
     }
   }
-  return textToMarkdown(block.text, linkedDocs)
+  const _md = textToMarkdown(block.text, linkedDocs)
+  return isTitle ? `# ${_md}` : _md
 }
 
 export async function sourceToMarkdown({
@@ -69,4 +70,8 @@ export function html2md(html: string) {
       .replaceAll(/<\/?.+?>/g, '')
       .trim()
   )
+}
+
+export function cleanFilename(filename: string) {
+  return filename.replaceAll(/[^\p{L}\p{N}_\- ]/gu, '').trim()
 }

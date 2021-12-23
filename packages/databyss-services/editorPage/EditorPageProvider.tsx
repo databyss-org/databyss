@@ -27,7 +27,7 @@ import * as actions from './actions'
 import { loadPage } from './'
 import { validUriRegex } from '../lib/util'
 import { getDocuments } from '../../databyss-data/pouchdb/utils'
-import { blockToMarkdown, sourceToMarkdown } from '../markdown'
+import { blockToMarkdown, sourceToMarkdown, cleanFilename } from '../markdown'
 import { DocumentType } from '../../databyss-data/pouchdb/interfaces'
 import { getCitationStyle } from '../citations/lib'
 import { CitationStyle } from '../citations/constants'
@@ -61,7 +61,7 @@ interface ContextType {
   archivePage: (id: string, boolean: boolean) => Promise<void>
   onPageCached: (id: string, callback: Function) => void
   removePageFromCache: (id: string) => void
-  exportPage: (id: string) => void
+  exportSinglePage: (id: string) => void
   sharedWithGroups?: string[]
 }
 
@@ -197,19 +197,28 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     [JSON.stringify(state.cache)]
   )
 
-  const exportPage = async (id: string) => {
-    const _page = (await loadPage(id)) as Page
-
+  const exportPage = async ({
+    page,
+    zip,
+    linkedDocuments,
+  }: {
+    page: Page
+    zip: JSZip
+    linkedDocuments: DocumentDict<Document>
+  }) => {
     // load page dependencies (linked documents)
     const _docIdsToFetch: string[] = []
-    _page.blocks.forEach((_block) => {
-      _docIdsToFetch.push(_block._id)
+    page.blocks.forEach((_block) => {
+      if (!linkedDocuments[_block._id]) {
+        _docIdsToFetch.push(_block._id)
+      }
       _block.text.ranges.forEach((_range) => {
         _range.marks.forEach((_mark) => {
           if (
             Array.isArray(_mark) &&
             _mark.length > 1 &&
-            !_mark[1].match(validUriRegex)
+            !_mark[1].match(validUriRegex) &&
+            !linkedDocuments[_mark[1]]
           ) {
             _docIdsToFetch.push(_mark[1])
           }
@@ -219,22 +228,37 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     const _linkedDocs = (await getDocuments<Document>(
       _docIdsToFetch
     )) as DocumentDict<Document>
+    Object.assign(linkedDocuments, _linkedDocs)
 
     // serialize the blocks to markdown
     const _markdownDoc: string[] = []
-    _page.blocks.forEach((_block) => {
+    page.blocks.forEach((_block, _idx) => {
       _markdownDoc.push(
-        blockToMarkdown({ block: _block, linkedDocs: _linkedDocs })
+        blockToMarkdown({
+          block: _block,
+          linkedDocs: _linkedDocs,
+          isTitle: _idx === 0,
+        })
       )
     })
 
-    const _zip = new JSZip().folder(_page.name)!
-    for (const _doc of Object.values(_linkedDocs)) {
+    zip.file(`${cleanFilename(page.name)}.md`, _markdownDoc.join('\n\n'))
+  }
+
+  const exportLinkedDocuments = async ({
+    documents,
+    zip,
+  }: {
+    documents: DocumentDict<Document>
+    zip: JSZip
+  }) => {
+    const _c = cleanFilename
+    for (const _doc of Object.values(documents)) {
       const _doctype = (_doc as any).doctype
       if (_doctype === DocumentType.Block) {
         const _block = _doc as Block
         if (_block.type === BlockType.Topic) {
-          _zip.file(`t/${_block.text.textValue}.md`, '')
+          zip.file(`t/${_c(_block.text.textValue)}.md`, '')
         }
         if (_block.type === BlockType.Source) {
           const _source = _block as Source
@@ -242,14 +266,32 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
             source: _source,
             citationStyle: getCitationStyle('apa') as CitationStyle,
           })
-          _zip.file(`s/${_source.name?.textValue}.md`, _sourcemd)
+          zip.file(
+            `s/${_c(_source.name?.textValue ?? _source.text.textValue)}.md`,
+            _sourcemd
+          )
         }
       }
     }
+  }
 
-    _zip.file(`${_page.name}.md`, _markdownDoc.slice(1).join('\n\n'))
+  const exportSinglePage = async (id: string) => {
+    const _c = cleanFilename
+    const _page = (await loadPage(id)) as Page
+    const _zip = new JSZip().folder(_c(_page.name))!
+    const _linkedDocs = {}
+    await exportPage({
+      page: _page,
+      zip: _zip,
+      linkedDocuments: _linkedDocs,
+    })
+    await exportLinkedDocuments({
+      documents: _linkedDocs,
+      zip: _zip,
+    })
+
     const _zipContent = await _zip.generateAsync({ type: 'arraybuffer' })
-    fileDownload(_zipContent, `${_page.name}.zip`)
+    fileDownload(_zipContent, `${_c(_page.name)}.zip`)
   }
 
   return (
@@ -269,7 +311,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         removePageFromCache,
         getPublicAccount,
         sharedWithGroups: sharedWithGroupsRef.current ?? [],
-        exportPage,
+        exportSinglePage,
       }}
     >
       <PageReplicator key={pageId} pageId={pageId}>
