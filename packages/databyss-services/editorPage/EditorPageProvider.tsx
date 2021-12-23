@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useCallback } from 'react'
+import JSZip from 'jszip'
 import { createContext, useContextSelector } from 'use-context-selector'
 import fileDownload from 'js-file-download'
 import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
@@ -17,13 +18,19 @@ import {
   ResourceNotFoundError,
   Document,
   DocumentDict,
+  Block,
+  BlockType,
+  Source,
 } from '../interfaces'
 import { PageReplicator } from './PageReplicator'
 import * as actions from './actions'
 import { loadPage } from './'
 import { validUriRegex } from '../lib/util'
 import { getDocuments } from '../../databyss-data/pouchdb/utils'
-import { blockToMarkdown } from '../markdown'
+import { blockToMarkdown, sourceToMarkdown } from '../markdown'
+import { DocumentType } from '../../databyss-data/pouchdb/interfaces'
+import { getCitationStyle } from '../citations/lib'
+import { CitationStyle } from '../citations/constants'
 
 interface PropsType {
   children: JSX.Element
@@ -221,8 +228,28 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
       )
     })
 
-    // console.log('[EditorPageProvider] exportPage markdownDoc', _markdownDoc)
-    fileDownload(_markdownDoc.slice(1).join('\n\n'), `${_page.name}.md`)
+    const _zip = new JSZip().folder(_page.name)!
+    for (const _doc of Object.values(_linkedDocs)) {
+      const _doctype = (_doc as any).doctype
+      if (_doctype === DocumentType.Block) {
+        const _block = _doc as Block
+        if (_block.type === BlockType.Topic) {
+          _zip.file(`t/${_block.text.textValue}.md`, '')
+        }
+        if (_block.type === BlockType.Source) {
+          const _source = _block as Source
+          const _sourcemd = await sourceToMarkdown({
+            source: _source,
+            citationStyle: getCitationStyle('apa') as CitationStyle,
+          })
+          _zip.file(`s/${_source.name?.textValue}.md`, _sourcemd)
+        }
+      }
+    }
+
+    _zip.file(`${_page.name}.md`, _markdownDoc.slice(1).join('\n\n'))
+    const _zipContent = await _zip.generateAsync({ type: 'arraybuffer' })
+    fileDownload(_zipContent, `${_page.name}.zip`)
   }
 
   return (
