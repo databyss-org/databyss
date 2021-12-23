@@ -18,6 +18,7 @@ const DropdownListItem = ({
   textColor,
   label,
   labelHtml,
+  subLabel,
   shortcut,
   onPress,
   onKeyDown,
@@ -53,7 +54,7 @@ const DropdownListItem = ({
         width="100%"
         alignItems="center"
       >
-        <View flexDirection="row" alignItems="center" flexShrink={1}>
+        <View flexDirection="row" alignItems="flex-start" flexShrink={1}>
           {textSymbol && (
             <Text
               variant="uiTextSmall"
@@ -74,13 +75,20 @@ const DropdownListItem = ({
               {icon}
             </Icon>
           )}
-          {labelHtml ? (
-            <RawHtml html={labelHtml} />
-          ) : (
-            <Text variant="uiTextSmall" color={light ? 'text.3' : textColor}>
-              {label}
-            </Text>
-          )}
+          <View pt={pxUnits(1)}>
+            {labelHtml ? (
+              <RawHtml html={labelHtml} />
+            ) : (
+              <Text variant="uiTextSmall" color={light ? 'text.3' : textColor}>
+                {label}
+              </Text>
+            )}
+            {subLabel && (
+              <Text variant="uiTextTiny" color="text.3">
+                {subLabel}
+              </Text>
+            )}
+          </View>
         </View>
         {switchControl && <Switch value={value} />}
         {shortcut && (

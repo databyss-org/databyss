@@ -1,8 +1,8 @@
 import React from 'react'
-import { View } from '@databyss-org/ui/primitives'
+import { View, Text } from '@databyss-org/ui/primitives'
 import { pxUnits } from '../../theming/views'
 
-const Separator = ({ spacing, color, secondary }) => (
+const Separator = ({ spacing, color, secondary, label }) => (
   <View my={spacing} px={secondary ? 'small' : 'none'}>
     <View
       height={1}
@@ -11,6 +11,13 @@ const Separator = ({ spacing, color, secondary }) => (
       borderStyle="solid"
       width="100%"
     />
+    {label && (
+      <View px="small" pt="small">
+        <Text variant="uiTextHeading" color="text.3" opacity={1}>
+          {label}
+        </Text>
+      </View>
+    )}
   </View>
 )
 

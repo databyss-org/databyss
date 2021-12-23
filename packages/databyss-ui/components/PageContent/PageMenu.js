@@ -18,6 +18,7 @@ import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import HelpSvg from '@databyss-org/ui/assets/help.svg'
 import SaveSvg from '@databyss-org/ui/assets/save.svg'
+import ExportAllSvg from '@databyss-org/ui/assets/export-all.svg'
 // import { saveGroup } from '@databyss-org/services/groups'
 // import { Group } from '@databyss-org/services/interfaces'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
@@ -171,10 +172,24 @@ const PageMenu = () => {
   }
 
   menuItems.push({
+    separator: true,
+    label: 'Export Markdown',
+  })
+
+  menuItems.push({
     icon: <SaveSvg />,
     label: 'Export page',
+    subLabel: 'Including references',
     action: () => exportPage(params),
     actionType: 'exportPage',
+  })
+
+  menuItems.push({
+    icon: <ExportAllSvg />,
+    label: 'Export everything',
+    subLabel: 'Download the whole collection',
+    action: () => exportPage(params),
+    actionType: 'exportAll',
   })
 
   if (menuItems.length > 0) {
@@ -198,9 +213,9 @@ const PageMenu = () => {
   }
 
   const DropdownList = () =>
-    menuItems.map((menuItem) =>
-      menuItem.separator ? (
-        <Separator />
+    menuItems.map(({ separator, ...menuItem }) =>
+      separator ? (
+        <Separator {...menuItem} />
       ) : (
         <DropdownListItem
           {...menuItem}
