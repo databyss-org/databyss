@@ -191,6 +191,7 @@ const PageMenu = () => {
     subLabel: 'Download the whole collection',
     action: () => exportAllPages(params),
     actionType: 'exportAll',
+    hideMenu: true,
   })
 
   if (menuItems.length > 0) {
@@ -221,7 +222,14 @@ const PageMenu = () => {
         <DropdownListItem
           {...menuItem}
           action={menuItem.actionType}
-          onPress={() => (menuItem.action ? menuItem.action() : null)}
+          onPress={() => {
+            if (menuItem.action) {
+              menuItem.action()
+            }
+            if (menuItem.hideMenu) {
+              setShowMenu(false)
+            }
+          }}
           key={menuItem.label}
         />
       )

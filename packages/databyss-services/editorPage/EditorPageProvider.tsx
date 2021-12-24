@@ -7,6 +7,7 @@ import { setPublicPage } from '@databyss-org/data/pouchdb/groups'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
+import { Text } from '@databyss-org/ui/primitives'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -79,7 +80,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   const sharedWithGroupsRef = useRef<string[] | null>(null)
   const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
   const pagesRes = usePages()
-  const { notify, hideDialog } = useNotifyContext()
+  const { notifySticky, hideSticky } = useNotifyContext()
   const { getPreferredCitationStyle } = useUserPreferencesContext()
 
   const pageIdParams = useParams()
@@ -309,9 +310,13 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   const exportAllPages = async () => {
     const _zip = new JSZip().folder('collection')!
     const _linkedDocs = {}
-    notify({
-      message: 'Converting collection to Markdown...',
-      showConfirmButtons: false,
+    notifySticky({
+      visible: true,
+      children: (
+        <Text variant="uiTextSmall" color="text.2">
+          Your export is being prepared and will download when complete.
+        </Text>
+      ),
     })
     for (const _pageHeader of Object.values(pagesRes.data!)) {
       if (_pageHeader.archive) {
@@ -329,7 +334,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
       })
     }
     const _zipContent = await _zip.generateAsync({ type: 'arraybuffer' })
-    hideDialog()
+    hideSticky()
     fileDownload(_zipContent, `collection.zip`)
   }
 
