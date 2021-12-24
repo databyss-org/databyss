@@ -18,6 +18,7 @@ import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import HelpSvg from '@databyss-org/ui/assets/help.svg'
 import SaveSvg from '@databyss-org/ui/assets/save.svg'
+import ExportAllSvg from '@databyss-org/ui/assets/export-all.svg'
 // import { saveGroup } from '@databyss-org/services/groups'
 // import { Group } from '@databyss-org/services/interfaces'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
@@ -69,7 +70,8 @@ const PageMenu = () => {
 
   const archivePage = useEditorPageContext((c) => c.archivePage)
   const deletePage = useEditorPageContext((c) => c.deletePage)
-  const exportPage = useEditorPageContext((c) => c.exportPage)
+  const exportSinglePage = useEditorPageContext((c) => c.exportSinglePage)
+  const exportAllPages = useEditorPageContext((c) => c.exportAllPages)
 
   const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
 
@@ -171,10 +173,25 @@ const PageMenu = () => {
   }
 
   menuItems.push({
+    separator: true,
+    label: 'Export Markdown',
+  })
+
+  menuItems.push({
     icon: <SaveSvg />,
     label: 'Export page',
-    action: () => exportPage(params),
+    subLabel: 'Including references',
+    action: () => exportSinglePage(params),
     actionType: 'exportPage',
+  })
+
+  menuItems.push({
+    icon: <ExportAllSvg />,
+    label: 'Export everything',
+    subLabel: 'Download the whole collection',
+    action: () => exportAllPages(params),
+    actionType: 'exportAll',
+    hideMenu: true,
   })
 
   if (menuItems.length > 0) {
@@ -198,14 +215,21 @@ const PageMenu = () => {
   }
 
   const DropdownList = () =>
-    menuItems.map((menuItem) =>
-      menuItem.separator ? (
-        <Separator />
+    menuItems.map(({ separator, ...menuItem }, idx) =>
+      separator ? (
+        <Separator {...menuItem} key={idx} />
       ) : (
         <DropdownListItem
           {...menuItem}
           action={menuItem.actionType}
-          onPress={() => (menuItem.action ? menuItem.action() : null)}
+          onPress={() => {
+            if (menuItem.action) {
+              menuItem.action()
+            }
+            if (menuItem.hideMenu) {
+              setShowMenu(false)
+            }
+          }}
           key={menuItem.label}
         />
       )

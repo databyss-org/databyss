@@ -54,6 +54,14 @@ describe('markdown converter', () => {
     const _mdActual = blockToMarkdown({
       block: page1json.blocks[1],
     })
+    const _mdExpected = page1md[1]
+    assert.deepEqual(_mdActual, _mdExpected)
+  })
+  it('should convert a title block ', () => {
+    const _mdActual = blockToMarkdown({
+      block: page1json.blocks[0],
+      isTitle: true,
+    })
     const _mdExpected = page1md[0]
     assert.deepEqual(_mdActual, _mdExpected)
   })
@@ -61,7 +69,7 @@ describe('markdown converter', () => {
     const _mdActual = blockToMarkdown({
       block: page1json.blocks[3],
     })
-    const _mdExpected = page1md[2]
+    const _mdExpected = page1md[3]
     assert.deepEqual(_mdActual, _mdExpected)
   })
   it('should convert a block with a renamed internal link', () => {
@@ -69,35 +77,35 @@ describe('markdown converter', () => {
       block: page1json.blocks[8],
       linkedDocs,
     })
-    const _mdExpected = page1md[7]
+    const _mdExpected = page1md[8]
     assert.deepEqual(_mdActual, _mdExpected)
   })
   it('should convert a block with an inline source', () => {
     const _mdActual = blockToMarkdown({
       block: page1json.blocks[4],
     })
-    const _mdExpected = page1md[3]
+    const _mdExpected = page1md[4]
     assert.deepEqual(_mdActual, _mdExpected)
   })
   it('should convert a block with an inline topic', () => {
     const _mdActual = blockToMarkdown({
       block: page1json.blocks[6],
     })
-    const _mdExpected = page1md[5]
+    const _mdExpected = page1md[6]
     assert.deepEqual(_mdActual, _mdExpected)
   })
   it('should convert an END_TOPIC block', () => {
     const _mdActual = blockToMarkdown({
       block: page1json.blocks[7],
     })
-    const _mdExpected = page1md[6]
+    const _mdExpected = page1md[7]
     assert.deepEqual(_mdActual, _mdExpected)
   })
   it('should convert a TOPIC block', () => {
     const _mdActual = blockToMarkdown({
       block: page1json.blocks[5],
     })
-    const _mdExpected = page1md[4]
+    const _mdExpected = page1md[5]
     assert.deepEqual(_mdActual, _mdExpected)
   })
   it('should convert a SOURCE block', () => {
@@ -105,7 +113,7 @@ describe('markdown converter', () => {
       block: page1json.blocks[2],
       linkedDocs,
     })
-    const _mdExpected = page1md[1]
+    const _mdExpected = page1md[2]
     assert.deepEqual(_mdActual, _mdExpected)
   })
   it('should convert a block with an internal link', () => {
@@ -113,7 +121,7 @@ describe('markdown converter', () => {
       block: page2json.blocks[1],
       linkedDocs,
     })
-    const _mdExpected = page2md[0]
+    const _mdExpected = page2md[1]
     assert.deepEqual(_mdActual, _mdExpected)
   })
   it('should convert a block with an image EMBED', () => {
@@ -121,7 +129,7 @@ describe('markdown converter', () => {
       block: page2json.blocks[2],
       linkedDocs,
     })
-    const _mdExpected = [page2md[1], page2md[2], page2md[3]].join('\n')
+    const _mdExpected = [page2md[2], page2md[3], page2md[4]].join('\n')
     assert.deepEqual(_mdActual, _mdExpected)
   })
   it('should convert a block with a YouTube EMBED', () => {
@@ -129,7 +137,7 @@ describe('markdown converter', () => {
       block: page2json.blocks[3],
       linkedDocs,
     })
-    const _mdExpected = page2md[4]
+    const _mdExpected = page2md[5]
     assert.deepEqual(_mdActual, _mdExpected)
   })
 })

@@ -35,7 +35,8 @@ export async function formatCitation(csl: any, options: any) {
   }
   if (
     outputType !== CitationOutputTypes.BIBLIOGRAPHY &&
-    outputType !== CitationOutputTypes.CITATION
+    outputType !== CitationOutputTypes.CITATION &&
+    outputType !== CitationOutputTypes.BIBTEX
   ) {
     throw new Error(
       'formatCitation() expected `options.outputType` ' +
@@ -51,30 +52,33 @@ export async function formatCitation(csl: any, options: any) {
         `Received "${typeOfStyleId}".`
     )
   }
-  const style: any = CitationStyles.find((s) => s.id === styleId)
-  if (!style) {
-    throw new Error(
-      'formatCitation() encountered an unhandled value ' +
-        `for the \`styleId\` parameter: "${styleId}". `
-    )
-  }
 
-  // cache to avoid fetching at every call
-  let styleData: string | null = ''
-  if (!hasStyle(styleId)) {
-    // 📡 no style data, must fetch it
-    styleData = await Cite.util.fetchFileAsync(style.url)
-    addStyle(styleId, styleData)
-  } else {
-    // ✅ style data already saved
-    styleData = getStyle(styleId)
-  }
+  if (options.outputType !== CitationOutputTypes.BIBTEX) {
+    const style: any = CitationStyles.find((s) => s.id === styleId)
+    if (!style) {
+      throw new Error(
+        'formatCitation() encountered an unhandled value ' +
+          `for the \`styleId\` parameter: "${styleId}". `
+      )
+    }
 
-  const styleConfig = Cite.plugins.config.get('@csl')
+    // cache to avoid fetching at every call
+    let styleData: string | null = ''
+    if (!hasStyle(styleId)) {
+      // 📡 no style data, must fetch it
+      styleData = await Cite.util.fetchFileAsync(style.url)
+      addStyle(styleId, styleData)
+    } else {
+      // ✅ style data already saved
+      styleData = getStyle(styleId)
+    }
 
-  if (!hasConfig(styleId, styleConfig)) {
-    // 📡 missing config, must fetch it
-    styleConfig.templates.add(styleId, styleData)
+    const styleConfig = Cite.plugins.config.get('@csl')
+
+    if (!hasConfig(styleId, styleConfig)) {
+      // 📡 missing config, must fetch it
+      styleConfig.templates.add(styleId, styleData)
+    }
   }
 
   if (!cite) {
@@ -82,6 +86,10 @@ export async function formatCitation(csl: any, options: any) {
   } else {
     cite = cite.reset()
     cite.set(csl)
+  }
+
+  if (outputType === CitationOutputTypes.BIBTEX) {
+    return cite.format(outputType)
   }
 
   const citation = cite.format(outputType, {

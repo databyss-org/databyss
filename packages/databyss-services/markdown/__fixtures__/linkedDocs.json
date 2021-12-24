@@ -1,5 +1,63 @@
 [
   {
+    "_id": "b9uXVnaeztqE",
+    "_rev": "32-0abb6234cbd9969f457b3d7f3ebac20f",
+    "text": {
+      "ranges": [],
+      "textValue": "Bruza, P. Hyperindices. (1992)"
+    },
+    "name": {
+      "ranges": [],
+      "textValue": "Bruza 1992"
+    },
+    "type": "SOURCE",
+    "doctype": "BLOCK",
+    "createdAt": 1633340688220,
+    "sharedWithGroups": ["p_82aviszukm4oo5"],
+    "belongsToGroup": "g_3ce6hg2yqktrfj",
+    "detail": {
+      "title": {
+        "textValue": "Hyperindices: a novel aid for searching in hypermedia"
+      },
+      "authors": [
+        {
+          "firstName": {
+            "textValue": "Peter"
+          },
+          "lastName": {
+            "textValue": "Bruza"
+          }
+        }
+      ],
+      "editors": [],
+      "translators": [],
+      "publicationType": {
+        "id": "bookSection",
+        "label": "Book Section"
+      },
+      "month": {
+        "id": 0,
+        "label": "None"
+      },
+      "year": {
+        "textValue": "1992"
+      },
+      "publisherName": {
+        "textValue": "Cambridge University Press"
+      },
+      "page": {
+        "textValue": "109-122"
+      },
+      "isbn": {
+        "textValue": "0521405173"
+      },
+      "doi": {
+        "textValue": "10.5555/129655.129664"
+      }
+    },
+    "modifiedAt": 1635692306594
+  },
+  {
     "_id": "V9mzztUU5ZU9",
     "_rev": "37-c983fae2b230109ce08d2d664690faff",
     "doctype": "BLOCK",

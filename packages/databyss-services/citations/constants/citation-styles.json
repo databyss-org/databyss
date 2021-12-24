@@ -42,6 +42,12 @@
       "name": "Vancouver",
       "shortName": "Vancouver",
       "url": "https://www.zotero.org/styles/vancouver"
+    },
+    {
+      "id": "bibtex",
+      "name": "BibTeX",
+      "shortName": "BibTeX",
+      "url": "https://www.zotero.org/styles/bibtex"
     }
   ]
 }
