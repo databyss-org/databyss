@@ -71,6 +71,7 @@ const PageMenu = () => {
   const archivePage = useEditorPageContext((c) => c.archivePage)
   const deletePage = useEditorPageContext((c) => c.deletePage)
   const exportSinglePage = useEditorPageContext((c) => c.exportSinglePage)
+  const exportAllPages = useEditorPageContext((c) => c.exportAllPages)
 
   const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
 
@@ -188,7 +189,7 @@ const PageMenu = () => {
     icon: <ExportAllSvg />,
     label: 'Export everything',
     subLabel: 'Download the whole collection',
-    action: () => exportSinglePage(params),
+    action: () => exportAllPages(params),
     actionType: 'exportAll',
   })
 

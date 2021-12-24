@@ -20,6 +20,9 @@ export function blockToMarkdown({
     }
     case BlockType.Source: {
       const _source = linkedDocs![block._id] as Source
+      if (!_source) {
+        return `## [[s/MISSING REF]]`
+      }
       const _shortName = _source.name?.textValue ?? _source.text.textValue
       return `## [[s/${_c(_shortName)}]]`
     }
@@ -45,17 +48,21 @@ export async function sourceToMarkdown({
   md += `### Citation (${citationStyle.shortName})\n\n`
 
   const csl = toJsonCsl(source.detail)
-  const citation = html2md(
-    await formatCitation(csl, {
-      styleId: citationStyle.id,
-      outputType: CitationOutputTypes.BIBLIOGRAPHY,
+
+  if (csl) {
+    const citation = html2md(
+      await formatCitation(csl, {
+        styleId: citationStyle.id,
+        outputType: CitationOutputTypes.BIBLIOGRAPHY,
+      })
+    )
+    md += `${citation}\n\n`
+    const bibtex = await formatCitation(csl, {
+      outputType: CitationOutputTypes.BIBTEX,
     })
-  )
-  md += `${citation}\n\n`
-  const bibtex = await formatCitation(csl, {
-    outputType: CitationOutputTypes.BIBTEX,
-  })
-  md += `### Citation (BibTeX)\n\n\`\`\`bibtex\n${bibtex.trim()}\n\`\`\`\n`
+    md += `### Citation (BibTeX)\n\n\`\`\`bibtex\n${bibtex.trim()}\n\`\`\`\n`
+  }
+
   return md
 }
 

@@ -6,6 +6,7 @@ import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
 import { setPublicPage } from '@databyss-org/data/pouchdb/groups'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -31,6 +32,7 @@ import { blockToMarkdown, sourceToMarkdown, cleanFilename } from '../markdown'
 import { DocumentType } from '../../databyss-data/pouchdb/interfaces'
 import { getCitationStyle } from '../citations/lib'
 import { CitationStyle } from '../citations/constants'
+import { useUserPreferencesContext } from '../../databyss-ui/hooks'
 
 interface PropsType {
   children: JSX.Element
@@ -62,6 +64,7 @@ interface ContextType {
   onPageCached: (id: string, callback: Function) => void
   removePageFromCache: (id: string) => void
   exportSinglePage: (id: string) => void
+  exportAllPages: () => void
   sharedWithGroups?: string[]
 }
 
@@ -76,6 +79,8 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   const sharedWithGroupsRef = useRef<string[] | null>(null)
   const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
   const pagesRes = usePages()
+  const { notify, hideDialog } = useNotifyContext()
+  const { getPreferredCitationStyle } = useUserPreferencesContext()
 
   const pageIdParams = useParams()
   let pageId
@@ -236,7 +241,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
       _markdownDoc.push(
         blockToMarkdown({
           block: _block,
-          linkedDocs: _linkedDocs,
+          linkedDocs: linkedDocuments,
           isTitle: _idx === 0,
         })
       )
@@ -253,18 +258,25 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     zip: JSZip
   }) => {
     const _c = cleanFilename
+    const _preferredStyle = getPreferredCitationStyle()
     for (const _doc of Object.values(documents)) {
+      if (!_doc) {
+        continue
+      }
       const _doctype = (_doc as any).doctype
       if (_doctype === DocumentType.Block) {
         const _block = _doc as Block
         if (_block.type === BlockType.Topic) {
-          zip.file(`t/${_c(_block.text.textValue)}.md`, '')
+          zip.file(
+            `t/${_c(_block.text.textValue)}.md`,
+            `# ${_block.text.textValue}\n`
+          )
         }
         if (_block.type === BlockType.Source) {
           const _source = _block as Source
           const _sourcemd = await sourceToMarkdown({
             source: _source,
-            citationStyle: getCitationStyle('apa') as CitationStyle,
+            citationStyle: getCitationStyle(_preferredStyle) as CitationStyle,
           })
           zip.file(
             `s/${_c(_source.name?.textValue ?? _source.text.textValue)}.md`,
@@ -294,6 +306,33 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     fileDownload(_zipContent, `${_c(_page.name)}.zip`)
   }
 
+  const exportAllPages = async () => {
+    const _zip = new JSZip().folder('collection')!
+    const _linkedDocs = {}
+    notify({
+      message: 'Converting collection to Markdown...',
+      showConfirmButtons: false,
+    })
+    for (const _pageHeader of Object.values(pagesRes.data!)) {
+      if (_pageHeader.archive) {
+        continue
+      }
+      const _page = (await loadPage(_pageHeader._id)) as Page
+      await exportPage({
+        page: _page,
+        zip: _zip,
+        linkedDocuments: _linkedDocs,
+      })
+      await exportLinkedDocuments({
+        documents: _linkedDocs,
+        zip: _zip,
+      })
+    }
+    const _zipContent = await _zip.generateAsync({ type: 'arraybuffer' })
+    hideDialog()
+    fileDownload(_zipContent, `collection.zip`)
+  }
+
   return (
     <EditorPageContext.Provider
       value={{
@@ -312,6 +351,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         getPublicAccount,
         sharedWithGroups: sharedWithGroupsRef.current ?? [],
         exportSinglePage,
+        exportAllPages,
       }}
     >
       <PageReplicator key={pageId} pageId={pageId}>
