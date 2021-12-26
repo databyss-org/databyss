@@ -2,8 +2,8 @@ import { Author } from '../../interfaces'
 
 export function isCurrentAuthor(
   authors: Author[],
-  firstNameQuery: string,
-  lastNameQuery: string
+  firstNameQuery: string | null,
+  lastNameQuery: string | null
 ) {
   if (!authors) {
     return false

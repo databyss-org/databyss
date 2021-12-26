@@ -4,7 +4,7 @@ import { createContext, useContextSelector } from 'use-context-selector'
 import fileDownload from 'js-file-download'
 import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
 import { setPublicPage } from '@databyss-org/data/pouchdb/groups'
-import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import { useBibliography, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { Text } from '@databyss-org/ui/primitives'
@@ -29,7 +29,12 @@ import * as actions from './actions'
 import { loadPage } from './'
 import { validUriRegex } from '../lib/util'
 import { getDocuments } from '../../databyss-data/pouchdb/utils'
-import { blockToMarkdown, sourceToMarkdown, cleanFilename } from '../markdown'
+import {
+  blockToMarkdown,
+  sourceToMarkdown,
+  cleanFilename,
+  bibliographyToMarkdown,
+} from '../markdown'
 import { DocumentType } from '../../databyss-data/pouchdb/interfaces'
 import { getCitationStyle } from '../citations/lib'
 import { CitationStyle } from '../citations/constants'
@@ -82,6 +87,13 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   const pagesRes = usePages()
   const { notifySticky, hideSticky } = useNotifyContext()
   const { getPreferredCitationStyle } = useUserPreferencesContext()
+
+  const biblioRes = useBibliography({
+    formatOptions: {
+      styleId: getPreferredCitationStyle(),
+    },
+    enabled: false,
+  })
 
   const pageIdParams = useParams()
   let pageId
@@ -318,6 +330,15 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         </Text>
       ),
     })
+    await biblioRes.refetch()
+    _zip.file(
+      's/@bibliography.md',
+      bibliographyToMarkdown({
+        bibliography: Object.values(biblioRes.data!),
+        citationStyle: getCitationStyle(getPreferredCitationStyle()),
+      })
+    )
+
     for (const _pageHeader of Object.values(pagesRes.data!)) {
       if (_pageHeader.archive) {
         continue

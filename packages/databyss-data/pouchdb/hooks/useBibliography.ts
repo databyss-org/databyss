@@ -8,12 +8,20 @@ import { toCitation } from '@databyss-org/services/citations'
 import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
 import { useBlocksInPages } from '.'
 import { useDocuments } from './useDocuments'
+import { isCurrentAuthor } from '../../../databyss-services/sources/lib'
 
-interface BibliographyDict {
-  [blockId: string]: {
-    citation: string
-    source: Source
-  }
+export interface AuthorName {
+  firstName: string | null
+  lastName: string | null
+}
+
+export interface BibliographyItem {
+  citation: string
+  source: Source
+}
+
+export interface BibliographyDict {
+  [blockId: string]: BibliographyItem
 }
 
 interface UseBibliographyOptions extends UseQueryOptions {
@@ -63,13 +71,6 @@ export const useBibliography = ({
     updateBibliography()
   }, [blocksByIdRes.dataUpdatedAt])
 
-  useEffect(
-    () => () => {
-      queryClient.removeQueries(queryKey)
-    },
-    []
-  )
-
   return query
 }
 
@@ -88,4 +89,33 @@ async function bibliographyFromSources(
     dict[source._id] = { citation, source }
   }
   return dict
+}
+
+export function sortBibliography(items: BibliographyItem[]) {
+  const getSortablePart = (source: Source) =>
+    // if author(s) exist, sort by last name (or first if no last)
+    source.detail?.authors?.length
+      ? source.detail.authors[0].lastName?.textValue ??
+        source.detail.authors[0].firstName?.textValue
+      : // otherwise sort by textValue
+        source.text.textValue
+
+  return items.sort((a, b) =>
+    getSortablePart(a.source).toLowerCase() >
+    getSortablePart(b.source).toLowerCase()
+      ? 1
+      : -1
+  )
+}
+
+export function filterBibliographyByAuthor({
+  items,
+  author,
+}: {
+  items: BibliographyItem[]
+  author: AuthorName
+}) {
+  return items.filter((s) =>
+    isCurrentAuthor(s.source.detail?.authors, author.firstName, author.lastName)
+  )
 }

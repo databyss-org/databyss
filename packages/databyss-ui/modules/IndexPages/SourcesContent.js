@@ -16,6 +16,10 @@ import {
   isCurrentAuthor,
 } from '../../../databyss-services/sources/lib'
 import { useUserPreferencesContext } from '../../hooks'
+import {
+  filterBibliographyByAuthor,
+  sortBibliography,
+} from '../../../databyss-data/pouchdb/hooks/useBibliography'
 
 // styled components
 const CitationStyleDropDown = styled(DropDownControl, () => ({
@@ -24,7 +28,7 @@ const CitationStyleDropDown = styled(DropDownControl, () => ({
 
 export const SourcesContent = () => {
   const { isOnline } = useNotifyContext()
-  const getQueryParams = useNavigationContext((c) => c.getQueryParams)
+  const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
   const {
     getPreferredCitationStyle,
     setPreferredCitationStyle,
@@ -52,29 +56,20 @@ export const SourcesContent = () => {
   let _authorFirstName = null
   let _authorLastName = null
   let _authorFullName = null
-  const _queryParams = getQueryParams()
-  const params = new URLSearchParams(_queryParams)
-  if (_queryParams.length) {
-    _authorFirstName = decodeURIComponent(params.get('firstName'))
-    _authorLastName = decodeURIComponent(params.get('lastName'))
+  const _path = getTokensFromPath()
+  if (_path.author) {
+    _authorFirstName = _path.author.firstName
+    _authorLastName = _path.author.lastName
     _authorFullName = composeAuthorName(_authorFirstName, _authorLastName)
   }
 
-  const sortedSources = Object.values(sourcesRes.data).sort((a, b) =>
-    a.source.text.textValue.toLowerCase() >
-    b.source.text.textValue.toLowerCase()
-      ? 1
-      : -1
-  )
+  const sortedSources = sortBibliography(Object.values(sourcesRes.data))
 
   const filteredSources = _authorFullName
-    ? sortedSources.filter((s) =>
-        isCurrentAuthor(
-          s.source.detail?.authors,
-          _authorFirstName,
-          _authorLastName
-        )
-      )
+    ? filterBibliographyByAuthor({
+        items: sortedSources,
+        author: { firstName: _authorFirstName, lastName: _authorLastName },
+      })
     : sortedSources
 
   let _citationStyleOptions = CitationStyleOptions

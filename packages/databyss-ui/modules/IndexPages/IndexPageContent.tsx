@@ -46,6 +46,7 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 import { useUserPreferencesContext } from '../../hooks'
+import IndexPageMenu from '../../components/IndexPage/IndexPageMenu'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -217,7 +218,7 @@ export const IndexPageView = ({
   }
   return (
     <>
-      <StickyHeader path={path} />
+      <StickyHeader path={path} contextMenu={<IndexPageMenu block={block} />} />
       <ScrollView pr="em" pl="large" flex="1" pb="extraLarge" {...others}>
         <Helmet>
           <meta charSet="utf-8" />
