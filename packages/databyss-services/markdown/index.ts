@@ -1,4 +1,3 @@
-import * as cleanTextUtils from 'clean-text-utils'
 import {
   AuthorName,
   BibliographyItem,

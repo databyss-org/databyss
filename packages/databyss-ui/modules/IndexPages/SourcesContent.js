@@ -11,10 +11,7 @@ import { IndexPageView } from './IndexPageContent'
 import { SourcesResults } from './SourcesResults'
 import { pxUnits } from '../../theming/views'
 import styled from '../../primitives/styled'
-import {
-  composeAuthorName,
-  isCurrentAuthor,
-} from '../../../databyss-services/sources/lib'
+import { composeAuthorName } from '../../../databyss-services/sources/lib'
 import { useUserPreferencesContext } from '../../hooks'
 import {
   filterBibliographyByAuthor,
