@@ -15,6 +15,7 @@ import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
 import { useNavigationContext } from '../Navigation/NavigationProvider'
 import { useUserPreferencesContext } from '../../hooks'
+import { sleep } from '../../../databyss-services/lib/util'
 
 const IndexPageMenu = ({ block }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
@@ -35,6 +36,9 @@ const IndexPageMenu = ({ block }) => {
   }
 
   const exportBibliography = async (path) => {
+    while (biblioRes.isFetching) {
+      await sleep(500)
+    }
     if (!path.params) {
       // bibliography (full or filtered by author)
       await downloadBibliography({

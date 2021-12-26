@@ -27,7 +27,7 @@ import {
 import { PageReplicator } from './PageReplicator'
 import * as actions from './actions'
 import { loadPage } from './'
-import { validUriRegex } from '../lib/util'
+import { sleep, validUriRegex } from '../lib/util'
 import { getDocuments } from '../../databyss-data/pouchdb/utils'
 import {
   blockToMarkdown,
@@ -92,7 +92,6 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     formatOptions: {
       styleId: getPreferredCitationStyle(),
     },
-    enabled: false,
   })
 
   const pageIdParams = useParams()
@@ -330,7 +329,9 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         </Text>
       ),
     })
-    await biblioRes.refetch()
+    while (biblioRes.isFetching) {
+      await sleep(500)
+    }
     _zip.file(
       's/@bibliography.md',
       bibliographyToMarkdown({
