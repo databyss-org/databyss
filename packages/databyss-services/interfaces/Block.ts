@@ -47,6 +47,11 @@ export interface Author {
   lastName: Text
 }
 
+export interface AuthorName {
+  firstName: string | null
+  lastName: string | null
+}
+
 export interface Citations {
   format: string
   text: Text

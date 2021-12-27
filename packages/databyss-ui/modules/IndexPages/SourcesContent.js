@@ -6,6 +6,10 @@ import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvi
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { DropDownControl } from '@databyss-org/ui/primitives'
+import {
+  filterBibliographyByAuthor,
+  sortBibliography,
+} from '@databyss-org/services/sources/lib'
 
 import { IndexPageView } from './IndexPageContent'
 import { SourcesResults } from './SourcesResults'
@@ -13,10 +17,6 @@ import { pxUnits } from '../../theming/views'
 import styled from '../../primitives/styled'
 import { composeAuthorName } from '../../../databyss-services/sources/lib'
 import { useUserPreferencesContext } from '../../hooks'
-import {
-  filterBibliographyByAuthor,
-  sortBibliography,
-} from '../../../databyss-data/pouchdb/hooks/useBibliography'
 
 // styled components
 const CitationStyleDropDown = styled(DropDownControl, () => ({

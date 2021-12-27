@@ -20,6 +20,7 @@ export type {
   Source,
   SourceDetail,
   Author,
+  AuthorName,
   Topic,
   SourceCitationHeader,
   IndexPageResult,
@@ -29,6 +30,7 @@ export type {
   Embed,
 } from './Block'
 export type { Document, DocumentDict } from './Document'
+export type { BibliographyItem, BibliographyDict } from './Bibliography'
 export { BlockType, Block } from './Block'
 export type { FSA } from './FSA'
 export { RangeType } from './Range'

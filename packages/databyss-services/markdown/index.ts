@@ -1,14 +1,20 @@
-import {
-  AuthorName,
-  BibliographyItem,
-  filterBibliographyByAuthor,
-  sortBibliography,
-} from '../../databyss-data/pouchdb/hooks/useBibliography'
 import { textToMarkdown } from '../blocks/serialize'
 import { CitationOutputTypes, CitationStyle } from '../citations/constants'
 import { formatCitation, toJsonCsl } from '../citations/lib'
-import { Block, BlockType, Document, DocumentDict, Source } from '../interfaces'
-import { composeAuthorName } from '../sources/lib'
+import {
+  Block,
+  BlockType,
+  Document,
+  DocumentDict,
+  Source,
+  AuthorName,
+  BibliographyItem,
+} from '../interfaces'
+import {
+  composeAuthorName,
+  sortBibliography,
+  filterBibliographyByAuthor,
+} from '../sources/lib'
 
 export function blockToMarkdown({
   block,
