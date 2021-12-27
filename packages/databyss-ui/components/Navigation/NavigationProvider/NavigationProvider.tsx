@@ -7,6 +7,7 @@ import {
 } from '@databyss-org/reach-router'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
+import { AuthorName } from '@databyss-org/services/interfaces'
 import reducer, { initialState } from './reducer'
 import * as actions from './actions'
 import {
@@ -15,7 +16,6 @@ import {
   NavigationState,
   PathTokens,
 } from './interfaces'
-import { AuthorName } from '../../../../databyss-data/pouchdb/hooks/useBibliography'
 
 interface ContextType extends NavigationState {
   location: Location

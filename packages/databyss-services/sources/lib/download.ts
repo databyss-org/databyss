@@ -1,14 +1,10 @@
-import {
-  AuthorName,
-  BibliographyItem,
-} from '@databyss-org/data/pouchdb/hooks/useBibliography'
 import fileDownload from 'js-file-download'
 import {
   bibliographyToMarkdown,
   cleanFilename,
   sourceToMarkdown,
 } from '../../markdown'
-import { Source } from '../../interfaces'
+import { Source, AuthorName, BibliographyItem } from '../../interfaces'
 import { getCitationStyle } from '../../citations/lib'
 import { CitationStyle } from '../../citations/constants'
 
