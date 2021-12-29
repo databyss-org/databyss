@@ -33,17 +33,22 @@ export function blockToMarkdown({
     }
     case BlockType.Source: {
       const _source = linkedDocs![block._id] as Source
-      if (!_source) {
-        return `## [[s/MISSING REF]]`
+      let _shortName = _source?.name?.textValue ?? _source?.text.textValue
+      if (!_shortName) {
+        _shortName = 'MISSING REF'
       }
-      const _shortName = _source.name?.textValue ?? _source.text.textValue
       return `## [[s/${_c(_shortName)}]]`
     }
     case BlockType.EndTopic: {
-      return `[/t/${_c(block.text.textValue.substr(3))}]`
+      return `/-- [[t/${_c(block.text.textValue.substr(3))}]] --/`
     }
     case BlockType.EndSource: {
-      return `[/s/${_c(block.text.textValue.substr(3))}]`
+      const _source = linkedDocs![block._id] as Source
+      let _shortName = _source?.name?.textValue ?? _source?.text.textValue
+      if (!_shortName) {
+        _shortName = 'MISSING REF'
+      }
+      return `/-- [[s/${_c(_shortName)}]] --/`
     }
   }
   const _md = textToMarkdown(block.text, linkedDocs)
@@ -61,7 +66,7 @@ export function bibliographyToMarkdown({
 }) {
   let md = '# '
   if (author) {
-    md += composeAuthorName(author.firstName, author.lastName)
+    md += escapeReserved(composeAuthorName(author.firstName, author.lastName))
   } else {
     md += 'Bibliography'
   }
@@ -82,6 +87,10 @@ export function bibliographyToMarkdown({
   return md
 }
 
+export function escapeReserved(text: string) {
+  return text.replaceAll('*', '\\*').replaceAll('_', '\\_').replace(/^#/, '\\#')
+}
+
 export async function sourceToMarkdown({
   source,
   citationStyle,
@@ -89,7 +98,7 @@ export async function sourceToMarkdown({
   source: Source
   citationStyle: CitationStyle
 }) {
-  let md = `# ${source.text.textValue}\n\n`
+  let md = `# ${escapeReserved(source.text.textValue)}\n\n`
   md += `### Citation (${citationStyle.shortName})\n\n`
 
   const csl = toJsonCsl(source.detail)
@@ -113,7 +122,7 @@ export async function sourceToMarkdown({
 
 export function html2md(html: string) {
   return (
-    html
+    escapeReserved(html)
       // <i>, <em> => _
       .replaceAll(/<\/?(i|em)>/gi, '_')
       // <b>, <strong> => **
@@ -125,5 +134,5 @@ export function html2md(html: string) {
 }
 
 export function cleanFilename(filename: string) {
-  return filename.replaceAll(/[^\p{L}\p{N}_\- ]/gu, '').trim()
+  return filename.replaceAll(/[^\p{L}\p{N}\- ]/gu, '').trim()
 }

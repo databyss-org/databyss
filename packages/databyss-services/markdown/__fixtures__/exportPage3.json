@@ -3,83 +3,173 @@
     {
       "type": "ENTRY",
       "text": {
-        "textValue": "Edge case exports",
+        "textValue": "Edge *case _exports",
         "ranges": []
       },
       "doctype": "BLOCK",
-      "createdAt": 1635074754581,
+      "createdAt": 1635081012141,
       "sharedWithGroups": [],
       "belongsToGroup": "g_3ce6hg2yqktrfj",
-      "modifiedAt": 1635074766650,
-      "_id": "UYREH6fDEyjb",
-      "_rev": "7-88dca175e72eb781de5927d894a17982"
+      "modifiedAt": 1640808989893,
+      "_id": "dCccMhtx9qyi",
+      "_rev": "7-2db24f9a41c19cadec0fb73bf3bc0861"
     },
     {
-      "type": "ENTRY",
       "text": {
         "textValue": "This is a normal entry.",
         "ranges": []
       },
+      "type": "ENTRY",
       "sharedWithGroups": [],
       "doctype": "BLOCK",
-      "createdAt": 1635074766650,
+      "createdAt": 1635081023107,
       "belongsToGroup": "g_3ce6hg2yqktrfj",
-      "modifiedAt": 1635074771651,
-      "_id": "bQyatPth6yXC",
-      "_rev": "6-fb55a2db1442344db268747646c03235"
+      "_id": "vt0FlUdjevq6",
+      "_rev": "1-1fc26e5af753ea5ae11417edbec66f25"
     },
     {
-      "type": "ENTRY",
       "text": {
         "textValue": "\tThis entry should have\tall\tthe\ttabs\tremoved.",
         "ranges": []
       },
+      "type": "ENTRY",
       "sharedWithGroups": [],
       "doctype": "BLOCK",
-      "createdAt": 1635074771651,
+      "createdAt": 1635081023107,
       "belongsToGroup": "g_3ce6hg2yqktrfj",
-      "modifiedAt": 1635074796654,
-      "_id": "5sU2eG5ja8Zr",
-      "_rev": "19-5b82bea3100af6a3499db11fb05c1077"
+      "_id": "69KKAe36VkBB",
+      "_rev": "1-ca42d4828ba6d8d50ef1cc60b8328a42"
     },
     {
-      "type": "ENTRY",
       "text": {
         "textValue": "All of the [square brackets] should be converted to [curly braces].",
         "ranges": []
       },
+      "type": "ENTRY",
+      "sharedWithGroups": [],
       "doctype": "BLOCK",
-      "createdAt": 1635074754696,
+      "createdAt": 1635081023107,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "_id": "PSYHxrBexdfH",
+      "_rev": "1-99808774fc5c9e6d9cc7e928f536f2ae"
+    },
+    {
+      "type": "ENTRY",
+      "text": {
+        "textValue": "The *special _characters __should **be escaped from an entry.",
+        "ranges": []
+      },
+      "doctype": "BLOCK",
+      "createdAt": 1635081012181,
       "sharedWithGroups": [],
       "belongsToGroup": "g_3ce6hg2yqktrfj",
-      "modifiedAt": 1635074819650,
-      "_id": "opLa4QY8EOWl",
-      "_rev": "16-816fba7d637ce82077800371c7e64f04"
+      "modifiedAt": 1640806412710,
+      "_id": "aHejXWnLXt8a",
+      "_rev": "83-e584d75441a07193ba37e17e6e43d8a1"
+    },
+    {
+      "type": "ENTRY",
+      "text": {
+        "textValue": "The #special* @characters_ should be @__escaped in #inline** refs",
+        "ranges": [
+          {
+            "offset": 4,
+            "length": 9,
+            "marks": [["inlineTopic", "U5By9upL8MGF"]]
+          },
+          {
+            "offset": 14,
+            "length": 12,
+            "marks": [["inlineCitation", "2Wb1Fh3E8d2k"]]
+          },
+          {
+            "offset": 37,
+            "length": 10,
+            "marks": [["inlineCitation", "8KyiadirTao9"]]
+          },
+          {
+            "offset": 51,
+            "length": 14,
+            "marks": [["inlineTopic", "iSP63wkXgVqT"]]
+          }
+        ]
+      },
+      "sharedWithGroups": [],
+      "doctype": "BLOCK",
+      "createdAt": 1640806412711,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "_id": "zenFwHgBxMcQ",
+      "_rev": "1-cdd7e8194c296c8879e5420f3a8a45f6"
+    },
+    {
+      "type": "TOPIC",
+      "text": {
+        "textValue": "special*",
+        "ranges": []
+      },
+      "doctype": "BLOCK",
+      "createdAt": 1640806230652,
+      "sharedWithGroups": [],
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1640806427578,
+      "_id": "U5By9upL8MGF",
+      "_rev": "3-99cb316f56aab02111af9f201de13085"
+    },
+    {
+      "text": {
+        "textValue": "characters_",
+        "ranges": []
+      },
+      "name": {
+        "textValue": "characters_",
+        "ranges": []
+      },
+      "type": "SOURCE",
+      "doctype": "BLOCK",
+      "createdAt": 1640806244790,
+      "sharedWithGroups": [],
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "modifiedAt": 1640806435707,
+      "_id": "2Wb1Fh3E8d2k",
+      "_rev": "3-ce20407faa15c97d106aefcdeab6d32c"
+    },
+    {
+      "text": {
+        "textValue": "",
+        "ranges": []
+      },
+      "type": "ENTRY",
+      "sharedWithGroups": [],
+      "doctype": "BLOCK",
+      "createdAt": 1640806448738,
+      "belongsToGroup": "g_3ce6hg2yqktrfj",
+      "_id": "acbj02NkQgUi",
+      "_rev": "1-aa8f2113cd7ef8a55a7e343ab8bf43e4"
     }
   ],
   "selection": {
     "anchor": {
-      "index": 3,
-      "offset": 67
+      "index": 2,
+      "offset": 46
     },
     "focus": {
-      "index": 3,
-      "offset": 67
+      "index": 2,
+      "offset": 46
     },
     "doctype": "SELECTION",
-    "createdAt": 1635074754543,
+    "createdAt": 1635081012113,
     "sharedWithGroups": [],
     "belongsToGroup": "g_3ce6hg2yqktrfj",
-    "modifiedAt": 1635074819650,
-    "_id": "csFms82nFm8y",
-    "_rev": "47-912b40b930bb43e3fabb227992b25864"
+    "modifiedAt": 1640809052980,
+    "_id": "xQtIHy4aHNIb",
+    "_rev": "105-eed82595ca52b22f3d975d3cc337db65"
   },
-  "name": "Edge case exports",
+  "name": "Edge *case _exports",
   "archive": false,
   "doctype": "PAGE",
-  "createdAt": 1635074755109,
+  "createdAt": 1635081012227,
   "belongsToGroup": "g_3ce6hg2yqktrfj",
-  "modifiedAt": 1635074793657,
-  "_id": "oi2phiop6j7twr",
-  "_rev": "6-8eda6b5cb1daed3bd8775190bcef53a5"
+  "modifiedAt": 1640808989257,
+  "_id": "ifqbggoj8caqxy",
+  "_rev": "15-6dff43f0ec71a324509cc91f5ae1a8b2"
 }

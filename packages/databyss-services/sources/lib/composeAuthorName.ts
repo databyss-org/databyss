@@ -5,5 +5,5 @@ export function composeAuthorName(
   if (firstName && lastName) {
     return `${lastName}, ${firstName}`
   }
-  return lastName || firstName
+  return lastName || firstName || ''
 }

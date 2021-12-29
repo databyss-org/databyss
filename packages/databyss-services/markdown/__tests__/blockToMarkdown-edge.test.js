@@ -37,4 +37,33 @@ describe('markdown converter', () => {
     const _mdExpected = page1md[3]
     assert.deepEqual(_mdActual, _mdExpected)
   })
+  it('should escape markdown chars in entries', () => {
+    const _mdActual = blockToMarkdown({
+      block: page1json.blocks[4],
+    })
+    const _mdExpected = page1md[4]
+    assert.deepEqual(_mdActual, _mdExpected)
+  })
+  it('should escape markdown chars in inline refs', () => {
+    const _mdActual = blockToMarkdown({
+      block: page1json.blocks[5],
+    })
+    const _mdExpected = page1md[5]
+    assert.deepEqual(_mdActual, _mdExpected)
+  })
+  it('should escape markdown chars in ref headers', () => {
+    const _mdActual = blockToMarkdown({
+      block: page1json.blocks[6],
+    })
+    const _mdExpected = page1md[6]
+    assert.deepEqual(_mdActual, _mdExpected)
+  })
+  it('should escape characters in the page title', () => {
+    const _mdActual = blockToMarkdown({
+      block: page1json.blocks[0],
+      isTitle: true,
+    })
+    const _mdExpected = page1md[0]
+    assert.deepEqual(_mdActual, _mdExpected)
+  })
 })

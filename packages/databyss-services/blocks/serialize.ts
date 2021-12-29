@@ -3,6 +3,7 @@ import colors from '@databyss-org/ui/theming/colors'
 import { Document, DocumentDict, Embed, Page, Text } from '../interfaces'
 import { RangeType, InlineTypes } from '../interfaces/Range'
 import { validUriRegex } from '../lib/util'
+import { cleanFilename, escapeReserved } from '../markdown'
 
 export interface StringTransformFn {
   (t: string): string
@@ -38,13 +39,18 @@ const markToHtml: TagMapFnType = (mark) =>
   }[mark[0]] ?? ['', ''])
 
 const markToMarkdown: TagMapFnType = (mark, linkedDocs) => {
+  const _c = cleanFilename
   switch (mark[0]) {
     case RangeType.Bold:
       return ['**', '**']
     case RangeType.Italic:
       return ['_', '_']
     case RangeType.Location:
-      return [`<span style="color:gray">`, '</span>']
+      return [
+        '[*',
+        (_t: string) => (_t.endsWith(' ') ? '*] ' : '*]'),
+        (_t: string) => _t.trim(),
+      ]
     case InlineTypes.Link:
       if (mark[1].match(validUriRegex)) {
         return ['[', `](${mark[1]})`]
@@ -53,12 +59,20 @@ const markToMarkdown: TagMapFnType = (mark, linkedDocs) => {
       return [
         '[[',
         `]]`,
-        (_t: string) => (_t === _pageName ? _t : `${_pageName}|${_t}`),
+        (_t: string) => (_t === _pageName ? _c(_t) : `${_c(_pageName)}|${_t}`),
       ]
     case InlineTypes.InlineSource:
-      return ['[[s/', ']]', ((_t: string) => _t.substr(1)) as StringTransformFn]
+      return [
+        '[[s/',
+        ']]',
+        ((_t: string) => _c(_t.substr(1))) as StringTransformFn,
+      ]
     case InlineTypes.InlineTopic:
-      return ['[[t/', ']]', ((_t: string) => _t.substr(1)) as StringTransformFn]
+      return [
+        '[[t/',
+        ']]',
+        ((_t: string) => _c(_t.substr(1))) as StringTransformFn,
+      ]
     case InlineTypes.Embed:
       const trimCurlies =
         // remove leading and trailing curlies
@@ -116,7 +130,7 @@ export function renderText(
   let _html = text.textValue
 
   if (!text.ranges.length) {
-    return _html
+    return escapeReserved(_html)
   }
 
   // sort ranges by offset, descending
@@ -153,11 +167,14 @@ export function renderText(
           __mark,
           linkedDocs ?? {}
         )
-        _openTags += __open
-        _closeTags = `${__close}${_closeTags}`
+        _openTags += typeof __open === 'function' ? __open(_segment) : __open
+        _closeTags = `${
+          typeof __close === 'function' ? __close(_segment) : __close
+        }${_closeTags}`
         if (__transform) {
           _segment = (__transform as StringTransformFn)(_segment)
         }
+        _segment = escapeReserved(_segment)
       })
       _html = `${_before}${_openTags}${_segment}${_closeTags}${_after}`
     } catch (err) {

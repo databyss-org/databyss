@@ -34,6 +34,7 @@ import {
   sourceToMarkdown,
   cleanFilename,
   bibliographyToMarkdown,
+  escapeReserved,
 } from '../markdown'
 import { DocumentType } from '../../databyss-data/pouchdb/interfaces'
 import { getCitationStyle } from '../citations/lib'
@@ -281,7 +282,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         if (_block.type === BlockType.Topic) {
           zip.file(
             `t/${_c(_block.text.textValue)}.md`,
-            `# ${_block.text.textValue}\n`
+            `# ${escapeReserved(_block.text.textValue)}\n`
           )
         }
         if (_block.type === BlockType.Source) {

@@ -24,7 +24,9 @@ export const downloadBibliography = async ({
       ...(styleId ? { citationStyle: getCitationStyle(styleId) } : {}),
     }),
     author
-      ? `bibliography (${author.lastName ?? author.firstName}).md`
+      ? `bibliography (${cleanFilename(
+          author.lastName ?? author.firstName ?? ''
+        )}).md`
       : 'bibliography.md'
   )
 }
