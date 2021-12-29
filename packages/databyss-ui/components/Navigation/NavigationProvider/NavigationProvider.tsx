@@ -7,6 +7,7 @@ import {
 } from '@databyss-org/reach-router'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
+import { AuthorName } from '@databyss-org/services/interfaces'
 import reducer, { initialState } from './reducer'
 import * as actions from './actions'
 import {
@@ -88,22 +89,38 @@ const NavigationProvider = ({
   const navigateSidebar = (options) =>
     dispatch(actions.navigateSidebar(options))
 
-  const getTokensFromPath = () => {
+  const getQueryParams = () => location.search
+
+  const getTokensFromPath = (): {
+    type: string
+    params: string
+    anchor: string
+    author: AuthorName | null
+  } => {
     const _path = location.pathname.split('/')
-    let _params = _path[3]
-    let _anchor = ''
+    let params: string = _path[3]
+    let anchor = ''
 
-    if (_params === 'authors') {
-      _params = _path[4]
+    if (params && params.includes('#')) {
+      const _str = params.split('#')
+      params = _str[0]
+      anchor = _str[1]
     }
 
-    if (_params && _params.includes('#')) {
-      const _str = _params.split('#')
-      _params = _str[0]
-      _anchor = _str[1]
+    const type: string = _path[2]
+
+    let author: AuthorName | null = null
+    if (type === 'sources' && !params) {
+      const _queryParams = new URLSearchParams(getQueryParams())
+      if (_queryParams.get('firstName') || _queryParams.get('lastName')) {
+        author = {
+          firstName: decodeURIComponent(_queryParams.get('firstName')!),
+          lastName: decodeURIComponent(_queryParams.get('lastName')!),
+        }
+      }
     }
 
-    return { type: _path[2], params: _params, anchor: _anchor }
+    return { type, params, anchor, author }
   }
 
   const getSidebarPath = () => {
@@ -122,8 +139,6 @@ const NavigationProvider = ({
     // TODO: within PageContent (or wherever we mount a <PageLoader>), check if archive
     // flag is set. If so, nagivate the sidebar to the archive tab
   }
-
-  const getQueryParams = () => location.search
 
   return (
     <NavigationContext.Provider

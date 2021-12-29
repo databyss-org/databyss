@@ -1,7 +1,20 @@
 import { textToMarkdown } from '../blocks/serialize'
 import { CitationOutputTypes, CitationStyle } from '../citations/constants'
 import { formatCitation, toJsonCsl } from '../citations/lib'
-import { Block, BlockType, Document, DocumentDict, Source } from '../interfaces'
+import {
+  Block,
+  BlockType,
+  Document,
+  DocumentDict,
+  Source,
+  AuthorName,
+  BibliographyItem,
+} from '../interfaces'
+import {
+  composeAuthorName,
+  sortBibliography,
+  filterBibliographyByAuthor,
+} from '../sources/lib'
 
 export function blockToMarkdown({
   block,
@@ -35,6 +48,38 @@ export function blockToMarkdown({
   }
   const _md = textToMarkdown(block.text, linkedDocs)
   return isTitle ? `# ${_md}` : _md
+}
+
+export function bibliographyToMarkdown({
+  bibliography,
+  author,
+  citationStyle,
+}: {
+  bibliography: BibliographyItem[]
+  author?: AuthorName
+  citationStyle?: CitationStyle
+}) {
+  let md = '# '
+  if (author) {
+    md += composeAuthorName(author.firstName, author.lastName)
+  } else {
+    md += 'Bibliography'
+  }
+  if (citationStyle) {
+    md += ` (${citationStyle.shortName})`
+  }
+  md += '\n\n'
+  let items = sortBibliography(bibliography)
+  if (author) {
+    items = filterBibliographyByAuthor({ items, author })
+  }
+  md += items
+    .map((item) =>
+      item.citation ? html2md(item.citation) : item.source.text.textValue
+    )
+    .join('\n\n')
+
+  return md
 }
 
 export async function sourceToMarkdown({

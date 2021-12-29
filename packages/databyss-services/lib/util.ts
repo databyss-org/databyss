@@ -1,5 +1,7 @@
 import { ResourcePending } from '../interfaces/ResourcePending'
 
+export const sleep = (m) => new Promise((r) => setTimeout(r, m))
+
 export const resourceIsReady = (resource) =>
   resource &&
   !(resource instanceof ResourcePending) &&

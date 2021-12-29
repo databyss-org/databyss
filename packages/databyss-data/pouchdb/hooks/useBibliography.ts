@@ -3,18 +3,12 @@ import {
   BlockType,
   CitationFormatOptions,
   Source,
+  BibliographyDict,
 } from '@databyss-org/services/interfaces'
 import { toCitation } from '@databyss-org/services/citations'
 import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
 import { useBlocksInPages } from '.'
 import { useDocuments } from './useDocuments'
-
-interface BibliographyDict {
-  [blockId: string]: {
-    citation: string
-    source: Source
-  }
-}
 
 interface UseBibliographyOptions extends UseQueryOptions {
   formatOptions: CitationFormatOptions
@@ -62,13 +56,6 @@ export const useBibliography = ({
   useEffect(() => {
     updateBibliography()
   }, [blocksByIdRes.dataUpdatedAt])
-
-  useEffect(
-    () => () => {
-      queryClient.removeQueries(queryKey)
-    },
-    []
-  )
 
   return query
 }
