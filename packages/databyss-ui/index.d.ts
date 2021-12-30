@@ -158,7 +158,7 @@ export interface SeparatorProps extends ViewProps {
   spacing?: ReactText
   secondary?: boolean
   label?: string
-  index?: number
+  lineWidth?: number
 }
 
 declare const Separator: FC<SeparatorProps>

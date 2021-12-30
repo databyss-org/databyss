@@ -26,8 +26,27 @@ import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
+import { useExportContext } from '@databyss-org/services/export'
 import LoadingFallback from '../Notify/LoadingFallback'
 import { pxUnits } from '../../theming/views'
+
+export const DropdownList = ({ menuItems }) =>
+  menuItems.map(({ separator, ...menuItem }, idx) =>
+    separator ? (
+      <Separator {...menuItem} key={idx} lineWidth={idx > 0 ? 1 : 0} />
+    ) : (
+      <DropdownListItem
+        {...menuItem}
+        action={menuItem.actionType}
+        onPress={() => {
+          if (menuItem.action) {
+            menuItem.action()
+          }
+        }}
+        key={menuItem.label}
+      />
+    )
+  )
 
 export function copyToClipboard(text) {
   const dummy = document.createElement('textarea')
@@ -70,8 +89,7 @@ const PageMenu = () => {
 
   const archivePage = useEditorPageContext((c) => c.archivePage)
   const deletePage = useEditorPageContext((c) => c.deletePage)
-  const exportSinglePage = useEditorPageContext((c) => c.exportSinglePage)
-  const exportAllPages = useEditorPageContext((c) => c.exportAllPages)
+  const { exportSinglePage, exportAllPages } = useExportContext()
 
   const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
 
@@ -199,9 +217,11 @@ const PageMenu = () => {
       icon: <ExportAllSvg />,
       label: 'Export everything',
       subLabel: 'Download the whole collection',
-      action: () => exportAllPages(params),
+      action: () => {
+        setShowMenu(false)
+        exportAllPages()
+      },
       actionType: 'exportAll',
-      hideMenu: true,
     })
   }
 
@@ -224,27 +244,6 @@ const PageMenu = () => {
     setPagePublic(params, !isPagePublic)
     setIsPagePublic(!isPagePublic)
   }
-
-  const DropdownList = () =>
-    menuItems.map(({ separator, ...menuItem }, idx) =>
-      separator ? (
-        <Separator {...menuItem} key={idx} lineWidth={idx > 0 ? 1 : 0} />
-      ) : (
-        <DropdownListItem
-          {...menuItem}
-          action={menuItem.actionType}
-          onPress={() => {
-            if (menuItem.action) {
-              menuItem.action()
-            }
-            if (menuItem.hideMenu) {
-              setShowMenu(false)
-            }
-          }}
-          key={menuItem.label}
-        />
-      )
-    )
 
   useEffect(() => {
     if (showCopiedCheck && !showMenu) {
@@ -412,7 +411,7 @@ const PageMenu = () => {
               </>
             ) : null}
 
-            <DropdownList />
+            <DropdownList menuItems={menuItems} />
             {/* {Object.values(groups).length ? <Separator /> : null}
             {groupsRes.isSuccess && Object.values(groups).length ? (
               collections()
