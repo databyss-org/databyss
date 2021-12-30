@@ -98,7 +98,10 @@ const markToMarkdown: TagMapFnType = (mark, linkedDocs) => {
  * Renders Text as HTML
  */
 export function textToHtml(text: Text): string {
-  return renderText(text, markToHtml).replaceAll('\n', '<br />')
+  return renderText({
+    text,
+    tagMapFn: markToHtml,
+  }).replaceAll('\n', '<br />')
 }
 
 /**
@@ -112,7 +115,12 @@ export function textToMarkdown(
     ...text,
     textValue: text.textValue.replaceAll('[', '{').replaceAll(']', '}'),
   }
-  return renderText(preprocessed, markToMarkdown, linkedDocs)
+  return renderText({
+    text: preprocessed,
+    tagMapFn: markToMarkdown,
+    linkedDocs,
+    escapeFn: escapeReserved,
+  })
     .replaceAll(/ +/g, ' ')
     .replaceAll('\n', '  \n')
     .replaceAll('\t', ' ')
@@ -122,15 +130,21 @@ export function textToMarkdown(
 /**
  * Renders Text as markup/markdown
  */
-export function renderText(
-  text: Text,
-  tagMapFn: TagMapFnType,
+export function renderText({
+  text,
+  tagMapFn,
+  linkedDocs,
+  escapeFn = (_s: string) => _s,
+}: {
+  text: Text
+  tagMapFn: TagMapFnType
   linkedDocs?: DocumentDict<Document>
-): string {
+  escapeFn?: (_s: string) => string
+}): string {
   let _html = text.textValue
 
   if (!text.ranges.length) {
-    return escapeReserved(_html)
+    return escapeFn(_html)
   }
 
   // sort ranges by offset, descending
@@ -174,7 +188,7 @@ export function renderText(
         if (__transform) {
           _segment = (__transform as StringTransformFn)(_segment)
         }
-        _segment = escapeReserved(_segment)
+        _segment = escapeFn(_segment)
       })
       _html = `${_before}${_openTags}${_segment}${_closeTags}${_after}`
     } catch (err) {
