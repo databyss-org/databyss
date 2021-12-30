@@ -140,59 +140,70 @@ const PageMenu = () => {
 
   const menuItems = []
 
-  if (canBeArchived && !_page.archive) {
-    menuItems.push({
-      icon: <ArchiveSvg />,
-      label: 'Archive',
-      action: () => onArchivePress(true),
-      actionType: 'archive',
-      // TODO: detect platform and render correct modifier key
-      // shortcut: 'Ctrl + Del',
-    })
+  if (!isPublicAccount()) {
+    if (canBeArchived && !_page.archive) {
+      menuItems.push({
+        icon: <ArchiveSvg />,
+        label: 'Archive',
+        action: () => onArchivePress(true),
+        actionType: 'archive',
+        // TODO: detect platform and render correct modifier key
+        // shortcut: 'Ctrl + Del',
+      })
+    }
+
+    if (_page?.archive) {
+      // add restore option
+      menuItems.push({
+        icon: <PageSvg />,
+        label: 'Restore Page',
+        action: () => onArchivePress(false),
+        actionType: 'restore',
+        // TODO: detect platform and render correct modifier key
+        // shortcut: 'Ctrl + Del',
+      })
+      // add delete option
+      menuItems.push({
+        icon: <TrashSvg />,
+        label: 'Delete page forever',
+        action: () => onPageDelete(),
+        actionType: 'delete',
+        // TODO: detect platform and render correct modifier key
+        // shortcut: 'Ctrl + Del',
+      })
+    }
   }
 
-  if (_page?.archive) {
-    // add restore option
+  const _hasMultiplePages =
+    pagesRes.data && Object.values(pagesRes.data).length > 1
+
+  if (_hasMultiplePages) {
     menuItems.push({
-      icon: <PageSvg />,
-      label: 'Restore Page',
-      action: () => onArchivePress(false),
-      actionType: 'restore',
-      // TODO: detect platform and render correct modifier key
-      // shortcut: 'Ctrl + Del',
-    })
-    // add delete option
-    menuItems.push({
-      icon: <TrashSvg />,
-      label: 'Delete page forever',
-      action: () => onPageDelete(),
-      actionType: 'delete',
-      // TODO: detect platform and render correct modifier key
-      // shortcut: 'Ctrl + Del',
+      separator: true,
+      label: 'Export Markdown',
     })
   }
-
-  menuItems.push({
-    separator: true,
-    label: 'Export Markdown',
-  })
 
   menuItems.push({
     icon: <SaveSvg />,
     label: 'Export page',
-    subLabel: 'Including references',
+    subLabel: _hasMultiplePages
+      ? 'Including references'
+      : 'Download as Markdown',
     action: () => exportSinglePage(params),
     actionType: 'exportPage',
   })
 
-  menuItems.push({
-    icon: <ExportAllSvg />,
-    label: 'Export everything',
-    subLabel: 'Download the whole collection',
-    action: () => exportAllPages(params),
-    actionType: 'exportAll',
-    hideMenu: true,
-  })
+  if (_hasMultiplePages) {
+    menuItems.push({
+      icon: <ExportAllSvg />,
+      label: 'Export everything',
+      subLabel: 'Download the whole collection',
+      action: () => exportAllPages(params),
+      actionType: 'exportAll',
+      hideMenu: true,
+    })
+  }
 
   if (menuItems.length > 0) {
     menuItems.push({ separator: true })
@@ -217,7 +228,7 @@ const PageMenu = () => {
   const DropdownList = () =>
     menuItems.map(({ separator, ...menuItem }, idx) =>
       separator ? (
-        <Separator {...menuItem} key={idx} />
+        <Separator {...menuItem} key={idx} lineWidth={idx > 0 ? 1 : 0} />
       ) : (
         <DropdownListItem
           {...menuItem}
@@ -366,11 +377,9 @@ const PageMenu = () => {
         data-test-element="archive-dropdown"
         label="Archive Page"
       >
-        {!isPublicAccount() && (
-          <Icon sizeVariant="medium" color="text.1">
-            <MenuSvg />
-          </Icon>
-        )}
+        <Icon sizeVariant="medium" color="text.1">
+          <MenuSvg />
+        </Icon>
       </BaseControl>
       {showMenu && (
         <ClickAwayListener onClickAway={() => setShowMenu(false)}>
@@ -382,7 +391,7 @@ const PageMenu = () => {
               right: 0,
             }}
           >
-            {!_page.archive ? (
+            {!isPublicAccount() && !_page.archive ? (
               <>
                 <DropdownListItem
                   height={pxUnits(34)}

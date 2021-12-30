@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { View, Separator, BaseControl, Icon } from '@databyss-org/ui/primitives'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import HelpSvg from '@databyss-org/ui/assets/help.svg'
@@ -18,7 +17,6 @@ import { useUserPreferencesContext } from '../../hooks'
 import { sleep } from '../../../databyss-services/lib/util'
 
 const IndexPageMenu = ({ block }) => {
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const { getTokensFromPath } = useNavigationContext()
   const [showMenu, setShowMenu] = useState(false)
   const path = getTokensFromPath()
@@ -59,7 +57,7 @@ const IndexPageMenu = ({ block }) => {
   if (path.type === 'sources') {
     menuItems.push({
       icon: <SaveSvg />,
-      label: 'Export Bibliography',
+      label: path.params ? 'Export Citation' : 'Export Bibliography',
       subLabel: 'Download as Markdown',
       action: () => exportBibliography(path),
       actionType: 'exportBiblio',
@@ -116,11 +114,9 @@ const IndexPageMenu = ({ block }) => {
         data-test-element="archive-dropdown"
         label="Archive Page"
       >
-        {!isPublicAccount() && (
-          <Icon sizeVariant="medium" color="text.1">
-            <MenuSvg />
-          </Icon>
-        )}
+        <Icon sizeVariant="medium" color="text.1">
+          <MenuSvg />
+        </Icon>
       </BaseControl>
       {showMenu && (
         <ClickAwayListener onClickAway={() => setShowMenu(false)}>

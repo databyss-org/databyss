@@ -157,6 +157,8 @@ declare const List: FC<PropsWithChildren<ListProps>>
 export interface SeparatorProps extends ViewProps {
   spacing?: ReactText
   secondary?: boolean
+  label?: string
+  index?: number
 }
 
 declare const Separator: FC<SeparatorProps>
