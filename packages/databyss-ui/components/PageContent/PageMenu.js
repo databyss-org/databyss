@@ -26,8 +26,27 @@ import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
+import { useExportContext } from '@databyss-org/services/export'
 import LoadingFallback from '../Notify/LoadingFallback'
 import { pxUnits } from '../../theming/views'
+
+export const DropdownList = ({ menuItems }) =>
+  menuItems.map(({ separator, ...menuItem }, idx) =>
+    separator ? (
+      <Separator {...menuItem} key={idx} lineWidth={idx > 0 ? 1 : 0} />
+    ) : (
+      <DropdownListItem
+        {...menuItem}
+        action={menuItem.actionType}
+        onPress={() => {
+          if (menuItem.action) {
+            menuItem.action()
+          }
+        }}
+        key={menuItem.label}
+      />
+    )
+  )
 
 export function copyToClipboard(text) {
   const dummy = document.createElement('textarea')
@@ -70,8 +89,7 @@ const PageMenu = () => {
 
   const archivePage = useEditorPageContext((c) => c.archivePage)
   const deletePage = useEditorPageContext((c) => c.deletePage)
-  const exportSinglePage = useEditorPageContext((c) => c.exportSinglePage)
-  const exportAllPages = useEditorPageContext((c) => c.exportAllPages)
+  const { exportSinglePage, exportAllPages } = useExportContext()
 
   const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
 
@@ -140,59 +158,72 @@ const PageMenu = () => {
 
   const menuItems = []
 
-  if (canBeArchived && !_page.archive) {
-    menuItems.push({
-      icon: <ArchiveSvg />,
-      label: 'Archive',
-      action: () => onArchivePress(true),
-      actionType: 'archive',
-      // TODO: detect platform and render correct modifier key
-      // shortcut: 'Ctrl + Del',
-    })
+  if (!isPublicAccount()) {
+    if (canBeArchived && !_page.archive) {
+      menuItems.push({
+        icon: <ArchiveSvg />,
+        label: 'Archive',
+        action: () => onArchivePress(true),
+        actionType: 'archive',
+        // TODO: detect platform and render correct modifier key
+        // shortcut: 'Ctrl + Del',
+      })
+    }
+
+    if (_page?.archive) {
+      // add restore option
+      menuItems.push({
+        icon: <PageSvg />,
+        label: 'Restore Page',
+        action: () => onArchivePress(false),
+        actionType: 'restore',
+        // TODO: detect platform and render correct modifier key
+        // shortcut: 'Ctrl + Del',
+      })
+      // add delete option
+      menuItems.push({
+        icon: <TrashSvg />,
+        label: 'Delete page forever',
+        action: () => onPageDelete(),
+        actionType: 'delete',
+        // TODO: detect platform and render correct modifier key
+        // shortcut: 'Ctrl + Del',
+      })
+    }
   }
 
-  if (_page?.archive) {
-    // add restore option
+  const _hasMultiplePages =
+    pagesRes.data && Object.values(pagesRes.data).length > 1
+
+  if (_hasMultiplePages) {
     menuItems.push({
-      icon: <PageSvg />,
-      label: 'Restore Page',
-      action: () => onArchivePress(false),
-      actionType: 'restore',
-      // TODO: detect platform and render correct modifier key
-      // shortcut: 'Ctrl + Del',
-    })
-    // add delete option
-    menuItems.push({
-      icon: <TrashSvg />,
-      label: 'Delete page forever',
-      action: () => onPageDelete(),
-      actionType: 'delete',
-      // TODO: detect platform and render correct modifier key
-      // shortcut: 'Ctrl + Del',
+      separator: true,
+      label: 'Export Markdown',
     })
   }
-
-  menuItems.push({
-    separator: true,
-    label: 'Export Markdown',
-  })
 
   menuItems.push({
     icon: <SaveSvg />,
     label: 'Export page',
-    subLabel: 'Including references',
+    subLabel: _hasMultiplePages
+      ? 'Including references'
+      : 'Download as Markdown',
     action: () => exportSinglePage(params),
     actionType: 'exportPage',
   })
 
-  menuItems.push({
-    icon: <ExportAllSvg />,
-    label: 'Export everything',
-    subLabel: 'Download the whole collection',
-    action: () => exportAllPages(params),
-    actionType: 'exportAll',
-    hideMenu: true,
-  })
+  if (_hasMultiplePages) {
+    menuItems.push({
+      icon: <ExportAllSvg />,
+      label: 'Export everything',
+      subLabel: 'Download the whole collection',
+      action: () => {
+        setShowMenu(false)
+        exportAllPages()
+      },
+      actionType: 'exportAll',
+    })
+  }
 
   if (menuItems.length > 0) {
     menuItems.push({ separator: true })
@@ -213,27 +244,6 @@ const PageMenu = () => {
     setPagePublic(params, !isPagePublic)
     setIsPagePublic(!isPagePublic)
   }
-
-  const DropdownList = () =>
-    menuItems.map(({ separator, ...menuItem }, idx) =>
-      separator ? (
-        <Separator {...menuItem} key={idx} />
-      ) : (
-        <DropdownListItem
-          {...menuItem}
-          action={menuItem.actionType}
-          onPress={() => {
-            if (menuItem.action) {
-              menuItem.action()
-            }
-            if (menuItem.hideMenu) {
-              setShowMenu(false)
-            }
-          }}
-          key={menuItem.label}
-        />
-      )
-    )
 
   useEffect(() => {
     if (showCopiedCheck && !showMenu) {
@@ -366,11 +376,9 @@ const PageMenu = () => {
         data-test-element="archive-dropdown"
         label="Archive Page"
       >
-        {!isPublicAccount() && (
-          <Icon sizeVariant="medium" color="text.1">
-            <MenuSvg />
-          </Icon>
-        )}
+        <Icon sizeVariant="medium" color="text.1">
+          <MenuSvg />
+        </Icon>
       </BaseControl>
       {showMenu && (
         <ClickAwayListener onClickAway={() => setShowMenu(false)}>
@@ -382,7 +390,7 @@ const PageMenu = () => {
               right: 0,
             }}
           >
-            {!_page.archive ? (
+            {!isPublicAccount() && !_page.archive ? (
               <>
                 <DropdownListItem
                   height={pxUnits(34)}
@@ -403,7 +411,7 @@ const PageMenu = () => {
               </>
             ) : null}
 
-            <DropdownList />
+            <DropdownList menuItems={menuItems} />
             {/* {Object.values(groups).length ? <Separator /> : null}
             {groupsRes.isSuccess && Object.values(groups).length ? (
               collections()

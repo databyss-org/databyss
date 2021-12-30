@@ -1,33 +1,21 @@
 import React, { useState } from 'react'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { View, Separator, BaseControl, Icon } from '@databyss-org/ui/primitives'
+import { View, BaseControl, Icon } from '@databyss-org/ui/primitives'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import HelpSvg from '@databyss-org/ui/assets/help.svg'
 import SaveSvg from '@databyss-org/ui/assets/save.svg'
+import ExportAllSvg from '@databyss-org/ui/assets/export-all.svg'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
-import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
+import { DropdownList } from '@databyss-org/ui/components'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
-import {
-  downloadBibliography,
-  downloadSourceMarkdown,
-} from '@databyss-org/services/sources/lib'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
-import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
+import { useExportContext } from '@databyss-org/services/export'
 import { useNavigationContext } from '../Navigation/NavigationProvider'
-import { useUserPreferencesContext } from '../../hooks'
-import { sleep } from '../../../databyss-services/lib/util'
 
 const IndexPageMenu = ({ block }) => {
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const { getTokensFromPath } = useNavigationContext()
   const [showMenu, setShowMenu] = useState(false)
   const path = getTokensFromPath()
-  const { getPreferredCitationStyle } = useUserPreferencesContext()
-  const biblioRes = useBibliography({
-    formatOptions: {
-      styleId: getPreferredCitationStyle(),
-    },
-  })
+  const { exportBibliography, exportAllPages } = useExportContext()
 
   const handleEscKey = (e) => {
     if (e.key === 'Escape') {
@@ -35,36 +23,32 @@ const IndexPageMenu = ({ block }) => {
     }
   }
 
-  const exportBibliography = async (path) => {
-    while (biblioRes.isFetching) {
-      await sleep(500)
-    }
-    if (!path.params) {
-      // bibliography (full or filtered by author)
-      await downloadBibliography({
-        items: Object.values(biblioRes.data),
-        author: path.author,
-        styleId: getPreferredCitationStyle(),
-      })
-    } else {
-      // export single source
-      await downloadSourceMarkdown({
-        source: block,
-        styleId: getPreferredCitationStyle(),
-      })
-    }
-  }
-
   const menuItems = []
+  menuItems.push({
+    separator: true,
+    label: 'Export Markdown',
+  })
+
   if (path.type === 'sources') {
     menuItems.push({
       icon: <SaveSvg />,
-      label: 'Export Bibliography',
-      subLabel: 'Download as Markdown',
-      action: () => exportBibliography(path),
+      label: path.params ? 'Export Citation' : 'Export Bibliography',
+      action: () => exportBibliography({ source: block, author: path.author }),
       actionType: 'exportBiblio',
     })
   }
+
+  menuItems.push({
+    icon: <ExportAllSvg />,
+    label: 'Export everything',
+    subLabel: 'Download all pages and references',
+    action: () => {
+      setShowMenu(false)
+      exportAllPages()
+    },
+    actionType: 'exportAll',
+    hideMenu: true,
+  })
 
   if (menuItems.length > 0) {
     menuItems.push({ separator: true })
@@ -78,27 +62,6 @@ const IndexPageMenu = ({ block }) => {
     actionType: 'help',
     light: true,
   })
-
-  const DropdownList = () =>
-    menuItems.map(({ separator, ...menuItem }, idx) =>
-      separator ? (
-        <Separator {...menuItem} key={idx} />
-      ) : (
-        <DropdownListItem
-          {...menuItem}
-          action={menuItem.actionType}
-          onPress={() => {
-            if (menuItem.action) {
-              menuItem.action()
-            }
-            if (menuItem.hideMenu) {
-              setShowMenu(false)
-            }
-          }}
-          key={menuItem.label}
-        />
-      )
-    )
 
   return (
     <View
@@ -116,11 +79,9 @@ const IndexPageMenu = ({ block }) => {
         data-test-element="archive-dropdown"
         label="Archive Page"
       >
-        {!isPublicAccount() && (
-          <Icon sizeVariant="medium" color="text.1">
-            <MenuSvg />
-          </Icon>
-        )}
+        <Icon sizeVariant="medium" color="text.1">
+          <MenuSvg />
+        </Icon>
       </BaseControl>
       {showMenu && (
         <ClickAwayListener onClickAway={() => setShowMenu(false)}>
@@ -132,7 +93,7 @@ const IndexPageMenu = ({ block }) => {
               right: 0,
             }}
           >
-            <DropdownList />
+            <DropdownList menuItems={menuItems} />
           </DropdownContainer>
         </ClickAwayListener>
       )}

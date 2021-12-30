@@ -3,6 +3,7 @@ import { ReactNode } from 'react'
 export { LoadingFallback } from './Notify/LoadingFallback'
 export { default as SidebarList } from './Sidebar/SidebarList'
 export { default as DropdownListItem } from './Menu/DropdownListItem'
+export { DropdownList } from './PageContent/PageMenu'
 export {
   default as SidebarListItem,
   SidebarListRow,

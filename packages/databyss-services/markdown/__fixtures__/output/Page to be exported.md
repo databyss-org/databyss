@@ -12,6 +12,6 @@ Is Databyss a _hyperindexing_ system? ([[s/Bruza 1992]])
 
 TBL addresses an early W3 debate about whether to standardize the structure of a [[t/hypertext]] document or not.
 
-[/t/Structured Documents]
+/-- [[t/Structured Documents]] --/
 
 How about some [[Linked page to be exported|embedded media]]?
