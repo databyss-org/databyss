@@ -27,6 +27,7 @@ const Editor = ({
   ...others
 }) => {
   const _searchTerm = useSearchContext((c) => c && c.searchTerm)
+  console.log(`[Editor] searchTerm ${_searchTerm}`)
 
   // preloads source and topic cache to be used by the suggest menu
   useBlocksInPages('EMBED')
@@ -216,7 +217,7 @@ const Editor = ({
         />
       </Slate>
     ),
-    [editor, selection]
+    [editor, selection, _searchTerm]
   )
 }
 
