@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/notes",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "private": true,
   "dependencies": {
     "@databyss-org/reach-router": "1.3.4-b1",
@@ -15,8 +15,8 @@
     "workbox-window": "^6.1.2"
   },
   "peerDependencies": {
-    "@databyss-org/services": "2.3.5",
-    "@databyss-org/ui": "2.3.5",
+    "@databyss-org/services": "2.3.6",
+    "@databyss-org/ui": "2.3.6",
     "react": "16.9.0",
     "react-dom": "16.9.0",
     "react-query": "^3.6.0",
