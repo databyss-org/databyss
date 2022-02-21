@@ -1,11 +1,15 @@
 import _ from 'lodash'
 import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { BlockReference } from '@databyss-org/services/interfaces'
+import { validURL } from '@databyss-org/services/lib/util'
 import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
 import { isAtomicInlineType, getInlineAtomicType } from '../util'
 
-export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
+export const getAtomicsFromFrag = (
+  frag: Block[],
+  excludeTypes: InlineTypes[] = []
+): BlockReference[] => {
   const atomics: BlockReference[] = []
   frag.forEach((b) => {
     if (!isAtomicInlineType(b.type)) {
@@ -15,12 +19,25 @@ export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
             .filter(
               (i) =>
                 Array.isArray(i) &&
-                (i[0] === InlineTypes.InlineTopic ||
-                  i[0] === InlineTypes.InlineSource ||
-                  i[0] === InlineTypes.Embed)
+                ((i[0] === InlineTypes.InlineTopic &&
+                  !excludeTypes.includes(InlineTypes.InlineTopic)) ||
+                  (i[0] === InlineTypes.InlineSource &&
+                    !excludeTypes.includes(InlineTypes.InlineSource)) ||
+                  (i[0] === InlineTypes.Link &&
+                    !excludeTypes.includes(InlineTypes.Link)) ||
+                  (i[0] === InlineTypes.Embed &&
+                    !excludeTypes.includes(InlineTypes.Embed)))
             )
             .forEach((i) => {
               if (!atomics.some((a) => a._id === i[1])) {
+                // inline page link
+                if (
+                  !excludeTypes.includes(InlineTypes.Link) &&
+                  i[0] === InlineTypes.Link &&
+                  !validURL(i[1])
+                ) {
+                  atomics.push({ type: InlineTypes.Link, _id: i[1] })
+                }
                 const atomicType = getInlineAtomicType(i[0])
                 if (atomicType) {
                   const _inline: BlockReference = {
