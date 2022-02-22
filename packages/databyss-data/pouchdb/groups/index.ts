@@ -334,8 +334,12 @@ export async function docIdsRelatedToPage(
     (_block) => _block.type === BlockType.Entry
   )
   const _entryBlockIds = _entryBlocks.map((_b) => _b._id)
-  const _relatedBlocks = getAtomicsFromFrag(_blocks, [InlineTypes.Link])
-  let _relatedBlockIds = _relatedBlocks.map((_b) => _b._id)
+  const _relatedBlocks = getAtomicsFromFrag(_blocks)
+
+  // we want to include blockRelations for Links, but not the linked pages
+  let _relatedBlockIds = _relatedBlocks
+    .filter((_b) => _b.type !== InlineTypes.Link)
+    .map((_b) => _b._id)
   let _relationIds = _relatedBlocks.map((_b) => `r_${_b._id}`)
 
   // console.log('[docIdsRelatedToPage] blocks', _blocks)
