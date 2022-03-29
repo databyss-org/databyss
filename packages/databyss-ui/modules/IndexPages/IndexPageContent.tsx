@@ -78,14 +78,17 @@ export const IndexPageTitleInput = ({
   const { navigate } = useNavigationContext()
   const blocksRes = useBlocks(BlockType._ANY)
   const pagesRes = usePages()
+  const isSearch = path[0] === 'Search'
 
   useImperativeHandle(handlesRef, () => ({
     updateTitle: (block: Block) => setTitle(getTitleFromBlock(block, path)),
   }))
 
-  // useEffect(() => {
-  //   debouncedSetTitle(getTitleFromBlock(block, path))
-  // }, [path])
+  useEffect(() => {
+    if (isSearch) {
+      setTitle(getTitleFromBlock(block, path))
+    }
+  }, [path])
 
   const setBlockText = useCallback(
     debounce((value: string) => {
@@ -120,7 +123,7 @@ export const IndexPageTitleInput = ({
   const onKeyDown = (evt: KeyboardEvent) => {
     if (evt.key === 'Enter') {
       evt.preventDefault()
-      if (path[0] === 'Search') {
+      if (isSearch) {
         navigate(`/${getAccountFromLocation()}/search/${title}`)
       }
     }
@@ -147,12 +150,10 @@ export const IndexPageTitleInput = ({
   return (
     <TitleInput
       autoFocus
-      placeholder={`untitled ${indexName}`}
+      placeholder={isSearch ? 'Search' : `untitled ${indexName}`}
       value={title}
       readonly={
-        isPublicAccount() ||
-        isMobileOrMobileOs() ||
-        (!block && path[0] !== 'Search')
+        isPublicAccount() || isMobileOrMobileOs() || (!block && !isSearch)
       }
       onChange={onChange}
       onKeyDown={onKeyDown}
