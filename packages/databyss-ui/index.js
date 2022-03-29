@@ -9,7 +9,7 @@ export { isMobile, isMobileOs, isMobileOrMobileOs } from './lib/mediaQuery'
 
 /* components */
 export {
-  default as NavigationProvider,
+  NavigationProvider,
   useNavigationContext,
 } from './components/Navigation/NavigationProvider'
 export { default as DropdownContainer } from './components/Menu/DropdownContainer'

@@ -1,10 +1,6 @@
 import React, { PropsWithChildren } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
-import {
-  useNavigate,
-  useLocation,
-  Router as ReachRouter,
-} from '@databyss-org/reach-router'
+import { useNavigate, useLocation } from 'react-router-dom'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { AuthorName } from '@databyss-org/services/interfaces'
@@ -35,21 +31,6 @@ const useReducer = createReducer()
 
 export const NavigationContext = createContext<ContextType>(null!)
 
-const RouteWrapper = ({ children }) => <>{children}</>
-export const Router = ({ children, ...others }) => (
-  <ReachRouter primary={false} component={RouteWrapper} {...others}>
-    {children}
-  </ReachRouter>
-)
-
-const withRouter = (Wrapped) => ({ children }) => (
-  <Router>
-    <Wrapped default>
-      {React.cloneElement(React.Children.only(children), { default: true })}
-    </Wrapped>
-  </Router>
-)
-
 const sidebarItemAliases = {
   collections: 'groups',
 }
@@ -58,7 +39,7 @@ interface PropsType {
   initialState: NavigationState
 }
 
-const NavigationProvider = ({
+export const NavigationProvider = ({
   children,
   initialState = new NavigationState(),
 }: PropsWithChildren<PropsType>) => {
@@ -168,5 +149,3 @@ export const useNavigationContext = (selector = (x) => x) =>
 NavigationProvider.defaultProps = {
   initialState,
 }
-
-export default withRouter(NavigationProvider)

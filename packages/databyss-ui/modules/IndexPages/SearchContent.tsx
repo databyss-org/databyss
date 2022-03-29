@@ -21,7 +21,7 @@ import { IndexResultTags } from './IndexResults'
 
 export const SearchContent = () => {
   const { getAccountFromLocation } = useNavigationContext()
-  const searchQuery = decodeURIComponent(useParams().query)
+  const searchQuery = decodeURIComponent(useParams().query!)
   const searchRes = useSearchEntries(searchQuery)
 
   const composeResults = (results: SearchEntriesResultPage[]) => {

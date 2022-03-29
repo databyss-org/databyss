@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react'
-import { Router } from '@databyss-org/ui/components/Navigation/NavigationProvider'
+import {
+  Routes,
+  Route,
+} from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { SearchProvider, UserPreferencesProvider } from '@databyss-org/ui/hooks'
 import { ExportProvider } from '@databyss-org/services/export'
@@ -102,25 +105,37 @@ const Private = () => {
 
   return (
     <Providers>
-      <Router>
-        <AppView path="/:accountId">
-          <NotFoundRedirect default />
-          <EditorPageProvider path="pages/:id">
-            <PageContent default />
-          </EditorPageProvider>
-          <SearchContent path="search/:query" />
-          <GroupDetail path="collections/:id" />
-          <IndexPageContent
-            blockType={BlockType.Source}
-            path="sources/:blockId"
-          />
-          <IndexPageContent
-            blockType={BlockType.Topic}
-            path="topics/:blockId"
-          />
-          <SourcesContent path="sources/" />
-        </AppView>
-      </Router>
+      <Routes>
+        <Route
+          path="/:accountId/*"
+          element={
+            <AppView>
+              <Routes>
+                <Route
+                  path="pages/:id"
+                  element={
+                    <EditorPageProvider>
+                      <PageContent />
+                    </EditorPageProvider>
+                  }
+                />
+                <Route path="search/:query" element={<SearchContent />} />
+                <Route path="collections/:id" element={<GroupDetail />} />
+                <Route
+                  path="sources/:blockId"
+                  element={<IndexPageContent blockType={BlockType.Source} />}
+                />
+                <Route
+                  path="topics/:blockId"
+                  element={<IndexPageContent blockType={BlockType.Topic} />}
+                />
+                <Route path="sources/*" element={<SourcesContent />} />
+                <Route path="*" element={<NotFoundRedirect />} />
+              </Routes>
+            </AppView>
+          }
+        />
+      </Routes>
       <ModalManager />
     </Providers>
   )
