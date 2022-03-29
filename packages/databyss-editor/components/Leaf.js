@@ -6,7 +6,6 @@ import { urlSafeName } from '@databyss-org/services/lib/util'
 import { EmbedMedia } from './EmbedMedia'
 import { Link } from './Link'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 
 // check for email addresses
 const _emailRegEx = new RegExp(

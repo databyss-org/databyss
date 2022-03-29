@@ -57,7 +57,6 @@ import { getAccountFromLocation } from '../../databyss-services/session/utils'
 import { BlockType } from '../interfaces'
 import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
 import { loadPage } from '../../databyss-services/editorPage'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 
 const ContentEditable = ({
   onDocumentChange,
