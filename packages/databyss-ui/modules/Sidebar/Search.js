@@ -52,7 +52,6 @@ const Search = (others) => {
   }, [searchTerm, value])
 
   useEffect(() => {
-    console.log('[Search] paramsType', paramsType)
     if (paramsType === 'search') {
       setQuery(params)
       setValue(params)

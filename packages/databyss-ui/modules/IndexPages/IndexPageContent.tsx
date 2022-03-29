@@ -47,6 +47,7 @@ import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 import { useUserPreferencesContext } from '../../hooks'
 import IndexPageMenu from '../../components/IndexPage/IndexPageMenu'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -201,7 +202,12 @@ export const IndexPageView = ({
   menuChild,
   ...others
 }: PropsWithChildren<IndexPageViewProps>) => {
-  const { showModal } = useNavigationContext()
+  const {
+    showModal,
+    getTokensFromPath,
+    navigate,
+    location,
+  } = useNavigationContext()
   const titleInputHandlesRef = useRef<IndexPageTitleInputHandles>(null)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const onUpdateBlock = (block: Block) => {
@@ -217,6 +223,24 @@ export const IndexPageView = ({
       },
     })
   }
+  // if no nice URL, make one and redirect
+  useEffect(() => {
+    if (block) {
+      const { nice } = getTokensFromPath()
+      const niceName = urlSafeName(block.text.textValue)
+      if (!nice?.length) {
+        window.requestAnimationFrame(() => {
+          navigate(`${location.pathname}/${niceName}`, { replace: true })
+        })
+      } else if (nice.join('/') !== niceName) {
+        window.requestAnimationFrame(() => {
+          navigate(`${location.pathname.replace(nice.join('/'), niceName)}`, {
+            replace: true,
+          })
+        })
+      }
+    }
+  }, [])
   return (
     <>
       <StickyHeader path={path} contextMenu={<IndexPageMenu block={block} />} />

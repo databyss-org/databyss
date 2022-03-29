@@ -77,15 +77,15 @@ export const NavigationProvider = ({
     params: string
     anchor: string
     author: AuthorName | null
+    nice: string[]
   } => {
     const _path = location.pathname.split('/')
-    let params: string = _path[3]
+    const params = _path[3]
     let anchor = ''
+    const nice = _path.slice(4)
 
-    if (params && params.includes('#')) {
-      const _str = params.split('#')
-      params = _str[0]
-      anchor = _str[1]
+    if (location.hash) {
+      anchor = location.hash.substring(1)
     }
 
     const type: string = _path[2]
@@ -101,7 +101,7 @@ export const NavigationProvider = ({
       }
     }
 
-    return { type, params, anchor, author }
+    return { type, params, anchor, author, nice }
   }
 
   const getSidebarPath = () => {

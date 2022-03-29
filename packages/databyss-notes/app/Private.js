@@ -105,14 +105,14 @@ const Private = () => {
 
   return (
     <Providers>
-      <Routes>
-        <Route
-          path="/:accountId/*"
-          element={
-            <AppView>
+      <AppView>
+        <Routes>
+          <Route
+            path="/:accountId/*"
+            element={
               <Routes>
                 <Route
-                  path="pages/:id"
+                  path="pages/:id/*"
                   element={
                     <EditorPageProvider>
                       <PageContent />
@@ -122,20 +122,21 @@ const Private = () => {
                 <Route path="search/:query" element={<SearchContent />} />
                 <Route path="collections/:id" element={<GroupDetail />} />
                 <Route
-                  path="sources/:blockId"
+                  path="sources/:blockId/*"
                   element={<IndexPageContent blockType={BlockType.Source} />}
                 />
                 <Route
-                  path="topics/:blockId"
+                  path="topics/:blockId/*"
                   element={<IndexPageContent blockType={BlockType.Topic} />}
                 />
                 <Route path="sources/*" element={<SourcesContent />} />
                 <Route path="*" element={<NotFoundRedirect />} />
               </Routes>
-            </AppView>
-          }
-        />
-      </Routes>
+            }
+          />
+          <Route path="*" element={<NotFoundRedirect />} />
+        </Routes>
+      </AppView>
       <ModalManager />
     </Providers>
   )
