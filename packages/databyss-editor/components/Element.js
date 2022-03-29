@@ -22,6 +22,7 @@ import { EmbedMedia } from './EmbedMedia'
 import SuggestLinks from './Suggest/SuggestLinks'
 import { BlockType } from '../interfaces'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 // browser still takes some time to process the spellcheck
 const SPELLCHECK_DEBOUNCE_TIME = 300
 
