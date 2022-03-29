@@ -27,6 +27,7 @@ import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListene
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { useExportContext } from '@databyss-org/services/export'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import LoadingFallback from '../Notify/LoadingFallback'
 import { pxUnits } from '../../theming/views'
 
@@ -143,7 +144,7 @@ const PageMenu = () => {
     const getUrl = window.location
     const baseUrl = `${getUrl.protocol}//${
       getUrl.host
-    }/${getAccountFromLocation()}/pages/${params}`
+    }/${getAccountFromLocation()}/pages/${params}/${urlSafeName(_page.name)}`
     copyToClipboard(baseUrl)
     setShowCopiedCheck(true)
   }
