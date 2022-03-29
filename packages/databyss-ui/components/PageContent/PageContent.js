@@ -9,9 +9,9 @@ import { View } from '@databyss-org/ui/primitives'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useNavigationContext } from '@databyss-org/ui'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 
 export const PageContentView = ({ children, ...others }) => (
   <View pt="small" flexShrink={1} flexGrow={1} overflow="hidden" {...others}>

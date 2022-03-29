@@ -8,6 +8,7 @@ import { useSearchContext } from '@databyss-org/ui/hooks'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorPageContext } from '@databyss-org/services'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
@@ -21,7 +22,6 @@ import { EmbedMedia } from './EmbedMedia'
 import SuggestLinks from './Suggest/SuggestLinks'
 import { BlockType } from '../interfaces'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 // browser still takes some time to process the spellcheck
 const SPELLCHECK_DEBOUNCE_TIME = 300
 

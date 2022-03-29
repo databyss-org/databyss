@@ -22,8 +22,8 @@ import {
   Page,
   Source,
 } from '@databyss-org/services/interfaces'
-import { useDocument } from '../../../databyss-data/pouchdb/hooks/useDocument'
 import { urlSafeName } from '@databyss-org/services/lib/util'
+import { useDocument } from '../../../databyss-data/pouchdb/hooks/useDocument'
 
 interface IndexResultsProps {
   relatedBlockId: string

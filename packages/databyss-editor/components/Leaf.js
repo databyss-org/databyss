@@ -2,10 +2,10 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react'
 import colors from '@databyss-org/ui/theming/colors'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import { EmbedMedia } from './EmbedMedia'
 import { Link } from './Link'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 
 // check for email addresses
 const _emailRegEx = new RegExp(

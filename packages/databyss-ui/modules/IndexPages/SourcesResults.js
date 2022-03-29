@@ -2,8 +2,8 @@ import React from 'react'
 
 import { BaseControl, Text, View } from '@databyss-org/ui/primitives'
 import { CitationView, useNavigationContext } from '@databyss-org/ui/components'
-import { useUserPreferencesContext } from '../../hooks'
 import { urlSafeName } from '@databyss-org/services/lib/util'
+import { useUserPreferencesContext } from '../../hooks'
 
 export const SourcesResults = ({ entries }) => {
   const { getPreferredCitationStyle } = useUserPreferencesContext()

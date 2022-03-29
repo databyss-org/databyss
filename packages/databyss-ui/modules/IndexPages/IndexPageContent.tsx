@@ -43,11 +43,11 @@ import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import EditSvg from '@databyss-org/ui/assets/edit.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 import { useUserPreferencesContext } from '../../hooks'
 import IndexPageMenu from '../../components/IndexPage/IndexPageMenu'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]

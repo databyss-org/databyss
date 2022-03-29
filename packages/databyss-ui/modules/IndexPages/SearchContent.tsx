@@ -16,9 +16,9 @@ import {
 import { useSearchEntries } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { SearchEntriesResultPage } from '@databyss-org/data/pouchdb/entries/lib/searchEntries'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import { IndexPageView } from './IndexPageContent'
 import { IndexResultTags } from './IndexResults'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 
 export const SearchContent = () => {
   const { getAccountFromLocation } = useNavigationContext()
