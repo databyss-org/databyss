@@ -18,6 +18,7 @@ import { BlockType } from '@databyss-org/editor/interfaces'
 import { SearchEntriesResultPage } from '@databyss-org/data/pouchdb/entries/lib/searchEntries'
 import { IndexPageView } from './IndexPageContent'
 import { IndexResultTags } from './IndexResults'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 
 export const SearchContent = () => {
   const { getAccountFromLocation } = useNavigationContext()
@@ -29,7 +30,9 @@ export const SearchContent = () => {
       Object.values(results).map((r, i) => (
         <IndexResultsContainer key={i}>
           <IndexResultTitle
-            href={`/${getAccountFromLocation()}/pages/${r.pageId}`}
+            href={`/${getAccountFromLocation()}/pages/${r.pageId}/${urlSafeName(
+              r.pageName
+            )}`}
             text={r.pageName}
             icon={<PageSvg />}
             dataTestElement="search-result-page"
@@ -68,7 +71,7 @@ export const SearchContent = () => {
                 dataTestElement="search-result-entries"
                 href={`/${getAccountFromLocation()}/pages/${
                   r.pageId
-                }#${_anchor}`}
+                }/${urlSafeName(r.pageName)}#${_anchor}`}
                 text={
                   <>
                     <RawHtml

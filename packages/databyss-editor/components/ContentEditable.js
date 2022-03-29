@@ -56,6 +56,7 @@ import { getAccountFromLocation } from '../../databyss-services/session/utils'
 import { BlockType } from '../interfaces'
 import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
 import { loadPage } from '../../databyss-services/editorPage'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -266,12 +267,16 @@ const ContentEditable = ({
   }, [currentLeaf, editor.selection?.focus.offset])
 
   const onInlineAtomicClick = (inlineData) => {
+    let _nice = ''
+    if (inlineData.name) {
+      _nice = `/${urlSafeName(inlineData.name)}`
+    }
     const _groupId = getAccountFromLocation()
     const _blockPath = {
       [BlockType.Source]: 'sources',
       [BlockType.Topic]: 'topics',
     }[inlineData.type]
-    navigate(`/${_groupId}/${_blockPath}/${inlineData.refId}`)
+    navigate(`/${_groupId}/${_blockPath}/${inlineData.refId}${_nice}`)
   }
 
   return useMemo(() => {

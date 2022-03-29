@@ -227,7 +227,11 @@ export const IndexPageView = ({
   useEffect(() => {
     if (block) {
       const { nice } = getTokensFromPath()
-      const niceName = urlSafeName(block.text.textValue)
+      const niceName = urlSafeName(
+        block.type === BlockType.Source
+          ? (block as Source).name?.textValue ?? block.text.textValue
+          : block.text.textValue
+      )
       if (!nice?.length) {
         window.requestAnimationFrame(() => {
           navigate(`${location.pathname}/${niceName}`, { replace: true })

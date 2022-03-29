@@ -3,6 +3,7 @@ import React from 'react'
 import { BaseControl, Text, View } from '@databyss-org/ui/primitives'
 import { CitationView, useNavigationContext } from '@databyss-org/ui/components'
 import { useUserPreferencesContext } from '../../hooks'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 
 export const SourcesResults = ({ entries }) => {
   const { getPreferredCitationStyle } = useUserPreferencesContext()
@@ -27,7 +28,11 @@ export const SourcesResults = ({ entries }) => {
             key={index}
             mb="small"
             data-test-element="source-results"
-            href={`/${getAccountFromLocation()}/sources/${entry.source._id}`}
+            href={`/${getAccountFromLocation()}/sources/${
+              entry.source._id
+            }/${urlSafeName(
+              entry.source.name?.textValue ?? entry.source.text.textValue
+            )}`}
             py="tiny"
             userSelect="text"
           >

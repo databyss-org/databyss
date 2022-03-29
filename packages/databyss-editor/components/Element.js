@@ -21,6 +21,7 @@ import { EmbedMedia } from './EmbedMedia'
 import SuggestLinks from './Suggest/SuggestLinks'
 import { BlockType } from '../interfaces'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 // browser still takes some time to process the spellcheck
 const SPELLCHECK_DEBOUNCE_TIME = 300
 
@@ -70,7 +71,9 @@ const Element = ({ attributes, children, element, readOnly }) => {
     [BlockType.Source]: 'sources',
     [BlockType.Topic]: 'topics',
   }[block.type]
-  const _href = `/${_groupId}/${_blockPath}/${block._id}`
+  const _href = `/${_groupId}/${_blockPath}/${block._id}/${urlSafeName(
+    block.text.textValue
+  )}`
 
   const onAtomicMouseDown = (e) => {
     e.preventDefault()

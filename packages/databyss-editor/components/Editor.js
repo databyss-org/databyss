@@ -75,8 +75,8 @@ const Editor = ({
     return <Element readOnly={readOnly} {...props} />
   }, [])
 
-  const onInlineClick = useCallback(({ atomicType, id }) => {
-    onInlineAtomicClick({ type: atomicType, refId: id })
+  const onInlineClick = useCallback(({ atomicType, id, name }) => {
+    onInlineAtomicClick({ type: atomicType, refId: id, name })
   }, [])
 
   const renderLeaf = useCallback(
