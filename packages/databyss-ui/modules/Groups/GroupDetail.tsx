@@ -13,6 +13,7 @@ import {
 } from '@databyss-org/ui/primitives'
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import { debounce } from 'lodash'
 import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
@@ -24,7 +25,6 @@ import {
   setGroupAction,
   GroupAction,
 } from '../../../databyss-data/pouchdb/groups/utils'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 
 interface GroupSectionProps extends ViewProps {
   title: string

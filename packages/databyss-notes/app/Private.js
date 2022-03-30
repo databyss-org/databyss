@@ -2,7 +2,8 @@ import React, { useEffect } from 'react'
 import {
   Routes,
   Route,
-} from '@databyss-org/ui/components/Navigation/NavigationProvider'
+  NotFoundRedirect,
+} from '@databyss-org/ui/components/Navigation'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { SearchProvider, UserPreferencesProvider } from '@databyss-org/ui/hooks'
 import { ExportProvider } from '@databyss-org/services/export'
@@ -24,7 +25,6 @@ import {
   SearchContent,
 } from '@databyss-org/ui/modules'
 import { EditorPageProvider } from '@databyss-org/services'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,29 +54,6 @@ const AppView = ({ children }) => (
     </View>
   </View>
 )
-
-const NotFoundRedirect = () => {
-  const { navigate } = useNavigationContext()
-  const getSession = useSessionContext((c) => c && c.getSession)
-
-  const { defaultGroupId, defaultGroupName, defaultPageId } = getSession()
-
-  // if no page found, navigate to default page
-  useEffect(() => {
-    let _groupName = ''
-    if (defaultGroupName) {
-      _groupName = `${urlSafeName(defaultGroupName)}-`
-    }
-    navigate(
-      `/${_groupName}${defaultGroupId.substring(2)}/pages/${defaultPageId}`,
-      {
-        hasAccount: true,
-      }
-    )
-  }, [])
-
-  return null
-}
 
 const Providers = ({ children }) => (
   <QueryClientProvider client={queryClient}>

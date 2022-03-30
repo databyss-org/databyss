@@ -12,6 +12,7 @@ const headerItems = [PagesMetadata]
 
 // component
 const PagesIndex = () => {
+  console.log('[PagesIndex]')
   const pagesRes = usePages()
   if (!pagesRes.isSuccess) {
     return <LoadingFallback queryObserver={pagesRes} />

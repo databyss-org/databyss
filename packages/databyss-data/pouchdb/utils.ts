@@ -211,6 +211,10 @@ export const getGroupSession = async (
           doctype: 'GROUP',
         },
       })
+      if (!_response?.docs) {
+        resolve(null)
+        return
+      }
       if (_response.docs.length > 1) {
         reject(new Error('multiple group docs'))
         return
