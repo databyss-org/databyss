@@ -125,7 +125,7 @@ export const IndexPageTitleInput = ({
     if (evt.key === 'Enter') {
       evt.preventDefault()
       if (isSearch) {
-        navigate(`/${getAccountFromLocation()}/search/${title}`)
+        navigate(`/${getAccountFromLocation(true)}/search/${title}`)
       }
     }
   }

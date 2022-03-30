@@ -24,6 +24,7 @@ import {
   setGroupAction,
   GroupAction,
 } from '../../../databyss-data/pouchdb/groups/utils'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -61,7 +62,10 @@ export const GroupFields = ({
 
     // compose public link
     const getUrl = window.location
-    const baseUrl = `${getUrl.protocol}//${getUrl.host}/${group._id}`
+    const _groupName = group.name ? `${urlSafeName(group.name)}-` : ''
+    const baseUrl = `${getUrl.protocol}//${
+      getUrl.host
+    }/${_groupName}${group._id.substring(2)}`
 
     copyToClipboard(baseUrl)
   }

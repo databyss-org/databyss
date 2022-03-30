@@ -56,7 +56,7 @@ const SidebarList = ({
 }: PropsWithChildren<SidebarListProps>) => {
   const { getAccountFromLocation, navigate } = useNavigationContext()
   const location = useLocation()
-  const account = getAccountFromLocation()
+  const account = getAccountFromLocation(true)
 
   const getHref = (item: SidebarListItemData<any>) => `/${account}${item.route}`
 

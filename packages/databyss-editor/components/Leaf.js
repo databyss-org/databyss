@@ -62,7 +62,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
-  const _groupId = getAccountFromLocation()
+  const _groupId = getAccountFromLocation(true)
 
   if (leaf.inlineTopic) {
     _children = (

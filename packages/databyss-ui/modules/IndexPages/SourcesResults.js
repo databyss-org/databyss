@@ -28,7 +28,7 @@ export const SourcesResults = ({ entries }) => {
             key={index}
             mb="small"
             data-test-element="source-results"
-            href={`/${getAccountFromLocation()}/sources/${
+            href={`/${getAccountFromLocation(true)}/sources/${
               entry.source._id
             }/${urlSafeName(
               entry.source.name?.textValue ?? entry.source.text.textValue

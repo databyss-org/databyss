@@ -144,7 +144,9 @@ const PageMenu = () => {
     const getUrl = window.location
     const baseUrl = `${getUrl.protocol}//${
       getUrl.host
-    }/${getAccountFromLocation()}/pages/${params}/${urlSafeName(_page.name)}`
+    }/${getAccountFromLocation(true)}/pages/${params}/${urlSafeName(
+      _page.name
+    )}`
     copyToClipboard(baseUrl)
     setShowCopiedCheck(true)
   }

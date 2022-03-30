@@ -24,6 +24,7 @@ import {
   SearchContent,
 } from '@databyss-org/ui/modules'
 import { EditorPageProvider } from '@databyss-org/services'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,13 +59,20 @@ const NotFoundRedirect = () => {
   const { navigate } = useNavigationContext()
   const getSession = useSessionContext((c) => c && c.getSession)
 
-  const { defaultGroupId, defaultPageId } = getSession()
+  const { defaultGroupId, defaultGroupName, defaultPageId } = getSession()
 
   // if no page found, navigate to default page
   useEffect(() => {
-    navigate(`/${defaultGroupId}/pages/${defaultPageId}`, {
-      hasAccount: true,
-    })
+    let _groupName = ''
+    if (defaultGroupName) {
+      _groupName = `${urlSafeName(defaultGroupName)}-`
+    }
+    navigate(
+      `/${_groupName}${defaultGroupId.substring(2)}/pages/${defaultPageId}`,
+      {
+        hasAccount: true,
+      }
+    )
   }, [])
 
   return null

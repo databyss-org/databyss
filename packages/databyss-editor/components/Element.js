@@ -66,7 +66,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
     ? editorContext.state.blocks[blockIndex - 1]
     : {}
 
-  const _groupId = getAccountFromLocation()
+  const _groupId = getAccountFromLocation(true)
   const _blockPath = {
     [BlockType.Source]: 'sources',
     [BlockType.Topic]: 'topics',

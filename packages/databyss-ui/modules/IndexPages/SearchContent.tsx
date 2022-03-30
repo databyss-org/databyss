@@ -30,9 +30,9 @@ export const SearchContent = () => {
       Object.values(results).map((r, i) => (
         <IndexResultsContainer key={i}>
           <IndexResultTitle
-            href={`/${getAccountFromLocation()}/pages/${r.pageId}/${urlSafeName(
-              r.pageName
-            )}`}
+            href={`/${getAccountFromLocation(true)}/pages/${
+              r.pageId
+            }/${urlSafeName(r.pageName)}`}
             text={r.pageName}
             icon={<PageSvg />}
             dataTestElement="search-result-page"
@@ -69,7 +69,7 @@ export const SearchContent = () => {
               <IndexResultDetails
                 key={k}
                 dataTestElement="search-result-entries"
-                href={`/${getAccountFromLocation()}/pages/${
+                href={`/${getAccountFromLocation(true)}/pages/${
                   r.pageId
                 }/${urlSafeName(r.pageName)}#${_anchor}`}
                 text={

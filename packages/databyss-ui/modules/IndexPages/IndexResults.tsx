@@ -81,7 +81,7 @@ export const IndexResults = ({
       <IndexResultsContainer key={i}>
         <IndexResultTitle
           key={`pageHeader-${i}`}
-          href={`/${getAccountFromLocation()}/pages/${r}/${urlSafeName(
+          href={`/${getAccountFromLocation(true)}/pages/${r}/${urlSafeName(
             pages[r].name
           )}`}
           icon={<PageSvg />}
@@ -125,9 +125,9 @@ export const IndexResults = ({
             return (
               <IndexResultDetails
                 key={k}
-                href={`/${getAccountFromLocation()}/pages/${r}/${urlSafeName(
-                  pages[r].name
-                )}#${_anchor}`}
+                href={`/${getAccountFromLocation(
+                  true
+                )}/pages/${r}/${urlSafeName(pages[r].name)}#${_anchor}`}
                 text={
                   <>
                     <RawHtml

@@ -167,6 +167,7 @@ const SessionProvider = ({
             session: {
               defaultPageId: _publicSession.defaultPageId,
               defaultGroupId: _publicSession._id,
+              defaultGroupName: _publicSession.name,
               publicAccount: {
                 _id: _publicSession._id,
               },

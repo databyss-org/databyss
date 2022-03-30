@@ -57,14 +57,21 @@ export const NavigationProvider = ({
   const hideModal = () => dispatch(actions.hideModal())
   const navigate = (url, options) => {
     const accountId = getAccountFromLocation()
+    const accountIdWithName = getAccountFromLocation(true)
     const hasAccount =
-      options?.hasAccount || (accountId && url.match(`/${accountId}/`))
+      options?.hasAccount ||
+      (accountIdWithName && url.match(`/${accountIdWithName}/`))
     const replace = !!options?.replace
     if (hasAccount) {
       navigateRouter(url, { replace })
       return
     }
-    navigateRouter(accountId ? `/${accountId}${url}` : url, { replace })
+    navigateRouter(
+      accountId
+        ? `/${accountIdWithName}${url.replace(`/${accountId}/`, '/')}`
+        : url,
+      { replace }
+    )
   }
 
   const navigateSidebar = (options) =>

@@ -244,9 +244,8 @@ export const isPagePublic = async () => {
 }
 
 export const isGroupPublic = async () => {
-  const path = window.location.pathname.split('/')
   // get the page id
-  const groupId = path?.[1]
+  const groupId = getAccountFromLocation()
   if (groupId) {
     try {
       await request(`${REMOTE_CLOUDANT_URL}/${groupId}`)
