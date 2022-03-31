@@ -40,10 +40,9 @@ describe('editor clipboard', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
+  afterEach(async (done) => {
     await tryQuit(driver)
-    await sleep(100)
+    done()
   })
 
   it('should copy a whole block and paste it at the end of the same block', async () => {

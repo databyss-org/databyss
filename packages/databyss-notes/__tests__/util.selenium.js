@@ -391,7 +391,9 @@ export const login = async (driver, email) => {
 
 export const tryQuit = async (driver) => {
   try {
+    await sleep(100)
     await driver.quit()
+    await sleep(100)
   } catch (ex) {
     console.warn('[webdriver] driver.quit failed', ex)
   }

@@ -39,10 +39,9 @@ describe('editor clipboard', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
+  afterEach(async (done) => {
     await tryQuit(driver)
-    await sleep(100)
+    done()
   })
 
   it('should copy two entry fragments and paste them within an entry', async () => {

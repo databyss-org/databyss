@@ -28,10 +28,9 @@ describe('new block menu actions', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
+  afterEach(async (done) => {
     await tryQuit(driver)
-    await sleep(100)
+    done()
   })
 
   it('should toggle a new atomics', async () => {

@@ -31,10 +31,9 @@ describe('EditSourceForm', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
+  afterEach(async (done) => {
     await tryQuit(driver)
-    await sleep(100)
+    done()
   })
 
   it('should be able to change source title', async () => {

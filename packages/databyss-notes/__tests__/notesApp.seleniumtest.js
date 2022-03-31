@@ -30,10 +30,9 @@ describe('notes app', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
+  afterEach(async (done) => {
     await tryQuit(driver)
-    await sleep(100)
+    done()
   })
 
   it('should switch page names and verify atomics appear on the sidebar', async () => {

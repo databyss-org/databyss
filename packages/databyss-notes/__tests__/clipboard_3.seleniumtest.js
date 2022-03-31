@@ -23,6 +23,7 @@ import {
   login,
   tryQuit,
 } from './util.selenium'
+import { done } from 'fetch-mock'
 
 let driver
 let editor
@@ -37,10 +38,9 @@ describe('editor clipboard', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
+  afterEach(async (done) => {
     await tryQuit(driver)
-    await sleep(100)
+    done()
   })
 
   it('should have a multi-block selection with atomics and paste the whole atomic blocks', async () => {

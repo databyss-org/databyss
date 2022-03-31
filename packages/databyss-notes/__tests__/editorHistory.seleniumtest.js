@@ -37,10 +37,9 @@ describe('editor history', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
+  afterEach(async (done) => {
     await tryQuit(driver)
-    await sleep(100)
+    done()
   })
 
   it('should undo a multiblock entry with an atomic', async () => {
