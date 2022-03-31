@@ -69,5 +69,12 @@ export const startSession = process.env.LOCAL_ENV
 
       const session = await driver.getSession()
       driver.sessionID = session.id_
+      driver.quit = async () => {
+        try {
+          await driver.quit()
+        } catch (ex) {
+          console.warn('[webdriver] driver.quit failed', ex)
+        }
+      }
       return driver
     }
