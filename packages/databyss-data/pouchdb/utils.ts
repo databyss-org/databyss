@@ -8,6 +8,7 @@ import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
 import { getGroupActionQ } from './groups/utils'
+import { CouchDb } from '../couchdb-client/couchdb'
 
 const INTERVAL_TIME = 1000
 
@@ -15,12 +16,18 @@ export const upQdict: upsertQueueRef = {
   current: [],
 }
 
-const dbBusyDispatchRef: { current: Function | null } = {
+const sessionDispatchRef: { current: Function | null } = {
   current: null,
 }
 
-export const setDbBusyDispatch = (dispatch: Function) => {
-  dbBusyDispatchRef.current = dispatch
+let sessionStateRef: { current: any }
+
+export const setDbBusyDispatch = (
+  dispatch: Function,
+  stateRef: { current: any }
+) => {
+  sessionDispatchRef.current = dispatch
+  sessionStateRef = stateRef
 }
 
 /**
@@ -31,17 +38,25 @@ export const setDbBusyDispatch = (dispatch: Function) => {
  */
 
 export const setDbBusy = (isBusy: boolean, writesPending?: number) => {
-  if (!dbBusyDispatchRef.current) {
+  if (!sessionDispatchRef.current) {
     return
   }
   const _writesPending =
+    writesPending ??
     upQdict.current.length + Object.keys(getGroupActionQ()).length
   // only set busy to false if no writes are left in queue
-  dbBusyDispatchRef.current({
+  const _isBusy = !!(_writesPending || writesPending) || isBusy
+  if (
+    _isBusy === sessionStateRef.current?.isDbBusy &&
+    _writesPending === sessionStateRef.current?.writesPending
+  ) {
+    return
+  }
+  sessionDispatchRef.current({
     type: 'DB_BUSY',
     payload: {
-      isBusy: !!(_writesPending || writesPending) || isBusy,
-      writesPending: writesPending || _writesPending,
+      isBusy: _isBusy,
+      writesPending: _writesPending,
     },
   })
 }
@@ -403,19 +418,26 @@ export class QueueProcessor extends EventEmitter {
   }
 
   process = async () => {
-    if (!this.isProcessing) {
-      if (upQdict.current.length) {
-        setDbBusy(true)
+    if (dbRef.current instanceof CouchDb) {
+      // hold items in Q if in COUCH mode
+      setDbBusy(true)
+      return
+    }
+    if (this.isProcessing) {
+      // already processing, bail now
+      return
+    }
+    if (upQdict.current.length) {
+      setDbBusy(true)
 
-        // do a coallece
-        this.isProcessing = true
-        const _upQdict = coallesceQ(upQdict.current)
-        upQdict.current = []
-        await bulkUpsert(_upQdict)
-        this.isProcessing = false
+      // do a coallece
+      this.isProcessing = true
+      const _upQdict = coallesceQ(upQdict.current)
+      upQdict.current = []
+      await bulkUpsert(_upQdict)
+      this.isProcessing = false
 
-        setDbBusy(false)
-      }
+      setDbBusy(false)
     } else {
       // db is not pending any writes
       setDbBusy(false)

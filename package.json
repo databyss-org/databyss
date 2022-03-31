@@ -26,6 +26,7 @@
     "start:pouchdb": "pouchdb-server --port 5001 -d ../pouchdb_data -c ./config/pouchdbServer.json",
     "start:api": "PORT=5000 NODE_ENV=production NPM_DEPLOY_TARGET=API_SERVER yarn start",
     "start:notes": "NPM_BUILD_TARGET=NOTES_APP node scripts/start.js",
+    "start:notes:couch": "NPM_BUILD_TARGET=NOTES_APP REACT_APP_COUCH_DIRECT=true node scripts/start.js",
     "start:notes:test": "NPM_BUILD_TARGET=NOTES_APP NODE_ENV=test node scripts/start.js",
     "start:homepage": "NPM_BUILD_TARGET=HOMEPAGE node scripts/start.js",
     "start:mobile": "PORT=3001 NPM_BUILD_TARGET=NOTES_MOBILE REACT_APP_FORCE_MOBILE=true node scripts/start.js",

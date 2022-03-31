@@ -50,7 +50,7 @@ const SessionProvider = ({
   email,
   unauthorizedChildren,
 }) => {
-  const [state, dispatch] = useReducer(reducer, initialState, {
+  const [state, dispatch, stateRef] = useReducer(reducer, initialState, {
     name: 'SessionProvider',
   })
   const { session: actions } = useServiceContext()
@@ -139,6 +139,7 @@ const SessionProvider = ({
           groupId,
           // TODO: how to curry dispatch
           dispatch,
+          stateRef,
         })
 
         dispatch({

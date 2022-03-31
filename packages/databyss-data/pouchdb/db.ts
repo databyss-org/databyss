@@ -52,9 +52,14 @@ export const getPouchDb = (groupId: string) => {
     process.env.FORCE_MOBILE?.toLowerCase() === 'true' ||
     process.env.COUCH_DIRECT?.toLowerCase() === 'true'
   ) {
+    console.log('[getPouchDb] using COUCH mode')
     if (!couchDbRef.current) {
       connect(groupId)
     }
+    console.log(
+      '[getPouchDb] DB instance is CouchDb?',
+      couchDbRef.current instanceof CouchDb
+    )
     const _unknown = couchDbRef.current as unknown
     return _unknown as PouchDB.Database
   }
@@ -207,8 +212,11 @@ export const replicateDbFromRemote = ({
         password: _cred.dbPassword,
       },
     }
-    // console.log('[replicateDbFromRemote]', opts)
     dbRef.current = getPouchDb(groupId)
+    if (dbRef.current instanceof CouchDb) {
+      resolve(true)
+      return
+    }
 
     checkNetwork().then((isOnline) => {
       if (isOnline) {
@@ -230,16 +238,18 @@ export const replicateDbFromRemote = ({
 export const syncPouchDb = ({
   groupId,
   dispatch,
+  stateRef,
 }: {
   groupId: string
   dispatch: Function
+  stateRef: any
 }) => {
+  setDbBusyDispatch(dispatch, stateRef)
   if (dbRef.current instanceof CouchDb) {
     return
   }
   console.log('Start PouchDB <=> Cloudant sync')
   // pass  the  session provider dispatch to the patch queue
-  setDbBusyDispatch(dispatch)
 
   // get credentials from local storage
   const _cred: any = getDbCredentialsFromLocal(groupId)
