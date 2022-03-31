@@ -181,8 +181,8 @@ describe('editor clipboard', () => {
     )
 
     assert.deepEqual(
-      sanitizeEditorChildren(actual.children),
-      sanitizeEditorChildren(expected.children)
+      sanitizeEditorChildren(actual.children, { pruneSelection: true }),
+      sanitizeEditorChildren(expected.children, { pruneSelection: true })
     )
 
     assert.deepEqual(actual.selection, expected.selection)
