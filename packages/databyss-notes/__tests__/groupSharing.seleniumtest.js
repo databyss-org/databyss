@@ -24,7 +24,7 @@ import { cleanUrl } from './util'
 let driver
 let actions
 
-export async function selectLinkInFirstBlock(actions) {
+export async function selectLinkInFirstBlock(actions()) {
   await upKey(actions())
   await upKey(actions())
   await upKey(actions())
@@ -67,10 +67,7 @@ describe('group sharings', () => {
     await tagButtonClick('data-test-element="new-page-button"', driver)
     await tagButtonClick('data-test-element="page-header"', driver)
 
-    await sendKeys(
-      actions(),
-      'B - This page will remain and get updated atomic'
-    )
+    await sendKeys(actions(), 'B - This page will remain and get updated atomic')
     await enterKey(actions())
     await sendKeys(actions(), '#this topic will be duplicated')
     await enterKey(actions())
@@ -126,7 +123,7 @@ describe('group sharings', () => {
     await paste(actions())
 
     // get public collection link
-    await selectLinkInFirstBlock(actions)
+    await selectLinkInFirstBlock(actions())
 
     const publicCollectionUrl = cleanUrl(
       await driver.executeScript('return window.getSelection().toString()')
