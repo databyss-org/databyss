@@ -34,7 +34,7 @@ describe('connected editor', () => {
 
   afterEach(async () => {
     await sleep(100)
-    await driver.quit()
+    await driver.tryQuit()
     await sleep(100)
   })
 

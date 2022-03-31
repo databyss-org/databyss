@@ -28,7 +28,7 @@ describe('editor sticky header', () => {
 
   afterEach(async (done) => {
     await logout(driver)
-    await driver.quit()
+    await driver.tryQuit()
     done()
   })
 

@@ -31,7 +31,7 @@ describe('atomic closure', () => {
 
   afterEach(async () => {
     await sleep(100)
-    await driver.quit()
+    await driver.tryQuit()
     driver = null
     await sleep(100)
   })
