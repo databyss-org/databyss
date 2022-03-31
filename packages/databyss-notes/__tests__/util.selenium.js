@@ -16,7 +16,7 @@ export const parse = (string) => {
 const LOCAL_URL = 'http://localhost:3000'
 const PROXY_URL = 'http://0.0.0.0:3000'
 
-const waitUntilTime = 30000
+const waitUntilTime = 60000
 
 const SLEEP_TIME = 300
 const MAX_RETRIES = 3
@@ -32,14 +32,14 @@ export const getEditor = async (driver) => {
   const el = await driver.wait(
     until.elementLocated(By.tagName('[contenteditable="true"]')),
     waitUntilTime,
-    'Timed out after 30 seconds',
+    `Timed out after ${waitUntilTime / 1000} seconds`,
     500
   )
 
   const _driver = await driver.wait(
     until.elementIsVisible(el),
     waitUntilTime,
-    'Timed out after 30 seconds',
+    `Timed out after ${waitUntilTime / 1000} seconds`,
     500
   )
   return _driver
@@ -50,14 +50,14 @@ export const getSharedPage = async (driver) => {
   const el = await driver.wait(
     until.elementLocated(By.tagName('[data-test-element="page-header"]')),
     waitUntilTime,
-    'Timed out after 30 seconds',
+    `Timed out after ${waitUntilTime / 1000} seconds`,
     500
   )
 
   const _driver = await driver.wait(
     until.elementIsVisible(el),
     waitUntilTime,
-    'Timed out after 30 seconds',
+    `Timed out after ${waitUntilTime / 1000} seconds`,
     500
   )
   return _driver
@@ -70,7 +70,7 @@ export const getElementsByTag = async (driver, tag) => {
     el = await driver.wait(
       until.elementsLocated(By.tagName(tag)),
       waitUntilTime,
-      'Timed out after 30 seconds',
+      `Timed out after ${waitUntilTime / 1000} seconds`,
       500
     )
   } catch (ex) {
@@ -88,7 +88,7 @@ export const getElementByTag = async (driver, tag) => {
   const el = await driver.wait(
     until.elementLocated(By.tagName(tag)),
     waitUntilTime,
-    'Timed out after 30 seconds',
+    `Timed out after ${waitUntilTime / 1000} seconds`,
     500
   )
 
@@ -174,14 +174,14 @@ export const getElementById = async (driver, id) => {
   const el = await driver.wait(
     until.elementLocated(By.id(id)),
     waitUntilTime,
-    'Timed out after 30 seconds',
+    `Timed out after ${waitUntilTime / 1000} seconds`,
     500
   )
 
   const _driver = await driver.wait(
     until.elementIsVisible(el),
     waitUntilTime,
-    'Timed out after 30 seconds',
+    `Timed out after ${waitUntilTime / 1000} seconds`,
     500
   )
   return _driver
@@ -394,7 +394,7 @@ export const tryQuit = async (driver) => {
     await sleep(100)
     await driver.quit()
     await sleep(100)
-  } catch (ex) {
-    console.warn('[webdriver] driver.quit failed', ex)
+  } catch (_) {
+    // ignore
   }
 }
