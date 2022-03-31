@@ -12,6 +12,7 @@ import {
   DropdownListItem,
   DropdownContainer,
 } from '@databyss-org/ui/components'
+import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 
 interface GroupMenuProps extends ViewProps {
   groupId: string
@@ -19,6 +20,7 @@ interface GroupMenuProps extends ViewProps {
 
 const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
   const { navigate } = useNavigationContext()
+  const groupsRes = useGroups()
 
   const [showMenu, setShowMenu] = useState(false)
 
@@ -34,9 +36,20 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
     // first remove the group from all associated documents
 
     await deleteCollection(groupId)
+    setShowMenu(false)
+    // navigate to next named group, if there is one
+    const _namedGroups = Object.values(groupsRes.data!).filter(
+      (group) => !!group.name
+    )
+    for (const group of _namedGroups) {
+      if (group._id !== groupId) {
+        navigate(`/collections/${group._id}`)
+        return
+      }
+    }
     navigate(`/`, { hasAccount: true })
     // window does not refresh on navigation change
-    setTimeout(() => window.location.reload(), 50)
+    // setTimeout(() => window.location.reload(), 50)
   }
 
   const DropdownList = () => (
