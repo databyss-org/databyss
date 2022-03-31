@@ -53,8 +53,8 @@ const Search = (others) => {
 
   useEffect(() => {
     if (paramsType === 'search') {
-      setQuery(params)
-      setValue(params)
+      setQuery(decodeURIComponent(params))
+      setValue(decodeURIComponent(params))
     }
   }, [params])
 
