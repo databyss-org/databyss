@@ -16,6 +16,7 @@ import {
   login,
   tagButtonListClick,
   downKey,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -32,7 +33,7 @@ describe('EditSourceForm', () => {
 
   afterEach(async () => {
     await sleep(100)
-    await driver.tryQuit()
+    await tryQuit(driver)
     await sleep(100)
   })
 

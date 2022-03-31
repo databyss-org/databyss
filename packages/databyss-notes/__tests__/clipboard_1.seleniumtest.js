@@ -25,6 +25,7 @@ import {
   login,
   isAppInNotesSaved,
   upShiftKey,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -41,7 +42,7 @@ describe('editor clipboard', () => {
 
   afterEach(async () => {
     await sleep(100)
-    await driver.tryQuit()
+    await tryQuit(driver)
     await sleep(100)
   })
 

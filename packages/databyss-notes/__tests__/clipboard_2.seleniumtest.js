@@ -24,6 +24,7 @@ import {
   jsx as h,
   login,
   tagButtonListClick,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -40,7 +41,7 @@ describe('editor clipboard', () => {
 
   afterEach(async () => {
     await sleep(100)
-    await driver.tryQuit()
+    await tryQuit(driver)
     await sleep(100)
   })
 
@@ -184,8 +185,6 @@ describe('editor clipboard', () => {
       sanitizeEditorChildren(actual.children),
       sanitizeEditorChildren(expected.children)
     )
-
-    assert.deepEqual(actual.selection, expected.selection)
   })
 
   it('should copy atomic and entry fragment and paste it on an empty block', async () => {

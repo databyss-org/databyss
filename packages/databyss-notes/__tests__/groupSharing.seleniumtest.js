@@ -18,6 +18,7 @@ import {
   downShiftKey,
   backspaceKey,
   login,
+  tryQuit,
 } from './util.selenium'
 import { cleanUrl } from './util'
 
@@ -47,7 +48,7 @@ describe('group sharings', () => {
 
   afterEach(async () => {
     await sleep(100)
-    await driver.tryQuit()
+    await tryQuit(driver)
     await sleep(100)
   })
 

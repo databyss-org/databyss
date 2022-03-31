@@ -15,6 +15,7 @@ import {
   jsx as h,
   login,
   isAppInNotesSaved,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -31,7 +32,7 @@ describe('atomic closure', () => {
 
   afterEach(async () => {
     await sleep(100)
-    await driver.tryQuit()
+    await tryQuit(driver)
     driver = null
     await sleep(100)
   })

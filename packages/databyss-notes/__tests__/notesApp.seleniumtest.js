@@ -15,6 +15,7 @@ import {
   tagButtonListClick,
   getEditorElements,
   login,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -31,7 +32,7 @@ describe('notes app', () => {
 
   afterEach(async () => {
     await sleep(100)
-    await driver.tryQuit()
+    await tryQuit(driver)
     await sleep(100)
   })
 

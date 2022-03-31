@@ -19,6 +19,7 @@ import {
   tagButtonListClick,
   tabKey,
   login,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -34,7 +35,7 @@ describe('block indexing', () => {
 
   afterEach(async (done) => {
     await logout(driver)
-    await driver.tryQuit()
+    await tryQuit(driver)
     done()
   })
 

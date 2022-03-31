@@ -12,6 +12,7 @@ import {
   logout,
   tagButtonClick,
   login,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -28,7 +29,7 @@ describe('editor sticky header', () => {
 
   afterEach(async (done) => {
     await logout(driver)
-    await driver.tryQuit()
+    await tryQuit(driver)
     done()
   })
 

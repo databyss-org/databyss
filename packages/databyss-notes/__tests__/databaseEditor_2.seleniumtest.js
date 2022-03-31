@@ -18,6 +18,7 @@ import {
   isAppInNotesSaved,
   jsx as h,
   login,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -34,7 +35,7 @@ describe('connected editor', () => {
 
   afterEach(async () => {
     await sleep(100)
-    await driver.tryQuit()
+    await tryQuit(driver)
     await sleep(100)
   })
 

@@ -388,3 +388,11 @@ export const login = async (driver, email) => {
 
   return _email
 }
+
+export const tryQuit = async (driver) => {
+  try {
+    await driver.quit()
+  } catch (ex) {
+    console.warn('[webdriver] driver.quit failed', ex)
+  }
+}

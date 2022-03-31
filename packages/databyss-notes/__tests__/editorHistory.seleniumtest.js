@@ -21,6 +21,7 @@ import {
   jsx as h,
   login,
   downKey,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -38,7 +39,7 @@ describe('editor history', () => {
 
   afterEach(async () => {
     await sleep(100)
-    await driver.tryQuit()
+    await tryQuit(driver)
     await sleep(100)
   })
 

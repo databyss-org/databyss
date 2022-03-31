@@ -15,6 +15,7 @@ import {
   tagButtonClick,
   tagButtonListClick,
   login,
+  tryQuit,
 } from './util.selenium'
 
 import { selectLinkInFirstBlock } from './groupSharing.seleniumtest'
@@ -34,7 +35,7 @@ describe('page sharing', () => {
 
   afterEach(async () => {
     await sleep(100)
-    await driver.tryQuit()
+    await tryQuit(driver)
     await sleep(100)
   })
 

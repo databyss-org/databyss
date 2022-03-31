@@ -19,6 +19,7 @@ import {
   tagButtonListClick,
   upKey,
   login,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -35,7 +36,7 @@ describe('inline atomic', () => {
   afterEach(async () => {
     await sleep(100)
     await logout(driver)
-    await driver.tryQuit()
+    await tryQuit(driver)
     await sleep(100)
   })
 

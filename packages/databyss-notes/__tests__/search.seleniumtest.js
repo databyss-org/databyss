@@ -11,6 +11,7 @@ import {
   sleep,
   tagButtonClick,
   login,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -26,7 +27,7 @@ describe('entry search', () => {
 
   afterEach(async () => {
     await sleep(100)
-    await driver.tryQuit()
+    await tryQuit(driver)
     await sleep(100)
   })
 
