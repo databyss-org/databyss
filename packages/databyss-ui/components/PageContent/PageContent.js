@@ -12,6 +12,7 @@ import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 
 export const PageContentView = ({ children, ...others }) => (
   <View pt="small" flexShrink={1} flexGrow={1} overflow="hidden" {...others}>
@@ -27,6 +28,7 @@ export const PageContainer = React.memo(
     const location = useLocation()
     const { navigate, getTokensFromPath } = useNavigationContext()
     const editorRef = useRef()
+    const pagesRes = usePages()
     const { anchor, nice } = getTokensFromPath()
 
     // index is used to set selection in slate
@@ -44,7 +46,7 @@ export const PageContainer = React.memo(
     }, [])
 
     useEffect(() => {
-      const niceName = urlSafeName(page.name)
+      const niceName = urlSafeName(pagesRes.data?.[page._id]?.name)
       let redirectTo = location.pathname
 
       if (!nice?.length) {
@@ -69,16 +71,18 @@ export const PageContainer = React.memo(
           if (_ref) {
             window.requestAnimationFrame(() => {
               scrollIntoView(_ref)
-              navigate(redirectTo, { replace: true })
+              // navigate(redirectTo, { replace: true })
+              window.history.replaceState('', '', redirectTo)
             })
           }
         }
       }
       // if no nice URL, make one and redirect
       if (redirectTo !== location.pathname) {
-        navigate(redirectTo, { replace: true })
+        // navigate(redirectTo, { replace: true })
+        window.history.replaceState('', '', redirectTo)
       }
-    }, [])
+    }, [pagesRes.data?.[page._id]?.name])
 
     return (
       <>
