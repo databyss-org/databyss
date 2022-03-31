@@ -130,7 +130,7 @@ export const getDocument = async <T extends Document>(
 ): Promise<T | null> => {
   try {
     return await dbRef.current!.get(id)
-  } catch (err) {
+  } catch (err: any) {
     if (err.name === 'not_found') {
       return null
     }

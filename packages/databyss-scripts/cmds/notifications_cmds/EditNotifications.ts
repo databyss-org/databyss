@@ -64,7 +64,7 @@ export class EditNotifications extends ServerProcess {
     if (!(this.action === EditAction.Remove)) {
       try {
         _notifications = JSON.parse(fs.readFileSync(this.args.file).toString())
-      } catch (err) {
+      } catch (err: any) {
         if (err.code === 'ENOENT') {
           throw new Error('Notifications file not found')
         } else {

@@ -351,19 +351,19 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   if (
     !blocksRes.isSuccess ||
     !pagesRes.isSuccess ||
-    !blocksRes.data?.[blockId]
+    !blocksRes.data?.[blockId!]
   ) {
     return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
   }
 
   return (
     <IndexPageView
-      path={getPathFromBlock(blocksRes.data![blockId])}
-      block={blocksRes.data![blockId]}
+      path={getPathFromBlock(blocksRes.data![blockId!])}
+      block={blocksRes.data![blockId!]}
       key={blockId}
     >
       <IndexResults
-        relatedBlockId={blockId}
+        relatedBlockId={blockId!}
         key={`${blockType}_${blockId}`}
         blocks={blocksRes.data!}
         pages={pagesRes.data!}

@@ -145,7 +145,7 @@ export const GroupDetail = () => {
 
   const pages = pagesRes?.data
 
-  const group = groupsRes.data?.[id]
+  const group = groupsRes.data?.[id!]
 
   if (!groupsRes.isSuccess || !group) {
     return <LoadingFallback queryObserver={groupsRes} />

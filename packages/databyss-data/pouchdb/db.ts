@@ -47,12 +47,6 @@ interface DbRef {
   readOnly: boolean
 }
 
-declare global {
-  interface IDBFactory {
-    databases: () => Promise<{ name: string; version: number }[]>
-  }
-}
-
 export const getPouchDb = (groupId: string) => {
   if (
     process.env.FORCE_MOBILE?.toLowerCase() === 'true' ||

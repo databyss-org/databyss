@@ -92,33 +92,28 @@ const Private = () => {
     <Providers>
       <AppView>
         <Routes>
-          <Route
-            path="/:accountId/*"
-            element={
-              <Routes>
-                <Route
-                  path="pages/:id/*"
-                  element={
-                    <EditorPageProvider>
-                      <PageContent />
-                    </EditorPageProvider>
-                  }
-                />
-                <Route path="search/:query" element={<SearchContent />} />
-                <Route path="collections/:id" element={<GroupDetail />} />
-                <Route
-                  path="sources/:blockId/*"
-                  element={<IndexPageContent blockType={BlockType.Source} />}
-                />
-                <Route
-                  path="topics/:blockId/*"
-                  element={<IndexPageContent blockType={BlockType.Topic} />}
-                />
-                <Route path="sources/*" element={<SourcesContent />} />
-                <Route path="*" element={<NotFoundRedirect />} />
-              </Routes>
-            }
-          />
+          <Route path="/:accountId/*">
+            <Route
+              path="pages/:id/*"
+              element={
+                <EditorPageProvider>
+                  <PageContent />
+                </EditorPageProvider>
+              }
+            />
+            <Route path="search/:query" element={<SearchContent />} />
+            <Route path="collections/:id" element={<GroupDetail />} />
+            <Route
+              path="sources/:blockId/*"
+              element={<IndexPageContent blockType={BlockType.Source} />}
+            />
+            <Route
+              path="topics/:blockId/*"
+              element={<IndexPageContent blockType={BlockType.Topic} />}
+            />
+            <Route path="sources/*" element={<SourcesContent />} />
+            <Route path="*" element={<NotFoundRedirect />} />
+          </Route>
           <Route path="*" element={<NotFoundRedirect />} />
         </Routes>
       </AppView>

@@ -12,7 +12,7 @@ export interface UseDocumentOptions {
   initialData?: any
 }
 
-const subscriptionDict: { [_id: string]: PouchDB.Core.Changes<any> } = {}
+const subscriptionDict: { [_id: string]: boolean } = {}
 
 export const useDocument = <T extends Document>(
   _id: string,
@@ -47,7 +47,8 @@ export const useDocument = <T extends Document>(
     if (subscriptionDict[_id]) {
       return
     }
-    subscriptionDict[_id] = dbRef!.current
+    subscriptionDict[_id] = true
+    dbRef!.current
       ?.changes({
         since: 'now',
         live: true,

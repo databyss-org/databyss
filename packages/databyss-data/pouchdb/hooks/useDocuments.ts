@@ -7,7 +7,7 @@ import { dbRef } from '../db'
 import { CouchDb } from '../../couchdb-client/couchdb'
 import { DocumentArrayToDict } from './utils'
 
-const subscriptionDict: { [selector: string]: PouchDB.Core.Changes<any> } = {}
+const subscriptionDict: { [selector: string]: boolean } = {}
 
 export const useDocuments = <T extends Document>(
   selectorOrIdList: PouchDB.Find.Selector | string[],
@@ -62,7 +62,8 @@ export const useDocuments = <T extends Document>(
     if (subscriptionDict[queryKey]) {
       return
     }
-    subscriptionDict[queryKey] = dbRef.current
+    subscriptionDict[queryKey] = true
+    dbRef.current
       ?.changes({
         since: 'now',
         live: true,
