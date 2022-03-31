@@ -28,7 +28,7 @@ describe('block indexing', () => {
   beforeEach(async (done) => {
     driver = await startSession({ platformName: WIN, browserName: CHROME })
     await login(driver)
-    actions = driver.actions()
+    actions = driver.actions
     done()
   })
 
@@ -46,18 +46,18 @@ describe('block indexing', () => {
     await tagButtonClick('data-test-element="page-header"', driver)
 
     await sleep(500)
-    await sendKeys(actions, 'this is the first page title')
-    await enterKey(actions)
+    await sendKeys(actions(), 'this is the first page title')
+    await enterKey(actions())
 
-    await sendKeys(actions, '@this is an opening source')
-    await enterKey(actions)
+    await sendKeys(actions(), '@this is an opening source')
+    await enterKey(actions())
     await isAppInNotesSaved(driver)
 
-    await upKey(actions)
+    await upKey(actions())
     // edits the author
-    await rightKey(actions)
-    await rightKey(actions)
-    await enterKey(actions)
+    await rightKey(actions())
+    await rightKey(actions())
+    await enterKey(actions())
     await sleep(1000)
 
     await tagButtonClick('data-test-button="open-source-modal"', driver)
@@ -65,27 +65,27 @@ describe('block indexing', () => {
 
     await tagButtonClick('data-test-path="text"', driver)
 
-    await rightKey(actions)
-    await tabKey(actions)
-    await tabKey(actions)
-    await tabKey(actions)
-    await tabKey(actions)
-    await tabKey(actions)
-    await tabKey(actions)
-    await tabKey(actions)
-    await tabKey(actions)
-    await tabKey(actions)
+    await rightKey(actions())
+    await tabKey(actions())
+    await tabKey(actions())
+    await tabKey(actions())
+    await tabKey(actions())
+    await tabKey(actions())
+    await tabKey(actions())
+    await tabKey(actions())
+    await tabKey(actions())
+    await tabKey(actions())
 
     await tagButtonClick('data-test-button="source-add-author"', driver)
 
     await tagButtonClick('data-test-path="detail.authors[0].lastName"', driver)
 
-    await sendKeys(actions, 'Derrida')
+    await sendKeys(actions(), 'Derrida')
 
     // await tagButtonClick('data-test-path="detail.authors[0].firstName"', driver)
-    await tabKey(actions)
+    await tabKey(actions())
 
-    await sendKeys(actions, 'Jacques')
+    await sendKeys(actions(), 'Jacques')
 
     await tagButtonClick('data-test-dismiss-modal="true"', driver)
 
@@ -99,37 +99,37 @@ describe('block indexing', () => {
 
     await sleep(1000)
 
-    await downKey(actions)
-    await sendKeys(actions, 'this is an entry')
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, '#a topic')
-    await enterKey(actions)
-    await sendKeys(actions, 'second entry')
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, 'third entry')
+    await downKey(actions())
+    await sendKeys(actions(), 'this is an entry')
+    await enterKey(actions())
+    await enterKey(actions())
+    await sendKeys(actions(), '#a topic')
+    await enterKey(actions())
+    await sendKeys(actions(), 'second entry')
+    await enterKey(actions())
+    await enterKey(actions())
+    await sendKeys(actions(), 'third entry')
     await isAppInNotesSaved(driver)
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, '/#')
-    await enterKey(actions)
-    await sendKeys(actions, 'fourth entry not in atomic')
+    await enterKey(actions())
+    await enterKey(actions())
+    await sendKeys(actions(), '/#')
+    await enterKey(actions())
+    await sendKeys(actions(), 'fourth entry not in atomic')
     await isAppInNotesSaved(driver)
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, '/@')
-    await enterKey(actions)
-    await sendKeys(actions, '#this is the second topic')
-    await enterKey(actions)
-    await sendKeys(actions, 'entry should be contained within topic')
-    await isAppInNotesSaved(driver)
-
-    await enterKey(actions)
-    await enterKey(actions)
+    await enterKey(actions())
+    await enterKey(actions())
+    await sendKeys(actions(), '/@')
+    await enterKey(actions())
+    await sendKeys(actions(), '#this is the second topic')
+    await enterKey(actions())
+    await sendKeys(actions(), 'entry should be contained within topic')
     await isAppInNotesSaved(driver)
 
-    await sendKeys(actions, 'second entry within topic')
+    await enterKey(actions())
+    await enterKey(actions())
+    await isAppInNotesSaved(driver)
+
+    await sendKeys(actions(), 'second entry within topic')
     // BLOCK RELATIONS NEED TO BE ADDED, WAIT FOR CHANGE
     await sleep(3000)
     await isAppInNotesSaved(driver)
@@ -170,12 +170,12 @@ describe('block indexing', () => {
     )
 
     await getEditor(driver)
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
+    await rightShiftKey(actions())
+    await rightShiftKey(actions())
+    await rightShiftKey(actions())
+    await rightShiftKey(actions())
+    await rightShiftKey(actions())
+    await rightShiftKey(actions())
 
     // get highlighted text
     const _selection = await driver.executeScript(
@@ -213,10 +213,10 @@ describe('block indexing', () => {
     )
 
     await getEditor(driver)
-    await leftKey(actions)
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
-    await backspaceKey(actions)
+    await leftKey(actions())
+    await rightShiftKey(actions())
+    await rightShiftKey(actions())
+    await backspaceKey(actions())
     await sleep(3000)
     await isAppInNotesSaved(driver)
 

@@ -21,8 +21,8 @@ describe('new block menu actions', () => {
   beforeEach(async (done) => {
     driver = await startSession()
     await login(driver)
-    actions = driver.actions()
-    await downKey(actions)
+    actions = driver.actions
+    await downKey(actions())
     await sleep(500)
     done()
   })

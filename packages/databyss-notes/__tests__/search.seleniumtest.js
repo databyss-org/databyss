@@ -20,7 +20,7 @@ describe('entry search', () => {
   beforeEach(async (done) => {
     driver = await startSession({ platformName: WIN, browserName: CHROME })
     await login(driver)
-    actions = driver.actions()
+    actions = driver.actions
     done()
   })
 
@@ -36,25 +36,25 @@ describe('entry search', () => {
     // populate a page
     await tagButtonClick('data-test-element="page-header"', driver)
 
-    await sendKeys(actions, 'this is the first page title')
+    await sendKeys(actions(), 'this is the first page title')
     await sleep(500)
 
-    await enterKey(actions)
-    await sendKeys(actions, 'this is a test entry')
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, '@this has keyword something in source')
-    await enterKey(actions)
+    await enterKey(actions())
+    await sendKeys(actions(), 'this is a test entry')
+    await enterKey(actions())
+    await enterKey(actions())
+    await sendKeys(actions(), '@this has keyword something in source')
+    await enterKey(actions())
     await sendKeys(
       actions,
       'something keyword appears at the start of an entry'
     )
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, 'this will also have keyword something')
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, 'this keyword something will be searched')
+    await enterKey(actions())
+    await enterKey(actions())
+    await sendKeys(actions(), 'this will also have keyword something')
+    await enterKey(actions())
+    await enterKey(actions())
+    await sendKeys(actions(), 'this keyword something will be searched')
     await isAppInNotesSaved(driver)
     await sleep(1000)
     // check for search results appearing in the same order as they appear on the page
@@ -67,9 +67,9 @@ describe('entry search', () => {
 
     // wait for editor to be visible
     await sleep(500)
-    await sendKeys(actions, 'something searched will')
+    await sendKeys(actions(), 'something searched will')
     await sleep(500)
-    await enterKey(actions)
+    await enterKey(actions())
 
     // get the search results, they should be in the order of relevance
 
@@ -108,18 +108,18 @@ describe('entry search', () => {
     await tagButtonClick('data-test-element="page-header"', driver)
 
     await sleep(500)
-    await sendKeys(actions, 'this is the second page title')
+    await sendKeys(actions(), 'this is the second page title')
     await sleep(500)
-    await enterKey(actions)
+    await enterKey(actions())
     await sendKeys(
       actions,
       'keyword something appears in the middle of an entry'
     )
-    await enterKey(actions)
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, '# this is a topic with something keyword')
-    await enterKey(actions)
+    await enterKey(actions())
+    await enterKey(actions())
+    await enterKey(actions())
+    await sendKeys(actions(), '# this is a topic with something keyword')
+    await enterKey(actions())
     await isAppInNotesSaved(driver)
 
     // create a third page
@@ -134,12 +134,15 @@ describe('entry search', () => {
       'this is the third page title has keyword something'
     )
     await sleep(500)
-    await enterKey(actions)
-    await sendKeys(actions, '@this is another test source')
-    await enterKey(actions)
-    await sendKeys(actions, 'keyword appears at the end of an entry something')
-    await enterKey(actions)
-    await enterKey(actions)
+    await enterKey(actions())
+    await sendKeys(actions(), '@this is another test source')
+    await enterKey(actions())
+    await sendKeys(
+      actions(),
+      'keyword appears at the end of an entry something'
+    )
+    await enterKey(actions())
+    await enterKey(actions())
     await isAppInNotesSaved(driver)
 
     // refresh and archive the page
@@ -153,10 +156,10 @@ describe('entry search', () => {
     // click on sidebar entry search
     await tagButtonClick('data-test-element="search-input"', driver)
 
-    await sendKeys(actions, 'something')
+    await sendKeys(actions(), 'something')
     await sleep(1000)
-    // await enterKey(actions)
-    await enterKey(actions)
+    // await enterKey(actions())
+    await enterKey(actions())
 
     // verify that a source is shown in the search results
 
@@ -241,13 +244,13 @@ describe('entry search', () => {
     // wait for editor to be visible
     await getEditor(driver)
     // highlights current anchor position
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
+    await rightShiftKey(actions())
+    await rightShiftKey(actions())
+    await rightShiftKey(actions())
+    await rightShiftKey(actions())
+    await rightShiftKey(actions())
+    await rightShiftKey(actions())
+    await rightShiftKey(actions())
     const _selection = await driver.executeScript(
       'return window.getSelection().toString()'
     )

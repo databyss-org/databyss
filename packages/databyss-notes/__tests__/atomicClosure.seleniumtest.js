@@ -25,7 +25,7 @@ describe('atomic closure', () => {
   beforeEach(async (done) => {
     driver = await startSession({ platformName: WIN, browserName: CHROME })
     await login(driver)
-    actions = driver.actions()
+    actions = driver.actions
     done()
   })
 
@@ -37,21 +37,21 @@ describe('atomic closure', () => {
   })
 
   it('should open, close, overwrite and delete source and topics', async () => {
-    await enterKey(actions)
-    await sendKeys(actions, '@this is an opening source')
-    await enterKey(actions)
-    await sendKeys(actions, 'this is an entry')
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, '#this is a topic')
-    await enterKey(actions)
-    await sendKeys(actions, 'this is another entry')
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, 'this is another entry')
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, '/#')
+    await enterKey(actions())
+    await sendKeys(actions(), '@this is an opening source')
+    await enterKey(actions())
+    await sendKeys(actions(), 'this is an entry')
+    await enterKey(actions())
+    await enterKey(actions())
+    await sendKeys(actions(), '#this is a topic')
+    await enterKey(actions())
+    await sendKeys(actions(), 'this is another entry')
+    await enterKey(actions())
+    await enterKey(actions())
+    await sendKeys(actions(), 'this is another entry')
+    await enterKey(actions())
+    await enterKey(actions())
+    await sendKeys(actions(), '/#')
     await sleep(1000)
 
     await isAppInNotesSaved(driver)
@@ -103,7 +103,7 @@ describe('atomic closure', () => {
 
     // close source
     await sleep(300)
-    await sendKeys(actions, '/@')
+    await sendKeys(actions(), '/@')
     await sleep(1000)
 
     await isAppInNotesSaved(driver)
@@ -157,15 +157,15 @@ describe('atomic closure', () => {
     assert.deepEqual(actual.selection, expected.selection)
 
     // should delete a closure on atomic deletion
-    await upKey(actions)
-    await upKey(actions)
-    await upKey(actions)
-    await upKey(actions)
-    await leftKey(actions)
-    await leftKey(actions)
-    await leftKey(actions)
-    await leftKey(actions)
-    await backspaceKey(actions)
+    await upKey(actions())
+    await upKey(actions())
+    await upKey(actions())
+    await upKey(actions())
+    await leftKey(actions())
+    await leftKey(actions())
+    await leftKey(actions())
+    await leftKey(actions())
+    await backspaceKey(actions())
     await sleep(1000)
 
     await isAppInNotesSaved(driver)
@@ -220,7 +220,7 @@ describe('atomic closure', () => {
 
     // should overwrite a previously closed atomic
     await sleep(300)
-    await sendKeys(actions, '/@')
+    await sendKeys(actions(), '/@')
     await isAppInNotesSaved(driver)
 
     await driver.navigate().refresh()

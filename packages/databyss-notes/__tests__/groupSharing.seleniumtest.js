@@ -24,14 +24,14 @@ import { cleanUrl } from './util'
 let driver
 let actions
 
-export async function selectLinkInFirstBlock(actions) {
-  await upKey(actions)
-  await upKey(actions)
-  await upKey(actions)
-  await downKey(actions)
-  await downShiftKey(actions)
-  await downShiftKey(actions)
-  await downShiftKey(actions)
+export async function selectLinkInFirstBlock(actions()) {
+  await upKey(actions())
+  await upKey(actions())
+  await upKey(actions())
+  await downKey(actions())
+  await downShiftKey(actions())
+  await downShiftKey(actions())
+  await downShiftKey(actions())
 }
 
 // TODO: THIS SHOULD BE ON THE PAGE SHARING  TEST
@@ -41,7 +41,7 @@ describe('group sharings', () => {
   beforeEach(async (done) => {
     driver = await startSession({ platformName: WIN, browserName: CHROME })
     email = await login(driver)
-    actions = driver.actions()
+    actions = driver.actions
     done()
   })
 
@@ -55,11 +55,11 @@ describe('group sharings', () => {
     // create first page
     await tagButtonClick('data-test-element="page-header"', driver)
 
-    await sendKeys(actions, 'A - This page will be shared then removed')
-    await enterKey(actions)
-    await sendKeys(actions, '#this topic will be duplicated')
-    await enterKey(actions)
-    await sendKeys(actions, 'entries about topic')
+    await sendKeys(actions(), 'A - This page will be shared then removed')
+    await enterKey(actions())
+    await sendKeys(actions(), '#this topic will be duplicated')
+    await enterKey(actions())
+    await sendKeys(actions(), 'entries about topic')
 
     await isAppInNotesSaved(driver)
 
@@ -67,21 +67,21 @@ describe('group sharings', () => {
     await tagButtonClick('data-test-element="new-page-button"', driver)
     await tagButtonClick('data-test-element="page-header"', driver)
 
-    await sendKeys(actions, 'B - This page will remain and get updated atomic')
-    await enterKey(actions)
-    await sendKeys(actions, '#this topic will be duplicated')
-    await enterKey(actions)
-    await sendKeys(actions, 'more under same topic')
+    await sendKeys(actions(), 'B - This page will remain and get updated atomic')
+    await enterKey(actions())
+    await sendKeys(actions(), '#this topic will be duplicated')
+    await enterKey(actions())
+    await sendKeys(actions(), 'more under same topic')
 
     // create third page (will be archived)
     await tagButtonClick('data-test-element="new-page-button"', driver)
     await tagButtonClick('data-test-element="page-header"', driver)
 
-    await sendKeys(actions, 'C - This page will be shared then archived')
-    await enterKey(actions)
-    await sendKeys(actions, '#this topic will be duplicated')
-    await enterKey(actions)
-    await sendKeys(actions, 'more under same topic')
+    await sendKeys(actions(), 'C - This page will be shared then archived')
+    await enterKey(actions())
+    await sendKeys(actions(), '#this topic will be duplicated')
+    await enterKey(actions())
+    await sendKeys(actions(), 'more under same topic')
 
     // CREATES NEW COLLECTION (share)
 
@@ -92,7 +92,7 @@ describe('group sharings', () => {
     // click collection title
     await tagButtonClick('data-test-path="name"', driver)
 
-    await sendKeys(actions, 'A - Test Collection One, will remain shared')
+    await sendKeys(actions(), 'A - Test Collection One, will remain shared')
     // click on pages dropdown
     await tagButtonClick('data-test-element="add-page-to-collection"', driver)
     // add page collection
@@ -118,12 +118,12 @@ describe('group sharings', () => {
     // click on header
     await tagButtonClick('data-test-element="page-header"', driver)
     // page title
-    await sendKeys(actions, 'D - this page is the clipboard')
-    await enterKey(actions)
-    await paste(actions)
+    await sendKeys(actions(), 'D - this page is the clipboard')
+    await enterKey(actions())
+    await paste(actions())
 
     // get public collection link
-    await selectLinkInFirstBlock(actions)
+    await selectLinkInFirstBlock(actions())
 
     const publicCollectionUrl = cleanUrl(
       await driver.executeScript('return window.getSelection().toString()')
@@ -138,7 +138,7 @@ describe('group sharings', () => {
     // click collection title
     await tagButtonClick('data-test-path="name"', driver)
 
-    await sendKeys(actions, 'B - Test Collection Two, will be deleted')
+    await sendKeys(actions(), 'B - Test Collection Two, will be deleted')
     // click on pages sidebar button
     await tagButtonClick('data-test-element="add-page-to-collection"', driver)
     // add collection
@@ -158,10 +158,10 @@ describe('group sharings', () => {
     // click on clipboard
     await tagButtonListClick('data-test-element="page-sidebar-item"', 3, driver)
     // paste new link
-    await selectLinkInFirstBlock(actions)
-    await backspaceKey(actions)
-    await paste(actions)
-    await selectLinkInFirstBlock(actions)
+    await selectLinkInFirstBlock(actions())
+    await backspaceKey(actions())
+    await paste(actions())
+    await selectLinkInFirstBlock(actions())
 
     const publicCollectionDeleteUrl = cleanUrl(
       await driver.executeScript('return window.getSelection().toString()')
@@ -176,7 +176,7 @@ describe('group sharings', () => {
     // click collection title
     await tagButtonClick('data-test-path="name"', driver)
 
-    await sendKeys(actions, 'C - Test Collection Three, will be unshared')
+    await sendKeys(actions(), 'C - Test Collection Three, will be unshared')
     // click on pages sidebar button
     await tagButtonClick('data-test-element="add-page-to-collection"', driver)
     // add collection
@@ -194,10 +194,10 @@ describe('group sharings', () => {
     // click on clipboard
     await tagButtonListClick('data-test-element="page-sidebar-item"', 3, driver)
     // paste new link
-    await selectLinkInFirstBlock(actions)
-    await backspaceKey(actions)
-    await paste(actions)
-    await selectLinkInFirstBlock(actions)
+    await selectLinkInFirstBlock(actions())
+    await backspaceKey(actions())
+    await paste(actions())
+    await selectLinkInFirstBlock(actions())
 
     const publicCollectionUnshareUrl = cleanUrl(
       await driver.executeScript('return window.getSelection().toString()')
@@ -276,12 +276,12 @@ describe('group sharings', () => {
 
     await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
 
-    // update topic on first page page (it should update on shared page with same topic)    await upKey(actions)
+    // update topic on first page page (it should update on shared page with same topic)    await upKey(actions())
     await tagButtonClick('data-test-atomic-edit="open"', driver)
     await sleep(1000)
     await tagButtonClick('data-test-path="text"', driver)
-    await selectAll(actions)
-    await sendKeys(actions, 'New Topic')
+    await selectAll(actions())
+    await sendKeys(actions(), 'New Topic')
 
     // allow sync
     await sleep(5000)
