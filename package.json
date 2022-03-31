@@ -42,7 +42,7 @@
     "test:local": "LOCAL_ENV=true yarn test",
     "test:units": "yarn test --selectProjects test",
     "test:selenium": "yarn test seleniumtest",
-    "test:selenium:local": "SAUCE=no LOCAL_ENV=true yarn test seleniumtest",
+    "test:selenium:local": "SAUCE=no LOCAL_ENV=true yarn test seleniumtest --selectProjects test-selenium",
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
     "styleguide:build": "NPM_BUILD_TARGET=TEST styleguidist build --config ./config/styleguide.config.js",
     "storybook": "REACT_APP_STORYBOOK=true NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public --ci",

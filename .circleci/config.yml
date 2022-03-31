@@ -12,11 +12,7 @@ jobs:
   jest:
     docker:
       # specify the version you desire here
-      - image: circleci/node:fermium
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
+      - image: cimg/node:14.19.1
 
     working_directory: ~/repo
 
