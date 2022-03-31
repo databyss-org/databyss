@@ -27,7 +27,7 @@ let actions
 
 describe('block indexing', () => {
   beforeEach(async (done) => {
-    driver = await startSession({ platformName: WIN, browserName: CHROME })
+    driver = await startSession()
     await login(driver)
     actions = driver.actions()
     done()

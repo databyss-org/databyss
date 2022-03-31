@@ -1,7 +1,7 @@
 /** @jsx h */
 /* eslint-disable func-names */
 import assert from 'assert'
-import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import { sanitizeEditorChildren } from './util'
 import {
   getEditor,
@@ -30,7 +30,7 @@ let actions
 
 describe('editor history', () => {
   beforeEach(async (done) => {
-    driver = await startSession({ platformName: WIN, browserName: CHROME })
+    driver = await startSession()
     await login(driver)
     actions = driver.actions()
     await downKey(actions)
