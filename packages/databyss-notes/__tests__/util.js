@@ -108,17 +108,8 @@ export const generateState = (size) => {
   return _state
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-export const sanitizeEditorChildren = (
-  children,
-  { pruneSelection } = { pruneSelection: false }
-) => {
-  let _sano = children
-  if (pruneSelection) {
-    const { selection, ..._children } = children
-    _sano = _children
-  }
-  return _sano.map((node) => ({
+export const sanitizeEditorChildren = (children) =>
+  children.map((node) => ({
     type: node.type,
     children: node.children.map((c) => {
       const _textNode = { text: c.text }
@@ -135,6 +126,5 @@ export const sanitizeEditorChildren = (
       return _textNode
     }),
   }))
-}
 
 export const cleanUrl = (url) => url.replace(/[\u{0080}-\u{FFFF}]/gu, '')
