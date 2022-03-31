@@ -210,16 +210,16 @@ export const isAppInNotesSaved = async (driver) => {
   }
 }
 
-export const toggleBold = (actions()) =>
+export const toggleBold = (actions) =>
   actions.keyDown(CONTROL).sendKeys('b').keyUp(CONTROL)
 
-export const toggleItalic = (actions()) =>
+export const toggleItalic = (actions) =>
   actions.keyDown(CONTROL).sendKeys('i').keyUp(CONTROL)
 
-export const toggleLocation = (actions()) =>
+export const toggleLocation = (actions) =>
   actions.keyDown(CONTROL).sendKeys('k').keyUp(CONTROL)
 
-export const singleHighlight = async (actions()) => {
+export const singleHighlight = async (actions) => {
   await actions
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_RIGHT)
@@ -241,63 +241,63 @@ export const sendKeys = async (actions(), keys) => {
   await navigationActionsBuilder(actions(), keys)
 }
 
-export const enterKey = async (actions()) => {
+export const enterKey = async (actions) => {
   await navigationActionsBuilder(actions(), Key.ENTER)
 }
 
-export const upKey = async (actions()) => {
+export const upKey = async (actions) => {
   await navigationActionsBuilder(actions(), Key.ARROW_UP)
 }
 
-export const escapeKey = async (actions()) => {
+export const escapeKey = async (actions) => {
   await navigationActionsBuilder(actions(), Key.ESCAPE)
 }
 
-export const tabKey = async (actions()) => {
+export const tabKey = async (actions) => {
   await navigationActionsBuilder(actions(), '\t')
 }
 
-export const downKey = async (actions()) => {
+export const downKey = async (actions) => {
   await navigationActionsBuilder(actions(), Key.ARROW_DOWN)
 }
 
-export const rightKey = async (actions()) => {
+export const rightKey = async (actions) => {
   await navigationActionsBuilder(actions(), Key.ARROW_RIGHT)
 }
 
-export const leftKey = async (actions()) => {
+export const leftKey = async (actions) => {
   await navigationActionsBuilder(actions(), Key.ARROW_LEFT)
 }
 
-export const backspaceKey = async (actions()) => {
+export const backspaceKey = async (actions) => {
   await navigationActionsBuilder(actions(), Key.BACK_SPACE)
 }
 
-export const selectAll = async (actions()) => {
+export const selectAll = async (actions) => {
   await actions.keyDown(CONTROL).sendKeys('a').keyUp(CONTROL).perform()
   await actions.clear()
   await sleep(SLEEP_TIME)
 }
 
-export const copy = async (actions()) => {
+export const copy = async (actions) => {
   await actions.keyDown(CONTROL).sendKeys('c').keyUp(CONTROL).perform()
   await actions.clear()
   await sleep(SLEEP_TIME)
 }
 
-export const cut = async (actions()) => {
+export const cut = async (actions) => {
   await actions.keyDown(CONTROL).sendKeys('x').keyUp(CONTROL).perform()
   await actions.clear()
   await sleep(SLEEP_TIME)
 }
 
-export const paste = async (actions()) => {
+export const paste = async (actions) => {
   await actions.keyDown(CONTROL).sendKeys('v').keyUp(CONTROL).perform()
   await actions.clear()
   await sleep(SLEEP_TIME)
 }
 
-export const upShiftKey = async (actions()) => {
+export const upShiftKey = async (actions) => {
   await actions
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_UP)
@@ -308,7 +308,7 @@ export const upShiftKey = async (actions()) => {
   await sleep(SLEEP_TIME)
 }
 
-export const rightShiftKey = async (actions()) => {
+export const rightShiftKey = async (actions) => {
   await actions
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_RIGHT)
@@ -319,7 +319,7 @@ export const rightShiftKey = async (actions()) => {
   await sleep(SLEEP_TIME)
 }
 
-export const leftShiftKey = async (actions()) => {
+export const leftShiftKey = async (actions) => {
   await actions
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_LEFT)
@@ -330,7 +330,7 @@ export const leftShiftKey = async (actions()) => {
   await sleep(SLEEP_TIME)
 }
 
-export const downShiftKey = async (actions()) => {
+export const downShiftKey = async (actions) => {
   await actions
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_DOWN)
@@ -341,13 +341,13 @@ export const downShiftKey = async (actions()) => {
   await sleep(SLEEP_TIME)
 }
 
-export const undo = async (actions()) => {
+export const undo = async (actions) => {
   await actions.keyDown(CONTROL).sendKeys('z').keyUp(CONTROL).perform()
   await actions.clear()
   await sleep(SLEEP_TIME)
 }
 
-export const redo = async (actions()) => {
+export const redo = async (actions) => {
   await actions
     .keyDown(CONTROL)
     .keyDown(Key.SHIFT)

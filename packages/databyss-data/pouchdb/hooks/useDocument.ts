@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { Document } from '@databyss-org/services/interfaces'
-import PouchDB from 'pouchdb'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 
 import { dbRef } from '../db'
