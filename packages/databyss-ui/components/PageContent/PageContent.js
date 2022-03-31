@@ -10,9 +10,9 @@ import { useEditorPageContext } from '@databyss-org/services'
 import { useNavigationContext } from '@databyss-org/ui'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import { urlSafeName } from '@databyss-org/services/lib/util'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
-import { usePages } from '@databyss-org/data/pouchdb/hooks'
 
 export const PageContentView = ({ children, ...others }) => (
   <View pt="small" flexShrink={1} flexGrow={1} overflow="hidden" {...others}>
@@ -26,7 +26,7 @@ export const PageContainer = React.memo(
     const [, setAuthToken] = useState()
     const [editorPath, setEditorPath] = useState(null)
     const location = useLocation()
-    const { navigate, getTokensFromPath } = useNavigationContext()
+    const { getTokensFromPath } = useNavigationContext()
     const editorRef = useRef()
     const pagesRes = usePages()
     const { anchor, nice } = getTokensFromPath()

@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 import assert from 'assert'
-import { startSession } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   sleep,
   sendKeys,
@@ -40,7 +40,7 @@ export async function selectLinkInFirstBlock(actions) {
 describe('group sharings', () => {
   let email
   beforeEach(async (done) => {
-    driver = await startSession()
+    driver = await startSession({ platformName: OSX, browserName: CHROME })
     email = await login(driver)
     actions = driver.actions()
     done()

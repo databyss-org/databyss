@@ -224,14 +224,14 @@ export const IndexPageView = ({
     })
   }
   // if no nice URL, make one and redirect
+  const blockName =
+    block?.type === BlockType.Source
+      ? (block as Source).name?.textValue ?? block.text.textValue
+      : block?.text.textValue
   useEffect(() => {
     if (block) {
       const { nice } = getTokensFromPath()
-      const niceName = urlSafeName(
-        block.type === BlockType.Source
-          ? (block as Source).name?.textValue ?? block.text.textValue
-          : block.text.textValue
-      )
+      const niceName = urlSafeName(blockName!)
       if (!nice?.length) {
         window.requestAnimationFrame(() => {
           navigate(`${location.pathname}/${niceName}`, { replace: true })
@@ -244,7 +244,7 @@ export const IndexPageView = ({
         })
       }
     }
-  }, [])
+  }, [blockName])
   return (
     <>
       <StickyHeader path={path} contextMenu={<IndexPageMenu block={block} />} />

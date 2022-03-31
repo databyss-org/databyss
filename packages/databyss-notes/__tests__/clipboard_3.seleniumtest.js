@@ -18,12 +18,10 @@ import {
   sendKeys,
   leftKey,
   isAppInNotesSaved,
-  sleep,
   jsx as h,
   login,
   tryQuit,
 } from './util.selenium'
-import { done } from 'fetch-mock'
 
 let driver
 let editor
