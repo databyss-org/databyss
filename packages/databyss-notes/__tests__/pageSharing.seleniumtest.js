@@ -27,7 +27,7 @@ describe('page sharing', () => {
   beforeEach(async (done) => {
     driver = await startSession({ platformName: WIN, browserName: CHROME })
     await login(driver)
-    actions = driver.actions
+    actions = driver.actions()
     await sleep(500)
     done()
   })
@@ -44,9 +44,9 @@ describe('page sharing', () => {
     await tagButtonClick('data-test-element="page-header"', driver)
 
     await sleep(500)
-    await sendKeys(actions(), 'this is the non shared page title')
-    await enterKey(actions())
-    await sendKeys(actions(), 'this is a test entry')
+    await sendKeys(actions, 'this is the non shared page title')
+    await enterKey(actions)
+    await sendKeys(actions, 'this is a test entry')
     await isAppInNotesSaved(driver)
 
     const privatePageURL = await driver.getCurrentUrl()
@@ -58,8 +58,8 @@ describe('page sharing', () => {
     await tagButtonClick('data-test-element="page-header"', driver)
 
     await sleep(500)
-    await sendKeys(actions(), 'this is a shared page title')
-    await enterKey(actions())
+    await sendKeys(actions, 'this is a shared page title')
+    await enterKey(actions)
     await isAppInNotesSaved(driver)
 
     // make page public
@@ -73,8 +73,8 @@ describe('page sharing', () => {
     editor = await getEditor(driver)
     await editor.click()
 
-    await paste(actions())
-    await selectLinkInFirstBlock(actions())
+    await paste(actions)
+    await selectLinkInFirstBlock(actions)
 
     // get the public page url
     const publicPageUrl = await driver.executeScript(
@@ -82,12 +82,12 @@ describe('page sharing', () => {
     )
 
     // populate page
-    await backspaceKey(actions())
-    await sendKeys(actions(), '@Public Page Source')
-    await enterKey(actions())
-    await sendKeys(actions(), '#Public Page Topic')
-    await enterKey(actions())
-    await sendKeys(actions(), 'this entry exists within the public page')
+    await backspaceKey(actions)
+    await sendKeys(actions, '@Public Page Source')
+    await enterKey(actions)
+    await sendKeys(actions, '#Public Page Topic')
+    await enterKey(actions)
+    await sendKeys(actions, 'this entry exists within the public page')
     await isAppInNotesSaved(driver)
 
     // allow the public page to replicate

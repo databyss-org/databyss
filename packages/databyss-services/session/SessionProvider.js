@@ -62,7 +62,7 @@ const SessionProvider = ({
     if (state.userInfo) {
       return state.userInfo
     }
-    dispatch(actions().getUserAccount())
+    dispatch(actions.getUserAccount())
     return null
   }, [state.userInfo])
 
@@ -86,13 +86,13 @@ const SessionProvider = ({
         return state.session
       }
       // else fetch
-      dispatch(actions().fetchSession(credentials))
+      dispatch(actions.fetchSession(credentials))
       return null
     },
     [state.session]
   )
 
-  const endSession = () => dispatch(actions().endSession())
+  const endSession = () => dispatch(actions.endSession())
 
   useEffect(() => {
     if (state.session instanceof NetworkUnavailableError) {
@@ -229,7 +229,7 @@ const SessionProvider = ({
   }
 
   const logout = () => {
-    dispatch(actions().logout())
+    dispatch(actions.logout())
   }
 
   /**
@@ -250,7 +250,7 @@ const SessionProvider = ({
   window.addEventListener('focus', shouldForceLogout)
 
   const setDefaultPage = useCallback((id) => {
-    dispatch(actions().onSetDefaultPage(id))
+    dispatch(actions.onSetDefaultPage(id))
   }, [])
 
   return (

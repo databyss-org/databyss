@@ -22,7 +22,7 @@ describe('editor sticky header', () => {
   beforeEach(async (done) => {
     driver = await startSession({ platformName: OSX, browserName: CHROME })
     await login(driver)
-    actions = driver.actions
+    actions = driver.actions()
     done()
   })
 
@@ -36,33 +36,33 @@ describe('editor sticky header', () => {
     await tagButtonClick('data-test-element="page-header"', driver)
 
     await sleep(500)
-    await sendKeys(actions(), 'this is a page title')
-    await enterKey(actions())
-    await sendKeys(actions(), 'this is a test entry')
-    await enterKey(actions())
-    await enterKey(actions())
-    await sendKeys(actions(), '@this is a test source')
-    await enterKey(actions())
-    await sendKeys(actions(), 'this is another test entry')
+    await sendKeys(actions, 'this is a page title')
+    await enterKey(actions)
+    await sendKeys(actions, 'this is a test entry')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '@this is a test source')
+    await enterKey(actions)
+    await sendKeys(actions, 'this is another test entry')
     await isAppInNotesSaved(driver)
-    await enterKey(actions())
-    await enterKey(actions())
-    await sendKeys(actions(), 'this is a test entry')
-    await enterKey(actions())
-    await enterKey(actions())
-    await sendKeys(actions(), 'entry')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, 'this is a test entry')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, 'entry')
     await isAppInNotesSaved(driver)
-    await enterKey(actions())
-    await enterKey(actions())
-    await sendKeys(actions(), '#this is a topic')
-    await enterKey(actions())
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '#this is a topic')
+    await enterKey(actions)
     await isAppInNotesSaved(driver)
-    await sendKeys(actions(), 'this is a test entry')
+    await sendKeys(actions, 'this is a test entry')
     await isAppInNotesSaved(driver)
-    await enterKey(actions())
-    await enterKey(actions())
-    await sendKeys(actions(), '/#')
-    await sendKeys(actions(), 'last entry')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '/#')
+    await sendKeys(actions, 'last entry')
     await isAppInNotesSaved(driver)
 
     // get page path
@@ -75,8 +75,8 @@ describe('editor sticky header', () => {
 
     assert.equal(headerSticky, 'this is a page title / @ this is a test source')
 
-    await upKey(actions())
-    await upKey(actions())
+    await upKey(actions)
+    await upKey(actions)
     headerSticky = await getElementByTag(
       driver,
       '[data-test-element="editor-sticky-header"]'
@@ -87,8 +87,8 @@ describe('editor sticky header', () => {
       'this is a page title / @ this is a test source / # this is a topic'
     )
 
-    await upKey(actions())
-    await upKey(actions())
+    await upKey(actions)
+    await upKey(actions)
     headerSticky = await getElementByTag(
       driver,
       '[data-test-element="editor-sticky-header"]'
@@ -96,10 +96,10 @@ describe('editor sticky header', () => {
     headerSticky = await headerSticky.getAttribute('innerText')
     assert.equal(headerSticky, 'this is a page title / @ this is a test source')
 
-    await enterKey(actions())
-    await enterKey(actions())
-    await sendKeys(actions(), '/@')
-    await downKey(actions())
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '/@')
+    await downKey(actions)
     await isAppInNotesSaved(driver)
 
     headerSticky = await getElementByTag(
@@ -109,11 +109,11 @@ describe('editor sticky header', () => {
     headerSticky = await headerSticky.getAttribute('innerText')
     assert.equal(headerSticky, 'this is a page title / # this is a topic')
 
-    await downKey(actions())
+    await downKey(actions)
 
-    await enterKey(actions())
-    await enterKey(actions())
-    await sendKeys(actions(), '/#')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '/#')
     await isAppInNotesSaved(driver)
 
     headerSticky = await getElementByTag(

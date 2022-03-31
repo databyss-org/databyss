@@ -24,7 +24,7 @@ describe('notes app', () => {
   beforeEach(async (done) => {
     driver = await startSession({ platformName: OSX, browserName: CHROME })
     await login(driver)
-    actions = driver.actions
+    actions = driver.actions()
     await sleep(500)
     done()
   })
@@ -41,16 +41,16 @@ describe('notes app', () => {
 
     await tagButtonClick('data-test-element="page-header"', driver)
 
-    await sendKeys(actions(), 'First Test Page Title')
-    await enterKey(actions())
+    await sendKeys(actions, 'First Test Page Title')
+    await enterKey(actions)
 
-    await sendKeys(actions(), '#this is a new topic')
-    await enterKey(actions())
-    await sendKeys(actions(), 'entries included within the topic')
+    await sendKeys(actions, '#this is a new topic')
+    await enterKey(actions)
+    await sendKeys(actions, 'entries included within the topic')
     await isAppInNotesSaved(driver)
-    await enterKey(actions())
-    await enterKey(actions())
-    await sendKeys(actions(), 'more entries included within topic')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, 'more entries included within topic')
     await isAppInNotesSaved(driver)
 
     // verify that the topic sidebar has the new topic
@@ -84,11 +84,11 @@ describe('notes app', () => {
 
     await tagButtonClick('data-test-element="page-header"', driver)
 
-    await sendKeys(actions(), 'Second page title')
-    await enterKey(actions())
+    await sendKeys(actions, 'Second page title')
+    await enterKey(actions)
 
     // select author from the google api
-    await sendKeys(actions(), '@Murray Bookchin')
+    await sendKeys(actions, '@Murray Bookchin')
     await isAppInNotesSaved(driver)
 
     await tagButtonClick('data-test-block-menu="GOOGLE_BOOKS"', driver)
@@ -109,8 +109,8 @@ describe('notes app', () => {
     // verify source added to sidebar
     assert.equal(sidebarSource.trim().length > 0, true)
     // delete the source and verify its removed from the sidebar
-    await backspaceKey(actions())
-    await backspaceKey(actions())
+    await backspaceKey(actions)
+    await backspaceKey(actions)
     await sleep(3000)
 
     // check if the source exists in the sidebar, it should be removed
@@ -122,7 +122,7 @@ describe('notes app', () => {
 
     assert.equal(sidebarSource.length, 1)
 
-    await sendKeys(actions(), 'Editor test two')
+    await sendKeys(actions, 'Editor test two')
 
     // click on sidebar for pages menu
     await tagButtonClick('data-test-sidebar-element="pages"', driver)

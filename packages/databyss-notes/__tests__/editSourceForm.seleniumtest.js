@@ -25,8 +25,8 @@ describe('EditSourceForm', () => {
   beforeEach(async (done) => {
     driver = await startSession({ platformName: WIN, browserName: CHROME })
     await login(driver)
-    actions = driver.actions
-    await downKey(actions())
+    actions = driver.actions()
+    await downKey(actions)
     done()
   })
 
@@ -42,18 +42,18 @@ describe('EditSourceForm', () => {
     await sleep(300)
 
     // write to editor
-    await sendKeys(actions(), `@${sourceTitle}`)
-    await enterKey(actions())
+    await sendKeys(actions, `@${sourceTitle}`)
+    await enterKey(actions)
     await isAppInNotesSaved(driver)
 
     await sleep(1000)
 
     // select newly created source block
-    await upKey(actions())
-    await rightKey(actions())
+    await upKey(actions)
+    await rightKey(actions)
 
     // open modal
-    await enterKey(actions())
+    await enterKey(actions)
     await sleep(1000)
     await tagButtonClick('data-test-button="open-source-modal"', driver)
     await sleep(1000)
@@ -64,16 +64,16 @@ describe('EditSourceForm', () => {
     // await tagButtonClick('data-test-path="text"', driver)
 
     // reach publication title field
-    await tabKey(actions())
+    await tabKey(actions)
     await sleep(1000)
-    await tabKey(actions())
+    await tabKey(actions)
     await sleep(1000)
-    await tabKey(actions())
+    await tabKey(actions)
     await sleep(1000)
-    await tabKey(actions())
+    await tabKey(actions)
 
     // enter values to test later
-    await sendKeys(actions(), sourceTitle)
+    await sendKeys(actions, sourceTitle)
 
     // dismiss modal
     await tagButtonClick('data-test-dismiss-modal="true"', driver)
@@ -89,11 +89,11 @@ describe('EditSourceForm', () => {
     await sleep(1000)
 
     // select source block anew
-    // await upKey(actions())
-    await rightKey(actions())
+    // await upKey(actions)
+    await rightKey(actions)
 
     // open modal
-    await enterKey(actions())
+    await enterKey(actions)
     await sleep(1000)
     await tagButtonClick('data-test-button="open-source-modal"', driver)
 
