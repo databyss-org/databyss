@@ -9,8 +9,9 @@ export const getAccountFromLocation = (
   if (!_accountId) {
     return false
   }
+  const _isPageGroup = _accountId.startsWith('p_')
   // normalize legacy urls
-  if (_accountId.startsWith('g_')) {
+  if (_accountId.startsWith('g_') || _accountId.startsWith('p_')) {
     _accountId = _accountId.substring(2)
   }
   const _accountIdParts = _accountId.split('-')
@@ -29,5 +30,5 @@ export const getAccountFromLocation = (
   if (withName) {
     return `${_accountName}${_accountId}`
   }
-  return `g_${_accountId}`
+  return `${_isPageGroup ? 'p_' : 'g_'}${_accountId}`
 }
