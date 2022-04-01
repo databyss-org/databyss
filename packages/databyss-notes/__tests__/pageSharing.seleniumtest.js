@@ -16,9 +16,8 @@ import {
   tagButtonListClick,
   login,
   tryQuit,
+  selectLinkInFirstBlock,
 } from './util.selenium'
-
-import { selectLinkInFirstBlock } from './groupSharing.seleniumtest'
 
 let driver
 let editor

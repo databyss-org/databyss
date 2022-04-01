@@ -10,30 +10,18 @@ import {
   selectAll,
   tagButtonClick,
   tagButtonListClick,
-  upKey,
   getElementsByTag,
   getElementByTag,
   logout,
-  downKey,
-  downShiftKey,
   backspaceKey,
   login,
   tryQuit,
+  selectLinkInFirstBlock,
 } from './util.selenium'
 import { cleanUrl } from './util'
 
 let driver
 let actions
-
-export async function selectLinkInFirstBlock(actions) {
-  await upKey(actions)
-  await upKey(actions)
-  await upKey(actions)
-  await downKey(actions)
-  await downShiftKey(actions)
-  await downShiftKey(actions)
-  await downShiftKey(actions)
-}
 
 // TODO: THIS SHOULD BE ON THE PAGE SHARING  TEST
 // 6) Archiving a page removes that page from shared pages
@@ -272,8 +260,11 @@ describe('group sharings', () => {
     await tagButtonClick('data-test-element="delete-group"', driver)
     await sleep(1000)
 
+    // HACK: for some reason, we get logged out here
+    await login(driver, email)
+
     // back to pages sidebar
-    await tagButtonClick('data-test-sidebar-element="pages"', driver)
+    // await tagButtonClick('data-test-sidebar-element="pages"', driver)
     // update topic on first page page (it should update on shared page with same topic)
     await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
 

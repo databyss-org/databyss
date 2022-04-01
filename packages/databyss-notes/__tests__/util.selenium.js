@@ -398,3 +398,13 @@ export const tryQuit = async (driver) => {
     // ignore
   }
 }
+
+export async function selectLinkInFirstBlock(actions) {
+  await upKey(actions)
+  await upKey(actions)
+  await upKey(actions)
+  await downKey(actions)
+  await downShiftKey(actions)
+  await downShiftKey(actions)
+  await downShiftKey(actions)
+}

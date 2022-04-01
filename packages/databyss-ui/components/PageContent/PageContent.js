@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import scrollIntoView from 'scroll-into-view-if-needed'
 import {
   useParams,
@@ -13,6 +13,7 @@ import { urlSafeName } from '@databyss-org/services/lib/util'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
+import { debounce } from 'lodash'
 
 export const PageContentView = ({ children, ...others }) => (
   <View pt="small" flexShrink={1} flexGrow={1} overflow="hidden" {...others}>
@@ -26,7 +27,8 @@ export const PageContainer = React.memo(
     const [, setAuthToken] = useState()
     const [editorPath, setEditorPath] = useState(null)
     const location = useLocation()
-    const { getTokensFromPath } = useNavigationContext()
+    const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
+    const navigate = useNavigationContext((c) => c.navigate)
     const editorRef = useRef()
     const pagesRes = usePages()
     const { anchor, nice } = getTokensFromPath()
@@ -44,6 +46,12 @@ export const PageContainer = React.memo(
         setAuthToken(true)
       }
     }, [])
+
+    const updateUrl = useCallback(
+      debounce((url) => {
+        navigate(url, { replace: true })
+      }, 1000)
+    )
 
     useEffect(() => {
       const niceName = urlSafeName(pagesRes.data?.[page._id]?.name)
@@ -72,7 +80,8 @@ export const PageContainer = React.memo(
             window.requestAnimationFrame(() => {
               scrollIntoView(_ref)
               // navigate(redirectTo, { replace: true })
-              window.history.replaceState('', '', redirectTo)
+              // window.history.replaceState('', '', redirectTo)
+              updateUrl(redirectTo)
             })
           }
         }
@@ -80,7 +89,8 @@ export const PageContainer = React.memo(
       // if no nice URL, make one and redirect
       if (redirectTo !== location.pathname) {
         // navigate(redirectTo, { replace: true })
-        window.history.replaceState('', '', redirectTo)
+        // window.history.replaceState('', '', redirectTo)
+        updateUrl(redirectTo)
       }
     }, [pagesRes.data?.[page._id]?.name])
 

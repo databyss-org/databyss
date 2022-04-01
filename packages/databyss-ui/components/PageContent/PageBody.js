@@ -36,7 +36,7 @@ const PageBody = ({
 }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
-  const { location } = useNavigationContext()
+  // const { location } = useNavigationContext()
   const clearBlockDict = useEditorPageContext((c) => c.clearBlockDict)
   const setPageHeader = useEditorPageContext((c) => c.setPageHeader)
   const sharedWithGroups = useEditorPageContext((c) => c.sharedWithGroups)
@@ -131,7 +131,7 @@ const PageBody = ({
         )}
         <HistoryProvider ref={editorStateRef}>
           <EditorProvider
-            key={location.pathname}
+            key={page._id}
             // if read only, disable on change
             onChange={(v) => !isReadOnly && onChange(v)}
             initialState={{
