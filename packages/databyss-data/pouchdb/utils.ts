@@ -215,10 +215,10 @@ export const getGroupSession = async (
         resolve(null)
         return
       }
-      if (_response.docs.length > 1) {
-        reject(new Error('multiple group docs'))
-        return
-      }
+      // if (_response.docs.length > 1) {
+      //   reject(new Error('multiple group docs'))
+      //   return
+      // }
       if (!_response.docs.length) {
         setTimeout(() => _getGroup(count + 1), 3000)
         return
