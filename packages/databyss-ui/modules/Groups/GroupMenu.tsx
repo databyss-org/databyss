@@ -43,11 +43,14 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
     )
     for (const group of _namedGroups) {
       if (group._id !== groupId) {
-        navigate(`/collections/${group._id}`)
+        setTimeout(
+          () => navigate(`/collections/${group._id}`, { replace: true }),
+          50
+        )
         return
       }
     }
-    navigate(`/`, { hasAccount: true })
+    setTimeout(() => navigate('/', { replace: true }), 50)
     // window does not refresh on navigation change
     // setTimeout(() => window.location.reload(), 50)
   }

@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 import assert from 'assert'
 import innerText from 'innertext'
-import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
   sleep,
@@ -26,7 +26,7 @@ let actions
 
 describe('page sharing', () => {
   beforeEach(async (done) => {
-    driver = await startSession({ platformName: OSX, browserName: CHROME })
+    driver = await startSession()
     await login(driver)
     actions = driver.actions()
     await sleep(500)
