@@ -194,7 +194,7 @@ export const getUserSession = async (): Promise<UserPreference | null> => {
 export const getGroupSession = async (
   maxRetries: number = 0
 ): Promise<Group | null> =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve) => {
     if (!dbRef.current) {
       resolve(null)
       return
@@ -215,10 +215,6 @@ export const getGroupSession = async (
         resolve(null)
         return
       }
-      // if (_response.docs.length > 1) {
-      //   reject(new Error('multiple group docs'))
-      //   return
-      // }
       if (!_response.docs.length) {
         setTimeout(() => _getGroup(count + 1), 3000)
         return
