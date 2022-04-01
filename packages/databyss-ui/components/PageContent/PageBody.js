@@ -1,11 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import {
-  PDFDropZoneManager,
-  Text,
-  useNavigationContext,
-  View,
-} from '@databyss-org/ui'
+import { PDFDropZoneManager, Text, View } from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'

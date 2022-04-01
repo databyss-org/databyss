@@ -11,9 +11,9 @@ import { useNavigationContext } from '@databyss-org/ui'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import { debounce } from 'lodash'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
-import { debounce } from 'lodash'
 
 export const PageContentView = ({ children, ...others }) => (
   <View pt="small" flexShrink={1} flexGrow={1} overflow="hidden" {...others}>
