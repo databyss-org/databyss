@@ -36,7 +36,7 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
     // first remove the group from all associated documents
 
     await deleteCollection(groupId)
-    setShowMenu(false)
+    // setShowMenu(false)
     // navigate to next named group, if there is one
     const _namedGroups = Object.values(groupsRes.data!).filter(
       (group) => !!group.name
