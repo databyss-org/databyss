@@ -36,7 +36,7 @@ export const StickyHeader = ({
     statusMessage =
       'Databyss is offline.\nYour changes are being saved locally and will be synched when you go back online.'
   } else if (debouncedIsDbBusy) {
-    statusMessage = `Databyss is getting back in synch.\n${writesPending} pending local changes\n${readsPending} pending remote changes`
+    statusMessage = `Databyss is getting back in sync.\n${writesPending} pending local changes\n${readsPending} pending remote changes`
   }
 
   return (

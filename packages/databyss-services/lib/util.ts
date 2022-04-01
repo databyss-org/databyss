@@ -2,7 +2,7 @@ import { ResourcePending } from '../interfaces/ResourcePending'
 
 export const urlSafeName = (name: string) =>
   name
-    .replaceAll(/[^\p{L}\p{N}-]/gu, '-')
+    ?.replaceAll(/[^\p{L}\p{N}-]/gu, '-')
     .replaceAll(/-+/gu, '-')
     .replace(/-$/, '')
     .replace(/^-/, '')

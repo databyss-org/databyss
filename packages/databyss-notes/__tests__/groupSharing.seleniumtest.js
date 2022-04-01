@@ -260,11 +260,8 @@ describe('group sharings', () => {
     await tagButtonClick('data-test-element="delete-group"', driver)
     await sleep(1000)
 
-    // HACK: for some reason, we get logged out here
-    await login(driver, email)
-
     // back to pages sidebar
-    // await tagButtonClick('data-test-sidebar-element="pages"', driver)
+    await tagButtonClick('data-test-sidebar-element="pages"', driver)
     // update topic on first page page (it should update on shared page with same topic)
     await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
 

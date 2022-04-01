@@ -84,10 +84,15 @@ export const areIndexBuilt = {
   current: false,
 }
 
-export const MakePouchReplicationErrorHandler = (action: string) => (
-  pouchError: any
-) => {
+export const MakePouchReplicationErrorHandler = (
+  action: string,
+  logOnly: boolean = false
+) => (pouchError: any) => {
   if (pouchError.name === 'forbidden' || pouchError.name === 'unauthorized') {
+    if (logOnly) {
+      console.log('[UnauthorizedDatabaseReplication]', action)
+      return
+    }
     throw new UnauthorizedDatabaseReplication(action)
   }
   throw pouchError
