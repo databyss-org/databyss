@@ -59,12 +59,10 @@ const Private = () => {
     provisionClientDatabase,
   } = getSession()
 
-  // const { defaultGroupId, defaultPageId } = user
-
   // Navigate to default page is nothing in path
   useEffect(() => {
     if (location.pathname === '/' || provisionClientDatabase) {
-      navigate(`/${defaultGroupId}/pages/${defaultPageId}`, {
+      navigate(`/${defaultGroupId.substring(2)}/pages/${defaultPageId}`, {
         hasAccount: true,
       })
     }

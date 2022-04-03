@@ -2,13 +2,14 @@ import React from 'react'
 import { Text, BaseControl } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { urlSafeName } from '@databyss-org/services/lib/util'
-import { useGroups } from '@databyss-org/data/pouchdb/hooks'
+import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { pxUnits } from '../..'
 import LoadingFallback from '../Notify/LoadingFallback'
 
 const Header = () => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const getSession = useSessionContext((c) => c && c.getSession)
+  const pagesRes = usePages()
 
   const { defaultGroupId, defaultGroupName, defaultPageId } = getSession()
 
@@ -25,13 +26,18 @@ const Header = () => {
     _urlGroupName = `${urlSafeName(defaultGroupName)}-`
   }
 
+  let _pageUrl = defaultPageId
+  if (pagesRes.data) {
+    _pageUrl = `${defaultPageId}/${urlSafeName(
+      pagesRes.data[defaultPageId].name
+    )}`
+  }
+
   return (
     <BaseControl
       href={
         isPublicAccount()
-          ? `/${_urlGroupName}${defaultGroupId.substring(
-              2
-            )}/pages/${defaultPageId}`
+          ? `/${_urlGroupName}${defaultGroupId.substring(2)}/pages/${_pageUrl}`
           : '/'
       }
       px="em"
