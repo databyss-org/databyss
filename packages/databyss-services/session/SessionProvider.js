@@ -13,6 +13,9 @@ import { Viewport } from '@databyss-org/ui'
 // import { connect } from '@databyss-org/data/couchdb-client/couchdb'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation'
+import { useGroups } from '@databyss-org/data/pouchdb/hooks'
+import { UNTITLED_NAME } from '@databyss-org/services/groups'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
@@ -25,6 +28,8 @@ import {
 import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
 import { replicateGroup, hasUnathenticatedAccess } from './actions'
 import { NetworkUnavailableError } from '../interfaces'
+import { urlSafeName } from '../lib/util'
+import { getAccountFromLocation } from './utils'
 
 const useReducer = createReducer()
 
@@ -50,6 +55,11 @@ const SessionProvider = ({
   })
   const { session: actions } = useServiceContext()
   const { notify } = useNotifyContext()
+  const location = useNavigationContext((c) => c && c.location)
+  const navigate = useNavigationContext((c) => c && c.navigate)
+  const groupRes = useGroups({
+    enabled: !!dbRef.current && !!state.session?.publicAccount,
+  })
 
   const isPublicAccount = useCallback(() => {
     if (state.session.publicAccount?._id) {
@@ -201,6 +211,53 @@ const SessionProvider = ({
       _init()
     }
   }, [state.sessionIsStored])
+
+  const _group = groupRes.data ? Object.values(groupRes.data)[0] : null
+  const _fullUrlFromGroupId = (groupIdWithName) => {
+    let _url = `/${groupIdWithName}/${location.pathname
+      .split('/')
+      .splice(2)
+      .join('/')}`
+    if (location.search) {
+      _url = `${_url}?${location.search}`
+    }
+    if (location.hash) {
+      _url = `${_url}#${location.search}`
+    }
+    return _url
+  }
+  const _updatePublicGroupInUrl = () => {
+    if (_group?.name === UNTITLED_NAME) {
+      return
+    }
+    if (!_group?.name) {
+      return
+    }
+    const _groupIdWithName = getAccountFromLocation(true)
+    const _defaultGroupIdWithName = `${urlSafeName(
+      _group.name
+    )}-${_group._id.substring(2)}`
+    if (_defaultGroupIdWithName !== _groupIdWithName) {
+      // console.log('[SessionProvider]', _url)
+      navigate(_fullUrlFromGroupId(_defaultGroupIdWithName), {
+        replace: true,
+        hasAccount: true,
+      })
+    }
+  }
+  useEffect(() => {
+    if (isPublicAccount()) {
+      _updatePublicGroupInUrl()
+    } else {
+      const _groupInUrl = location.pathname.split('/')[1]
+      if (_groupInUrl.match(/^(p_|g_)/)) {
+        navigate(_fullUrlFromGroupId(_groupInUrl.substring(2)), {
+          replace: true,
+          hasAccount: true,
+        })
+      }
+    }
+  }, [_group?.name])
 
   let _children = children
   const isPending = state.session instanceof ResourcePending

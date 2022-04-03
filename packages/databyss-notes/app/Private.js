@@ -14,8 +14,6 @@ import {
   PageContent,
   GroupDetail,
 } from '@databyss-org/ui'
-import { QueryClient, QueryClientProvider } from 'react-query'
-// import { ReactQueryDevtools } from 'react-query/devtools'
 
 import { GestureProvider, View } from '@databyss-org/ui/primitives'
 import { BlockType } from '@databyss-org/services/interfaces'
@@ -25,19 +23,6 @@ import {
   SearchContent,
 } from '@databyss-org/ui/modules'
 import { EditorPageProvider } from '@databyss-org/services'
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // Disable window focus refetching globally for all react-query hooks
-      // see: https://react-query.tanstack.com/guides/window-focus-refetching
-      refetchOnWindowFocus: false,
-      // Never set queries as stale
-      staleTime: Infinity,
-      cacheTime: Infinity,
-    },
-  },
-})
 
 const AppView = ({ children }) => (
   <View
@@ -56,16 +41,13 @@ const AppView = ({ children }) => (
 )
 
 const Providers = ({ children }) => (
-  <QueryClientProvider client={queryClient}>
-    <UserPreferencesProvider>
-      <ExportProvider>
-        <SearchProvider>
-          <GestureProvider>{children}</GestureProvider>
-        </SearchProvider>
-      </ExportProvider>
-    </UserPreferencesProvider>
-    {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-  </QueryClientProvider>
+  <UserPreferencesProvider>
+    <ExportProvider>
+      <SearchProvider>
+        <GestureProvider>{children}</GestureProvider>
+      </SearchProvider>
+    </ExportProvider>
+  </UserPreferencesProvider>
 )
 
 const Private = () => {

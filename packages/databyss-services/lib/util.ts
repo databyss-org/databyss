@@ -7,6 +7,7 @@ export const urlSafeName = (name: string) =>
     .replace(/-$/, '')
     .replace(/^-/, '')
     .trim()
+    .toLowerCase()
 
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 

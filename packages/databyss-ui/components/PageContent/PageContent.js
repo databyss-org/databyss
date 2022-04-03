@@ -57,10 +57,12 @@ export const PageContainer = React.memo(
       const niceName = urlSafeName(pagesRes.data?.[page._id]?.name)
       let redirectTo = location.pathname
 
-      if (!nice?.length) {
-        redirectTo = `${location.pathname}/${niceName}`
-      } else if (nice.join('/') !== niceName) {
-        redirectTo = `${location.pathname.replace(nice.join('/'), niceName)}`
+      if (niceName) {
+        if (!nice?.length) {
+          redirectTo = `${location.pathname}/${niceName}`
+        } else if (nice.join('/') !== niceName) {
+          redirectTo = `${location.pathname.replace(nice.join('/'), niceName)}`
+        }
       }
 
       // if anchor link exists, scroll to anchor

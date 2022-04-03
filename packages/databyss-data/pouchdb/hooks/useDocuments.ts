@@ -11,7 +11,7 @@ const subscriptionDict: { [selector: string]: boolean } = {}
 
 export const useDocuments = <T extends Document>(
   selectorOrIdList: PouchDB.Find.Selector | string[],
-  options?: UseQueryOptions
+  options: UseQueryOptions = { enabled: true }
 ) => {
   const queryClient = useQueryClient()
 
@@ -54,10 +54,13 @@ export const useDocuments = <T extends Document>(
   )
 
   useEffect(() => {
+    if (!options?.enabled) {
+      return
+    }
+
     if (dbRef.current instanceof CouchDb) {
       return
     }
-    // console.log('useDocuments.subscribe', queryKey, selector)
 
     if (subscriptionDict[queryKey]) {
       return
@@ -83,18 +86,16 @@ export const useDocuments = <T extends Document>(
           }
           if (change.deleted) {
             // remove from cache
-            // console.log('useDocuments.delete', change.doc)
             delete oldData![change.doc._id]
           } else {
             // add or update cache
-            // console.log('useDocuments.addOrUpdate', change.doc)
             oldData![change.doc._id] = change.doc
           }
           return oldData as DocumentDict<T>
         })
       })!
-    // console.log('useDocuments.subscribe', subscriptionDict)
-  }, [])
+    // console.log('[useDocuments] subscribe', queryKey, selector, dbRef.current)
+  }, [options?.enabled])
 
   return query
 }
