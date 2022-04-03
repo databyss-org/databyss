@@ -7,7 +7,6 @@ import { pxUnits } from '../..'
 import LoadingFallback from '../Notify/LoadingFallback'
 
 const Header = () => {
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const getSession = useSessionContext((c) => c && c.getSession)
   const pagesRes = usePages()
 
