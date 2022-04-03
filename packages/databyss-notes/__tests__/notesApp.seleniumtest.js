@@ -15,6 +15,7 @@ import {
   tagButtonListClick,
   getEditorElements,
   login,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -29,10 +30,9 @@ describe('notes app', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
-    await driver.quit()
-    await sleep(100)
+  afterEach(async (done) => {
+    await tryQuit(driver)
+    done()
   })
 
   it('should switch page names and verify atomics appear on the sidebar', async () => {

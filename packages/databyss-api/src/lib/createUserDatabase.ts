@@ -109,7 +109,7 @@ export const createGroupDatabase = async (
     _db = await cloudant.current.db.use<any>(id)
 
     return _db
-  } catch (err) {
+  } catch (err: any) {
     if (err.error !== 'not_found') {
       throw err
     }

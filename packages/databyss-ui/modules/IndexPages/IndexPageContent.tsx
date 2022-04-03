@@ -43,6 +43,7 @@ import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import EditSvg from '@databyss-org/ui/assets/edit.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 import { useUserPreferencesContext } from '../../hooks'
@@ -78,14 +79,17 @@ export const IndexPageTitleInput = ({
   const { navigate } = useNavigationContext()
   const blocksRes = useBlocks(BlockType._ANY)
   const pagesRes = usePages()
+  const isSearch = path[0] === 'Search'
 
   useImperativeHandle(handlesRef, () => ({
     updateTitle: (block: Block) => setTitle(getTitleFromBlock(block, path)),
   }))
 
-  // useEffect(() => {
-  //   debouncedSetTitle(getTitleFromBlock(block, path))
-  // }, [path])
+  useEffect(() => {
+    if (isSearch) {
+      setTitle(getTitleFromBlock(block, path))
+    }
+  }, [path])
 
   const setBlockText = useCallback(
     debounce((value: string) => {
@@ -120,8 +124,8 @@ export const IndexPageTitleInput = ({
   const onKeyDown = (evt: KeyboardEvent) => {
     if (evt.key === 'Enter') {
       evt.preventDefault()
-      if (path[0] === 'Search') {
-        navigate(`/${getAccountFromLocation()}/search/${title}`)
+      if (isSearch) {
+        navigate(`/${getAccountFromLocation(true)}/search/${title}`)
       }
     }
   }
@@ -147,12 +151,10 @@ export const IndexPageTitleInput = ({
   return (
     <TitleInput
       autoFocus
-      placeholder={`untitled ${indexName}`}
+      placeholder={isSearch ? 'Search' : `untitled ${indexName}`}
       value={title}
       readonly={
-        isPublicAccount() ||
-        isMobileOrMobileOs() ||
-        (!block && path[0] !== 'Search')
+        isPublicAccount() || isMobileOrMobileOs() || (!block && !isSearch)
       }
       onChange={onChange}
       onKeyDown={onKeyDown}
@@ -200,7 +202,12 @@ export const IndexPageView = ({
   menuChild,
   ...others
 }: PropsWithChildren<IndexPageViewProps>) => {
-  const { showModal } = useNavigationContext()
+  const {
+    showModal,
+    getTokensFromPath,
+    navigate,
+    location,
+  } = useNavigationContext()
   const titleInputHandlesRef = useRef<IndexPageTitleInputHandles>(null)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const onUpdateBlock = (block: Block) => {
@@ -216,6 +223,28 @@ export const IndexPageView = ({
       },
     })
   }
+  // if no nice URL, make one and redirect
+  const blockName =
+    block?.type === BlockType.Source
+      ? (block as Source).name?.textValue ?? block.text.textValue
+      : block?.text.textValue
+  useEffect(() => {
+    if (block) {
+      const { nice } = getTokensFromPath()
+      const niceName = urlSafeName(blockName!)
+      if (!nice?.length) {
+        window.requestAnimationFrame(() => {
+          navigate(`${location.pathname}/${niceName}`, { replace: true })
+        })
+      } else if (nice.join('/') !== niceName) {
+        window.requestAnimationFrame(() => {
+          navigate(`${location.pathname.replace(nice.join('/'), niceName)}`, {
+            replace: true,
+          })
+        })
+      }
+    }
+  }, [blockName])
   return (
     <>
       <StickyHeader path={path} contextMenu={<IndexPageMenu block={block} />} />
@@ -322,19 +351,19 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   if (
     !blocksRes.isSuccess ||
     !pagesRes.isSuccess ||
-    !blocksRes.data?.[blockId]
+    !blocksRes.data?.[blockId!]
   ) {
     return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
   }
 
   return (
     <IndexPageView
-      path={getPathFromBlock(blocksRes.data![blockId])}
-      block={blocksRes.data![blockId]}
+      path={getPathFromBlock(blocksRes.data![blockId!])}
+      block={blocksRes.data![blockId!]}
       key={blockId}
     >
       <IndexResults
-        relatedBlockId={blockId}
+        relatedBlockId={blockId!}
         key={`${blockType}_${blockId}`}
         blocks={blocksRes.data!}
         pages={pagesRes.data!}

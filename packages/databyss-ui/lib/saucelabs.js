@@ -28,10 +28,7 @@ if (jasmine) {
 }
 /* eslint-enable no-undef */
 
-const sessionDefaults = {
-  platformName: OSX,
-  browserName: SAFARI,
-}
+const sessionDefaults = { platformName: WIN, browserName: CHROME }
 
 export const startSession = process.env.LOCAL_ENV
   ? async () => {

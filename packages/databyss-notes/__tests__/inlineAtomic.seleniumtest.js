@@ -19,6 +19,7 @@ import {
   tagButtonListClick,
   upKey,
   login,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -32,11 +33,10 @@ describe('inline atomic', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
+  afterEach(async (done) => {
     await logout(driver)
-    await driver.quit()
-    await sleep(100)
+    await tryQuit(driver)
+    done()
   })
 
   it('should test the integrity of inline atomics', async () => {

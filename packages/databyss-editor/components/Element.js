@@ -8,6 +8,7 @@ import { useSearchContext } from '@databyss-org/ui/hooks'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorPageContext } from '@databyss-org/services'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
@@ -65,12 +66,14 @@ const Element = ({ attributes, children, element, readOnly }) => {
     ? editorContext.state.blocks[blockIndex - 1]
     : {}
 
-  const _groupId = getAccountFromLocation()
+  const _groupId = getAccountFromLocation(true)
   const _blockPath = {
     [BlockType.Source]: 'sources',
     [BlockType.Topic]: 'topics',
   }[block.type]
-  const _href = `/${_groupId}/${_blockPath}/${block._id}`
+  const _href = `/${_groupId}/${_blockPath}/${block._id}/${urlSafeName(
+    block.text.textValue
+  )}`
 
   const onAtomicMouseDown = (e) => {
     e.preventDefault()

@@ -104,7 +104,7 @@ export const UserPreferencesProvider = ({ children }) => {
             message: _notification.messageHtml,
             onOk: () => {
               setNotificationRead(_notification.id!)
-              setTimeout(() => window.location.reload(true), 500)
+              setTimeout(() => window.location.reload(), 500)
             },
             showCancelButton: false,
           })

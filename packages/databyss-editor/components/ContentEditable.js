@@ -12,8 +12,9 @@ import { setSource } from '@databyss-org/services/sources'
 import { setEmbed } from '@databyss-org/services/embeds'
 import { setBlockRelations } from '@databyss-org/services/entries'
 import { setTopic } from '@databyss-org/data/pouchdb/topics'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { copyToClipboard } from '@databyss-org/ui/components/PageContent/PageMenu'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -266,12 +267,16 @@ const ContentEditable = ({
   }, [currentLeaf, editor.selection?.focus.offset])
 
   const onInlineAtomicClick = (inlineData) => {
+    let _nice = ''
+    if (inlineData.name) {
+      _nice = `/${urlSafeName(inlineData.name)}`
+    }
     const _groupId = getAccountFromLocation()
     const _blockPath = {
       [BlockType.Source]: 'sources',
       [BlockType.Topic]: 'topics',
     }[inlineData.type]
-    navigate(`/${_groupId}/${_blockPath}/${inlineData.refId}`)
+    navigate(`/${_groupId}/${_blockPath}/${inlineData.refId}${_nice}`)
   }
 
   return useMemo(() => {

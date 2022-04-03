@@ -1,11 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import {
-  PDFDropZoneManager,
-  Text,
-  useNavigationContext,
-  View,
-} from '@databyss-org/ui'
+import { PDFDropZoneManager, Text, View } from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'
@@ -36,7 +31,7 @@ const PageBody = ({
 }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
-  const { location } = useNavigationContext()
+  // const { location } = useNavigationContext()
   const clearBlockDict = useEditorPageContext((c) => c.clearBlockDict)
   const setPageHeader = useEditorPageContext((c) => c.setPageHeader)
   const sharedWithGroups = useEditorPageContext((c) => c.sharedWithGroups)
@@ -131,7 +126,7 @@ const PageBody = ({
         )}
         <HistoryProvider ref={editorStateRef}>
           <EditorProvider
-            key={location.pathname}
+            key={page._id}
             // if read only, disable on change
             onChange={(v) => !isReadOnly && onChange(v)}
             initialState={{

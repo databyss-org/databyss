@@ -1,5 +1,9 @@
 import React, { useEffect } from 'react'
-import { Router } from '@databyss-org/ui/components/Navigation/NavigationProvider'
+import {
+  Routes,
+  Route,
+  NotFoundRedirect,
+} from '@databyss-org/ui/components/Navigation'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { SearchProvider, UserPreferencesProvider } from '@databyss-org/ui/hooks'
 import { ExportProvider } from '@databyss-org/services/export'
@@ -10,8 +14,6 @@ import {
   PageContent,
   GroupDetail,
 } from '@databyss-org/ui'
-import { QueryClient, QueryClientProvider } from 'react-query'
-// import { ReactQueryDevtools } from 'react-query/devtools'
 
 import { GestureProvider, View } from '@databyss-org/ui/primitives'
 import { BlockType } from '@databyss-org/services/interfaces'
@@ -21,19 +23,6 @@ import {
   SearchContent,
 } from '@databyss-org/ui/modules'
 import { EditorPageProvider } from '@databyss-org/services'
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // Disable window focus refetching globally for all react-query hooks
-      // see: https://react-query.tanstack.com/guides/window-focus-refetching
-      refetchOnWindowFocus: false,
-      // Never set queries as stale
-      staleTime: Infinity,
-      cacheTime: Infinity,
-    },
-  },
-})
 
 const AppView = ({ children }) => (
   <View
@@ -51,33 +40,14 @@ const AppView = ({ children }) => (
   </View>
 )
 
-const NotFoundRedirect = () => {
-  const { navigate } = useNavigationContext()
-  const getSession = useSessionContext((c) => c && c.getSession)
-
-  const { defaultGroupId, defaultPageId } = getSession()
-
-  // if no page found, navigate to default page
-  useEffect(() => {
-    navigate(`/${defaultGroupId}/pages/${defaultPageId}`, {
-      hasAccount: true,
-    })
-  }, [])
-
-  return null
-}
-
 const Providers = ({ children }) => (
-  <QueryClientProvider client={queryClient}>
-    <UserPreferencesProvider>
-      <ExportProvider>
-        <SearchProvider>
-          <GestureProvider>{children}</GestureProvider>
-        </SearchProvider>
-      </ExportProvider>
-    </UserPreferencesProvider>
-    {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-  </QueryClientProvider>
+  <UserPreferencesProvider>
+    <ExportProvider>
+      <SearchProvider>
+        <GestureProvider>{children}</GestureProvider>
+      </SearchProvider>
+    </ExportProvider>
+  </UserPreferencesProvider>
 )
 
 const Private = () => {
@@ -89,12 +59,10 @@ const Private = () => {
     provisionClientDatabase,
   } = getSession()
 
-  // const { defaultGroupId, defaultPageId } = user
-
   // Navigate to default page is nothing in path
   useEffect(() => {
     if (location.pathname === '/' || provisionClientDatabase) {
-      navigate(`/${defaultGroupId}/pages/${defaultPageId}`, {
+      navigate(`/${defaultGroupId.substring(2)}/pages/${defaultPageId}`, {
         hasAccount: true,
       })
     }
@@ -102,25 +70,33 @@ const Private = () => {
 
   return (
     <Providers>
-      <Router>
-        <AppView path="/:accountId">
-          <NotFoundRedirect default />
-          <EditorPageProvider path="pages/:id">
-            <PageContent default />
-          </EditorPageProvider>
-          <SearchContent path="search/:query" />
-          <GroupDetail path="collections/:id" />
-          <IndexPageContent
-            blockType={BlockType.Source}
-            path="sources/:blockId"
-          />
-          <IndexPageContent
-            blockType={BlockType.Topic}
-            path="topics/:blockId"
-          />
-          <SourcesContent path="sources/" />
-        </AppView>
-      </Router>
+      <AppView>
+        <Routes>
+          <Route path="/:accountId/*">
+            <Route
+              path="pages/:id/*"
+              element={
+                <EditorPageProvider>
+                  <PageContent />
+                </EditorPageProvider>
+              }
+            />
+            <Route path="search/:query" element={<SearchContent />} />
+            <Route path="collections/:id" element={<GroupDetail />} />
+            <Route
+              path="sources/:blockId/*"
+              element={<IndexPageContent blockType={BlockType.Source} />}
+            />
+            <Route
+              path="topics/:blockId/*"
+              element={<IndexPageContent blockType={BlockType.Topic} />}
+            />
+            <Route path="sources/*" element={<SourcesContent />} />
+            <Route path="*" element={<NotFoundRedirect />} />
+          </Route>
+          <Route path="*" element={<NotFoundRedirect />} />
+        </Routes>
+      </AppView>
       <ModalManager />
     </Providers>
   )

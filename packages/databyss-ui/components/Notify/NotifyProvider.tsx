@@ -275,7 +275,7 @@ class NotifyProvider extends React.Component {
             ml="small"
             variant="uiLink"
             textVariant="uiTextNormal"
-            onPress={() => window.location.reload(true)}
+            onPress={() => window.location.reload()}
           >
             Refresh or click here to update
           </Button>
@@ -437,7 +437,7 @@ class NotifyProvider extends React.Component {
       >
         Discord Support Channel
       </Button>,
-      <Button key="ok" onPress={() => window.location.reload(true)}>
+      <Button key="ok" onPress={() => window.location.reload()}>
         Refresh and try again
       </Button>,
     ]

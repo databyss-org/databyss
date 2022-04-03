@@ -10,4 +10,5 @@ export {
   NavigationProvider,
   useNavigationContext,
   NavigationContext,
-} from './NavigationProvider'
+} from './NavigationProvider/NavigationProvider'
+export { NotFoundRedirect } from './NotFoundRedirect'

@@ -11,6 +11,7 @@ import {
   jsx as h,
   login,
   downKey,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -27,10 +28,9 @@ describe('new block menu actions', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
-    await driver.quit()
-    await sleep(100)
+  afterEach(async (done) => {
+    await tryQuit(driver)
+    done()
   })
 
   it('should toggle a new atomics', async () => {

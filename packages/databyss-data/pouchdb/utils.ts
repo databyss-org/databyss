@@ -130,7 +130,7 @@ export const getDocument = async <T extends Document>(
 ): Promise<T | null> => {
   try {
     return await dbRef.current!.get(id)
-  } catch (err) {
+  } catch (err: any) {
     if (err.name === 'not_found') {
       return null
     }
@@ -194,7 +194,7 @@ export const getUserSession = async (): Promise<UserPreference | null> => {
 export const getGroupSession = async (
   maxRetries: number = 0
 ): Promise<Group | null> =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve) => {
     if (!dbRef.current) {
       resolve(null)
       return
@@ -211,8 +211,8 @@ export const getGroupSession = async (
           doctype: 'GROUP',
         },
       })
-      if (_response.docs.length > 1) {
-        reject(new Error('multiple group docs'))
+      if (!_response?.docs) {
+        resolve(null)
         return
       }
       if (!_response.docs.length) {

@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { Document } from '@databyss-org/services/interfaces'
-import PouchDB from 'pouchdb'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 
 import { dbRef } from '../db'
@@ -12,7 +11,7 @@ export interface UseDocumentOptions {
   initialData?: any
 }
 
-const subscriptionDict: { [_id: string]: PouchDB.Core.Changes<any> } = {}
+const subscriptionDict: { [_id: string]: boolean } = {}
 
 export const useDocument = <T extends Document>(
   _id: string,
@@ -47,7 +46,8 @@ export const useDocument = <T extends Document>(
     if (subscriptionDict[_id]) {
       return
     }
-    subscriptionDict[_id] = dbRef!.current
+    subscriptionDict[_id] = true
+    dbRef!.current
       ?.changes({
         since: 'now',
         live: true,

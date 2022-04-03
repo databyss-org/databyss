@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
-  Redirect,
-  Router,
-} from '@databyss-org/ui/components/Navigation/NavigationProvider'
-import { QueryClientProvider, QueryClient } from 'react-query'
+  Routes,
+  Route,
+  NotFoundRedirect,
+  useNavigate,
+} from '@databyss-org/ui/components/Navigation'
 import { View } from '@databyss-org/ui/primitives'
 import { EditorPageProvider } from '@databyss-org/services'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { UserPreferencesProvider } from '@databyss-org/ui/hooks'
 import NavBar from '../components/NavBar'
 import Tabs from '../constants/Tabs'
@@ -20,26 +20,48 @@ import TopicsIndex from './Topics/TopicsIndex'
 import TopicDetails from './Topics/TopicDetails'
 import ConfigIndex from './Config/ConfigIndex'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // Disable window focus refetching globally for all react-query hooks
-      // see: https://react-query.tanstack.com/guides/window-focus-refetching
-      refetchOnWindowFocus: false,
-      // Never set queries as stale
-      staleTime: Infinity,
-      cacheTime: Infinity,
-    },
-  },
-})
+const Redirect = ({ to }) => {
+  const navigate = useNavigate()
+  useEffect(() => {
+    navigate(to)
+  })
+  return null
+}
 
-const RouterGroup = ({ children }) => <>{children}</>
+const PagesRouter = () => (
+  <Routes>
+    <Route path="/" element={<PagesIndex />} />
+    <Route
+      path="/:pageId/*"
+      element={
+        <EditorPageProvider>
+          <PageDetails default />
+        </EditorPageProvider>
+      }
+    />
+  </Routes>
+)
+
+const SourcesRouter = () => (
+  <Routes>
+    <Route path="/" element={<SourcesIndex />} />
+    <Route path="/authors/*">
+      <Route path="*" element={<SourcesIndex />} />
+      <Route path=":query" element={<AuthorDetails />} />
+    </Route>
+    <Route path="/:blockId/*" element={<SourceDetails />} />
+  </Routes>
+)
+
+const TopicsRouter = () => (
+  <Routes>
+    <Route path="/" element={<TopicsIndex />} />
+    <Route path="/:blockId/*" element={<TopicDetails />} />
+  </Routes>
+)
 
 // component
 const Private = () => {
-  const getSession = useSessionContext((c) => c && c.getSession)
-  const { defaultGroupId } = getSession()
-
   const [currentTab, setCurrentTab] = useState(Tabs.PAGES)
 
   const onNavBarChange = (item) => {
@@ -54,53 +76,29 @@ const Private = () => {
 
   // render methods
   const render = () => (
-    <QueryClientProvider client={queryClient}>
-      <UserPreferencesProvider>
-        <View
-          position="absolute"
-          top="0"
-          bottom="0"
-          width="100%"
-          backgroundColor="background.1"
-        >
-          <Router>
-            <Redirect noThrow from="/signup" to="/" />
-            <RouterGroup path="/:accountId">
-              <RouterGroup path="pages">
-                <PagesIndex path="/" />
-                <EditorPageProvider path=":pageId">
-                  <PageDetails default />
-                </EditorPageProvider>
-              </RouterGroup>
+    <UserPreferencesProvider>
+      <View
+        position="absolute"
+        top="0"
+        bottom="0"
+        width="100%"
+        backgroundColor="background.1"
+      >
+        <Routes>
+          <Route path="*" element={<NotFoundRedirect />} />
+          <Route path="/signup" element={<Redirect to="/" />} />
+          <Route path="/:accountId/*">
+            <Route path="*" element={<NotFoundRedirect />} />
+            <Route path="pages/*" element={<PagesRouter />} />
+            <Route path="sources/*" element={<SourcesRouter />} />
+            <Route path="topics/*" element={<TopicsRouter />} />
+            <Route path="config/*" element={<ConfigIndex />} />
+          </Route>
+        </Routes>
 
-              <RouterGroup path="sources">
-                <SourcesIndex path="/" />
-                <RouterGroup path="/authors">
-                  <SourcesIndex path="/" />
-                  <AuthorDetails path="/:query" />
-                </RouterGroup>
-                <SourceDetails path="/:blockId" />
-              </RouterGroup>
-
-              <RouterGroup path="topics">
-                <TopicsIndex path="/" />
-                <TopicDetails path="/:blockId" />
-              </RouterGroup>
-
-              <RouterGroup path="config">
-                <ConfigIndex path="/" />
-              </RouterGroup>
-
-              <Redirect noThrow from="*" to="pages" />
-            </RouterGroup>
-
-            <Redirect noThrow from="*" to={`${defaultGroupId}/pages`} />
-          </Router>
-
-          <NavBar onChange={onNavBarChange} />
-        </View>
-      </UserPreferencesProvider>
-    </QueryClientProvider>
+        <NavBar onChange={onNavBarChange} />
+      </View>
+    </UserPreferencesProvider>
   )
 
   return render()

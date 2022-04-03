@@ -13,6 +13,7 @@ import {
 } from '@databyss-org/ui/primitives'
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import { debounce } from 'lodash'
 import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
@@ -61,7 +62,10 @@ export const GroupFields = ({
 
     // compose public link
     const getUrl = window.location
-    const baseUrl = `${getUrl.protocol}//${getUrl.host}/${group._id}`
+    const _groupName = group.name ? `${urlSafeName(group.name)}-` : ''
+    const baseUrl = `${getUrl.protocol}//${
+      getUrl.host
+    }/${_groupName}${group._id.substring(2)}`
 
     copyToClipboard(baseUrl)
   }
@@ -141,7 +145,7 @@ export const GroupDetail = () => {
 
   const pages = pagesRes?.data
 
-  const group = groupsRes.data?.[id]
+  const group = groupsRes.data?.[id!]
 
   if (!groupsRes.isSuccess || !group) {
     return <LoadingFallback queryObserver={groupsRes} />

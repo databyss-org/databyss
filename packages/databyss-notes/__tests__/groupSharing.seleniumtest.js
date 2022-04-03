@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 import assert from 'assert'
-import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import {
   sleep,
   sendKeys,
@@ -10,45 +10,33 @@ import {
   selectAll,
   tagButtonClick,
   tagButtonListClick,
-  upKey,
   getElementsByTag,
   getElementByTag,
   logout,
-  downKey,
-  downShiftKey,
   backspaceKey,
   login,
+  tryQuit,
+  selectLinkInFirstBlock,
 } from './util.selenium'
 import { cleanUrl } from './util'
 
 let driver
 let actions
 
-export async function selectLinkInFirstBlock(actions) {
-  await upKey(actions)
-  await upKey(actions)
-  await upKey(actions)
-  await downKey(actions)
-  await downShiftKey(actions)
-  await downShiftKey(actions)
-  await downShiftKey(actions)
-}
-
 // TODO: THIS SHOULD BE ON THE PAGE SHARING  TEST
 // 6) Archiving a page removes that page from shared pages
 describe('group sharings', () => {
   let email
   beforeEach(async (done) => {
-    driver = await startSession({ platformName: WIN, browserName: CHROME })
+    driver = await startSession()
     email = await login(driver)
     actions = driver.actions()
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
-    await driver.quit()
-    await sleep(100)
+  afterEach(async (done) => {
+    await tryQuit(driver)
+    done()
   })
 
   it('should ensure group sharing integrity', async () => {
@@ -272,8 +260,9 @@ describe('group sharings', () => {
     await tagButtonClick('data-test-element="delete-group"', driver)
     await sleep(1000)
 
+    // back to pages sidebar
+    await tagButtonClick('data-test-sidebar-element="pages"', driver)
     // update topic on first page page (it should update on shared page with same topic)
-
     await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
 
     // update topic on first page page (it should update on shared page with same topic)    await upKey(actions)

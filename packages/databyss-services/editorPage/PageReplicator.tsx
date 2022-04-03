@@ -79,7 +79,7 @@ export const PageReplicator = ({
           return !doc._id.includes('design/')
         },
       })
-      .on('error', MakePouchReplicationErrorHandler('[startReplication]'))
+      .on('error', MakePouchReplicationErrorHandler('[startReplication]', true))
       // keeps track of the loader wheel
       .on('change', () => {
         setDbBusy(true)

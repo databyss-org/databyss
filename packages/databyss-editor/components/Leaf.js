@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react'
 import colors from '@databyss-org/ui/theming/colors'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import { EmbedMedia } from './EmbedMedia'
 import { Link } from './Link'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
@@ -61,15 +62,19 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
     )
   }
 
-  const _groupId = getAccountFromLocation()
+  const _groupId = getAccountFromLocation(true)
 
   if (leaf.inlineTopic) {
     _children = (
       <a
-        href={`/${_groupId}/topics/${leaf.atomicId}`}
+        href={`/${_groupId}/topics/${leaf.atomicId}/${urlSafeName(leaf.text)}`}
         onClick={(evt) => {
           evt.preventDefault()
-          onInlineClick({ atomicType: 'TOPIC', id: leaf.atomicId })
+          onInlineClick({
+            atomicType: 'TOPIC',
+            id: leaf.atomicId,
+            name: leaf.text,
+          })
         }}
         style={{
           color: inlineTopic,
@@ -89,6 +94,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
         _children={_children}
         atomicId={leaf.atomicId}
         readOnly={readOnly}
+        text={leaf.text}
       />
     )
   }
@@ -96,10 +102,14 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
   if (leaf.inlineCitation) {
     _children = (
       <a
-        href={`/${_groupId}/sources/${leaf.atomicId}`}
+        href={`/${_groupId}/sources/${leaf.atomicId}/${urlSafeName(leaf.text)}`}
         onClick={(evt) => {
           evt.preventDefault()
-          onInlineClick({ atomicType: 'SOURCE', id: leaf.atomicId })
+          onInlineClick({
+            atomicType: 'SOURCE',
+            id: leaf.atomicId,
+            name: leaf.text,
+          })
         }}
         style={{
           color: inlineSource,

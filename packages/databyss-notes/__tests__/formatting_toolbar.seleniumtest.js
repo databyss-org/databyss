@@ -2,7 +2,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import { sanitizeEditorChildren } from './util'
 import {
   sleep,
@@ -15,6 +15,7 @@ import {
   jsx as h,
   login,
   downKey,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -23,17 +24,16 @@ let actions
 
 describe('format text in editor', () => {
   beforeEach(async (done) => {
-    driver = await startSession({ platformName: WIN, browserName: CHROME })
+    driver = await startSession()
     await login(driver)
     actions = driver.actions()
     await downKey(actions)
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
-    await driver.quit()
-    await sleep(100)
+  afterEach(async (done) => {
+    await tryQuit(driver)
+    done()
   })
 
   it('should toggle italic using the format toolbar', async () => {

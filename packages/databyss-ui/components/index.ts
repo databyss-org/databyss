@@ -9,7 +9,7 @@ export {
   SidebarListRow,
 } from './Sidebar/SidebarListItem'
 export {
-  default as NavigationProvider,
+  NavigationProvider,
   useNavigationContext,
 } from './Navigation/NavigationProvider/NavigationProvider'
 export { default as AccountMenu } from './PageContent/AccountMenu'

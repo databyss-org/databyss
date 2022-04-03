@@ -47,12 +47,6 @@ interface DbRef {
   readOnly: boolean
 }
 
-declare global {
-  interface IDBFactory {
-    databases: () => Promise<{ name: string; version: number }[]>
-  }
-}
-
 export const getPouchDb = (groupId: string) => {
   if (
     process.env.FORCE_MOBILE?.toLowerCase() === 'true' ||
@@ -90,10 +84,15 @@ export const areIndexBuilt = {
   current: false,
 }
 
-export const MakePouchReplicationErrorHandler = (action: string) => (
-  pouchError: any
-) => {
+export const MakePouchReplicationErrorHandler = (
+  action: string,
+  logOnly: boolean = false
+) => (pouchError: any) => {
   if (pouchError.name === 'forbidden' || pouchError.name === 'unauthorized') {
+    if (logOnly) {
+      console.log('[UnauthorizedDatabaseReplication]', action)
+      return
+    }
     throw new UnauthorizedDatabaseReplication(action)
   }
   throw pouchError

@@ -15,7 +15,7 @@ const Search = (others) => {
     getTokensFromPath,
   } = useNavigationContext()
 
-  const { params } = getTokensFromPath()
+  const { params, type: paramsType } = getTokensFromPath()
   const searchTerm = useSearchContext((c) => c && c.searchTerm)
   const setQuery = useSearchContext((c) => c && c.setQuery)
   const menuItem = getSidebarPath()
@@ -50,6 +50,13 @@ const Search = (others) => {
   useEffect(() => {
     encodedSearchTerm.current = encodeURIComponent(value)
   }, [searchTerm, value])
+
+  useEffect(() => {
+    if (paramsType === 'search') {
+      setQuery(decodeURIComponent(params))
+      setValue(decodeURIComponent(params))
+    }
+  }, [params])
 
   const onSearchClick = () => {
     // if not currently in search page, navigate to search page

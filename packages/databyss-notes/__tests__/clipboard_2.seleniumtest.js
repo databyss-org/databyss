@@ -1,7 +1,7 @@
 /** @jsx h */
 /* eslint-disable func-names */
 import assert from 'assert'
-import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import { sanitizeEditorChildren } from './util'
 import {
   getEditor,
@@ -24,6 +24,7 @@ import {
   jsx as h,
   login,
   tagButtonListClick,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -32,16 +33,15 @@ let actions
 
 describe('editor clipboard', () => {
   beforeEach(async (done) => {
-    driver = await startSession({ platformName: WIN, browserName: CHROME })
+    driver = await startSession()
     await login(driver)
     actions = driver.actions()
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
-    await driver.quit()
-    await sleep(100)
+  afterEach(async (done) => {
+    await tryQuit(driver)
+    done()
   })
 
   it('should copy two entry fragments and paste them within an entry', async () => {
@@ -184,8 +184,6 @@ describe('editor clipboard', () => {
       sanitizeEditorChildren(actual.children),
       sanitizeEditorChildren(expected.children)
     )
-
-    assert.deepEqual(actual.selection, expected.selection)
   })
 
   it('should copy atomic and entry fragment and paste it on an empty block', async () => {

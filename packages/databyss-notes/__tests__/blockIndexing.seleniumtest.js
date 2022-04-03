@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 import assert from 'assert'
-import { startSession, CHROME, WIN } from '@databyss-org/ui/lib/saucelabs'
+import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementsByTag,
   sleep,
@@ -19,6 +19,7 @@ import {
   tagButtonListClick,
   tabKey,
   login,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -26,7 +27,7 @@ let actions
 
 describe('block indexing', () => {
   beforeEach(async (done) => {
-    driver = await startSession({ platformName: WIN, browserName: CHROME })
+    driver = await startSession()
     await login(driver)
     actions = driver.actions()
     done()
@@ -34,7 +35,7 @@ describe('block indexing', () => {
 
   afterEach(async (done) => {
     await logout(driver)
-    await driver.quit()
+    await tryQuit(driver)
     done()
   })
 

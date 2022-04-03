@@ -27,7 +27,7 @@ router.post('/', authMiddleware, async (req, res) => {
       return res.json({ data: { session } })
     }
     return res.json({ data: { isPublic: true } }).status(200)
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message)
     return res.status(500).send('Server Error')
     // throw new Error('err')

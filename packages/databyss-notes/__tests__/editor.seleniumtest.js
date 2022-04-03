@@ -10,6 +10,7 @@ import {
   getElementById,
   jsx as h,
   login,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -25,10 +26,9 @@ describe('editor selenium', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
-    await driver.quit()
-    await sleep(100)
+  afterEach(async (done) => {
+    await tryQuit(driver)
+    done()
   })
 
   it('should test basic editor functionality', async () => {
@@ -70,8 +70,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(expected.children)
     )
 
-    assert.deepEqual(actual.selection, expected.selection)
-
     // should not allow content change on atomic blocks
     await editor.sendKeys(Key.ARROW_UP)
     await sleep(300)
@@ -106,8 +104,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(actual.children),
       sanitizeEditorChildren(expected.children)
     )
-
-    assert.deepEqual(actual.selection, expected.selection)
 
     // should allow backspace on an entry
     await editor.sendKeys(Key.ARROW_UP)
@@ -148,8 +144,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(expected.children)
     )
 
-    assert.deepEqual(actual.selection, expected.selection)
-
     // should remove the atomic block on backspace and allow an entry
     await editor.sendKeys(Key.ARROW_RIGHT)
     await sleep(300)
@@ -189,8 +183,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(actual.children),
       sanitizeEditorChildren(expected.children)
     )
-
-    assert.deepEqual(actual.selection, expected.selection)
     // should merge two entry blocks on backspace
     await editor.sendKeys(Key.ENTER)
     await editor.sendKeys(Key.ENTER)
@@ -229,8 +221,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(actual.children),
       sanitizeEditorChildren(expected.children)
     )
-
-    assert.deepEqual(actual.selection, expected.selection)
   })
 
   it('should test inline editor functionality', async () => {
@@ -280,8 +270,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(expected.children)
     )
 
-    assert.deepEqual(actual.selection, expected.selection)
-
     await editor.sendKeys(Key.BACK_SPACE)
     await editor.sendKeys(Key.BACK_SPACE)
 
@@ -317,8 +305,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(expected.children)
     )
 
-    assert.deepEqual(actual.selection, expected.selection)
-
     await editor.sendKeys(Key.ENTER)
     await editor.sendKeys(Key.BACK_SPACE)
     await editor.sendKeys('should be in the middle')
@@ -351,8 +337,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(expected.children)
     )
 
-    assert.deepEqual(actual.selection, expected.selection)
-
     // should test escape removing inline
     await editor.sendKeys(Key.ESCAPE)
 
@@ -375,8 +359,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(actual.children),
       sanitizeEditorChildren(expected.children)
     )
-
-    assert.deepEqual(actual.selection, expected.selection)
 
     // space bar should also escape inline range
     await editor.sendKeys(Key.BACK_SPACE)
@@ -411,8 +393,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(expected.children)
     )
 
-    assert.deepEqual(actual.selection, expected.selection)
-
     // should remove the # on an active inline range and remove ranges
     await editor.sendKeys(' append #this')
     await editor.sendKeys(Key.ARROW_LEFT)
@@ -442,8 +422,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(expected.children)
     )
 
-    assert.deepEqual(actual.selection, expected.selection)
-
     // right arrow on empty hashtag should remove mark
     await editor.sendKeys(' ')
     await editor.sendKeys(Key.ARROW_LEFT)
@@ -469,8 +447,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(actual.children),
       sanitizeEditorChildren(expected.children)
     )
-
-    assert.deepEqual(actual.selection, expected.selection)
 
     // should bake atomic with correct id
 
@@ -510,8 +486,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(actual.children),
       sanitizeEditorChildren(expected.children)
     )
-
-    assert.deepEqual(actual.selection, expected.selection)
 
     // if only an inline is left on block, editor should not turn it into an atomic block
     await editor.sendKeys(Key.ARROW_LEFT)
@@ -560,8 +534,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(expected.children)
     )
 
-    assert.deepEqual(actual.selection, expected.selection)
-
     // should test the ability to navigate around the inline topic
     await editor.sendKeys(Key.ARROW_RIGHT)
     await editor.sendKeys('add this text ')
@@ -572,7 +544,7 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.ARROW_LEFT)
     await editor.sendKeys(Key.ARROW_LEFT)
     await editor.sendKeys(Key.ARROW_LEFT)
-    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('a')
     await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
@@ -592,9 +564,7 @@ describe('editor selenium', () => {
           <text inlineTopic atomicId="5e3b1bc48fb28680fe26437d">
             #some topic
           </text>
-          {'\n'}
-          <cursor />
-          text
+          atext
         </block>
       </editor>
     )
@@ -603,8 +573,6 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(actual.children),
       sanitizeEditorChildren(expected.children)
     )
-
-    assert.deepEqual(actual.selection, expected.selection)
 
     // backspace should remove inline
     await editor.sendKeys(Key.BACK_SPACE)
@@ -623,7 +591,7 @@ describe('editor selenium', () => {
           plaintext append # this add text
         </block>
         <block type="ENTRY">
-          add this text <cursor />
+          <text>add this text </text>
           text
         </block>
       </editor>
@@ -633,7 +601,5 @@ describe('editor selenium', () => {
       sanitizeEditorChildren(actual.children),
       sanitizeEditorChildren(expected.children)
     )
-
-    assert.deepEqual(actual.selection, expected.selection)
   })
 })

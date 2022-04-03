@@ -1,10 +1,6 @@
 import React, { PropsWithChildren } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
-import {
-  useNavigate,
-  useLocation,
-  Router as ReachRouter,
-} from '@databyss-org/reach-router'
+import { useNavigate, useLocation } from 'react-router-dom'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { AuthorName } from '@databyss-org/services/interfaces'
@@ -35,21 +31,6 @@ const useReducer = createReducer()
 
 export const NavigationContext = createContext<ContextType>(null!)
 
-const RouteWrapper = ({ children }) => <>{children}</>
-export const Router = ({ children, ...others }) => (
-  <ReachRouter primary={false} component={RouteWrapper} {...others}>
-    {children}
-  </ReachRouter>
-)
-
-const withRouter = (Wrapped) => ({ children }) => (
-  <Router>
-    <Wrapped default>
-      {React.cloneElement(React.Children.only(children), { default: true })}
-    </Wrapped>
-  </Router>
-)
-
 const sidebarItemAliases = {
   collections: 'groups',
 }
@@ -58,7 +39,7 @@ interface PropsType {
   initialState: NavigationState
 }
 
-const NavigationProvider = ({
+export const NavigationProvider = ({
   children,
   initialState = new NavigationState(),
 }: PropsWithChildren<PropsType>) => {
@@ -76,14 +57,21 @@ const NavigationProvider = ({
   const hideModal = () => dispatch(actions.hideModal())
   const navigate = (url, options) => {
     const accountId = getAccountFromLocation()
+    const accountIdWithName = getAccountFromLocation(true)
     const hasAccount =
-      options?.hasAccount || (accountId && url.match(`/${accountId}/`))
+      options?.hasAccount ||
+      (accountIdWithName && url.match(`/${accountIdWithName}/`))
     const replace = !!options?.replace
     if (hasAccount) {
       navigateRouter(url, { replace })
       return
     }
-    navigateRouter(accountId ? `/${accountId}${url}` : url, { replace })
+    navigateRouter(
+      accountId
+        ? `/${accountIdWithName}${url.replace(`/${accountId}/`, '/')}`
+        : url,
+      { replace }
+    )
   }
 
   const navigateSidebar = (options) =>
@@ -96,15 +84,15 @@ const NavigationProvider = ({
     params: string
     anchor: string
     author: AuthorName | null
+    nice: string[]
   } => {
     const _path = location.pathname.split('/')
-    let params: string = _path[3]
+    const params = _path[3]
     let anchor = ''
+    const nice = _path.slice(4)
 
-    if (params && params.includes('#')) {
-      const _str = params.split('#')
-      params = _str[0]
-      anchor = _str[1]
+    if (location.hash) {
+      anchor = location.hash.substring(1)
     }
 
     const type: string = _path[2]
@@ -120,7 +108,7 @@ const NavigationProvider = ({
       }
     }
 
-    return { type, params, anchor, author }
+    return { type, params, anchor, author, nice }
   }
 
   const getSidebarPath = () => {
@@ -168,5 +156,3 @@ export const useNavigationContext = (selector = (x) => x) =>
 NavigationProvider.defaultProps = {
   initialState,
 }
-
-export default withRouter(NavigationProvider)

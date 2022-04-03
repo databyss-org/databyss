@@ -16,12 +16,13 @@ import {
 import { useSearchEntries } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { SearchEntriesResultPage } from '@databyss-org/data/pouchdb/entries/lib/searchEntries'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 import { IndexPageView } from './IndexPageContent'
 import { IndexResultTags } from './IndexResults'
 
 export const SearchContent = () => {
   const { getAccountFromLocation } = useNavigationContext()
-  const searchQuery = decodeURIComponent(useParams().query)
+  const searchQuery = decodeURIComponent(useParams().query!)
   const searchRes = useSearchEntries(searchQuery)
 
   const composeResults = (results: SearchEntriesResultPage[]) => {
@@ -29,7 +30,9 @@ export const SearchContent = () => {
       Object.values(results).map((r, i) => (
         <IndexResultsContainer key={i}>
           <IndexResultTitle
-            href={`/${getAccountFromLocation()}/pages/${r.pageId}`}
+            href={`/${getAccountFromLocation(true)}/pages/${
+              r.pageId
+            }/${urlSafeName(r.pageName)}`}
             text={r.pageName}
             icon={<PageSvg />}
             dataTestElement="search-result-page"
@@ -66,9 +69,9 @@ export const SearchContent = () => {
               <IndexResultDetails
                 key={k}
                 dataTestElement="search-result-entries"
-                href={`/${getAccountFromLocation()}/pages/${
+                href={`/${getAccountFromLocation(true)}/pages/${
                   r.pageId
-                }#${_anchor}`}
+                }/${urlSafeName(r.pageName)}#${_anchor}`}
                 text={
                   <>
                     <RawHtml

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import scrollIntoView from 'scroll-into-view-if-needed'
 import {
   useParams,
@@ -9,6 +9,9 @@ import { View } from '@databyss-org/ui/primitives'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useNavigationContext } from '@databyss-org/ui'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
+import { urlSafeName } from '@databyss-org/services/lib/util'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import { debounce } from 'lodash'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
 
@@ -19,13 +22,16 @@ export const PageContentView = ({ children, ...others }) => (
 )
 
 export const PageContainer = React.memo(
-  ({ anchor, page, ...others }) => {
+  ({ page, ...others }) => {
     const getBlockRefByIndex = useEditorPageContext((c) => c.getBlockRefByIndex)
     const [, setAuthToken] = useState()
     const [editorPath, setEditorPath] = useState(null)
     const location = useLocation()
-    const navigate = useNavigationContext((c) => c && c.navigate)
+    const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
+    const navigate = useNavigationContext((c) => c.navigate)
     const editorRef = useRef()
+    const pagesRes = usePages()
+    const { anchor, nice } = getTokensFromPath()
 
     // index is used to set selection in slate
     const [index, setIndex] = useState(null)
@@ -41,7 +47,24 @@ export const PageContainer = React.memo(
       }
     }, [])
 
+    const updateUrl = useCallback(
+      debounce((url) => {
+        navigate(url, { replace: true })
+      }, 1000)
+    )
+
     useEffect(() => {
+      const niceName = urlSafeName(pagesRes.data?.[page._id]?.name)
+      let redirectTo = location.pathname
+
+      if (niceName) {
+        if (!nice?.length) {
+          redirectTo = `${location.pathname}/${niceName}`
+        } else if (nice.join('/') !== niceName) {
+          redirectTo = `${location.pathname.replace(nice.join('/'), niceName)}`
+        }
+      }
+
       // if anchor link exists, scroll to anchor
       if (anchor) {
         let _index = -1
@@ -58,12 +81,20 @@ export const PageContainer = React.memo(
           if (_ref) {
             window.requestAnimationFrame(() => {
               scrollIntoView(_ref)
-              navigate(location.pathname, { replace: true })
+              // navigate(redirectTo, { replace: true })
+              // window.history.replaceState('', '', redirectTo)
+              updateUrl(redirectTo)
             })
           }
         }
       }
-    }, [])
+      // if no nice URL, make one and redirect
+      if (redirectTo !== location.pathname) {
+        // navigate(redirectTo, { replace: true })
+        // window.history.replaceState('', '', redirectTo)
+        updateUrl(redirectTo)
+      }
+    }, [pagesRes.data?.[page._id]?.name])
 
     return (
       <>
@@ -88,7 +119,6 @@ export const PageContainer = React.memo(
 const PageContent = (others) => {
   // get page id and anchor from url
   const { id } = useParams()
-  const anchor = useLocation().hash.substring(1)
 
   /*
   use same route to update name, just pass it name 
@@ -98,9 +128,7 @@ const PageContent = (others) => {
     <View flex="1" height="100%" backgroundColor="background.1">
       {id && (
         <EditorPageLoader pageId={id} key={id} firstBlockIsTitle>
-          {(page) => (
-            <PageContainer anchor={anchor} id={id} page={page} {...others} />
-          )}
+          {(page) => <PageContainer id={id} page={page} {...others} />}
         </EditorPageLoader>
       )}
     </View>

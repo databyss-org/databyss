@@ -13,14 +13,30 @@ export class CouchDb {
     this.dbName = dbName
   }
 
+  async allDocs(
+    request: { keys: string[] },
+    options?: RequestCouchOptions
+  ): Promise<{ rows: { doc: any }[] } | null> {
+    const response = await this.bulkGet(
+      { docs: request.keys.map((id) => ({ id })) },
+      options
+    )
+    if (!response) {
+      return null
+    }
+    return {
+      rows: response.results.map((r) => ({ doc: r.docs[0].ok })),
+    }
+  }
+
   get(docId: string, options?: RequestCouchOptions) {
     return couchGet(`${this.dbName}/${docId}`, options)
   }
 
   async bulkGet(
-    request: { docs: { id }[] },
+    request: { docs: { id: string }[] },
     options?: RequestCouchOptions
-  ): Promise<{ [docId: string]: any | null }> {
+  ): Promise<{ results: { docs: { ok: any }[] }[] } | null> {
     return couchPost(`${this.dbName}/_bulk_get`, request, options) as Promise<{
       results: any[]
     }>

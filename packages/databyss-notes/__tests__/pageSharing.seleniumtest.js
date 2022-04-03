@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 import assert from 'assert'
 import innerText from 'innertext'
-import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
   sleep,
@@ -15,9 +15,9 @@ import {
   tagButtonClick,
   tagButtonListClick,
   login,
+  tryQuit,
+  selectLinkInFirstBlock,
 } from './util.selenium'
-
-import { selectLinkInFirstBlock } from './groupSharing.seleniumtest'
 
 let driver
 let editor
@@ -25,17 +25,16 @@ let actions
 
 describe('page sharing', () => {
   beforeEach(async (done) => {
-    driver = await startSession({ platformName: WIN, browserName: CHROME })
+    driver = await startSession()
     await login(driver)
     actions = driver.actions()
     await sleep(500)
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
-    await driver.quit()
-    await sleep(100)
+  afterEach(async (done) => {
+    await tryQuit(driver)
+    done()
   })
 
   it('should ensure page sharing integrity', async () => {

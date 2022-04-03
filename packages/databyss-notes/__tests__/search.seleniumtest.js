@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 import assert from 'assert'
-import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import {
   getEditor,
   isAppInNotesSaved,
@@ -11,6 +11,7 @@ import {
   sleep,
   tagButtonClick,
   login,
+  tryQuit,
 } from './util.selenium'
 
 let driver
@@ -18,16 +19,15 @@ let actions
 
 describe('entry search', () => {
   beforeEach(async (done) => {
-    driver = await startSession({ platformName: WIN, browserName: CHROME })
+    driver = await startSession()
     await login(driver)
     actions = driver.actions()
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
-    await driver.quit()
-    await sleep(100)
+  afterEach(async (done) => {
+    await tryQuit(driver)
+    done()
   })
 
   // should search an entry at the middle of an entry

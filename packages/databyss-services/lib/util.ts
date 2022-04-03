@@ -1,5 +1,15 @@
 import { ResourcePending } from '../interfaces/ResourcePending'
 
+export const urlSafeName = (name: string) =>
+  name
+    ?.replaceAll("'", '')
+    .replaceAll(/[^\p{L}\p{N}-]/gu, '-')
+    .replaceAll(/-+/gu, '-')
+    .replace(/-$/, '')
+    .replace(/^-/, '')
+    .trim()
+    .toLowerCase()
+
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 
 export const resourceIsReady = (resource) =>

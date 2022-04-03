@@ -72,7 +72,7 @@ export class RestoreDb extends ServerProcess {
         throw new Error('Database exists and --replace is not set.')
       }
       await cloudant.current.db.destroy(id)
-    } catch (err) {
+    } catch (err: any) {
       if (err.error !== 'not_found') {
         throw err
       }
