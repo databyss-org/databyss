@@ -5,7 +5,6 @@ import {
   NotFoundRedirect,
   useNavigate,
 } from '@databyss-org/ui/components/Navigation'
-import { QueryClientProvider, QueryClient } from 'react-query'
 import { View } from '@databyss-org/ui/primitives'
 import { EditorPageProvider } from '@databyss-org/services'
 import { UserPreferencesProvider } from '@databyss-org/ui/hooks'
@@ -20,19 +19,6 @@ import AuthorDetails from './Sources/AuthorDetails'
 import TopicsIndex from './Topics/TopicsIndex'
 import TopicDetails from './Topics/TopicDetails'
 import ConfigIndex from './Config/ConfigIndex'
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // Disable window focus refetching globally for all react-query hooks
-      // see: https://react-query.tanstack.com/guides/window-focus-refetching
-      refetchOnWindowFocus: false,
-      // Never set queries as stale
-      staleTime: Infinity,
-      cacheTime: Infinity,
-    },
-  },
-})
 
 const Redirect = ({ to }) => {
   const navigate = useNavigate()
@@ -90,31 +76,29 @@ const Private = () => {
 
   // render methods
   const render = () => (
-    <QueryClientProvider client={queryClient}>
-      <UserPreferencesProvider>
-        <View
-          position="absolute"
-          top="0"
-          bottom="0"
-          width="100%"
-          backgroundColor="background.1"
-        >
-          <Routes>
+    <UserPreferencesProvider>
+      <View
+        position="absolute"
+        top="0"
+        bottom="0"
+        width="100%"
+        backgroundColor="background.1"
+      >
+        <Routes>
+          <Route path="*" element={<NotFoundRedirect />} />
+          <Route path="/signup" element={<Redirect to="/" />} />
+          <Route path="/:accountId/*">
             <Route path="*" element={<NotFoundRedirect />} />
-            <Route path="/signup" element={<Redirect to="/" />} />
-            <Route path="/:accountId/*">
-              <Route path="*" element={<NotFoundRedirect />} />
-              <Route path="pages/*" element={<PagesRouter />} />
-              <Route path="sources/*" element={<SourcesRouter />} />
-              <Route path="topics/*" element={<TopicsRouter />} />
-              <Route path="config/*" element={<ConfigIndex />} />
-            </Route>
-          </Routes>
+            <Route path="pages/*" element={<PagesRouter />} />
+            <Route path="sources/*" element={<SourcesRouter />} />
+            <Route path="topics/*" element={<TopicsRouter />} />
+            <Route path="config/*" element={<ConfigIndex />} />
+          </Route>
+        </Routes>
 
-          <NavBar onChange={onNavBarChange} />
-        </View>
-      </UserPreferencesProvider>
-    </QueryClientProvider>
+        <NavBar onChange={onNavBarChange} />
+      </View>
+    </UserPreferencesProvider>
   )
 
   return render()
