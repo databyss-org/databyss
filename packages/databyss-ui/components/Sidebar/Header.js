@@ -19,7 +19,7 @@ const Header = () => {
     return <LoadingFallback queryObserver={groupRes} />
   }
   // a public account will only have one group associated with it
-  const _groupName = Object.values(groupRes.data)?.[0]?.name || 'Databyss'
+  const _groupName = Object.values(groupRes.data)?.[0]?.name
 
   let _urlGroupName = ''
   if (defaultGroupName) {
@@ -27,7 +27,7 @@ const Header = () => {
   }
 
   let _pageUrl = defaultPageId
-  if (pagesRes.data) {
+  if (_groupName && pagesRes.data) {
     _pageUrl = `${defaultPageId}/${urlSafeName(
       pagesRes.data[defaultPageId].name
     )}`
@@ -36,16 +36,16 @@ const Header = () => {
   return (
     <BaseControl
       href={
-        isPublicAccount()
+        _groupName
           ? `/${_urlGroupName}${defaultGroupId.substring(2)}/pages/${_pageUrl}`
-          : '/'
+          : 'https://www.databyss.org'
       }
       px="em"
       mt={pxUnits(11)}
       mb="extraSmall"
     >
       <Text variant="heading4" color="text.3">
-        {_groupName}
+        {_groupName || 'Databyss'}
       </Text>
     </BaseControl>
   )
