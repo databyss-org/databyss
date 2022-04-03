@@ -26,7 +26,7 @@ const Header = () => {
   }
 
   let _pageUrl = defaultPageId
-  if (_groupName && pagesRes.data) {
+  if (_groupName && pagesRes.data?.[defaultPageId]?.name) {
     _pageUrl = `${defaultPageId}/${urlSafeName(
       pagesRes.data[defaultPageId].name
     )}`
