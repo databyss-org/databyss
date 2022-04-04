@@ -30,14 +30,12 @@ const PageDetails = () => {
 
   // render methods
   const renderPageDetails = (page) => (
-    <NotifyProvider>
-      <PageContainer
-        anchor={anchor}
-        id={pageId}
-        page={page}
-        maxHeight={getScrollViewMaxHeight()}
-      />
-    </NotifyProvider>
+    <PageContainer
+      anchor={anchor}
+      id={pageId}
+      page={page}
+      maxHeight={getScrollViewMaxHeight()}
+    />
   )
 
   const render = () => (

@@ -335,7 +335,8 @@ const SessionProvider = ({
           !(state.session instanceof ResourcePending) &&
           !(state.session instanceof Error) &&
           dbRef.readOnly &&
-          !isPublicAccount()
+          !isPublicAccount() &&
+          !isMobile()
         }
         rightAlignChildren={<LoadingIcon width={20} height={20} />}
       >

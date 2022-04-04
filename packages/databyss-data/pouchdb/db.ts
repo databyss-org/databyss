@@ -336,7 +336,7 @@ export const pouchDataValidation = (data) => {
   }
 }
 
-export const initDb = async ({
+export const initDb = ({
   groupId,
   isPublicGroup = false,
   dispatch,
@@ -348,59 +348,72 @@ export const initDb = async ({
   dispatch?: Function
   stateRef?: any
   onReplicationComplete?: (success: boolean) => void
-}) => {
-  if (dispatch && stateRef) {
-    setDbBusyDispatch(dispatch, stateRef)
-  }
+}) =>
+  new Promise<void>((resolve) => {
+    if (dispatch && stateRef) {
+      setDbBusyDispatch(dispatch, stateRef)
+    }
 
-  const _pouchDb = new PouchDB(groupId, {
-    auto_compaction: true,
+    const _pouchDb = new PouchDB(groupId, {
+      auto_compaction: true,
+    })
+
+    const _replicationComplete = (success: boolean) => {
+      if (!success) {
+        console.warn('[DB] replication failed')
+      } else {
+        console.log('[DB] Replication done, switching to PouchDb')
+        dbRef.current = _pouchDb
+        dbRef.readOnly = isPublicGroup
+      }
+      if (onReplicationComplete) {
+        onReplicationComplete(success)
+      }
+      resolve()
+    }
+
+    // check pouch db ref (might already exist locally from prev session)
+    _pouchDb
+      .get('user_preference')
+      .then(() => {
+        _replicationComplete(true)
+      })
+      .catch(() => {
+        console.log('[DB] Init using COUCH mode')
+        if (!couchDbRef.current) {
+          connect(groupId)
+        }
+        // HACK: a little trick to get the CouchDb ref to look like a PouchDb ref
+        // because they are designed to have the same spec
+        const _unknown = couchDbRef.current as unknown
+        dbRef.current = _unknown as PouchDB.Database
+        dbRef.readOnly = true
+
+        // do not replicate on mobile for now
+        if (process.env.FORCE_MOBILE) {
+          resolve()
+          return
+        }
+
+        console.log('[DB] Start replication')
+        if (isPublicGroup) {
+          replicatePublicGroup({ groupId, pouchDb: _pouchDb }).then(
+            _replicationComplete
+          )
+        } else {
+          replicateDbFromRemote({
+            groupId,
+            pouchDb: _pouchDb,
+          }).then(_replicationComplete)
+        }
+
+        // if not in test env, resolve now so app can continue while replication happens
+        // in the background
+        if (process.env.NODE_ENV !== 'test') {
+          resolve()
+        }
+      })
   })
-
-  const _replicationComplete = (success: boolean) => {
-    if (!success) {
-      console.warn('[DB] replication failed')
-    } else {
-      console.log('[DB] Replication done, switching to PouchDb')
-      dbRef.current = _pouchDb
-      dbRef.readOnly = isPublicGroup
-    }
-    if (onReplicationComplete) {
-      onReplicationComplete(success)
-    }
-  }
-
-  // check pouch db ref (might already exist locally from prev session)
-  try {
-    await _pouchDb.get('user_preference')
-    _replicationComplete(true)
-    return
-  } catch (_) {
-    // noop
-  }
-
-  console.log('[DB] Init using COUCH mode')
-  if (!couchDbRef.current) {
-    connect(groupId)
-  }
-  // HACK: a little trick to get the CouchDb ref to look like a PouchDb ref
-  // because they are designed to have the same spec
-  const _unknown = couchDbRef.current as unknown
-  dbRef.current = _unknown as PouchDB.Database
-  dbRef.readOnly = true
-
-  console.log('[DB] Start replication')
-  if (isPublicGroup) {
-    replicatePublicGroup({ groupId, pouchDb: _pouchDb }).then(
-      _replicationComplete
-    )
-  } else {
-    replicateDbFromRemote({
-      groupId,
-      pouchDb: _pouchDb,
-    }).then(_replicationComplete)
-  }
-}
 
 export const waitForPouchDb = (timeout: number = 1200000) =>
   new Promise<boolean>((resolve) => {

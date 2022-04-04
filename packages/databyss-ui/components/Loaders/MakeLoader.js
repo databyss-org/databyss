@@ -38,6 +38,7 @@ const MakeLoader = ({
   }
 
   if (errors) {
+    console.log('[MakeLoader] errors', errors)
     return (
       errorFallback ?? (
         <ErrorFallback
@@ -51,6 +52,7 @@ const MakeLoader = ({
     )
   }
 
+  console.log('[MakeLoader] render')
   if (typeof children !== 'function') {
     return children
   }
