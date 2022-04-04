@@ -181,6 +181,7 @@ const Editor = ({
     },
     [searchTerm]
   )
+  console.log('[Editor] readOnly', readOnly)
   return useMemo(
     () => (
       <Slate editor={editor} selection={selection} {...slateProps}>
@@ -216,7 +217,7 @@ const Editor = ({
         />
       </Slate>
     ),
-    [editor, selection, _searchTerm]
+    [editor, selection, _searchTerm, readOnly]
   )
 }
 

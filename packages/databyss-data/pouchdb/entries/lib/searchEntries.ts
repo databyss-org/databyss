@@ -36,12 +36,19 @@ interface SearchRow {
   activeHeadings?: IndexPageResult[]
 }
 
-const searchEntries = async (
-  encodedQuery: string,
-  pages: Page[],
-  blocks: DocumentDict<Block>,
+const searchEntries = async ({
+  encodedQuery,
+  pages,
+  blocks,
+  onUpdated,
+  allowStale,
+}: {
+  encodedQuery: string
+  pages: Page[]
+  blocks: DocumentDict<Block>
   onUpdated?: (res: SearchEntriesResultPage[]) => void
-): Promise<SearchEntriesResultPage[]> => {
+  allowStale: boolean
+}): Promise<SearchEntriesResultPage[]> => {
   const _query = decodeURIComponent(encodedQuery)
 
   const _buildSearchEntriesResults = (
@@ -63,6 +70,10 @@ const searchEntries = async (
 
     pages.forEach((p) =>
       p.blocks.forEach((b, index) => {
+        if (!b.type) {
+          console.warn('[searchEntries] block missing type', b)
+          return
+        }
         if (b.type.match(/^END_/)) {
           return
         }
@@ -184,11 +195,15 @@ const searchEntries = async (
     return Object.values(_results)
   }
 
-  const _res = await searchText(_query, (_updatedRes) => {
-    if (!onUpdated) {
-      return
-    }
-    onUpdated(_buildSearchEntriesResults(_updatedRes))
+  const _res = await searchText({
+    query: _query,
+    onUpdated: (_updatedRes) => {
+      if (!onUpdated) {
+        return
+      }
+      onUpdated(_buildSearchEntriesResults(_updatedRes))
+    },
+    allowStale,
   })
 
   return _buildSearchEntriesResults(_res)

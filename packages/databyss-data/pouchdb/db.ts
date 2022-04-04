@@ -47,26 +47,11 @@ interface DbRef {
   readOnly: boolean
 }
 
-export const getPouchDb = (groupId: string) => {
-  if (
-    process.env.FORCE_MOBILE?.toLowerCase() === 'true' ||
-    process.env.COUCH_DIRECT?.toLowerCase() === 'true'
-  ) {
-    console.log('[getPouchDb] using COUCH mode')
-    if (!couchDbRef.current) {
-      connect(groupId)
-    }
-    console.log(
-      '[getPouchDb] DB instance is CouchDb?',
-      couchDbRef.current instanceof CouchDb
-    )
-    const _unknown = couchDbRef.current as unknown
-    return _unknown as PouchDB.Database
-  }
-  return new PouchDB(groupId, {
+const getPouchDb = (groupId: string) =>
+  new PouchDB(groupId, {
     auto_compaction: true,
   })
-}
+
 export const dbRef: DbRef = {
   current: null,
   readOnly: false,
@@ -126,15 +111,20 @@ export const resetPouchDb = async () => {
 replicates public remote DB to local
 */
 
-export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
+export const replicatePublicGroup = ({
+  groupId,
+  pouchDb,
+}: {
+  groupId: string
+  pouchDb: PouchDB.Database<any>
+}) =>
   new Promise<boolean>((resolve, reject) => {
     const opts = {
       retry: true,
       batch_size: 1000,
     }
-    dbRef.current = getPouchDb(groupId)
-
-    dbRef.current?.replicate
+    console.log('[DB] replicatePublicGroup')
+    pouchDb.replicate
       ?.from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
         ...opts,
       })
@@ -143,15 +133,15 @@ export const replicatePublicGroup = ({ groupId }: { groupId: string }) =>
         MakePouchReplicationErrorHandler('[replicatePublicGroup:replicate]')
       )
       .on('complete', () => {
-        // console.log('[replicatePublicGroup] complete')
+        console.log('[DB] replicatePublicGroup complete')
         const _opts = {
           ...opts,
           live: true,
           continuous: true,
         }
         // when replication is complete, kick off a live sync
-        dbRef
-          .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
+        pouchDb.replicate
+          .from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
             ..._opts,
           })
           .on('paused', () => {
@@ -172,19 +162,14 @@ replicates remote DB to local
 */
 
 export const replicateDbFromRemote = ({
-  // dbKey,
-  // dbPassword,
   groupId,
+  pouchDb,
 }: {
-  // dbKey: string
-  // dbPassword: string
   groupId: string
+  pouchDb: PouchDB.Database<any>
 }) =>
-  new Promise<Boolean>((resolve, reject) => {
-    if (dbRef.current instanceof CouchDb) {
-      resolve(true)
-      return
-    }
+  new Promise<boolean>((resolve, reject) => {
+    console.log('[DB] replicateDbFromRemote', groupId)
     const _couchUrl = `${REMOTE_CLOUDANT_URL}/${groupId}`
 
     // for now we are getting the first credentials from local storage groups
@@ -212,16 +197,11 @@ export const replicateDbFromRemote = ({
         password: _cred.dbPassword,
       },
     }
-    dbRef.current = getPouchDb(groupId)
-    if (dbRef.current instanceof CouchDb) {
-      resolve(true)
-      return
-    }
 
     checkNetwork().then((isOnline) => {
       if (isOnline) {
-        dbRef
-          .current!.replicate.from(_couchUrl, {
+        pouchDb.replicate
+          .from(_couchUrl, {
             ...opts,
           })
           .on(
@@ -235,20 +215,11 @@ export const replicateDbFromRemote = ({
     })
   })
 
-export const syncPouchDb = ({
-  groupId,
-  dispatch,
-  stateRef,
-}: {
-  groupId: string
-  dispatch: Function
-  stateRef: any
-}) => {
-  setDbBusyDispatch(dispatch, stateRef)
+export const syncPouchDb = ({ groupId }: { groupId: string }) => {
   if (dbRef.current instanceof CouchDb) {
     return
   }
-  console.log('Start PouchDB <=> Cloudant sync')
+  console.log('[DB] Start PouchDb sync')
   // pass  the  session provider dispatch to the patch queue
 
   // get credentials from local storage
@@ -364,3 +335,87 @@ export const pouchDataValidation = (data) => {
     )
   }
 }
+
+export const initDb = async ({
+  groupId,
+  isPublicGroup = false,
+  dispatch,
+  stateRef,
+  onReplicationComplete,
+}: {
+  groupId: string
+  isPublicGroup: boolean
+  dispatch?: Function
+  stateRef?: any
+  onReplicationComplete?: (success: boolean) => void
+}) => {
+  if (dispatch && stateRef) {
+    setDbBusyDispatch(dispatch, stateRef)
+  }
+
+  const _pouchDb = new PouchDB(groupId, {
+    auto_compaction: true,
+  })
+
+  const _replicationComplete = (success: boolean) => {
+    if (!success) {
+      console.warn('[DB] replication failed')
+    } else {
+      console.log('[DB] Replication done, switching to PouchDb')
+      dbRef.current = _pouchDb
+      dbRef.readOnly = isPublicGroup
+    }
+    if (onReplicationComplete) {
+      onReplicationComplete(success)
+    }
+  }
+
+  // check pouch db ref (might already exist locally from prev session)
+  try {
+    await _pouchDb.get('user_preference')
+    _replicationComplete(true)
+    return
+  } catch (_) {
+    // noop
+  }
+
+  console.log('[DB] Init using COUCH mode')
+  if (!couchDbRef.current) {
+    connect(groupId)
+  }
+  // HACK: a little trick to get the CouchDb ref to look like a PouchDb ref
+  // because they are designed to have the same spec
+  const _unknown = couchDbRef.current as unknown
+  dbRef.current = _unknown as PouchDB.Database
+  dbRef.readOnly = true
+
+  console.log('[DB] Start replication')
+  if (isPublicGroup) {
+    replicatePublicGroup({ groupId, pouchDb: _pouchDb }).then(
+      _replicationComplete
+    )
+  } else {
+    replicateDbFromRemote({
+      groupId,
+      pouchDb: _pouchDb,
+    }).then(_replicationComplete)
+  }
+}
+
+export const waitForPouchDb = (timeout: number = 1200000) =>
+  new Promise<boolean>((resolve) => {
+    const _startTime = Date.now()
+    const _checkDb = () => {
+      if (Date.now() - _startTime > timeout) {
+        console.warn('[DB] waitForPouchDb timed out')
+        resolve(false)
+        return
+      }
+      if (dbRef.current && !(dbRef.current instanceof CouchDb)) {
+        resolve(true)
+        return
+      }
+      setTimeout(_checkDb, 500)
+    }
+    _checkDb()
+  })

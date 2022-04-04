@@ -357,7 +357,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
         {children}
       </EditorContext.Provider>
     ),
-    [state]
+    [state, onChange]
   )
 }
 

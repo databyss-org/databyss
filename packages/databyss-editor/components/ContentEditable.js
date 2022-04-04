@@ -941,7 +941,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
         firstBlockIsTitle={firstBlockIsTitle}
       />
     )
-  }, [editor, state])
+  }, [editor, state, readonly])
 }
 
 export default ContentEditable

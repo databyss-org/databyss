@@ -9,6 +9,7 @@ import {
   CACHE_USER_ACCOUNT,
   SET_DEFAULT_PAGE,
   STORE_SESSION_LOCALLY,
+  SET_READ_ONLY,
 } from './constants'
 
 import { ResourcePending } from '../interfaces/'
@@ -31,6 +32,7 @@ export const initialState = {
   readsPending: 0,
   writesPending: 0,
   sessionIsStored: false,
+  isReadOnly: true,
 }
 
 export default (state, action) => {
@@ -120,6 +122,13 @@ export default (state, action) => {
       return {
         ...state,
         session: action.payload.session,
+      }
+    }
+
+    case SET_READ_ONLY: {
+      return {
+        ...state,
+        isReadOnly: action.payload,
       }
     }
 

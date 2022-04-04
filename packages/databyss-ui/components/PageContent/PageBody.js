@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, Text, View } from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
@@ -20,18 +20,15 @@ import {
 } from '@databyss-org/editor/state/util'
 import { UNTITLED_PAGE_NAME } from '@databyss-org/services/interfaces'
 import _, { debounce } from 'lodash'
-import { isMobile } from '../../lib/mediaQuery'
 
-const PageBody = ({
+export const PageBody = ({
   page,
   focusIndex,
   onNavigateUpFromEditor,
   editorRef,
   onEditorPathChange,
 }) => {
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-
-  // const { location } = useNavigationContext()
+  const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const clearBlockDict = useEditorPageContext((c) => c.clearBlockDict)
   const setPageHeader = useEditorPageContext((c) => c.setPageHeader)
   const sharedWithGroups = useEditorPageContext((c) => c.sharedWithGroups)
@@ -113,12 +110,14 @@ const PageBody = ({
     )
   )
 
-  const render = () => {
-    const isReadOnly = isPublicAccount() || isMobile() || page.archive
+  const readOnly = isReadOnly || page.archive
 
-    return (
+  console.log('[PageBody] readOnly', readOnly)
+
+  return useMemo(
+    () => (
       <CatalogProvider>
-        {isReadOnly && (
+        {readOnly && (
           <Helmet>
             <meta charSet="utf-8" />
             <title>{page.name}</title>
@@ -128,7 +127,7 @@ const PageBody = ({
           <EditorProvider
             key={page._id}
             // if read only, disable on change
-            onChange={(v) => !isReadOnly && onChange(v)}
+            onChange={(v) => !readOnly && onChange(v)}
             initialState={{
               ...pageToEditorState(withMetaData(page)),
               firstBlockIsTitle: true,
@@ -141,7 +140,7 @@ const PageBody = ({
               onNavigateUpFromTop={onNavigateUpFromEditor}
               active={false}
               editorRef={editorRef}
-              readonly={isReadOnly}
+              readonly={readOnly}
               sharedWithGroups={sharedWithGroups}
               firstBlockIsTitle
               {...(process.env.NODE_ENV === 'test' ? { onDocumentChange } : {})}
@@ -163,14 +162,7 @@ const PageBody = ({
           </View>
         )}
       </CatalogProvider>
-    )
-  }
-
-  return render()
+    ),
+    [page?._id, focusIndex, readOnly]
+  )
 }
-
-export default React.memo(
-  PageBody,
-  (prev, next) =>
-    prev.page._id === next.page._id && prev.focusIndex === next.focusIndex
-)

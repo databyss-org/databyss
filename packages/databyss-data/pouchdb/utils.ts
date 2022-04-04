@@ -201,7 +201,7 @@ export const getUserSession = async (): Promise<UserPreference | null> => {
   try {
     response = await dbRef.current!.get('user_preference')
   } catch (err) {
-    console.error('user session not found')
+    // noop
   }
   return response
 }
@@ -240,10 +240,15 @@ export const getGroupSession = async (
     _getGroup()
   })
 
-export const searchText = async (
-  query: string,
+export const searchText = async ({
+  query,
+  onUpdated,
+  allowStale,
+}: {
+  query: string
   onUpdated: (res: PouchDB.SearchResponse<{}>) => void
-) => {
+  allowStale: boolean
+}) => {
   // calculate how strict we want the search to be
 
   // will require at least one word to be in the results
@@ -263,10 +268,18 @@ export const searchText = async (
 
   const _res = await (dbRef.current as PouchDB.Database).search({
     ..._params,
-    stale: 'ok',
+    ...(allowStale
+      ? {
+          stale: 'ok',
+        }
+      : {}),
   })
 
-  ;(dbRef.current as PouchDB.Database).search(_params).then(onUpdated)
+  if (allowStale) {
+    ;(dbRef.current as PouchDB.Database).search(_params).then(onUpdated)
+  } else {
+    onUpdated(_res)
+  }
 
   return _res
 }

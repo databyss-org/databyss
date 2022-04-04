@@ -18,6 +18,7 @@ import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 
 const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const { navigate, navigateSidebar, getSidebarPath } = useNavigationContext()
 
   const sidebarPath = getSidebarPath()
@@ -62,6 +63,7 @@ const Footer = ({ collapsed }) => {
         flexDirection="row"
         alignItems="center"
         childViewProps={{ width: '100%' }}
+        disabled={isReadOnly}
       >
         <Grid singleRow alignItems="center" columnGap="small">
           {collapsed ? (

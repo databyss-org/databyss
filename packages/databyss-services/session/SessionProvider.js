@@ -2,20 +2,17 @@ import React, { useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 // import { debounce } from 'lodash'
 import Login from '@databyss-org/ui/modules/Login/Login'
-import {
-  replicateDbFromRemote,
-  syncPouchDb,
-  initiatePouchDbIndexes,
-  dbRef,
-  getPouchDb,
-} from '@databyss-org/data/pouchdb/db'
-import { Viewport } from '@databyss-org/ui'
+import LoadingIcon from '@databyss-org/ui/assets/loading.svg'
+import { syncPouchDb, dbRef, initDb } from '@databyss-org/data/pouchdb/db'
+import { Text, View, Viewport } from '@databyss-org/ui'
 // import { connect } from '@databyss-org/data/couchdb-client/couchdb'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { UNTITLED_NAME } from '@databyss-org/services/groups'
+import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
+import StickyMessage from '@databyss-org/ui/components/Notify/StickyMessage'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
@@ -26,7 +23,7 @@ import {
   getDefaultGroup,
 } from './clientStorage'
 import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
-import { replicateGroup, hasUnathenticatedAccess } from './actions'
+import { hasUnathenticatedAccess } from './actions'
 import { NetworkUnavailableError } from '../interfaces'
 import { urlSafeName } from '../lib/util'
 import { getAccountFromLocation } from './utils'
@@ -115,6 +112,7 @@ const SessionProvider = ({
 
   useEffect(() => {
     const _init = async () => {
+      // do we have an authenticated session in the browser?
       const _sesionFromLocalStorage = await localStorageHasSession()
       if (_sesionFromLocalStorage) {
         console.log('[SessionProvider] 2nd pass')
@@ -123,23 +121,18 @@ const SessionProvider = ({
         const groupId = _sesionFromLocalStorage.defaultGroupId
         // download remote database if not on mobile
 
-        if (!process.env.FORCE_MOBILE) {
-          await replicateDbFromRemote({
-            groupId,
-          })
-
-          // set up search indexes
-          setTimeout(() => {
-            initiatePouchDbIndexes()
-          }, [5000])
-        }
-
-        // set up live sync
-        syncPouchDb({
+        await initDb({
           groupId,
-          // TODO: how to curry dispatch
           dispatch,
           stateRef,
+          onReplicationComplete: (_res) => {
+            if (_res) {
+              // set up live sync
+              syncPouchDb({
+                groupId,
+              })
+            }
+          },
         })
 
         dispatch({
@@ -151,23 +144,27 @@ const SessionProvider = ({
         return
       }
 
-      // do we have a public group in localstorage
+      // do we have a public group in localstorage?
       let _publicSession = await localStorageHasPublicSession()
       if (_publicSession) {
         console.log('[SessionProvider] has public session')
         // start replication on public group
-        await replicateGroup(_publicSession.belongsToGroup)
+        // await replicateGroup(_publicSession.belongsToGroup)
+        await initDb({
+          groupId: _publicSession.belongsToGroup,
+          isPublicGroup: true,
+        })
       } else {
         // try to get public access
         console.log('[SessionProvider] get public access')
         const unauthenticatedGroupId = await hasUnathenticatedAccess()
+        console.log(
+          '[SessionProvider] unauthenticatedGroupId',
+          unauthenticatedGroupId
+        )
 
         if (unauthenticatedGroupId) {
-          if (!process.env.FORCE_MOBILE) {
-            await replicateGroup(unauthenticatedGroupId)
-          } else {
-            dbRef.current = getPouchDb(unauthenticatedGroupId)
-          }
+          await initDb({ groupId: unauthenticatedGroupId, isPublicGroup: true })
           _publicSession = await localStorageHasPublicSession(3)
         }
       }
@@ -311,6 +308,12 @@ const SessionProvider = ({
     dispatch(actions.onSetDefaultPage(id))
   }, [])
 
+  useEffect(() => {
+    dispatch(
+      actions.setReadOnly(dbRef.readOnly || isPublicAccount() || !!isMobile())
+    )
+  }, [dbRef.readOnly])
+
   return (
     <SessionContext.Provider
       value={{
@@ -325,6 +328,24 @@ const SessionProvider = ({
         dispatch,
       }}
     >
+      <StickyMessage
+        canDismiss={false}
+        visible={
+          state.session &&
+          !(state.session instanceof ResourcePending) &&
+          !(state.session instanceof Error) &&
+          dbRef.readOnly &&
+          !isPublicAccount()
+        }
+        rightAlignChildren={<LoadingIcon width={20} height={20} />}
+      >
+        <View flexDirection="row" alignItems="center">
+          <Text variant="uiTextNormal">
+            Sync in progress. Your Databyss will be in read-only mode until the
+            sync finishes.
+          </Text>
+        </View>
+      </StickyMessage>
       {_children}
     </SessionContext.Provider>
   )
