@@ -20,7 +20,7 @@ import {
 import { setDbBusy } from '../../databyss-data/pouchdb/utils'
 
 const INTERVAL_TIME = 5000
-const MAX_RETRIES = 5
+const MAX_RETRIES = 10
 
 export const PageReplicator = ({
   children,
@@ -38,6 +38,7 @@ export const PageReplicator = ({
 
   const { isOnline } = useNotifyContext()
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
 
   const startReplication = ({
     groupId,
@@ -95,10 +96,16 @@ export const PageReplicator = ({
 
   // cancel the replications on unmount
   useEffect(() => {
-    if (isOnline && !isPublicAccount() && groupsRes.isSuccess && pageId) {
-      // find all groups that contain this page
-      const groupsWithPage = Object.values(groupsRes.data!).filter((group) =>
-        group.pages.includes(pageId)
+    if (
+      isOnline &&
+      !isReadOnly &&
+      !isPublicAccount() &&
+      groupsRes.isSuccess &&
+      pageId
+    ) {
+      // find all public groups that contain this page
+      const groupsWithPage = Object.values(groupsRes.data!).filter(
+        (group) => group.public && group.pages.includes(pageId)
       )
       groupsWithPage.forEach((group) => {
         console.log(
@@ -189,7 +196,12 @@ export const PageReplicator = ({
         replication.cancel()
       })
     }
-  }, [groupsRes.isSuccess, JSON.stringify(groupsRes.data), isOnline])
+  }, [
+    groupsRes.isSuccess,
+    JSON.stringify(groupsRes.data),
+    isOnline,
+    isReadOnly,
+  ])
 
   if (!groupsRes.isSuccess) {
     return <LoadingFallback queryObserver={groupsRes} />
