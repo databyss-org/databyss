@@ -52,7 +52,6 @@ const MakeLoader = ({
     )
   }
 
-  console.log('[MakeLoader] render')
   if (typeof children !== 'function') {
     return children
   }

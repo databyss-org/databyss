@@ -112,57 +112,59 @@ export const PageBody = ({
 
   const readOnly = isReadOnly || page.archive
 
-  console.log('[PageBody] readOnly', readOnly)
-
-  return useMemo(
-    () => (
-      <CatalogProvider>
-        {readOnly && (
-          <Helmet>
-            <meta charSet="utf-8" />
-            <title>{page.name}</title>
-          </Helmet>
-        )}
-        <HistoryProvider ref={editorStateRef}>
-          <EditorProvider
-            key={page._id}
-            // if read only, disable on change
-            onChange={(v) => !readOnly && onChange(v)}
-            initialState={{
-              ...pageToEditorState(withMetaData(page)),
-              firstBlockIsTitle: true,
-            }}
-          >
-            <PDFDropZoneManager />
-            <ContentEditable
-              autofocus
-              focusIndex={focusIndex}
-              onNavigateUpFromTop={onNavigateUpFromEditor}
-              active={false}
-              editorRef={editorRef}
-              readonly={readOnly}
-              sharedWithGroups={sharedWithGroups}
-              firstBlockIsTitle
-              {...(process.env.NODE_ENV === 'test' ? { onDocumentChange } : {})}
-            />
-          </EditorProvider>
-        </HistoryProvider>
-        {process.env.NODE_ENV === 'test' && (
-          <View height="120px" overflow="scroll" bg="black" p="medium">
-            <Text
-              color="white"
-              variant="uiTextSmall"
-              id="slateDocument"
-              css={{
-                whiteSpace: 'pre-wrap',
+  return (
+    <CatalogProvider>
+      {readOnly && (
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>{page.name}</title>
+        </Helmet>
+      )}
+      <HistoryProvider ref={editorStateRef}>
+        {useMemo(
+          () => (
+            <EditorProvider
+              key={page._id}
+              // if read only, disable on change
+              onChange={(v) => !readOnly && onChange(v)}
+              initialState={{
+                ...pageToEditorState(withMetaData(page)),
+                firstBlockIsTitle: true,
               }}
             >
-              {_debugSlateState}
-            </Text>
-          </View>
+              <PDFDropZoneManager />
+              <ContentEditable
+                autofocus
+                focusIndex={focusIndex}
+                onNavigateUpFromTop={onNavigateUpFromEditor}
+                active={false}
+                editorRef={editorRef}
+                readonly={readOnly}
+                sharedWithGroups={sharedWithGroups}
+                firstBlockIsTitle
+                {...(process.env.NODE_ENV === 'test'
+                  ? { onDocumentChange }
+                  : {})}
+              />
+            </EditorProvider>
+          ),
+          [page?._id, focusIndex, readOnly]
         )}
-      </CatalogProvider>
-    ),
-    [page?._id, focusIndex, readOnly]
+      </HistoryProvider>
+      {process.env.NODE_ENV === 'test' && (
+        <View height="120px" overflow="scroll" bg="black" p="medium">
+          <Text
+            color="white"
+            variant="uiTextSmall"
+            id="slateDocument"
+            css={{
+              whiteSpace: 'pre-wrap',
+            }}
+          >
+            {_debugSlateState}
+          </Text>
+        </View>
+      )}
+    </CatalogProvider>
   )
 }
