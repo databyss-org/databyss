@@ -5,7 +5,6 @@ import {
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { EditorPageLoader } from '@databyss-org/ui/components/Loaders'
 import { PageContainer } from '@databyss-org/ui/components/PageContent/PageContent'
-import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 
 import { MobileView } from '../Mobile'
 
