@@ -372,39 +372,58 @@ export const initDb = ({
       resolve()
     }
 
-    console.log('[DB] Init using COUCH mode')
-    if (!couchDbRef.current) {
-      connect(groupId)
-    }
-    // HACK: a little trick to get the CouchDb ref to look like a PouchDb ref
-    // because they are designed to have the same spec
-    const _unknown = couchDbRef.current as unknown
-    dbRef.current = _unknown as PouchDB.Database
-    dbRef.readOnly = true
+    const _startInCouchMode = () => {
+      console.log('[DB] Init using COUCH mode')
+      if (!couchDbRef.current) {
+        connect(groupId)
+      }
+      // HACK: a little trick to get the CouchDb ref to look like a PouchDb ref
+      // because they are designed to have the same spec
+      const _unknown = couchDbRef.current as unknown
+      dbRef.current = _unknown as PouchDB.Database
+      dbRef.readOnly = true
 
-    // do not replicate on mobile for now
-    if (process.env.FORCE_MOBILE) {
-      resolve()
-      return
+      // do not replicate on mobile for now
+      if (process.env.FORCE_MOBILE) {
+        resolve()
+        return
+      }
+
+      console.log('[DB] Start replication')
+      if (isPublicGroup) {
+        replicatePublicGroup({ groupId, pouchDb: _pouchDb }).then(
+          _replicationComplete
+        )
+      } else {
+        replicateDbFromRemote({
+          groupId,
+          pouchDb: _pouchDb,
+        }).then(_replicationComplete)
+      }
+
+      // if not in test env, resolve now so app can continue while replication happens
+      // in the background
+      if (process.env.NODE_ENV !== 'test') {
+        resolve()
+      }
     }
 
-    console.log('[DB] Start replication')
-    if (isPublicGroup) {
-      replicatePublicGroup({ groupId, pouchDb: _pouchDb }).then(
-        _replicationComplete
-      )
-    } else {
-      replicateDbFromRemote({
-        groupId,
-        pouchDb: _pouchDb,
-      }).then(_replicationComplete)
-    }
-
-    // if not in test env, resolve now so app can continue while replication happens
-    // in the background
-    if (process.env.NODE_ENV !== 'test') {
-      resolve()
-    }
+    // if we're offline, check pouch db ref for user_prefs doc
+    // (it might already exist locally from prev session)
+    checkNetwork().then((isOnline) =>
+      !isOnline
+        ? _pouchDb
+            .get('user_preference')
+            .then(() => {
+              _replicationComplete(true)
+            })
+            .catch(() => {
+              _startInCouchMode()
+            })
+        : // otherwise, always start in couch mode and run a replication
+          // so we get the latest changes
+          _startInCouchMode()
+    )
   })
 
 export const waitForPouchDb = (timeout: number = 1200000) =>
