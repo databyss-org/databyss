@@ -8,6 +8,8 @@ import {
   Range,
   BlockReference,
 } from '@databyss-org/services/interfaces'
+import { validUriRegex } from '@databyss-org/services/lib/util'
+import matchAll from 'string.prototype.matchall'
 import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import { EditorState, PagePath } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
@@ -408,4 +410,42 @@ export const cleanupAtomicData = (data: any) => {
     delete data.weight
   }
   return _data
+}
+
+export const createLinkRangesForUrls = (text: string) => {
+  const _emailRegEx = new RegExp(
+    /\b([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)\b/,
+    'gi'
+  )
+  const _ranges: Range[] = []
+  const _validUri = new RegExp(validUriRegex, 'gi')
+  ;[_emailRegEx, _validUri].forEach((_regex) => {
+    const _matches = [...matchAll(text, _regex)]
+    _matches.forEach((e) => {
+      const _parts = text.split(e[0])
+      let offset = 0
+      _parts.forEach((part, i) => {
+        if (i !== 0) {
+          const _range: Range = {
+            offset: offset - e[0].length,
+            length: e[0].length,
+            marks: [[InlineTypes.Link, e[0]]],
+          }
+          // const _range2 = {
+          //   anchor: { path, offset: offset - e[0].length },
+          //   focus: { path, offset },
+          //   url: e[0],
+          // }
+          // check to see if this range is already included as a range
+          // NOTE: enable this if patterns might overlap
+          // if (!ranges.filter((r) => Range.includes(r, _range)).length) {
+          //   ranges.push(_range)
+          // }
+          _ranges.push(_range)
+        }
+        offset = offset + part.length + e[0].length
+      })
+    })
+  })
+  return _ranges
 }

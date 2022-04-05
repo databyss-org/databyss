@@ -5,8 +5,6 @@ import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import styledCss from '@styled-system/css'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
-import { validUriRegex, validURL } from '@databyss-org/services/lib/util'
-import matchAll from 'string.prototype.matchall'
 import { useEditorContext } from '../state/EditorProvider'
 import { TitleElement } from './TitleElement'
 import Leaf from './Leaf'
@@ -14,6 +12,7 @@ import Element from './Element'
 import FormatMenu from './FormatMenu'
 import { isSelectionCollapsed } from '../lib/clipboardUtils'
 import { convertSelectionToLink } from '../lib/inlineUtils/setPageLink'
+import { createLinkRangesForUrls } from '../lib/util'
 
 const Editor = ({
   children,
@@ -102,37 +101,13 @@ const Editor = ({
       }
 
       if (Text.isText(node) && !(node?.inlineEmbedInput || node?.embed)) {
-        // do not apply markup
-
-        const _string = Node.string(node)
-
-        // check for email addresses
-        const _emailRegEx = new RegExp(
-          /\b([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)\b/,
-          'gi'
-        )
-        const _validUri = new RegExp(validUriRegex, 'gi')
-        ;[_emailRegEx, _validUri].forEach((_regex) => {
-          const _matches = [...matchAll(_string, _regex)]
-          _matches.forEach((e) => {
-            const _parts = _string.split(e[0])
-            let offset = 0
-            _parts.forEach((part, i) => {
-              if (i !== 0) {
-                const _range = {
-                  anchor: { path, offset: offset - e[0].length },
-                  focus: { path, offset },
-                  url: e[0],
-                }
-                // check to see if this range is already included as a range
-                // NOTE: enable this if patterns might overlap
-                // if (!ranges.filter((r) => Range.includes(r, _range)).length) {
-                //   ranges.push(_range)
-                // }
-                ranges.push(_range)
-              }
-              offset = offset + part.length + e[0].length
-            })
+        // create links for urls and email addresses
+        const _linkRanges = createLinkRangesForUrls(Node.string(node))
+        _linkRanges.forEach((_linkRange) => {
+          ranges.push({
+            anchor: { path, offset: _linkRange.offset },
+            focus: { path, offset: _linkRange.offset + _linkRange.length },
+            url: _linkRange.marks[0][1],
           })
         })
       }

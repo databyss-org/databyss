@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react'
 import styledCss from '@styled-system/css'
 import {
+  createLinkRangesForUrls,
   isAtomicInlineType,
   slateBlockToHtmlWithSearch,
 } from '@databyss-org/editor/lib/util'
@@ -15,6 +16,7 @@ import {
   InlineRangeType,
   Block,
 } from '@databyss-org/services/interfaces'
+import cloneDeep from 'clone-deep'
 import { RawHtml, View, Text as TextComponent } from '@databyss-org/ui'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
 import { ElementView } from '@databyss-org/editor/components/ElementView'
@@ -32,6 +34,7 @@ import {
   AtomicHeader,
   isAtomicClosure,
 } from '@databyss-org/editor/components/AtomicHeader'
+import { fixOverlappingRanges } from '@databyss-org/services/blocks/textRanges'
 
 export const FlatBlock = ({
   index,
@@ -210,22 +213,25 @@ export function rangeToLeaf(marks: Mark[], text: string) {
  */
 export function renderTextToComponents({
   text,
-  linkedDocs,
   escapeFn = (_s: string) => _s,
 }: {
   text: Text
   linkedDocs?: DocumentDict<Document>
   escapeFn?: (_s: string) => ReactNode
 }): ReactNode {
-  let _text = text.textValue
+  const _text = text.textValue
+  let _ranges = cloneDeep(text.ranges)
 
-  if (!text.ranges.length) {
+  // add link ranges
+  _ranges = _ranges.concat(createLinkRangesForUrls(_text))
+
+  if (!_ranges.length) {
     return escapeFn(_text)
   }
 
   // merge and sort ranges
-  const _ranges = mergeRanges(text.ranges, SortOptions.Ascending)
-  console.log('[FlatPageBody] ranges', _ranges)
+  _ranges = mergeRanges(_ranges, SortOptions.Ascending)
+  fixOverlappingRanges(_ranges)
 
   let _lastRangeEnd = 0
 

@@ -40,3 +40,20 @@ export function mergeRanges(
     return 0
   })
 }
+
+/**
+ * Fix overlapping ranges (truncate ranges, moving left to right)
+ * NB Expects ranges sorted ascending
+ */
+export function fixOverlappingRanges(ranges: Range[]) {
+  if (!ranges.length) {
+    return
+  }
+  ranges.forEach((_range, _idx) => {
+    const _nextOffset =
+      _idx < ranges.length - 1 ? ranges[_idx + 1].offset : null
+    if (_nextOffset && _range.offset + _range.length > _nextOffset) {
+      _range.length = _nextOffset - _range.offset
+    }
+  })
+}
