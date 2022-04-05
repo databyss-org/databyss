@@ -41,7 +41,7 @@ const BaseControl = forwardRef(
     )
 
     const _onPress = (event) => {
-      if (typeof onPress === 'function') {
+      if (!disabled && typeof onPress === 'function') {
         onPress(event)
       }
 
@@ -53,7 +53,9 @@ const BaseControl = forwardRef(
         navigationContext
       ) {
         event.preventDefault()
-        navigationContext.navigate(href)
+        if (!disabled) {
+          navigationContext.navigate(href)
+        }
       }
     }
 

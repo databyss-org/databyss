@@ -5,7 +5,6 @@ import {
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { EditorPageLoader } from '@databyss-org/ui/components/Loaders'
 import { PageContainer } from '@databyss-org/ui/components/PageContent/PageContent'
-import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 
 import { MobileView } from '../Mobile'
 
@@ -30,14 +29,12 @@ const PageDetails = () => {
 
   // render methods
   const renderPageDetails = (page) => (
-    <NotifyProvider>
-      <PageContainer
-        anchor={anchor}
-        id={pageId}
-        page={page}
-        maxHeight={getScrollViewMaxHeight()}
-      />
-    </NotifyProvider>
+    <PageContainer
+      anchor={anchor}
+      id={pageId}
+      page={page}
+      maxHeight={getScrollViewMaxHeight()}
+    />
   )
 
   const render = () => (

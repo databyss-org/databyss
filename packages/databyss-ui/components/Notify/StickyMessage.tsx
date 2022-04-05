@@ -13,7 +13,9 @@ interface StickyMessageProps {
   messageId?: string | null
   html?: string | null
   children?: ReactNode | null
+  rightAlignChildren?: ReactNode | null
   visible?: boolean
+  canDismiss?: boolean
 }
 
 const StickyMessage = ({
@@ -21,6 +23,8 @@ const StickyMessage = ({
   html,
   children,
   visible,
+  canDismiss,
+  rightAlignChildren,
 }: StickyMessageProps) => {
   const [dismissed, setDismissed] = useState(
     messageId ? localStorage.getItem(`${messageId}_dismissed`) : false
@@ -58,16 +62,22 @@ const StickyMessage = ({
             children
           )}
         </View>
-        <BaseControl
-          onPress={dismiss}
-          py="tiny"
-          px="tiny"
-          alignSelf="flex-start"
-        >
-          <Icon sizeVariant="tiny" color="text.3">
-            <CloseSvg />
-          </Icon>
-        </BaseControl>
+        {rightAlignChildren && (
+          <View alignSelf="flex-start">{rightAlignChildren}</View>
+        )}
+
+        {canDismiss && (
+          <BaseControl
+            onPress={dismiss}
+            py="tiny"
+            px="tiny"
+            alignSelf="flex-start"
+          >
+            <Icon sizeVariant="tiny" color="text.3">
+              <CloseSvg />
+            </Icon>
+          </BaseControl>
+        )}
       </Grid>
     </View>
   )
@@ -75,6 +85,7 @@ const StickyMessage = ({
 
 StickyMessage.defaultProps = {
   visible: true,
+  canDismiss: true,
 }
 
 export default StickyMessage

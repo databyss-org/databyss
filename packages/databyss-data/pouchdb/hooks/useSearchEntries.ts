@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import PouchDB from 'pouchdb'
-import { dbRef } from '../db'
+import { dbRef, waitForPouchDb } from '../db'
 import { searchEntries } from '../entries'
 import { SearchEntriesResultPage } from '../entries/lib/searchEntries'
 import { DocumentType } from '../interfaces'
@@ -14,6 +14,9 @@ const changesRef: { current: PouchDB.Core.Changes<any> | undefined } = {
   current: undefined,
 }
 
+// let firstSearchInProgress: boolean = false
+let firstSearchComplete: boolean = false
+
 export const useSearchEntries = (searchQuery: string) => {
   const pagesRes = usePages()
   const blocksRes = useDocuments<Block>({
@@ -25,14 +28,19 @@ export const useSearchEntries = (searchQuery: string) => {
   const query = useQuery<SearchEntriesResultPage[]>(
     queryKey,
     async () => {
-      const results = await searchEntries(
-        searchQuery,
-        Object.values(pagesRes.data!),
-        blocksRes.data!,
-        (_results) => {
+      if (!(await waitForPouchDb())) {
+        return []
+      }
+      const results = await searchEntries({
+        encodedQuery: searchQuery,
+        pages: Object.values(pagesRes.data!),
+        blocks: blocksRes.data!,
+        onUpdated: (_results) => {
           queryClient.setQueryData(queryKey, _results)
-        }
-      )
+        },
+        allowStale: firstSearchComplete,
+      })
+      firstSearchComplete = true
       return results
     },
     {

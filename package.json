@@ -1,12 +1,12 @@
 {
   "name": "databyss-org-workspace",
-  "version": "2.4.0",
-  "description": "Expressive database management tools for writers and researchers",
+  "version": "2.4.1",
+  "description": "The word processor is dead. Long live the word processor.",
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/databyss-org/databyss.git",
-    "masterBranch": "next"
+    "masterBranch": "main"
   },
   "author": "databyss-org",
   "license": "MIT",

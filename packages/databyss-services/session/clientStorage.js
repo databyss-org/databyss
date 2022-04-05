@@ -117,13 +117,12 @@ export function setPouchSecret(credentials) {
     keyMap = JSON.parse(keyMap)
   }
 
-  credentials.forEach((g) => {
-    // let defaultAccount = false
-    // if no default account in dictionary, set default account
-    if (!Object.keys(keyMap).length) {
-      setDefaultGroup(g.groupId)
-    }
+  // if no default account in storage, set default account
+  if (!getDefaultGroup()) {
+    setDefaultGroup(credentials[0].groupId)
+  }
 
+  credentials.forEach((g) => {
     keyMap[g.groupId] = {
       dbPassword: g.dbPassword,
       dbKey: g.dbKey,

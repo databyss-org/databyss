@@ -1,10 +1,7 @@
 import {
-  replicateDbFromRemote,
   replicatePublicGroup,
   REMOTE_CLOUDANT_URL,
-  initiatePouchDbIndexes,
-  dbRef,
-  getPouchDb,
+  initDb,
 } from '@databyss-org/data/pouchdb/db'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
@@ -21,6 +18,7 @@ import {
   SET_DEFAULT_PAGE,
   SET_SESSION,
   STORE_SESSION_LOCALLY,
+  SET_READ_ONLY,
 } from './constants'
 import {
   getAuthToken,
@@ -112,6 +110,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     if (res.data && res.data.session) {
       const { session } = res.data
       // set credentials in local storage if sent from server
+      console.log('[fetchSession] session', session)
       if (session.groupCredentials) {
         setPouchSecret(session.groupCredentials)
       }
@@ -124,13 +123,8 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       const _defaultGroupId =
         session.user?.defaultGroupId || session?.groupCredentials[0].groupId
 
-      if (!process.env.FORCE_MOBILE) {
-        await replicateDbFromRemote({
-          groupId: _defaultGroupId,
-        })
-      } else {
-        dbRef.current = getPouchDb(`${_defaultGroupId}`)
-      }
+      // this will store session info locally into 'user_preference' doc
+      await initDb({ groupId: _defaultGroupId })
 
       dispatch({
         type: STORE_SESSION_LOCALLY,
@@ -150,11 +144,11 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       })
     }
   } catch (error) {
-    try {
-      await cleanupDefaultGroup()
-    } catch (err) {
-      console.error(err)
-    }
+    // try {
+    //   await cleanupDefaultGroup()
+    // } catch (err) {
+    //   console.error(err)
+    // }
     dispatch({
       type: DENY_ACCESS,
       payload: { error },
@@ -224,6 +218,11 @@ export const setSession = (session) => async (dispatch) => {
   })
 }
 
+export const setReadOnly = (readOnly) => ({
+  type: SET_READ_ONLY,
+  payload: readOnly,
+})
+
 /*
 checks url for public page
 */
@@ -284,12 +283,7 @@ export const hasUnathenticatedAccess = (maxRetries = 5) =>
     _checkAccess()
   })
 
-export const replicateGroup = (id) => {
+export const replicateGroup = (id) =>
   replicatePublicGroup({
     groupId: id,
   })
-
-  setTimeout(() => {
-    initiatePouchDbIndexes()
-  }, [5000])
-}

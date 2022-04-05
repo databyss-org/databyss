@@ -2,6 +2,7 @@ import React, { useState, useEffect, forwardRef } from 'react'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { isMobile } from '../../lib/mediaQuery'
 import { TitleInput } from './TitleInput'
 
@@ -59,7 +60,9 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
     <TitleInput
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
-      readonly={isPublicAccount() || isMobile() || page.archive}
+      readonly={
+        dbRef.readOnly || isPublicAccount() || isMobile() || page.archive
+      }
       ref={ref}
       data-test-element="page-header"
       onKeyDown={(e) => {

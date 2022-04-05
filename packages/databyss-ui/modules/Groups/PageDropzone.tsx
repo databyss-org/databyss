@@ -17,6 +17,7 @@ import {
   Group,
   DocumentDict,
 } from '@databyss-org/services/interfaces'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import {
   LoadingFallback,
   SidebarListRow,
@@ -49,6 +50,7 @@ export const PageDropzone = ({
 }: PageDropzoneProps) => {
   const _inTestEnv = process.env.NODE_ENV === 'test'
   const [showMenu, setShowMenu] = useState(false)
+  const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
 
   let _pagesList
 
@@ -97,6 +99,9 @@ export const PageDropzone = ({
   // get most current group and page value
 
   const onDrop = (item: DraggableItem) => {
+    if (isReadOnly) {
+      return
+    }
     if (!group) {
       return
     }
@@ -163,14 +168,16 @@ export const PageDropzone = ({
                 hoverColor="control.1"
                 // p="em"
               >
-                <BaseControl
-                  onPress={() => onRemove(page._id)}
-                  data-test-element="remove-page"
-                >
-                  <Icon sizeVariant="tiny">
-                    <CloseSvg />
-                  </Icon>
-                </BaseControl>
+                {!isReadOnly && (
+                  <BaseControl
+                    onPress={() => onRemove(page._id)}
+                    data-test-element="remove-page"
+                  >
+                    <Icon sizeVariant="tiny">
+                      <CloseSvg />
+                    </Icon>
+                  </BaseControl>
+                )}
               </SidebarListRow>
             ))}
             {value!.length === 1 && (

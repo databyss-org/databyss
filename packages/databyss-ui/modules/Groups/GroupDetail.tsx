@@ -11,6 +11,7 @@ import {
   ViewProps,
   ScrollView,
 } from '@databyss-org/ui/primitives'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { urlSafeName } from '@databyss-org/services/lib/util'
@@ -45,9 +46,11 @@ const GroupSection = ({
 export const GroupFields = ({
   group,
   pages,
+  readOnly,
 }: {
   group: Group
   pages: DocumentDict<Page> | undefined
+  readOnly: boolean
 }) => {
   const [values, setValues] = useState(group)
   const groupValue = useRef(group)
@@ -110,7 +113,7 @@ export const GroupFields = ({
     <ValueListProvider onChange={onChange} values={_values}>
       <View pl="em" pr="medium" pt="none" flexGrow={1}>
         <ValueListItem path="name">
-          <TitleInput placeholder={UNTITLED_NAME} />
+          <TitleInput readonly={readOnly} placeholder={UNTITLED_NAME} />
         </ValueListItem>
         <Grid columnGap="large" widthVariant="content" flexGrow={1}>
           <GroupSection title="Pages" flexGrow={1} flexBasis={1}>
@@ -128,7 +131,7 @@ export const GroupFields = ({
           <View flexGrow={1} flexBasis={1}>
             <GroupSection title="Share with Everyone">
               <ValueListItem path="public">
-                <PublicSharingSettings onClick={copyLink} />
+                <PublicSharingSettings readOnly={readOnly} onClick={copyLink} />
               </ValueListItem>
             </GroupSection>
           </View>
@@ -142,6 +145,7 @@ export const GroupDetail = () => {
   const { id } = useParams()
   const groupsRes = useGroups()
   const pagesRes = usePages()
+  const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
 
   const pages = pagesRes?.data
 
@@ -165,7 +169,12 @@ export const GroupDetail = () => {
         flexShrink={1}
         shadowOnScroll
       >
-        <GroupFields pages={pages} group={group} key={id} />
+        <GroupFields
+          pages={pages}
+          group={group}
+          readOnly={isReadOnly}
+          key={`${id}${isReadOnly}`}
+        />
       </ScrollView>
     </>
   )

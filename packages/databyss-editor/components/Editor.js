@@ -216,7 +216,7 @@ const Editor = ({
         />
       </Slate>
     ),
-    [editor, selection, _searchTerm]
+    [editor, selection, _searchTerm, readOnly]
   )
 }
 

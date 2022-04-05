@@ -6,6 +6,7 @@ import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 // import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 // import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { deleteCollection } from '@databyss-org/data/pouchdb/groups/index'
 import {
@@ -20,6 +21,7 @@ interface GroupMenuProps extends ViewProps {
 
 const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
   const { navigate } = useNavigationContext()
+  const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const groupsRes = useGroups()
 
   const [showMenu, setShowMenu] = useState(false)
@@ -62,6 +64,7 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
       data-test-element="delete-group"
       action="delete-group"
       onPress={deleteGroup}
+      disabled={isReadOnly}
     />
   )
 

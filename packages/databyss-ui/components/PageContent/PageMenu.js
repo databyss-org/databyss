@@ -70,6 +70,7 @@ const PageMenu = () => {
   const groups = groupsRes.data
 
   const getSession = useSessionContext((c) => c && c.getSession)
+  const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const setDefaultPage = useSessionContext((c) => c && c.setDefaultPage)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
@@ -168,6 +169,7 @@ const PageMenu = () => {
         label: 'Archive',
         action: () => onArchivePress(true),
         actionType: 'archive',
+        disabled: isReadOnly,
         // TODO: detect platform and render correct modifier key
         // shortcut: 'Ctrl + Del',
       })
@@ -180,6 +182,7 @@ const PageMenu = () => {
         label: 'Restore Page',
         action: () => onArchivePress(false),
         actionType: 'restore',
+        disabled: isReadOnly,
         // TODO: detect platform and render correct modifier key
         // shortcut: 'Ctrl + Del',
       })
@@ -189,6 +192,7 @@ const PageMenu = () => {
         label: 'Delete page forever',
         action: () => onPageDelete(),
         actionType: 'delete',
+        disabled: isReadOnly,
         // TODO: detect platform and render correct modifier key
         // shortcut: 'Ctrl + Del',
       })
@@ -402,6 +406,7 @@ const PageMenu = () => {
                   value={isPagePublic}
                   onPress={togglePublicPage}
                   action="togglePublic"
+                  disabled={isReadOnly}
                   switchControl
                 />
                 {isPagePublic ? (

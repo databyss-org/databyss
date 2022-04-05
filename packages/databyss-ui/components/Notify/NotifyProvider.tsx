@@ -1,4 +1,5 @@
-import React, { createContext, ReactNode, useContext } from 'react'
+import React, { ReactNode } from 'react'
+import { createContext, useContextSelector } from 'use-context-selector'
 import {
   Dialog,
   Button,
@@ -194,6 +195,7 @@ class NotifyProvider extends React.Component {
       e &&
       instanceofAny([e, e.reason, e.error], [UnauthorizedDatabaseReplication])
     ) {
+      console.log('[UnauthorizedDatabaseReplication]', e)
       cleanupGroupFromUrl().then(() => {
         window.location.pathname = '/'
       })
@@ -508,6 +510,7 @@ class NotifyProvider extends React.Component {
   }
 }
 
-export const useNotifyContext = () => useContext(NotifyContext)
+export const useNotifyContext = (selector = (x) => x) =>
+  useContextSelector(NotifyContext, selector)
 
 export default NotifyProvider

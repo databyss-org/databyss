@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, Text, View } from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
@@ -20,18 +20,15 @@ import {
 } from '@databyss-org/editor/state/util'
 import { UNTITLED_PAGE_NAME } from '@databyss-org/services/interfaces'
 import _, { debounce } from 'lodash'
-import { isMobile } from '../../lib/mediaQuery'
 
-const PageBody = ({
+export const PageBody = ({
   page,
   focusIndex,
   onNavigateUpFromEditor,
   editorRef,
   onEditorPathChange,
 }) => {
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-
-  // const { location } = useNavigationContext()
+  const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const clearBlockDict = useEditorPageContext((c) => c.clearBlockDict)
   const setPageHeader = useEditorPageContext((c) => c.setPageHeader)
   const sharedWithGroups = useEditorPageContext((c) => c.sharedWithGroups)
@@ -113,64 +110,61 @@ const PageBody = ({
     )
   )
 
-  const render = () => {
-    const isReadOnly = isPublicAccount() || isMobile() || page.archive
+  const readOnly = isReadOnly || page.archive
 
-    return (
-      <CatalogProvider>
-        {isReadOnly && (
-          <Helmet>
-            <meta charSet="utf-8" />
-            <title>{page.name}</title>
-          </Helmet>
-        )}
-        <HistoryProvider ref={editorStateRef}>
-          <EditorProvider
-            key={page._id}
-            // if read only, disable on change
-            onChange={(v) => !isReadOnly && onChange(v)}
-            initialState={{
-              ...pageToEditorState(withMetaData(page)),
-              firstBlockIsTitle: true,
-            }}
-          >
-            <PDFDropZoneManager />
-            <ContentEditable
-              autofocus
-              focusIndex={focusIndex}
-              onNavigateUpFromTop={onNavigateUpFromEditor}
-              active={false}
-              editorRef={editorRef}
-              readonly={isReadOnly}
-              sharedWithGroups={sharedWithGroups}
-              firstBlockIsTitle
-              {...(process.env.NODE_ENV === 'test' ? { onDocumentChange } : {})}
-            />
-          </EditorProvider>
-        </HistoryProvider>
-        {process.env.NODE_ENV === 'test' && (
-          <View height="120px" overflow="scroll" bg="black" p="medium">
-            <Text
-              color="white"
-              variant="uiTextSmall"
-              id="slateDocument"
-              css={{
-                whiteSpace: 'pre-wrap',
+  return (
+    <CatalogProvider>
+      {readOnly && (
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>{page.name}</title>
+        </Helmet>
+      )}
+      <HistoryProvider ref={editorStateRef}>
+        {useMemo(
+          () => (
+            <EditorProvider
+              key={page._id}
+              // if read only, disable on change
+              onChange={(v) => !readOnly && onChange(v)}
+              initialState={{
+                ...pageToEditorState(withMetaData(page)),
+                firstBlockIsTitle: true,
               }}
             >
-              {_debugSlateState}
-            </Text>
-          </View>
+              <PDFDropZoneManager />
+              <ContentEditable
+                autofocus
+                focusIndex={focusIndex}
+                onNavigateUpFromTop={onNavigateUpFromEditor}
+                active={false}
+                editorRef={editorRef}
+                readonly={readOnly}
+                sharedWithGroups={sharedWithGroups}
+                firstBlockIsTitle
+                {...(process.env.NODE_ENV === 'test'
+                  ? { onDocumentChange }
+                  : {})}
+              />
+            </EditorProvider>
+          ),
+          [page?._id, focusIndex, readOnly]
         )}
-      </CatalogProvider>
-    )
-  }
-
-  return render()
+      </HistoryProvider>
+      {process.env.NODE_ENV === 'test' && (
+        <View height="120px" overflow="scroll" bg="black" p="medium">
+          <Text
+            color="white"
+            variant="uiTextSmall"
+            id="slateDocument"
+            css={{
+              whiteSpace: 'pre-wrap',
+            }}
+          >
+            {_debugSlateState}
+          </Text>
+        </View>
+      )}
+    </CatalogProvider>
+  )
 }
-
-export default React.memo(
-  PageBody,
-  (prev, next) =>
-    prev.page._id === next.page._id && prev.focusIndex === next.focusIndex
-)

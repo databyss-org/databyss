@@ -45,12 +45,14 @@ interface PublicSharingSettingsProps {
   value?: boolean
   onClick: () => void
   onChange?: (value: boolean) => void
+  readOnly?: boolean
 }
 
 export const PublicSharingSettings = ({
   value,
   onClick,
   onChange,
+  readOnly,
   ...others
 }: PublicSharingSettingsProps) => {
   const [linkCopied, setLinkCopied] = useState(false)
@@ -72,6 +74,7 @@ export const PublicSharingSettings = ({
         }}
         value={value}
         onChange={onChange}
+        disabled={readOnly}
       />
       <View px="em">
         <Separator spacing="none" color="text.3" />

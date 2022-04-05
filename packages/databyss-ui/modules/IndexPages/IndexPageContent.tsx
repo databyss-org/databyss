@@ -36,7 +36,6 @@ import {
   ViewProps,
   Button,
 } from '@databyss-org/ui/primitives'
-import { isMobile, isMobileOrMobileOs } from '@databyss-org/ui/lib/mediaQuery'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
@@ -74,7 +73,7 @@ export const IndexPageTitleInput = ({
   handlesRef,
   ...others
 }: IndexPageViewProps) => {
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const [title, setTitle] = useState(getTitleFromBlock(block, path))
   const { navigate } = useNavigationContext()
   const blocksRes = useBlocks(BlockType._ANY)
@@ -153,9 +152,7 @@ export const IndexPageTitleInput = ({
       autoFocus
       placeholder={isSearch ? 'Search' : `untitled ${indexName}`}
       value={title}
-      readonly={
-        isPublicAccount() || isMobileOrMobileOs() || (!block && !isSearch)
-      }
+      readonly={isReadOnly || (!block && !isSearch)}
       onChange={onChange}
       onKeyDown={onKeyDown}
       icon={icon && <Icon>{icon}</Icon>}
@@ -209,7 +206,7 @@ export const IndexPageView = ({
     location,
   } = useNavigationContext()
   const titleInputHandlesRef = useRef<IndexPageTitleInputHandles>(null)
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const onUpdateBlock = (block: Block) => {
     titleInputHandlesRef.current?.updateTitle(block)
   }
@@ -278,7 +275,7 @@ export const IndexPageView = ({
             />
           )}
           {block?.type === BlockType.Source &&
-            (isPublicAccount() || isMobile() ? (
+            (isReadOnly ? (
               <SourceTitleAndCitationView block={block} mb="small" />
             ) : (
               <View position="relative" mt="em" mb="small">

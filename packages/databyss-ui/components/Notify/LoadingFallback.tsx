@@ -103,7 +103,7 @@ export const LoadingFallback = ({
 LoadingFallback.defaultProps = {
   size: 25,
   showLongWaitMessage: false,
-  longWaitMs: 2500,
+  longWaitMs: 10000,
   longWaitDialogOptions: {
     message:
       "<strong>Databyss is synching with the cloud.</strong><p>If it's not done shortly...</p><p>&nbsp;&nbsp;&nbsp;...just wait longer.</p>",
