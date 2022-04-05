@@ -40,6 +40,9 @@ export const useDocument = <T extends Document>(
   )
 
   useEffect(() => {
+    if (!options?.enabled) {
+      return
+    }
     if (dbRef.current instanceof CouchDb) {
       return
     }
@@ -57,7 +60,7 @@ export const useDocument = <T extends Document>(
       .on('change', (change) => {
         queryClient.setQueryData<T>(queryKey, change.doc)
       })!
-  }, [])
+  }, [options?.enabled, dbRef.current])
 
   return query
 }

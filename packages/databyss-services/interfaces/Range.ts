@@ -1,7 +1,9 @@
+export type Mark = RangeType | InlineRangeType
+
 export interface Range {
   offset: number
   length: number
-  marks: Array<RangeType | InlineRangeType>
+  marks: Mark[]
 }
 
 export enum InlineTypes {

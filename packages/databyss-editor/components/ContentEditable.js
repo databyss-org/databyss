@@ -38,7 +38,7 @@ import {
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
-import { isAtomicClosure } from './Element'
+import { isAtomicClosure } from './AtomicHeader'
 import { useHistoryContext } from '../history/EditorHistory'
 import {
   onInlineFocusBlur,

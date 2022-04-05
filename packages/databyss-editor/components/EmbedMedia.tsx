@@ -24,12 +24,12 @@ export const EmbedMedia = ({
   attributes,
   _element,
   onInlineClick,
+  editor,
 }) => {
   const blocksRes = useBlocks(BlockType.Embed)
   const [data, setData] = useState<null | Embed>()
   const [highlight, setHighlight] = useState(false)
   const textRef = useRef<any>()
-  const editor = useSlate() as ReactEditor & SlateEditor
   const _isSelected = useSelected()
 
   // only compute if current block is focused
@@ -114,4 +114,9 @@ export const EmbedMedia = ({
       </View>
     </InlineEmbed>
   )
+}
+
+export const EditorEmbedMedia = (props) => {
+  const editor = useSlate() as ReactEditor & SlateEditor
+  return <EmbedMedia {...props} editor={editor} />
 }
