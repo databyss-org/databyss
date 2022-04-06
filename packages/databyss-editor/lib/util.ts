@@ -430,7 +430,7 @@ export const createLinkRangesForUrls = (text: string) => {
           const _range: Range = {
             offset: offset - e[0].length,
             length: e[0].length,
-            marks: [[InlineTypes.Link, e[0]]],
+            marks: [[InlineTypes.Url, e[0]]],
           }
           // const _range2 = {
           //   anchor: { path, offset: offset - e[0].length },

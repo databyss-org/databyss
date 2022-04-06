@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
+import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvder'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 
@@ -14,6 +15,7 @@ export const useDocuments = <T extends Document>(
   options: UseQueryOptions = { enabled: true }
 ) => {
   const queryClient = useQueryClient()
+  const { isCouchMode } = useDatabaseContext()
 
   let docIds: string[]
   let selector: PouchDB.Find.Selector | undefined
@@ -95,7 +97,7 @@ export const useDocuments = <T extends Document>(
         })
       })!
     // console.log('[useDocuments] subscribe', queryKey, selector, dbRef.current)
-  }, [options?.enabled, dbRef.current])
+  }, [options?.enabled, isCouchMode])
 
   return query
 }

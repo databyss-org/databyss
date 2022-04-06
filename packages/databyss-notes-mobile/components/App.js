@@ -1,7 +1,7 @@
 import React from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { useNavigationContext } from '@databyss-org/ui'
-import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
+import { DatabaseProvider } from '@databyss-org/services/lib/DatabaseProvder'
 import SessionProvider from '@databyss-org/services/session/SessionProvider'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 import Public from '@databyss-org/notes/app/Public'
@@ -31,7 +31,7 @@ const App = () => {
   // render methods
   const render = () => (
     <NotifyProvider>
-      <ServiceProvider>
+      <DatabaseProvider>
         <QueryClientProvider client={queryClient}>
           <SessionProvider
             signUp={isSignUp()}
@@ -41,7 +41,7 @@ const App = () => {
             <Private />
           </SessionProvider>
         </QueryClientProvider>
-      </ServiceProvider>
+      </DatabaseProvider>
     </NotifyProvider>
   )
 

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { Document } from '@databyss-org/services/interfaces'
+import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvder'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 
 import { dbRef } from '../db'
@@ -17,6 +18,7 @@ export const useDocument = <T extends Document>(
   _id: string,
   options: UseDocumentOptions = { enabled: true }
 ) => {
+  const { isCouchMode } = useDatabaseContext()
   const queryClient = useQueryClient()
   const queryKey = `useDocument_${_id}`
 
@@ -60,7 +62,7 @@ export const useDocument = <T extends Document>(
       .on('change', (change) => {
         queryClient.setQueryData<T>(queryKey, change.doc)
       })!
-  }, [options?.enabled, dbRef.current])
+  }, [options?.enabled, isCouchMode])
 
   return query
 }

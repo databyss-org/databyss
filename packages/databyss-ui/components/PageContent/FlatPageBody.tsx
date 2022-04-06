@@ -24,6 +24,7 @@ import { AtomicHeader } from '@databyss-org/editor/components/AtomicHeader'
 import { splitOverlappingRanges } from '@databyss-org/services/blocks/textRanges'
 import { useSearchContext } from '../../hooks'
 import { useNavigationContext } from '../Navigation'
+import { validUriRegex } from '@databyss-org/services/lib/util'
 
 export const FlatBlock = ({
   index,
@@ -52,7 +53,7 @@ export const FlatBlock = ({
   }
   const _block = block ?? _blockRes.data ?? null
 
-  _searchTerm = _searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+  _searchTerm = _searchTerm?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
   const _renderText = () =>
     renderTextToComponents({
       key: block?._id!,
@@ -179,17 +180,19 @@ export interface Leaf {
 
 export function rangeToLeaf(marks: Mark[], text: string) {
   const _atomicId: string | undefined = marks.find((m) => Array.isArray(m))?.[1]
-  const _includesInline = (_marks: Mark[], inlineType: InlineTypes) =>
-    !!_marks.find((m) => Array.isArray(m) && m[0] === inlineType)
+  const _getInline = (inlineType: InlineTypes) =>
+    marks.find((m) => Array.isArray(m) && m[0] === inlineType)
+  const _includesInline = (inlineType: InlineTypes) => !!_getInline(inlineType)
 
   const _leaf: Leaf = {
     text,
+    link: _includesInline(InlineTypes.Link),
+    url: _getInline(InlineTypes.Url)?.[1],
     children: renderText(text),
     atomicId: _atomicId,
-    embed: _includesInline(marks, InlineTypes.Embed),
-    inlineTopic: _includesInline(marks, InlineTypes.InlineTopic),
-    inlineCitation: _includesInline(marks, InlineTypes.InlineSource),
-    link: _includesInline(marks, InlineTypes.Link),
+    embed: _includesInline(InlineTypes.Embed),
+    inlineTopic: _includesInline(InlineTypes.InlineTopic),
+    inlineCitation: _includesInline(InlineTypes.InlineSource),
     italic: marks.includes(RangeType.Italic),
     bold: marks.includes(RangeType.Bold),
     location: marks.includes(RangeType.Location),

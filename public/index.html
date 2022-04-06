@@ -11,22 +11,39 @@
       rel="stylesheet"
     />
     <title>Databyss</title>
-    <% if (!process.env.FORCE_MOBILE) { %>
     <script>
       ;(function () {
         // if mobile, replace hostname with mobile hostname
         var mobileOsAgents = /ios|iphone|android|windows phone/i
         var isMobile = Math.max(window.innerWidth, window.innerHeight) < 900
         var isMobileOs = navigator.userAgent.match(mobileOsAgents)
-        if ('%MOBILE_HOST%' && isMobile && isMobileOs) {
+        if (
+          '%MOBILE_HOST%' &&
+          window.location.host !== '%MOBILE_HOST%' &&
+          isMobile &&
+          isMobileOs
+        ) {
           var redir = window.location.href.replace(
             window.location.host,
             '%MOBILE_HOST%'
           )
           window.location.replace(redir)
         }
+        if (
+          '%DESKTOP_HOST%' &&
+          window.location.host !== '%DESKTOP_HOST%' &&
+          !isMobile &&
+          !isMobileOs
+        ) {
+          var redir = window.location.href.replace(
+            window.location.host,
+            '%DESKTOP_HOST%'
+          )
+          window.location.replace(redir)
+        }
       })()
     </script>
+    <% if (!process.env.FORCE_MOBILE) { %>
     <script src="%PUBLIC_URL%/gsap.min.js"></script>
     <style>
       body {

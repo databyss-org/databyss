@@ -34,6 +34,7 @@ const PageDetails = () => {
       id={pageId}
       page={page}
       maxHeight={getScrollViewMaxHeight()}
+      isReadOnly
     />
   )
 
