@@ -95,7 +95,7 @@ export const useDocuments = <T extends Document>(
         })
       })!
     // console.log('[useDocuments] subscribe', queryKey, selector, dbRef.current)
-  }, [options?.enabled])
+  }, [options?.enabled, dbRef.current])
 
   return query
 }

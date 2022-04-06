@@ -1,14 +1,11 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
-import { Text, View, BaseControl } from '@databyss-org/ui/primitives'
-import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
+import { Text, View } from '@databyss-org/ui/primitives'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from '@databyss-org/slate-react'
 import { Range } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorPageContext } from '@databyss-org/services'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
@@ -20,24 +17,10 @@ import {
 } from './Suggest'
 import { EmbedMedia } from './EmbedMedia'
 import SuggestLinks from './Suggest/SuggestLinks'
-import { BlockType } from '../interfaces'
-import { getAccountFromLocation } from '../../databyss-services/session/utils'
+import { ElementView } from './ElementView'
+import { AtomicHeader } from './AtomicHeader'
 // browser still takes some time to process the spellcheck
 const SPELLCHECK_DEBOUNCE_TIME = 300
-
-export const getAtomicStyle = (type) =>
-  ({
-    SOURCE: 'bodyHeading3Underline',
-    TOPIC: 'bodyHeading2',
-    END_TOPIC: 'uiTextSmall',
-    END_SOURCE: 'uiTextSmall',
-  }[type])
-
-export const isAtomicClosure = (type) =>
-  ({
-    END_TOPIC: true,
-    END_SOURCE: true,
-  }[type])
 
 const Element = ({ attributes, children, element, readOnly }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
@@ -54,8 +37,6 @@ const Element = ({ attributes, children, element, readOnly }) => {
 
   const editorContext = useEditorContext()
 
-  const { navigate } = useNavigationContext()
-
   const registerBlockRefByIndex = useEditorPageContext(
     (c) => c && c.registerBlockRefByIndex
   )
@@ -65,20 +46,6 @@ const Element = ({ attributes, children, element, readOnly }) => {
   const previousBlock = editorContext
     ? editorContext.state.blocks[blockIndex - 1]
     : {}
-
-  const _groupId = getAccountFromLocation(true)
-  const _blockPath = {
-    [BlockType.Source]: 'sources',
-    [BlockType.Topic]: 'topics',
-  }[block.type]
-  const _href = `/${_groupId}/${_blockPath}/${block._id}/${urlSafeName(
-    block.text.textValue
-  )}`
-
-  const onAtomicMouseDown = (e) => {
-    e.preventDefault()
-    navigate(_href)
-  }
 
   // spellcheck is debounced on element change
   // state is used to trigger a re-render
@@ -129,36 +96,20 @@ const Element = ({ attributes, children, element, readOnly }) => {
 
       const selHasRange = !Range.isCollapsed(editor.selection)
 
-      const vpad =
-        block.type === 'ENTRY' || block.type === previousBlock?.type ? 1 : 3
-
       return (
-        <View
+        <ElementView
           ref={(ref) => {
             if (registerBlockRefByIndex) {
               const _index = ReactEditor.findPath(editor, element)[0]
               registerBlockRefByIndex(_index, ref)
             }
           }}
-          ml={element.isBlock && !(readOnly && isMobile()) ? 'medium' : 0}
-          mr="large"
-          pt={vpad}
-          pb="em"
-          display={element.isBlock ? 'flex' : 'inline-flex'}
           spellCheck={spellCheck}
-          widthVariant="content"
-          position="relative"
-          justifyContent="center"
-          {...(isAtomicClosure(previousBlock?.type) && {
-            pt: '4',
-          })}
-          {...(isAtomicClosure(element.type) && {
-            borderBottomWidth: '2px',
-            borderBottomColor: 'gray.5',
-            pb: 'small',
-            mr: 'largest',
-          })}
           data-test-editor-element="true"
+          readOnly={readOnly}
+          block={block}
+          previousBlock={previousBlock}
+          isBlock={element.isBlock}
         >
           {block.__showNewBlockMenu && !readOnly && !_isPublic && (
             <View
@@ -247,38 +198,17 @@ const Element = ({ attributes, children, element, readOnly }) => {
           )}
 
           {isAtomicInlineType(element.type) ? (
-            <BaseControl
-              alignSelf="flex-start"
-              flexWrap="nowrap"
-              display="inline"
-              alignItems="center"
-              borderRadius="default"
-              data-test-atomic-edit="open"
-              pl="tiny"
-              pr={!isAtomicClosure(element.type) ? '0' : 'tiny'}
-              ml="tinyNegative"
-              backgroundColor={
-                block.__isActive ? 'background.3' : 'transparent'
-              }
-              css={{
-                cursor: selHasRange ? 'text' : 'pointer',
-                caretColor: block.__isActive ? 'transparent' : 'currentcolor',
-              }}
-              onPress={onAtomicMouseDown}
-              href={_href}
+            <AtomicHeader
+              readOnly={readOnly}
+              selHasRange={selHasRange}
+              block={block}
             >
-              <Text
-                variant={getAtomicStyle(element.type)}
-                color={`${isAtomicClosure(element.type) ? 'gray.4' : ''}`}
-                display="inline"
-              >
-                {children}
-              </Text>
-            </BaseControl>
+              {children}
+            </AtomicHeader>
           ) : (
             <Text {...attributes}>{children}</Text>
           )}
-        </View>
+        </ElementView>
       )
     },
     // search term updates element for highlight

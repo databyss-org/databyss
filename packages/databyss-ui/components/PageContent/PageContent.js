@@ -14,6 +14,7 @@ import { urlSafeName } from '@databyss-org/services/lib/util'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { debounce } from 'lodash'
 import { PageBody } from './PageBody'
+import { FlatPageBody } from './FlatPageBody'
 import PageSticky from './PageSticky'
 
 export const PageContentView = ({ children, ...others }) => (
@@ -22,7 +23,7 @@ export const PageContentView = ({ children, ...others }) => (
   </View>
 )
 
-export const PageContainer = ({ page, ...others }) => {
+export const PageContainer = ({ page, isReadOnly, ...others }) => {
   const getBlockRefByIndex = useEditorPageContext((c) => c.getBlockRefByIndex)
   const [, setAuthToken] = useState()
   const [editorPath, setEditorPath] = useState(null)
@@ -100,12 +101,16 @@ export const PageContainer = ({ page, ...others }) => {
     <>
       <PageSticky pagePath={editorPath} pageId={page._id} />
       <PageContentView {...others}>
-        <PageBody
-          onEditorPathChange={setEditorPath}
-          editorRef={editorRef}
-          page={page}
-          focusIndex={index}
-        />
+        {isReadOnly ? (
+          <FlatPageBody page={page} />
+        ) : (
+          <PageBody
+            onEditorPathChange={setEditorPath}
+            editorRef={editorRef}
+            page={page}
+            focusIndex={index}
+          />
+        )}
       </PageContentView>
     </>
   )
@@ -126,7 +131,13 @@ const PageContent = ({ anchor, ...others }) => {
         {id && (
           <EditorPageLoader pageId={id} key={id} firstBlockIsTitle>
             {(page) => (
-              <PageContainer id={id} page={page} anchor={anchor} {...others} />
+              <PageContainer
+                id={id}
+                page={page}
+                anchor={anchor}
+                isReadOnly={isReadOnly}
+                {...others}
+              />
             )}
           </EditorPageLoader>
         )}

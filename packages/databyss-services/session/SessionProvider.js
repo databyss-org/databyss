@@ -310,7 +310,12 @@ const SessionProvider = ({
 
   useEffect(() => {
     dispatch(
-      actions.setReadOnly(dbRef.readOnly || isPublicAccount() || !!isMobile())
+      actions.setReadOnly(
+        dbRef.readOnly ||
+          isPublicAccount() ||
+          !!isMobile() ||
+          window.location.search.includes('__readonly')
+      )
     )
   }, [dbRef.readOnly])
 

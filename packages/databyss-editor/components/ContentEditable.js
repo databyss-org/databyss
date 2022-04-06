@@ -14,7 +14,6 @@ import { setBlockRelations } from '@databyss-org/services/entries'
 import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { copyToClipboard } from '@databyss-org/ui/components/PageContent/PageMenu'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -35,10 +34,11 @@ import {
   isEmpty,
   isAtomicInlineType,
   cleanupAtomicData,
+  getInlineAtomicHref,
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
-import { isAtomicClosure } from './Element'
+import { isAtomicClosure } from './AtomicHeader'
 import { useHistoryContext } from '../history/EditorHistory'
 import {
   onInlineFocusBlur,
@@ -53,8 +53,6 @@ import {
   enterAtEndOfInlineAtomic,
   onLinkBackspace,
 } from '../lib/inlineUtils'
-import { getAccountFromLocation } from '../../databyss-services/session/utils'
-import { BlockType } from '../interfaces'
 import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
 import { loadPage } from '../../databyss-services/editorPage'
 
@@ -267,16 +265,7 @@ const ContentEditable = ({
   }, [currentLeaf, editor.selection?.focus.offset])
 
   const onInlineAtomicClick = (inlineData) => {
-    let _nice = ''
-    if (inlineData.name) {
-      _nice = `/${urlSafeName(inlineData.name)}`
-    }
-    const _groupId = getAccountFromLocation()
-    const _blockPath = {
-      [BlockType.Source]: 'sources',
-      [BlockType.Topic]: 'topics',
-    }[inlineData.type]
-    navigate(`/${_groupId}/${_blockPath}/${inlineData.refId}${_nice}`)
+    navigate(getInlineAtomicHref(inlineData))
   }
 
   return useMemo(() => {
@@ -639,8 +628,8 @@ const ContentEditable = ({
           ) {
             event.preventDefault()
             onInlineAtomicClick({
-              type: _focusedBlock.type,
-              refId: _focusedBlock._id,
+              atomicType: _focusedBlock.type,
+              id: _focusedBlock._id,
             })
           }
           // if closure block is highlighted prevent `enter` key

@@ -6,5 +6,6 @@
     "typescript",
     "typescriptreact"
   ],
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "turboConsoleLog.quote": "'"
 }

@@ -3,7 +3,7 @@
 import React from 'react'
 import colors from '@databyss-org/ui/theming/colors'
 import { urlSafeName } from '@databyss-org/services/lib/util'
-import { EmbedMedia } from './EmbedMedia'
+import { EditorEmbedMedia, EmbedMedia } from './EmbedMedia'
 import { Link } from './Link'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
 
@@ -13,7 +13,13 @@ const _emailRegEx = new RegExp(
   'gi'
 )
 
-const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
+export const Leaf = ({
+  attributes,
+  children,
+  leaf,
+  readOnly,
+  onInlineClick,
+}) => {
   const { blue, gray, orange, inlineTopic, inlineSource } = colors
 
   let _children = children
@@ -36,8 +42,15 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
   }
 
   if (leaf.embed) {
-    _children = (
+    _children = readOnly ? (
       <EmbedMedia
+        attributes={attributes}
+        _children={_children}
+        _element={leaf}
+        onInlineClick={onInlineClick}
+      />
+    ) : (
+      <EditorEmbedMedia
         attributes={attributes}
         _children={_children}
         _element={leaf}
