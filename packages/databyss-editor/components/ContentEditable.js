@@ -14,7 +14,6 @@ import { setBlockRelations } from '@databyss-org/services/entries'
 import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { copyToClipboard } from '@databyss-org/ui/components/PageContent/PageMenu'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -54,8 +53,6 @@ import {
   enterAtEndOfInlineAtomic,
   onLinkBackspace,
 } from '../lib/inlineUtils'
-import { getAccountFromLocation } from '../../databyss-services/session/utils'
-import { BlockType } from '../interfaces'
 import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
 import { loadPage } from '../../databyss-services/editorPage'
 

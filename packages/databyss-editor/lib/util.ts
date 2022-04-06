@@ -9,6 +9,7 @@ import {
   BlockReference,
 } from '@databyss-org/services/interfaces'
 import { urlSafeName, validUriRegex } from '@databyss-org/services/lib/util'
+import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import matchAll from 'string.prototype.matchall'
 import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import { EditorState, PagePath } from '../interfaces'
@@ -22,7 +23,6 @@ import {
   InlineTypes,
   InlineRangeType,
 } from '../../databyss-services/interfaces/Range'
-import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 
 export const splice = (src: any, idx: number, rem: number, str: any) =>
   src.slice(0, idx) + str + src.slice(idx + Math.abs(rem))
