@@ -24,7 +24,6 @@ import { AtomicHeader } from '@databyss-org/editor/components/AtomicHeader'
 import { splitOverlappingRanges } from '@databyss-org/services/blocks/textRanges'
 import { useSearchContext } from '../../hooks'
 import { useNavigationContext } from '../Navigation'
-import { validUriRegex } from '@databyss-org/services/lib/util'
 
 export const FlatBlock = ({
   index,

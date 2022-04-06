@@ -19,7 +19,6 @@ import {
   SET_SESSION,
   STORE_SESSION_LOCALLY,
   SET_READ_ONLY,
-  SET_COUCH_MODE,
 } from './constants'
 import {
   getAuthToken,
