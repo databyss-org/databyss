@@ -2,8 +2,8 @@ import { urlSafeName } from '@databyss-org/services/lib/util'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { BaseControl, Text } from '@databyss-org/ui'
 import { useNavigationContext } from '@databyss-org/ui/components'
-import React from 'react'
-import { BlockType } from '../interfaces'
+import React, { PropsWithChildren } from 'react'
+import { Block, BlockType } from '../interfaces'
 
 export const getAtomicStyle = (type) =>
   ({
@@ -19,7 +19,18 @@ export const isAtomicClosure = (type) =>
     END_SOURCE: true,
   }[type])
 
-export const AtomicHeader = ({ children, block, readOnly, selHasRange }) => {
+export interface AtomicHeaderProps {
+  block: Block
+  readOnly: boolean
+  selHasRange?: boolean
+}
+
+export const AtomicHeader = ({
+  children,
+  block,
+  readOnly,
+  selHasRange,
+}: PropsWithChildren<AtomicHeaderProps>) => {
   const navigate = useNavigationContext((c) => c && c.navigate)
 
   const _groupId = getAccountFromLocation(true)

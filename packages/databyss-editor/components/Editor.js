@@ -5,14 +5,15 @@ import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import styledCss from '@styled-system/css'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
+import { validURL } from '@databyss-org/services/lib/util'
 import { useEditorContext } from '../state/EditorProvider'
 import { TitleElement } from './TitleElement'
-import Leaf from './Leaf'
+import { Leaf } from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
 import { isSelectionCollapsed } from '../lib/clipboardUtils'
 import { convertSelectionToLink } from '../lib/inlineUtils/setPageLink'
-import { createLinkRangesForUrls } from '../lib/util'
+import { createHighlightRanges, createLinkRangesForUrls } from '../lib/util'
 
 const Editor = ({
   children,
@@ -116,42 +117,22 @@ const Editor = ({
         return ranges
       }
       // search each word individually
-      const _searchTerm = searchTerm.split(' ')
+      if (Text.isText(node) && !node.inlineAtomicMenu) {
+        const _highlightRanges = createHighlightRanges(node.text, searchTerm)
+        console.log('[Editor] highlightRanges', _highlightRanges)
+        _highlightRanges.forEach((_highlightRange) => {
+          ranges.push({
+            anchor: { path, offset: _highlightRange.offset },
+            focus: {
+              path,
+              offset: _highlightRange.offset + _highlightRange.length,
+            },
+            highlight: true,
+          })
+        })
+      }
 
-      _searchTerm.forEach((word) => {
-        if (word && Text.isText(node) && !node.inlineAtomicMenu) {
-          const { text } = node
-          // normalize diactritics
-          const parts = text
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .split(
-              new RegExp(
-                `\\b${word
-                  .normalize('NFD')
-                  .replace(/[\u0300-\u036f]/g, '')}\\b`,
-                'i'
-              )
-            )
-
-          if (parts.length > 1) {
-            let offset = 0
-
-            parts.forEach((part, i) => {
-              if (i !== 0) {
-                ranges.push({
-                  anchor: { path, offset: offset - word.length },
-                  focus: { path, offset },
-                  highlight: true,
-                })
-              }
-
-              offset = offset + part.length + word.length
-            })
-          }
-        }
-      })
-
+      console.log('[Editor] ranges', ranges)
       return ranges
     },
     [searchTerm]

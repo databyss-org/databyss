@@ -1,21 +1,11 @@
 import React, { ReactNode } from 'react'
 import styledCss from '@styled-system/css'
 import {
+  createHighlightRanges,
   createLinkRangesForUrls,
   isAtomicInlineType,
-  slateBlockToHtmlWithSearch,
 } from '@databyss-org/editor/lib/util'
-import {
-  Page,
-  Text,
-  Document,
-  DocumentDict,
-  Embed,
-  Range,
-  RangeType,
-  InlineRangeType,
-  Block,
-} from '@databyss-org/services/interfaces'
+import { Page, Text, RangeType, Block } from '@databyss-org/services/interfaces'
 import cloneDeep from 'clone-deep'
 import { RawHtml, View, Text as TextComponent } from '@databyss-org/ui'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
@@ -25,16 +15,12 @@ import { mergeRanges, SortOptions } from '@databyss-org/services/blocks'
 import { InlineTypes, Mark } from '@databyss-org/services/interfaces/Range'
 import { Leaf as LeafComponent } from '@databyss-org/editor/components/Leaf'
 import { TitleElement } from '@databyss-org/editor/components/TitleElement'
-import { useDocuments, usePages } from '@databyss-org/data/pouchdb/hooks'
-import LoadingFallback from '../Notify/LoadingFallback'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { CouchDb } from '@databyss-org/data/couchdb-client/couchdb'
-import {
-  AtomicHeader,
-  isAtomicClosure,
-} from '@databyss-org/editor/components/AtomicHeader'
-import { fixOverlappingRanges } from '@databyss-org/services/blocks/textRanges'
+import { AtomicHeader } from '@databyss-org/editor/components/AtomicHeader'
+import { splitOverlappingRanges } from '@databyss-org/services/blocks/textRanges'
+import { useSearchContext } from '../../hooks'
 
 export const FlatBlock = ({
   index,
@@ -49,6 +35,7 @@ export const FlatBlock = ({
   block?: Block
   previousBlock?: Block
 }) => {
+  let _searchTerm = useSearchContext((c) => c && c.searchTerm)
   const _blockRes = useDocument<Block>(id, { enabled: !block })
   const _previousBlockRes = useDocument<Block>(previousId ?? '', {
     enabled: !block && !!previousId,
@@ -61,29 +48,27 @@ export const FlatBlock = ({
   }
   const _block = block ?? _blockRes.data ?? null
 
+  _searchTerm = _searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+  const _renderText = () =>
+    renderTextToComponents({
+      key: block?._id!,
+      text: _block?.text!,
+      escapeFn: renderText,
+      searchTerm: _searchTerm,
+    })
+
   return index ? (
     <ElementView
       block={_block}
       previousBlock={previousBlock ?? _previousBlockRes.data ?? null}
       readOnly
-      // css={{
-      //   display: 'block',
-      // }}
     >
       {isAtomicInlineType(_block?.type!) ? (
-        <AtomicHeader block={_block} readOnly>
-          {renderTextToComponents({
-            text: _block?.text!,
-            escapeFn: renderText,
-          })}
+        <AtomicHeader block={_block!} readOnly>
+          {_renderText()}
         </AtomicHeader>
       ) : (
-        <TextComponent>
-          {renderTextToComponents({
-            text: _block?.text!,
-            escapeFn: renderText,
-          })}
-        </TextComponent>
+        <TextComponent>{_renderText()}</TextComponent>
       )}
     </ElementView>
   ) : (
@@ -91,10 +76,7 @@ export const FlatBlock = ({
       text={block?.text.textValue ?? _blockRes.data!.text.textValue}
       attributes={{}}
     >
-      {renderTextToComponents({
-        text: block?.text ?? _blockRes.data!.text,
-        escapeFn: renderText,
-      })}
+      {_renderText()}
     </TitleElement>
   )
 }
@@ -153,11 +135,8 @@ export const FlatPageBody = ({ page }: { page: Page }) => {
     </View>
   )
 }
-function renderRawHtml(html: string) {
-  return <RawHtml html={html} variant="bodyTextNormal" />
-}
 
-function renderText(html: string) {
+function renderText(html: string, key?: string) {
   return (
     <RawHtml
       css={{
@@ -167,6 +146,7 @@ function renderText(html: string) {
       }}
       variant="bodyTextNormal"
       html={html}
+      {...(key ? { key } : {})}
     />
   )
 }
@@ -202,6 +182,7 @@ export function rangeToLeaf(marks: Mark[], text: string) {
     italic: marks.includes(RangeType.Italic),
     bold: marks.includes(RangeType.Bold),
     location: marks.includes(RangeType.Location),
+    highlight: marks.includes(RangeType.Highlight),
   }
 
   return _leaf
@@ -212,12 +193,15 @@ export function rangeToLeaf(marks: Mark[], text: string) {
  * NB this assumes that ranges do not overlap
  */
 export function renderTextToComponents({
+  key,
   text,
+  searchTerm,
   escapeFn = (_s: string) => _s,
 }: {
+  key: string
   text: Text
-  linkedDocs?: DocumentDict<Document>
-  escapeFn?: (_s: string) => ReactNode
+  searchTerm?: string
+  escapeFn?: (_s: string, _key?: string) => ReactNode
 }): ReactNode {
   const _text = text.textValue
   let _ranges = cloneDeep(text.ranges)
@@ -225,19 +209,23 @@ export function renderTextToComponents({
   // add link ranges
   _ranges = _ranges.concat(createLinkRangesForUrls(_text))
 
+  if (searchTerm) {
+    _ranges = _ranges.concat(createHighlightRanges(_text, searchTerm))
+  }
+
   if (!_ranges.length) {
     return escapeFn(_text)
   }
 
   // merge and sort ranges
   _ranges = mergeRanges(_ranges, SortOptions.Ascending)
-  fixOverlappingRanges(_ranges)
+  splitOverlappingRanges(_ranges)
 
   let _lastRangeEnd = 0
 
   return (
     <>
-      {_ranges.reduce((_components: ReactNode[], _range) => {
+      {_ranges.reduce((_components: ReactNode[], _range, _idx) => {
         const _before = _text.slice(_lastRangeEnd, _range.offset)
         const _segment = _text.slice(
           _range.offset,
@@ -245,8 +233,9 @@ export function renderTextToComponents({
         )
         _lastRangeEnd = _range.offset + _range.length
         return _components.concat([
-          escapeFn(_before),
+          escapeFn(_before, `${key}.${_idx}b`),
           <LeafComponent
+            key={`${key}.${_idx}`}
             readOnly
             attributes={{}}
             leaf={rangeToLeaf(_range.marks, _segment)}
@@ -256,48 +245,8 @@ export function renderTextToComponents({
         ])
       }, [])}
       {_lastRangeEnd < _text.length - 1
-        ? escapeFn(_text.slice(_lastRangeEnd))
+        ? escapeFn(_text.slice(_lastRangeEnd), `${key}.end`)
         : null}
     </>
   )
-
-  // _ranges.forEach((_range) => {
-  //   // split text into _before, _segment and _after
-  //   const _before = _text.slice(0, _range.offset)
-  //   let _segment = _text.slice(_range.offset, _range.offset + _range.length)
-  //   const _after = _text.slice(_range.offset + _range.length)
-
-  //   // EDGE CASE: if segment is just whitespace an has marks, just return the whitespace
-  //   if (!_segment.match(/[^\s]/)) {
-  //     _text = `${_before}${_segment}${_after}`
-  //     return
-  //   }
-
-  //   // ignore marks with no defined markup
-  //   try {
-  //     let _openTags = ''
-  //     let _closeTags = ''
-  //     _range.marks.forEach((_mark) => {
-  //       // mark can be a tuple or string; coerce to tuple
-  //       const __mark: string[] = Array.isArray(_mark) ? _mark : [_mark]
-  //       const [__open, __close, __transform] = tagMapFn(
-  //         __mark,
-  //         linkedDocs ?? {}
-  //       )
-  //       _openTags += typeof __open === 'function' ? __open(_segment) : __open
-  //       _closeTags = `${
-  //         typeof __close === 'function' ? __close(_segment) : __close
-  //       }${_closeTags}`
-  //       if (__transform) {
-  //         _segment = (__transform as StringTransformFn)(_segment)
-  //       }
-  //       _segment = escapeFn(_segment)
-  //     })
-  //     _text = `${_before}${_openTags}${_segment}${_closeTags}${_after}`
-  //   } catch (err) {
-  //     console.warn('[renderText]', err)
-  //     _text = `${_before}${_segment}${_after}`
-  //   }
-  // })
-  // return _text
 }

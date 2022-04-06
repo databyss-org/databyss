@@ -30,30 +30,68 @@ export function mergeRanges(
     return _merged
   }
 
-  return _merged.sort((a, b) => {
+  sortRanges(_merged, sort)
+
+  return _merged
+}
+
+export function sortRanges(ranges: Range[], sortOptions: SortOptions) {
+  if (!ranges.length || sortOptions === SortOptions.None) {
+    return
+  }
+  ranges.sort((a, b) => {
     if (a.offset < b.offset) {
-      return sort === SortOptions.Descending ? 1 : -1
+      return sortOptions === SortOptions.Descending ? 1 : -1
     }
     if (a.offset > b.offset) {
-      return sort === SortOptions.Descending ? -1 : 1
+      return sortOptions === SortOptions.Descending ? -1 : 1
     }
     return 0
   })
 }
 
 /**
- * Fix overlapping ranges (truncate ranges, moving left to right)
- * NB Expects ranges sorted ascending
+ * Split overlapping ranges into new ranges with merged marks
  */
-export function fixOverlappingRanges(ranges: Range[]) {
+export function splitOverlappingRanges(ranges: Range[]) {
   if (!ranges.length) {
     return
   }
+  sortRanges(ranges, SortOptions.Ascending)
+  const _overlapRanges: Range[] = []
   ranges.forEach((_range, _idx) => {
-    const _nextOffset =
-      _idx < ranges.length - 1 ? ranges[_idx + 1].offset : null
+    const _nextRange = _idx < ranges.length - 1 ? ranges[_idx + 1] : null
+    const _nextOffset = _nextRange?.offset
     if (_nextOffset && _range.offset + _range.length > _nextOffset) {
+      // create new range for overlap
+      const _overlapRange: Range = {
+        offset: _nextOffset,
+        length: Math.min(
+          _range.offset + _range.length - _nextOffset,
+          _nextRange.length
+        ),
+        marks: [..._nextRange.marks, ..._range.marks],
+      }
+      _overlapRanges.push(_overlapRange)
+
+      // if range extends over entire nextRange, make nextRange the latter-half of range
+      if (_range.offset + _range.length > _nextOffset + _nextRange.length) {
+        _nextRange.offset = _overlapRange.offset + _overlapRange.length
+        _nextRange.length =
+          _range.length -
+          _overlapRange.length -
+          (_overlapRange.offset - _range.offset)
+        _nextRange.marks = _range.marks
+      } else {
+        // move next offset to end of overlap range
+        _nextRange.offset = _overlapRange.offset + _overlapRange.length
+        // reduce length of next range by length of overlap
+        _nextRange.length -= _overlapRange.length
+      }
+      // truncate current range at start of next offset
       _range.length = _nextOffset - _range.offset
     }
   })
+  ranges.push(..._overlapRanges)
+  sortRanges(ranges, SortOptions.Ascending)
 }

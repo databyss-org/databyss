@@ -449,3 +449,45 @@ export const createLinkRangesForUrls = (text: string) => {
   })
   return _ranges
 }
+
+export const createHighlightRanges = (text: string, searchTerm: string) => {
+  const _searchTerm = searchTerm.split(' ')
+  const _ranges: Range[] = []
+  _searchTerm.forEach((word) => {
+    if (!word) {
+      return
+    }
+    // normalize diactritics
+    const parts = text
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .split(
+        new RegExp(
+          `\\b${word.normalize('NFD').replace(/[\u0300-\u036f]/g, '')}\\b`,
+          'i'
+        )
+      )
+
+    if (parts.length > 1) {
+      let offset = 0
+
+      parts.forEach((part, i) => {
+        if (i !== 0) {
+          _ranges.push({
+            offset: offset - word.length,
+            length: word.length,
+            marks: [RangeType.Highlight],
+          })
+          // ranges.push({
+          //   anchor: { path, offset: offset - word.length },
+          //   focus: { path, offset },
+          //   highlight: true,
+          // })
+        }
+
+        offset = offset + part.length + word.length
+      })
+    }
+  })
+  return _ranges
+}
