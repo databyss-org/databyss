@@ -143,9 +143,9 @@ export const FlatPageBody = ({ page }: { page: Page }) => {
 
 function renderText(html: string, key?: string) {
   let _html = html
-  if (!_html?.trim().length) {
+  if (key?.startsWith('END') && !_html?.trim().length) {
     _html = '&nbsp;'
-  } else if (_html.endsWith('\n')) {
+  } else if (key?.startsWith('END') && _html.endsWith('\n')) {
     _html += '&nbsp;'
   }
   return (
@@ -227,7 +227,7 @@ export function renderTextToComponents({
   }
 
   if (!_ranges.length) {
-    return escapeFn(_text)
+    return escapeFn(_text, `END_${key}`)
   }
 
   // merge and sort ranges
@@ -246,7 +246,7 @@ export function renderTextToComponents({
         )
         _lastRangeEnd = _range.offset + _range.length
         return _components.concat([
-          escapeFn(_before, `${key}.${_idx}b`),
+          _before.length ? escapeFn(_before, `${key}.${_idx}b`) : null,
           <LeafComponent
             key={`${key}.${_idx}`}
             readOnly
@@ -254,12 +254,15 @@ export function renderTextToComponents({
             leaf={rangeToLeaf(_range.marks, _segment)}
             onInlineClick={onInlineClick}
           >
-            {escapeFn(_segment)}
+            {escapeFn(
+              _segment,
+              _lastRangeEnd === _text.length - 1 ? `END_${key}` : undefined
+            )}
           </LeafComponent>,
         ])
       }, [])}
       {_lastRangeEnd < _text.length - 1
-        ? escapeFn(_text.slice(_lastRangeEnd), `${key}.end`)
+        ? escapeFn(_text.slice(_lastRangeEnd), `END_${key}`)
         : null}
     </>
   )

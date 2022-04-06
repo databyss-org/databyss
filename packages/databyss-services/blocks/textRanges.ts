@@ -46,6 +46,13 @@ export function sortRanges(ranges: Range[], sortOptions: SortOptions) {
     if (a.offset > b.offset) {
       return sortOptions === SortOptions.Descending ? -1 : 1
     }
+    // if offsets are the same, put the shorter one first
+    if (a.length < b.length) {
+      return sortOptions === SortOptions.Descending ? 1 : -1
+    }
+    if (a.length > b.length) {
+      return sortOptions === SortOptions.Descending ? -1 : 1
+    }
     return 0
   })
 }
@@ -61,8 +68,8 @@ export function splitOverlappingRanges(ranges: Range[]) {
   const _overlapRanges: Range[] = []
   ranges.forEach((_range, _idx) => {
     const _nextRange = _idx < ranges.length - 1 ? ranges[_idx + 1] : null
-    const _nextOffset = _nextRange?.offset
-    if (_nextOffset && _range.offset + _range.length > _nextOffset) {
+    const _nextOffset = _nextRange?.offset!
+    if (_nextRange && _range.offset + _range.length > _nextOffset) {
       // create new range for overlap
       const _overlapRange: Range = {
         offset: _nextOffset,
@@ -72,6 +79,15 @@ export function splitOverlappingRanges(ranges: Range[]) {
         ),
         marks: [..._nextRange.marks, ..._range.marks],
       }
+      // edge case: range.offset and nextRange.offset are both at 0,
+      // so we need to make current range the overlap range
+      if (_range.offset === 0 && _range.offset === _nextOffset) {
+        _range.marks = _overlapRange.marks
+        _nextRange.offset = _range.length
+        return
+      }
+
+      // otherwise just push the overlap range
       _overlapRanges.push(_overlapRange)
 
       // if range extends over entire nextRange, make nextRange the latter-half of range

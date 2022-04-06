@@ -97,13 +97,11 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
     }
   }, [pagesRes.data?.[page._id]?.name])
 
-  const _readOnly = isReadOnly || window.location.search.includes('__readonly')
-
   return (
     <>
       <PageSticky pagePath={editorPath} pageId={page._id} />
       <PageContentView {...others}>
-        {_readOnly ? (
+        {isReadOnly ? (
           <FlatPageBody page={page} />
         ) : (
           <PageBody
