@@ -70,6 +70,12 @@ describe('editor history', () => {
     await undo(actions)
     await undo(actions)
     await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
     await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -132,6 +138,11 @@ describe('editor history', () => {
     await undo(actions)
     await undo(actions)
     await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
     await isAppInNotesSaved(driver)
 
     // checks before redo
@@ -163,6 +174,11 @@ describe('editor history', () => {
 
     assert.deepEqual(actual.selection, expected.selection)
 
+    await redo(actions)
+    await redo(actions)
+    await redo(actions)
+    await redo(actions)
+    await redo(actions)
     await redo(actions)
     await redo(actions)
     await redo(actions)
