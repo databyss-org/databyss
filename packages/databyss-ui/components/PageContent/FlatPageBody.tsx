@@ -137,6 +137,12 @@ export const FlatPageBody = ({ page }: { page: Page }) => {
 }
 
 function renderText(html: string, key?: string) {
+  let _html = html
+  if (!_html?.trim().length) {
+    _html = '&nbsp;'
+  } else if (_html.endsWith('\n')) {
+    _html += '&nbsp;'
+  }
   return (
     <RawHtml
       css={{
@@ -145,7 +151,7 @@ function renderText(html: string, key?: string) {
         color: 'inherit',
       }}
       variant="bodyTextNormal"
-      html={html}
+      html={_html}
       {...(key ? { key } : {})}
     />
   )
