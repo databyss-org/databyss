@@ -75,13 +75,13 @@ const Editor = ({
     return <Element readOnly={readOnly} {...props} />
   }, [])
 
-  const onInlineClick = useCallback(({ atomicType, id, name }) => {
-    onInlineAtomicClick({ type: atomicType, refId: id, name })
-  }, [])
-
   const renderLeaf = useCallback(
     (props) => (
-      <Leaf {...props} readOnly={readOnly} onInlineClick={onInlineClick} />
+      <Leaf
+        {...props}
+        readOnly={readOnly}
+        onInlineClick={onInlineAtomicClick}
+      />
     ),
     [searchTerm]
   )

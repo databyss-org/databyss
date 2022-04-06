@@ -8,7 +8,7 @@ import {
   Range,
   BlockReference,
 } from '@databyss-org/services/interfaces'
-import { validUriRegex } from '@databyss-org/services/lib/util'
+import { urlSafeName, validUriRegex } from '@databyss-org/services/lib/util'
 import matchAll from 'string.prototype.matchall'
 import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import { EditorState, PagePath } from '../interfaces'
@@ -22,6 +22,7 @@ import {
   InlineTypes,
   InlineRangeType,
 } from '../../databyss-services/interfaces/Range'
+import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 
 export const splice = (src: any, idx: number, rem: number, str: any) =>
   src.slice(0, idx) + str + src.slice(idx + Math.abs(rem))
@@ -490,4 +491,26 @@ export const createHighlightRanges = (text: string, searchTerm: string) => {
     }
   })
   return _ranges
+}
+
+export interface InlineAtomicDef {
+  name: string
+  atomicType: string
+  id: string
+}
+export const getInlineAtomicHref = ({
+  name,
+  atomicType,
+  id,
+}: InlineAtomicDef) => {
+  let _nice = ''
+  if (name) {
+    _nice = `/${urlSafeName(name)}`
+  }
+  const _groupId = getAccountFromLocation()
+  const _blockPath = {
+    [BlockType.Source]: 'sources',
+    [BlockType.Topic]: 'topics',
+  }[atomicType]
+  return `/${_groupId}/${_blockPath}/${id}${_nice}`
 }

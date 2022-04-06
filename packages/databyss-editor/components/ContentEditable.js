@@ -35,6 +35,7 @@ import {
   isEmpty,
   isAtomicInlineType,
   cleanupAtomicData,
+  getInlineAtomicHref,
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
@@ -267,16 +268,7 @@ const ContentEditable = ({
   }, [currentLeaf, editor.selection?.focus.offset])
 
   const onInlineAtomicClick = (inlineData) => {
-    let _nice = ''
-    if (inlineData.name) {
-      _nice = `/${urlSafeName(inlineData.name)}`
-    }
-    const _groupId = getAccountFromLocation()
-    const _blockPath = {
-      [BlockType.Source]: 'sources',
-      [BlockType.Topic]: 'topics',
-    }[inlineData.type]
-    navigate(`/${_groupId}/${_blockPath}/${inlineData.refId}${_nice}`)
+    navigate(getInlineAtomicHref(inlineData))
   }
 
   return useMemo(() => {
@@ -639,8 +631,8 @@ const ContentEditable = ({
           ) {
             event.preventDefault()
             onInlineAtomicClick({
-              type: _focusedBlock.type,
-              refId: _focusedBlock._id,
+              atomicType: _focusedBlock.type,
+              id: _focusedBlock._id,
             })
           }
           // if closure block is highlighted prevent `enter` key

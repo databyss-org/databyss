@@ -3,6 +3,8 @@ import styledCss from '@styled-system/css'
 import {
   createHighlightRanges,
   createLinkRangesForUrls,
+  getInlineAtomicHref,
+  InlineAtomicDef,
   isAtomicInlineType,
 } from '@databyss-org/editor/lib/util'
 import { Page, Text, RangeType, Block } from '@databyss-org/services/interfaces'
@@ -21,6 +23,7 @@ import { CouchDb } from '@databyss-org/data/couchdb-client/couchdb'
 import { AtomicHeader } from '@databyss-org/editor/components/AtomicHeader'
 import { splitOverlappingRanges } from '@databyss-org/services/blocks/textRanges'
 import { useSearchContext } from '../../hooks'
+import { useNavigationContext } from '../Navigation'
 
 export const FlatBlock = ({
   index,
@@ -36,6 +39,7 @@ export const FlatBlock = ({
   previousBlock?: Block
 }) => {
   let _searchTerm = useSearchContext((c) => c && c.searchTerm)
+  const navigate = useNavigationContext((c) => c && c.navigate)
   const _blockRes = useDocument<Block>(id, { enabled: !block })
   const _previousBlockRes = useDocument<Block>(previousId ?? '', {
     enabled: !block && !!previousId,
@@ -55,6 +59,7 @@ export const FlatBlock = ({
       text: _block?.text!,
       escapeFn: renderText,
       searchTerm: _searchTerm,
+      onInlineClick: (d) => navigate(getInlineAtomicHref(d)),
     })
 
   return index ? (
@@ -202,11 +207,13 @@ export function renderTextToComponents({
   key,
   text,
   searchTerm,
+  onInlineClick,
   escapeFn = (_s: string) => _s,
 }: {
   key: string
   text: Text
   searchTerm?: string
+  onInlineClick: (d: InlineAtomicDef) => void
   escapeFn?: (_s: string, _key?: string) => ReactNode
 }): ReactNode {
   const _text = text.textValue
@@ -245,6 +252,7 @@ export function renderTextToComponents({
             readOnly
             attributes={{}}
             leaf={rangeToLeaf(_range.marks, _segment)}
+            onInlineClick={onInlineClick}
           >
             {escapeFn(_segment)}
           </LeafComponent>,

@@ -212,8 +212,8 @@ export const onInlineKeyPress = ({
             return true
           }
           const inlineAtomicData = {
-            refId: _currentLeaf.atomicId,
-            type: _type,
+            id: _currentLeaf.atomicId,
+            atomicType: _type,
           }
           if (_currentLeaf.text.length === _anchor.offset) {
             Transforms.insertNodes(editor, { text: '\n' })
