@@ -12,10 +12,14 @@ const subscriptionDict: { [selector: string]: boolean } = {}
 
 export const useDocuments = <T extends Document>(
   selectorOrIdList: PouchDB.Find.Selector | string[],
-  options: UseQueryOptions = { enabled: true }
+  options?: UseQueryOptions
 ) => {
   const queryClient = useQueryClient()
   const { isCouchMode } = useDatabaseContext()
+  let _enabled = true
+  if (options?.enabled !== undefined) {
+    _enabled = options.enabled
+  }
 
   let docIds: string[]
   let selector: PouchDB.Find.Selector | undefined
@@ -56,7 +60,7 @@ export const useDocuments = <T extends Document>(
   )
 
   useEffect(() => {
-    if (!options?.enabled) {
+    if (!_enabled) {
       return
     }
 

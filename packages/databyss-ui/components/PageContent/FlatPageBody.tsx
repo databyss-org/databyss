@@ -40,9 +40,9 @@ export const FlatBlock = ({
 }) => {
   let _searchTerm = useSearchContext((c) => c && c.searchTerm)
   const navigate = useNavigationContext((c) => c && c.navigate)
-  const _blockRes = useDocument<Block>(id, { enabled: !block })
+  const _blockRes = useDocument<Block>(id, { initialData: block })
   const _previousBlockRes = useDocument<Block>(previousId ?? '', {
-    enabled: !block && !!previousId,
+    initialData: previousBlock,
   })
   if (!block && !_blockRes.isSuccess) {
     return null
@@ -64,6 +64,7 @@ export const FlatBlock = ({
 
   return index ? (
     <ElementView
+      // ref={(ref) => registerBlockRefByIndex(index, ref)}
       block={_block}
       previousBlock={previousBlock ?? _previousBlockRes.data ?? null}
       index={index}
@@ -112,11 +113,8 @@ export const FlatBlocks = ({ page }: { page: Page }) => (
 )
 
 export const FlatPageBody = ({ page }: { page: Page }) => {
-  const _couchMode = dbRef.current instanceof CouchDb
-  const _pageRes = useDocument<Page>(page._id, {
-    enabled: !_couchMode,
-  })
-  if (!_couchMode && !_pageRes.isSuccess) {
+  const _pageRes = useDocument<Page>(page._id, { initialData: page })
+  if (!_pageRes.isSuccess) {
     return null
   }
 
@@ -137,7 +135,7 @@ export const FlatPageBody = ({ page }: { page: Page }) => {
         }) as InterpolationWithTheme<any>
       }
     >
-      <FlatBlocks page={_couchMode ? page : _pageRes.data!} />
+      <FlatBlocks page={_pageRes.data!} />
     </View>
   )
 }

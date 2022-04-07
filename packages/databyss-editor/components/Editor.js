@@ -119,7 +119,6 @@ const Editor = ({
       // search each word individually
       if (Text.isText(node) && !node.inlineAtomicMenu) {
         const _highlightRanges = createHighlightRanges(node.text, searchTerm)
-        console.log('[Editor] highlightRanges', _highlightRanges)
         _highlightRanges.forEach((_highlightRange) => {
           ranges.push({
             anchor: { path, offset: _highlightRange.offset },
@@ -132,7 +131,6 @@ const Editor = ({
         })
       }
 
-      console.log('[Editor] ranges', ranges)
       return ranges
     },
     [searchTerm]

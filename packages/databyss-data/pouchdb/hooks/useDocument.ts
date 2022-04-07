@@ -16,11 +16,15 @@ const subscriptionDict: { [_id: string]: boolean } = {}
 
 export const useDocument = <T extends Document>(
   _id: string,
-  options: UseDocumentOptions = { enabled: true }
+  options?: UseDocumentOptions
 ) => {
   const { isCouchMode } = useDatabaseContext()
   const queryClient = useQueryClient()
   const queryKey = `useDocument_${_id}`
+  let _enabled = true
+  if (options?.enabled !== undefined) {
+    _enabled = options.enabled
+  }
 
   useEffect(() => {
     EM.process()
@@ -36,13 +40,13 @@ export const useDocument = <T extends Document>(
           .catch((err) => reject(err))
       }),
     {
-      enabled: options.enabled,
-      initialData: options.initialData,
+      enabled: _enabled,
+      initialData: options?.initialData,
     }
   )
 
   useEffect(() => {
-    if (!options?.enabled) {
+    if (!_enabled) {
       return
     }
     if (dbRef.current instanceof CouchDb) {
