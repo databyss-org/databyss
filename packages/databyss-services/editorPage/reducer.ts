@@ -28,7 +28,7 @@ export const initialState: PageState = {
   refDict: {},
   promiseDict: {},
   sharedWithGroups: [],
-  focusIndex: 0,
+  focusIndex: null,
 }
 
 export default produce((draft: Draft<PageState>, action: FSA) => {

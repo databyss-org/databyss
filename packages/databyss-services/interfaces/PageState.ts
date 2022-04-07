@@ -7,5 +7,5 @@ export interface PageState {
   refDict: RefDict
   promiseDict: { [pageId: string]: PCancelable<Page> }
   sharedWithGroups: string[]
-  focusIndex: number
+  focusIndex: number | null
 }
