@@ -16,7 +16,7 @@ import StickyMessage from '@databyss-org/ui/components/Notify/StickyMessage'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
-import { useServiceContext } from '../'
+import * as actions from './actions'
 import {
   localStorageHasSession,
   localStorageHasPublicSession,
@@ -27,6 +27,7 @@ import { hasUnathenticatedAccess } from './actions'
 import { NetworkUnavailableError } from '../interfaces'
 import { urlSafeName } from '../lib/util'
 import { getAccountFromLocation } from './utils'
+import { useDatabaseContext } from '../lib/DatabaseProvder'
 
 const useReducer = createReducer()
 
@@ -50,10 +51,10 @@ const SessionProvider = ({
   const [state, dispatch, stateRef] = useReducer(reducer, initialState, {
     name: 'SessionProvider',
   })
-  const { session: actions } = useServiceContext()
   const { notify } = useNotifyContext()
   const location = useNavigationContext((c) => c && c.location)
   const navigate = useNavigationContext((c) => c && c.navigate)
+  const { updateCouchMode, setCouchMode } = useDatabaseContext()
   const groupRes = useGroups({
     enabled: !!dbRef.current && !!state.session?.publicAccount,
   })
@@ -121,11 +122,13 @@ const SessionProvider = ({
         const groupId = _sesionFromLocalStorage.defaultGroupId
         // download remote database if not on mobile
 
+        setCouchMode(true)
         await initDb({
           groupId,
           dispatch,
           stateRef,
           onReplicationComplete: (_res) => {
+            updateCouchMode()
             if (_res) {
               // set up live sync
               syncPouchDb({
@@ -150,9 +153,11 @@ const SessionProvider = ({
         console.log('[SessionProvider] has public session')
         // start replication on public group
         // await replicateGroup(_publicSession.belongsToGroup)
+        setCouchMode(true)
         await initDb({
           groupId: _publicSession.belongsToGroup,
           isPublicGroup: true,
+          onReplicationComplete: () => updateCouchMode(),
         })
       } else {
         // try to get public access
@@ -164,7 +169,12 @@ const SessionProvider = ({
         )
 
         if (unauthenticatedGroupId) {
-          await initDb({ groupId: unauthenticatedGroupId, isPublicGroup: true })
+          setCouchMode(true)
+          await initDb({
+            groupId: unauthenticatedGroupId,
+            isPublicGroup: true,
+            onReplicationComplete: () => updateCouchMode(),
+          })
           _publicSession = await localStorageHasPublicSession(3)
         }
       }

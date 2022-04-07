@@ -384,10 +384,10 @@ export const initDb = ({
       dbRef.readOnly = true
 
       // do not replicate on mobile for now
-      if (process.env.FORCE_MOBILE) {
-        resolve()
-        return
-      }
+      // if (process.env.FORCE_MOBILE) {
+      //   resolve()
+      //   return
+      // }
 
       console.log('[DB] Start replication')
       if (isPublicGroup) {

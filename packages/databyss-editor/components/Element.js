@@ -5,7 +5,6 @@ import { ReactEditor, useEditor } from '@databyss-org/slate-react'
 import { Range } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { useEditorPageContext } from '@databyss-org/services'
 import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
@@ -36,10 +35,6 @@ const Element = ({ attributes, children, element, readOnly }) => {
   const editor = useEditor()
 
   const editorContext = useEditorContext()
-
-  const registerBlockRefByIndex = useEditorPageContext(
-    (c) => c && c.registerBlockRefByIndex
-  )
 
   const blockIndex = ReactEditor.findPath(editor, element)[0]
   const block = editorContext ? editorContext.state.blocks[blockIndex] : {}
@@ -98,12 +93,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
 
       return (
         <ElementView
-          ref={(ref) => {
-            if (registerBlockRefByIndex) {
-              const _index = ReactEditor.findPath(editor, element)[0]
-              registerBlockRefByIndex(_index, ref)
-            }
-          }}
+          index={blockIndex}
           spellCheck={spellCheck}
           data-test-editor-element="true"
           readOnly={readOnly}

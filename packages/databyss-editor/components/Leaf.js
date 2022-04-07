@@ -186,7 +186,7 @@ export const Leaf = ({
       <a
         target="_blank"
         rel="noreferrer"
-        href={leaf.url}
+        href={_formattedUrl}
         style={{
           color: blue[2],
           cursor: 'pointer',

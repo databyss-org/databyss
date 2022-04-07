@@ -11,6 +11,7 @@ export enum InlineTypes {
   InlineSource = 'inlineCitation',
   Embed = 'embed',
   Link = 'link',
+  Url = 'url',
 }
 
 export type InlineRangeType = [InlineTypes, string]

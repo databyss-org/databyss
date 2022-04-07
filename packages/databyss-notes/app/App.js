@@ -2,7 +2,7 @@ import React from 'react'
 import { Base64 } from 'js-base64'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import SessionProvider from '@databyss-org/services/session/SessionProvider'
-import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
+import { DatabaseProvider } from '@databyss-org/services/lib/DatabaseProvder'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { Viewport, useNavigationContext } from '@databyss-org/ui'
 import FirefoxWarning from '@databyss-org/ui/components/Notify/FirefoxWarning'
@@ -34,7 +34,7 @@ const App = () => {
   return (
     <Viewport p={0}>
       <NotifyProvider>
-        <ServiceProvider>
+        <DatabaseProvider>
           <FirefoxWarning />
           {process.env.MAINTENANCE_MODE?.toLowerCase() === 'true' ? (
             <Public />
@@ -51,7 +51,7 @@ const App = () => {
               {/* <ReactQueryDevtools initialIsOpen={false} /> */}
             </QueryClientProvider>
           )}
-        </ServiceProvider>
+        </DatabaseProvider>
       </NotifyProvider>
     </Viewport>
   )

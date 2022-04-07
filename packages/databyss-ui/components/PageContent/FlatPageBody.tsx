@@ -40,9 +40,9 @@ export const FlatBlock = ({
 }) => {
   let _searchTerm = useSearchContext((c) => c && c.searchTerm)
   const navigate = useNavigationContext((c) => c && c.navigate)
-  const _blockRes = useDocument<Block>(id, { enabled: !block })
+  const _blockRes = useDocument<Block>(id, { initialData: block })
   const _previousBlockRes = useDocument<Block>(previousId ?? '', {
-    enabled: !block && !!previousId,
+    initialData: previousBlock,
   })
   if (!block && !_blockRes.isSuccess) {
     return null
@@ -52,7 +52,7 @@ export const FlatBlock = ({
   }
   const _block = block ?? _blockRes.data ?? null
 
-  _searchTerm = _searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+  _searchTerm = _searchTerm?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
   const _renderText = () =>
     renderTextToComponents({
       key: block?._id!,
@@ -66,6 +66,7 @@ export const FlatBlock = ({
     <ElementView
       block={_block}
       previousBlock={previousBlock ?? _previousBlockRes.data ?? null}
+      index={index}
       readOnly
     >
       {isAtomicInlineType(_block?.type!) ? (
@@ -111,11 +112,8 @@ export const FlatBlocks = ({ page }: { page: Page }) => (
 )
 
 export const FlatPageBody = ({ page }: { page: Page }) => {
-  const _couchMode = dbRef.current instanceof CouchDb
-  const _pageRes = useDocument<Page>(page._id, {
-    enabled: !_couchMode,
-  })
-  if (!_couchMode && !_pageRes.isSuccess) {
+  const _pageRes = useDocument<Page>(page._id, { initialData: page })
+  if (!_pageRes.isSuccess) {
     return null
   }
 
@@ -136,7 +134,7 @@ export const FlatPageBody = ({ page }: { page: Page }) => {
         }) as InterpolationWithTheme<any>
       }
     >
-      <FlatBlocks page={_couchMode ? page : _pageRes.data!} />
+      <FlatBlocks page={_pageRes.data!} />
     </View>
   )
 }
@@ -179,17 +177,19 @@ export interface Leaf {
 
 export function rangeToLeaf(marks: Mark[], text: string) {
   const _atomicId: string | undefined = marks.find((m) => Array.isArray(m))?.[1]
-  const _includesInline = (_marks: Mark[], inlineType: InlineTypes) =>
-    !!_marks.find((m) => Array.isArray(m) && m[0] === inlineType)
+  const _getInline = (inlineType: InlineTypes) =>
+    marks.find((m) => Array.isArray(m) && m[0] === inlineType)
+  const _includesInline = (inlineType: InlineTypes) => !!_getInline(inlineType)
 
   const _leaf: Leaf = {
     text,
+    link: _includesInline(InlineTypes.Link),
+    url: _getInline(InlineTypes.Url)?.[1],
     children: renderText(text),
     atomicId: _atomicId,
-    embed: _includesInline(marks, InlineTypes.Embed),
-    inlineTopic: _includesInline(marks, InlineTypes.InlineTopic),
-    inlineCitation: _includesInline(marks, InlineTypes.InlineSource),
-    link: _includesInline(marks, InlineTypes.Link),
+    embed: _includesInline(InlineTypes.Embed),
+    inlineTopic: _includesInline(InlineTypes.InlineTopic),
+    inlineCitation: _includesInline(InlineTypes.InlineSource),
     italic: marks.includes(RangeType.Italic),
     bold: marks.includes(RangeType.Bold),
     location: marks.includes(RangeType.Location),

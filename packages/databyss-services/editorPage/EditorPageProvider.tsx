@@ -48,6 +48,8 @@ interface ContextType {
   onPageCached: (id: string, callback: Function) => void
   removePageFromCache: (id: string) => void
   sharedWithGroups?: string[]
+  setFocusIndex: (index: number) => void
+  focusIndex: number
 }
 
 const useReducer = createReducer()
@@ -182,6 +184,9 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     [JSON.stringify(state.cache)]
   )
 
+  const setFocusIndex = (index: number) =>
+    dispatch(actions.setFocusIndex(index))
+
   return (
     <EditorPageContext.Provider
       value={{
@@ -199,6 +204,8 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         removePageFromCache,
         getPublicAccount,
         sharedWithGroups: sharedWithGroupsRef.current ?? [],
+        setFocusIndex,
+        focusIndex: state.focusIndex,
       }}
     >
       <PageReplicator key={pageId} pageId={pageId}>
@@ -208,5 +215,6 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const useEditorPageContext = (selector = (x: ContextType) => x) =>
-  useContextSelector(EditorPageContext, selector)
+export const useEditorPageContext = (
+  selector: { (x: ContextType): any } = (x: ContextType) => x
+) => useContextSelector(EditorPageContext, selector)
