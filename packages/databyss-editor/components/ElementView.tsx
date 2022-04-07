@@ -1,6 +1,9 @@
-import React, { forwardRef, PropsWithChildren } from 'react'
+import React, { PropsWithChildren, useEffect, useRef } from 'react'
+import scrollIntoView from 'scroll-into-view-if-needed'
 import { View } from '@databyss-org/ui'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
+import { useNavigationContext } from '@databyss-org/ui/components'
+import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { Block } from '../interfaces'
 import { isAtomicClosure } from './AtomicHeader'
 
@@ -9,22 +12,50 @@ interface ElementViewProps extends PropsWithChildren<{}> {
   previousBlock: Block | null
   isBlock?: boolean
   readOnly: boolean
+  index: number
 }
 
-export const ElementView = forwardRef(
-  (
-    {
-      children,
-      isBlock,
-      block,
-      previousBlock,
-      readOnly,
-      ...others
-    }: ElementViewProps,
-    ref
-  ) => (
+export const ElementView = ({
+  children,
+  isBlock,
+  block,
+  previousBlock,
+  readOnly,
+  index,
+  ...others
+}: ElementViewProps) => {
+  const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
+  const setFocusIndex = useEditorPageContext((c) => c && c.setFocusIndex)
+  const navigate = useNavigationContext((c) => c && c.navigate)
+  const location = useNavigationContext((c) => c && c.location)
+  const { anchor } = getTokensFromPath()
+  const viewRef = useRef(null)
+
+  useEffect(() => {
+    if (!anchor) {
+      return
+    }
+    if (!viewRef.current) {
+      return
+    }
+    // if anchor contains '/:blockIndex', use the block index
+    let _anchorMatch = anchor !== block?._id
+    if (anchor.match('/')) {
+      _anchorMatch = index === parseInt(anchor.split('/')[1], 10)
+    }
+    if (!_anchorMatch) {
+      return
+    }
+    window.requestAnimationFrame(() => {
+      scrollIntoView(viewRef.current!)
+      setFocusIndex(index)
+      navigate(location.pathname, { replace: true })
+    })
+  }, [viewRef.current, anchor])
+
+  return (
     <View
-      ref={ref}
+      ref={viewRef}
       ml={isBlock && !(readOnly && isMobile()) ? 'medium' : 0}
       mr="large"
       pt={
@@ -49,7 +80,7 @@ export const ElementView = forwardRef(
       {children}
     </View>
   )
-)
+}
 
 ElementView.defaultProps = {
   isBlock: true,

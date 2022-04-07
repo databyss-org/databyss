@@ -66,6 +66,7 @@ export const FlatBlock = ({
     <ElementView
       block={_block}
       previousBlock={previousBlock ?? _previousBlockRes.data ?? null}
+      index={index}
       readOnly
     >
       {isAtomicInlineType(_block?.type!) ? (

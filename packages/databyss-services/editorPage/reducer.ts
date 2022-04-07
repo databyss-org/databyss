@@ -18,6 +18,7 @@ import {
   SET_PAGE_PUBLIC,
   CACHE_PUBLIC_PAGE,
   CACHE_SHARED_WITH_GROUPS,
+  SET_FOCUS_INDEX,
 } from './constants'
 import { resourceIsReady } from '../lib/util'
 
@@ -27,6 +28,7 @@ export const initialState: PageState = {
   refDict: {},
   promiseDict: {},
   sharedWithGroups: [],
+  focusIndex: 0,
 }
 
 export default produce((draft: Draft<PageState>, action: FSA) => {
@@ -106,6 +108,10 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
     }
     case CACHE_SHARED_WITH_GROUPS: {
       draft.sharedWithGroups = action.payload.sharedWithGroups
+      break
+    }
+    case SET_FOCUS_INDEX: {
+      draft.focusIndex = action.payload
       break
     }
   }

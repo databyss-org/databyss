@@ -14,7 +14,15 @@ import {
   SET_PAGE_PUBLIC,
   CACHE_PUBLIC_PAGE,
   CACHE_SHARED_WITH_GROUPS,
+  SET_FOCUS_INDEX,
 } from './constants'
+
+export function setFocusIndex(index: number) {
+  return {
+    type: SET_FOCUS_INDEX,
+    payload: index,
+  }
+}
 
 export function fetchPage(_id: string, firstBlockIsTitle: boolean) {
   return async (dispatch: Function) => {

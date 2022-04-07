@@ -98,12 +98,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
 
       return (
         <ElementView
-          ref={(ref) => {
-            if (registerBlockRefByIndex) {
-              const _index = ReactEditor.findPath(editor, element)[0]
-              registerBlockRefByIndex(_index, ref)
-            }
-          }}
+          index={blockIndex}
           spellCheck={spellCheck}
           data-test-editor-element="true"
           readOnly={readOnly}

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import scrollIntoView from 'scroll-into-view-if-needed'
 import {
   useParams,
   useLocation,
@@ -24,7 +23,7 @@ export const PageContentView = ({ children, ...others }) => (
 )
 
 export const PageContainer = ({ page, isReadOnly, ...others }) => {
-  const getBlockRefByIndex = useEditorPageContext((c) => c.getBlockRefByIndex)
+  const focusIndex = useEditorPageContext((c) => c.focusIndex)
   const [, setAuthToken] = useState()
   const [editorPath, setEditorPath] = useState(null)
   const location = useLocation()
@@ -32,10 +31,7 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
   const navigate = useNavigationContext((c) => c.navigate)
   const editorRef = useRef()
   const pagesRes = usePages()
-  const { anchor, nice } = getTokensFromPath()
-
-  // index is used to set selection in slate
-  const [index, setIndex] = useState(null)
+  const { nice } = getTokensFromPath()
 
   /*
   confirms a token is in local pouch in order to show account menu
@@ -65,34 +61,7 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
         redirectTo = `${location.pathname.replace(nice.join('/'), niceName)}`
       }
     }
-
-    // if anchor link exists, scroll to anchor
-    if (anchor) {
-      let _index = -1
-      // if anchor contains '/:blockIndex', use the block index
-      if (anchor.match('/')) {
-        _index = parseInt(anchor.split('/')[1], 10)
-      } else {
-        // get index value of anchor on page
-        _index = page.blocks.findIndex((b) => b._id === anchor)
-      }
-      if (_index > -1) {
-        setIndex(_index)
-        const _ref = getBlockRefByIndex(_index)
-        if (_ref) {
-          window.requestAnimationFrame(() => {
-            scrollIntoView(_ref)
-            // navigate(redirectTo, { replace: true })
-            // window.history.replaceState('', '', redirectTo)
-            updateUrl(redirectTo)
-          })
-        }
-      }
-    }
-    // if no nice URL, make one and redirect
     if (redirectTo !== location.pathname) {
-      // navigate(redirectTo, { replace: true })
-      // window.history.replaceState('', '', redirectTo)
       updateUrl(redirectTo)
     }
   }, [pagesRes.data?.[page._id]?.name])
@@ -108,7 +77,7 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
             onEditorPathChange={setEditorPath}
             editorRef={editorRef}
             page={page}
-            focusIndex={index}
+            focusIndex={focusIndex}
           />
         )}
       </PageContentView>
