@@ -39,7 +39,7 @@ export const ElementView = ({
       return
     }
     // if anchor contains '/:blockIndex', use the block index
-    let _anchorMatch = anchor !== block?._id
+    let _anchorMatch = anchor === block?._id
     if (anchor.match('/')) {
       _anchorMatch = index === parseInt(anchor.split('/')[1], 10)
     }
@@ -48,7 +48,9 @@ export const ElementView = ({
     }
     window.requestAnimationFrame(() => {
       scrollIntoView(viewRef.current!)
-      setFocusIndex(index)
+      if (!readOnly) {
+        setFocusIndex(index)
+      }
       navigate(location.pathname, { replace: true })
     })
   }, [viewRef.current, anchor])

@@ -64,7 +64,6 @@ export const FlatBlock = ({
 
   return index ? (
     <ElementView
-      // ref={(ref) => registerBlockRefByIndex(index, ref)}
       block={_block}
       previousBlock={previousBlock ?? _previousBlockRes.data ?? null}
       index={index}
