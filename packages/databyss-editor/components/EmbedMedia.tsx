@@ -8,12 +8,10 @@ import {
 import { Node, Editor as SlateEditor, Transforms } from '@databyss-org/slate'
 import { View } from '@databyss-org/ui/primitives'
 // import PenSVG from '@databyss-org/ui/assets/pen.svg'
-// import _ from 'lodash'
-// import { useBlocks } from '@databyss-org/data/pouchdb/hooks/useBlocks'
 import { Embed, Block } from '@databyss-org/services/interfaces/Block'
+import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { InlineEmbed } from './InlineEmbed'
 import { ResolveEmbed } from './ResolveEmbed'
-import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 
 export const isHttpInsecure = (url) => {
   const _regEx = /^http:\/\//
@@ -27,9 +25,7 @@ export const EmbedMedia = ({
   // onInlineClick,
   editor,
 }) => {
-  // const blocksRes = useBlocks(BlockType.Embed)
   const blockRes = useDocument<Block>(_element.atomicId)
-  // const [data, setData] = useState<null | Embed>()
   const [highlight, setHighlight] = useState(false)
   const textRef = useRef<any>()
   const _isSelected = useSelected()
