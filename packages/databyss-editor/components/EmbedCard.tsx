@@ -70,7 +70,7 @@ export const EmbedCard = React.memo(
         )}
         {imageSrc && (
           <View
-            maxHeight={
+            height={
               mediaType === MediaTypes.IMAGE ||
               mediaType === MediaTypes.INSTAGRAM ||
               !description
@@ -126,7 +126,7 @@ export const EmbedCard = React.memo(
                   style={{
                     opacity: 0,
                     width: '100%',
-                    maxHeight:
+                    height:
                       mediaType === MediaTypes.IMAGE ||
                       mediaType === MediaTypes.INSTAGRAM ||
                       !description

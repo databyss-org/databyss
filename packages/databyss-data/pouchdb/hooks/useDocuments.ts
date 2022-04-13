@@ -7,19 +7,17 @@ import PouchDB from 'pouchdb'
 import { dbRef } from '../db'
 import { CouchDb } from '../../couchdb-client/couchdb'
 import { DocumentArrayToDict } from './utils'
+import { defaultOptions, UseDocumentOptions } from './useDocument'
 
 const subscriptionDict: { [selector: string]: boolean } = {}
 
 export const useDocuments = <T extends Document>(
   selectorOrIdList: PouchDB.Find.Selector | string[],
-  options?: UseQueryOptions
+  options: UseDocumentOptions = {}
 ) => {
   const queryClient = useQueryClient()
   const { isCouchMode } = useDatabaseContext()
-  let _enabled = true
-  if (options?.enabled !== undefined) {
-    _enabled = options.enabled
-  }
+  const _options = { ...defaultOptions, options }
 
   let docIds: string[]
   let selector: PouchDB.Find.Selector | undefined
@@ -60,7 +58,7 @@ export const useDocuments = <T extends Document>(
   )
 
   useEffect(() => {
-    if (!_enabled) {
+    if (!_options.enabled || !_options.subscribe) {
       return
     }
 
