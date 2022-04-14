@@ -7,7 +7,7 @@ import PouchDB from 'pouchdb'
 import { dbRef } from '../db'
 import { CouchDb } from '../../couchdb-client/couchdb'
 import { DocumentArrayToDict } from './utils'
-import { defaultOptions, UseDocumentOptions } from './useDocument'
+import { defaultUseDocumentOptions, UseDocumentOptions } from './useDocument'
 
 const subscriptionDict: { [selector: string]: boolean } = {}
 
@@ -17,7 +17,7 @@ export const useDocuments = <T extends Document>(
 ) => {
   const queryClient = useQueryClient()
   const { isCouchMode } = useDatabaseContext()
-  const _options = { ...defaultOptions, options }
+  const _options = { ...defaultUseDocumentOptions, ...options }
 
   let docIds: string[]
   let selector: PouchDB.Find.Selector | undefined

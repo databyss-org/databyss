@@ -13,7 +13,7 @@ export interface UseDocumentOptions {
   subscribe?: boolean
 }
 
-export const defaultOptions = {
+export const defaultUseDocumentOptions = {
   enabled: true,
   initialData: null,
   subscribe: true,
@@ -28,7 +28,7 @@ export const useDocument = <T extends Document>(
   const { isCouchMode } = useDatabaseContext()
   const queryClient = useQueryClient()
   const queryKey = `useDocument_${_id}`
-  const _options = { ...defaultOptions, options }
+  const _options = { ...defaultUseDocumentOptions, ...options }
 
   useEffect(() => {
     EM.process()
