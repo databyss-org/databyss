@@ -8,6 +8,7 @@ import {
 } from '@databyss-org/scripts/lib'
 import { SysGroup, SysUser } from '@databyss-org/data/interfaces'
 import { RestoreDb } from './RestoreDb'
+import { parseCouchExportList } from '../../lib/util'
 
 export class Restore extends ServerProcess {
   user: SysUser | null = null
@@ -84,7 +85,7 @@ export function getUserFromJson(
   backupDir: string,
   email: string
 ): SysUser | null {
-  const _users = JSON.parse(
+  const _users = parseCouchExportList(
     fs.readFileSync(path.join(backupDir, 'users.json')).toString()
   ) as SysUser[]
   const _userMatches = _users.filter((_u) => _u.email === email)

@@ -1,9 +1,13 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
+import scrollIntoView from 'scroll-into-view-if-needed'
 import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
 import { setPublicPage } from '@databyss-org/data/pouchdb/groups'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
-import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
+import {
+  useParams,
+  useNavigationContext,
+} from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -49,6 +53,7 @@ interface ContextType {
   removePageFromCache: (id: string) => void
   sharedWithGroups?: string[]
   setFocusIndex: (index: number) => void
+  setLastBlockRendered: () => void
   focusIndex: number
 }
 
@@ -63,6 +68,8 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   const sharedWithGroupsRef = useRef<string[] | null>(null)
   const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
   const pagesRes = usePages()
+  const navigate = useNavigationContext((c) => c && c.navigate)
+  const location = useNavigationContext((c) => c && c.location)
 
   const pageIdParams = useParams()
   let pageId
@@ -184,8 +191,22 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     [JSON.stringify(state.cache)]
   )
 
-  const setFocusIndex = (index: number) =>
+  const setLastBlockRendered = () => {
+    if (!state.focusIndex) {
+      return
+    }
+    window.requestAnimationFrame(() => {
+      scrollIntoView(document.getElementsByName(state.focusIndex.toString())[0])
+      navigate(location.pathname, { replace: true })
+    })
+  }
+
+  const setFocusIndex = (index: number, last?: boolean) => {
     dispatch(actions.setFocusIndex(index))
+    if (last) {
+      setLastBlockRendered()
+    }
+  }
 
   return (
     <EditorPageContext.Provider
@@ -206,6 +227,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         sharedWithGroups: sharedWithGroupsRef.current ?? [],
         setFocusIndex,
         focusIndex: state.focusIndex,
+        setLastBlockRendered,
       }}
     >
       <PageReplicator key={pageId} pageId={pageId}>

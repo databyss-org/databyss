@@ -10,21 +10,25 @@ import { CouchDb } from '../../couchdb-client/couchdb'
 export interface UseDocumentOptions {
   enabled?: boolean
   initialData?: any
+  subscribe?: boolean
+}
+
+export const defaultUseDocumentOptions = {
+  enabled: true,
+  initialData: null,
+  subscribe: true,
 }
 
 const subscriptionDict: { [_id: string]: boolean } = {}
 
 export const useDocument = <T extends Document>(
   _id: string,
-  options?: UseDocumentOptions
+  options: UseDocumentOptions = {}
 ) => {
   const { isCouchMode } = useDatabaseContext()
   const queryClient = useQueryClient()
   const queryKey = `useDocument_${_id}`
-  let _enabled = true
-  if (options?.enabled !== undefined) {
-    _enabled = options.enabled
-  }
+  const _options = { ...defaultUseDocumentOptions, ...options }
 
   useEffect(() => {
     EM.process()
@@ -40,13 +44,13 @@ export const useDocument = <T extends Document>(
           .catch((err) => reject(err))
       }),
     {
-      enabled: _enabled,
+      enabled: _options.enabled,
       initialData: options?.initialData,
     }
   )
 
   useEffect(() => {
-    if (!_enabled) {
+    if (!_options.enabled || !_options.subscribe) {
       return
     }
     if (dbRef.current instanceof CouchDb) {

@@ -165,6 +165,7 @@ describe('inline atomic', () => {
       0,
       driver
     )
+    await sleep(1000)
 
     await getEditor(driver)
     // highlight row and get inner selection

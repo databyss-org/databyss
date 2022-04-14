@@ -96,10 +96,7 @@ export const IndexResults = ({
               [BlockType.Topic]: 'bodyNormalSemibold',
               [BlockType.Source]: 'bodyNormalUnderline',
             }[blocks[e.block].type]
-            let _anchor = e.block
-            if (blocks[e.block].type !== BlockType.Entry) {
-              _anchor += `/${e.blockIndex}`
-            }
+            const _anchor = e.blockIndex
 
             // build extra tags
             const _extraTags: string[] = []

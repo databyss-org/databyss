@@ -238,6 +238,7 @@ describe('entry search', () => {
     )
 
     await entrySearchResult[_idx].click()
+    await sleep(1000)
     // wait for editor to be visible
     await getEditor(driver)
     // highlights current anchor position

@@ -383,12 +383,6 @@ export const initDb = ({
       dbRef.current = _unknown as PouchDB.Database
       dbRef.readOnly = true
 
-      // do not replicate on mobile for now
-      // if (process.env.FORCE_MOBILE) {
-      //   resolve()
-      //   return
-      // }
-
       console.log('[DB] Start replication')
       if (isPublicGroup) {
         replicatePublicGroup({ groupId, pouchDb: _pouchDb }).then(

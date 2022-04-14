@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { forwardRef, ReactNode } from 'react'
 import styledCss from '@styled-system/css'
 import {
   createHighlightRanges,
@@ -9,7 +9,12 @@ import {
 } from '@databyss-org/editor/lib/util'
 import { Page, Text, RangeType, Block } from '@databyss-org/services/interfaces'
 import cloneDeep from 'clone-deep'
-import { RawHtml, View, Text as TextComponent } from '@databyss-org/ui'
+import {
+  RawHtml,
+  View,
+  Text as TextComponent,
+  RefForwardingFC,
+} from '@databyss-org/ui'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
 import { ElementView } from '@databyss-org/editor/components/ElementView'
 import { InterpolationWithTheme } from '@emotion/core'
@@ -31,12 +36,14 @@ export const FlatBlock = ({
   previousId,
   block,
   previousBlock,
+  last,
 }: {
   index: number
   id: string
   previousId: string | null
   block?: Block
   previousBlock?: Block
+  last: boolean
 }) => {
   let _searchTerm = useSearchContext((c) => c && c.searchTerm)
   const navigate = useNavigationContext((c) => c && c.navigate)
@@ -67,6 +74,7 @@ export const FlatBlock = ({
       block={_block}
       previousBlock={previousBlock ?? _previousBlockRes.data ?? null}
       index={index}
+      last={last}
       readOnly
     >
       {isAtomicInlineType(_block?.type!) ? (
@@ -94,7 +102,8 @@ export const FlatBlocks = ({ page }: { page: Page }) => (
       return (
         <FlatBlock
           index={idx}
-          key={block._id}
+          last={idx === page.blocks.length - 1}
+          key={`${idx}:${block._id}`}
           id={block._id}
           previousId={_previousBlockId}
           {...(dbRef.current instanceof CouchDb
@@ -111,33 +120,36 @@ export const FlatBlocks = ({ page }: { page: Page }) => (
   </>
 )
 
-export const FlatPageBody = ({ page }: { page: Page }) => {
-  const _pageRes = useDocument<Page>(page._id, { initialData: page })
-  if (!_pageRes.isSuccess) {
-    return null
-  }
+export const FlatPageBody: RefForwardingFC<{ page: Page }> = forwardRef(
+  ({ page }, ref) => {
+    const _pageRes = useDocument<Page>(page._id, { initialData: page })
+    if (!_pageRes.isSuccess) {
+      return null
+    }
 
-  return (
-    <View
-      css={
-        styledCss({
-          overflowY: 'auto',
-          overflowWrap: 'anywhere',
-          wordBreak: 'break-word',
-          flexGrow: 1,
-          flexShrink: 1,
-          display: 'block',
-          paddingLeft: 'em',
-          paddingRight: 'medium',
-          paddingBottom: 'extraLarge',
-          ...scrollbarResetCss,
-        }) as InterpolationWithTheme<any>
-      }
-    >
-      <FlatBlocks page={_pageRes.data!} />
-    </View>
-  )
-}
+    return (
+      <View
+        ref={ref}
+        css={
+          styledCss({
+            overflowY: 'auto',
+            overflowWrap: 'anywhere',
+            wordBreak: 'break-word',
+            flexGrow: 1,
+            flexShrink: 1,
+            display: 'block',
+            paddingLeft: 'em',
+            paddingRight: 'medium',
+            paddingBottom: 'extraLarge',
+            ...scrollbarResetCss,
+          }) as InterpolationWithTheme<any>
+        }
+      >
+        <FlatBlocks page={_pageRes.data!} />
+      </View>
+    )
+  }
+)
 
 function renderText(html: string, key?: string) {
   let _html = html
@@ -216,6 +228,9 @@ export function renderTextToComponents({
   onInlineClick: (d: InlineAtomicDef) => void
   escapeFn?: (_s: string, _key?: string) => ReactNode
 }): ReactNode {
+  if (!text) {
+    return null
+  }
   const _text = text.textValue
   let _ranges = cloneDeep(text.ranges)
 

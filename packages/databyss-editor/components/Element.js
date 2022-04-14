@@ -100,6 +100,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
           block={block}
           previousBlock={previousBlock}
           isBlock={element.isBlock}
+          last={blockIndex === editorContext.state.blocks.length - 1}
         >
           {block.__showNewBlockMenu && !readOnly && !_isPublic && (
             <View

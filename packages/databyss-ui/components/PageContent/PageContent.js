@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useQueryClient } from 'react-query'
 import {
   useParams,
   useLocation,
@@ -9,12 +10,15 @@ import { View } from '@databyss-org/ui/primitives'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useNavigationContext } from '@databyss-org/ui'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
-import { urlSafeName } from '@databyss-org/services/lib/util'
-import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import { urlSafeName, validUriRegex } from '@databyss-org/services/lib/util'
+import { useDocuments, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { debounce } from 'lodash'
 import { PageBody } from './PageBody'
 import { FlatPageBody } from './FlatPageBody'
 import PageSticky from './PageSticky'
+import LoadingFallback from '../Notify/LoadingFallback'
+
+// const INTERACTION_EVENTS = 'pointerdown keydown wheel touchstart focusin'
 
 export const PageContentView = ({ children, ...others }) => (
   <View pt="small" flexShrink={1} flexGrow={1} overflow="hidden" {...others}>
@@ -33,10 +37,7 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
   const pagesRes = usePages()
   const { nice } = getTokensFromPath()
 
-  /*
-  confirms a token is in local pouch in order to show account menu
-  */
-
+  // confirms a token is in local pouch in order to show account menu
   useEffect(() => {
     const _token = getAuthToken()
     if (_token) {
@@ -66,7 +67,19 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
     }
   }, [pagesRes.data?.[page._id]?.name])
 
-  return (
+  // preload embed docs into cache
+  const queryClient = useQueryClient()
+  const linkedDocsRes = useDocuments(getLinkedDocIds(page), {
+    subscribe: false,
+  })
+
+  if (linkedDocsRes.isSuccess) {
+    Object.values(linkedDocsRes.data).forEach((_doc) => {
+      queryClient.setQueryData(`useDocument_${_doc._id}`, _doc)
+    })
+  }
+
+  return linkedDocsRes.isSuccess ? (
     <>
       <PageSticky pagePath={editorPath} pageId={page._id} />
       <PageContentView {...others}>
@@ -82,12 +95,16 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
         )}
       </PageContentView>
     </>
+  ) : (
+    <LoadingFallback resource={linkedDocsRes} />
   )
 }
 
-const PageContent = ({ anchor, ...others }) => {
+const PageContent = (others) => {
   // get page id and anchor from url
   const { id } = useParams()
+  const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
+  const { anchor } = getTokensFromPath()
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
 
   /*
@@ -114,6 +131,24 @@ const PageContent = ({ anchor, ...others }) => {
     ),
     [id, isReadOnly, anchor]
   )
+}
+
+function getLinkedDocIds(page) {
+  const _docIds = {}
+  page.blocks.forEach((_block) => {
+    _block.text.ranges.forEach((_range) => {
+      _range.marks.forEach((_mark) => {
+        if (
+          Array.isArray(_mark) &&
+          _mark.length > 1 &&
+          !_mark[1].match(validUriRegex)
+        ) {
+          _docIds[_mark[1]] = true
+        }
+      })
+    })
+  })
+  return Object.keys(_docIds)
 }
 
 export default PageContent

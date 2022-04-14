@@ -67,3 +67,21 @@ export const timestampFields = (doc?: any) => ({
 
 //   // find all groups that belong to this user
 // }
+
+/**
+ * CouchDb exports split large lists into multiple lines.
+ * This function parses each line into JSON and then returns the merged result.
+ * If there's only one line, it just returns the parsed contents of that line
+ */
+export function parseCouchExportList(text: string) {
+  if (!text.startsWith('[')) {
+    throw new Error('[parseCouchExportList] text is malformed or not a list')
+  }
+  let list = []
+  text.split('\n').forEach((line) => {
+    if (line.trim()) {
+      list = list.concat(JSON.parse(line))
+    }
+  })
+  return list
+}
