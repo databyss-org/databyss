@@ -36,12 +36,14 @@ export const FlatBlock = ({
   previousId,
   block,
   previousBlock,
+  last,
 }: {
   index: number
   id: string
   previousId: string | null
   block?: Block
   previousBlock?: Block
+  last: boolean
 }) => {
   let _searchTerm = useSearchContext((c) => c && c.searchTerm)
   const navigate = useNavigationContext((c) => c && c.navigate)
@@ -72,6 +74,7 @@ export const FlatBlock = ({
       block={_block}
       previousBlock={previousBlock ?? _previousBlockRes.data ?? null}
       index={index}
+      last={last}
       readOnly
     >
       {isAtomicInlineType(_block?.type!) ? (
@@ -99,6 +102,7 @@ export const FlatBlocks = ({ page }: { page: Page }) => (
       return (
         <FlatBlock
           index={idx}
+          last={idx === page.blocks.length - 1}
           key={`${idx}:${block._id}`}
           id={block._id}
           previousId={_previousBlockId}

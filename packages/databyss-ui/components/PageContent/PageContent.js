@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import scrollIntoView from 'scroll-into-view-if-needed'
 import { useQueryClient } from 'react-query'
 import {
   useParams,
@@ -18,7 +17,6 @@ import { PageBody } from './PageBody'
 import { FlatPageBody } from './FlatPageBody'
 import PageSticky from './PageSticky'
 import LoadingFallback from '../Notify/LoadingFallback'
-import { dbRef } from '@databyss-org/data/pouchdb/db'
 
 // const INTERACTION_EVENTS = 'pointerdown keydown wheel touchstart focusin'
 

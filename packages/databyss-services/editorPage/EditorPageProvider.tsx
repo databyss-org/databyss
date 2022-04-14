@@ -54,6 +54,7 @@ interface ContextType {
   removePageFromCache: (id: string) => void
   sharedWithGroups?: string[]
   setFocusIndex: (index: number) => void
+  setLastBlockRendered: () => void
   focusIndex: number
 }
 
@@ -191,14 +192,21 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     [JSON.stringify(state.cache)]
   )
 
-  const setFocusIndex = (index: number) => {
+  const setLastBlockRendered = () => {
+    if (!state.focusIndex) {
+      return
+    }
     window.requestAnimationFrame(() => {
-      scrollIntoView(document.getElementsByName(index.toString())[0])
-      if (!dbRef.readOnly) {
-        dispatch(actions.setFocusIndex(index))
-      }
+      scrollIntoView(document.getElementsByName(state.focusIndex.toString())[0])
       navigate(location.pathname, { replace: true })
     })
+  }
+
+  const setFocusIndex = (index: number, last?: boolean) => {
+    dispatch(actions.setFocusIndex(index))
+    if (last) {
+      setLastBlockRendered()
+    }
   }
 
   return (
@@ -220,6 +228,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         sharedWithGroups: sharedWithGroupsRef.current ?? [],
         setFocusIndex,
         focusIndex: state.focusIndex,
+        setLastBlockRendered,
       }}
     >
       <PageReplicator key={pageId} pageId={pageId}>

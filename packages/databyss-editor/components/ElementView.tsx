@@ -12,6 +12,7 @@ interface ElementViewProps extends PropsWithChildren<{}> {
   isBlock?: boolean
   readOnly: boolean
   index: number
+  last: boolean
 }
 
 export const ElementView = ({
@@ -21,10 +22,14 @@ export const ElementView = ({
   previousBlock,
   readOnly,
   index,
+  last,
   ...others
 }: ElementViewProps) => {
   const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
   const setFocusIndex = useEditorPageContext((c) => c && c.setFocusIndex)
+  const setLastBlockRendered = useEditorPageContext(
+    (c) => c && c.setLastBlockRendered
+  )
   const { anchor } = getTokensFromPath()
   const viewRef = useRef(null)
 
@@ -36,9 +41,12 @@ export const ElementView = ({
       return
     }
     if (parseInt(anchor, 10) !== index) {
+      if (last) {
+        setLastBlockRendered()
+      }
       return
     }
-    setFocusIndex(index)
+    setFocusIndex(index, last)
   }, [viewRef.current, anchor])
 
   return (
