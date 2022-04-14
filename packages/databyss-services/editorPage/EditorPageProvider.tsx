@@ -8,7 +8,6 @@ import {
   useParams,
   useNavigationContext,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
-import { dbRef } from '@databyss-org/data/pouchdb/db'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
