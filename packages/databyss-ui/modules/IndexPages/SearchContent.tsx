@@ -46,10 +46,7 @@ export const SearchContent = () => {
               [BlockType.Topic]: 'bodyNormalSemibold',
               [BlockType.Source]: 'bodyNormalUnderline',
             }[e.type]
-            let _anchor = e.entryId
-            if (e.type !== BlockType.Entry) {
-              _anchor += `/${e.index}`
-            }
+            const _anchor = e.index
 
             // build extra tags
             const _extraTags: string[] = []
