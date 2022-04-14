@@ -18,6 +18,7 @@ import { PageBody } from './PageBody'
 import { FlatPageBody } from './FlatPageBody'
 import PageSticky from './PageSticky'
 import LoadingFallback from '../Notify/LoadingFallback'
+import { dbRef } from '@databyss-org/data/pouchdb/db'
 
 // const INTERACTION_EVENTS = 'pointerdown keydown wheel touchstart focusin'
 
@@ -107,38 +108,6 @@ const PageContent = (others) => {
   const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
   const { anchor } = getTokensFromPath()
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
-
-  const scrollIntervalRef = useRef(null)
-  // const viewRef = useRef(null)
-
-  // const onUserInteraction = useCallback(() => {
-  //   clearInterval(scrollIntervalRef.current)
-  //   if (viewRef.current) {
-  //     INTERACTION_EVENTS.split(' ').forEach((e) => {
-  //       viewRef.current.removeEventListener(e, onUserInteraction)
-  //     })
-  //   }
-  // }, [scrollIntervalRef])
-
-  useEffect(() => {
-    if (anchor && !scrollIntervalRef.current) {
-      scrollIntervalRef.current = setInterval(() => {
-        const _el = document.getElementsByName(anchor)
-        if (_el?.length) {
-          scrollIntoView(_el[0])
-          clearInterval(scrollIntervalRef.current)
-        }
-      }, 100)
-    }
-  }, [anchor])
-
-  // useEffect(() => {
-  //   if (viewRef.current) {
-  //     INTERACTION_EVENTS.split(' ').forEach((e) => {
-  //       viewRef.current.addEventListener(e, onUserInteraction, true)
-  //     })
-  //   }
-  // }, [viewRef.current])
 
   /*
   use same route to update name, just pass it name 

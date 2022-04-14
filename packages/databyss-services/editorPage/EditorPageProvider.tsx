@@ -1,9 +1,14 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
+import scrollIntoView from 'scroll-into-view-if-needed'
 import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
 import { setPublicPage } from '@databyss-org/data/pouchdb/groups'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
-import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
+import {
+  useParams,
+  useNavigationContext,
+} from '@databyss-org/ui/components/Navigation/NavigationProvider'
+import { dbRef } from '@databyss-org/data/pouchdb/db'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -63,6 +68,8 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   const sharedWithGroupsRef = useRef<string[] | null>(null)
   const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
   const pagesRes = usePages()
+  const navigate = useNavigationContext((c) => c && c.navigate)
+  const location = useNavigationContext((c) => c && c.location)
 
   const pageIdParams = useParams()
   let pageId
@@ -184,8 +191,15 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     [JSON.stringify(state.cache)]
   )
 
-  const setFocusIndex = (index: number) =>
-    dispatch(actions.setFocusIndex(index))
+  const setFocusIndex = (index: number) => {
+    window.requestAnimationFrame(() => {
+      scrollIntoView(document.getElementsByName(index.toString())[0])
+      if (!dbRef.readOnly) {
+        dispatch(actions.setFocusIndex(index))
+      }
+      navigate(location.pathname, { replace: true })
+    })
+  }
 
   return (
     <EditorPageContext.Provider

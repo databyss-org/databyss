@@ -224,6 +224,9 @@ export function renderTextToComponents({
   onInlineClick: (d: InlineAtomicDef) => void
   escapeFn?: (_s: string, _key?: string) => ReactNode
 }): ReactNode {
+  if (!text) {
+    return null
+  }
   const _text = text.textValue
   let _ranges = cloneDeep(text.ranges)
 

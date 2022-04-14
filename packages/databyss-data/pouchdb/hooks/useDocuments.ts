@@ -44,9 +44,16 @@ export const useDocuments = <T extends Document>(
               keys: docIds,
             })
             .then((res) =>
-              resolve(DocumentArrayToDict(res.rows.map((r) => r.doc)))
+              resolve(
+                DocumentArrayToDict(
+                  res.rows.map((r) => r.doc).filter((r) => !!r)
+                )
+              )
             )
-            .catch((err) => reject(err))
+            .catch((err) => {
+              console.error('[useDocuments] error', err)
+              reject(err)
+            })
         } else {
           dbRef.current
             ?.find({ selector: selector! })
