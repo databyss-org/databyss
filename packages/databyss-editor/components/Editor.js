@@ -1,11 +1,12 @@
-import React, { useCallback, useMemo } from 'react'
-import { Slate, Editable } from '@databyss-org/slate-react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import { Slate, Editable, ReactEditor } from '@databyss-org/slate-react'
 import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import styledCss from '@styled-system/css'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
 import { validURL } from '@databyss-org/services/lib/util'
+import { useScrollMemory } from '@databyss-org/ui'
 import { useEditorContext } from '../state/EditorProvider'
 import { TitleElement } from './TitleElement'
 import { Leaf } from './Leaf'
@@ -135,6 +136,16 @@ const Editor = ({
     },
     [searchTerm]
   )
+
+  const _editorRef = useRef(null)
+
+  const _restoreScroll = useScrollMemory(_editorRef)
+
+  useEffect(() => {
+    _editorRef.current = ReactEditor.toDOMNode(editor, editor)
+    _restoreScroll()
+  }, [])
+
   return useMemo(
     () => (
       <Slate editor={editor} selection={selection} {...slateProps}>

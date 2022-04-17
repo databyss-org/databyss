@@ -14,6 +14,9 @@ export {
 } from './components/Navigation/NavigationProvider'
 export { default as DropdownContainer } from './components/Menu/DropdownContainer'
 
+/* hooks */
+export { useScrollMemory } from './hooks/scrollMemory/useScrollMemory'
+
 /* modules */
 export { default as ModalManager } from './modules/Modals/ModalManager'
 export { default as PDFDropZoneManager } from './components/PDFDropZone/PDFDropZoneManager'

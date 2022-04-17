@@ -14,7 +14,6 @@ import { ResourcePending } from '../interfaces/ResourcePending'
 import {
   Page,
   PageState,
-  RefDict,
   PatchBatch,
   ResourceResponse,
   ResourceNotFoundError,
@@ -40,13 +39,7 @@ interface ContextType {
     id: string,
     firstBlockIsTitle: boolean
   ) => Page | ResourcePending | null
-  clearBlockDict: () => void
   setPatches: (patches: PatchBatch) => void
-  registerBlockRefByIndex: (
-    index: number,
-    refOne: React.Ref<HTMLInputElement>
-  ) => void
-  getBlockRefByIndex: (index: number) => React.Ref<HTMLInputElement>
   getPublicAccount: (id: string) => string | string[]
   archivePage: (id: string, boolean: boolean) => Promise<void>
   onPageCached: (id: string, callback: Function) => void
@@ -64,7 +57,6 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   children,
   initialState = _initState,
 }: PropsType) => {
-  const refDictRef = useRef<RefDict>({})
   const sharedWithGroupsRef = useRef<string[] | null>(null)
   const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
   const pagesRes = usePages()
@@ -141,24 +133,6 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     [JSON.stringify(state.cache), pagesRes.data]
   )
 
-  const registerBlockRefByIndex = useCallback(
-    (index: number, ref: React.Ref<HTMLInputElement>) => {
-      refDictRef.current[index] = ref
-    },
-    []
-  )
-
-  const getBlockRefByIndex = useCallback((index: number) => {
-    if (refDictRef.current[index]) {
-      return refDictRef.current[index]
-    }
-    return null
-  }, [])
-
-  const clearBlockDict = useCallback(() => {
-    refDictRef.current = {}
-  }, [])
-
   const deletePage = (id: string) => {
     dispatch(actions.deletePage(id))
   }
@@ -215,9 +189,6 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         setPage,
         setPageHeader,
         setPatches,
-        registerBlockRefByIndex,
-        getBlockRefByIndex,
-        clearBlockDict,
         deletePage,
         archivePage,
         onPageCached,
