@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode } from 'react'
+import React, { forwardRef, ReactNode, useRef } from 'react'
 import styledCss from '@styled-system/css'
 import {
   createHighlightRanges,
@@ -29,6 +29,8 @@ import { AtomicHeader } from '@databyss-org/editor/components/AtomicHeader'
 import { splitOverlappingRanges } from '@databyss-org/services/blocks/textRanges'
 import { useSearchContext } from '../../hooks'
 import { useNavigationContext } from '../Navigation'
+import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
+import forkRef from '../../lib/forkRef'
 
 export const FlatBlock = ({
   index,
@@ -95,14 +97,24 @@ export const FlatBlock = ({
   )
 }
 
-export const FlatBlocks = ({ page }: { page: Page }) => (
+export const FlatBlocks = ({
+  page,
+  onLast,
+}: {
+  page: Page
+  onLast: () => void
+}) => (
   <>
     {page.blocks.map((block, idx) => {
       const _previousBlockId = idx > 0 ? page.blocks[idx - 1]._id : null
+      const _last = idx === page.blocks.length - 1
+      if (_last) {
+        onLast()
+      }
       return (
         <FlatBlock
           index={idx}
-          last={idx === page.blocks.length - 1}
+          last={_last}
           key={`${idx}:${block._id}`}
           id={block._id}
           previousId={_previousBlockId}
@@ -123,13 +135,15 @@ export const FlatBlocks = ({ page }: { page: Page }) => (
 export const FlatPageBody: RefForwardingFC<{ page: Page }> = forwardRef(
   ({ page }, ref) => {
     const _pageRes = useDocument<Page>(page._id, { initialData: page })
+    const _viewRef = useRef<HTMLElement | null>(null)
+    const _restoreScroll = useScrollMemory(_viewRef)
     if (!_pageRes.isSuccess) {
       return null
     }
 
     return (
       <View
-        ref={ref}
+        ref={forkRef(ref, _viewRef)}
         css={
           styledCss({
             overflowY: 'auto',
@@ -145,7 +159,7 @@ export const FlatPageBody: RefForwardingFC<{ page: Page }> = forwardRef(
           }) as InterpolationWithTheme<any>
         }
       >
-        <FlatBlocks page={_pageRes.data!} />
+        <FlatBlocks page={_pageRes.data!} onLast={_restoreScroll} />
       </View>
     )
   }

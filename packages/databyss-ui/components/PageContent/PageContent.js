@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useQueryClient } from 'react-query'
 import {
   useParams,
@@ -33,7 +33,6 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
   const location = useLocation()
   const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
   const navigate = useNavigationContext((c) => c.navigate)
-  const editorRef = useRef()
   const pagesRes = usePages()
   const { nice } = getTokensFromPath()
 
@@ -88,7 +87,6 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
         ) : (
           <PageBody
             onEditorPathChange={setEditorPath}
-            editorRef={editorRef}
             page={page}
             focusIndex={focusIndex}
           />

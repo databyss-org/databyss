@@ -47,6 +47,7 @@ import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 import { useUserPreferencesContext } from '../../hooks'
 import IndexPageMenu from '../../components/IndexPage/IndexPageMenu'
+import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -206,7 +207,14 @@ export const IndexPageView = ({
     location,
   } = useNavigationContext()
   const titleInputHandlesRef = useRef<IndexPageTitleInputHandles>(null)
+  const scrollViewRef = useRef<HTMLElement | null>(null)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
+  const restoreScroll = useScrollMemory(scrollViewRef)
+
+  useEffect(() => {
+    restoreScroll()
+  }, [])
+
   const onUpdateBlock = (block: Block) => {
     titleInputHandlesRef.current?.updateTitle(block)
   }
@@ -245,7 +253,14 @@ export const IndexPageView = ({
   return (
     <>
       <StickyHeader path={path} contextMenu={<IndexPageMenu block={block} />} />
-      <ScrollView pr="em" pl="large" flex="1" pb="extraLarge" {...others}>
+      <ScrollView
+        pr="em"
+        pl="large"
+        flex="1"
+        pb="extraLarge"
+        ref={scrollViewRef}
+        {...others}
+      >
         <Helmet>
           <meta charSet="utf-8" />
           <title>{path[path.length - 1]}</title>

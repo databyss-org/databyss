@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, Text, View } from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
@@ -29,13 +29,9 @@ export const PageBody = ({
   onEditorPathChange,
 }) => {
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
-  const clearBlockDict = useEditorPageContext((c) => c.clearBlockDict)
   const setPageHeader = useEditorPageContext((c) => c.setPageHeader)
   const sharedWithGroups = useEditorPageContext((c) => c.sharedWithGroups)
   const setPatches = useEditorPageContext((c) => c.setPatches)
-
-  useEffect(() => () => clearBlockDict(), [])
-
   const pageState = useRef(null)
   const editorStateRef = useRef()
 
