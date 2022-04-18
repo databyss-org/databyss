@@ -2,6 +2,7 @@
 
 import { get } from 'lodash'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 
 /**
  * @param {object} options Object containing these properties:
@@ -22,11 +23,17 @@ export const buildListItems = (options) => {
   keys.forEach((key) => {
     const element = data[key]
     const elementId = element._id || element.id
+    const elementName =
+      element.name?.textValue || element.name || element.text?.textValue
+    let href = `${baseUrl}/${elementId}`
+    if (elementName) {
+      href = `${href}/${urlSafeName(elementName)}`
+    }
 
     response.push({
       _id: elementId,
       label: get(element, labelPropPath),
-      href: `${baseUrl}/${elementId}`,
+      href,
       icon,
     })
   })
