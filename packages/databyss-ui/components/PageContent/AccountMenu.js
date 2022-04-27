@@ -52,25 +52,6 @@ const AccountMenu = () => {
             actionType: 'logout',
             shortcut: `v${version}`,
           },
-          // {
-          //   label: 'Hide',
-          //   action: () => {
-          //     hideApplication()
-          //     notify({
-          //       nude: true,
-          //       message: 'Synchronizing your Databyss with the cloud...',
-          //     })
-          //   },
-          //   actionType: 'hide',
-          // },
-          // {
-          //   label: 'Sticky',
-          //   action: () =>
-          //     notifySticky({
-          //       children: <Text>Hello sticky</Text>,
-          //     }),
-          //   actionType: 'sticky',
-          // },
         ]
 
         if (isPublicAccount()) {

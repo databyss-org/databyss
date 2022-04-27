@@ -10,7 +10,10 @@ import { Base64 } from 'js-base64'
 import { send } from '../../lib/postmark'
 import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
-import { createUserDatabaseCredentials } from '../../lib/createUserDatabase'
+import {
+  addCredentialsToGroupId,
+  createUserDatabase,
+} from '../../lib/createUserDatabase'
 
 const router = express.Router()
 
@@ -74,10 +77,15 @@ router.post(
 
       const session = await getSessionFromUserId(_userId)
 
-      // give user credentials, if default db does not exist for user, create one
-      const credentials = await createUserDatabaseCredentials(session.user)
+      // if default db does not exist for user, create one
+      await createUserDatabase(session.user)
+      const _defaultCredentials = await addCredentialsToGroupId({
+        groupId: user.defaultGroupId!,
+        userId: user._id,
+      })
 
-      session.groupCredentials = [credentials]
+      session.groupCredentials = [_defaultCredentials]
+
       res.json({ data: { session } })
     })
   })

@@ -4,8 +4,9 @@ import { authMiddleware } from '../../middleware'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
 import {
-  createUserDatabaseCredentials,
+  createUserDatabase,
   addCredientialsToSession,
+  addCredentialsToGroupId,
 } from '../../lib/createUserDatabase'
 
 const router = express.Router()
@@ -17,7 +18,9 @@ router.post('/', authMiddleware, async (req, res) => {
   try {
     if (req?.user) {
       let session = await getSessionFromUserId(req.user._id)
-      // TODO: on every re-login attempt we are creating new user credentials, should this happen on the back end or should the user save the credentials in their offline database?
+      // TODO: on every re-login attempt we are creating new user credentials,
+      // should this happen on the back end or should the user save the credentials
+      // in their offline database?
       session = await addCredientialsToSession({
         groupId: session.user.defaultGroupId!,
         userId: session.user._id,
@@ -61,13 +64,13 @@ router.post(
         await cloudant.models.Logins.destroy(_res._id, _res._rev)
         const session = await getSessionFromToken(token)
 
-        // give user credentials, if default db does not exist for user, create one
-        const credentials = await createUserDatabaseCredentials(
-          session.user,
-          skipTitleBlock
-        )
-
-        session.groupCredentials = [credentials]
+        // if default db does not exist for user, create one
+        await createUserDatabase(session.user, skipTitleBlock)
+        const _defaultCredentials = await addCredentialsToGroupId({
+          groupId: session.user.defaultGroupId!,
+          userId: session.user._id,
+        })
+        session.groupCredentials = [_defaultCredentials]
 
         return res.json({ data: { session } })
       }

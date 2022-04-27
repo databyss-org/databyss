@@ -23,11 +23,11 @@ import {
   getDefaultGroup,
 } from './clientStorage'
 import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
-import { hasUnathenticatedAccess } from './actions'
 import { NetworkUnavailableError } from '../interfaces'
 import { urlSafeName } from '../lib/util'
 import { getAccountFromLocation } from './utils'
 import { useDatabaseContext } from '../lib/DatabaseProvder'
+import { hasAuthenticatedAccess, hasUnathenticatedAccess } from './access'
 
 const useReducer = createReducer()
 
@@ -60,6 +60,9 @@ const SessionProvider = ({
   })
 
   const isPublicAccount = useCallback(() => {
+    if (state.session.publicAccount?.hasAuthenticatedAccess) {
+      return false
+    }
     if (state.session.publicAccount?._id) {
       return true
     }
@@ -74,12 +77,9 @@ const SessionProvider = ({
     return null
   }, [state.userInfo])
 
-  const getCurrentAccount = useCallback(() => {
-    if (state.session.publicAccount?._id) {
-      return state.session.publicAccount._id
-    }
-    return state.session.account._id
-  }, [state.session])
+  const getPublicAccount = useCallback(() => state.session.publicAccount, [
+    state.session,
+  ])
   // credentials can be:
   // - `undefined` if we're just reloading
   // - `code` if we're logging in from an email link or code
@@ -149,36 +149,41 @@ const SessionProvider = ({
 
       // do we have a public group in localstorage?
       let _publicSession = await localStorageHasPublicSession()
+      let _publicGroupId
       if (_publicSession) {
         console.log('[SessionProvider] has public session')
-        // start replication on public group
-        // await replicateGroup(_publicSession.belongsToGroup)
-        setCouchMode(true)
-        await initDb({
-          groupId: _publicSession.belongsToGroup,
-          isPublicGroup: true,
-          onReplicationComplete: () => updateCouchMode(),
-        })
+        _publicGroupId = _publicSession.belongsToGroup
       } else {
         // try to get public access
         console.log('[SessionProvider] get public access')
-        const unauthenticatedGroupId = await hasUnathenticatedAccess()
-        console.log(
-          '[SessionProvider] unauthenticatedGroupId',
-          unauthenticatedGroupId
-        )
-
-        if (unauthenticatedGroupId) {
-          setCouchMode(true)
-          await initDb({
-            groupId: unauthenticatedGroupId,
-            isPublicGroup: true,
-            onReplicationComplete: () => updateCouchMode(),
-          })
-          _publicSession = await localStorageHasPublicSession(3)
-        }
+        _publicGroupId = await hasUnathenticatedAccess()
+        console.log('[SessionProvider] unauthenticatedGroupId', _publicGroupId)
       }
-      if (_publicSession) {
+
+      if (_publicGroupId) {
+        // see if we also have authenticated access to this managed group
+        const _hasAuthenticatedAccess = await hasAuthenticatedAccess()
+        console.log(
+          '[SessionProvider] hasAuthenticatedAccess',
+          _hasAuthenticatedAccess
+        )
+        setCouchMode(true)
+        // replicate group to local
+        // or replicate and start sync if we have authenticated access
+        await initDb({
+          groupId: _publicGroupId,
+          isPublicGroup: !_hasAuthenticatedAccess,
+          onReplicationComplete: (_res) => {
+            updateCouchMode()
+            if (_hasAuthenticatedAccess && _res) {
+              // set up live sync
+              syncPouchDb({
+                groupId: _publicGroupId,
+              })
+            }
+          },
+        })
+        _publicSession = await localStorageHasPublicSession(3)
         dispatch({
           type: CACHE_PUBLIC_SESSION,
           payload: {
@@ -188,12 +193,14 @@ const SessionProvider = ({
               defaultGroupName: _publicSession.name,
               publicAccount: {
                 _id: _publicSession._id,
+                hasAuthenticatedAccess: _hasAuthenticatedAccess,
+                belongsToGroup: _publicSession.belongsToGroup,
               },
               notifications: _publicSession.notifications ?? [],
             },
           },
         })
-        dbRef.readOnly = true
+        dbRef.readOnly = !_hasAuthenticatedAccess
       } else {
         console.log('[SessionProvider] no public session')
         // if user has a default groupId in local storage, change url and retry session _init
@@ -337,7 +344,7 @@ const SessionProvider = ({
         getSession,
         endSession,
         isPublicAccount,
-        getCurrentAccount,
+        getPublicAccount,
         getUserAccount,
         logout,
         dispatch,

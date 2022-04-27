@@ -1,8 +1,4 @@
-import {
-  replicatePublicGroup,
-  REMOTE_CLOUDANT_URL,
-  initDb,
-} from '@databyss-org/data/pouchdb/db'
+import { replicatePublicGroup, initDb } from '@databyss-org/data/pouchdb/db'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
 import { NetworkUnavailableError, NotAuthorizedError } from '../interfaces'
@@ -222,66 +218,6 @@ export const setReadOnly = (readOnly) => ({
   type: SET_READ_ONLY,
   payload: readOnly,
 })
-
-/*
-checks url for public page
-*/
-export const isPagePublic = async () => {
-  const path = window.location.pathname.split('/')
-  // get the page id
-  const pageId = path?.[3]
-  if (pageId) {
-    const groupId = `p_${pageId}`
-    try {
-      await request(`${REMOTE_CLOUDANT_URL}/${groupId}`)
-      return groupId
-    } catch (err) {
-      return false
-    }
-  }
-  return false
-}
-
-export const isGroupPublic = async () => {
-  // get the page id
-  const groupId = getAccountFromLocation()
-  if (groupId) {
-    try {
-      await request(`${REMOTE_CLOUDANT_URL}/${groupId}`)
-      return groupId
-    } catch (err) {
-      return false
-    }
-  }
-  return false
-}
-
-export const hasUnathenticatedAccess = (maxRetries = 5) =>
-  new Promise((resolve, reject) => {
-    // if there's no group (account) in the URL, bail and resolve false
-    if (!getAccountFromLocation()) {
-      resolve(false)
-      return
-    }
-    const _checkAccess = async (count = 0) => {
-      // console.log('[hasUnauthenticatedAccess] checkAccess attempt', count + 1)
-      if (process.env.STORYBOOK || count >= maxRetries) {
-        resolve(false)
-        return
-      }
-      try {
-        const _groupId = (await isGroupPublic()) || (await isPagePublic())
-        if (_groupId) {
-          resolve(_groupId)
-          return
-        }
-        setTimeout(() => _checkAccess(count + 1), 3000)
-      } catch (err) {
-        reject(err)
-      }
-    }
-    _checkAccess()
-  })
 
 export const replicateGroup = (id) =>
   replicatePublicGroup({

@@ -152,6 +152,7 @@ export function getDbCredentialsFromLocal(groupId) {
     keyMap = JSON.parse(keyMap)
   }
 
+  // console.log('[getDbCredentialsFromLocal]', keyMap, groupId)
   return keyMap[groupId]
 }
 

@@ -227,73 +227,69 @@ export const addCredentialsToGroupId = async ({
   return { ...response }
 }
 
-export const createUserDatabaseCredentials = async (
+export const createUserDatabase = async (
   user: SysUser,
   skipTitleBlock?: boolean
-): Promise<CredentialResponse> => {
+) => {
   let groupId = user.defaultGroupId
 
   // create new group if user does not have one
-  if (!groupId) {
-    groupId = `g_${uidlc()}`
-    await createGroupId({ groupId, userId: user._id })
+  if (groupId) {
+    return
+  }
+  groupId = `g_${uidlc()}`
+  console.log('[createUserDatabase]', groupId)
+  await createGroupId({ groupId, userId: user._id })
 
-    // creates a database if not yet defined
-    const _db = await createGroupDatabase(groupId)
-    // add user preferences to user database
+  // creates a database if not yet defined
+  const _db = await createGroupDatabase(groupId)
+  // add user preferences to user database
 
-    const defaultPageId = uidlc()
-    const _notifications = welcomeNotifications as Partial<Notification>[]
-    const _userPreferences: UserPreference = {
-      _id: 'user_preference',
-      userId: user._id,
-      email: user?.email,
-      belongsToGroup: groupId,
-      createdAt: Date.now(),
-      groups: [
-        {
-          groupId,
-          // creates a new default page id
-          defaultPageId,
-          role: Role.GroupAdmin,
-        },
-      ],
-      notifications:
-        process.env.NODE_ENV === 'test'
-          ? []
-          : (_notifications.map((_notification) => ({
-              id: uid(),
-              type: NotificationType.Dialog,
-              ..._notification,
-              createdAt: Date.now(),
-            })) as Notification[]),
-    }
-
-    await initializeNewPage({
-      groupId,
-      pageId: defaultPageId,
-      skipTitleBlock,
-    })
-
-    await _db.upsert(_userPreferences._id, () => ({
-      ..._userPreferences,
-      doctype: DocumentType.UserPreferences,
-    }))
-
-    // add defaultPageId to Userdb
-    await cloudant.models.Users.upsert(_userPreferences.userId, (oldDoc) => ({
-      ...oldDoc,
-      defaultGroupId: _userPreferences.belongsToGroup,
-    }))
+  const defaultPageId = uidlc()
+  const _notifications = welcomeNotifications as Partial<Notification>[]
+  const _userPreferences: UserPreference = {
+    _id: 'user_preference',
+    userId: user._id,
+    email: user?.email,
+    belongsToGroup: groupId,
+    createdAt: Date.now(),
+    groups: [
+      {
+        groupId,
+        // creates a new default page id
+        defaultPageId,
+        role: Role.GroupAdmin,
+      },
+    ],
+    notifications:
+      process.env.NODE_ENV === 'test'
+        ? []
+        : (_notifications.map((_notification) => ({
+            id: uid(),
+            type: NotificationType.Dialog,
+            ..._notification,
+            createdAt: Date.now(),
+          })) as Notification[]),
   }
 
-  // add credentials to new database
-  const response = await addCredentialsToGroupId({
+  await initializeNewPage({
     groupId,
-    userId: user._id,
+    pageId: defaultPageId,
+    skipTitleBlock,
   })
 
-  return response
+  await _db.upsert(_userPreferences._id, () => ({
+    ..._userPreferences,
+    doctype: DocumentType.UserPreferences,
+  }))
+
+  // add defaultPageId to Userdb
+  await cloudant.models.Users.upsert(_userPreferences.userId, (oldDoc) => ({
+    ...oldDoc,
+    defaultGroupId: _userPreferences.belongsToGroup,
+  }))
+
+  user.defaultGroupId = _userPreferences.belongsToGroup
 }
 
 export const addCredientialsToSession = async ({

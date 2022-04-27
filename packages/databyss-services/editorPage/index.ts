@@ -57,6 +57,6 @@ export const createDatabaseCredentials = async ({
   })
 
   // set the credentials to local storage
-  const cred = _res.data
-  setPouchSecret(Object.values(cred))
+  const cred = Object.values(_res.data)
+  setPouchSecret(cred)
 }
