@@ -68,10 +68,8 @@ export const addCloudantGroupDatabase = async ({
   const res = await httpPost(`/cloudant/groups/${groupId}`, {
     data: { isPublic },
   })
-  // if is public, add credentials to localstorage
-  if (isPublic) {
-    setPouchSecret(Object.values(res.data))
-  }
+  // add credentials to localstorage
+  setPouchSecret(Object.values(res.data))
 }
 
 /**
@@ -249,7 +247,7 @@ export const replicateGroup = async ({
   isPublic,
 }: {
   groupId: string
-  isPublic?: boolean
+  isPublic: boolean
 }) => {
   try {
     // first check if credentials exist
@@ -288,6 +286,7 @@ export const replicateGroup = async ({
 }
 
 export const setGroup = async (group: Group, pageId?: string) => {
+  console.log('[setGroup]', group)
   // if pageId is passed, crawl pageId and append group id to all documents associated with the page
   if (pageId) {
     addPageToGroup({ pageId, groupId: group._id })
@@ -309,9 +308,11 @@ export const setGroup = async (group: Group, pageId?: string) => {
   })
 
   // if group settings were changed, propegate changes to remote db
-  if (group.public) {
-    setGroupAction(group._id, GroupAction.SHARED)
-  }
+  setGroupAction({
+    groupId: group._id,
+    action: GroupAction.CREATE_OR_UPDATE,
+    isPublic: group.public,
+  })
 }
 
 /**
@@ -446,7 +447,11 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     })
 
     // create cloudant db
-    setGroupAction(_data._id, GroupAction.SHARED)
+    setGroupAction({
+      groupId: _data._id,
+      action: GroupAction.CREATE_OR_UPDATE,
+      isPublic: true,
+    })
   } else {
     // page is removed from sharing
 
@@ -463,7 +468,7 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     })
 
     // remove database from cloudant
-    setGroupAction(_data._id, GroupAction.UNSHARED)
+    setGroupAction({ groupId: _data._id, action: GroupAction.DESTROY })
   }
 }
 
@@ -505,13 +510,10 @@ export const updateAndReplicateSharedDatabase = async ({
     groupId,
     isPublic,
   })
-
-  if (isPublic) {
-    replicateGroup({
-      groupId,
-      isPublic: true,
-    })
-  }
+  await replicateGroup({
+    groupId,
+    isPublic,
+  })
 }
 
 /**
@@ -623,7 +625,7 @@ export const deleteCollection = async (groupId: string) => {
   })
 
   if (_group) {
-    const { public: isPublic, _id: groupId } = _group
+    const { _id: groupId } = _group
 
     // get all pages group is associated with
     const _pageIds = _group.pages
@@ -639,9 +641,7 @@ export const deleteCollection = async (groupId: string) => {
       doc: { ..._group, _deleted: true },
     })
 
-    if (isPublic) {
-      // delete group from cloudant
-      setGroupAction(groupId, GroupAction.UNSHARED)
-    }
+    // delete group from cloudant
+    setGroupAction({ groupId, action: GroupAction.DESTROY })
   }
 }

@@ -10,7 +10,11 @@ import {
   Grid,
   ViewProps,
   ScrollView,
+  Button,
+  Icon,
+  List,
 } from '@databyss-org/ui/primitives'
+import ExternalLinkSvg from '@databyss-org/ui/assets/external-link.svg'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
@@ -22,10 +26,6 @@ import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
 import { copyToClipboard } from '../../components/PageContent/PageMenu'
 import GroupMenu from './GroupMenu'
-import {
-  setGroupAction,
-  GroupAction,
-} from '../../../databyss-data/pouchdb/groups/utils'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -41,6 +41,18 @@ const GroupSection = ({
     </Text>
     {children}
   </View>
+)
+
+export const DetailPanel = ({ children, ...others }) => (
+  <List
+    bg="background.2"
+    horizontalItemPadding="em"
+    verticalItemPadding="small"
+    borderRadius="default"
+    {...others}
+  >
+    {children}
+  </List>
 )
 
 export const GroupFields = ({
@@ -60,28 +72,27 @@ export const GroupFields = ({
     [saveGroup]
   )
 
+  // compose link
+  const _groupName = group.name ? `${urlSafeName(group.name)}-` : ''
+  const _groupUrl = `${window.location.protocol}//${
+    window.location.host
+  }/${_groupName}${group._id.substring(2)}`
+
   const copyLink = () => {
     // TODO: collection should only be linkable if page exist
 
-    // compose public link
-    const getUrl = window.location
-    const _groupName = group.name ? `${urlSafeName(group.name)}-` : ''
-    const baseUrl = `${getUrl.protocol}//${
-      getUrl.host
-    }/${_groupName}${group._id.substring(2)}`
-
-    copyToClipboard(baseUrl)
+    copyToClipboard(_groupUrl)
   }
 
   const onChange = useCallback(
     (_values: Group) => {
       // if change occured in group public status
-      if (groupValue.current.public !== _values.public) {
-        setGroupAction(
-          group._id,
-          _values.public ? GroupAction.SHARED : GroupAction.UNSHARED
-        )
-      }
+      // if (groupValue.current.public !== _values.public) {
+      //   setGroupAction(
+      //     group._id,
+      //     _values.public ? GroupAction.MAKE_PUBLIC : GroupAction.MAKE_PRIVATE
+      //   )
+      // }
       // if defaultPageId was set for this group, set it now
       if (!groupValue.current.defaultPageId) {
         _values.defaultPageId = _values.pages[0]
@@ -129,6 +140,29 @@ export const GroupFields = ({
             </View>
           </GroupSection>
           <View flexGrow={1} flexBasis={1}>
+            <GroupSection title="Open Collection in New Tab">
+              <DetailPanel>
+                <Grid
+                  singleRow
+                  flexWrap="nowrap"
+                  columnGap="tiny"
+                  alignItems="flex-start"
+                >
+                  <Icon sizeVariant="tiny" color="text.1" mt="tiny">
+                    <ExternalLinkSvg />
+                  </Icon>
+                  <Button
+                    flexShrink={1}
+                    variant="uiLink"
+                    textVariant="uiTextSmall"
+                    href={_groupUrl}
+                    target="_blank"
+                  >
+                    {_groupUrl}
+                  </Button>
+                </Grid>
+              </DetailPanel>
+            </GroupSection>
             <GroupSection title="Share with Everyone">
               <ValueListItem path="public">
                 <PublicSharingSettings readOnly={readOnly} onClick={copyLink} />

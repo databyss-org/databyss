@@ -107,7 +107,6 @@ export const resetPouchDb = async () => {
 /*
 replicates public remote DB to local
 */
-
 export const replicatePublicGroup = ({
   groupId,
   hasAuthenticatedAccess,
@@ -116,9 +115,17 @@ export const replicatePublicGroup = ({
   hasAuthenticatedAccess: boolean
 }) =>
   new Promise<boolean>((resolve, reject) => {
-    const opts = {
+    const opts: any = {
       retry: true,
       batch_size: 1000,
+    }
+    if (hasAuthenticatedAccess) {
+      const _auth = getReplicationAuth(groupId)
+      if (!_auth) {
+        reject()
+        return
+      }
+      opts.auth = _auth
     }
     checkNetwork().then((isOnline) => {
       if (isOnline) {
@@ -129,7 +136,9 @@ export const replicatePublicGroup = ({
           })
           .on(
             'error',
-            MakePouchReplicationErrorHandler('[replicatePublicGroup:replicate]')
+            MakePouchReplicationErrorHandler(
+              `[replicatePublicGroup:replicate ${groupId}]`
+            )
           )
           .on('complete', () => {
             // switch to pouchdb
@@ -175,39 +184,47 @@ export const replicatePublicGroup = ({
     })
   })
 
+export function getReplicationAuth(groupId: string) {
+  const _creds = getPouchSecret()
+
+  if (!_creds) {
+    console.log('[DB] getReplicationAuth: no pouch secrets')
+    return false
+  }
+
+  const _cred = _creds[groupId]
+
+  if (!_cred) {
+    console.log('[DB] getReplicationAuth: group not in secrets')
+    return false
+  }
+
+  return {
+    username: _cred.dbKey,
+    password: _cred.dbPassword,
+  }
+}
+
 /*
 replicates remote DB to local
 */
-
 export const replicateDbFromRemote = (groupId: string) =>
   new Promise<boolean>((resolve, reject) => {
     console.log('[DB] replicateDbFromRemote', groupId)
     const _couchUrl = `${REMOTE_CLOUDANT_URL}/${groupId}`
+    const _auth = getReplicationAuth(groupId)
 
-    // for now we are getting the first credentials from local storage groups
-    const _creds = getPouchSecret()
-    // let _dbId
-    let _cred
+    if (!_auth) {
+      reject()
+      return
+    }
 
-    if (!_creds) {
-      reject()
-    }
-    if (_creds) {
-      // _dbId = Object.keys(_creds)[0]
-      _cred = _creds[groupId]
-    }
-    if (!_cred) {
-      reject()
-    }
     const opts = {
       // live: true,
       retry: true,
       // continuous: true,
       batch_size: 1000,
-      auth: {
-        username: _cred.dbKey,
-        password: _cred.dbPassword,
-      },
+      auth: _auth,
     }
 
     checkNetwork().then((isOnline) => {

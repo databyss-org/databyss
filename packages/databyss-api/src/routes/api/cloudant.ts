@@ -103,22 +103,18 @@ router.delete(
 )
 
 // @route    POST api/cloudant/groups
-// @desc     creates a database for shared groups
+// @desc     creates/updates a database for shared groups
 router.post('/groups/:id', authMiddleware, async (req, res) => {
   // get user id
   const userId = req.user!._id
   const groupId = req.params.id
   const { isPublic } = req.body.data
 
-  let credentials
-  if (isPublic) {
-    credentials = await createSharedGroupDatabase({
-      groupId,
-      userId,
-    })
-  }
-
-  // NOTE: if isPublic is false, currently does nothing
+  const credentials = await createSharedGroupDatabase({
+    groupId,
+    userId,
+    isPublic,
+  })
 
   return res.json({ data: { credentials } }).status(200)
 })

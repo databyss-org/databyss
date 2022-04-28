@@ -13,8 +13,8 @@ import { getDocument, setDbBusy } from '../utils'
 import { PageDoc } from '../interfaces'
 
 export enum GroupAction {
-  SHARED = 'SHARED',
-  UNSHARED = 'UNSHARED',
+  CREATE_OR_UPDATE = 'CREATE_OR_UPDATE',
+  DESTROY = 'DESTROY',
 }
 
 export enum PageAction {
@@ -28,6 +28,7 @@ interface QueuePayload {
   pages?: {
     [pageId: string]: PageAction
   }
+  public?: boolean
 }
 
 interface GroupActionQ {
@@ -44,14 +45,21 @@ export function getGroupActionQ(): GroupActionQ {
 }
 
 export function setGroupActionQ(_d) {
+  console.log('[setGroupActionQ]', _d)
   localStorage.setItem('groupActionQ', JSON.stringify(_d))
 }
 
-export function setGroupAction(
-  groupId: string,
-  action: GroupAction,
-  retry: number = 0
-) {
+export function setGroupAction({
+  groupId,
+  action,
+  retry = 0,
+  isPublic,
+}: {
+  groupId: string
+  action: GroupAction
+  retry?: number
+  isPublic?: boolean
+}) {
   const _dict = getGroupActionQ()
   if (!_dict[groupId]) {
     _dict[groupId] = { retry }
@@ -62,6 +70,9 @@ export function setGroupAction(
   } else {
     _dict[groupId].action = action
   }
+  // set public bit
+  _dict[groupId].public = isPublic
+
   setGroupActionQ(_dict)
 }
 
@@ -126,15 +137,19 @@ export async function processGroupActionQ() {
 
     const _groupAction = groupPayload?.action
     const _retry = groupPayload?.retry ?? 0
+    const _public = groupPayload?.public ?? false
     if (_groupAction) {
       removeGroupAction(groupId)
       try {
         switch (_groupAction) {
-          case GroupAction.SHARED: {
-            await updateAndReplicateSharedDatabase({ groupId, isPublic: true })
+          case GroupAction.CREATE_OR_UPDATE: {
+            await updateAndReplicateSharedDatabase({
+              groupId,
+              isPublic: _public,
+            })
             break
           }
-          case GroupAction.UNSHARED: {
+          case GroupAction.DESTROY: {
             try {
               await removeSharedDatabase(groupId)
             } catch (err) {
@@ -152,7 +167,12 @@ export async function processGroupActionQ() {
             groupPayload,
             JSON.stringify(err)
           )
-          setGroupAction(groupId, _groupAction, _retry + 1)
+          setGroupAction({
+            groupId,
+            action: _groupAction,
+            retry: _retry + 1,
+            isPublic: _public,
+          })
         } else {
           throw err
         }

@@ -67,13 +67,15 @@ export const deleteSharedGroupDatabase = (dbName: string) =>
 const createSharedGroupDatabase = async ({
   groupId,
   userId,
+  isPublic,
 }: {
   groupId: string
   userId: string
+  isPublic: boolean
 }): Promise<CredentialResponse> => {
   await createGroupId({ groupId, userId })
   await createGroupDatabase(groupId)
-  const credentials = await setSecurity({ groupId, isPublic: true })
+  const credentials = await setSecurity({ groupId, isPublic })
   return credentials
 }
 
