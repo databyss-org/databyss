@@ -120,49 +120,59 @@ export const replicatePublicGroup = ({
       retry: true,
       batch_size: 1000,
     }
-    console.log('[DB] replicatePublicGroup')
-    pouchDb.replicate
-      ?.from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
-        ...opts,
-      })
-      .on(
-        'error',
-        MakePouchReplicationErrorHandler('[replicatePublicGroup:replicate]')
-      )
-      .on('complete', () => {
-        // switch to pouchdb
-        console.log('[DB] Replication done, switching to PouchDb')
-        dbRef.current = pouchDb
-        dbRef.readOnly = !hasAuthenticatedAccess
-
-        // start sync
-        if (hasAuthenticatedAccess) {
-          // read/write sync (authenticated)
-          syncPouchDb(groupId)
-          return
-        }
-        // read sync (unauthenticated)
-        const _opts = {
-          ...opts,
-          live: true,
-          continuous: true,
-        }
-        // when replication is complete, kick off a live sync
+    checkNetwork().then((isOnline) => {
+      if (isOnline) {
+        console.log('[DB] replicatePublicGroup')
         pouchDb.replicate
-          .from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
-            ..._opts,
-          })
-          .on('paused', () => {
-            resolve(true)
+          ?.from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
+            ...opts,
           })
           .on(
             'error',
-            MakePouchReplicationErrorHandler('[replicatePublicGroup:sync]')
+            MakePouchReplicationErrorHandler('[replicatePublicGroup:replicate]')
           )
-      })
-      .on('error', (err) => {
-        reject(err)
-      })
+          .on('complete', () => {
+            // switch to pouchdb
+            console.log('[DB] Replication done, switching to PouchDb')
+            dbRef.current = pouchDb
+            dbRef.readOnly = !hasAuthenticatedAccess
+
+            // start sync
+            if (hasAuthenticatedAccess) {
+              // read/write sync (authenticated)
+              syncPouchDb(groupId)
+              return
+            }
+            // read sync (unauthenticated)
+            const _opts = {
+              ...opts,
+              live: true,
+              continuous: true,
+            }
+            // when replication is complete, kick off a live sync
+            pouchDb.replicate
+              .from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
+                ..._opts,
+              })
+              .on('paused', () => {
+                resolve(true)
+              })
+              .on(
+                'error',
+                MakePouchReplicationErrorHandler('[replicatePublicGroup:sync]')
+              )
+          })
+          .on('error', (err) => {
+            reject(err)
+          })
+      } else {
+        // ofline
+        console.log('[DB] Offline, skipping replication')
+        dbRef.current = pouchDb
+        dbRef.readOnly = !hasAuthenticatedAccess
+        resolve(false)
+      }
+    })
   })
 
 /*
@@ -220,6 +230,9 @@ export const replicateDbFromRemote = (groupId: string) =>
             resolve(true)
           })
       } else {
+        console.log('[DB] Offline, skipping replication')
+        dbRef.current = pouchDb
+        dbRef.readOnly = false
         resolve(false)
       }
     })
@@ -359,11 +372,27 @@ export async function initDb(groupId: string) {
   dbRef.readOnly = true
   if (!(await checkNetwork())) {
     try {
+      // user session
       await pouchDb.get('user_preference')
       dbRef.current = pouchDb
-      return
     } catch {
-      console.log('[DB] offline but pouchdb missing or unreadable')
+      console.log('[DB] OFFLINE no user_preference, trying group')
+      try {
+        // group session
+        if (
+          (
+            await pouchDb.find({
+              selector: {
+                doctype: 'GROUP',
+              },
+            })
+          )?.docs?.[0]
+        ) {
+          dbRef.current = pouchDb
+        }
+      } catch {
+        console.log('[DB] OFFLINE no group')
+      }
     }
   }
 }

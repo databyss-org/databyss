@@ -67,6 +67,10 @@ const SessionProvider = ({
     enabled: !!dbRef.current && !!state.session?.publicAccount,
   })
 
+  const isGroupSession = useCallback(() => !!state.session.publicAccount?._id, [
+    state.session?.publicAccount,
+  ])
+
   const isPublicAccount = useCallback(() => {
     if (state.session.publicAccount?.hasAuthenticatedAccess) {
       return false
@@ -344,6 +348,7 @@ const SessionProvider = ({
         setDefaultPage,
         getSession,
         endSession,
+        isGroupSession,
         isPublicAccount,
         getPublicAccount,
         getUserAccount,

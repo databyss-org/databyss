@@ -38,7 +38,7 @@ const MakeLoader = ({
   }
 
   if (errors) {
-    console.log('[MakeLoader] errors', errors)
+    // console.log('[MakeLoader] errors', errors)
     return (
       errorFallback ?? (
         <ErrorFallback

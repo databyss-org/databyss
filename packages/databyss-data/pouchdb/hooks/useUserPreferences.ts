@@ -11,23 +11,23 @@ export const useUserPreferences = (
   UseQueryResult<UserPreference | Group>,
   (prefs: UserPreference) => void
 ] => {
-  const isPublicAccount =
-    useSessionContext((c) => c && c.isPublicAccount) ?? (() => false)
+  const isGroupSession =
+    useSessionContext((c) => c && c.isGroupSession) ?? (() => false)
   const getSession = useSessionContext((c) => c && c.getSession) ?? (() => null)
   const queryClient = useQueryClient()
 
   const prefsRes = useDocument<UserPreference>('user_preference', {
-    enabled: !isPublicAccount(),
+    enabled: !isGroupSession(),
     ...options,
   })
   const groupRes = useDocument<Group>(getSession()?.publicAccount?._id, {
-    enabled: isPublicAccount(),
+    enabled: isGroupSession(),
     ...options,
   })
 
   return [
-    isPublicAccount() ? groupRes : prefsRes,
-    isPublicAccount()
+    isGroupSession() ? groupRes : prefsRes,
+    isGroupSession()
       ? () => null
       : (prefs: UserPreference) => {
           queryClient.setQueryData('user_preference', prefs)

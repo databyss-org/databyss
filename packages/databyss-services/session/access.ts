@@ -71,10 +71,11 @@ export async function hasAuthenticatedAccess() {
         dbKey: _creds.dbKey,
       })
     } catch (_err) {
-      if (
-        _err instanceof NotAuthorizedError ||
-        _err instanceof NetworkUnavailableError
-      ) {
+      if (_err instanceof NetworkUnavailableError) {
+        // if offline, we should assume credentials are valid and proceed as editable
+        return _groupId
+      }
+      if (_err instanceof NotAuthorizedError) {
         return false
       }
       throw _err
