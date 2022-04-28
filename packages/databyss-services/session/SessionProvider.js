@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback, useRef } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 // import { debounce } from 'lodash'
 import Login from '@databyss-org/ui/modules/Login/Login'
@@ -36,6 +36,7 @@ import { urlSafeName } from '../lib/util'
 import { getAccountFromLocation } from './utils'
 import { useDatabaseContext } from '../lib/DatabaseProvder'
 import { hasAuthenticatedAccess, hasUnathenticatedAccess } from './access'
+import { checkNetwork } from '../lib/request'
 
 const useReducer = createReducer()
 
@@ -59,7 +60,8 @@ const SessionProvider = ({
   const [state, dispatch] = useReducer(reducer, initialState, {
     name: 'SessionProvider',
   })
-  const { notify } = useNotifyContext()
+  const { notify, isOnline } = useNotifyContext()
+  const isOnlineRef = useRef(isOnline)
   const location = useNavigationContext((c) => c && c.location)
   const navigate = useNavigationContext((c) => c && c.navigate)
   const { updateCouchMode, setCouchMode } = useDatabaseContext()
@@ -125,6 +127,8 @@ const SessionProvider = ({
 
   useEffect(() => {
     const _init = async () => {
+      // get network status
+      isOnlineRef.current = await checkNetwork()
       // do we have an authenticated session in the browser?
       const _sesionFromLocalStorage = await localStorageHasSession()
       if (_sesionFromLocalStorage) {
@@ -227,10 +231,10 @@ const SessionProvider = ({
         }
       }
     }
-    if (!state.sesson) {
+    if (!state.sesson || (!isOnlineRef.current && isOnline)) {
       _init()
     }
-  }, [state.sessionIsStored])
+  }, [state.sessionIsStored, isOnline])
 
   const _group = groupRes.data ? Object.values(groupRes.data)[0] : null
   const _fullUrlFromGroupId = (groupIdWithName) => {
