@@ -185,7 +185,13 @@ export const PageReplicator = ({
   }
 
   useEffect(() => {
-    if (!isOnline || isReadOnly || !groupsRes.isSuccess || !pageId) {
+    if (
+      !isOnline ||
+      dbRef.current instanceof CouchDb ||
+      isReadOnly ||
+      !groupsRes.isSuccess ||
+      !pageId
+    ) {
       return () => null
     }
     if (getPublicAccount()?.hasAuthenticatedAccess) {
@@ -221,6 +227,7 @@ export const PageReplicator = ({
     JSON.stringify(groupsRes.data),
     isOnline,
     isReadOnly,
+    dbRef.current,
   ])
 
   if (!groupsRes.isSuccess) {
