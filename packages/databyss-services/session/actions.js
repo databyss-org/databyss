@@ -120,7 +120,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         session.user?.defaultGroupId || session?.groupCredentials[0].groupId
 
       // this will store session info locally into 'user_preference' doc
-      await initDb({ groupId: _defaultGroupId })
+      await initDb(_defaultGroupId)
 
       dispatch({
         type: STORE_SESSION_LOCALLY,

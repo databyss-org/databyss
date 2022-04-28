@@ -3,7 +3,13 @@ import { createContext, useContextSelector } from 'use-context-selector'
 // import { debounce } from 'lodash'
 import Login from '@databyss-org/ui/modules/Login/Login'
 import LoadingIcon from '@databyss-org/ui/assets/loading.svg'
-import { syncPouchDb, dbRef, initDb } from '@databyss-org/data/pouchdb/db'
+import {
+  dbRef,
+  replicateDbFromRemote,
+  replicatePublicGroup,
+  initDb,
+  dbGroupId,
+} from '@databyss-org/data/pouchdb/db'
 import { Text, View, Viewport } from '@databyss-org/ui'
 // import { connect } from '@databyss-org/data/couchdb-client/couchdb'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
@@ -13,6 +19,7 @@ import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { UNTITLED_NAME } from '@databyss-org/services/groups'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import StickyMessage from '@databyss-org/ui/components/Notify/StickyMessage'
+import { setDbBusy } from '@databyss-org/data/pouchdb/utils'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
@@ -21,6 +28,7 @@ import {
   localStorageHasSession,
   localStorageHasPublicSession,
   getDefaultGroup,
+  getPouchSecret,
 } from './clientStorage'
 import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
 import { NetworkUnavailableError } from '../interfaces'
@@ -48,7 +56,7 @@ const SessionProvider = ({
   email,
   unauthorizedChildren,
 }) => {
-  const [state, dispatch, stateRef] = useReducer(reducer, initialState, {
+  const [state, dispatch] = useReducer(reducer, initialState, {
     name: 'SessionProvider',
   })
   const { notify } = useNotifyContext()
@@ -119,25 +127,18 @@ const SessionProvider = ({
         console.log('[SessionProvider] 2nd pass')
         // 2nd pass: load session from local_storage
         // replicate from cloudant
-        const groupId = _sesionFromLocalStorage.defaultGroupId
-        // download remote database if not on mobile
-
         setCouchMode(true)
-        await initDb({
-          groupId,
-          dispatch,
-          stateRef,
-          onReplicationComplete: (_res) => {
-            updateCouchMode()
-            if (_res) {
-              // set up live sync
-              syncPouchDb({
-                groupId,
-              })
-            }
-          },
-        })
+        setDbBusy(true)
 
+        const _syncPromise = replicateDbFromRemote(
+          _sesionFromLocalStorage.defaultGroupId
+        ).then(updateCouchMode)
+        // if in test env we have to wait for replication to finish
+        if (process.env.NODE_ENV === 'test') {
+          await _syncPromise
+        }
+
+        // cache session so we can proceed to load app
         dispatch({
           type: CACHE_SESSION,
           payload: {
@@ -147,60 +148,61 @@ const SessionProvider = ({
         return
       }
 
-      // do we have a public group in localstorage?
-      let _publicSession = await localStorageHasPublicSession()
-      let _publicGroupId
-      if (_publicSession) {
-        console.log('[SessionProvider] has public session')
-        _publicGroupId = _publicSession.belongsToGroup
-      } else {
-        // try to get public access
-        console.log('[SessionProvider] get public access')
+      // 1st pass
+
+      // try to get authenticated access first
+      console.log('[SessionProvider] try get private access')
+      let _publicGroupId = await hasAuthenticatedAccess()
+      let _hasAuthenticatedAccess = !!_publicGroupId
+      console.log('[SessionProvider] authenticated groupId', _publicGroupId)
+      if (!_publicGroupId) {
+        console.log('[SessionProvider] try get public access')
         _publicGroupId = await hasUnathenticatedAccess()
-        console.log('[SessionProvider] unauthenticatedGroupId', _publicGroupId)
+        console.log('[SessionProvider] unauthenticated groupId', _publicGroupId)
       }
 
       if (_publicGroupId) {
-        // see if we also have authenticated access to this managed group
-        const _hasAuthenticatedAccess = await hasAuthenticatedAccess()
-        console.log(
-          '[SessionProvider] hasAuthenticatedAccess',
-          _hasAuthenticatedAccess
-        )
         setCouchMode(true)
-        // replicate group to local
-        // or replicate and start sync if we have authenticated access
-        await initDb({
-          groupId: _publicGroupId,
-          isPublicGroup: !_hasAuthenticatedAccess,
-          onReplicationComplete: (_res) => {
-            updateCouchMode()
-            if (_hasAuthenticatedAccess && _res) {
-              // set up live sync
-              syncPouchDb({
-                groupId: _publicGroupId,
-              })
-            }
-          },
-        })
-        _publicSession = await localStorageHasPublicSession(3)
-        dispatch({
-          type: CACHE_PUBLIC_SESSION,
-          payload: {
-            session: {
-              defaultPageId: _publicSession.defaultPageId,
-              defaultGroupId: _publicSession._id,
-              defaultGroupName: _publicSession.name,
-              publicAccount: {
-                _id: _publicSession._id,
-                hasAuthenticatedAccess: _hasAuthenticatedAccess,
-                belongsToGroup: _publicSession.belongsToGroup,
+        // make sure db is initialized to correct groupId
+        if (dbGroupId() !== _publicGroupId) {
+          initDb(_publicGroupId)
+        }
+        // do we have a public group in localstorage?
+        const _publicSession = await localStorageHasPublicSession()
+        if (_publicSession) {
+          console.log('[SessionProvider] has public session')
+          _hasAuthenticatedAccess = !!getPouchSecret()?.[_publicGroupId]
+
+          // replicate group to local
+          // or replicate and start sync if we have authenticated access
+          setDbBusy(true)
+          const _syncPromise = replicatePublicGroup({
+            groupId: _publicGroupId,
+            hasAuthenticatedAccess: _hasAuthenticatedAccess,
+          }).then(updateCouchMode)
+          // if in test env we have to wait for replication to finish
+          if (process.env.NODE_ENV === 'test') {
+            await _syncPromise
+          }
+
+          dispatch({
+            type: CACHE_PUBLIC_SESSION,
+            payload: {
+              session: {
+                defaultPageId: _publicSession.defaultPageId,
+                defaultGroupId: _publicSession._id,
+                defaultGroupName: _publicSession.name,
+                publicAccount: {
+                  _id: _publicSession._id,
+                  hasAuthenticatedAccess: _hasAuthenticatedAccess,
+                  belongsToGroup: _publicSession.belongsToGroup,
+                },
+                notifications: _publicSession.notifications ?? [],
               },
-              notifications: _publicSession.notifications ?? [],
             },
-          },
-        })
-        dbRef.readOnly = !_hasAuthenticatedAccess
+          })
+          dbRef.readOnly = !_hasAuthenticatedAccess
+        }
       } else {
         console.log('[SessionProvider] no public session')
         // if user has a default groupId in local storage, change url and retry session _init
@@ -221,7 +223,6 @@ const SessionProvider = ({
         }
       }
     }
-
     if (!state.sesson) {
       _init()
     }

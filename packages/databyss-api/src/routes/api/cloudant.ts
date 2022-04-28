@@ -46,11 +46,12 @@ router.post(
   async (req, res) => {
     // get user id
     const groupId = req.params.id
-    const { isPublic } = req.body.data
+    const { isPublic, preservePublic } = req.body.data
 
     const credentials = await setSecurity({
       groupId,
       isPublic,
+      preservePublic,
     })
 
     return res.json({ data: { credentials } }).status(200)

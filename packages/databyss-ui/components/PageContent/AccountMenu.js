@@ -21,7 +21,7 @@ const AccountMenu = () => {
   } = useNotifyContext()
   const logout = useSessionContext((c) => c && c.logout)
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const getPublicAccount = useSessionContext((c) => c && c.getPublicAccount)
   const [menuOpen, setMenuOpen] = useState(false)
 
   const onLogout = () => {
@@ -54,7 +54,7 @@ const AccountMenu = () => {
           },
         ]
 
-        if (isPublicAccount()) {
+        if (getPublicAccount()) {
           menuItems.unshift({
             icon: <LinkSvg />,
             label: 'Back to my Databyss',

@@ -2,7 +2,7 @@ import { REMOTE_CLOUDANT_URL } from '@databyss-org/data/pouchdb/db'
 import { getAccountFromLocation } from './utils'
 import request from '../lib/request'
 import { getPouchSecret } from './clientStorage'
-import { NotAuthorizedError } from '../interfaces'
+import { NetworkUnavailableError, NotAuthorizedError } from '../interfaces'
 import {
   createDatabaseCredentials,
   validateGroupCredentials,
@@ -50,10 +50,13 @@ export async function hasAuthenticatedAccess() {
     try {
       await createDatabaseCredentials({
         groupId: _groupId as string,
-        isPublic: false,
+        preservePublic: true,
       })
     } catch (_err) {
-      if (_err instanceof NotAuthorizedError) {
+      if (
+        _err instanceof NotAuthorizedError ||
+        _err instanceof NetworkUnavailableError
+      ) {
         return false
       }
       throw _err
@@ -68,13 +71,16 @@ export async function hasAuthenticatedAccess() {
         dbKey: _creds.dbKey,
       })
     } catch (_err) {
-      if (_err instanceof NotAuthorizedError) {
+      if (
+        _err instanceof NotAuthorizedError ||
+        _err instanceof NetworkUnavailableError
+      ) {
         return false
       }
       throw _err
     }
   }
-  return true
+  return _groupId
 }
 
 /*

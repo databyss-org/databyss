@@ -211,6 +211,7 @@ export const getGroupSession = async (
 ): Promise<Group | null> =>
   new Promise((resolve) => {
     if (!dbRef.current) {
+      console.log('[getGroupSession] no dbRef')
       resolve(null)
       return
     }
@@ -227,11 +228,13 @@ export const getGroupSession = async (
         },
       })
       if (!_response?.docs) {
+        console.log('[getGroupSession] no groups in local db')
         resolve(null)
         return
       }
       if (!_response.docs.length) {
         setTimeout(() => _getGroup(count + 1), 3000)
+        console.log('[getGroupSession] no groups in local db')
         return
       }
       resolve(_response.docs[0])

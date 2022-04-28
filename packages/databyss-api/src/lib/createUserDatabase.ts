@@ -143,9 +143,11 @@ const getSecurity = (groupId: string): Promise<{ [key: string]: string[] }> =>
 export const setSecurity = ({
   groupId,
   isPublic,
+  preservePublic,
 }: {
   groupId: string
   isPublic?: boolean
+  preservePublic?: boolean
 }): Promise<CredentialResponse> =>
   new Promise((resolve, reject) => {
     const _credentials = {
@@ -165,11 +167,14 @@ export const setSecurity = ({
 
       // define permissions for new credentials
 
-      // if page is public, allow read and replication permission
-      if (isPublic) {
-        security.nobody = ['_reader', '_replicator']
-      } else {
-        security.nobody = []
+      // if preservePublic is set, don't change permissions for public user
+      if (!preservePublic) {
+        // if page is public, allow read and replication permission
+        if (isPublic) {
+          security.nobody = ['_reader', '_replicator']
+        } else {
+          security.nobody = []
+        }
       }
 
       security[api.key] = ['_reader', '_writer', '_replicator']

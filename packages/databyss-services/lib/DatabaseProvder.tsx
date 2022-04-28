@@ -14,10 +14,6 @@ export const DatabaseProvider = ({ children }) => {
   const [isCouchMode, setCouchMode] = useState(false)
 
   const updateCouchMode = () => {
-    // console.log(
-    //   '[DatabaseProvider] updateCouchMode',
-    //   dbRef.current instanceof CouchDb
-    // )
     setCouchMode(dbRef.current instanceof CouchDb)
   }
 

@@ -181,7 +181,6 @@ export async function localStorageHasSession() {
 
     // if we're on a URL with a groupid on it, make sure it matches default group
     const groupIdFromUrl = getAccountFromLocation()
-
     if (
       !process.env.STORYBOOK &&
       groupIdFromUrl &&
