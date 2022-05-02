@@ -1,9 +1,7 @@
 import React, { ReactNode, useEffect, useRef } from 'react'
 import PouchDB from 'pouchdb'
-import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { getPouchSecret } from '@databyss-org/services/session/clientStorage'
 import { CouchDb } from '@databyss-org/data/couchdb-client/couchdb'
-import { LoadingFallback } from '@databyss-org/ui/components'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { validateGroupCredentials, createDatabaseCredentials } from './index'
@@ -25,19 +23,16 @@ const MAX_RETRIES = 10
 export const PageReplicator = ({
   children,
   pageId,
+  sharedWithGroups,
 }: {
   children: ReactNode
   pageId: string
+  sharedWithGroups: string[]
 }) => {
   const replicationsRef = useRef<PouchDB.Replication.Replication<any>[]>([])
-
   const replicationStatusRef = useRef<{ [key: string]: boolean }>({})
 
-  // get the groups from react-query
-  const groupsRes = useGroups()
-
   const { isOnline } = useNotifyContext()
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const getPublicAccount = useSessionContext((c) => c && c.getPublicAccount)
 
@@ -189,11 +184,12 @@ export const PageReplicator = ({
       !isOnline ||
       dbRef.current instanceof CouchDb ||
       isReadOnly ||
-      !groupsRes.isSuccess ||
+      !sharedWithGroups.length ||
       !pageId
     ) {
       return () => null
     }
+    // if we are on an authenticated group session, replicate to user collection
     if (getPublicAccount()?.hasAuthenticatedAccess) {
       const _replicateToGroupId = getPublicAccount().belongsToGroup
       console.log(
@@ -204,35 +200,19 @@ export const PageReplicator = ({
       if (!replicationStatusRef.current[_replicateToGroupId]) {
         validateAndStart({ groupId: _replicateToGroupId, isPublic: false })
       }
-    } else if (!isPublicAccount()) {
-      // find all public groups that contain this page
-      const groupsWithPage = Object.values(groupsRes.data!).filter(
-        (group) => group.public && group.pages.includes(pageId)
-      )
-      groupsWithPage.forEach((group) => {
-        console.log(
-          `[PageReplicator] starting public replication for ${group._id}`
-        )
-        // check if group is already replicating
-        if (!replicationStatusRef.current[group._id]) {
-          validateAndStart({ groupId: group._id, isPublic: true })
-        }
-      })
     }
+    // find all public groups that contain this page
+    sharedWithGroups.forEach((groupId) => {
+      console.log(`[PageReplicator] starting public replication for ${groupId}`)
+      // check if group is already replicating
+      if (!replicationStatusRef.current[groupId]) {
+        validateAndStart({ groupId, isPublic: true })
+      }
+    })
 
     // cancel the replications on unmount
     return cancelReplications
-  }, [
-    groupsRes.isSuccess,
-    JSON.stringify(groupsRes.data),
-    isOnline,
-    isReadOnly,
-    dbRef.current,
-  ])
-
-  if (!groupsRes.isSuccess) {
-    return <LoadingFallback queryObserver={groupsRes} />
-  }
+  }, [sharedWithGroups, isOnline, isReadOnly, dbRef.current])
 
   return <>{children}</>
 }

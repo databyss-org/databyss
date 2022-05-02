@@ -201,10 +201,12 @@ const upsertReplication = async ({
   groupId,
   dbKey,
   dbPassword,
+  filterSharedWithGroup,
 }: {
   groupId: string
   dbKey: string
   dbPassword: string
+  filterSharedWithGroup: boolean
 }) => {
   const opts = {
     retry: true,
@@ -216,24 +218,25 @@ const upsertReplication = async ({
 
   // console.log('[upsertReplication]', groupId)
 
-  const _findRes = await dbRef.current?.find({
-    selector: {
-      sharedWithGroups: {
-        $elemMatch: {
-          $eq: groupId,
+  const filterOpts: any = {}
+  if (filterSharedWithGroup) {
+    const _findRes = await dbRef.current?.find({
+      selector: {
+        sharedWithGroups: {
+          $elemMatch: {
+            $eq: groupId,
+          },
         },
       },
-    },
-  })
-
-  const _docIds = _findRes?.docs.map((doc) => doc._id)
-  // console.log('[upsertReplication] doc ids', _docIds)
+    })
+    filterOpts.doc_ids = _findRes?.docs.map((doc) => doc._id)
+  }
 
   // upsert replication
   dbRef
     .current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
       ...opts,
-      doc_ids: _docIds,
+      ...filterOpts,
       batch_size: 1000,
     })
     .on('error', MakePouchReplicationErrorHandler('[upsertReplication]'))
@@ -245,9 +248,13 @@ const upsertReplication = async ({
 export const replicateGroup = async ({
   groupId,
   isPublic,
+  preservePublic,
+  filterSharedWithGroup = true,
 }: {
   groupId: string
-  isPublic: boolean
+  isPublic?: boolean
+  preservePublic?: boolean
+  filterSharedWithGroup?: boolean
 }) => {
   try {
     // first check if credentials exist
@@ -259,6 +266,7 @@ export const replicateGroup = async ({
       await createDatabaseCredentials({
         groupId,
         isPublic,
+        preservePublic,
       })
 
       // credentials should be in local storage now
@@ -279,6 +287,7 @@ export const replicateGroup = async ({
       groupId,
       dbKey: creds.dbKey,
       dbPassword: creds.dbPassword,
+      filterSharedWithGroup,
     })
   } catch (err) {
     console.error(err)

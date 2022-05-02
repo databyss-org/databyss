@@ -201,7 +201,11 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         setLastBlockRendered,
       }}
     >
-      <PageReplicator key={pageId} pageId={pageId}>
+      <PageReplicator
+        key={pageId}
+        pageId={pageId}
+        sharedWithGroups={sharedWithGroupsRef.current ?? []}
+      >
         {children}
       </PageReplicator>
     </EditorPageContext.Provider>

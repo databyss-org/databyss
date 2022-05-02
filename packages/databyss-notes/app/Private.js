@@ -22,7 +22,7 @@ import {
   IndexPageContent,
   SearchContent,
 } from '@databyss-org/ui/modules'
-import { EditorPageProvider } from '@databyss-org/services'
+import { EditorPageProvider, IndexProvider } from '@databyss-org/services'
 
 const AppView = ({ children }) => (
   <View
@@ -43,9 +43,11 @@ const AppView = ({ children }) => (
 const Providers = ({ children }) => (
   <UserPreferencesProvider>
     <ExportProvider>
-      <SearchProvider>
-        <GestureProvider>{children}</GestureProvider>
-      </SearchProvider>
+      <IndexProvider>
+        <SearchProvider>
+          <GestureProvider>{children}</GestureProvider>
+        </SearchProvider>
+      </IndexProvider>
     </ExportProvider>
   </UserPreferencesProvider>
 )

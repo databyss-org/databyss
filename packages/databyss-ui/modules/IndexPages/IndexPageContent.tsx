@@ -14,6 +14,7 @@ import {
   useParams,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { useIndexContext } from '@databyss-org/services'
 import { Helmet } from 'react-helmet'
 import { useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { Block, BlockType, Source } from '@databyss-org/services/interfaces'
@@ -23,8 +24,6 @@ import {
   StickyHeader,
   TitleInput,
 } from '@databyss-org/ui/components'
-import { setTopic } from '@databyss-org/data/pouchdb/topics'
-import { setSource } from '@databyss-org/data/pouchdb/sources'
 import { CitationOutputTypes } from '@databyss-org/services/citations/constants'
 import {
   ScrollView,
@@ -77,12 +76,16 @@ export const IndexPageTitleInput = ({
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const [title, setTitle] = useState(getTitleFromBlock(block, path))
   const { navigate } = useNavigationContext()
-  const blocksRes = useBlocks(BlockType._ANY)
-  const pagesRes = usePages()
+  const { setTopic, setSource } = useIndexContext()
   const isSearch = path[0] === 'Search'
 
   useImperativeHandle(handlesRef, () => ({
-    updateTitle: (block: Block) => setTitle(getTitleFromBlock(block, path)),
+    updateTitle: (block: Block) => {
+      const _title = getTitleFromBlock(block, path)
+      if (_title !== title) {
+        setTitle(_title)
+      }
+    },
   }))
 
   useEffect(() => {
@@ -99,14 +102,11 @@ export const IndexPageTitleInput = ({
       switch (block!.type) {
         case BlockType.Topic:
           block!.text.textValue = value
-          setTopic(block!, { pages: pagesRes.data, blocks: blocksRes.data })
+          setTopic(block!)
           break
         case BlockType.Source:
           block!.text.textValue = value
-          setSource(block! as Source, {
-            pages: pagesRes.data,
-            blocks: blocksRes.data,
-          })
+          setSource(block! as Source)
           break
       }
     }, 3000),
@@ -235,6 +235,10 @@ export const IndexPageView = ({
       : block?.text.textValue
   useEffect(() => {
     if (block) {
+      // update title input
+      onUpdateBlock(block)
+
+      // update url slug
       const { nice } = getTokensFromPath()
       const niceName = urlSafeName(blockName!)
       if (!nice?.length) {

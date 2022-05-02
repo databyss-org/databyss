@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import colors from '@databyss-org/ui/theming/colors'
-import { setEmbed } from '@databyss-org/services/embeds/setEmbed'
 import { useOpenGraph } from '@databyss-org/data/pouchdb/hooks/useOpenGraph'
+import { useIndexContext } from '@databyss-org/services'
 import { BlockType, Embed } from '@databyss-org/services/interfaces/Block'
 
 export const UnfetchedMedia = ({ atomicId, src, highlight }) => {
   //   const blocksRes = useBlocks(BlockType.Embed)
   const graphRes = useOpenGraph(src)
+  const { setEmbed } = useIndexContext()
 
   useEffect(() => {
     if (graphRes.data) {

@@ -8,10 +8,8 @@ import {
 } from '@databyss-org/slate'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
-import { setSource } from '@databyss-org/services/sources'
-import { setEmbed } from '@databyss-org/services/embeds'
 import { setBlockRelations } from '@databyss-org/services/entries'
-import { setTopic } from '@databyss-org/data/pouchdb/topics'
+import { useIndexContext } from '@databyss-org/services'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { copyToClipboard } from '@databyss-org/ui/components/PageContent/PageMenu'
 import { useEditorContext } from '../state/EditorProvider'
@@ -53,7 +51,6 @@ import {
   enterAtEndOfInlineAtomic,
   onLinkBackspace,
 } from '../lib/inlineUtils'
-import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
 import { loadPage } from '../../databyss-services/editorPage'
 
 const ContentEditable = ({
@@ -66,11 +63,9 @@ const ContentEditable = ({
   sharedWithGroups,
   firstBlockIsTitle,
 }) => {
-  const blocksRes = useBlocks()
-  const pagesRes = usePages()
   const editorContext = useEditorContext()
   const { navigate } = useNavigationContext()
-
+  const { setTopic, setSource, setEmbed } = useIndexContext()
   const historyContext = useHistoryContext()
 
   const {
@@ -161,22 +156,12 @@ const ContentEditable = ({
         const _types = {
           SOURCE: () => {
             if (_data) {
-              window.requestAnimationFrame(() =>
-                setSource(_data, {
-                  pages: pagesRes.data,
-                  blocks: blocksRes.data,
-                })
-              )
+              window.requestAnimationFrame(() => setSource(_data))
             }
           },
           TOPIC: () => {
             if (_data) {
-              window.requestAnimationFrame(() =>
-                setTopic(_data, {
-                  pages: pagesRes.data,
-                  blocks: blocksRes.data,
-                })
-              )
+              window.requestAnimationFrame(() => setTopic(_data))
             }
           },
           EMBED: () => {

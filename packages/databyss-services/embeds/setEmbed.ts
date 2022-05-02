@@ -1,7 +1,5 @@
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { upsert } from '@databyss-org/data/pouchdb/utils'
-import { updateInlines } from '@databyss-org/editor/lib/inlineUtils/updateInlines'
-import { InlineTypes } from '../interfaces/Range'
 import { Embed, BlockType } from '../interfaces/Block'
 
 export const setEmbed = async (data: Embed) => {
@@ -20,11 +18,5 @@ export const setEmbed = async (data: Embed) => {
     doctype: DocumentType.Block,
     _id,
     doc: blockFields,
-  })
-
-  await updateInlines({
-    inlineType: InlineTypes.Embed,
-    text,
-    _id,
   })
 }

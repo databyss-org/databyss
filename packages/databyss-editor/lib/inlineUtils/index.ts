@@ -1,5 +1,4 @@
 export { setAtomicWithoutSuggestion } from './setAtomicWithoutSuggestion'
-export { updateInlines } from './updateInlines'
 export { enterAtEndOfInlineAtomic } from './enterAtEndOfInlineAtomic'
 export { onBakeInlineAtomic } from './onBakeInlineAtomic'
 export { onInlineKeyPress } from './onInlineKeyPress'

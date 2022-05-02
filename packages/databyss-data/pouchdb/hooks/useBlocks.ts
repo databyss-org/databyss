@@ -6,6 +6,7 @@ import { useDocuments } from './useDocuments'
 
 interface UseBlocksOptions extends QueryOptions {
   includeIds?: string[]
+  enabled?: boolean
 }
 
 export const useBlocks = (blockType: BlockType, options?: UseBlocksOptions) => {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-// import { setTopic } from '@databyss-org/services/topics'
-import { setEmbed } from '@databyss-org/services/embeds'
+import { useIndexContext } from '@databyss-org/services'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
@@ -28,6 +27,7 @@ const EmbedModal = ({ refId, visible, onUpdate, id }) => {
   })
   const [values, setValues] = useState<null | Embed>(null)
   const { hideModal } = useNavigationContext()
+  const { setEmbed } = useIndexContext()
 
   const onBlur = () => {
     if (values && values.text.textValue.length) {

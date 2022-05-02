@@ -5,14 +5,14 @@ import {
   Page,
   Text,
 } from '@databyss-org/services/interfaces/'
-import { replicateSharedPage } from '@databyss-org/data/pouchdb/groups'
+import { replicateGroup } from '@databyss-org/data/pouchdb/groups'
 import {
   DocumentType,
   DocumentCacheDict,
 } from '@databyss-org/data/pouchdb/interfaces'
 import { findOne, getDocument, upsert } from '@databyss-org/data/pouchdb/utils'
 import { InlineTypes } from '@databyss-org/services/interfaces/Range'
-import { replaceInlineText } from '../../state/util'
+import { replaceInlineText } from '@databyss-org/editor/state/util'
 
 /**
  * Get the BlockRelations doc for this topic,
@@ -23,11 +23,13 @@ export const updateInlines = async ({
   text,
   _id,
   caches,
+  publicAccount,
 }: {
   inlineType: InlineTypes
   text: Text
   _id: string
   caches?: DocumentCacheDict
+  publicAccount: any
 }) => {
   const _relation = await findOne<BlockRelation>({
     doctype: DocumentType.BlockRelation,
@@ -92,7 +94,28 @@ export const updateInlines = async ({
     }
   }
 
-  // update all replicated pages related to topic
-  const pagesWhereAtomicExists: string[] = _relation.pages
-  replicateSharedPage(pagesWhereAtomicExists)
+  // replicate to other collections that have this relation
+  console.log(
+    '[updateInlines] relation.sharedWithGroups',
+    _relation.sharedWithGroups
+  )
+  if (_relation.sharedWithGroups?.length) {
+    for (const groupId of _relation.sharedWithGroups) {
+      replicateGroup({ groupId, preservePublic: true })
+    }
+  }
+
+  // if we are on an authenticated group session, replicate to user collection
+  if (publicAccount?.hasAuthenticatedAccess) {
+    const _replicateToGroupId = publicAccount?.belongsToGroup
+    console.log(
+      '[updateInlines] replicate back to parent group',
+      _replicateToGroupId
+    )
+    // check if group is already replicating
+    replicateGroup({
+      groupId: _replicateToGroupId,
+      filterSharedWithGroup: false,
+    })
+  }
 }
