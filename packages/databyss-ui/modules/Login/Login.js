@@ -8,7 +8,7 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import GoogleLoginButton from '@databyss-org/ui/components/Login/GoogleLoginButton'
 import { NotAuthorizedError } from '@databyss-org/services/interfaces'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import Navbar from '@databyss-org/ui/modules/Homepage/Hero/Navbar'
+import Navbar from '../../../databyss-homepage/modules/Homepage/Hero/Navbar'
 
 const initialFormState = {
   email: {

@@ -1,11 +1,11 @@
 import React from 'react'
 import { View } from '@databyss-org/ui/primitives'
-import Hero from '@databyss-org/ui/modules/Homepage/Hero/Hero'
-import HighlightedFeature from '@databyss-org/ui/modules/Homepage/Features/HighlightedFeature'
-import Feature from '@databyss-org/ui/modules/Homepage/Features/Feature'
-import FAQ from '@databyss-org/ui/modules/Homepage/FAQ/FAQ'
-import homepageContent from '@databyss-org/ui/modules/Homepage/homepageContent.json'
-import { Footer } from './Footer/Footer'
+import Hero from './Hero/Hero'
+import HighlightedFeature from './Features/HighlightedFeature'
+import Feature from './Features/Feature'
+import FAQ from './FAQ/FAQ'
+import homepageContent from './homepageContent.json'
+import { Footer } from '../../components/Footer/Footer'
 
 const Homepage = () => (
   <View minHeight="100vh" width="100%" backgroundColor="background.1">

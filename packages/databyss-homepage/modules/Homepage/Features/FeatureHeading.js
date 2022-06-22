@@ -1,10 +1,7 @@
 import React from 'react'
 import { Text, View } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import {
-  featureContentMaxHeight,
-  featureHeadingMaxWidth,
-} from '@databyss-org/ui/modules/Homepage/Features/Feature'
+import { featureContentMaxHeight, featureHeadingMaxWidth } from './Feature'
 
 const FeatureHeading = ({
   title,

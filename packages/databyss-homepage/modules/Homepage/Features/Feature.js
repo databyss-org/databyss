@@ -1,11 +1,11 @@
 import React from 'react'
 import { View } from '@databyss-org/ui/primitives'
-import FeatureHeading from '@databyss-org/ui/modules/Homepage/Features/FeatureHeading'
-import FeatureImg from '@databyss-org/ui/modules/Homepage/Features/FeatureImg'
 import { useMediaQuery } from 'react-responsive'
 import breakpoints from '@databyss-org/ui/theming/responsive'
 import { pxUnits, borderRadius } from '@databyss-org/ui/theming/views'
 import Markdown from '@databyss-org/ui/components/Util/Markdown'
+import FeatureHeading from './FeatureHeading'
+import FeatureImg from './FeatureImg'
 
 export const featureContentMaxWidth = pxUnits(1200)
 export const featureContentMaxHeight = pxUnits(560)

@@ -8,5 +8,9 @@
     "react": "16.9.0",
     "react-dom": "16.9.0",
     "react-helmet": "^6.1.0"
+  },
+  "dependencies": {
+    "react-router-dom": "6.2.2",
+    "react-responsive": "^8.1.0"
   }
 }

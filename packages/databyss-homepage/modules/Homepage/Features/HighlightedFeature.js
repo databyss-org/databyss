@@ -1,11 +1,11 @@
 import React from 'react'
 import { View } from '@databyss-org/ui/primitives'
 import { borderRadius } from '@databyss-org/ui/theming/views'
-import FeatureHeading from '@databyss-org/ui/modules/Homepage/Features/FeatureHeading'
-import FeatureImg from '@databyss-org/ui/modules/Homepage/Features/FeatureImg'
-import { featureContentMaxWidth } from '@databyss-org/ui/modules/Homepage/Features/Feature'
 import Markdown from '@databyss-org/ui/components/Util/Markdown'
-import { SectionView } from '../util'
+import FeatureHeading from './FeatureHeading'
+import FeatureImg from './FeatureImg'
+import { featureContentMaxWidth } from './Feature'
+import { SectionView } from '../../../components/SectionView'
 
 const HighlightedFeature = ({
   backgroundColor,

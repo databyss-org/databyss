@@ -3,9 +3,9 @@ import { View, Text, Button, Grid } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import breakpoints from '@databyss-org/ui/theming/responsive'
 import { useMediaQuery } from 'react-responsive'
-import Navbar from '@databyss-org/ui/modules/Homepage/Hero/Navbar'
-import MobileOnly from '../../../components/Responsive/MobileOnly'
-import TabletOnly from '../../../components/Responsive/TabletOnly'
+import MobileOnly from '@databyss-org/ui/components/Responsive/MobileOnly'
+import TabletOnly from '@databyss-org/ui/components/Responsive/TabletOnly'
+import Navbar from './Navbar'
 
 const Hero = ({
   logoSrc,

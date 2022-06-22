@@ -7,9 +7,9 @@ import {
   Icon,
 } from '@databyss-org/ui/primitives'
 import { darkTheme } from '@databyss-org/ui/theming/theme'
-import footerContent from '@databyss-org/ui/modules/Homepage/Footer/footerContent.json'
 import LogoSvg from '@databyss-org/ui/assets/logo-thick.svg'
-import { SectionView } from '../util'
+import { SectionView } from '../SectionView'
+import footerContent from './footerContent.json'
 
 export const Footer = () => (
   <View theme={darkTheme} backgroundColor="background.1">
