@@ -1,6 +1,6 @@
 [
   {
-    "content": "The Databyss Foundation, Inc. is a 501(c)(3) charitable organization committed to the advancement of the Digital Humanities.",
+    "content": "The Databyss Foundation is a 501(c)(3) charitable organization committed to building and maintaining an open and equitable infrastructure for the advancement of those working in the humanities and digital humanities.",
     "sections": [
       {
         "title": "Databyss",
@@ -19,15 +19,18 @@
           },
           {
             "name": "User Guide",
-            "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511"
+            "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511",
+            "target": "_blank"
           },
           {
             "name": "FAQ",
-            "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511/pages/5iz4lsgfm0a4cx/faq"
+            "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511/pages/5iz4lsgfm0a4cx/faq",
+            "target": "_blank"
           },
           {
             "name": "Support (Discord)",
-            "route": "https://discord.gg/jyQVawQM2Q"
+            "route": "https://discord.gg/jyQVawQM2Q",
+            "target": "_blank"
           }
         ]
       },
@@ -52,7 +55,8 @@
           },
           {
             "name": "Donate",
-            "route": "https://databyss.org/donate"
+            "route": "https://donorbox.org/the-databyss-foundation",
+            "className": "custom-dbox-popup"
           }
         ]
       },

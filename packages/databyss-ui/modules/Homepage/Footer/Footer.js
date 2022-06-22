@@ -57,6 +57,8 @@ export const Footer = () => (
                 key={`footer_item_${section.title}_${item.name}`}
                 href={item.route}
                 mt="small"
+                {...(item.className ? { className: 'custom-dbox-popup' } : {})}
+                {...(item.target ? { target: item.target } : {})}
               >
                 <Text variant="uiTextSmall" color="text.1">
                   {item.name}

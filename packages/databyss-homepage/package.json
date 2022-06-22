@@ -6,6 +6,7 @@
     "@databyss-org/services": "2.5.4",
     "@databyss-org/ui": "2.5.4",
     "react": "16.9.0",
-    "react-dom": "16.9.0"
+    "react-dom": "16.9.0",
+    "react-helmet": "^6.1.0"
   }
 }
