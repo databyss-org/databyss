@@ -8,7 +8,7 @@ import {
   featureContentMaxWidth,
   featureHeadingMaxWidth,
 } from '../Features/Feature'
-import { SectionView } from '../../../components/SectionView'
+import { SectionView } from '../SectionView'
 
 const Question = ({ question }) => (
   <Text variant="uiTextLargeSemibold" color="text.1" mb="em">

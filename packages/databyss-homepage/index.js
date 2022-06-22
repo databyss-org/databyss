@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from '@databyss-org/ui/theming'
-import Homepage from './modules/Homepage/Homepage'
+import { Homepage } from './modules/Homepage/Homepage'
+import { Foundation } from './modules/Foundation/Foundation'
 
 const globalStyles = () => ({
   '& a, & a:visited': {
@@ -16,7 +17,7 @@ ReactDOM.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Homepage />} />
-        {/* <Route path="/foundation" element={<Homepage />} /> */}
+        <Route path="/foundation" element={<Foundation />} />
       </Routes>
     </BrowserRouter>
     <Helmet>

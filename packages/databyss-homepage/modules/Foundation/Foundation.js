@@ -4,12 +4,12 @@ import Hero from '../../components/Hero/Hero'
 import HighlightedFeature from '../../components/Features/HighlightedFeature'
 import Feature from '../../components/Features/Feature'
 import FAQ from '../../components/FAQ/FAQ'
-import homepageContent from './homepageContent.json'
+import foundationContent from './foundationContent.json'
 import { Footer } from '../../components/Footer/Footer'
 
-export const Homepage = () => (
+export const Foundation = () => (
   <View minHeight="100vh" width="100%" backgroundColor="background.1">
-    {homepageContent.sections.map((section) => {
+    {foundationContent.sections.map((section) => {
       if (section.component === 'Hero') {
         return (
           <Hero

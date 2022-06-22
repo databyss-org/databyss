@@ -1,0 +1,93 @@
+{
+  "title": "Databyss Foundation",
+  "meta": [
+    {
+      "name": "description",
+      "content": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word processor."
+    }
+  ],
+  "sections": [
+    {
+      "component": "Hero",
+      "backgroundImgSrc": "/homepage/stone_bg.jpg",
+      "logoSrc": "/homepage/logo-thick.png",
+      "title": "Databyss Foundation",
+      "headline": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word processor.",
+      "ctaButtons": [
+        {
+          "text": "Get Started",
+          "href": "https://app.databyss.org/signup",
+          "tabletOnly": "true"
+        },
+        {
+          "text": "Login",
+          "href": "https://app.databyss.org/",
+          "mobileOnly": "true"
+        }
+      ],
+      "navLinks": [
+        {
+          "name": "User Guide",
+          "route": "https://app.databyss.org/g_7v9n4vjx2h7511",
+          "target": "_blank"
+        },
+        {
+          "name": "Discord",
+          "route": "https://discord.gg/jyQVawQM2Q",
+          "target": "_blank"
+        },
+        {
+          "name": "GitHub",
+          "route": "https://github.com/databyss-org/databyss",
+          "target": "_blank",
+          "tabletOnly": true
+        },
+        {
+          "separator": true,
+          "tabletOnly": true
+        },
+        {
+          "name": "Sign Up",
+          "route": "https://app.databyss.org/signup",
+          "tabletOnly": true
+        },
+        {
+          "name": "Log in",
+          "route": "https://app.databyss.org/",
+          "tabletOnly": true
+        }
+      ]
+    },
+    {
+      "component": "HighlightedFeature",
+      "videoSrc": "/homepage/homepage_video.mp4",
+      "imgHasBoxShadow": true,
+      "title": "The Basics",
+      "description": "Databyss gives you the freedom to organize notes hierarchically (as a long stream of thought) or to build a network of associations by linking sections of your work to sources, topics, and authors."
+    },
+    {
+      "component": "DefaultFeature",
+      "videoSrc": "/homepage/pdf_annotations.mp4",
+      "title": "Import PDF Annotations",
+      "description": "Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them."
+    },
+    {
+      "component": "DualBgFeature",
+      "leftBgColor": "purple.4",
+      "rightBgColor": "purple.5",
+      "imgSrc": "/homepage/sources_dropdown.png",
+      "imgAlt": "Dropdown menu when searching for sources",
+      "imgMaxHeight": "260px",
+      "title": "Add Sources",
+      "description": "To add a new source and find the bibliographical data of the text you are annotating, press @ on a new line to search using Open Library, Google Books, and Crossref."
+    },
+    {
+      "component": "DefaultFeature",
+      "imgSrc": "/homepage/search_feature.png",
+      "imgAlt": "Example of a search result",
+      "imgHasBoxShadow": true,
+      "title": "Search Your Notes",
+      "description": "Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases."
+    }
+  ]
+}

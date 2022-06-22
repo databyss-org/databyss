@@ -7,7 +7,7 @@
         "items": [
           {
             "name": "About Databyss",
-            "route": "https://databyss.org/"
+            "route": "/"
           },
           {
             "name": "Login",
@@ -39,19 +39,19 @@
         "items": [
           {
             "name": "About Databyss Foundation",
-            "route": "https://databyss.org/foundation"
+            "route": "/foundation"
           },
           {
             "name": "Projects",
-            "route": "https://databyss.org/foundation#projects"
+            "route": "/foundation#projects"
           },
           {
             "name": "Team",
-            "route": "https://databyss.org/foundation#team"
+            "route": "/foundation#team"
           },
           {
             "name": "Story",
-            "route": "https://databyss.org/foundation#story"
+            "route": "/foundation#story"
           },
           {
             "name": "Donate",

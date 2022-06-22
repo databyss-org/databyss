@@ -5,7 +5,7 @@ import Markdown from '@databyss-org/ui/components/Util/Markdown'
 import FeatureHeading from './FeatureHeading'
 import FeatureImg from './FeatureImg'
 import { featureContentMaxWidth } from './Feature'
-import { SectionView } from '../../../components/SectionView'
+import { SectionView } from '../SectionView'
 
 const HighlightedFeature = ({
   backgroundColor,
