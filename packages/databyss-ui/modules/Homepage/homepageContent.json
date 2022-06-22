@@ -10,7 +10,7 @@
     {
       "component": "Hero",
       "backgroundImgSrc": "/homepage/stone_bg.jpg",
-      "logoSrc": "/homepage/logo_new.png",
+      "logoSrc": "/homepage/logo-thick.png",
       "title": "Databyss",
       "headline": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word processor.",
       "ctaButtons": [
@@ -90,19 +90,71 @@
       "description": "Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases."
     },
     {
-      "component": "DualBgFeature",
-      "imgSrc": "/homepage/messy_notes.jpg",
-      "imgAlt": "Messy notes",
-      "leftBgColor": "background.2",
-      "rightBgColor": "background.3",
-      "alignContent": "flex-start",
-      "title": "About Databyss",
-      "description": [
-        "“Three years ago, I began reading and annotating the work of the philosopher Jacques Derrida—commonly referred to as the father of deconstruction. I started filling so many blank pages that I realized, with dismay, that it was going to be extremely hard for me or anyone else to retrace my steps and find my notes useful.",
-        "“I decided to transcribe my notes onto a word-processor so that they would be searchable. I soon (well, not *so* soon) had written a 2500 page (single-spaced!) document. I was able to search it by pressing COMMAND+F, but this was very limiting. So, I began looking for software that would allow for deeper, more meaningful searches.",
-        "“At the same time, I began adding more authors to my annotation project, so I now needed a precise bibliography for my notes. Apps like Zotero and Mendeley are great for this, and while they support notes, they force them into bibliographic buckets and are not the \"writing tool\" I was looking for. It seemed there was no suitable application, so I continued to use a word-processor in spite of its limitations.",
-        "“I shared these limitations with Paul, who had helped me build [returntocinder.com](https://returntocinder.com), a web version of my Derrida notes. After months of discussions, we conceived of *Databyss*, a simple word-processor application with powerful organization and search features. Even in its beta form, I already use *Databyss* for all my annotation projects, for my class notes, and for basic everyday lists. Paul and I hope you will find it equally versatile and useful for your own projects.”",
-        "——Jake Reeder, Ph.D."
+      "component": "Footer",
+      "sections": [
+        {
+          "title": "Databyss",
+          "items": [
+            {
+              "name": "About",
+              "route": "https://databyss.org/"
+            },
+            {
+              "name": "Login",
+              "route": "https://app.databyss.org/"
+            },
+            {
+              "name": "Signup",
+              "route": "https://app.databyss.org/"
+            },
+            {
+              "name": "User Guide",
+              "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511"
+            },
+            {
+              "name": "FAQ",
+              "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511/pages/5iz4lsgfm0a4cx/faq"
+            }
+          ]
+        },
+        {
+          "title": "Databyss Foundation",
+          "items": [
+            {
+              "name": "About",
+              "route": "https://databyss.org/foundation"
+            },
+            {
+              "name": "Projects",
+              "route": "https://databyss.org/foundation#projects"
+            },
+            {
+              "name": "Team",
+              "route": "https://databyss.org/foundation#team"
+            },
+            {
+              "name": "Story",
+              "route": "https://databyss.org/foundation#story"
+            },
+            {
+              "name": "Donate",
+              "route": "https://databyss.org/donate"
+            }
+          ]
+        },
+        {
+          "title": "Other",
+          "items": [
+            {
+              "name": "Terms of use",
+              "route": "https://databyss.org/terms"
+            },
+            {
+              "name": "Privacy policy",
+              "route": "https://databyss.org/privacy"
+            }
+          ]
+        }
       ]
     }
   ]

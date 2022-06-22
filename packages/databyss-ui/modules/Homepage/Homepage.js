@@ -5,6 +5,7 @@ import HighlightedFeature from '@databyss-org/ui/modules/Homepage/Features/Highl
 import Feature from '@databyss-org/ui/modules/Homepage/Features/Feature'
 import FAQ from '@databyss-org/ui/modules/Homepage/FAQ/FAQ'
 import homepageContent from '@databyss-org/ui/modules/Homepage/homepageContent.json'
+import { Footer } from './Footer/Footer'
 
 const Homepage = () => (
   <View minHeight="100vh" width="100%" backgroundColor="background.1">
@@ -78,6 +79,7 @@ const Homepage = () => (
       }
       return null
     })}
+    <Footer />
   </View>
 )
 

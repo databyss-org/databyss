@@ -1,0 +1,74 @@
+[
+  {
+    "content": "The Databyss Foundation, Inc. is a 501(c)(3) charitable organization committed to the advancement of the Digital Humanities.",
+    "sections": [
+      {
+        "title": "Databyss",
+        "items": [
+          {
+            "name": "About Databyss",
+            "route": "https://databyss.org/"
+          },
+          {
+            "name": "Login",
+            "route": "https://app.databyss.org/"
+          },
+          {
+            "name": "Signup",
+            "route": "https://app.databyss.org/"
+          },
+          {
+            "name": "User Guide",
+            "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511"
+          },
+          {
+            "name": "FAQ",
+            "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511/pages/5iz4lsgfm0a4cx/faq"
+          },
+          {
+            "name": "Support (Discord)",
+            "route": "https://discord.gg/jyQVawQM2Q"
+          }
+        ]
+      },
+      {
+        "title": "Databyss Foundation",
+        "items": [
+          {
+            "name": "About Databyss Foundation",
+            "route": "https://databyss.org/foundation"
+          },
+          {
+            "name": "Projects",
+            "route": "https://databyss.org/foundation#projects"
+          },
+          {
+            "name": "Team",
+            "route": "https://databyss.org/foundation#team"
+          },
+          {
+            "name": "Story",
+            "route": "https://databyss.org/foundation#story"
+          },
+          {
+            "name": "Donate",
+            "route": "https://databyss.org/donate"
+          }
+        ]
+      },
+      {
+        "title": "Other",
+        "items": [
+          {
+            "name": "Terms of use",
+            "route": "https://databyss.org/terms"
+          },
+          {
+            "name": "Privacy policy",
+            "route": "https://databyss.org/privacy"
+          }
+        ]
+      }
+    ]
+  }
+]
