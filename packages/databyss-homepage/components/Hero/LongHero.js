@@ -7,6 +7,7 @@ import TabletOnly from '@databyss-org/ui/components/Responsive/TabletOnly'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import Navbar from '../Navbar'
 import { HeroView } from './HeroView'
+import Markdown from '@databyss-org/ui/components/Util/Markdown'
 
 export const LongHero = ({
   logoSrc,
@@ -41,12 +42,13 @@ export const LongHero = ({
       <View
         alignItems="center"
         mt={isMobile ? 'large' : 'largest'}
+        pt={isMobile ? 'none' : 'large'}
         widthVariant="page"
       >
         <Grid singleRow columnGap={isMobile ? 'tiny' : 'extraLarge'}>
           <View flex="1" minWidth={pxUnits(300)} maxWidth="80%" pb="large">
             <Text variant="uiTextMediumLong" color="text.5">
-              {headline}
+              <Markdown source={headline} />
             </Text>
           </View>
           <View>

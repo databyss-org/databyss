@@ -9,25 +9,31 @@ const FeatureImg = ({
   width,
   height,
   imgHasBoxShadow,
-}) => (
-  <>
-    {imgSrc && (
-      <img
-        src={imgSrc}
-        alt={imgAlt}
-        width={width}
-        height={height}
-        css={{
-          alignSelf: 'center',
-          boxShadow: imgHasBoxShadow && theme.buttonShadow.boxShadow,
-          borderRadius,
-          maxWidth: '100%',
-          maxHeight: maxHeight || '100%',
-        }}
-      />
-    )}
-  </>
-)
+  ...others
+}) => {
+  const { css, ...imgProps } = others
+  return (
+    <>
+      {imgSrc && (
+        <img
+          src={imgSrc}
+          alt={imgAlt}
+          width={width}
+          height={height}
+          css={{
+            alignSelf: 'center',
+            boxShadow: imgHasBoxShadow && theme.buttonShadow.boxShadow,
+            borderRadius,
+            maxWidth: '100%',
+            maxHeight: maxHeight || '100%',
+            ...css,
+          }}
+          {...imgProps}
+        />
+      )}
+    </>
+  )
+}
 
 FeatureImg.defaultProps = {
   height: 'auto',

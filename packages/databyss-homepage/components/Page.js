@@ -4,14 +4,20 @@ import { Hero } from './Hero/Hero'
 import { LongHero } from './Hero/LongHero'
 import HighlightedFeature from './Features/HighlightedFeature'
 import Feature from './Features/Feature'
+import { LongFeature } from './Features/LongFeature'
 import FAQ from './FAQ'
 import { Footer } from './Footer'
+import { SectionHeading } from './SectionHeading'
+import { SectionSeparator } from './SectionSeparator'
 
 const componentMap = {
   Hero,
   LongHero,
   HighlightedFeature,
   FAQ,
+  SectionHeading,
+  SectionSeparator,
+  LongFeature,
   DefaultFeature: Feature,
   DualBgFeature: Feature,
 }
