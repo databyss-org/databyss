@@ -13,6 +13,7 @@ export const featureHeadingMaxWidth = pxUnits(560)
 
 const Feature = ({
   title,
+  anchor,
   description,
   leftBgColor,
   rightBgColor,
@@ -83,6 +84,7 @@ const Feature = ({
               px={isDesktop ? 'extraLarge' : 'medium'}
             >
               <FeatureHeading
+                anchor={anchor}
                 title={title}
                 description={formatDescriptionText(description)}
                 descriptionColor={

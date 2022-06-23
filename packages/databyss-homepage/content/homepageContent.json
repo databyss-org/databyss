@@ -1,5 +1,5 @@
 {
-  "title": "Databyss Foundation",
+  "title": "Databyss",
   "meta": [
     {
       "name": "description",
@@ -11,7 +11,7 @@
       "component": "Hero",
       "backgroundImgSrc": "/homepage/stone_bg.jpg",
       "logoSrc": "/homepage/logo-thick.png",
-      "title": "Databyss Foundation",
+      "title": "Databyss",
       "headline": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word processor.",
       "ctaButtons": [
         {

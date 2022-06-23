@@ -1,5 +1,5 @@
 {
-  "title": "Databyss",
+  "title": "Databyss Foundation",
   "meta": [
     {
       "name": "description",
@@ -11,7 +11,7 @@
       "component": "Hero",
       "backgroundImgSrc": "/homepage/stone_bg.jpg",
       "logoSrc": "/homepage/logo-thick.png",
-      "title": "Databyss",
+      "title": "Databyss Foundation",
       "headline": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word processor.",
       "ctaButtons": [
         {
@@ -68,7 +68,8 @@
     {
       "component": "DefaultFeature",
       "videoSrc": "/homepage/pdf_annotations.mp4",
-      "title": "Import PDF Annotations",
+      "title": "Projects",
+      "anchor": "projects",
       "description": "Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them."
     },
     {
@@ -88,74 +89,6 @@
       "imgHasBoxShadow": true,
       "title": "Search Your Notes",
       "description": "Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases."
-    },
-    {
-      "component": "Footer",
-      "sections": [
-        {
-          "title": "Databyss",
-          "items": [
-            {
-              "name": "About",
-              "route": "https://databyss.org/"
-            },
-            {
-              "name": "Login",
-              "route": "https://app.databyss.org/"
-            },
-            {
-              "name": "Signup",
-              "route": "https://app.databyss.org/"
-            },
-            {
-              "name": "User Guide",
-              "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511"
-            },
-            {
-              "name": "FAQ",
-              "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511/pages/5iz4lsgfm0a4cx/faq"
-            }
-          ]
-        },
-        {
-          "title": "Databyss Foundation",
-          "items": [
-            {
-              "name": "About",
-              "route": "https://databyss.org/foundation"
-            },
-            {
-              "name": "Projects",
-              "route": "https://databyss.org/foundation#projects"
-            },
-            {
-              "name": "Team",
-              "route": "https://databyss.org/foundation#team"
-            },
-            {
-              "name": "Story",
-              "route": "https://databyss.org/foundation#story"
-            },
-            {
-              "name": "Donate",
-              "route": "https://databyss.org/donate"
-            }
-          ]
-        },
-        {
-          "title": "Other",
-          "items": [
-            {
-              "name": "Terms of use",
-              "route": "https://databyss.org/terms"
-            },
-            {
-              "name": "Privacy policy",
-              "route": "https://databyss.org/privacy"
-            }
-          ]
-        }
-      ]
     }
   ]
 }

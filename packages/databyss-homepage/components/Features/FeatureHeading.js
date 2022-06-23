@@ -5,14 +5,17 @@ import { featureContentMaxHeight, featureHeadingMaxWidth } from './Feature'
 
 const FeatureHeading = ({
   title,
+  anchor,
   description,
   descriptionColor,
   textAlign,
 }) => (
   <View maxWidth={featureHeadingMaxWidth}>
-    <Text variant="heading3" color="text.1" mb="medium" textAlign={textAlign}>
-      {title}
-    </Text>
+    <a name={anchor ?? title}>
+      <Text variant="heading3" color="text.1" mb="medium" textAlign={textAlign}>
+        {title}
+      </Text>
+    </a>
     {description && (
       <View
         overflowY="auto"
