@@ -5,31 +5,22 @@ import breakpoints from '@databyss-org/ui/theming/responsive'
 import { useMediaQuery } from 'react-responsive'
 import MobileOnly from '@databyss-org/ui/components/Responsive/MobileOnly'
 import TabletOnly from '@databyss-org/ui/components/Responsive/TabletOnly'
-import Navbar from './Navbar'
+import Navbar from '../Navbar'
+import { HeroView } from './HeroView'
 
-const Hero = ({
+export const Hero = ({
   logoSrc,
   title,
   headline,
   ctaButtons,
-  backgroundImgSrc,
-  backgroundColor,
   navLinks,
+  ...others
 }) => {
   const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
   const isMobile = useMediaQuery({ maxWidth: breakpoints.mobile })
 
   return (
-    <View
-      p="large"
-      pb={isMobile ? 'extraLarge' : 'largest'}
-      width="100%"
-      alignItems="center"
-      css={{
-        backgroundColor,
-        background: backgroundImgSrc && `url(${backgroundImgSrc})`,
-      }}
-    >
+    <HeroView {...others}>
       <TabletOnly>
         <Navbar navLinks={navLinks} />
       </TabletOnly>
@@ -39,14 +30,16 @@ const Hero = ({
         widthVariant="headline"
       >
         <View flexDirection="row" alignItems="center" mb="large">
-          <View mr="em">
-            <img
-              src={logoSrc}
-              width={isTablet ? pxUnits(72) : pxUnits(64)}
-              height="auto"
-              alt="Logo"
-            />
-          </View>
+          {logoSrc && (
+            <View mr="em">
+              <img
+                src={logoSrc}
+                width={isTablet ? pxUnits(72) : pxUnits(64)}
+                height="auto"
+                alt={title}
+              />
+            </View>
+          )}
           <Text
             variant={isTablet ? 'heading1' : 'heading2'}
             color="text.6"
@@ -93,8 +86,6 @@ const Hero = ({
           <Navbar navLinks={navLinks} />
         </MobileOnly>
       </View>
-    </View>
+    </HeroView>
   )
 }
-
-export default Hero

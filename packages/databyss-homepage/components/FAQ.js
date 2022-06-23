@@ -3,12 +3,12 @@ import { View, Text } from '@databyss-org/ui/primitives'
 import { useMediaQuery } from 'react-responsive'
 import breakpoints from '@databyss-org/ui/theming/responsive'
 import Markdown from '@databyss-org/ui/components/Util/Markdown'
-import FeatureHeading from '../Features/FeatureHeading'
+import FeatureHeading from './Features/FeatureHeading'
 import {
   featureContentMaxWidth,
   featureHeadingMaxWidth,
-} from '../Features/Feature'
-import { SectionView } from '../SectionView'
+} from './Features/Feature'
+import { SectionView } from './SectionView'
 
 const Question = ({ question }) => (
   <Text variant="uiTextLargeSemibold" color="text.1" mb="em">

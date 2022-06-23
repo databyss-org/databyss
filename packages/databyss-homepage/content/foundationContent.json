@@ -3,58 +3,42 @@
   "meta": [
     {
       "name": "description",
-      "content": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word processor."
+      "content": "The Databyss Foundation is a nonprofit organization committed to building and maintaining an open and equitable infrastructure for the advancement of those working in the humanities and digital humanities."
     }
   ],
   "sections": [
     {
-      "component": "Hero",
+      "component": "LongHero",
       "backgroundImgSrc": "/homepage/stone_bg.jpg",
       "logoSrc": "/homepage/logo-thick.png",
-      "title": "Databyss Foundation",
-      "headline": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word processor.",
+      "headline": "The Databyss Foundation is a nonprofit organization committed to building and maintaining an open and equitable infrastructure for the advancement of those working in the humanities and digital humanities. We primarily develop Databyss, a free application for writing scholarly notes and documents. We also host the growing library of indexed, cross-referenced collections that Databyss users have published. To keep our technology and services free of charge, all of this is funded by the generous donations of individuals and organizations. We encourage anyone to participate if they share our commitment to making humanities research accessible through innovative software and services.",
       "ctaButtons": [
         {
-          "text": "Get Started",
-          "href": "https://app.databyss.org/signup",
-          "tabletOnly": "true"
-        },
-        {
-          "text": "Login",
-          "href": "https://app.databyss.org/",
-          "mobileOnly": "true"
+          "text": "🔒 Donate now",
+          "href": "https://donorbox.org/the-databyss-foundation",
+          "className": "custom-dbox-popup"
         }
       ],
       "navLinks": [
         {
-          "name": "User Guide",
-          "route": "https://app.databyss.org/g_7v9n4vjx2h7511",
-          "target": "_blank"
+          "name": "Projects",
+          "route": "#projects"
         },
         {
-          "name": "Discord",
-          "route": "https://discord.gg/jyQVawQM2Q",
-          "target": "_blank"
+          "name": "Team",
+          "route": "#team"
         },
         {
-          "name": "GitHub",
-          "route": "https://github.com/databyss-org/databyss",
-          "target": "_blank",
-          "tabletOnly": true
+          "name": "Story",
+          "route": "#story"
         },
         {
-          "separator": true,
-          "tabletOnly": true
+          "separator": true
         },
         {
-          "name": "Sign Up",
-          "route": "https://app.databyss.org/signup",
-          "tabletOnly": true
-        },
-        {
-          "name": "Log in",
-          "route": "https://app.databyss.org/",
-          "tabletOnly": true
+          "name": "🔒 Donate",
+          "route": "https://donorbox.org/the-databyss-foundation",
+          "className": "custom-dbox-popup"
         }
       ]
     },

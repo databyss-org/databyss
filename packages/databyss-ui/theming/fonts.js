@@ -79,6 +79,11 @@ const uiTextVariants = {
   uiTextLarge: uiText(22),
   uiTextMedium: uiText(18),
   uiTextNormal: uiText(16),
+  uiTextMediumLong: {
+    ...uiText(18),
+    fontWeight: 300,
+    lineHeight: pxUnits(28),
+  },
   uiTextMultiline: {
     ...uiText(14),
     lineHeight: pxUnits(17.5),

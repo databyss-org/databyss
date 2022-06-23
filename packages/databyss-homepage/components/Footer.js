@@ -8,8 +8,8 @@ import {
 } from '@databyss-org/ui/primitives'
 import { darkTheme } from '@databyss-org/ui/theming/theme'
 import LogoSvg from '@databyss-org/ui/assets/logo-thick.svg'
-import { SectionView } from '../SectionView'
-import footerContent from './footerContent.json'
+import { SectionView } from './SectionView'
+import footerContent from '../content/footerContent.json'
 
 export const Footer = () => (
   <View theme={darkTheme} backgroundColor="background.1">
@@ -57,7 +57,7 @@ export const Footer = () => (
                 key={`footer_item_${section.title}_${item.name}`}
                 href={item.route}
                 mt="small"
-                {...(item.className ? { className: 'custom-dbox-popup' } : {})}
+                {...(item.className ? { className: item.className } : {})}
                 {...(item.target ? { target: item.target } : {})}
               >
                 <Text variant="uiTextSmall" color="text.1">

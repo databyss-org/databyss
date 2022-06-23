@@ -40,6 +40,7 @@ const Navbar = ({ lightTheme, navLinks }) => {
               href={link.route}
               target={link.target}
               height={pxUnits(26)}
+              {...(link.className ? { className: link.className } : {})}
               hoverColor="transparent"
               css={{
                 textDecoration: 'none',
