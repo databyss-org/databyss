@@ -21,13 +21,14 @@ export const LongHero = ({
 }) => {
   const [scrollTop, setScrollTop] = useState(0)
   const onScroll = useCallback(
-    throttle((e) => {
-      setScrollTop(e.target.documentElement.scrollTop)
+    throttle(() => {
+      setScrollTop(window.scrollY)
       // console.log(e.target.documentElement.scrollTop)
     }, 100)
   )
   useEffect(() => {
     window.addEventListener('scroll', onScroll)
+    onScroll()
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -36,18 +37,28 @@ export const LongHero = ({
   const button = ctaButtons[0]
   const desktopHeaderPosition = fixedHeader ? 'fixed' : 'absolute'
   const tabletLogoSize = scrollTop > 0 ? pxUnits(40) : pxUnits(72)
+  const tabletLogoVariant =
+    scrollTop > 0 ? 'foundationLogoSmall' : 'foundationLogoNormal'
 
   return (
-    <HeroView fixedHeader={fixedHeader} scrollTop={scrollTop} {...others}>
+    <HeroView
+      fixedHeader={isTablet && fixedHeader}
+      scrollTop={scrollTop}
+      {...others}
+    >
       <View
         theme={darkTheme}
-        position={isMobile ? 'static' : desktopHeaderPosition}
         alignSelf="flex-start"
-        left="medium"
+        left="em"
         top={scrollTop > 0 ? 'em' : 'medium'}
         zIndex={theme.zIndex.sticky + 1}
+        onClick={() => {
+          window.scrollTo(0, 0)
+        }}
         css={{
           transition: 'all linear 100ms',
+          position: isMobile ? 'static' : desktopHeaderPosition,
+          cursor: 'pointer',
         }}
       >
         <View flexDirection="row" alignItems="center">
@@ -60,11 +71,16 @@ export const LongHero = ({
               transition: 'all linear 100ms',
             }}
           />
-          <Text pl="small" variant="uiTextMultiline" color="text.2">
-            Databyss
-            <br />
-            Foundation
-          </Text>
+          {isTablet && (
+            <Text
+              pl="small"
+              variant={isTablet ? tabletLogoVariant : 'foundationLogoNormal'}
+              color="text.2"
+            >
+              The <br />
+              Databyss Foundation
+            </Text>
+          )}
         </View>
       </View>
       <TabletOnly>

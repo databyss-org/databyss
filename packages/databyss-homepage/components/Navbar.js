@@ -13,7 +13,6 @@ const Navbar = ({ lightTheme, navLinks, fixed }) => {
     <View
       flexDirection="row"
       justifyContent={isMobile ? 'center' : 'flex-end'}
-      width="100%"
       position={isMobile ? 'static' : desktopPosition}
       top="medium"
       right="medium"

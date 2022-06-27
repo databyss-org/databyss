@@ -170,6 +170,27 @@ const bodyVariants = {
   },
 }
 
+const foundationVariants = {
+  foundationLogoNormal: {
+    ...bodyText(20),
+    lineHeight: pxUnits(22),
+  },
+  foundationLogoSmall: {
+    ...bodyText(14),
+    lineHeight: pxUnits(15),
+  },
+}
+// const foundationVariants = {
+//   foundationLogoNormal: {
+//     ...bodyText(13),
+//     lineHeight: pxUnits(15),
+//   },
+//   foundationLogoSmall: {
+//     ...bodyText(11),
+//     lineHeight: pxUnits(12),
+//   },
+// }
+
 const bodyBoldVariants = Object.keys(bodyVariants).reduce(
   (variants, vk) => ({
     ...variants,
@@ -226,6 +247,7 @@ const textVariants = {
   ...bodyBoldVariants,
   ...bodyItalicVariants,
   ...bodyBoldItalicVariants,
+  ...foundationVariants,
 }
 
 export default {
