@@ -69,7 +69,8 @@
       "component": "DefaultFeature",
       "videoSrc": "/homepage/pdf_annotations.mp4",
       "title": "Import PDF Annotations",
-      "description": "Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them."
+      "description": "Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them.",
+      "mb": "extraLarge"
     },
     {
       "component": "DualBgFeature",
@@ -79,7 +80,8 @@
       "imgAlt": "Dropdown menu when searching for sources",
       "imgMaxHeight": "260px",
       "title": "Add Sources",
-      "description": "To add a new source and find the bibliographical data of the text you are annotating, press @ on a new line to search using Open Library, Google Books, and Crossref."
+      "description": "To add a new source and find the bibliographical data of the text you are annotating, press @ on a new line to search using Open Library, Google Books, and Crossref.",
+      "mb": "extraLarge"
     },
     {
       "component": "DefaultFeature",
@@ -87,7 +89,8 @@
       "imgAlt": "Example of a search result",
       "imgHasBoxShadow": true,
       "title": "Search Your Notes",
-      "description": "Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases."
+      "description": "Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases.",
+      "mb": "extraLarge"
     }
   ]
 }
