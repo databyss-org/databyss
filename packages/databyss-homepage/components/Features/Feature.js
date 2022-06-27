@@ -71,7 +71,6 @@ const Feature = ({
       backgroundColor="background.1"
       mx={marginX}
       alignItems="center"
-      mb="extraLarge"
       {...others}
     >
       <View

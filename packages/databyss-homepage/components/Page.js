@@ -25,7 +25,7 @@ const componentMap = {
 export const Page = ({ content }) => (
   <View minHeight="100vh" width="100%" backgroundColor="background.1">
     {content.sections.map((section, idx) => {
-      console.log('[Page] component', section.component)
+      // console.log('[Page] component', section.component)
       const Component = componentMap[section.component]
       return (
         <Component

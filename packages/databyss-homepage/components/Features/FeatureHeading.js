@@ -1,7 +1,6 @@
 import React from 'react'
 import { Text, View } from '@databyss-org/ui/primitives'
-import { pxUnits } from '@databyss-org/ui/theming/views'
-import { featureContentMaxHeight, featureHeadingMaxWidth } from './Feature'
+import { featureHeadingMaxWidth } from './Feature'
 
 const FeatureHeading = ({
   title,
@@ -17,12 +16,7 @@ const FeatureHeading = ({
       </Text>
     </a>
     {description && (
-      <View
-        overflowY="auto"
-        css={{
-          maxHeight: `calc(${featureContentMaxHeight} - ${pxUnits(124)})`,
-        }}
-      >
+      <View>
         <Text
           variant="uiTextMedium"
           color={descriptionColor || 'text.3'}

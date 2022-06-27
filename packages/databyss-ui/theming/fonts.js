@@ -164,6 +164,10 @@ const bodyVariants = {
   bodyHeading3: bodyText(18),
   bodyNormal: bodyText(16),
   bodySmall: bodyText(14),
+  bodySectionHeading1: {
+    ...bodyHeading(38),
+    'font-variant': 'all-small-caps',
+  },
 }
 
 const bodyBoldVariants = Object.keys(bodyVariants).reduce(

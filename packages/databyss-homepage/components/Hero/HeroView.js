@@ -2,11 +2,15 @@ import React from 'react'
 import { View } from '@databyss-org/ui/primitives'
 import breakpoints from '@databyss-org/ui/theming/responsive'
 import { useMediaQuery } from 'react-responsive'
+import { pxUnits } from '@databyss-org/ui/theming/views'
+import theme, { darkTheme } from '@databyss-org/ui/theming/theme'
 
 export const HeroView = ({
   backgroundImgSrc,
   backgroundColor,
   children,
+  fixedHeader,
+  scrollTop,
   ...others
 }) => {
   const isMobile = useMediaQuery({ maxWidth: breakpoints.mobile })
@@ -23,6 +27,20 @@ export const HeroView = ({
       }}
       {...others}
     >
+      {fixedHeader && (
+        <View
+          theme={darkTheme}
+          position="fixed"
+          height={pxUnits(70)}
+          width="100%"
+          top={0}
+          backgroundColor={scrollTop > 0 ? 'background.0' : 'transparent'}
+          css={{
+            transition: 'all linear 100ms',
+          }}
+          zIndex={theme.zIndex.sticky}
+        />
+      )}
       {children}
     </View>
   )

@@ -12,6 +12,7 @@ export const LongFeature = ({ paragraphs, ...others }) => {
       {...others}
       widthVariant="page"
       mb="extraLarge"
+      pt="large"
     >
       {paragraphs.map((text) => (
         <Text variant="uiTextMediumLong" mb="medium">
