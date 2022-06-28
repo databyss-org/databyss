@@ -18,6 +18,7 @@
         {
           "text": "🔒 Donate now",
           "href": "https://donorbox.org/the-databyss-foundation",
+          "mobileHref": "/donate",
           "className": "custom-dbox-popup"
         }
       ],
@@ -40,6 +41,7 @@
         {
           "name": "🔒 Donate",
           "route": "https://donorbox.org/the-databyss-foundation",
+          "mobileRoute": "/donate",
           "className": "custom-dbox-popup"
         }
       ]
