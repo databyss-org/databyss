@@ -1,0 +1,79 @@
+[
+  {
+    "content": "The Databyss Foundation, Inc. is a 501(c)(3) charitable organization committed to building and maintaining an open and equitable infrastructure for the advancement of those working in the humanities and digital humanities.",
+    "sections": [
+      {
+        "title": "Databyss",
+        "items": [
+          {
+            "name": "About Databyss",
+            "route": "/"
+          },
+          {
+            "name": "Login",
+            "route": "https://app.databyss.org/"
+          },
+          {
+            "name": "Signup",
+            "route": "https://app.databyss.org/"
+          },
+          {
+            "name": "User Guide",
+            "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511",
+            "target": "_blank"
+          },
+          {
+            "name": "FAQ",
+            "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511/pages/5iz4lsgfm0a4cx/faq",
+            "target": "_blank"
+          },
+          {
+            "name": "Support (Discord)",
+            "route": "https://discord.gg/jyQVawQM2Q",
+            "target": "_blank"
+          }
+        ]
+      },
+      {
+        "title": "Databyss Foundation",
+        "items": [
+          {
+            "name": "About Databyss Foundation",
+            "route": "/foundation"
+          },
+          {
+            "name": "Projects",
+            "route": "/foundation#projects"
+          },
+          {
+            "name": "Team",
+            "route": "/foundation#team"
+          },
+          {
+            "name": "Story",
+            "route": "/foundation#story"
+          },
+          {
+            "name": "Donate",
+            "route": "https://donorbox.org/the-databyss-foundation",
+            "className": "custom-dbox-popup"
+          }
+        ]
+      },
+      {
+        "title": "Legal",
+        "items": [
+          {
+            "name": "Terms of use",
+            "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511/pages/3cl4nleow0sif9/terms-of-use",
+            "target": "_blank"
+          },
+          {
+            "name": "Privacy policy",
+            "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511/pages/sm1w1918o1bfij/privacy-policy"
+          }
+        ]
+      }
+    ]
+  }
+]

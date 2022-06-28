@@ -1,11 +1,12 @@
 import React from 'react'
 import { View } from '@databyss-org/ui/primitives'
-import FeatureHeading from '@databyss-org/ui/modules/Homepage/Features/FeatureHeading'
-import FeatureImg from '@databyss-org/ui/modules/Homepage/Features/FeatureImg'
 import { useMediaQuery } from 'react-responsive'
 import breakpoints from '@databyss-org/ui/theming/responsive'
 import { pxUnits, borderRadius } from '@databyss-org/ui/theming/views'
 import Markdown from '@databyss-org/ui/components/Util/Markdown'
+import theme from '@databyss-org/ui/theming/theme'
+import FeatureHeading from './FeatureHeading'
+import FeatureImg from './FeatureImg'
 
 export const featureContentMaxWidth = pxUnits(1200)
 export const featureContentMaxHeight = pxUnits(560)
@@ -13,6 +14,7 @@ export const featureHeadingMaxWidth = pxUnits(560)
 
 const Feature = ({
   title,
+  anchor,
   description,
   leftBgColor,
   rightBgColor,
@@ -27,6 +29,10 @@ const Feature = ({
   alignContent,
   videoSrc,
   type,
+  reverseFlow,
+  imgProps,
+  columnBasis,
+  ...others
 }) => {
   const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
   const isDesktop = useMediaQuery({ minWidth: breakpoints.desktop })
@@ -49,28 +55,43 @@ const Feature = ({
         </p>
       ))
     }
-    return description
+    return <Markdown source={description} />
+  }
+
+  let flexDirectionReverse = ''
+  if (
+    reverseFlow ||
+    (type === 'dualBg' && typeof reverseFlow === 'undefined')
+  ) {
+    flexDirectionReverse = '-reverse'
   }
 
   return (
-    <View backgroundColor="background.1" mx={marginX} alignItems="center">
+    <View
+      backgroundColor="background.1"
+      mx={marginX}
+      alignItems="center"
+      {...others}
+    >
       <View
-        flexGrow="1"
+        flex="1"
         width="100%"
-        flexDirection={isTablet ? 'row' : 'column'}
-        mb="extraLarge"
+        flexDirection={
+          isTablet
+            ? `row${flexDirectionReverse}`
+            : `column${flexDirectionReverse}`
+        }
         maxWidth={type === 'dualBg' ? 'none' : featureContentMaxWidth}
       >
         <View
           backgroundColor={type === 'dualBg' ? rightBgColor : 'inherit'}
-          width={isTablet ? '50%' : '100%'}
-          order={type === 'dualBg' && 2}
+          width={isTablet ? columnBasis : '100%'}
+          flex="1"
         >
           <View
             backgroundColor={type === 'dualBg' ? rightBgColor : 'inherit'}
             py={type === 'default' ? 'none' : 'large'}
-            flexGrow="1"
-            flexShrink="1"
+            flex="1"
             justifyContent={alignContent}
             alignItems={
               isLargeDesktop && type === 'default' ? 'flex-end' : 'flex-start'
@@ -83,6 +104,7 @@ const Feature = ({
               px={isDesktop ? 'extraLarge' : 'medium'}
             >
               <FeatureHeading
+                anchor={anchor}
                 title={title}
                 description={formatDescriptionText(description)}
                 descriptionColor={
@@ -94,17 +116,16 @@ const Feature = ({
         </View>
         <View
           backgroundColor={type === 'dualBg' ? leftBgColor : 'inherit'}
-          width={isTablet ? '50%' : '100%'}
-          order={type === 'dualBg' && 1}
+          width={isTablet ? columnBasis : '100%'}
           alignItems={isTablet ? 'flex-end' : 'center'}
         >
           <View
-            flexGrow="1"
+            flex="1"
             px={isDesktop ? 'extraLarge' : 'medium'}
             py={type === 'dualBg' ? 'large' : 'none'}
             alignItems="center"
             justifyContent="center"
-            flexBasis={isTablet ? '50%' : 'auto'}
+            flexBasis={isTablet ? columnBasis : 'auto'}
             maxHeight={featureContentMaxHeight}
             maxWidth={`calc(${featureContentMaxWidth} / 2)`}
           >
@@ -116,6 +137,7 @@ const Feature = ({
                 height={imgHeight}
                 imgHasBoxShadow={imgHasBoxShadow}
                 maxHeight={getImgMaxHeight()}
+                {...imgProps}
               />
             )}
             {videoSrc && (
@@ -128,6 +150,7 @@ const Feature = ({
                 muted
                 preload="auto"
                 css={{
+                  boxShadow: imgHasBoxShadow && theme.buttonShadow.boxShadow,
                   borderRadius,
                 }}
               />
@@ -146,6 +169,8 @@ Feature.defaultProps = {
   type: 'default',
   leftBgColor: 'purple.4',
   rightBgColor: 'purple.5',
+  imgProps: {},
+  columnBasis: '50%',
 }
 
 export default Feature

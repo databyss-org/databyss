@@ -4,21 +4,22 @@ import theme, { timing } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { useMediaQuery } from 'react-responsive'
 
-const Navbar = ({ lightTheme, navLinks }) => {
+const Navbar = ({ lightTheme, navLinks, fixed }) => {
   const isTablet = useMediaQuery({ minWidth: theme.breakpoints.tablet })
   const isMobile = useMediaQuery({ maxWidth: theme.breakpoints.mobile })
   const isDesktop = useMediaQuery({ minWidth: theme.breakpoints.desktop })
+  const desktopPosition = fixed ? 'fixed' : 'absolute'
   return (
     <View
       flexDirection="row"
       justifyContent={isMobile ? 'center' : 'flex-end'}
-      width="100%"
-      position={isMobile ? 'static' : 'absolute'}
+      position={isMobile ? 'static' : desktopPosition}
       top="medium"
       right="medium"
       mt={isMobile ? 'medium' : 'none'}
+      zIndex={theme.zIndex.sticky + 1}
     >
-      <Grid singleRow columnGap="em">
+      <Grid singleRow columnGap="em" alignItems="baseline">
         {navLinks.map((link, index) => {
           if (link.mobileOnly && !isMobile) {
             return null
@@ -40,6 +41,7 @@ const Navbar = ({ lightTheme, navLinks }) => {
               href={link.route}
               target={link.target}
               height={pxUnits(26)}
+              {...(link.className ? { className: link.className } : {})}
               hoverColor="transparent"
               css={{
                 textDecoration: 'none',

@@ -79,6 +79,11 @@ const uiTextVariants = {
   uiTextLarge: uiText(22),
   uiTextMedium: uiText(18),
   uiTextNormal: uiText(16),
+  uiTextMediumLong: {
+    ...uiText(18),
+    fontWeight: 300,
+    lineHeight: pxUnits(28),
+  },
   uiTextMultiline: {
     ...uiText(14),
     lineHeight: pxUnits(17.5),
@@ -159,7 +164,32 @@ const bodyVariants = {
   bodyHeading3: bodyText(18),
   bodyNormal: bodyText(16),
   bodySmall: bodyText(14),
+  bodySectionHeading1: {
+    ...bodyHeading(38),
+    'font-variant': 'all-small-caps',
+  },
 }
+
+const foundationVariants = {
+  foundationLogoNormal: {
+    ...bodyText(20),
+    lineHeight: pxUnits(22),
+  },
+  foundationLogoSmall: {
+    ...bodyText(14),
+    lineHeight: pxUnits(15),
+  },
+}
+// const foundationVariants = {
+//   foundationLogoNormal: {
+//     ...bodyText(13),
+//     lineHeight: pxUnits(15),
+//   },
+//   foundationLogoSmall: {
+//     ...bodyText(11),
+//     lineHeight: pxUnits(12),
+//   },
+// }
 
 const bodyBoldVariants = Object.keys(bodyVariants).reduce(
   (variants, vk) => ({
@@ -217,6 +247,7 @@ const textVariants = {
   ...bodyBoldVariants,
   ...bodyItalicVariants,
   ...bodyBoldItalicVariants,
+  ...foundationVariants,
 }
 
 export default {

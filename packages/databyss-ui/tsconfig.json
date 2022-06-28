@@ -1,6 +1,10 @@
 {
   "extends": "../../config/tsconfig.json",
-  "include": ["./**/*"],
+  "include": [
+    "./**/*",
+    "../databyss-homepage/modules/Homepage",
+    "../databyss-homepage/components/Footer"
+  ],
   "compilerOptions": {
     "composite": true
   },

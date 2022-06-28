@@ -1,13 +1,14 @@
 import React from 'react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { useMediaQuery } from 'react-responsive'
-import FeatureHeading from '@databyss-org/ui/modules/Homepage/Features/FeatureHeading'
+import breakpoints from '@databyss-org/ui/theming/responsive'
+import Markdown from '@databyss-org/ui/components/Util/Markdown'
+import FeatureHeading from './Features/FeatureHeading'
 import {
   featureContentMaxWidth,
   featureHeadingMaxWidth,
-} from '@databyss-org/ui/modules/Homepage/Features/Feature'
-import breakpoints from '@databyss-org/ui/theming/responsive'
-import Markdown from '@databyss-org/ui/components/Util/Markdown'
+} from './Features/Feature'
+import { SectionView } from './SectionView'
 
 const Question = ({ question }) => (
   <Text variant="uiTextLargeSemibold" color="text.1" mb="em">
@@ -32,22 +33,8 @@ const FAQ = ({ title, description, descriptionColor, questionsAndAnswers }) => {
   const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
   const isDesktop = useMediaQuery({ minWidth: breakpoints.desktop })
 
-  const getContentSpacing = () => {
-    if (isDesktop) {
-      return 'extraLarge'
-    }
-    if (isTablet) {
-      return 'large'
-    }
-    return 'none'
-  }
-
   return (
-    <View
-      backgroundColor="background.1"
-      mx={getContentSpacing()}
-      alignItems="center"
-    >
+    <SectionView>
       <View
         flexGrow="1"
         width="100%"
@@ -82,7 +69,7 @@ const FAQ = ({ title, description, descriptionColor, questionsAndAnswers }) => {
           ))}
         </View>
       </View>
-    </View>
+    </SectionView>
   )
 }
 

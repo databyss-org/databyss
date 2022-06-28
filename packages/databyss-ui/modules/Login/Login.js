@@ -8,7 +8,6 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import GoogleLoginButton from '@databyss-org/ui/components/Login/GoogleLoginButton'
 import { NotAuthorizedError } from '@databyss-org/services/interfaces'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import Navbar from '@databyss-org/ui/modules/Homepage/Hero/Navbar'
 
 const initialFormState = {
   email: {
@@ -24,7 +23,7 @@ function validateEmail(email) {
   return re.test(String(email).toLowerCase())
 }
 
-const Login = ({ pending, signupFlow, navLinks }) => {
+const Login = ({ pending, signupFlow }) => {
   const { getSession, requestCode, session } = useSessionContext()
   const emailInputRef = useRef(null)
   const codeInputRef = useRef(null)
@@ -103,7 +102,6 @@ const Login = ({ pending, signupFlow, navLinks }) => {
 
   return (
     <>
-      {navLinks && <Navbar lightTheme />}
       <ValueListProvider
         values={values}
         onChange={onChange}
