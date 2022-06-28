@@ -3,7 +3,12 @@ import { View } from '@databyss-org/ui/primitives'
 import { useMediaQuery } from 'react-responsive'
 import breakpoints from '@databyss-org/ui/theming/responsive'
 
-export const SectionView = ({ children, defaultSpacing, ...others }) => {
+export const SectionView = ({
+  children,
+  defaultSpacing,
+  backgroundColor,
+  ...others
+}) => {
   const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
   const isDesktop = useMediaQuery({ minWidth: breakpoints.desktop })
 
@@ -16,7 +21,7 @@ export const SectionView = ({ children, defaultSpacing, ...others }) => {
 
   return (
     <View
-      backgroundColor="background.1"
+      backgroundColor={backgroundColor}
       m={contentSpacing}
       mb="none"
       alignItems="center"

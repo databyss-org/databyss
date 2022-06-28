@@ -42,7 +42,7 @@ export const Hero = ({
           )}
           <Text
             variant={isTablet ? 'heading1' : 'heading2'}
-            color="text.6"
+            color="text.0"
             textAlign="center"
           >
             {title}
@@ -50,7 +50,7 @@ export const Hero = ({
         </View>
         <Text
           variant="uiTextMedium"
-          color="text.5"
+          color="text.0"
           textAlign="center"
           mb={pxUnits(48)}
         >
@@ -75,7 +75,7 @@ export const Hero = ({
                   textDecoration: 'none',
                 }}
               >
-                <Text variant="uiTextNormalSemibold" color="text.5">
+                <Text variant="uiTextNormalSemibold" color="text.0">
                   {button.text}
                 </Text>
               </Button>

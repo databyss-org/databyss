@@ -85,7 +85,7 @@
     },
     {
       "component": "DefaultFeature",
-      "imgSrc": "/homepage/search_feature.png",
+      "imgSrc": "/homepage/search_feature.jpg",
       "imgAlt": "Example of a search result",
       "imgHasBoxShadow": true,
       "title": "Search Your Notes",

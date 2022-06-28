@@ -12,7 +12,17 @@ import { SectionView } from './SectionView'
 import footerContent from '../content/footerContent.json'
 
 export const Footer = () => (
-  <View theme={darkTheme} backgroundColor="background.1">
+  <View
+    theme={darkTheme}
+    backgroundColor="background.1"
+    css={{
+      background:
+        footerContent[0].backgroundImgSrc &&
+        `url(${footerContent[0].backgroundImgSrc})`,
+      backgroundSize: 'cover',
+      backgroundPositionY: 'bottom',
+    }}
+  >
     <SectionView mt="extraLarge" mb="extraLarge" defaultSpacing="medium">
       <View
         alignSelf="flex-start"

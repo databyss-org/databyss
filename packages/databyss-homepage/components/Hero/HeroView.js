@@ -21,15 +21,16 @@ export const HeroView = ({
       pb={isMobile ? 'extraLarge' : 'largest'}
       width="100%"
       alignItems="center"
+      backgroundColor={backgroundColor}
+      theme={darkTheme}
       css={{
-        backgroundColor,
         background: backgroundImgSrc && `url(${backgroundImgSrc})`,
+        backgroundSize: 'cover',
       }}
       {...others}
     >
       {fixedHeader && (
         <View
-          theme={darkTheme}
           position="fixed"
           height={pxUnits(70)}
           width="100%"

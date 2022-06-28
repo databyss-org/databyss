@@ -94,7 +94,7 @@ export const LongHero = ({
       >
         <Grid singleRow columnGap={isMobile ? 'tiny' : 'extraLarge'}>
           <View flex="1" minWidth={pxUnits(300)} maxWidth="80%" pb="large">
-            <Text variant="uiTextMediumLong" color="text.5">
+            <Text variant="uiTextMediumLong" color="text.1">
               <Markdown source={headline} />
             </Text>
           </View>
@@ -109,7 +109,7 @@ export const LongHero = ({
                 textDecoration: 'none',
               }}
             >
-              <Text variant="uiTextNormalSemibold" color="text.5">
+              <Text variant="uiTextNormalSemibold" color="text.1">
                 {button.text}
               </Text>
             </Button>

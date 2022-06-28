@@ -32,7 +32,7 @@ const Navbar = ({ lightTheme, navLinks, fixed }) => {
           }
 
           return link.separator ? (
-            <Text key={index} color="gray.5" variant="uiTextNormal">
+            <Text key={index} color="text.1" variant="uiTextNormal">
               |
             </Text>
           ) : (
@@ -59,7 +59,7 @@ const Navbar = ({ lightTheme, navLinks, fixed }) => {
               }}
             >
               <Text
-                color={lightTheme ? 'text.3' : 'text.4'}
+                color={lightTheme ? 'text.3' : 'text.2'}
                 variant="uiTextNormal"
               >
                 {link.name}
