@@ -12,21 +12,22 @@ export const SectionHeading = ({ title, anchor, ...others }) => {
       theme={darkTheme}
       backgroundColor="background.3"
       px={isDesktop ? 'extraLarge' : 'medium'}
-      pb="large"
+      pb="em"
       position="relative"
+      // top={pxUnits(68)}
       {...others}
     >
       <a
         name={anchor ?? title}
         css={{
-          position: 'absolute',
-          top: pxUnits(-60),
+          position: 'relative',
+          top: pxUnits(-70),
           zIndex: -1,
         }}
       >
         {title}
       </a>
-      <Text variant="bodySectionHeading1" mt="large" color="text.0">
+      <Text variant="bodyHeading2" color="text.0">
         {title}
       </Text>
     </View>

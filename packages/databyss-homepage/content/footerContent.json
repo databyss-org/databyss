@@ -61,15 +61,16 @@
         ]
       },
       {
-        "title": "Other",
+        "title": "Legal",
         "items": [
           {
             "name": "Terms of use",
-            "route": "https://databyss.org/terms"
+            "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511/pages/3cl4nleow0sif9/terms-of-use",
+            "target": "_blank"
           },
           {
             "name": "Privacy policy",
-            "route": "https://databyss.org/privacy"
+            "route": "https://app.databyss.org/databyss-user-guide-7v9n4vjx2h7511/pages/sm1w1918o1bfij/privacy-policy"
           }
         ]
       }

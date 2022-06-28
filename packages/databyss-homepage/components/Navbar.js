@@ -19,7 +19,7 @@ const Navbar = ({ lightTheme, navLinks, fixed }) => {
       mt={isMobile ? 'medium' : 'none'}
       zIndex={theme.zIndex.sticky + 1}
     >
-      <Grid singleRow columnGap="em">
+      <Grid singleRow columnGap="em" alignItems="baseline">
         {navLinks.map((link, index) => {
           if (link.mobileOnly && !isMobile) {
             return null

@@ -36,9 +36,9 @@ export const LongHero = ({
   const isMobile = useMediaQuery({ maxWidth: breakpoints.mobile })
   const button = ctaButtons[0]
   const desktopHeaderPosition = fixedHeader ? 'fixed' : 'absolute'
-  const tabletLogoSize = scrollTop > 0 ? pxUnits(40) : pxUnits(72)
+  const tabletLogoSize = scrollTop > 25 ? pxUnits(40) : pxUnits(72)
   const tabletLogoVariant =
-    scrollTop > 0 ? 'foundationLogoSmall' : 'foundationLogoNormal'
+    scrollTop > 25 ? 'foundationLogoSmall' : 'foundationLogoNormal'
 
   return (
     <HeroView
@@ -50,13 +50,13 @@ export const LongHero = ({
         theme={darkTheme}
         alignSelf="flex-start"
         left="em"
-        top={scrollTop > 0 ? 'em' : 'medium'}
+        top={scrollTop > 25 ? 'em' : 'medium'}
         zIndex={theme.zIndex.sticky + 1}
         onClick={() => {
           window.scrollTo(0, 0)
         }}
         css={{
-          transition: 'all linear 100ms',
+          transition: 'all linear 50ms',
           position: isMobile ? 'static' : desktopHeaderPosition,
           cursor: 'pointer',
         }}
@@ -68,7 +68,7 @@ export const LongHero = ({
             height="auto"
             alt={title}
             css={{
-              transition: 'all linear 100ms',
+              transition: 'all linear 50ms',
             }}
           />
           {isTablet && (
@@ -89,7 +89,7 @@ export const LongHero = ({
       <View
         alignItems="center"
         mt={isMobile ? 'large' : 'largest'}
-        pt={isMobile ? 'none' : 'large'}
+        pt={isMobile ? 'none' : 'extraLarge'}
         widthVariant="page"
       >
         <Grid singleRow columnGap={isMobile ? 'tiny' : 'extraLarge'}>

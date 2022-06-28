@@ -14,8 +14,8 @@ export const LongFeature = ({ paragraphs, ...others }) => {
       mb="extraLarge"
       pt="large"
     >
-      {paragraphs.map((text) => (
-        <Text variant="uiTextMediumLong" mb="medium">
+      {paragraphs.map((text, idx) => (
+        <Text variant="uiTextMediumLong" mb="medium" key={idx}>
           <Markdown source={text} />
         </Text>
       ))}

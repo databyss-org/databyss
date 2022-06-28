@@ -34,9 +34,9 @@ export const HeroView = ({
           height={pxUnits(70)}
           width="100%"
           top={0}
-          backgroundColor={scrollTop > 0 ? 'background.0' : 'transparent'}
+          backgroundColor={scrollTop > 25 ? 'background.0' : 'transparent'}
           css={{
-            transition: 'all linear 100ms',
+            transition: 'all linear 50ms',
           }}
           zIndex={theme.zIndex.sticky}
         />
