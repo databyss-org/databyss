@@ -10,6 +10,7 @@
     {
       "component": "Hero",
       "backgroundImgSrc": "/homepage/stone_bg.jpg",
+      "backgroundColor": "background.1",
       "logoSrc": "/homepage/logo-thick.png",
       "title": "Databyss",
       "headline": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word processor.",

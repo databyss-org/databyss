@@ -24,7 +24,7 @@ export const HeroView = ({
       backgroundColor={backgroundColor}
       theme={darkTheme}
       css={{
-        background: backgroundImgSrc && `url(${backgroundImgSrc})`,
+        backgroundImage: backgroundImgSrc && `url(${backgroundImgSrc})`,
         backgroundSize: 'cover',
       }}
       {...others}
