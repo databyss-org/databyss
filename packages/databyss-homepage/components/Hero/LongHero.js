@@ -9,6 +9,7 @@ import Markdown from '@databyss-org/ui/components/Util/Markdown'
 import theme, { darkTheme } from '@databyss-org/ui/theming/theme'
 import Navbar from '../Navbar'
 import { HeroView } from './HeroView'
+import { Logo } from '../Logo'
 
 export const LongHero = ({
   logoSrc,
@@ -39,6 +40,19 @@ export const LongHero = ({
   const tabletLogoSize = scrollTop > 25 ? pxUnits(40) : pxUnits(72)
   const tabletLogoVariant =
     scrollTop > 25 ? 'foundationLogoSmall' : 'foundationLogoNormal'
+  const logo = {
+    logoSrc,
+    logoText: isTablet ? (
+      <>
+        The
+        <br />
+        Databyss Foundation
+      </>
+    ) : null,
+    imgWidth: isTablet ? tabletLogoSize : pxUnits(64),
+    textVariant: isTablet ? tabletLogoVariant : 'foundationLogoNormal',
+    alt: title,
+  }
 
   return (
     <HeroView
@@ -61,27 +75,7 @@ export const LongHero = ({
           cursor: 'pointer',
         }}
       >
-        <View flexDirection="row" alignItems="center">
-          <img
-            src={logoSrc}
-            width={isTablet ? tabletLogoSize : pxUnits(64)}
-            height="auto"
-            alt={title}
-            css={{
-              transition: 'all linear 50ms',
-            }}
-          />
-          {isTablet && (
-            <Text
-              pl="small"
-              variant={isTablet ? tabletLogoVariant : 'foundationLogoNormal'}
-              color="text.2"
-            >
-              The <br />
-              Databyss Foundation
-            </Text>
-          )}
-        </View>
+        <Logo {...logo} />
       </View>
       <TabletOnly>
         <Navbar navLinks={navLinks} fixed={fixedHeader} />
@@ -102,7 +96,9 @@ export const LongHero = ({
             <Button
               minWidth={60}
               variant="pinkHighlighted"
-              href={button.href}
+              href={
+                isMobile && button.mobileHref ? button.mobileHref : button.href
+              }
               {...(button.className ? { className: button.className } : {})}
               childViewProps={{ flexDirection: 'row' }}
               css={{

@@ -38,7 +38,9 @@ const Navbar = ({ lightTheme, navLinks, fixed }) => {
           ) : (
             <BaseControl
               key={index}
-              href={link.route}
+              href={
+                isMobile && link.mobileRoute ? link.mobileRoute : link.route
+              }
               target={link.target}
               height={pxUnits(26)}
               {...(link.className ? { className: link.className } : {})}

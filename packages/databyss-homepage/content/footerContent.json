@@ -57,6 +57,7 @@
           {
             "name": "Donate",
             "route": "https://donorbox.org/the-databyss-foundation",
+            "mobileRoute": "/donate",
             "className": "custom-dbox-popup"
           }
         ]
