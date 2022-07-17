@@ -491,8 +491,9 @@ const _sanitizeHtml = (html: string): string => {
     // TRANSFORM TAG NAMES
     transformTags: {
       p: containerSanitizer,
-      // links should come in as spans
-      // a: (tagName, attribs) => textTagStyle('link', attribs),
+      // transform anchor tags with no hrefs to spans
+      a: (tagName, attribs) =>
+        attribs.href ? { tagName, attribs } : textTagStyle('span', attribs),
       b: textTagStyle,
       div: containerSanitizer,
       span: containerSanitizer,
