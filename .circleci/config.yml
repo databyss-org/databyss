@@ -46,7 +46,7 @@ jobs:
 
       - run:
           name: wait on api server
-          command: ./node_modules/.bin/wait-on http://0.0.0.0:5000/api/version/
+          command: ./node_modules/.bin/wait-on http://0.0.0.0:5050/api/version/
 
       # The sauce-dev-server.js script runs a storybook appropriate for selenium testing
       # so we don't need this step. iI was here for when we were using Cypress for

@@ -5,7 +5,7 @@ module.exports = async function globalSetup() {
   if (!process.env.LOCAL_ENV) {
     // clears cloudant database
 
-    await fetch(`http://0.0.0.0:5000/api/cloudant/`, {
+    await fetch(`http://0.0.0.0:5050/api/cloudant/`, {
       method: 'DELETE',
     })
     await teardown()
