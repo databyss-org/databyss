@@ -144,7 +144,5 @@ export const pasteEventHandler = (e: ClipboardEvent): Block[] | null => {
     return data
   }
 
-  // TODO: HTML paste fragment
-
   return null
 }

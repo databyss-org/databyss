@@ -170,11 +170,12 @@ export const slateRangesToStateRanges = (node) => {
     )
 
     if (_inlineType.length) {
+      const marks = [[_inlineType[0], child.atomicId]]
       // if object contains an object id, search for allowed atomic
       _ranges.push({
         offset: _offset,
         length: _textLength,
-        marks: [[_inlineType[0], child.atomicId]],
+        marks,
       })
     } else {
       Object.keys(child).forEach((prop) => {
