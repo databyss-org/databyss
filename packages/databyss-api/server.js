@@ -13,7 +13,7 @@ const start = () =>
   require('./src/app')
     .default()
     .then((app) => {
-      const PORT = process.env.PORT || 5000
+      const PORT = process.env.PORT || 5050
       httpServer = http.createServer(app)
       httpServer.listen(PORT, () => {
         console.log(`Server started on port ${PORT}`)

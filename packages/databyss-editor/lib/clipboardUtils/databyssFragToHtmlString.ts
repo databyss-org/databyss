@@ -9,6 +9,7 @@ import {
   Transforms,
 } from '@databyss-org/slate'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
+import { stripText } from '@databyss-org/services/catalog/util'
 import { slateRangesToStateRanges, stateBlockToSlateBlock } from '../slateUtils'
 import { uid } from '../../../databyss-data/lib/uid'
 import splitTextAtOffset from './splitTextAtOffset'
@@ -116,7 +117,7 @@ const newLineElements = {
 
 const styleContainer = (el) => {
   let _style: any = {
-    ...(el.hasAttribute('break') && { newLine: true }),
+    ...(el.hasAttribute('break') && { newLine: true, doubleBreak: true }),
     ...(el.hasAttribute('indent') && { indent: true }),
   }
 
@@ -163,6 +164,7 @@ const TEXT_TAGS = {
       _attributes = {
         ..._attributes,
         newLine: true,
+        doubleBreak: true,
       }
     }
     if (el.hasAttribute('indent')) {
@@ -240,6 +242,17 @@ export const deserialize = ({
     return jsx('fragment', {}, children)
   }
 
+  if (nodeName === 'A') {
+    const _href = el.attributes.href.nodeValue
+    return children.map((c: Text, i: number) =>
+      jsx(
+        'text',
+        { link: true, atomicId: _href },
+        i ? c : { ...c, text: typeof c === 'string' ? c : c.text }
+      )
+    )
+  }
+
   if (TEXT_TAGS[nodeName]) {
     let _children = children
     const attrs = TEXT_TAGS[nodeName](el, isGoogleDoc)
@@ -275,6 +288,13 @@ export const deserialize = ({
         }
         return _textNode
       })
+      // add new line to end of node
+      _children[_children.length - 1] = {
+        ..._children[_children.length - 1],
+        text: `${_children[_children.length - 1].text}\n`,
+      }
+    }
+    if (attrs?.doubleBreak) {
       // add new line to end of node
       _children[_children.length - 1] = {
         ..._children[_children.length - 1],
@@ -354,7 +374,6 @@ const formatFragment = (frag: Node[]): Block[] => {
   }
 
   const _sanatizedFrag = sanatizeFrag(_frag)
-
   let _normalized: Node[] = []
 
   // flatten nested children, some children may have {type: 'ENTRY'}
@@ -376,8 +395,10 @@ const formatFragment = (frag: Node[]): Block[] => {
   })
 
   _normalized = sanatizeFrag(_normalized)
+  // console.log('[PASTE] normalized', _normalized)
 
   let _databyssFrag = _normalized.map((block) => normalizeSlateNode(block))
+  // console.log('[PASTE] databyss frag', _databyssFrag)
 
   // split into mulitple blocks if two `\n` exist in a row
   _databyssFrag = splitFragAtBreaks(_databyssFrag[0])
@@ -465,18 +486,24 @@ const sanatizeHeader = () => ({
   },
 })
 
-const _sanitizeHtml = (html: string): string =>
-  sanitizeHtml(html, {
-    allowedTags: Object.keys(TEXT_TAGS).map((t) => t.toLocaleLowerCase()),
+const _sanitizeHtml = (html: string): string => {
+  const allowedTags = [
+    ...Object.keys(TEXT_TAGS).map((t) => t.toLocaleLowerCase()),
+    'a',
+  ]
+  return sanitizeHtml(html, {
+    allowedTags,
     // allowed attributes
     allowedAttributes: {
       '*': ['break', 'bold', 'italic', 'indent', 'list'],
+      a: ['href'],
     },
     // TRANSFORM TAG NAMES
     transformTags: {
       p: containerSanitizer,
-      // links should come in as spans
-      a: (tagName, attribs) => textTagStyle('span', attribs),
+      // transform anchor tags with no hrefs to spans
+      a: (tagName, attribs) =>
+        attribs.href ? { tagName, attribs } : textTagStyle('span', attribs),
       b: textTagStyle,
       div: containerSanitizer,
       span: containerSanitizer,
@@ -486,9 +513,17 @@ const _sanitizeHtml = (html: string): string =>
       h4: sanatizeHeader,
       h5: sanatizeHeader,
     },
+    textFilter: (text, tagName) => {
+      if (tagName === 'a') {
+        return stripText(text)
+      }
+      return text
+    },
   })
+}
 
 export const htmlToDatabyssFrag = (html: string): Block[] => {
+  // console.log('[PASTE] html', html)
   let parsed = new DOMParser().parseFromString(html, 'text/html')
   const _isGoogle = isGooglePaste(parsed.body)
 
@@ -509,7 +544,7 @@ export const htmlToDatabyssFrag = (html: string): Block[] => {
   const _sanitzedHtml = _sanitizeHtml(_body.outerHTML)
 
   parsed = new DOMParser().parseFromString(_sanitzedHtml, 'text/html')
-  console.log(parsed)
+  // console.log('[PASTE] parsed', parsed)
 
   // convert to slate nodes
   const fragment: Node[] = deserialize({
