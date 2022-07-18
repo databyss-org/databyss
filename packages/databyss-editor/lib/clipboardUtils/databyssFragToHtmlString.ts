@@ -117,7 +117,7 @@ const newLineElements = {
 
 const styleContainer = (el) => {
   let _style: any = {
-    ...(el.hasAttribute('break') && { newLine: true }),
+    ...(el.hasAttribute('break') && { newLine: true, doubleBreak: true }),
     ...(el.hasAttribute('indent') && { indent: true }),
   }
 
@@ -164,6 +164,7 @@ const TEXT_TAGS = {
       _attributes = {
         ..._attributes,
         newLine: true,
+        doubleBreak: true,
       }
     }
     if (el.hasAttribute('indent')) {
@@ -293,6 +294,13 @@ export const deserialize = ({
         text: `${_children[_children.length - 1].text}\n`,
       }
     }
+    if (attrs?.doubleBreak) {
+      // add new line to end of node
+      _children[_children.length - 1] = {
+        ..._children[_children.length - 1],
+        text: `${_children[_children.length - 1].text}\n`,
+      }
+    }
 
     return _children.map((child) => {
       let _attrs = attrs
@@ -387,8 +395,10 @@ const formatFragment = (frag: Node[]): Block[] => {
   })
 
   _normalized = sanatizeFrag(_normalized)
+  // console.log('[PASTE] normalized', _normalized)
 
   let _databyssFrag = _normalized.map((block) => normalizeSlateNode(block))
+  // console.log('[PASTE] databyss frag', _databyssFrag)
 
   // split into mulitple blocks if two `\n` exist in a row
   _databyssFrag = splitFragAtBreaks(_databyssFrag[0])
@@ -513,6 +523,7 @@ const _sanitizeHtml = (html: string): string => {
 }
 
 export const htmlToDatabyssFrag = (html: string): Block[] => {
+  // console.log('[PASTE] html', html)
   let parsed = new DOMParser().parseFromString(html, 'text/html')
   const _isGoogle = isGooglePaste(parsed.body)
 
@@ -533,6 +544,7 @@ export const htmlToDatabyssFrag = (html: string): Block[] => {
   const _sanitzedHtml = _sanitizeHtml(_body.outerHTML)
 
   parsed = new DOMParser().parseFromString(_sanitzedHtml, 'text/html')
+  // console.log('[PASTE] parsed', parsed)
 
   // convert to slate nodes
   const fragment: Node[] = deserialize({
