@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { AuthorName } from '@databyss-org/services/interfaces'
+import { resetScrollMemoryBeforeNavigate } from '@databyss-org/ui/hooks/scrollMemory/useScrollMemory'
 import reducer, { initialState } from './reducer'
 import * as actions from './actions'
 import {
@@ -62,16 +63,14 @@ export const NavigationProvider = ({
       options?.hasAccount ||
       (accountIdWithName && url.match(`/${accountIdWithName}/`))
     const replace = !!options?.replace
-    if (hasAccount) {
-      navigateRouter(url, { replace })
-      return
-    }
-    navigateRouter(
-      accountId
+    let _url = url
+    if (!hasAccount) {
+      _url = accountId
         ? `/${accountIdWithName}${url.replace(`/${accountId}/`, '/')}`
-        : url,
-      { replace }
-    )
+        : url
+    }
+    resetScrollMemoryBeforeNavigate(_url)
+    navigateRouter(_url, { replace })
   }
 
   const navigateSidebar = (options) =>

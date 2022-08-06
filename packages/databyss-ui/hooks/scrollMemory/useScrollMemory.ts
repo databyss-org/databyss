@@ -6,6 +6,15 @@ import { useLocation } from 'react-router-dom'
 
 const url = new Map<string, number>()
 
+// monkeypatching caused issues with ReactRouter,
+// so this method must be called just before the RR `navigate` call
+// to ensure that navigating to a page resets the scroll for that page
+export const resetScrollMemoryBeforeNavigate = (pathname: string) => {
+  if (location.pathname !== pathname) {
+    url.delete(pathname)
+  }
+}
+
 export const useScrollMemory = (
   elementRef: MutableRefObject<HTMLElement | null>
 ) => {
@@ -19,7 +28,6 @@ export const useScrollMemory = (
         didScrollRef.current = true
         const _scroll = elementRef.current?.scrollTop
         const _key = location.pathname
-        // console.log('[useScrollMemory] saveScroll', _key, _scroll)
         url.set(_key, _scroll!)
       },
       100,
@@ -27,28 +35,6 @@ export const useScrollMemory = (
     ),
     [elementRef]
   )
-
-  const onPush = useCallback(
-    (pathname: string) => {
-      // console.log('[useScrollMemory] onPush', location.pathname, pathname)
-      if (location.pathname !== pathname) {
-        url.delete(pathname)
-      }
-    },
-    [location]
-  )
-
-  const patchPushState = () => {
-    const _orig = history.pushState
-    history.pushState = (state, _, url) => {
-      onPush(url as string)
-      _orig(state, _, url)
-    }
-  }
-
-  useEffect(() => {
-    patchPushState()
-  }, [])
 
   useEffect(() => {
     if (!elementRef.current) {
@@ -73,7 +59,6 @@ export const useScrollMemory = (
 
   const restoreScroll = () => {
     const _scroll = url.get(location.pathname)
-    // console.log('[useScrollMemory] restoreScroll', location.pathname, _scroll)
     if (!_scroll) {
       return
     }
