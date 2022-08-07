@@ -1,8 +1,9 @@
-import React, { PropsWithChildren, ReactNode } from 'react'
+import React, { PropsWithChildren, ReactNode, useState } from 'react'
 import {
   SidebarListItemData,
   useNavigationContext,
 } from '@databyss-org/ui/components'
+import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
@@ -22,12 +23,15 @@ import {
 } from '@databyss-org/ui/primitives'
 import { useLocation } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
+import { SidebarHeaderButton } from './SidebarHeaderButton'
 
 export interface SidebarListProps
   extends ScrollViewProps,
     KeyboardNavigationProps {
   menuItems: SidebarListItemData<any>[]
   keyboardNavigation?: boolean
+  heading?: string
+  prependItems?: SidebarListItemData<any>[]
 }
 
 const menuSvgs: { [key: string]: ReactNode } = {
@@ -52,11 +56,14 @@ const SidebarList = ({
   keyboardNavigation,
   keyboardEventsActive,
   onItemSelected,
+  heading,
+  prependItems,
   ...others
 }: PropsWithChildren<SidebarListProps>) => {
   const { getAccountFromLocation, navigate } = useNavigationContext()
   const location = useLocation()
   const account = getAccountFromLocation(true)
+  const [showAll, setShowAll] = useState<boolean>(false)
 
   const getHref = (item: SidebarListItemData<any>) => `/${account}${item.route}`
 
@@ -91,6 +98,50 @@ const SidebarList = ({
       : { onPress: () => navigate(item.route) }),
   })
 
+  let _menuItems = [...menuItems]
+  const recentSidebarItemLimit = parseInt(process.env.RECENT_SIDEBAR_ITEMS!, 10)
+  if (!showAll && _menuItems.length > recentSidebarItemLimit) {
+    _menuItems = _menuItems.sort(
+      (a, b) =>
+        (b.data?.modifiedAt ?? b.data?.createdAt) -
+        (a.data?.modifiedAt ?? a.data?.createdAt)
+    )
+    _menuItems = _menuItems.slice(
+      0,
+      Math.min(recentSidebarItemLimit, _menuItems.length)
+    )
+  }
+  _menuItems = sortEntriesAtoZ(_menuItems, 'text')
+  if (prependItems) {
+    _menuItems = [...prependItems, ..._menuItems]
+  }
+
+  if (heading) {
+    _menuItems = [
+      {
+        text: heading,
+        type: 'heading',
+        ...(showAll || _menuItems.length < menuItems.length
+          ? {
+              links: [
+                {
+                  label: 'recent',
+                  active: !showAll,
+                  onPress: () => setShowAll(false),
+                },
+                {
+                  label: 'all',
+                  active: showAll,
+                  onPress: () => setShowAll(true),
+                },
+              ],
+            }
+          : {}),
+      },
+      ..._menuItems,
+    ]
+  }
+
   return (
     <ScrollView
       height={height}
@@ -112,14 +163,18 @@ const SidebarList = ({
         py={0}
       >
         {children}
-        {menuItems.map((item, index) => {
+        {_menuItems.map((item, index) => {
           if (!item.text) {
             return null
           }
           if (item.type === 'heading') {
             return (
               <View
+                flexDirection="row"
+                justifyContent="space-between"
+                alignItems="center"
                 pl="em"
+                pr="small"
                 pt={index ? 'em' : 'small'}
                 pb="small"
                 key={item.text}
@@ -127,6 +182,18 @@ const SidebarList = ({
                 <Text variant="uiTextHeading" color="text.3" userSelect="none">
                   {item.text}
                 </Text>
+                {item.links && (
+                  <View flexDirection="row">
+                    {item.links.map((link) => (
+                      <SidebarHeaderButton
+                        label={link.label}
+                        ml="tiny"
+                        active={link.active}
+                        onPress={link.onPress}
+                      />
+                    ))}
+                  </View>
+                )}
               </View>
             )
           }
