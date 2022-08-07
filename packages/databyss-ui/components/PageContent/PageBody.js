@@ -35,7 +35,7 @@ export const PageBody = ({
   const pageState = useRef(null)
   const editorStateRef = useRef()
 
-  const debouncedSetPageHeader = _.debounce(setPageHeader, 250)
+  const debouncedSetPageHeader = _.debounce(setPageHeader, 1000)
 
   const [_debugSlateState, _setDebugSlateState] = useState(null)
 

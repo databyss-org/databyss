@@ -70,10 +70,6 @@ if (
   dbRef.current = getPouchDb(defaultGroup)
 }
 
-export const areIndexBuilt = {
-  current: false,
-}
-
 export const MakePouchReplicationErrorHandler = (
   action: string,
   logOnly: boolean = false
@@ -86,17 +82,6 @@ export const MakePouchReplicationErrorHandler = (
     throw new UnauthorizedDatabaseReplication(action)
   }
   throw pouchError
-}
-
-export const initiatePouchDbIndexes = async () => {
-  if (dbRef.current instanceof CouchDb) {
-    return
-  }
-
-  // TODO: indexing
-
-  console.log('indexes built')
-  areIndexBuilt.current = true
 }
 
 export const resetPouchDb = async () => {
