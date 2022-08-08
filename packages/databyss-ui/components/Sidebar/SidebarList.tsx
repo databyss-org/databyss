@@ -23,6 +23,7 @@ import {
 } from '@databyss-org/ui/primitives'
 import { useLocation } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 import { SidebarHeaderButton } from './SidebarHeaderButton'
 
 export interface SidebarListProps
@@ -103,8 +104,8 @@ const SidebarList = ({
   if (!showAll && _menuItems.length > recentSidebarItemLimit) {
     _menuItems = _menuItems.sort(
       (a, b) =>
-        (b.data?.modifiedAt ?? b.data?.createdAt) -
-        (a.data?.modifiedAt ?? a.data?.createdAt)
+        (b.data?.accessedAt ?? b.data?.modifiedAt ?? b.data?.createdAt) -
+        (a.data?.accessedAt ?? a.data?.modifiedAt ?? a.data?.createdAt)
     )
     _menuItems = _menuItems.slice(
       0,
@@ -179,21 +180,21 @@ const SidebarList = ({
                 pb="small"
                 key={item.text}
               >
-                <Text variant="uiTextHeading" color="text.3" userSelect="none">
+                <Text variant="uiTextHeading" color="text.2" userSelect="none">
                   {item.text}
                 </Text>
-                {item.links && (
-                  <View flexDirection="row">
-                    {item.links.map((link) => (
+                <View flexDirection="row" minHeight={pxUnits(20)}>
+                  {item.links &&
+                    item.links.map((link) => (
                       <SidebarHeaderButton
+                        key={`shb-${link.label}`}
                         label={link.label}
                         ml="tiny"
                         active={link.active}
                         onPress={link.onPress}
                       />
                     ))}
-                  </View>
-                )}
+                </View>
               </View>
             )
           }

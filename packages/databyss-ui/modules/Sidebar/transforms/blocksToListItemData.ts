@@ -7,6 +7,7 @@ export const blocksToListItemData: SidebarTransformFunction<
   Block | Source | Topic
 > = (blocks) =>
   blocks.map((_block) => ({
+    data: _block,
     type: blockTypeToListItemType(_block.type),
     route: `/${blockTypeToListItemType(_block.type)}s/${
       _block._id

@@ -84,13 +84,8 @@ const SidebarSearchResults = ({
   return (
     <SidebarList
       data-test-element="search-results"
-      menuItems={[
-        {
-          text: 'Quick Matches',
-          type: 'heading',
-        },
-        ...(filterQuery === '' ? sortedSources : filteredEntries),
-      ]}
+      heading="Quick Matches"
+      menuItems={filterQuery === '' ? sortedSources : filteredEntries}
       height={height}
       keyboardNavigation
       keyboardEventsActive={searchHasFocus}
@@ -105,6 +100,7 @@ const SidebarSearchResults = ({
       {...others}
     >
       <FulltextSearchItem onPress={onSearch} />
+      <View />
     </SidebarList>
   )
 }

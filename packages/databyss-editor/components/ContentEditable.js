@@ -6,7 +6,7 @@ import {
   Point,
   Range,
 } from '@databyss-org/slate'
-import { EM } from '@databyss-org/data/pouchdb/utils'
+import { EM, updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { setSource } from '@databyss-org/services/sources'
 import { setEmbed } from '@databyss-org/services/embeds'
@@ -195,6 +195,8 @@ const ContentEditable = ({
           _id: entity._id,
           page: state.pageHeader?._id,
         }
+
+        updateAccessedAt(entity._id)
 
         setBlockRelations(_payload)
         removeEntityFromQueue(entity._id)

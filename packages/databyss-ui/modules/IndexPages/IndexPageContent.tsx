@@ -43,6 +43,7 @@ import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import EditSvg from '@databyss-org/ui/assets/edit.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { urlSafeName } from '@databyss-org/services/lib/util'
+import { updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 import { useUserPreferencesContext } from '../../hooks'
@@ -209,6 +210,7 @@ export const IndexPageView = ({
   const titleInputHandlesRef = useRef<IndexPageTitleInputHandles>(null)
   const scrollViewRef = useRef<HTMLElement | null>(null)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const restoreScroll = useScrollMemory(scrollViewRef)
 
   useEffect(() => {
@@ -235,6 +237,9 @@ export const IndexPageView = ({
       : block?.text.textValue
   useEffect(() => {
     if (block) {
+      if (block && !isPublicAccount()) {
+        updateAccessedAt(block!._id)
+      }
       const { nice } = getTokensFromPath()
       const niceName = urlSafeName(blockName!)
       if (!nice?.length) {
