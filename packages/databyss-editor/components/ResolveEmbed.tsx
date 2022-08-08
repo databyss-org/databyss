@@ -16,6 +16,9 @@ export const ResolveEmbed = ({
   highlight,
   ...others
 }: ResolveEmbedProps) => {
+  if (!data?.detail) {
+    return null
+  }
   const _isUnfetched =
     !data.detail.mediaType || data.detail.mediaType === MediaTypes.UNFETCHED
 

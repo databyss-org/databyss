@@ -111,8 +111,9 @@ const SidebarList = ({
       0,
       Math.min(recentSidebarItemLimit, _menuItems.length)
     )
+  } else {
+    _menuItems = sortEntriesAtoZ(_menuItems, 'text')
   }
-  _menuItems = sortEntriesAtoZ(_menuItems, 'text')
   if (prependItems) {
     _menuItems = [...prependItems, ..._menuItems]
   }

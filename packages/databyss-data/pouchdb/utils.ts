@@ -297,11 +297,13 @@ const coallesceQ = (patches: Patch[]) => {
   return _patches
 }
 
-export const updateAccessedAt = (_id: string) =>
-  dbRef.current!.upsert(_id, (oldDoc) => ({
+export const updateAccessedAt = (_id: string) => {
+  console.log('[updateAccessedAt]', _id)
+  return dbRef.current!.upsert(_id, (oldDoc) => ({
     ...oldDoc,
     accessedAt: Date.now(),
   }))
+}
 
 // bypasses upsert queue
 export const upsertImmediate = async ({
