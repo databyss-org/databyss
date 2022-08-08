@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
@@ -55,18 +54,12 @@ export const PageList = ({ archive, transform, ...others }: PageListProps) => {
   }))
   // console.log('[PageList] joined', joined)
   const mapped = transform!(joined)
-  const sorted = sortEntriesAtoZ(mapped, 'text')
 
   return (
     <SidebarList
       data-test-element="sidebar-pages-list"
-      menuItems={[
-        {
-          text: archive ? 'Archived' : 'Pages',
-          type: 'heading',
-        },
-        ...sorted,
-      ]}
+      heading={archive ? 'Archived' : 'Pages'}
+      menuItems={mapped}
       {...others}
     />
   )

@@ -3,24 +3,18 @@ import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import { Group } from '@databyss-org/services/interfaces'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
-import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 
 export const GroupList = (others) => {
   const groupsRes = useGroups()
 
   const getGroupItems = (groups: Group[]) =>
-    sortEntriesAtoZ(
-      groups.map((group) => ({
-        text: group.name,
-        type: 'group',
-        route: `/collections/${group._id}`,
-        data: group,
-        iconColor: group.public ? 'orange.2' : null,
-      })),
-      'text'
-    )
-
-  // const sorted = sortEntriesAtoZ(mapped, 'text')
+    groups.map((group) => ({
+      text: group.name,
+      type: 'group',
+      route: `/collections/${group._id}`,
+      data: group,
+      iconColor: group.public ? 'orange.2' : null,
+    }))
 
   if (!groupsRes.isSuccess) {
     return <LoadingFallback queryObserver={groupsRes} />
@@ -31,13 +25,8 @@ export const GroupList = (others) => {
 
   return (
     <SidebarList
-      menuItems={[
-        {
-          text: 'My Collections',
-          type: 'heading',
-        },
-        ...getGroupItems(namedGroups),
-      ]}
+      heading="Collections"
+      menuItems={getGroupItems(namedGroups)}
       {...others}
     />
   )

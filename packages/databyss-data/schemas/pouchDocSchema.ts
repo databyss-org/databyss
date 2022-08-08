@@ -33,6 +33,9 @@ export const pouchDocSchema: JSONSchema4 = {
     modifiedAt: {
       type: 'number',
     },
+    accessedAt: {
+      type: 'number',
+    },
     _deleted: {
       type: 'boolean',
     },

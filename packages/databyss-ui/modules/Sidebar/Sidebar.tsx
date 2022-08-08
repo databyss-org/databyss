@@ -58,12 +58,8 @@ export const Sidebar = () => {
               <BlockList
                 blockType={BlockType.Source}
                 transform={authorsToListItemData}
+                heading="Sources"
                 prependItems={[
-                  {
-                    text: 'Sources',
-                    type: 'heading',
-                    route: '',
-                  },
                   {
                     type: 'sources',
                     text: 'Bibliography',
@@ -73,16 +69,7 @@ export const Sidebar = () => {
               />
             )}
             {menuItem === 'topics' && (
-              <BlockList
-                blockType={BlockType.Topic}
-                prependItems={[
-                  {
-                    text: 'Topics',
-                    type: 'heading',
-                    route: '',
-                  },
-                ]}
-              />
+              <BlockList blockType={BlockType.Topic} heading="Topics" />
             )}
             {menuItem === 'archive' && <PageList archive />}
             {menuItem === 'groups' && <GroupList />}

@@ -36,6 +36,7 @@ export function fetchPage(_id: string, firstBlockIsTitle: boolean) {
         if (firstBlockIsTitle && !(page instanceof ResourceNotFoundError)) {
           await ensureTitleBlock(page)
         }
+        console.log('[fetchPage]', page)
         dispatch({
           type: CACHE_PAGE,
           payload: { page, id: _id },

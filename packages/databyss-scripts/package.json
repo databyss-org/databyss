@@ -1,11 +1,11 @@
 {
   "name": "@databyss-org/scripts",
-  "version": "2.5.6",
+  "version": "2.6.0",
   "description": "databyss scripts",
   "author": "databyss-org",
   "license": "MIT",
   "dependencies": {
-    "@cloudant/couchbackup": "^2.6.0",
+    "@cloudant/couchbackup": "2.9.2",
     "@databyss-org/find-remove": "^3.1.0-b1",
     "@types/tmp": "^0.2.0",
     "@types/yargs": "^16.0.1",
@@ -19,9 +19,9 @@
     "yargs": "^16.2.0"
   },
   "peerDependencies": {
-    "@databyss-org/api": "2.5.6",
-    "@databyss-org/data": "2.5.6",
-    "@databyss-org/scripts": "2.5.6",
-    "@databyss-org/services": "2.5.6"
+    "@databyss-org/api": "2.6.0",
+    "@databyss-org/data": "2.6.0",
+    "@databyss-org/scripts": "2.6.0",
+    "@databyss-org/services": "2.6.0"
   }
 }

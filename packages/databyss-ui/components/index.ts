@@ -25,12 +25,19 @@ export { SourceCitationView } from './Citation/SourceCitationView'
 export { default as EditSourceForm } from './SourceForm/EditSourceForm'
 export { DropdownContainer } from '../'
 
+export interface SidebarListItemLink {
+  label: string
+  active?: boolean
+  onPress: () => void
+}
+
 export interface SidebarListItemData<T> {
   text: string
   type: string
-  route: string
+  route?: string
   icon?: ReactNode
   data?: T
   iconColor?: string | null
   name?: string
+  links?: SidebarListItemLink[]
 }

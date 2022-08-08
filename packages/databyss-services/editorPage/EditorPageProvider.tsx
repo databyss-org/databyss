@@ -8,6 +8,7 @@ import {
   useParams,
   useNavigationContext,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
+import { updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -20,6 +21,7 @@ import {
 } from '../interfaces'
 import { PageReplicator } from './PageReplicator'
 import * as actions from './actions'
+import { useSessionContext } from '../session/SessionProvider'
 
 interface PropsType {
   children: JSX.Element
@@ -62,6 +64,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   const pagesRes = usePages()
   const navigate = useNavigationContext((c) => c && c.navigate)
   const location = useNavigationContext((c) => c && c.location)
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   const pageIdParams = useParams()
   let pageId
@@ -126,6 +129,9 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
           return new ResourceNotFoundError('')
         }
         return state.cache[id]
+      }
+      if (!isPublicAccount()) {
+        updateAccessedAt(id)
       }
       dispatch(actions.fetchPage(id, firstBlockIsTitle))
       return null

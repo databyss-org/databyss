@@ -90,6 +90,10 @@ const uiTextVariants = {
   },
   uiTextSmall: uiText(14),
   uiTextTiny: uiText(10),
+  uiTextSmallCaps: {
+    ...uiText(10),
+    textTransform: 'uppercase',
+  },
   uiTextHeading: {
     fontFamily: fonts.uiFont,
     fontSize: 13,

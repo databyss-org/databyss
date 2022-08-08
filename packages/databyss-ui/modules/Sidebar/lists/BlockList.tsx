@@ -10,7 +10,6 @@ import {
   SidebarList,
   SidebarListItemData,
 } from '@databyss-org/ui/components'
-import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import {
   blocksToListItemData,
   SidebarTransformFunction,
@@ -21,12 +20,14 @@ interface BlockListProps<T extends Block> {
   blockType: BlockType
   transform?: SidebarTransformFunction<T>
   prependItems?: SidebarListItemData<T>[]
+  heading?: string
 }
 
 export const BlockList = <T extends Block>({
   blockType,
   transform,
   prependItems,
+  heading,
   ...others
 }: BlockListProps<T>) => {
   const blockRelationsRes = useBlockRelations(blockType)
@@ -47,10 +48,14 @@ export const BlockList = <T extends Block>({
     )
   )
 
-  const sorted = sortEntriesAtoZ(mapped, 'text')
-  const menuItems = (prependItems || []).concat(sorted)
-
-  return <SidebarList menuItems={menuItems} {...others} />
+  return (
+    <SidebarList
+      menuItems={mapped}
+      prependItems={prependItems}
+      heading={heading}
+      {...others}
+    />
+  )
 }
 
 BlockList.defaultProps = {
