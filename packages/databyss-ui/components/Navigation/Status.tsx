@@ -41,9 +41,8 @@ export const Status = React.memo(() => {
     statusMessage = `Databyss is getting back in sync.\n${dbStatus.writesPending} pending local changes`
   }
 
-  return useMemo(() => {
-    console.log('[Status] render')
-    return (
+  return useMemo(
+    () => (
       <View alignItems="center" justifyContent="flex-end" flexDirection="row">
         {!dbStatus.isBusy && (
           <View id="changes-saved">
@@ -61,6 +60,7 @@ export const Status = React.memo(() => {
           borderRadius="round"
         />
       </View>
-    )
-  }, [dbStatus.isBusy, statusMessage])
+    ),
+    [dbStatus.isBusy, statusMessage]
+  )
 })
