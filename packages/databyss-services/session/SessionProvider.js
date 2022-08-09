@@ -48,7 +48,7 @@ const SessionProvider = ({
   email,
   unauthorizedChildren,
 }) => {
-  const [state, dispatch, stateRef] = useReducer(reducer, initialState, {
+  const [state, dispatch] = useReducer(reducer, initialState, {
     name: 'SessionProvider',
   })
   const { notify } = useNotifyContext()
@@ -125,8 +125,6 @@ const SessionProvider = ({
         setCouchMode(true)
         await initDb({
           groupId,
-          dispatch,
-          stateRef,
           onReplicationComplete: (_res) => {
             updateCouchMode()
             if (_res) {
@@ -293,9 +291,9 @@ const SessionProvider = ({
     )
   }
 
-  const logout = () => {
+  const logout = useCallback(() => {
     dispatch(actions.logout())
-  }
+  }, [actions.logout])
 
   /**
    * checks on window focus if user should be forced logged out

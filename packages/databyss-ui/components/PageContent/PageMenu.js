@@ -62,7 +62,7 @@ export function copyToClipboard(text) {
   document.body.removeChild(dummy)
 }
 
-const PageMenu = () => {
+const PageMenu = React.memo(() => {
   const pagesRes = usePages()
   const groupsRes = useGroups()
 
@@ -452,6 +452,6 @@ const PageMenu = () => {
       )}
     </View>
   )
-}
+})
 
 export default PageMenu

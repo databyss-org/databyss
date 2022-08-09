@@ -351,20 +351,21 @@ const PDFDropZoneManager = () => {
   }, [])
 
   // render methods
-  const getLabel = () => (hasParsed ? '' : 'Drop your PDF here')
+  const label = hasParsed ? '' : 'Drop your PDF here'
 
-  const render = () => (
-    <View {...viewStyles()} className="pdf-drop-zone-manager">
-      <DashedArea
-        label={getLabel()}
-        isVisible={isDropAreaVisible}
-        isParsing={isParsing}
-      />
-      <InfoModal id="pdfDropZoneModal" />
-    </View>
+  return React.useMemo(
+    () => (
+      <View {...viewStyles()} className="pdf-drop-zone-manager">
+        <DashedArea
+          label={label}
+          isVisible={isDropAreaVisible}
+          isParsing={isParsing}
+        />
+        <InfoModal id="pdfDropZoneModal" />
+      </View>
+    ),
+    [label, isDropAreaVisible, isParsing]
   )
-
-  return render()
 }
 
 export default PDFDropZoneManager

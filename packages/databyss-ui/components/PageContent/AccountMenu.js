@@ -7,11 +7,12 @@ import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListene
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { version } from '@databyss-org/services'
+import { getDbBusy } from '@databyss-org/data/pouchdb/utils'
 import DropdownContainer from '../Menu/DropdownContainer'
 import DropdownListItem from '../Menu/DropdownListItem'
 import { AccountLoader } from '../Loaders'
 
-const AccountMenu = () => {
+const AccountMenu = React.memo(() => {
   const {
     isOnline,
     notifyConfirm,
@@ -20,12 +21,11 @@ const AccountMenu = () => {
     // notify,
   } = useNotifyContext()
   const logout = useSessionContext((c) => c && c.logout)
-  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const [menuOpen, setMenuOpen] = useState(false)
 
   const onLogout = () => {
-    if (!isOnline || isDbBusy) {
+    if (!isOnline || getDbBusy().isBusy) {
       notifyConfirm({
         message:
           'You are offline or have unsynched changes. Signing out will remove all local data, so we suggest waiting until you are online and all changes are synched (green dot) before signing out.',
@@ -157,6 +157,6 @@ const AccountMenu = () => {
   ) : (
     <View width="38px" height="38px" />
   )
-}
+})
 
 export default AccountMenu

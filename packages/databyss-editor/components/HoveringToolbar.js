@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { ThemeProvider } from 'emotion-theming'
 import { Grid, View } from '@databyss-org/ui/primitives'
@@ -19,28 +19,42 @@ const _css = (position, showToolbar) => ({
   opacity: showToolbar ? 1 : 0,
   transition: `opacity ${theme.timing.quick}ms ease`,
   borderRadius,
-  ...position,
+  left: pxUnits(position.left),
+  top: pxUnits(position.top),
 })
 
-const HoveringToolbar = forwardRef(
-  ({ children, position, showToolbar }, ref) => (
+const HoveringToolbar = ({ children, selectionRect, selectionIsBackwards }) => {
+  const offscreenPosition = { top: -200, left: -200 }
+  const menuRef = useRef()
+  const [position, setPosition] = useState(offscreenPosition)
+
+  const updatePosition = () => {
+    const el = menuRef.current
+    setPosition({
+      top: selectionRect.top + window.pageYOffset - el.offsetHeight,
+      left:
+        selectionRect.left + (selectionIsBackwards ? 0 : selectionRect.width),
+    })
+  }
+
+  useEffect(() => {
+    if (menuRef.current) {
+      updatePosition()
+    } else {
+      setPosition(offscreenPosition)
+    }
+  }, [menuRef.current, selectionRect, selectionIsBackwards])
+
+  return (
     <Portal>
       <ThemeProvider theme={darkTheme}>
         <View
           css={[
-            styledCss(
-              _css(
-                {
-                  top: position.top,
-                  left: position.left,
-                  right: position.right,
-                  bottom: position.bottom,
-                },
-                showToolbar
-              )
-            )(darkTheme),
+            styledCss(_css(position, position.top > 0 && position.left > 0))(
+              darkTheme
+            ),
           ]}
-          ref={ref}
+          ref={menuRef}
         >
           <Grid singleRow columnGap={0} flexWrap="nowrap">
             {children}
@@ -49,13 +63,6 @@ const HoveringToolbar = forwardRef(
       </ThemeProvider>
     </Portal>
   )
-)
-
-HoveringToolbar.defaultProps = {
-  position: {
-    top: -200,
-    left: -200,
-  },
 }
 
 export default HoveringToolbar

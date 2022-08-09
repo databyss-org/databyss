@@ -13,7 +13,7 @@ export {
   useNavigationContext,
 } from './Navigation/NavigationProvider/NavigationProvider'
 export { default as AccountMenu } from './PageContent/AccountMenu'
-export { StickyHeader } from './Navigation/SickyHeader'
+export { StickyHeader } from './Navigation/StickyHeader'
 export { TitleInput } from './PageContent/TitleInput'
 export {
   IndexResultDetails,

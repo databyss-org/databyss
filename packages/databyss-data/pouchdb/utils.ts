@@ -16,50 +16,25 @@ export const upQdict: upsertQueueRef = {
   current: [],
 }
 
-const sessionDispatchRef: { current: Function | null } = {
-  current: null,
-}
-
-let sessionStateRef: { current: any }
-
-export const setDbBusyDispatch = (
-  dispatch: Function,
-  stateRef: { current: any }
-) => {
-  sessionDispatchRef.current = dispatch
-  sessionStateRef = stateRef
-}
-
-/**
- *
- * @param isBusy
- * @param writesPending
- * global function to dispatch db_busy action
- */
+let _isBusy = false
+let _writesPending = 0
 
 export const setDbBusy = (isBusy: boolean, writesPending?: number) => {
-  if (!sessionDispatchRef.current) {
-    return
-  }
-  const _writesPending =
+  _writesPending =
     writesPending ??
     upQdict.current.length + Object.keys(getGroupActionQ()).length
   // only set busy to false if no writes are left in queue
-  const _isBusy = !!(_writesPending || writesPending) || isBusy
-  if (
-    _isBusy === sessionStateRef.current?.isDbBusy &&
-    _writesPending === sessionStateRef.current?.writesPending
-  ) {
-    return
-  }
-  sessionDispatchRef.current({
-    type: 'DB_BUSY',
-    payload: {
-      isBusy: _isBusy,
-      writesPending: _writesPending,
-    },
-  })
+  _isBusy = !!(_writesPending || writesPending) || isBusy
 }
+
+export interface DbStatus {
+  isBusy: boolean
+  writesPending: number
+}
+export const getDbBusy = (): DbStatus => ({
+  isBusy: _isBusy,
+  writesPending: _writesPending,
+})
 
 export const addTimeStamp = (doc: any): any => {
   // if document has been created add a modifiedAt timestamp
@@ -297,13 +272,11 @@ const coallesceQ = (patches: Patch[]) => {
   return _patches
 }
 
-export const updateAccessedAt = (_id: string) => {
-  console.log('[updateAccessedAt]', _id)
-  return dbRef.current!.upsert(_id, (oldDoc) => ({
+export const updateAccessedAt = (_id: string) =>
+  dbRef.current!.upsert(_id, (oldDoc) => ({
     ...oldDoc,
     accessedAt: Date.now(),
   }))
-}
 
 // bypasses upsert queue
 export const upsertImmediate = async ({
