@@ -20,22 +20,6 @@ import LoadingFallback from '../Notify/LoadingFallback'
 
 // const INTERACTION_EVENTS = 'pointerdown keydown wheel touchstart focusin'
 
-export const PageContentView = ({ children, ...others }) =>
-  React.useMemo(
-    () => (
-      <View
-        pt="small"
-        flexShrink={1}
-        flexGrow={1}
-        overflow="hidden"
-        {...others}
-      >
-        {children}
-      </View>
-    ),
-    []
-  )
-
 export const PageContainer = ({ page, isReadOnly, ...others }) => {
   const focusIndex = useEditorPageContext((c) => c.focusIndex)
   const [, setAuthToken] = useState()
@@ -88,24 +72,33 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
     })
   }
 
-  return linkedDocsRes.isSuccess ? (
-    <>
-      <PageSticky pagePath={editorPath} pageId={page._id} />
-      <PageContentView {...others}>
-        {isReadOnly ? (
-          <FlatPageBody page={page} />
-        ) : (
-          <PageBody
-            onEditorPathChange={setEditorPath}
-            page={page}
-            focusIndex={focusIndex}
-          />
-        )}
-      </PageContentView>
-    </>
-  ) : (
-    <LoadingFallback resource={linkedDocsRes} />
-  )
+  return useMemo(() => {
+    console.log('[PageContent] render')
+    return linkedDocsRes.isSuccess ? (
+      <>
+        <PageSticky pagePath={editorPath} pageId={page._id} />
+        <View
+          pt="small"
+          flexShrink={1}
+          flexGrow={1}
+          overflow="hidden"
+          {...others}
+        >
+          {isReadOnly ? (
+            <FlatPageBody page={page} />
+          ) : (
+            <PageBody
+              onEditorPathChange={setEditorPath}
+              page={page}
+              focusIndex={focusIndex}
+            />
+          )}
+        </View>
+      </>
+    ) : (
+      <LoadingFallback resource={linkedDocsRes} />
+    )
+  }, [linkedDocsRes.isSuccess, isReadOnly, page._id, focusIndex])
 }
 
 const PageContent = (others) => {

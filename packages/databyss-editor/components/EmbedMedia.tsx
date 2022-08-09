@@ -103,7 +103,7 @@ export const EmbedMedia = ({
         </View>
       </InlineEmbed>
     ),
-    [JSON.stringify(blockRes.data)]
+    [JSON.stringify(blockRes.data), highlight]
   )
 }
 

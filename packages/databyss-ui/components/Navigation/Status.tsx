@@ -24,7 +24,7 @@ export const Status = React.memo(() => {
         prevStatusRef.current = initStatus
         setDbStatus(initStatus)
       }
-      if (!prevStatusRef.current.isBusy && status.writesPending > 20) {
+      if (!prevStatusRef.current.isBusy && status.writesPending > 5) {
         prevStatusRef.current = status
         setDbStatus(status)
       }
