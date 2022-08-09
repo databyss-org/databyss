@@ -72,33 +72,40 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
     })
   }
 
-  return useMemo(() => {
-    console.log('[PageContent] render')
-    return linkedDocsRes.isSuccess ? (
-      <>
-        <PageSticky pagePath={editorPath} pageId={page._id} />
-        <View
-          pt="small"
-          flexShrink={1}
-          flexGrow={1}
-          overflow="hidden"
-          {...others}
-        >
-          {isReadOnly ? (
-            <FlatPageBody page={page} />
-          ) : (
-            <PageBody
-              onEditorPathChange={setEditorPath}
-              page={page}
-              focusIndex={focusIndex}
-            />
-          )}
-        </View>
-      </>
-    ) : (
-      <LoadingFallback resource={linkedDocsRes} />
-    )
-  }, [linkedDocsRes.isSuccess, isReadOnly, page._id, focusIndex])
+  return useMemo(
+    () =>
+      linkedDocsRes.isSuccess ? (
+        <>
+          <PageSticky pagePath={editorPath} pageId={page._id} />
+          <View
+            pt="small"
+            flexShrink={1}
+            flexGrow={1}
+            overflow="hidden"
+            {...others}
+          >
+            {isReadOnly ? (
+              <FlatPageBody page={page} />
+            ) : (
+              <PageBody
+                onEditorPathChange={setEditorPath}
+                page={page}
+                focusIndex={focusIndex}
+              />
+            )}
+          </View>
+        </>
+      ) : (
+        <LoadingFallback resource={linkedDocsRes} />
+      ),
+    [
+      linkedDocsRes.isSuccess,
+      isReadOnly,
+      page._id,
+      focusIndex,
+      editorPath?.path?.join('/'),
+    ]
+  )
 }
 
 const PageContent = (others) => {
