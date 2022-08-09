@@ -215,7 +215,24 @@ export const isMarkActive = (editor, format) => {
 }
 
 export const toggleMark = (editor, format) => {
+  // HACK if selection is at beginning of entry, jog the cursor to make the formatting work
   const isActive = isMarkActive(editor, format)
+  if (
+    (editor.selection.anchor.path[1] === 0 &&
+      editor.selection.anchor.offset === 0) ||
+    (editor.selection.focus.path[1] === 0 &&
+      editor.selection.focus.offset === 0)
+  ) {
+    Transforms.move(editor, {
+      unit: 'character',
+      distance: 1,
+      reverse: true,
+    })
+    Transforms.move(editor, {
+      unit: 'character',
+      distance: 1,
+    })
+  }
   if (isActive) {
     Editor.removeMark(editor, format)
   } else {
