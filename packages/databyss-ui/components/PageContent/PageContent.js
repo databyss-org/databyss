@@ -20,11 +20,21 @@ import LoadingFallback from '../Notify/LoadingFallback'
 
 // const INTERACTION_EVENTS = 'pointerdown keydown wheel touchstart focusin'
 
-export const PageContentView = ({ children, ...others }) => (
-  <View pt="small" flexShrink={1} flexGrow={1} overflow="hidden" {...others}>
-    {children}
-  </View>
-)
+export const PageContentView = ({ children, ...others }) =>
+  React.useMemo(
+    () => (
+      <View
+        pt="small"
+        flexShrink={1}
+        flexGrow={1}
+        overflow="hidden"
+        {...others}
+      >
+        {children}
+      </View>
+    ),
+    []
+  )
 
 export const PageContainer = ({ page, isReadOnly, ...others }) => {
   const focusIndex = useEditorPageContext((c) => c.focusIndex)
@@ -109,8 +119,9 @@ const PageContent = (others) => {
   use same route to update name, just pass it name 
   */
 
-  return useMemo(
-    () => (
+  return useMemo(() => {
+    console.log('[PageContent] render')
+    return (
       <View flex="1" height="100%" backgroundColor="background.1">
         {id && (
           <EditorPageLoader pageId={id} key={id} firstBlockIsTitle>
@@ -126,9 +137,8 @@ const PageContent = (others) => {
           </EditorPageLoader>
         )}
       </View>
-    ),
-    [id, isReadOnly, anchor]
-  )
+    )
+  }, [id, isReadOnly, anchor])
 }
 
 function getLinkedDocIds(page) {

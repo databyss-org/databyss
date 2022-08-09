@@ -27,10 +27,6 @@ export const initialState = {
   // cleared when challenge is accepted or rejected
   lastCredentials: null,
   userInfo: null,
-  // monitors pouch db sync
-  isDbBusy: false,
-  readsPending: 0,
-  writesPending: 0,
   sessionIsStored: false,
   isReadOnly: true,
 }
@@ -129,15 +125,6 @@ export default (state, action) => {
       return {
         ...state,
         isReadOnly: action.payload,
-      }
-    }
-
-    case 'DB_BUSY': {
-      return {
-        ...state,
-        isDbBusy: action.payload.isBusy,
-        readsPending: action.payload.readsPending || 0,
-        writesPending: action.payload.writesPending || 0,
       }
     }
 

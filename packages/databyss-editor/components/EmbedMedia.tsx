@@ -62,23 +62,24 @@ export const EmbedMedia = ({
     }
   }
 
-  return (
-    <InlineEmbed
-      attributes={attributes}
-      embedData={blockRes.data as Embed}
-      onClick={highlightEmbed}
-      _children={_children}
-      textRef={textRef}
-    >
-      <View position="relative">
-        <ResolveEmbed
-          data={blockRes.data as Embed}
-          highlight={highlight}
-          leaf={_element}
-          position="relative"
-          zIndex={1}
-        />
-        {/* {highlight && (
+  return React.useMemo(
+    () => (
+      <InlineEmbed
+        attributes={attributes}
+        embedData={blockRes.data as Embed}
+        onClick={highlightEmbed}
+        _children={_children}
+        textRef={textRef}
+      >
+        <View position="relative">
+          <ResolveEmbed
+            data={blockRes.data as Embed}
+            highlight={highlight}
+            leaf={_element}
+            position="relative"
+            zIndex={1}
+          />
+          {/* {highlight && (
           <View
             zIndex={2}
             position="absolute"
@@ -99,8 +100,10 @@ export const EmbedMedia = ({
             </Button>
           </View>
         )} */}
-      </View>
-    </InlineEmbed>
+        </View>
+      </InlineEmbed>
+    ),
+    [JSON.stringify(blockRes.data)]
   )
 }
 

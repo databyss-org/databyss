@@ -28,7 +28,7 @@ import tv4 from 'tv4'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { checkNetwork } from '@databyss-org/services/lib/request'
 import { DocumentType } from './interfaces'
-import { setDbBusyDispatch, setDbBusy } from './utils'
+import { setDbBusy } from './utils'
 import { processGroupActionQ } from './groups/utils'
 import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
 import embedSchema from '../schemas/embedSchema'
@@ -324,21 +324,13 @@ export const pouchDataValidation = (data) => {
 export const initDb = ({
   groupId,
   isPublicGroup = false,
-  dispatch,
-  stateRef,
   onReplicationComplete,
 }: {
   groupId: string
   isPublicGroup: boolean
-  dispatch?: Function
-  stateRef?: any
   onReplicationComplete?: (success: boolean) => void
 }) =>
   new Promise<void>((resolve) => {
-    if (dispatch && stateRef) {
-      setDbBusyDispatch(dispatch, stateRef)
-    }
-
     const _pouchDb = new PouchDB(groupId, {
       auto_compaction: true,
     })
