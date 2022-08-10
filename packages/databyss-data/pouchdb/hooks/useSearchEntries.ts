@@ -1,14 +1,15 @@
 import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import PouchDB from 'pouchdb'
 import { dbRef, waitForPouchDb } from '../db'
 import { searchEntries } from '../entries'
 import { SearchEntriesResultPage } from '../entries/lib/searchEntries'
 import { DocumentType } from '../interfaces'
 import { usePages } from './'
-import { CouchDb } from '../../couchdb-client/couchdb'
 import { useDocuments } from './useDocuments'
 import { Block } from '../../../databyss-services/interfaces'
+import { CouchDb } from '../../couchdb-client/couchdb'
 
 const changesRef: { current: PouchDB.Core.Changes<any> | undefined } = {
   current: undefined,
@@ -18,6 +19,7 @@ const changesRef: { current: PouchDB.Core.Changes<any> | undefined } = {
 let firstSearchComplete: boolean = false
 
 export const useSearchEntries = (searchQuery: string) => {
+  const { isOnline } = useNotifyContext()
   const pagesRes = usePages()
   const blocksRes = useDocuments<Block>({
     doctype: DocumentType.Block,
@@ -39,6 +41,7 @@ export const useSearchEntries = (searchQuery: string) => {
           queryClient.setQueryData(queryKey, _results)
         },
         allowStale: firstSearchComplete,
+        localSearch: !isOnline,
       })
       firstSearchComplete = true
       return results
@@ -72,7 +75,7 @@ export const useSearchEntries = (searchQuery: string) => {
           queryClient.removeQueries(['searchEntries'])
         }
       })
-  }, [])
+  }, [dbRef.current])
 
   return query
 }

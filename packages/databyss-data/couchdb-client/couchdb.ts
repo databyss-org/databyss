@@ -1,10 +1,40 @@
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces'
+import { InvalidRequestError } from '@databyss-org/services/interfaces/Errors'
 import {
   couchGet,
   couchPost,
   couchPut,
   RequestCouchOptions,
 } from '@databyss-org/services/lib/requestCouch'
+import { PouchDbSearchRow } from '../pouchdb/entries/lib/searchEntries'
+
+function splitSearchTerms(query: string) {
+  const _words = query.split(' ')
+  const _terms: string[] = []
+  let _widx = 0
+  let _tidx = 0
+  let _inphrase = false
+  while (_widx < _words.length) {
+    if (_inphrase) {
+      _terms[_tidx] += ` ${_words[_widx]}`
+      if (_words[_widx].endsWith('"')) {
+        _terms[_tidx] = _terms[_tidx].substring(0, _terms[_tidx].length - 1)
+        _tidx += 1
+        _inphrase = false
+      }
+    } else {
+      _terms[_tidx] = _words[_widx]
+      if (_words[_widx].startsWith('"')) {
+        _terms[_tidx] = _terms[_tidx].substring(1)
+        _inphrase = true
+      } else {
+        _tidx += 1
+      }
+    }
+    _widx += 1
+  }
+  return _terms
+}
 
 export class CouchDb {
   dbName: string
@@ -63,6 +93,37 @@ export class CouchDb {
     }
     const _nextDoc = diffFn(_oldDoc)
     return couchPut(`${this.dbName}/${docId}`, _nextDoc, options)
+  }
+
+  /**
+   * Fulltext search
+   * @param query search string
+   */
+  async search(
+    { query },
+    options?: RequestCouchOptions
+  ): Promise<PouchDbSearchRow[]> {
+    const _terms = splitSearchTerms(query)
+    console.log('[search] terms', _terms)
+    const body = {
+      selector: {
+        $and: _terms.map((term) => ({
+          $text: term,
+        })),
+      },
+    }
+    const res: any = await couchPost(`${this.dbName}/_find`, body, options)
+    if (!res.docs) {
+      throw new InvalidRequestError(`Invalid query: ${JSON.stringify(body)}`)
+    }
+    return res.docs.map((doc: any) => {
+      const row: PouchDbSearchRow = {
+        id: doc._id,
+        doc,
+        score: 0,
+      }
+      return row
+    })
   }
 }
 interface CouchDbRef {

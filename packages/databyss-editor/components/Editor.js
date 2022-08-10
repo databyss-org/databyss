@@ -145,7 +145,6 @@ const Editor = ({
   useEffect(() => {
     _editorRef.current = ReactEditor.toDOMNode(editor, editor)
     if (editorRef) {
-      console.log('[Editor] editorRef', _editorRef.current)
       editorRef.current = _editorRef.current
     }
     _restoreScroll()

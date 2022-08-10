@@ -11,6 +11,7 @@ import { populatePage } from '@databyss-org/services/blocks/joins'
 import { indexPage } from '@databyss-org/editor/lib/util'
 import { cloneDeep } from 'lodash'
 import { searchText } from '../../utils'
+import { couchDbRef } from '../../../couchdb-client/couchdb'
 
 export interface SearchEntriesResultRow {
   entryId: string
@@ -28,7 +29,9 @@ export interface SearchEntriesResultPage {
   pageId: string
 }
 
-interface SearchRow {
+export type PouchDbSearchRow = PouchDB.SearchRow<SearchRow>
+
+export interface SearchRow {
   page: Page | null
   index: number
   text: Text
@@ -42,19 +45,21 @@ const searchEntries = async ({
   blocks,
   onUpdated,
   allowStale,
+  localSearch,
 }: {
   encodedQuery: string
   pages: Page[]
   blocks: DocumentDict<Block>
   onUpdated?: (res: SearchEntriesResultPage[]) => void
   allowStale: boolean
+  localSearch: boolean
 }): Promise<SearchEntriesResultPage[]> => {
   const _query = decodeURIComponent(encodedQuery)
 
   const _buildSearchEntriesResults = (
-    _res: PouchDB.SearchResponse<{}>
+    rows: PouchDbSearchRow[]
   ): SearchEntriesResultPage[] => {
-    const _queryResponse = _res.rows as PouchDB.SearchRow<SearchRow>[]
+    const _queryResponse = rows
     if (!_queryResponse.length) {
       return []
     }
@@ -195,18 +200,26 @@ const searchEntries = async ({
     return Object.values(_results)
   }
 
-  const _res = await searchText({
-    query: _query,
-    onUpdated: (_updatedRes) => {
-      if (!onUpdated) {
-        return
-      }
-      onUpdated(_buildSearchEntriesResults(_updatedRes))
-    },
-    allowStale,
-  })
+  let _searchRows: PouchDbSearchRow[] = []
+  if (localSearch) {
+    const _res = await searchText({
+      query: _query,
+      onUpdated: (_updatedRes) => {
+        if (!onUpdated) {
+          return
+        }
+        onUpdated(
+          _buildSearchEntriesResults(_updatedRes.rows as PouchDbSearchRow[])
+        )
+      },
+      allowStale,
+    })
+    _searchRows = _res.rows as PouchDbSearchRow[]
+  } else {
+    _searchRows = await couchDbRef.current?.search({ query: _query })!
+  }
 
-  return _buildSearchEntriesResults(_res)
+  return _buildSearchEntriesResults(_searchRows)
 }
 
 export default searchEntries
