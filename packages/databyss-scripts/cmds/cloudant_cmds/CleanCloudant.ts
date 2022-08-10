@@ -4,7 +4,10 @@ import {
   ServerProcessArgs,
   sleep,
 } from '@databyss-org/scripts/lib'
-import { updateDesignDocs, initiateDatabases } from '@databyss-org/data/couchdb'
+import {
+  updateSysDesignDocs,
+  initiateDatabases,
+} from '@databyss-org/data/couchdb'
 import { SysUser } from '@databyss-org/data/interfaces'
 import { Document, Group } from '@databyss-org/services/interfaces'
 
@@ -60,7 +63,7 @@ export class CleanCloudant extends ServerProcess {
       // re-initialize the database
       await initiateDatabases()
       this.logSuccess('created admin dbs')
-      await updateDesignDocs()
+      await updateSysDesignDocs()
       this.logSuccess('added design docs to admin dbs')
     }
   }

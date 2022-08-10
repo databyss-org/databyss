@@ -1,5 +1,5 @@
 import { SysUser, Role } from '@databyss-org/data/interfaces'
-import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
+import { updateGroupDesignDocs } from '@databyss-org/data/couchdb/util'
 import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import { DocumentScope } from 'nano'
@@ -99,21 +99,6 @@ export const deleteGroupId = async (groupId) => {
   }
 }
 
-export const createSearchIndex = async (db: DocumentScope<any>) =>
-  db.createIndex({
-    type: 'text',
-    index: {
-      default_analyzer: 'english',
-      fields: [
-        {
-          name: 'text.textValue',
-          type: 'string',
-        },
-      ],
-    } as any,
-    name: 'textValue-text',
-  })
-
 export const createGroupDatabase = async (
   id: string
 ): Promise<DocumentScope<any>> => {
@@ -131,8 +116,7 @@ export const createGroupDatabase = async (
     await cloudant.current.db.create(id)
     // add design docs to sever
     _db = await cloudant.current.db.use<any>(id)
-    await updateDesignDoc({ db: _db })
-    await createSearchIndex(_db)
+    await updateGroupDesignDocs(_db)
 
     return _db
   }
