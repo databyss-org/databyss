@@ -25,7 +25,7 @@ export const PageBody = ({
   page,
   focusIndex,
   onNavigateUpFromEditor,
-  editorRef,
+  editorRef: editableRef,
   onEditorPathChange,
 }) => {
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
@@ -134,7 +134,7 @@ export const PageBody = ({
                 focusIndex={focusIndex}
                 onNavigateUpFromTop={onNavigateUpFromEditor}
                 active={false}
-                editorRef={editorRef}
+                editableRef={editableRef}
                 readonly={readOnly}
                 sharedWithGroups={sharedWithGroups}
                 firstBlockIsTitle

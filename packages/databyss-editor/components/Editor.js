@@ -25,6 +25,7 @@ const Editor = ({
   onInlineAtomicClick,
   firstBlockIsTitle,
   selection,
+  editorRef,
   ...others
 }) => {
   const _searchTerm = useSearchContext((c) => c && c.searchTerm)
@@ -143,6 +144,10 @@ const Editor = ({
 
   useEffect(() => {
     _editorRef.current = ReactEditor.toDOMNode(editor, editor)
+    if (editorRef) {
+      console.log('[Editor] editorRef', _editorRef.current)
+      editorRef.current = _editorRef.current
+    }
     _restoreScroll()
   }, [])
 

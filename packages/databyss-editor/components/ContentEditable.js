@@ -62,13 +62,14 @@ const ContentEditable = ({
   autofocus,
   readonly,
   onNavigateUpFromTop,
-  editorRef,
   sharedWithGroups,
   firstBlockIsTitle,
+  editableRef,
 }) => {
   const blocksRes = useBlocks()
   const pagesRes = usePages()
   const editorContext = useEditorContext()
+  const editorRef = useRef(null)
   const { navigate } = useNavigationContext()
 
   const historyContext = useHistoryContext()
@@ -92,6 +93,10 @@ const ContentEditable = ({
 
   try {
     if (!valueRef.current || state.operations.reloadAll) {
+      let _scroll = null
+      if (state.operations.reloadAll) {
+        _scroll = editorRef.current?.scrollTop
+      }
       editor.children = stateToSlate(state)
       // load selection from DB
       if (state.selection) {
@@ -105,6 +110,11 @@ const ContentEditable = ({
         if (!state.operations.reloadAll) {
           setSelection(state.selection)
         }
+      }
+      if (_scroll) {
+        requestAnimationFrame(() => {
+          editorRef.current.scrollTop = _scroll
+        })
       }
     }
   } catch (error) {
@@ -207,7 +217,7 @@ const ContentEditable = ({
     }
   }, [state.newEntities.length])
 
-  useImperativeHandle(editorRef, () => ({
+  useImperativeHandle(editableRef, () => ({
     focus: () => {
       ReactEditor.focus(editor)
       const _firstBlockText = state.blocks[0].text.textValue
@@ -930,6 +940,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
         onKeyDown={onKeyDown}
         readonly={readonly}
         firstBlockIsTitle={firstBlockIsTitle}
+        editorRef={editorRef}
       />
     )
   }, [editor, state, readonly])
