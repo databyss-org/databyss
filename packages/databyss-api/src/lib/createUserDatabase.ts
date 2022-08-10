@@ -99,6 +99,21 @@ export const deleteGroupId = async (groupId) => {
   }
 }
 
+export const createSearchIndex = async (db: DocumentScope<any>) =>
+  db.createIndex({
+    type: 'text',
+    index: {
+      default_analyzer: 'english',
+      fields: [
+        {
+          name: 'text.textValue',
+          type: 'string',
+        },
+      ],
+    } as any,
+    name: 'textValue-text',
+  })
+
 export const createGroupDatabase = async (
   id: string
 ): Promise<DocumentScope<any>> => {
@@ -117,6 +132,7 @@ export const createGroupDatabase = async (
     // add design docs to sever
     _db = await cloudant.current.db.use<any>(id)
     await updateDesignDoc({ db: _db })
+    await createSearchIndex(_db)
 
     return _db
   }
