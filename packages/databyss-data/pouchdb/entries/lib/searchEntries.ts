@@ -11,7 +11,7 @@ import { populatePage } from '@databyss-org/services/blocks/joins'
 import { indexPage } from '@databyss-org/editor/lib/util'
 import { cloneDeep } from 'lodash'
 import { searchText } from '../../utils'
-import { couchDbRef } from '../../../couchdb-client/couchdb'
+import { couchDbRef, splitSearchTerms } from '../../../couchdb-client/couchdb'
 
 export interface SearchEntriesResultRow {
   entryId: string
@@ -90,8 +90,36 @@ const searchEntries = async ({
     )
 
     // expand results
+    const _terms = splitSearchTerms(encodedQuery, {
+      stemmed: true,
+      normalized: true,
+    })
     const _expandedQueryResponse: PouchDB.SearchRow<SearchRow>[] = []
     for (const _result of _queryResponse) {
+      if (_result.doc.type !== BlockType.Entry) {
+        continue
+      }
+      if (!_result.doc.text.textValue) {
+        continue
+      }
+      // skip if no terms matched
+      let _hasMatch = false
+      _terms.forEach((term) => {
+        if (_hasMatch) {
+          return
+        }
+        if (
+          _result.doc.text.textValue.match(
+            new RegExp(`\\b${term.text}[^\\b]*?\\b`, 'ig')
+          )
+        ) {
+          _hasMatch = true
+        }
+      })
+      if (!_hasMatch) {
+        continue
+      }
+
       const _entryId = _result.id
       const _pages = _blockToPages[_entryId]
 

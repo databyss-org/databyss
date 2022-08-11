@@ -19,12 +19,7 @@ const setTopic = async (data: Topic, caches?: DocumentCacheDict) => {
     },
   })
 
-  if (_prevTopic?.text.textValue !== text.textValue) {
-    console.log(
-      '[SetTopic] updateInlines',
-      _prevTopic?.text?.textValue,
-      text.textValue
-    )
+  if (_prevTopic && _prevTopic.text.textValue !== text.textValue) {
     await updateInlines({
       inlineType: InlineTypes.InlineTopic,
       text,

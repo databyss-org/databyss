@@ -1,3 +1,4 @@
+import { stemmer } from 'stemmer'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces'
 import { InvalidRequestError } from '@databyss-org/services/interfaces/Errors'
 import {
@@ -13,7 +14,18 @@ export interface SearchTerm {
   exact: boolean
 }
 
-export function splitSearchTerms(query: string) {
+interface SplitSearchTermOptions {
+  normalized: boolean
+  stemmed: boolean
+}
+
+// init stemming
+// const stemmer = new Snowball('English')
+
+export function splitSearchTerms(
+  query: string,
+  { stemmed, normalized }: SplitSearchTermOptions
+) {
   const _words = query.split(' ')
   const _terms: SearchTerm[] = []
   let _widx = 0
@@ -51,7 +63,29 @@ export function splitSearchTerms(query: string) {
 
     _widx += 1
   }
-  return _terms
+
+  const _additional: SearchTerm[] = []
+  const _processed = _terms.map((term) => {
+    if (term.exact) {
+      return term
+    }
+    if (normalized) {
+      // normalize diactritics
+      term.text = term.text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    }
+    if (stemmed) {
+      term.text = stemmer(term.text)
+      if (term.text.endsWith('bl')) {
+        _additional.push({
+          text: `${term.text.substring(0, term.text.length - 1)}il`,
+          exact: false,
+        })
+      }
+    }
+    return term
+  })
+
+  return _processed.concat(_additional)
 }
 
 export class CouchDb {
@@ -121,7 +155,10 @@ export class CouchDb {
     { query },
     options?: RequestCouchOptions
   ): Promise<PouchDbSearchRow[]> {
-    const _terms = splitSearchTerms(query)
+    const _terms = splitSearchTerms(query, {
+      stemmed: false,
+      normalized: false,
+    })
     const body = {
       selector: {
         $and: _terms.map((term) => ({

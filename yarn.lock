@@ -15527,6 +15527,11 @@ lambdafs@^1.3.0:
   dependencies:
     tar-fs "^2.0.0"
 
+lancaster-stemmer@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/lancaster-stemmer/-/lancaster-stemmer-2.0.0.tgz#057cf6352b24cc8aed7698760a4a4e3ccfe11693"
+  integrity sha512-JBXY8lluzXGUSm7DD5Yx/g/2WLw+o3th6sylh5pue7nYIQSxB9f6v2g18z1brS5N/nyN5hE0eLmSnRn03MpIcA==
+
 language-subtag-registry@~0.3.2:
   version "0.3.21"
   resolved "https://registry.yarnpkg.com/language-subtag-registry/-/language-subtag-registry-0.3.21.tgz#04ac218bea46f04cb039084602c6da9e788dd45a"
@@ -22900,11 +22905,6 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-snowball@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/snowball/-/snowball-0.3.1.tgz#627b19fb6574118bef06ad6810d84ddbee3ef993"
-  integrity sha512-mCgdHVUCYV2W67Wm75phNERUQ01a6k1Rbjm3l2wF3QWVaxLxf2Iu3Jm3nWlZW3S6g0SdQcn9AEsnhgBoplw+3g==
-
 sockjs-client@1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/sockjs-client/-/sockjs-client-1.3.0.tgz#12fc9d6cb663da5739d3dc5fb6e8687da95cb177"
@@ -23329,6 +23329,11 @@ stealthy-require@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
   integrity sha1-NbCYdbT/SfJqd35QmzCQoyJr8ks=
+
+stemmer@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/stemmer/-/stemmer-2.0.0.tgz#05fcaf174c423b0fec85e660759ebd4867d811c9"
+  integrity sha512-0YS2oMdTZ/wAWUHMMpf7AAJ8Gm6dHXyHddJ0zCu2DIfOfIbdwqAm1bbk4+Vti6gxNIcOrnm5jAP7vYTzQDvc5A==
 
 store2@^2.7.1:
   version "2.11.2"
