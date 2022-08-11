@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
-import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
+import { checkNetwork } from '@databyss-org/services/lib/request'
 import PouchDB from 'pouchdb'
 import { dbRef, waitForPouchDb } from '../db'
 import { searchEntries } from '../entries'
@@ -19,7 +19,6 @@ const changesRef: { current: PouchDB.Core.Changes<any> | undefined } = {
 let firstSearchComplete: boolean = false
 
 export const useSearchEntries = (searchQuery: string) => {
-  const { isOnline } = useNotifyContext()
   const pagesRes = usePages()
   const blocksRes = useDocuments<Block>({
     doctype: DocumentType.Block,
@@ -30,7 +29,8 @@ export const useSearchEntries = (searchQuery: string) => {
   const query = useQuery<SearchEntriesResultPage[]>(
     queryKey,
     async () => {
-      if (!(await waitForPouchDb())) {
+      const isOnline = await checkNetwork()
+      if (!isOnline && !(await waitForPouchDb())) {
         return []
       }
       const results = await searchEntries({
