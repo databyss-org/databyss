@@ -22900,6 +22900,11 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
+snowball@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/snowball/-/snowball-0.3.1.tgz#627b19fb6574118bef06ad6810d84ddbee3ef993"
+  integrity sha512-mCgdHVUCYV2W67Wm75phNERUQ01a6k1Rbjm3l2wF3QWVaxLxf2Iu3Jm3nWlZW3S6g0SdQcn9AEsnhgBoplw+3g==
+
 sockjs-client@1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/sockjs-client/-/sockjs-client-1.3.0.tgz#12fc9d6cb663da5739d3dc5fb6e8687da95cb177"

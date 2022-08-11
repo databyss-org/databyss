@@ -119,9 +119,8 @@ const PageContent = (others) => {
   use same route to update name, just pass it name 
   */
 
-  return useMemo(() => {
-    console.log('[PageContent] render')
-    return (
+  return useMemo(
+    () => (
       <View flex="1" height="100%" backgroundColor="background.1">
         {id && (
           <EditorPageLoader pageId={id} key={id} firstBlockIsTitle>
@@ -137,8 +136,9 @@ const PageContent = (others) => {
           </EditorPageLoader>
         )}
       </View>
-    )
-  }, [id, isReadOnly, anchor])
+    ),
+    [id, isReadOnly, anchor]
+  )
 }
 
 function getLinkedDocIds(page) {

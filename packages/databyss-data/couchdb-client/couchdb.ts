@@ -8,29 +8,47 @@ import {
 } from '@databyss-org/services/lib/requestCouch'
 import { PouchDbSearchRow } from '../pouchdb/entries/lib/searchEntries'
 
-function splitSearchTerms(query: string) {
+export interface SearchTerm {
+  text: string
+  exact: boolean
+}
+
+export function splitSearchTerms(query: string) {
   const _words = query.split(' ')
-  const _terms: string[] = []
+  const _terms: SearchTerm[] = []
   let _widx = 0
   let _tidx = 0
   let _inphrase = false
   while (_widx < _words.length) {
     if (_inphrase) {
-      _terms[_tidx] += ` ${_words[_widx]}`
+      _terms[_tidx].text += ` ${_words[_widx]}`
       if (_words[_widx].endsWith('"')) {
-        _terms[_tidx] = _terms[_tidx].substring(0, _terms[_tidx].length - 1)
         _tidx += 1
         _inphrase = false
       }
     } else {
-      _terms[_tidx] = _words[_widx]
+      _terms[_tidx] = {
+        exact: false,
+        text: _words[_widx],
+      }
       if (_words[_widx].startsWith('"')) {
-        _terms[_tidx] = _terms[_tidx].substring(1)
-        _inphrase = true
+        _terms[_tidx].exact = true
+        _terms[_tidx].text = _terms[_tidx].text.substring(1)
+        if (!_words[_widx].endsWith('"')) {
+          _inphrase = true
+        } else {
+          _tidx += 1
+        }
       } else {
         _tidx += 1
       }
     }
+    // trim trailing quote
+    const _lastTerm = _terms[_terms.length - 1]
+    if (_lastTerm.text.endsWith('"')) {
+      _lastTerm.text = _lastTerm.text.substring(0, _lastTerm.text.length - 1)
+    }
+
     _widx += 1
   }
   return _terms
@@ -104,11 +122,10 @@ export class CouchDb {
     options?: RequestCouchOptions
   ): Promise<PouchDbSearchRow[]> {
     const _terms = splitSearchTerms(query)
-    console.log('[search] terms', _terms)
     const body = {
       selector: {
         $and: _terms.map((term) => ({
-          $text: term,
+          $text: term.text,
         })),
       },
     }

@@ -104,6 +104,27 @@ export const updateIndexDesignDocs = async (db: DocumentScope<any>) => {
   await db.upsert(_dd._id, () => _dd)
 }
 
+export const updateCustomIndexDesignDocs = async (db: DocumentScope<any>) => {
+  const _dd = {
+    _id: '_design/custom_search_index',
+    language: 'javascript',
+    indexes: {
+      fulltext: {
+        analyzer: {
+          name: 'perfield',
+          default: 'english',
+          fields: {
+            $default: 'english',
+          },
+        },
+        index:
+          "function (doc) { if (doc.text && doc.text.textValue) { index('text', doc.text.textValue, { store: true }) } }",
+      },
+    },
+  }
+  await db.upsert(_dd._id, () => _dd)
+}
+
 export const updateGroupDesignDocs = async (db: DocumentScope<any>) => {
   await updateValidationDesignDoc({ db })
   await updateIndexDesignDocs(db)

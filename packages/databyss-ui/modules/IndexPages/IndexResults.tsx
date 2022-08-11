@@ -24,6 +24,7 @@ import {
 } from '@databyss-org/services/interfaces'
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import { useDocument } from '../../../databyss-data/pouchdb/hooks/useDocument'
+import { useSearchContext } from '../../hooks'
 
 interface IndexResultsProps {
   relatedBlockId: string
@@ -55,6 +56,9 @@ export const IndexResults = ({
 }: IndexResultsProps) => {
   const { getAccountFromLocation } = useNavigationContext()
   const blockRelationRes = useDocument<BlockRelation>(`r_${relatedBlockId}`)
+  const normalizedStemmedTerms = useSearchContext(
+    (c) => c && c.normalizedStemmedTerms
+  )
 
   const queryRes = [blockRelationRes]
 
@@ -128,7 +132,10 @@ export const IndexResults = ({
                 text={
                   <>
                     <RawHtml
-                      html={slateBlockToHtmlWithSearch(blocks[e.block])}
+                      html={slateBlockToHtmlWithSearch(
+                        blocks[e.block],
+                        normalizedStemmedTerms
+                      )}
                       variant={_variant}
                       mr="tiny"
                     />

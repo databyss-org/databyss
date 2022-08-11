@@ -28,7 +28,10 @@ const Editor = ({
   editorRef,
   ...others
 }) => {
-  const _searchTerm = useSearchContext((c) => c && c.searchTerm)
+  const normalizedStemmedTerms = useSearchContext(
+    (c) => c && c.normalizedStemmedTerms
+  )
+  const searchTerm = useSearchContext((c) => c && c.searchTerm)
 
   // preloads source and topic cache to be used by the suggest menu
   useBlocksInPages('EMBED')
@@ -57,18 +60,7 @@ const Editor = ({
     paste(e)
   }
 
-  let searchTerm = ''
-
-  function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
-  }
-
-  if (_searchTerm) {
-    searchTerm = escapeRegExp(_searchTerm)
-  }
-
   const readOnly = !others.onChange || readonly
-  // const editor = useMemo(() => withReact(createEditor()), [])
   const renderElement = useCallback((props) => {
     const { element } = props
     if (firstBlockIsTitle && element.isTitle) {
@@ -115,12 +107,15 @@ const Editor = ({
         })
       }
 
-      if (!searchTerm.length) {
+      if (!normalizedStemmedTerms.length) {
         return ranges
       }
       // search each word individually
       if (Text.isText(node) && !node.inlineAtomicMenu) {
-        const _highlightRanges = createHighlightRanges(node.text, searchTerm)
+        const _highlightRanges = createHighlightRanges(
+          node.text,
+          normalizedStemmedTerms
+        )
         _highlightRanges.forEach((_highlightRange) => {
           ranges.push({
             anchor: { path, offset: _highlightRange.offset },
@@ -185,7 +180,7 @@ const Editor = ({
         />
       </Slate>
     ),
-    [editor, selection, _searchTerm, readOnly]
+    [editor, selection, searchTerm, readOnly]
   )
 }
 
