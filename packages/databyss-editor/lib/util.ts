@@ -336,7 +336,10 @@ export const slateBlockToHtmlWithSearch = (
 ): string => {
   const _block = cloneDeep(block)
 
-  const _ranges = createHighlightRanges(_block.text.textValue, searchTerms)
+  const _ranges = [
+    ..._block.text.ranges,
+    ...createHighlightRanges(_block.text.textValue, searchTerms),
+  ]
   // sort array by offset
   _ranges.sort((a, b) => {
     // if offset equal, sort by length
