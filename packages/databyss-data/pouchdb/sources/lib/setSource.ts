@@ -1,6 +1,10 @@
-import { Source, BlockType } from '@databyss-org/services/interfaces'
+import {
+  Source,
+  BlockType,
+  SourceCitationHeader,
+} from '@databyss-org/services/interfaces'
 import { DocumentType, DocumentCacheDict } from '../../interfaces'
-import { upsertImmediate } from '../../utils'
+import { getDocument, upsertImmediate } from '../../utils'
 import { InlineTypes } from '../../../../databyss-services/interfaces/Range'
 import { updateInlines } from '../../../../databyss-editor/lib/inlineUtils/updateInlines'
 
@@ -21,18 +25,27 @@ export const setSource = async (data: Source, caches?: DocumentCacheDict) => {
     sharedWithGroups,
   }
 
+  const _prevSource: SourceCitationHeader | null = await getDocument(_id)
+
   await upsertImmediate({
     doctype: DocumentType.Block,
     _id,
     doc: blockFields,
   })
 
-  await updateInlines({
-    inlineType: InlineTypes.InlineSource,
-    text: name,
-    _id,
-    caches,
-  })
+  if (_prevSource?.name?.textValue !== name.textValue) {
+    console.log(
+      '[SetSource] updateInlines',
+      _prevSource?.name?.textValue,
+      name.textValue
+    )
+    await updateInlines({
+      inlineType: InlineTypes.InlineSource,
+      text: name,
+      _id,
+      caches,
+    })
+  }
 }
 
 export default setSource
