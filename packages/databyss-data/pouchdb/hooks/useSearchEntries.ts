@@ -24,12 +24,44 @@ export const useSearchEntries = (searchQuery: string) => {
     doctype: DocumentType.Block,
   })
   const queryClient = useQueryClient()
-
   const queryKey = ['searchEntries', searchQuery]
+
+  // watch for changes in pouch and reset cache when necessary
+  const subscribeOnce = () => {
+    if (dbRef.current instanceof CouchDb) {
+      return
+    }
+    if (changesRef.current) {
+      // already subscribed
+      return
+    }
+
+    changesRef.current = dbRef
+      .current!.changes({
+        since: 'now',
+        live: true,
+        include_docs: true,
+      })
+      .on('change', (change) => {
+        if (
+          change.doc?.doctype === DocumentType.Block ||
+          change.doc?.doctype === DocumentType.Page
+        ) {
+          // reset after a delay so cloud index has time to reset
+          setTimeout(() => {
+            queryClient.resetQueries(['searchEntries'])
+          }, 3000)
+          changesRef.current?.cancel()
+          changesRef.current = undefined
+        }
+      })
+  }
+
   const query = useQuery<SearchEntriesResultPage[]>(
     queryKey,
     async () => {
       const isOnline = await checkNetwork()
+      subscribeOnce()
       if (!isOnline && !(await waitForPouchDb())) {
         return []
       }
@@ -50,32 +82,6 @@ export const useSearchEntries = (searchQuery: string) => {
       enabled: pagesRes.isSuccess && blocksRes.isSuccess,
     }
   )
-
-  // watch for changes in pouch and reset cache when necessary
-  useEffect(() => {
-    if (dbRef.current instanceof CouchDb) {
-      return
-    }
-    if (changesRef.current) {
-      // already subscribed
-      return
-    }
-
-    changesRef.current = dbRef
-      .current!.changes({
-        since: 'now',
-        live: true,
-        include_docs: true,
-      })
-      .on('change', (change) => {
-        if (
-          change.doc?.doctype === DocumentType.Block ||
-          change.doc?.doctype === DocumentType.Page
-        ) {
-          queryClient.removeQueries(['searchEntries'])
-        }
-      })
-  }, [dbRef.current])
 
   return query
 }
