@@ -30,7 +30,6 @@ export const useSearchEntries = (searchQuery: string) => {
     queryKey,
     async () => {
       const isOnline = await checkNetwork()
-      console.log('[useSearchEntries] isOnline', isOnline)
       if (!isOnline && !(await waitForPouchDb())) {
         return []
       }
