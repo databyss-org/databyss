@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { checkNetwork } from '@databyss-org/services/lib/request'
 import PouchDB from 'pouchdb'
