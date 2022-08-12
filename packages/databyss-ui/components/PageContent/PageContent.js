@@ -28,7 +28,7 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
   const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
   const navigate = useNavigationContext((c) => c.navigate)
   const pagesRes = usePages()
-  const { nice } = getTokensFromPath()
+  const path = getTokensFromPath()
 
   // confirms a token is in local pouch in order to show account menu
   useEffect(() => {
@@ -49,10 +49,10 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
     let redirectTo = location.pathname
 
     if (niceName) {
-      if (!nice?.length) {
-        redirectTo = `${location.pathname}/${niceName}`
-      } else if (nice.join('/') !== niceName) {
-        redirectTo = `${location.pathname.replace(nice.join('/'), niceName)}`
+      if (!path.nice?.length) {
+        redirectTo = `${location.pathname}/${niceName}${location.hash}`
+      } else if (path.nice.join('/') !== niceName) {
+        redirectTo = `/${path.type}/${path.params}/${niceName}${location.hash}`
       }
     }
     if (redirectTo !== location.pathname) {

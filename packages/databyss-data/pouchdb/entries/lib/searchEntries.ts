@@ -27,6 +27,7 @@ export interface SearchEntriesResultPage {
   maxTextScore: number
   pageName: string
   pageId: string
+  pageTimestamp: number
 }
 
 export type PouchDbSearchRow = PouchDB.SearchRow<SearchRow>
@@ -96,9 +97,6 @@ const searchEntries = async ({
     })
     const _expandedQueryResponse: PouchDB.SearchRow<SearchRow>[] = []
     for (const _result of _queryResponse) {
-      if (_result.doc.type !== BlockType.Entry) {
-        continue
-      }
       if (!_result.doc.text.textValue) {
         continue
       }
@@ -162,9 +160,11 @@ const searchEntries = async ({
         // get index where block appears on page
         if (!acc.get(pageId)) {
           // init result
+          const _p = curr.page as any
           const _data: SearchEntriesResultPage = {
             pageName: curr.page.name,
             pageId,
+            pageTimestamp: _p.accessedAt ?? _p.modifiedAt ?? _p.createdAt,
             maxTextScore: curr.score,
             entries: [
               {
@@ -198,8 +198,8 @@ const searchEntries = async ({
             activeHeadings: curr.activeHeadings,
           })
 
-          // sort the entries by text score
-          _entries.sort((a, b) => (a.textScore < b.textScore ? 1 : -1))
+          // sort the entries by index
+          _entries.sort((a, b) => a.index - b.index)
           _data.entries = _entries
           _data.maxTextScore = _maxScore
 
@@ -210,15 +210,9 @@ const searchEntries = async ({
 
       // sort the map according to the text score per page
       _resultsMap = new Map<string, SearchEntriesResultPage>(
-        [..._resultsMap].sort(([, v], [, v2]) => {
-          if (v.maxTextScore < v2.maxTextScore) {
-            return 1
-          }
-          if (v.maxTextScore > v2.maxTextScore) {
-            return -1
-          }
-          return 0
-        })
+        [..._resultsMap].sort(
+          ([, v], [, v2]) => v2.pageTimestamp - v.pageTimestamp
+        )
       )
 
       // convert from map back to object

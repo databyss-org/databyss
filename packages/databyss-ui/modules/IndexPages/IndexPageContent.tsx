@@ -240,17 +240,18 @@ export const IndexPageView = ({
       if (block && !isPublicAccount()) {
         updateAccessedAt(block!._id)
       }
-      const { nice } = getTokensFromPath()
+      const path = getTokensFromPath()
       const niceName = urlSafeName(blockName!)
-      if (!nice?.length) {
+      if (!path.nice?.length) {
         window.requestAnimationFrame(() => {
-          navigate(`${location.pathname}/${niceName}`, { replace: true })
-        })
-      } else if (nice.join('/') !== niceName) {
-        window.requestAnimationFrame(() => {
-          navigate(`${location.pathname.replace(nice.join('/'), niceName)}`, {
+          navigate(`${location.pathname}/${niceName}${location.hash}`, {
             replace: true,
           })
+        })
+      } else if (path.nice.join('/') !== niceName) {
+        window.requestAnimationFrame(() => {
+          const _to = `/${path.type}/${path.params}/${niceName}${location.hash}`
+          navigate(_to, { replace: true })
         })
       }
     }
