@@ -3,11 +3,8 @@ import { Text, Editor, Node, Range, Transforms } from '@databyss-org/slate'
 import { pickBy } from 'lodash'
 import { textToHtml } from '@databyss-org/services/blocks'
 import { isAtomicInlineType } from './util'
-import {
-  stateToSlateMarkup,
-  statePointToSlatePoint,
-  flattenRanges,
-} from './markup'
+import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
+import { flattenRanges } from './ranges'
 
 export const flattenNode = (node) => {
   if (!node) {
@@ -78,6 +75,7 @@ export const stateBlockToHtml = (block) => {
   // replace non width white space with a white space
   const _text = block.text.textValue.replace('\uFEFF', ' ')
   const _ranges = flattenRanges(block.text.ranges)
+  console.log('[stateBlockToHtml] ranges', block.text.ranges)
   return textToHtml({
     textValue: _text,
     ranges: _ranges,
@@ -149,6 +147,7 @@ const allowedRanges = [
   'embed',
   'inlineEmbedInput',
   'inlineLinkInput',
+  'highlight',
 ]
 
 const allowedInlines = ['inlineTopic', 'inlineCitation', 'embed', 'link']
@@ -171,12 +170,20 @@ export const slateRangesToStateRanges = (node) => {
 
     if (_inlineType.length) {
       const marks = [[_inlineType[0], child.atomicId]]
+      // _marks = [..._marks, [_inlineType[0], child.atomicId]]
       // if object contains an object id, search for allowed atomic
       _ranges.push({
         offset: _offset,
         length: _textLength,
         marks,
       })
+      if (child.highlight) {
+        _ranges.push({
+          offset: _offset,
+          length: _textLength,
+          marks: ['highlight'],
+        })
+      }
     } else {
       Object.keys(child).forEach((prop) => {
         if (allowedRanges.includes(prop) && child[prop]) {

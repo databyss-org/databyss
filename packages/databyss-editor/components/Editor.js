@@ -116,6 +116,9 @@ const Editor = ({
           node.text,
           normalizedStemmedTerms
         )
+        // if (_highlightRanges.length) {
+        //   console.log('[Editor] highlightRanges', _highlightRanges)
+        // }
         _highlightRanges.forEach((_highlightRange) => {
           ranges.push({
             anchor: { path, offset: _highlightRange.offset },

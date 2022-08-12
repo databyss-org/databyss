@@ -350,6 +350,9 @@ export const slateBlockToHtmlWithSearch = (
   })
 
   _block.text.ranges = _ranges
+  // const _slateBlock = stateBlockToSlateBlock(_block)
+  // console.log('[slateBlockToHtmlWithSearch]', cloneDeep(_block))
+  // _block.text.ranges = slateRangesToStateRanges(_slateBlock)
   const _frag = stateBlockToHtml(_block)
   return _frag
 }
@@ -414,6 +417,7 @@ export function createHighlightRanges(text: string, searchTerms: SearchTerm[]) {
 
   // normalize diacritics
   const _normalizedText = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  console.log('[createHighlightRanges] normalizedText', _normalizedText)
 
   searchTerms.forEach((term) => {
     if (!term?.text) {

@@ -29,6 +29,9 @@ const HoveringToolbar = ({ children, selectionRect, selectionIsBackwards }) => {
   const [position, setPosition] = useState(offscreenPosition)
 
   const updatePosition = () => {
+    if (!selectionRect) {
+      return
+    }
     const el = menuRef.current
     setPosition({
       top: selectionRect.top + window.pageYOffset - el.offsetHeight,
