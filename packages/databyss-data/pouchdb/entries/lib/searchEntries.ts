@@ -11,6 +11,7 @@ import { populatePage } from '@databyss-org/services/blocks/joins'
 import { indexPage } from '@databyss-org/editor/lib/util'
 import { cloneDeep } from 'lodash'
 import { searchText } from '../../utils'
+import { couchDbRef, splitSearchTerms } from '../../../couchdb-client/couchdb'
 
 export interface SearchEntriesResultRow {
   entryId: string
@@ -26,9 +27,12 @@ export interface SearchEntriesResultPage {
   maxTextScore: number
   pageName: string
   pageId: string
+  pageTimestamp: number
 }
 
-interface SearchRow {
+export type PouchDbSearchRow = PouchDB.SearchRow<SearchRow>
+
+export interface SearchRow {
   page: Page | null
   index: number
   text: Text
@@ -42,19 +46,21 @@ const searchEntries = async ({
   blocks,
   onUpdated,
   allowStale,
+  localSearch,
 }: {
   encodedQuery: string
   pages: Page[]
   blocks: DocumentDict<Block>
   onUpdated?: (res: SearchEntriesResultPage[]) => void
   allowStale: boolean
+  localSearch: boolean
 }): Promise<SearchEntriesResultPage[]> => {
   const _query = decodeURIComponent(encodedQuery)
 
   const _buildSearchEntriesResults = (
-    _res: PouchDB.SearchResponse<{}>
+    rows: PouchDbSearchRow[]
   ): SearchEntriesResultPage[] => {
-    const _queryResponse = _res.rows as PouchDB.SearchRow<SearchRow>[]
+    const _queryResponse = rows
     if (!_queryResponse.length) {
       return []
     }
@@ -85,8 +91,33 @@ const searchEntries = async ({
     )
 
     // expand results
+    const _terms = splitSearchTerms(encodedQuery, {
+      stemmed: true,
+      normalized: true,
+    })
     const _expandedQueryResponse: PouchDB.SearchRow<SearchRow>[] = []
     for (const _result of _queryResponse) {
+      if (!_result.doc.text.textValue) {
+        continue
+      }
+      // skip if no terms matched
+      let _hasMatch = false
+      _terms.forEach((term) => {
+        if (_hasMatch) {
+          return
+        }
+        if (
+          _result.doc.text.textValue.match(
+            new RegExp(`\\b${term.text}[^\\b]*?\\b`, 'ig')
+          )
+        ) {
+          _hasMatch = true
+        }
+      })
+      if (!_hasMatch) {
+        continue
+      }
+
       const _entryId = _result.id
       const _pages = _blockToPages[_entryId]
 
@@ -129,9 +160,11 @@ const searchEntries = async ({
         // get index where block appears on page
         if (!acc.get(pageId)) {
           // init result
+          const _p = curr.page as any
           const _data: SearchEntriesResultPage = {
             pageName: curr.page.name,
             pageId,
+            pageTimestamp: _p.accessedAt ?? _p.modifiedAt ?? _p.createdAt,
             maxTextScore: curr.score,
             entries: [
               {
@@ -165,8 +198,8 @@ const searchEntries = async ({
             activeHeadings: curr.activeHeadings,
           })
 
-          // sort the entries by text score
-          _entries.sort((a, b) => (a.textScore < b.textScore ? 1 : -1))
+          // sort the entries by index
+          _entries.sort((a, b) => a.index - b.index)
           _data.entries = _entries
           _data.maxTextScore = _maxScore
 
@@ -177,15 +210,9 @@ const searchEntries = async ({
 
       // sort the map according to the text score per page
       _resultsMap = new Map<string, SearchEntriesResultPage>(
-        [..._resultsMap].sort(([, v], [, v2]) => {
-          if (v.maxTextScore < v2.maxTextScore) {
-            return 1
-          }
-          if (v.maxTextScore > v2.maxTextScore) {
-            return -1
-          }
-          return 0
-        })
+        [..._resultsMap].sort(
+          ([, v], [, v2]) => v2.pageTimestamp - v.pageTimestamp
+        )
       )
 
       // convert from map back to object
@@ -195,18 +222,26 @@ const searchEntries = async ({
     return Object.values(_results)
   }
 
-  const _res = await searchText({
-    query: _query,
-    onUpdated: (_updatedRes) => {
-      if (!onUpdated) {
-        return
-      }
-      onUpdated(_buildSearchEntriesResults(_updatedRes))
-    },
-    allowStale,
-  })
+  let _searchRows: PouchDbSearchRow[] = []
+  if (localSearch) {
+    const _res = await searchText({
+      query: _query,
+      onUpdated: (_updatedRes) => {
+        if (!onUpdated) {
+          return
+        }
+        onUpdated(
+          _buildSearchEntriesResults(_updatedRes.rows as PouchDbSearchRow[])
+        )
+      },
+      allowStale,
+    })
+    _searchRows = _res.rows as PouchDbSearchRow[]
+  } else {
+    _searchRows = await couchDbRef.current?.search({ query: _query })!
+  }
 
-  return _buildSearchEntriesResults(_res)
+  return _buildSearchEntriesResults(_searchRows)
 }
 
 export default searchEntries

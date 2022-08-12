@@ -1,14 +1,14 @@
-import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
+import { checkNetwork } from '@databyss-org/services/lib/request'
 import PouchDB from 'pouchdb'
 import { dbRef, waitForPouchDb } from '../db'
 import { searchEntries } from '../entries'
 import { SearchEntriesResultPage } from '../entries/lib/searchEntries'
 import { DocumentType } from '../interfaces'
 import { usePages } from './'
-import { CouchDb } from '../../couchdb-client/couchdb'
 import { useDocuments } from './useDocuments'
 import { Block } from '../../../databyss-services/interfaces'
+import { CouchDb } from '../../couchdb-client/couchdb'
 
 const changesRef: { current: PouchDB.Core.Changes<any> | undefined } = {
   current: undefined,
@@ -23,33 +23,10 @@ export const useSearchEntries = (searchQuery: string) => {
     doctype: DocumentType.Block,
   })
   const queryClient = useQueryClient()
-
   const queryKey = ['searchEntries', searchQuery]
-  const query = useQuery<SearchEntriesResultPage[]>(
-    queryKey,
-    async () => {
-      if (!(await waitForPouchDb())) {
-        return []
-      }
-      const results = await searchEntries({
-        encodedQuery: searchQuery,
-        pages: Object.values(pagesRes.data!),
-        blocks: blocksRes.data!,
-        onUpdated: (_results) => {
-          queryClient.setQueryData(queryKey, _results)
-        },
-        allowStale: firstSearchComplete,
-      })
-      firstSearchComplete = true
-      return results
-    },
-    {
-      enabled: pagesRes.isSuccess && blocksRes.isSuccess,
-    }
-  )
 
   // watch for changes in pouch and reset cache when necessary
-  useEffect(() => {
+  const subscribeOnce = () => {
     if (dbRef.current instanceof CouchDb) {
       return
     }
@@ -69,10 +46,41 @@ export const useSearchEntries = (searchQuery: string) => {
           change.doc?.doctype === DocumentType.Block ||
           change.doc?.doctype === DocumentType.Page
         ) {
-          queryClient.removeQueries(['searchEntries'])
+          // reset after a delay so cloud index has time to reset
+          setTimeout(() => {
+            queryClient.resetQueries(['searchEntries'])
+          }, 3000)
+          changesRef.current?.cancel()
+          changesRef.current = undefined
         }
       })
-  }, [])
+  }
+
+  const query = useQuery<SearchEntriesResultPage[]>(
+    queryKey,
+    async () => {
+      const isOnline = await checkNetwork()
+      subscribeOnce()
+      if (!isOnline && !(await waitForPouchDb())) {
+        return []
+      }
+      const results = await searchEntries({
+        encodedQuery: searchQuery,
+        pages: Object.values(pagesRes.data!),
+        blocks: blocksRes.data!,
+        onUpdated: (_results) => {
+          queryClient.setQueryData(queryKey, _results)
+        },
+        allowStale: firstSearchComplete,
+        localSearch: !isOnline,
+      })
+      firstSearchComplete = true
+      return results
+    },
+    {
+      enabled: pagesRes.isSuccess && blocksRes.isSuccess,
+    }
+  )
 
   return query
 }

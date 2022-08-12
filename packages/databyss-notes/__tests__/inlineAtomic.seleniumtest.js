@@ -156,13 +156,13 @@ describe('inline atomic', () => {
       '[data-test-element="search-result-entries"]'
     )
 
-    // assure 3 results are listed under entry
-    assert.equal(topicEntries.length, 3)
+    // assure 2 results are listed under entry
+    assert.equal(topicEntries.length, 2)
 
     // change the name of the inline atomic
     await tagButtonListClick(
       'data-test-element="search-result-entries"',
-      0,
+      1,
       driver
     )
     await sleep(1000)

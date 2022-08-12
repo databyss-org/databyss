@@ -19,11 +19,16 @@ import { SearchEntriesResultPage } from '@databyss-org/data/pouchdb/entries/lib/
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import { IndexPageView } from './IndexPageContent'
 import { IndexResultTags } from './IndexResults'
+import { useSearchContext } from '../../hooks'
 
 export const SearchContent = () => {
   const { getAccountFromLocation } = useNavigationContext()
   const searchQuery = decodeURIComponent(useParams().query!)
   const searchRes = useSearchEntries(searchQuery)
+  console.log('[SearchContent] searchRes.success', searchRes.isSuccess)
+  const normalizedStemmedTerms = useSearchContext(
+    (c) => c && c.normalizedStemmedTerms
+  )
 
   const composeResults = (results: SearchEntriesResultPage[]) => {
     const _Pages = results.length ? (
@@ -75,8 +80,7 @@ export const SearchContent = () => {
                       variant={_variant}
                       html={slateBlockToHtmlWithSearch(
                         { text: e.text, type: BlockType.Entry, _id: e.entryId },
-                        // only allow alphanumeric, hyphen and space
-                        searchQuery.replace(/[^a-zA-Z0-9À-ž-' ]/gi, '')
+                        normalizedStemmedTerms
                       )}
                       mr="tiny"
                     />

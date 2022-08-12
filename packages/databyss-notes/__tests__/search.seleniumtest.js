@@ -67,35 +67,62 @@ describe('entry search', () => {
 
     // wait for editor to be visible
     await sleep(500)
+    await sendKeys(actions, 'something')
+    await sleep(500)
+    await enterKey(actions)
+
+    // get the search results, they should be in the order of relevance
+
+    let searchPageEntryResults = await getElementsByTag(
+      driver,
+      '[data-test-element="search-result-entries"]'
+    )
+
+    await sleep(3000)
+    assert.equal(searchPageEntryResults.length, 4)
+
+    // get text from entry search results
+    let results = await Promise.all(
+      searchPageEntryResults.map(async (r) => {
+        const _text = await r.getAttribute('innerText')
+        return _text.trim()
+      })
+    )
+    assert(results[0].startsWith('this has keyword something in source'))
+    assert(
+      results[1].startsWith(
+        'something keyword appears at the start of an entry'
+      )
+    )
+    assert(results[2].startsWith('this will also have keyword something'))
+    assert(results[3].startsWith('this keyword something will be searched'))
+
+    // clear the search element
+    await tagButtonClick('data-test-element="clear-search-results"', driver)
+
+    await sleep(500)
     await sendKeys(actions, 'something searched will')
     await sleep(500)
     await enterKey(actions)
 
     // get the search results, they should be in the order of relevance
 
-    const searchPageEntryResults = await getElementsByTag(
+    searchPageEntryResults = await getElementsByTag(
       driver,
       '[data-test-element="search-result-entries"]'
     )
 
-    await sleep(6000)
-    assert.equal(searchPageEntryResults.length, 4)
+    await sleep(3000)
+    assert.equal(searchPageEntryResults.length, 1)
 
     // get text from entry search results
-    const results = await Promise.all(
+    results = await Promise.all(
       searchPageEntryResults.map(async (r) => {
         const _text = await r.getAttribute('innerText')
         return _text.trim()
       })
     )
     assert(results[0].startsWith('this keyword something will be searched'))
-    assert(results[1].startsWith('this will also have keyword something'))
-    assert(results[2].startsWith('this has keyword something in source'))
-    assert(
-      results[3].startsWith(
-        'something keyword appears at the start of an entry'
-      )
-    )
 
     // clear the search element
     await tagButtonClick('data-test-element="clear-search-results"', driver)

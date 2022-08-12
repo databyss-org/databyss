@@ -29,6 +29,13 @@ export class ResourceNotFoundError extends Error {
   }
 }
 
+export class InvalidRequestError extends Error {
+  constructor(message = 'InvalidRequest') {
+    super()
+    this.message = message
+  }
+}
+
 export class InsufficientPermissionError extends Error {
   constructor(message = 'Not Authorized') {
     super()

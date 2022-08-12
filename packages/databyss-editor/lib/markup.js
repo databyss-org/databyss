@@ -1,5 +1,6 @@
 import { createEditor, Transforms } from '@databyss-org/slate'
 import cloneDeep from 'clone-deep'
+import { flattenRanges } from './ranges'
 import { toggleMark } from './slateUtils'
 
 const moveToStart = (editor) => {
@@ -62,57 +63,6 @@ export const statePointToSlatePoint = (children, point) => {
   const selection = { anchor: _point, focus: _point }
 
   return selection.focus
-}
-
-export function flattenRanges(ranges) {
-  const flattened = []
-  for (let i = 0; i < ranges.length; i += 1) {
-    const range = ranges[i]
-    const nextRange = ranges[i + 1]
-    if (!nextRange) {
-      // we're at the end
-      flattened.push(range)
-      // eslint-disable-next-line no-continue
-      continue
-    }
-    if (nextRange.offset >= range.offset + range.length) {
-      // already flat
-      flattened.push(range)
-      // eslint-disable-next-line no-continue
-      continue
-    }
-    // skip nextRange in next loop because we're combining below
-    i += 1
-    const newLen1 = nextRange.offset - range.offset
-    // if current range extends before the next range, then we need block1
-    if (range.offset < nextRange.offset) {
-      const newBlock1 = {
-        ...range,
-        length: newLen1,
-      }
-      flattened.push(newBlock1)
-    }
-    const newMarks2 = [...nextRange.marks, ...range.marks]
-    let newLen2 = nextRange.length
-    // if next range extends beyond end of current range
-    if (range.offset + range.length < nextRange.offset + nextRange.length) {
-      newLen2 = range.offset + range.length - nextRange.offset
-    }
-    const newBlock2 = { ...nextRange, marks: newMarks2, length: newLen2 }
-    flattened.push(newBlock2)
-    // if current range extends beyond next range, we need a 3rd block
-    if (range.offset + range.length > nextRange.offset + nextRange.length) {
-      const newOffset3 = nextRange.offset + nextRange.length
-      const newLen3 = range.offset + range.length - newOffset3
-      const newBlock3 = {
-        offset: newOffset3,
-        length: newLen3,
-        marks: range.marks,
-      }
-      flattened.push(newBlock3)
-    }
-  }
-  return flattened
 }
 
 export const stateToSlateMarkup = (block) => {

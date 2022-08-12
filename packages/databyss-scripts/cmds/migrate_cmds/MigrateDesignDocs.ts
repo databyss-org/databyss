@@ -4,7 +4,7 @@ import {
   ServerProcessArgs,
   sleep,
 } from '@databyss-org/scripts/lib'
-import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
+import { updateGroupDesignDocs } from '@databyss-org/data/couchdb/util'
 import { DesignDoc } from '@databyss-org/data/interfaces'
 
 export async function groupIdForUser(email: string) {
@@ -26,7 +26,7 @@ export class MigrateGroupDesignDocs extends ServerProcess {
   }
   async updateDesignDoc(dbName: string) {
     const _db = await cloudant.current.db.use<DesignDoc>(dbName)
-    await updateDesignDoc({ db: _db })
+    await updateGroupDesignDocs(_db)
     this.log(`⬆️  migrated: ${dbName}`)
   }
   async run() {

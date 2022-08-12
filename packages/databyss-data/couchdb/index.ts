@@ -1,6 +1,12 @@
 import * as nano from 'nano'
 
-export { updateDesignDocs, initiateDatabases, updateDesignDoc } from './util'
+export {
+  updateSysDesignDocs,
+  initiateDatabases,
+  updateValidationDesignDoc,
+  updateGroupDesignDocs,
+  updateIndexDesignDocs,
+} from './util'
 export { cloudant } from './cloudant'
 export type { DocumentScope } from 'nano'
 

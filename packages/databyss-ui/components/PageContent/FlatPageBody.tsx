@@ -24,7 +24,7 @@ import { Leaf as LeafComponent } from '@databyss-org/editor/components/Leaf'
 import { TitleElement } from '@databyss-org/editor/components/TitleElement'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
-import { CouchDb } from '@databyss-org/data/couchdb-client/couchdb'
+import { CouchDb, SearchTerm } from '@databyss-org/data/couchdb-client/couchdb'
 import { AtomicHeader } from '@databyss-org/editor/components/AtomicHeader'
 import { splitOverlappingRanges } from '@databyss-org/services/blocks/textRanges'
 import { useSearchContext } from '../../hooks'
@@ -47,7 +47,9 @@ export const FlatBlock = ({
   previousBlock?: Block
   last: boolean
 }) => {
-  let _searchTerm = useSearchContext((c) => c && c.searchTerm)
+  const normalizedStemmedTerms = useSearchContext(
+    (c) => c && c.normalizedStemmedTerms
+  )
   const navigate = useNavigationContext((c) => c && c.navigate)
   const _blockRes = useDocument<Block>(id, { initialData: block })
   const _previousBlockRes = useDocument<Block>(previousId ?? '', {
@@ -61,13 +63,12 @@ export const FlatBlock = ({
   }
   const _block = block ?? _blockRes.data ?? null
 
-  _searchTerm = _searchTerm?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
   const _renderText = () =>
     renderTextToComponents({
       key: block?._id!,
       text: _block?.text!,
       escapeFn: renderText,
-      searchTerm: _searchTerm,
+      searchTerms: normalizedStemmedTerms,
       onInlineClick: (d) => navigate(getInlineAtomicHref(d)),
     })
 
@@ -232,13 +233,13 @@ export function rangeToLeaf(marks: Mark[], text: string) {
 export function renderTextToComponents({
   key,
   text,
-  searchTerm,
+  searchTerms,
   onInlineClick,
   escapeFn = (_s: string) => _s,
 }: {
   key: string
   text: Text
-  searchTerm?: string
+  searchTerms?: SearchTerm[]
   onInlineClick: (d: InlineAtomicDef) => void
   escapeFn?: (_s: string, _key?: string) => ReactNode
 }): ReactNode {
@@ -251,8 +252,8 @@ export function renderTextToComponents({
   // add link ranges
   _ranges = _ranges.concat(createLinkRangesForUrls(_text))
 
-  if (searchTerm) {
-    _ranges = _ranges.concat(createHighlightRanges(_text, searchTerm))
+  if (searchTerms) {
+    _ranges = _ranges.concat(createHighlightRanges(_text, searchTerms))
   }
 
   if (!_ranges.length) {

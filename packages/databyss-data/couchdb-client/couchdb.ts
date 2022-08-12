@@ -1,10 +1,92 @@
+import { stemmer } from 'stemmer'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces'
+import { InvalidRequestError } from '@databyss-org/services/interfaces/Errors'
 import {
   couchGet,
   couchPost,
   couchPut,
   RequestCouchOptions,
 } from '@databyss-org/services/lib/requestCouch'
+import { PouchDbSearchRow } from '../pouchdb/entries/lib/searchEntries'
+
+export interface SearchTerm {
+  text: string
+  exact: boolean
+}
+
+interface SplitSearchTermOptions {
+  normalized: boolean
+  stemmed: boolean
+}
+
+// init stemming
+// const stemmer = new Snowball('English')
+
+export function splitSearchTerms(
+  query: string,
+  { stemmed, normalized }: SplitSearchTermOptions
+) {
+  const _words = query.split(' ')
+  const _terms: SearchTerm[] = []
+  let _widx = 0
+  let _tidx = 0
+  let _inphrase = false
+  while (_widx < _words.length) {
+    if (_inphrase) {
+      _terms[_tidx].text += ` ${_words[_widx]}`
+      if (_words[_widx].endsWith('"')) {
+        _tidx += 1
+        _inphrase = false
+      }
+    } else {
+      _terms[_tidx] = {
+        exact: false,
+        text: _words[_widx],
+      }
+      if (_words[_widx].startsWith('"')) {
+        _terms[_tidx].exact = true
+        _terms[_tidx].text = _terms[_tidx].text.substring(1)
+        if (!_words[_widx].endsWith('"')) {
+          _inphrase = true
+        } else {
+          _tidx += 1
+        }
+      } else {
+        _tidx += 1
+      }
+    }
+    // trim trailing quote
+    const _lastTerm = _terms[_terms.length - 1]
+    if (_lastTerm.text.endsWith('"')) {
+      _lastTerm.text = _lastTerm.text.substring(0, _lastTerm.text.length - 1)
+    }
+
+    _widx += 1
+  }
+
+  const _additional: SearchTerm[] = []
+  const _processed = _terms.map((term) => {
+    if (term.exact) {
+      return term
+    }
+    if (normalized) {
+      // normalize diactritics
+      term.text = term.text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    }
+    if (stemmed) {
+      term.text = stemmer(term.text)
+      if (term.text.endsWith('bl')) {
+        _additional.push({
+          text: `${term.text.substring(0, term.text.length - 1)}il`,
+          exact: false,
+        })
+      }
+    }
+    return term
+  })
+
+  return _processed.concat(_additional)
+}
 
 export class CouchDb {
   dbName: string
@@ -63,6 +145,39 @@ export class CouchDb {
     }
     const _nextDoc = diffFn(_oldDoc)
     return couchPut(`${this.dbName}/${docId}`, _nextDoc, options)
+  }
+
+  /**
+   * Fulltext search
+   * @param query search string
+   */
+  async search(
+    { query },
+    options?: RequestCouchOptions
+  ): Promise<PouchDbSearchRow[]> {
+    const _terms = splitSearchTerms(query, {
+      stemmed: false,
+      normalized: false,
+    })
+    const body = {
+      selector: {
+        $and: _terms.map((term) => ({
+          $text: term.text,
+        })),
+      },
+    }
+    const res: any = await couchPost(`${this.dbName}/_find`, body, options)
+    if (!res.docs) {
+      throw new InvalidRequestError(`Invalid query: ${JSON.stringify(body)}`)
+    }
+    return res.docs.map((doc: any) => {
+      const row: PouchDbSearchRow = {
+        id: doc._id,
+        doc,
+        score: 0,
+      }
+      return row
+    })
   }
 }
 interface CouchDbRef {

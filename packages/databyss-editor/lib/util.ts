@@ -10,6 +10,7 @@ import {
 } from '@databyss-org/services/interfaces'
 import { urlSafeName, validUriRegex } from '@databyss-org/services/lib/util'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
+import { SearchTerm } from '@databyss-org/data/couchdb-client/couchdb'
 import matchAll from 'string.prototype.matchall'
 import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import { EditorState, PagePath } from '../interfaces'
@@ -331,68 +332,25 @@ export const indexPage = ({
 
 export const slateBlockToHtmlWithSearch = (
   block: Block,
-  query?: string
+  searchTerms: SearchTerm[]
 ): string => {
   const _block = cloneDeep(block)
 
-  if (query) {
-    // add query markup to results
+  const _ranges = [
+    ..._block.text.ranges,
+    ...createHighlightRanges(_block.text.textValue, searchTerms),
+  ]
+  // sort array by offset
+  _ranges.sort((a, b) => {
+    // if offset equal, sort by length
+    if (a.offset === b.offset) {
+      return b.length - a.length
+    }
+    return a.offset > b.offset ? 1 : -1
+  })
 
-    const ranges: Range[] = []
-
-    // add search ranges to block
-    // add escape characters
-    /*
-      BUG: if query is multiple words, and split into individual words:
-      query.split(' ')
-
-      correct ranges will be applied but the function will fail on `flattenRanges` 
-
-      for now we can only have one range added
-      */
-    const _word = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
-
-    // normalize diactritics
-    const parts = _block.text.textValue
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .split(
-        new RegExp(
-          `\\b${_word.normalize('NFD').replace(/[\u0300-\u036f]/g, '')}\\b`,
-          'i'
-        )
-      )
-
-    let offset = 0
-
-    parts.forEach((part, i) => {
-      const length = _word.length
-
-      if (i !== 0) {
-        ranges.push({
-          offset: offset - _word.length,
-          length,
-          marks: [RangeType.Highlight],
-        })
-      }
-
-      offset = offset + part.length + _word.length
-    })
-
-    const _ranges = [..._block.text.ranges, ...ranges]
-    // sort array by offset
-    _ranges.sort((a, b) => {
-      // if offset equal, sort by length
-      if (a.offset === b.offset) {
-        return b.length - a.length
-      }
-      return a.offset > b.offset ? 1 : -1
-    })
-
-    _block.text.ranges = _ranges
-  }
+  _block.text.ranges = _ranges
   const _frag = stateBlockToHtml(_block)
-
   return _frag
 }
 
@@ -451,42 +409,26 @@ export const createLinkRangesForUrls = (text: string) => {
   return _ranges
 }
 
-export const createHighlightRanges = (text: string, searchTerm: string) => {
-  const _searchTerm = searchTerm.split(' ')
+export function createHighlightRanges(text: string, searchTerms: SearchTerm[]) {
   const _ranges: Range[] = []
-  _searchTerm.forEach((word) => {
-    if (!word) {
+
+  // normalize diacritics
+  const _normalizedText = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+  searchTerms.forEach((term) => {
+    if (!term?.text) {
       return
     }
-    // normalize diactritics
-    const parts = text
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .split(
-        new RegExp(
-          `\\b${word.normalize('NFD').replace(/[\u0300-\u036f]/g, '')}\\b`,
-          'i'
-        )
-      )
 
-    if (parts.length > 1) {
-      let offset = 0
+    const matches = _normalizedText.matchAll(
+      new RegExp(`\\b${term.text}[^\\b]*?\\b`, 'ig')
+    )
 
-      parts.forEach((part, i) => {
-        if (i !== 0) {
-          _ranges.push({
-            offset: offset - word.length,
-            length: word.length,
-            marks: [RangeType.Highlight],
-          })
-          // ranges.push({
-          //   anchor: { path, offset: offset - word.length },
-          //   focus: { path, offset },
-          //   highlight: true,
-          // })
-        }
-
-        offset = offset + part.length + word.length
+    for (const match of matches) {
+      _ranges.push({
+        offset: match.index!,
+        length: match[0].length,
+        marks: [RangeType.Highlight],
       })
     }
   })

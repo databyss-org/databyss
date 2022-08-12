@@ -28,7 +28,8 @@ import embedSchema from '../schemas/embedSchema'
 const fs = require('fs')
 
 const baseDir = process.env.NODE_ENV === 'production' ? '/app/build/api' : '.'
-export const updateDesignDoc = async ({
+
+export const updateValidationDesignDoc = async ({
   schema,
   db,
 }: {
@@ -71,19 +72,77 @@ export const updateDesignDoc = async ({
   await db.upsert(_dd._id, () => _dd)
 }
 
-export const updateDesignDocs = async () => {
-  const _designDatabaseTuple: [JSONSchema4, DocumentScope<DesignDoc>][] = [
+export const updateIndexDesignDocs = async (db: DocumentScope<any>) => {
+  const _dd = {
+    _id: '_design/fulltext_search_index',
+    language: 'query',
+    indexes: {
+      fulltext_search_index: {
+        index: {
+          default_analyzer: 'english',
+          default_field: {},
+          partial_filter_selector: {},
+          selector: {},
+          fields: [
+            {
+              type: 'string',
+              name: 'text.textValue',
+            },
+          ],
+          index_array_lengths: true,
+        },
+        analyzer: {
+          name: 'perfield',
+          default: 'english',
+          fields: {
+            $default: 'english',
+          },
+        },
+      },
+    },
+  }
+  await db.upsert(_dd._id, () => _dd)
+}
+
+export const updateCustomIndexDesignDocs = async (db: DocumentScope<any>) => {
+  const _dd = {
+    _id: '_design/custom_search_index',
+    language: 'javascript',
+    indexes: {
+      fulltext: {
+        analyzer: {
+          name: 'perfield',
+          default: 'english',
+          fields: {
+            $default: 'english',
+          },
+        },
+        index:
+          "function (doc) { if (doc.text && doc.text.textValue) { index('text', doc.text.textValue, { store: true }) } }",
+      },
+    },
+  }
+  await db.upsert(_dd._id, () => _dd)
+}
+
+export const updateGroupDesignDocs = async (db: DocumentScope<any>) => {
+  await updateValidationDesignDoc({ db })
+  await updateIndexDesignDocs(db)
+}
+
+export const updateSysDesignDocs = async () => {
+  const _designDatabaseTuples: [JSONSchema4, DocumentScope<DesignDoc>][] = [
     [userSchema, cloudant.models.UsersDesignDoc],
     [loginSchema, cloudant.models.LoginsDesignDoc],
     [sysGroupSchema, cloudant.models.GroupsDesignDoc],
   ]
 
-  _designDatabaseTuple.forEach((t) =>
-    updateDesignDoc({
+  for (const t of _designDatabaseTuples) {
+    await updateValidationDesignDoc({
       schema: t[0],
       db: t[1],
     })
-  )
+  }
 }
 
 export const initiateDatabases = async () => {
