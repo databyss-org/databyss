@@ -20,8 +20,9 @@ interface SplitSearchTermOptions {
   stemmed: boolean
 }
 
-// init stemming
-// const stemmer = new Snowball('English')
+export function unorm(text: string) {
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+}
 
 export function splitSearchTerms(
   query: string,
@@ -69,7 +70,7 @@ export function splitSearchTerms(
     }
     if (normalized) {
       // normalize diactritics
-      term.text = term.text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      term.text = unorm(term.text)
     }
     if (stemmed) {
       const _stem = stemmer(term.text)
@@ -171,14 +172,39 @@ export class CouchDb {
     if (!res.docs) {
       throw new InvalidRequestError(`Invalid query: ${JSON.stringify(body)}`)
     }
-    return res.docs.map((doc: any) => {
+
+    const nresq = encodeURIComponent(
+      _terms.map((t) => `${t.text}*`).join(' AND ')
+    )
+    const nresuri = `${this.dbName}/_design/custom_search_index/_search/normalized?q=${nresq}&include_docs=true`
+    // console.log('[CouchDB] search', nresuri)
+    const nres: any = await couchGet(nresuri)
+
+    const rowDict: { [id: string]: PouchDbSearchRow } = {}
+    res.docs.forEach((doc: any) => {
+      if (rowDict[doc._id]) {
+        return
+      }
       const row: PouchDbSearchRow = {
         id: doc._id,
         doc,
         score: 0,
       }
-      return row
+      rowDict[doc._id] = row
     })
+    nres.rows.forEach((row: any) => {
+      if (rowDict[row.id]) {
+        return
+      }
+      const _row: PouchDbSearchRow = {
+        id: row.id,
+        doc: row.doc,
+        score: 0,
+      }
+      rowDict[row.id] = _row
+    })
+
+    return Object.values(rowDict)
   }
 }
 interface CouchDbRef {

@@ -109,16 +109,15 @@ export const updateCustomIndexDesignDocs = async (db: DocumentScope<any>) => {
     _id: '_design/custom_search_index',
     language: 'javascript',
     indexes: {
-      fulltext: {
-        analyzer: {
-          name: 'perfield',
-          default: 'english',
-          fields: {
-            $default: 'english',
-          },
-        },
-        index:
-          "function (doc) { if (doc.text && doc.text.textValue) { index('text', doc.text.textValue, { store: true }) } }",
+      normalized: {
+        index: fs
+          .readFileSync(
+            path.join(
+              __dirname,
+              `${baseDir}/_design_doc_includes/ntext_index.js.es5`
+            )
+          )
+          .toString(),
       },
     },
   }
@@ -128,6 +127,7 @@ export const updateCustomIndexDesignDocs = async (db: DocumentScope<any>) => {
 export const updateGroupDesignDocs = async (db: DocumentScope<any>) => {
   await updateValidationDesignDoc({ db })
   await updateIndexDesignDocs(db)
+  await updateCustomIndexDesignDocs(db)
 }
 
 export const updateSysDesignDocs = async () => {

@@ -11,7 +11,11 @@ import { populatePage } from '@databyss-org/services/blocks/joins'
 import { indexPage } from '@databyss-org/editor/lib/util'
 import { cloneDeep } from 'lodash'
 import { searchText } from '../../utils'
-import { couchDbRef, splitSearchTerms } from '../../../couchdb-client/couchdb'
+import {
+  couchDbRef,
+  splitSearchTerms,
+  unorm,
+} from '../../../couchdb-client/couchdb'
 
 export interface SearchEntriesResultRow {
   entryId: string
@@ -106,11 +110,12 @@ const searchEntries = async ({
         if (_hasMatch) {
           return
         }
-        if (
-          _result.doc.text.textValue.match(
-            new RegExp(`\\b${term.text}[^\\b]*?\\b`, 'ig')
-          )
-        ) {
+        const _rex = new RegExp(
+          `\\b${term.exact ? unorm(term.text) : term.text}[^\\b]*?\\b`,
+          'ig'
+        )
+        const _txt = _result.doc.text.textValue
+        if (unorm(_txt).match(_rex)) {
           _hasMatch = true
         }
       })

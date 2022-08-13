@@ -10,7 +10,7 @@ import {
 } from '@databyss-org/services/interfaces'
 import { urlSafeName, validUriRegex } from '@databyss-org/services/lib/util'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
-import { SearchTerm } from '@databyss-org/data/couchdb-client/couchdb'
+import { SearchTerm, unorm } from '@databyss-org/data/couchdb-client/couchdb'
 import matchAll from 'string.prototype.matchall'
 import { stemmer } from 'stemmer'
 import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
@@ -414,18 +414,29 @@ export function createHighlightRanges(text: string, searchTerms: SearchTerm[]) {
   const _ranges: Range[] = []
 
   // normalize diacritics
-  const _normalizedText = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  const _normalizedText = unorm(text)
 
   searchTerms.forEach((term) => {
     if (!term?.text) {
       return
     }
 
-    const _rex = `\\b${term.text}[^\\b]*?\\b`
+    const _rex = `\\b${term.exact ? unorm(term.text) : term.text}[^\\b]*?\\b`
     const matches = _normalizedText.matchAll(new RegExp(_rex, 'ig'))
 
     for (const match of matches) {
-      if (match[0] !== term.text && stemmer(match[0]) !== term.text) {
+      // has match been normalized?
+      const _orig = text.substring(match.index!, match.index! + match[0].length)
+      const _matchNormalized = _orig !== match[0]
+
+      // force exact match if
+      // - not normalized
+      // - stem of match doesn't equal stem of term
+      if (
+        !_matchNormalized &&
+        match[0] !== term.text &&
+        stemmer(match[0]) !== term.text
+      ) {
         continue
       }
       _ranges.push({
