@@ -25,7 +25,6 @@ export const SearchContent = () => {
   const { getAccountFromLocation } = useNavigationContext()
   const searchQuery = decodeURIComponent(useParams().query!)
   const searchRes = useSearchEntries(searchQuery)
-  console.log('[SearchContent] searchRes.success', searchRes.isSuccess)
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
   )

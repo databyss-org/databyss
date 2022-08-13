@@ -11,7 +11,8 @@ import { PouchDbSearchRow } from '../pouchdb/entries/lib/searchEntries'
 
 export interface SearchTerm {
   text: string
-  exact: boolean
+  exact?: boolean
+  stemmed?: boolean
 }
 
 interface SplitSearchTermOptions {
@@ -39,10 +40,7 @@ export function splitSearchTerms(
         _inphrase = false
       }
     } else {
-      _terms[_tidx] = {
-        exact: false,
-        text: _words[_widx],
-      }
+      _terms[_tidx] = { text: _words[_widx] }
       if (_words[_widx].startsWith('"')) {
         _terms[_tidx].exact = true
         _terms[_tidx].text = _terms[_tidx].text.substring(1)
@@ -74,12 +72,15 @@ export function splitSearchTerms(
       term.text = term.text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     }
     if (stemmed) {
-      term.text = stemmer(term.text)
-      if (term.text.endsWith('bl')) {
-        _additional.push({
-          text: `${term.text.substring(0, term.text.length - 1)}il`,
-          exact: false,
-        })
+      const _stem = stemmer(term.text)
+      if (_stem.length > 2 && _stem !== term.text) {
+        term.text = _stem
+        term.stemmed = true
+        if (term.text.endsWith('bl')) {
+          _additional.push({
+            text: `${term.text.substring(0, term.text.length - 1)}il`,
+          })
+        }
       }
     }
     return term

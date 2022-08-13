@@ -12,6 +12,7 @@ import { urlSafeName, validUriRegex } from '@databyss-org/services/lib/util'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { SearchTerm } from '@databyss-org/data/couchdb-client/couchdb'
 import matchAll from 'string.prototype.matchall'
+import { stemmer } from 'stemmer'
 import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import { EditorState, PagePath } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
@@ -420,11 +421,13 @@ export function createHighlightRanges(text: string, searchTerms: SearchTerm[]) {
       return
     }
 
-    const matches = _normalizedText.matchAll(
-      new RegExp(`\\b${term.text}[^\\b]*?\\b`, 'ig')
-    )
+    const _rex = `\\b${term.text}[^\\b]*?\\b`
+    const matches = _normalizedText.matchAll(new RegExp(_rex, 'ig'))
 
     for (const match of matches) {
+      if (match[0] !== term.text && stemmer(match[0]) !== term.text) {
+        continue
+      }
       _ranges.push({
         offset: match.index!,
         length: match[0].length,
