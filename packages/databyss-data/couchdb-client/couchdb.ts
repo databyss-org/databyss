@@ -1,4 +1,4 @@
-import { stemmer } from 'stemmer'
+import { stemmer as porterStemmer } from 'stemmer'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces'
 import { InvalidRequestError } from '@databyss-org/services/interfaces/Errors'
 import {
@@ -13,6 +13,7 @@ export interface SearchTerm {
   text: string
   exact?: boolean
   stemmed?: boolean
+  original: string
 }
 
 interface SplitSearchTermOptions {
@@ -22,6 +23,16 @@ interface SplitSearchTermOptions {
 
 export function unorm(text: string) {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+}
+
+export function stemmer(word: string) {
+  if (word.endsWith('ier')) {
+    return word.substring(0, word.length - 2)
+  }
+  if (word.endsWith('iest')) {
+    return word.substring(0, word.length - 3)
+  }
+  return porterStemmer(word)
 }
 
 export function splitSearchTerms(
@@ -41,7 +52,10 @@ export function splitSearchTerms(
         _inphrase = false
       }
     } else {
-      _terms[_tidx] = { text: _words[_widx] }
+      _terms[_tidx] = {
+        text: _words[_widx],
+        original: _words[_widx].replaceAll('"', ''),
+      }
       if (_words[_widx].startsWith('"')) {
         _terms[_tidx].exact = true
         _terms[_tidx].text = _terms[_tidx].text.substring(1)
@@ -79,7 +93,14 @@ export function splitSearchTerms(
         term.stemmed = true
         if (term.text.endsWith('bl')) {
           _additional.push({
+            original: term.original,
             text: `${term.text.substring(0, term.text.length - 1)}il`,
+          })
+        }
+        if (term.text.endsWith('i')) {
+          _additional.push({
+            original: term.original,
+            text: `${term.text.substring(0, term.text.length - 1)}y`,
           })
         }
       }

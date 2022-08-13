@@ -8,7 +8,7 @@ import {
   Text,
 } from '@databyss-org/services/interfaces'
 import { populatePage } from '@databyss-org/services/blocks/joins'
-import { indexPage } from '@databyss-org/editor/lib/util'
+import { indexPage, matchTermRegex } from '@databyss-org/editor/lib/util'
 import { cloneDeep } from 'lodash'
 import { searchText } from '../../utils'
 import {
@@ -110,14 +110,12 @@ const searchEntries = async ({
         if (_hasMatch) {
           return
         }
-        const _rex = new RegExp(
-          `\\b${term.exact ? unorm(term.text) : term.text}[^\\b]*?\\b`,
-          'ig'
-        )
+        const _rex = matchTermRegex(term)
         const _txt = _result.doc.text.textValue
         if (unorm(_txt).match(_rex)) {
           _hasMatch = true
         }
+        // console.log('[searchEntries] match', _txt, _rex)
       })
       if (!_hasMatch) {
         continue
