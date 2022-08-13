@@ -10,9 +10,12 @@ import {
 } from '@databyss-org/services/interfaces'
 import { urlSafeName, validUriRegex } from '@databyss-org/services/lib/util'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
-import { SearchTerm } from '@databyss-org/data/couchdb-client/couchdb'
+import {
+  SearchTerm,
+  stemmer,
+  unorm,
+} from '@databyss-org/data/couchdb-client/couchdb'
 import matchAll from 'string.prototype.matchall'
-import { stemmer } from 'stemmer'
 import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import { EditorState, PagePath } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
@@ -410,22 +413,52 @@ export const createLinkRangesForUrls = (text: string) => {
   return _ranges
 }
 
+export function matchTermRegex(term: SearchTerm) {
+  if (term.exact) {
+    return new RegExp(`\\b${unorm(term.text)}\\b`, 'gi')
+  }
+  const srex = `\\b${term.text}[^\\b]*?\\b`
+  const orex = `\\b${unorm(term.original)}[^\\b]*?\\b`
+  return new RegExp(`${srex}|${orex}`, 'gi')
+}
+
+export function stemMatch(
+  term: SearchTerm,
+  match: RegExpMatchArray,
+  text: string
+) {
+  const _orig = text.substring(match.index!, match.index! + match[0].length)
+  const _matchNormalized = _orig !== match[0]
+  // force stem match if not normalized (non-exact only)
+  return (
+    term.exact ||
+    _matchNormalized ||
+    stemmer(match[0]) === stemmer(term.original)
+  )
+}
+
 export function createHighlightRanges(text: string, searchTerms: SearchTerm[]) {
   const _ranges: Range[] = []
 
   // normalize diacritics
-  const _normalizedText = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  const _normalizedText = unorm(text)
 
   searchTerms.forEach((term) => {
     if (!term?.text) {
       return
     }
 
-    const _rex = `\\b${term.text}[^\\b]*?\\b`
-    const matches = _normalizedText.matchAll(new RegExp(_rex, 'ig'))
+    const _rex = matchTermRegex(term)
+    const matches = _normalizedText.matchAll(_rex)
 
     for (const match of matches) {
-      if (match[0] !== term.text && stemmer(match[0]) !== term.text) {
+      if (!stemMatch(term, match, text)) {
+        // console.log(
+        //   '[CRH] skipping',
+        //   match[0],
+        //   stemmer(match[0]),
+        //   stemmer(term.original)
+        // )
         continue
       }
       _ranges.push({

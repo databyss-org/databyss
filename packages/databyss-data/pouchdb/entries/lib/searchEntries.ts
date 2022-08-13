@@ -8,10 +8,18 @@ import {
   Text,
 } from '@databyss-org/services/interfaces'
 import { populatePage } from '@databyss-org/services/blocks/joins'
-import { indexPage } from '@databyss-org/editor/lib/util'
+import {
+  indexPage,
+  matchTermRegex,
+  stemMatch,
+} from '@databyss-org/editor/lib/util'
 import { cloneDeep } from 'lodash'
 import { searchText } from '../../utils'
-import { couchDbRef, splitSearchTerms } from '../../../couchdb-client/couchdb'
+import {
+  couchDbRef,
+  splitSearchTerms,
+  unorm,
+} from '../../../couchdb-client/couchdb'
 
 export interface SearchEntriesResultRow {
   entryId: string
@@ -30,7 +38,9 @@ export interface SearchEntriesResultPage {
   pageTimestamp: number
 }
 
-export type PouchDbSearchRow = PouchDB.SearchRow<SearchRow>
+export interface PouchDbSearchRow extends PouchDB.SearchRow<SearchRow> {
+  normalized?: boolean
+}
 
 export interface SearchRow {
   page: Page | null
@@ -106,13 +116,22 @@ const searchEntries = async ({
         if (_hasMatch) {
           return
         }
-        if (
-          _result.doc.text.textValue.match(
-            new RegExp(`\\b${term.text}[^\\b]*?\\b`, 'ig')
-          )
-        ) {
-          _hasMatch = true
+        const _rex = matchTermRegex(term)
+        const _txt = _result.doc.text.textValue
+        const _matches = unorm(_txt).matchAll(_rex)
+        if (!_matches) {
+          _hasMatch = false
+        } else {
+          for (const match of _matches) {
+            _hasMatch = stemMatch(term, match, _txt)
+            if (_hasMatch) {
+              break
+            }
+          }
         }
+        // if (!_hasMatch) {
+        //   console.log('[searchEntries] no match', _result.normalized)
+        // }
       })
       if (!_hasMatch) {
         continue
