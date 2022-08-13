@@ -159,7 +159,7 @@ export class CouchDb {
   ): Promise<PouchDbSearchRow[]> {
     const _terms = splitSearchTerms(query, {
       stemmed: false,
-      normalized: false,
+      normalized: true,
     })
     const body = {
       selector: {
