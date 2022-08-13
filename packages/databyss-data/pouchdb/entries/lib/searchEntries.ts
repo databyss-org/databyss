@@ -8,7 +8,11 @@ import {
   Text,
 } from '@databyss-org/services/interfaces'
 import { populatePage } from '@databyss-org/services/blocks/joins'
-import { indexPage, matchTermRegex } from '@databyss-org/editor/lib/util'
+import {
+  indexPage,
+  matchTermRegex,
+  stemMatch,
+} from '@databyss-org/editor/lib/util'
 import { cloneDeep } from 'lodash'
 import { searchText } from '../../utils'
 import {
@@ -34,7 +38,9 @@ export interface SearchEntriesResultPage {
   pageTimestamp: number
 }
 
-export type PouchDbSearchRow = PouchDB.SearchRow<SearchRow>
+export interface PouchDbSearchRow extends PouchDB.SearchRow<SearchRow> {
+  normalized?: boolean
+}
 
 export interface SearchRow {
   page: Page | null
@@ -112,10 +118,20 @@ const searchEntries = async ({
         }
         const _rex = matchTermRegex(term)
         const _txt = _result.doc.text.textValue
-        if (unorm(_txt).match(_rex)) {
-          _hasMatch = true
+        const _matches = unorm(_txt).matchAll(_rex)
+        if (!_matches) {
+          _hasMatch = false
+        } else {
+          for (const match of _matches) {
+            _hasMatch = stemMatch(term, match, _txt)
+            if (_hasMatch) {
+              break
+            }
+          }
         }
-        // console.log('[searchEntries] match', _txt, _rex)
+        // if (!_hasMatch) {
+        //   console.log('[searchEntries] no match', _result.normalized)
+        // }
       })
       if (!_hasMatch) {
         continue

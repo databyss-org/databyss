@@ -221,6 +221,7 @@ export class CouchDb {
         id: row.id,
         doc: row.doc,
         score: 0,
+        normalized: true,
       }
       rowDict[row.id] = _row
     })

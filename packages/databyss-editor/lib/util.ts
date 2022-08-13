@@ -422,6 +422,21 @@ export function matchTermRegex(term: SearchTerm) {
   return new RegExp(`${srex}|${orex}`, 'gi')
 }
 
+export function stemMatch(
+  term: SearchTerm,
+  match: RegExpMatchArray,
+  text: string
+) {
+  const _orig = text.substring(match.index!, match.index! + match[0].length)
+  const _matchNormalized = _orig !== match[0]
+  // force stem match if not normalized (non-exact only)
+  return (
+    term.exact ||
+    _matchNormalized ||
+    stemmer(match[0]) === stemmer(term.original)
+  )
+}
+
 export function createHighlightRanges(text: string, searchTerms: SearchTerm[]) {
   const _ranges: Range[] = []
 
@@ -437,17 +452,7 @@ export function createHighlightRanges(text: string, searchTerms: SearchTerm[]) {
     const matches = _normalizedText.matchAll(_rex)
 
     for (const match of matches) {
-      // console.log('[CRH] match', term.text, match[0])
-      // has match been normalized?
-      const _orig = text.substring(match.index!, match.index! + match[0].length)
-      const _matchNormalized = _orig !== match[0]
-
-      // force stem match if not normalized (non-exact only)
-      if (
-        !term.exact &&
-        !_matchNormalized &&
-        stemmer(match[0]) !== stemmer(term.original)
-      ) {
+      if (!stemMatch(term, match, text)) {
         // console.log(
         //   '[CRH] skipping',
         //   match[0],
