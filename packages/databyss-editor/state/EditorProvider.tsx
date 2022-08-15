@@ -156,9 +156,9 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
 
   const setSelection = (selection: Selection) => {
     selectionLastUpdatedAtRef.current = Date.now()
-    if (!selection._id) {
-      selection._id = state.selection?._id
-    }
+    // if (!selection._id) {
+    //   selection._id = state.selection?._id
+    // }
     dispatch({
       type: SET_SELECTION,
       payload: { selection },
