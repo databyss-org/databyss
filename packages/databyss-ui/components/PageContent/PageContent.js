@@ -128,7 +128,7 @@ const PageContent = (others) => {
               <PageContainer
                 id={id}
                 page={page}
-                anchor={anchor}
+                // anchor={anchor}
                 isReadOnly={isReadOnly}
                 {...others}
               />

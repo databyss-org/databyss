@@ -25,29 +25,32 @@ export const ElementView = ({
   last,
   ...others
 }: ElementViewProps) => {
-  const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
-  const setFocusIndex = useEditorPageContext((c) => c && c.setFocusIndex)
+  // const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
+  // const setFocusIndex = useEditorPageContext((c) => c && c.setFocusIndex)
   const setLastBlockRendered = useEditorPageContext(
     (c) => c && c.setLastBlockRendered
   )
-  const { anchor } = getTokensFromPath()
+  // const { anchor } = getTokensFromPath()
   const viewRef = useRef(null)
 
   useEffect(() => {
-    if (!anchor) {
-      return
+    // if (!anchor) {
+    //   return
+    // }
+    // if (!viewRef.current) {
+    //   return
+    // }
+    // if (parseInt(anchor, 10) !== index) {
+    //   if (last) {
+    //     setLastBlockRendered()
+    //   }
+    //   return
+    // }
+    // setFocusIndex(index, last)
+    if (viewRef.current && last) {
+      setLastBlockRendered()
     }
-    if (!viewRef.current) {
-      return
-    }
-    if (parseInt(anchor, 10) !== index) {
-      if (last) {
-        setLastBlockRendered()
-      }
-      return
-    }
-    setFocusIndex(index, last)
-  }, [viewRef.current, anchor])
+  }, [viewRef.current])
 
   return (
     <View

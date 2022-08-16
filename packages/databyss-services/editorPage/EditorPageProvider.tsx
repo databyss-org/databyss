@@ -65,6 +65,8 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   const navigate = useNavigationContext((c) => c && c.navigate)
   const location = useNavigationContext((c) => c && c.location)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
+  const { anchor } = getTokensFromPath()
 
   const pageIdParams = useParams()
   let pageId
@@ -171,12 +173,14 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     [JSON.stringify(state.cache)]
   )
 
+  const focusIndex = anchor && parseInt(anchor, 10)
+
   const setLastBlockRendered = () => {
-    if (!state.focusIndex) {
+    if (!focusIndex) {
       return
     }
     window.requestAnimationFrame(() => {
-      scrollIntoView(document.getElementsByName(state.focusIndex.toString())[0])
+      scrollIntoView(document.getElementsByName(focusIndex.toString())[0])
       navigate(location.pathname, { replace: true })
     })
   }
@@ -203,7 +207,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         getPublicAccount,
         sharedWithGroups: sharedWithGroupsRef.current ?? [],
         setFocusIndex,
-        focusIndex: state.focusIndex,
+        focusIndex,
         setLastBlockRendered,
       }}
     >
