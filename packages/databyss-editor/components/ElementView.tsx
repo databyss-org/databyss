@@ -1,7 +1,6 @@
 import React, { PropsWithChildren, useEffect, useRef } from 'react'
 import { View } from '@databyss-org/ui'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
-import { useNavigationContext } from '@databyss-org/ui/components'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { Block } from '../interfaces'
 import { isAtomicClosure } from './AtomicHeader'
@@ -25,8 +24,6 @@ export const ElementView = ({
   last,
   ...others
 }: ElementViewProps) => {
-  // const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
-  // const setFocusIndex = useEditorPageContext((c) => c && c.setFocusIndex)
   const setLastBlockRendered = useEditorPageContext(
     (c) => c && c.setLastBlockRendered
   )
@@ -34,19 +31,6 @@ export const ElementView = ({
   const viewRef = useRef(null)
 
   useEffect(() => {
-    // if (!anchor) {
-    //   return
-    // }
-    // if (!viewRef.current) {
-    //   return
-    // }
-    // if (parseInt(anchor, 10) !== index) {
-    //   if (last) {
-    //     setLastBlockRendered()
-    //   }
-    //   return
-    // }
-    // setFocusIndex(index, last)
     if (viewRef.current && last) {
       setLastBlockRendered()
     }
