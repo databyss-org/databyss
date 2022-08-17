@@ -138,6 +138,7 @@ const ContentEditable = ({
 
   // if focus index is provides, move caret
   useEffect(() => {
+    // console.log('[ContentEditable] focusIndex', focusIndex)
     if (typeof focusIndex === 'number' && editor.children) {
       const _point = { index: focusIndex, offset: 0 }
       const _selection = { anchor: _point, focus: _point }
