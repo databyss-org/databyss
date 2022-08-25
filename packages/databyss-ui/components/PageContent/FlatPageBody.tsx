@@ -63,7 +63,6 @@ export const FlatBlock = ({
   type: BlockType
   text: Text
 }) => {
-  console.log('[FlatBlock] block', block)
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
   )
@@ -81,33 +80,31 @@ export const FlatBlock = ({
   if (!block && previousId && !_previousBlockRes.isSuccess) {
     return null
   }
-  const _block =
-    block ?? isAtomicClosure(type)
-      ? {
-          _id: id,
-          type,
-          text: {
-            textValue: _blockRes.data
-              ? atomicClosureText(type, _blockRes.data.text.textValue)
-              : text?.textValue ?? '',
-            ranges: [],
-          },
-        }
-      : _blockRes.data ?? null
+  const _block = isAtomicClosure(type)
+    ? {
+        _id: id,
+        type,
+        text: {
+          textValue: _blockRes.data
+            ? atomicClosureText(type, _blockRes.data.text.textValue)
+            : text?.textValue ?? '',
+          ranges: [],
+        },
+      }
+    : _blockRes.data ?? null
 
-  const _previousBlock =
-    previousBlock ?? isAtomicClosure(previousType)
-      ? {
-          _id: previousId ?? '',
-          type: previousType ?? BlockType._ANY,
-          text: { textValue: '', ranges: [] },
-        }
-      : _previousBlockRes.data ?? null
+  const _previousBlock = isAtomicClosure(previousType)
+    ? {
+        _id: previousId ?? '',
+        type: previousType ?? BlockType._ANY,
+        text: { textValue: '', ranges: [] },
+      }
+    : _previousBlockRes.data ?? null
 
   const _renderText = () =>
     renderTextToComponents({
       key: block?._id!,
-      text: _block?.text!,
+      text: block?.text ?? _block?.text ?? { textValue: '', ranges: [] },
       escapeFn: renderText,
       searchTerms: normalizedStemmedTerms,
       onInlineClick: (d) => navigate(getInlineAtomicHref(d)),
@@ -115,7 +112,7 @@ export const FlatBlock = ({
 
   return index ? (
     <ElementView
-      block={_block}
+      block={block ?? _block}
       previousBlock={previousId ? _previousBlock : null}
       index={index}
       last={last}
