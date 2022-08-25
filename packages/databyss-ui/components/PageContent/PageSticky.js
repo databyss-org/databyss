@@ -12,7 +12,7 @@ const PageSticky = ({ pagePath, pageId }) => {
   const pages = pagesRes.data
 
   // get page title
-  if (pages[pageId]?.name) {
+  if (pages?.[pageId]?.name) {
     currentPath.push(pages[pageId].name)
   }
 
