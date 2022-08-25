@@ -124,7 +124,10 @@ export class CouchDb {
   ): Promise<{ rows: { doc: any }[] } | null> {
     const response = await this.bulkGet(
       { docs: request.keys.map((id) => ({ id })) },
-      options
+      {
+        ...options,
+        authenticateAsGroupId: this.dbName,
+      }
     )
     if (!response) {
       return null
@@ -135,21 +138,30 @@ export class CouchDb {
   }
 
   get(docId: string, options?: RequestCouchOptions) {
-    return couchGet(`${this.dbName}/${docId}`, options)
+    return couchGet(`${this.dbName}/${docId}`, {
+      ...options,
+      authenticateAsGroupId: this.dbName,
+    })
   }
 
   async bulkGet(
     request: { docs: { id: string }[] },
     options?: RequestCouchOptions
   ): Promise<{ results: { docs: { ok: any }[] }[] } | null> {
-    return couchPost(`${this.dbName}/_bulk_get`, request, options) as Promise<{
+    return couchPost(`${this.dbName}/_bulk_get`, request, {
+      ...options,
+      authenticateAsGroupId: this.dbName,
+    }) as Promise<{
       results: any[]
     }>
   }
 
   // TODO: add TS defs for find request
   find(request: any, options?: RequestCouchOptions) {
-    return couchPost(`${this.dbName}/_find`, request, options)
+    return couchPost(`${this.dbName}/_find`, request, {
+      ...options,
+      authenticateAsGroupId: this.dbName,
+    })
   }
 
   // TODO: add TS defs for upsert request
@@ -160,14 +172,20 @@ export class CouchDb {
   ) {
     let _oldDoc = {}
     try {
-      _oldDoc = (await this.get(docId, options)) as {}
+      _oldDoc = (await this.get(docId, {
+        ...options,
+        authenticateAsGroupId: this.dbName,
+      })) as {}
     } catch (err) {
       if (!(err instanceof ResourceNotFoundError)) {
         throw err
       }
     }
     const _nextDoc = diffFn(_oldDoc)
-    return couchPut(`${this.dbName}/${docId}`, _nextDoc, options)
+    return couchPut(`${this.dbName}/${docId}`, _nextDoc, {
+      ...options,
+      authenticateAsGroupId: this.dbName,
+    })
   }
 
   /**
@@ -189,7 +207,10 @@ export class CouchDb {
         })),
       },
     }
-    const res: any = await couchPost(`${this.dbName}/_find`, body, options)
+    const res: any = await couchPost(`${this.dbName}/_find`, body, {
+      ...options,
+      authenticateAsGroupId: this.dbName,
+    })
     if (!res.docs) {
       throw new InvalidRequestError(`Invalid query: ${JSON.stringify(body)}`)
     }
@@ -199,7 +220,10 @@ export class CouchDb {
     )
     const nresuri = `${this.dbName}/_design/custom_search_index/_search/normalized?q=${nresq}&include_docs=true`
     // console.log('[CouchDB] search', nresuri)
-    const nres: any = await couchGet(nresuri)
+    const nres: any = await couchGet(nresuri, {
+      ...options,
+      authenticateAsGroupId: this.dbName,
+    })
 
     const rowDict: { [id: string]: PouchDbSearchRow } = {}
     res.docs.forEach((doc: any) => {
