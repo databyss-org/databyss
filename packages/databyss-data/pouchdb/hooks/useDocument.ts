@@ -1,3 +1,4 @@
+import PouchDB from 'pouchdb'
 import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { Document } from '@databyss-org/services/interfaces'
@@ -19,7 +20,11 @@ export const defaultUseDocumentOptions = {
   subscribe: true,
 }
 
-const subscriptionDict: { [_id: string]: boolean } = {}
+const subscriptionDict: {
+  [_id: string]: PouchDB.Core.Changes<any> | undefined
+} = {}
+
+const subscriptionCount: { [selector: string]: number } = {}
 
 export const useDocument = <T extends Document>(
   _id: string,
@@ -49,7 +54,7 @@ export const useDocument = <T extends Document>(
     }
   )
 
-  useEffect(() => {
+  const subscribe = () => {
     if (!_options.enabled || !_options.subscribe) {
       return
     }
@@ -57,10 +62,12 @@ export const useDocument = <T extends Document>(
       return
     }
     if (subscriptionDict[_id]) {
+      subscriptionCount[_id] += 1
       return
     }
-    subscriptionDict[_id] = true
-    dbRef!.current
+    // console.log('[useDocument] subscribe', _id)
+    subscriptionCount[_id] = 1
+    subscriptionDict[_id] = dbRef!.current
       ?.changes({
         since: 'now',
         live: true,
@@ -70,6 +77,24 @@ export const useDocument = <T extends Document>(
       .on('change', (change) => {
         queryClient.setQueryData<T>(queryKey, change.doc)
       })!
+  }
+
+  const unsubscribe = () => {
+    if (!subscriptionDict[_id]) {
+      return
+    }
+    subscriptionCount[_id] -= 1
+    if (subscriptionCount[_id] > 0) {
+      return
+    }
+    // console.log('[useDocument] unsubscribe', _id)
+    subscriptionDict[_id]?.cancel()
+    delete subscriptionDict[_id]
+  }
+
+  useEffect(() => {
+    subscribe()
+    return unsubscribe
   }, [options?.enabled, isCouchMode])
 
   return query

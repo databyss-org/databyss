@@ -30,11 +30,12 @@ export const requestCouch = (
 ) => {
   const { authenticateAsGroupId } = options
   const _secrets = getPouchSecret()
-  const _groupId =
-    authenticateAsGroupId || (_secrets && Object.keys(_secrets)?.[0])
+  const _groupId = _secrets
+    ? authenticateAsGroupId || (_secrets && Object.keys(_secrets)?.[0])
+    : null
   let _username
   let _password
-  if (_groupId) {
+  if (_groupId && _secrets[_groupId]) {
     _username = _secrets[_groupId].dbKey
     _password = _secrets[_groupId].dbPassword
   }
@@ -46,9 +47,10 @@ export const requestCouch = (
     ...options,
     headers: {
       ...options.headers,
-      ...(_groupId && {
-        Authorization: `Basic ${Base64.btoa(`${_username}:${_password}`)}`,
-      }),
+      ...(_username &&
+        _password && {
+          Authorization: `Basic ${Base64.btoa(`${_username}:${_password}`)}`,
+        }),
     },
   }
   return new Promise((resolve, reject) => {
