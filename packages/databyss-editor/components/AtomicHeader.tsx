@@ -36,7 +36,9 @@ export const AtomicHeader = ({
   const _groupId = getAccountFromLocation(true)
   const _blockPath = {
     [BlockType.Source]: 'sources',
+    [BlockType.EndSource]: 'sources',
     [BlockType.Topic]: 'topics',
+    [BlockType.EndTopic]: 'topics',
   }[block.type]
   const _href = `/${_groupId}/${_blockPath}/${block._id}/${urlSafeName(
     block.text.textValue

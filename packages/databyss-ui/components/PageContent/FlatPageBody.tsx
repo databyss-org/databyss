@@ -7,7 +7,13 @@ import {
   InlineAtomicDef,
   isAtomicInlineType,
 } from '@databyss-org/editor/lib/util'
-import { Page, Text, RangeType, Block } from '@databyss-org/services/interfaces'
+import {
+  Page,
+  Text,
+  RangeType,
+  Block,
+  BlockType,
+} from '@databyss-org/services/interfaces'
 import cloneDeep from 'clone-deep'
 import {
   RawHtml,
@@ -25,8 +31,12 @@ import { TitleElement } from '@databyss-org/editor/components/TitleElement'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { CouchDb, SearchTerm } from '@databyss-org/data/couchdb-client/couchdb'
-import { AtomicHeader } from '@databyss-org/editor/components/AtomicHeader'
+import {
+  AtomicHeader,
+  isAtomicClosure,
+} from '@databyss-org/editor/components/AtomicHeader'
 import { splitOverlappingRanges } from '@databyss-org/services/blocks/textRanges'
+import { atomicClosureText } from '@databyss-org/editor/state/util'
 import { useSearchContext } from '../../hooks'
 import { useNavigationContext } from '../Navigation'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
@@ -38,22 +48,32 @@ export const FlatBlock = ({
   previousId,
   block,
   previousBlock,
+  previousType,
   last,
+  type,
+  text,
 }: {
   index: number
   id: string
   previousId: string | null
+  previousType: BlockType | null
   block?: Block
   previousBlock?: Block
   last: boolean
+  type: BlockType
+  text: Text
 }) => {
+  console.log('[FlatBlock] block', block)
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
   )
   const navigate = useNavigationContext((c) => c && c.navigate)
-  const _blockRes = useDocument<Block>(id, { initialData: block })
-  const _previousBlockRes = useDocument<Block>(previousId ?? '', {
+  const _blockRes = useDocument<Block>(id, {
+    initialData: block,
+  })
+  const _previousBlockRes = useDocument<Block>(previousId!, {
     initialData: previousBlock,
+    enabled: !!previousId,
   })
   if (!block && !_blockRes.isSuccess) {
     return null
@@ -61,7 +81,28 @@ export const FlatBlock = ({
   if (!block && previousId && !_previousBlockRes.isSuccess) {
     return null
   }
-  const _block = block ?? _blockRes.data ?? null
+  const _block =
+    block ?? isAtomicClosure(type)
+      ? {
+          _id: id,
+          type,
+          text: {
+            textValue: _blockRes.data
+              ? atomicClosureText(type, _blockRes.data.text.textValue)
+              : text?.textValue ?? '',
+            ranges: [],
+          },
+        }
+      : _blockRes.data ?? null
+
+  const _previousBlock =
+    previousBlock ?? isAtomicClosure(previousType)
+      ? {
+          _id: previousId ?? '',
+          type: previousType ?? BlockType._ANY,
+          text: { textValue: '', ranges: [] },
+        }
+      : _previousBlockRes.data ?? null
 
   const _renderText = () =>
     renderTextToComponents({
@@ -75,7 +116,7 @@ export const FlatBlock = ({
   return index ? (
     <ElementView
       block={_block}
-      previousBlock={previousBlock ?? _previousBlockRes.data ?? null}
+      previousBlock={previousId ? _previousBlock : null}
       index={index}
       last={last}
       readOnly
@@ -108,17 +149,21 @@ export const FlatBlocks = ({
   <>
     {page.blocks.map((block, idx) => {
       const _previousBlockId = idx > 0 ? page.blocks[idx - 1]._id : null
+      const _previousBlockType = idx > 0 ? page.blocks[idx - 1].type : null
       const _last = idx === page.blocks.length - 1
       if (_last) {
         onLast()
       }
       return (
         <FlatBlock
+          type={block.type}
+          text={block.text}
           index={idx}
           last={_last}
           key={`${idx}:${block._id}`}
           id={block._id}
           previousId={_previousBlockId}
+          previousType={_previousBlockType}
           {...(dbRef.current instanceof CouchDb
             ? {
                 block,

@@ -9,7 +9,11 @@ import { CouchDb } from '../../couchdb-client/couchdb'
 import { DocumentArrayToDict } from './utils'
 import { defaultUseDocumentOptions, UseDocumentOptions } from './useDocument'
 
-const subscriptionDict: { [selector: string]: boolean } = {}
+const subscriptionDict: {
+  [selector: string]: PouchDB.Core.Changes<any> | undefined
+} = {}
+
+const subscriptionCount: { [selector: string]: number } = {}
 
 export const useDocuments = <T extends Document>(
   selectorOrIdList: PouchDB.Find.Selector | string[],
@@ -64,20 +68,20 @@ export const useDocuments = <T extends Document>(
     options as UseQueryOptions<DocumentDict<T>>
   )
 
-  useEffect(() => {
+  const subscribe = () => {
     if (!_options.enabled || !_options.subscribe) {
       return
     }
-
     if (dbRef.current instanceof CouchDb) {
       return
     }
-
     if (subscriptionDict[queryKey]) {
+      subscriptionCount[queryKey] += 1
       return
     }
-    subscriptionDict[queryKey] = true
-    dbRef.current
+    // console.log('[useDocuments] subscribe', queryKey)
+    subscriptionCount[queryKey] = 1
+    subscriptionDict[queryKey] = dbRef.current
       ?.changes({
         since: 'now',
         live: true,
@@ -105,7 +109,24 @@ export const useDocuments = <T extends Document>(
           return oldData as DocumentDict<T>
         })
       })!
-    // console.log('[useDocuments] subscribe', queryKey, selector, dbRef.current)
+  }
+
+  const unsubscribe = () => {
+    if (!subscriptionDict[queryKey]) {
+      return
+    }
+    subscriptionCount[queryKey] -= 1
+    if (subscriptionCount[queryKey] > 0) {
+      return
+    }
+    // console.log('[useDocuments] unsubscribe', queryKey)
+    subscriptionDict[queryKey]?.cancel()
+    delete subscriptionDict[queryKey]
+  }
+
+  useEffect(() => {
+    subscribe()
+    return unsubscribe
   }, [options?.enabled, isCouchMode])
 
   return query

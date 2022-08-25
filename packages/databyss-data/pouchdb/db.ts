@@ -47,10 +47,12 @@ interface DbRef {
   readOnly: boolean
 }
 
-const getPouchDb = (groupId: string) =>
-  new PouchDB(groupId, {
+const getPouchDb = (groupId: string) => {
+  const _db = new PouchDB(groupId, {
     auto_compaction: true,
   })
+  return _db.setMaxListeners(100)
+}
 
 export const dbRef: DbRef = {
   current: null,
@@ -331,9 +333,7 @@ export const initDb = ({
   onReplicationComplete?: (success: boolean) => void
 }) =>
   new Promise<void>((resolve) => {
-    const _pouchDb = new PouchDB(groupId, {
-      auto_compaction: true,
-    })
+    const _pouchDb = getPouchDb(groupId)
 
     const _replicationComplete = (success: boolean) => {
       if (!success) {
