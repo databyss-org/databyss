@@ -30,8 +30,9 @@ export const requestCouch = (
 ) => {
   const { authenticateAsGroupId } = options
   const _secrets = getPouchSecret()
-  const _groupId =
-    authenticateAsGroupId || (_secrets && Object.keys(_secrets)?.[0])
+  const _groupId = _secrets
+    ? authenticateAsGroupId || (_secrets && Object.keys(_secrets)?.[0])
+    : null
   let _username
   let _password
   if (_groupId) {
