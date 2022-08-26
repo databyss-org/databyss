@@ -9,7 +9,7 @@ import FirefoxWarning from '@databyss-org/ui/components/Notify/FirefoxWarning'
 import Public from './Public'
 import Private from './Private'
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       // Disable window focus refetching globally for all react-query hooks
