@@ -3,7 +3,10 @@ import {
   SidebarListItemData,
   useNavigationContext,
 } from '@databyss-org/ui/components'
-import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
+import {
+  sortEntriesAtoZ,
+  sortEntriesByRecent,
+} from '@databyss-org/services/entries/util'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
@@ -108,11 +111,12 @@ const SidebarList = ({
   let _menuItems = [...menuItems]
   const recentSidebarItemLimit = parseInt(process.env.RECENT_SIDEBAR_ITEMS!, 10)
   if (!showAll && _menuItems.length > recentSidebarItemLimit) {
-    _menuItems = _menuItems.sort(
-      (a, b) =>
-        (b.data?.accessedAt ?? b.data?.modifiedAt ?? b.data?.createdAt) -
-        (a.data?.accessedAt ?? a.data?.modifiedAt ?? a.data?.createdAt)
-    )
+    _menuItems = sortEntriesByRecent(menuItems, 'data')
+    // _menuItems = _menuItems.sort(
+    //   (a, b) =>
+    //     (b.data?.accessedAt ?? b.data?.modifiedAt ?? b.data?.createdAt) -
+    //     (a.data?.accessedAt ?? a.data?.modifiedAt ?? a.data?.createdAt)
+    // )
     _menuItems = _menuItems.slice(
       0,
       Math.min(recentSidebarItemLimit, _menuItems.length)
