@@ -1,3 +1,5 @@
+import { unorm } from '@databyss-org/data/couchdb-client/couchdb'
+
 export const createIndexPageEntries = ({
   text,
   type,
@@ -34,14 +36,14 @@ export const sortEntriesAtoZ = (entries, sortBy) =>
 
 export const filterEntries = (entries, filterQuery) => {
   const findEntry = (query) => (entry) =>
-    query
+    unorm(query)
       .split(' ')
       .reduce(
         (qacc, qcurr) =>
           Boolean(
             qacc &&
-              (entry.text.match(new RegExp(`\\b${qcurr}`, 'i')) ||
-                entry?.name?.match(new RegExp(`\\b${qcurr}`, 'i')))
+              (unorm(entry.text).match(new RegExp(`\\b${qcurr}`, 'i')) ||
+                unorm(entry?.name ?? '').match(new RegExp(`\\b${qcurr}`, 'i')))
           ),
         true
       )

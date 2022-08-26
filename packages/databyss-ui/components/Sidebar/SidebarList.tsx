@@ -25,6 +25,7 @@ import { useLocation } from '@databyss-org/ui/components/Navigation/NavigationPr
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { SidebarHeaderButton } from './SidebarHeaderButton'
+import { unorm } from '@databyss-org/data/couchdb-client/couchdb'
 
 export interface SidebarListProps
   extends ScrollViewProps,
@@ -73,9 +74,14 @@ const SidebarList = ({
     if (keyboardNavigation && keyboardEventsActive) {
       return false
     }
-    return getHref(item) === location.pathname + location.search
-      ? `?${location.search}`
-      : ''
+    const _hrefRoute = unorm(getHref(item))
+    const _hrefCurrent = unorm(
+      `${decodeURI(location.pathname)}${
+        location.search ? `?${location.search}` : ''
+      }`
+    )
+    // console.log('[SidebarList]', _hrefCurrent, _hrefRoute)
+    return _hrefRoute === _hrefCurrent
   }
 
   const getDraggable = (item: SidebarListItemData<any>) => {
