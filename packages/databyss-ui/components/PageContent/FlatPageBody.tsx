@@ -29,8 +29,7 @@ import { InlineTypes, Mark } from '@databyss-org/services/interfaces/Range'
 import { Leaf as LeafComponent } from '@databyss-org/editor/components/Leaf'
 import { TitleElement } from '@databyss-org/editor/components/TitleElement'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
-import { dbRef } from '@databyss-org/data/pouchdb/db'
-import { CouchDb, SearchTerm } from '@databyss-org/data/couchdb-client/couchdb'
+import { SearchTerm } from '@databyss-org/data/couchdb-client/couchdb'
 import {
   AtomicHeader,
   isAtomicClosure,
@@ -44,54 +43,50 @@ import forkRef from '../../lib/forkRef'
 
 export const FlatBlock = ({
   index,
-  id,
   previousId,
   block,
   previousBlock,
   previousType,
   last,
-  type,
-  text,
 }: {
   index: number
-  id: string
   previousId: string | null
   previousType: BlockType | null
-  block?: Block
+  block: Block
   previousBlock?: Block
   last: boolean
-  type: BlockType
-  text: Text
 }) => {
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
   )
   const navigate = useNavigationContext((c) => c && c.navigate)
-  const _blockRes = useDocument<Block>(id, {
+  const _blockRes = useDocument<Block>(block._id, {
     initialData: block,
   })
   const _previousBlockRes = useDocument<Block>(previousId!, {
     initialData: previousBlock,
     enabled: !!previousId,
   })
-  if (!block && !_blockRes.isSuccess) {
+  if (
+    previousId &&
+    !isAtomicClosure(previousType) &&
+    !_previousBlockRes.isSuccess
+  ) {
     return null
   }
-  if (!block && previousId && !_previousBlockRes.isSuccess) {
+  if (!_blockRes.data?.text) {
     return null
   }
-  const _block = isAtomicClosure(type)
-    ? {
-        _id: id,
-        type,
-        text: {
-          textValue: _blockRes.data
-            ? atomicClosureText(type, _blockRes.data.text.textValue)
-            : text?.textValue ?? '',
-          ranges: [],
-        },
-      }
-    : _blockRes.data ?? null
+  const _block = isAtomicClosure(block.type) ? { ...block } : _blockRes.data!
+  if (isAtomicClosure(_block.type)) {
+    _block.text = {
+      textValue: atomicClosureText(
+        _block.type,
+        _blockRes.data!.text?.textValue ?? _block.text.textValue
+      ),
+      ranges: [],
+    }
+  }
 
   const _previousBlock = isAtomicClosure(previousType)
     ? {
@@ -103,8 +98,8 @@ export const FlatBlock = ({
 
   const _renderText = () =>
     renderTextToComponents({
-      key: block?._id!,
-      text: block?.text ?? _block?.text ?? { textValue: '', ranges: [] },
+      key: _block._id,
+      text: _block.text ?? { textValue: '', ranges: [] },
       escapeFn: renderText,
       searchTerms: normalizedStemmedTerms,
       onInlineClick: (d) => navigate(getInlineAtomicHref(d)),
@@ -112,14 +107,14 @@ export const FlatBlock = ({
 
   return index ? (
     <ElementView
-      block={block ?? _block}
-      previousBlock={previousId ? _previousBlock : null}
+      block={_block}
+      previousBlock={_previousBlock}
       index={index}
       last={last}
       readOnly
     >
-      {isAtomicInlineType(_block?.type!) ? (
-        <AtomicHeader block={_block!} readOnly>
+      {isAtomicInlineType(_block.type) ? (
+        <AtomicHeader block={_block} readOnly>
           {_renderText()}
         </AtomicHeader>
       ) : (
@@ -127,10 +122,7 @@ export const FlatBlock = ({
       )}
     </ElementView>
   ) : (
-    <TitleElement
-      text={block?.text.textValue ?? _blockRes.data!.text.textValue}
-      attributes={{}}
-    >
+    <TitleElement text={_block.text.textValue} attributes={{}}>
       {_renderText()}
     </TitleElement>
   )
@@ -153,22 +145,15 @@ export const FlatBlocks = ({
       }
       return (
         <FlatBlock
-          type={block.type}
-          text={block.text}
           index={idx}
           last={_last}
           key={`${idx}:${block._id}`}
-          id={block._id}
           previousId={_previousBlockId}
           previousType={_previousBlockType}
-          {...(dbRef.current instanceof CouchDb
-            ? {
-                block,
-                previousBlock: _previousBlockId
-                  ? page.blocks[_previousBlockId]
-                  : null,
-              }
-            : {})}
+          block={block}
+          previousBlock={
+            _previousBlockId ? page.blocks[_previousBlockId] : null
+          }
         />
       )
     })}
@@ -180,10 +165,9 @@ export const FlatPageBody: RefForwardingFC<{ page: Page }> = forwardRef(
     const _pageRes = useDocument<Page>(page._id, { initialData: page })
     const _viewRef = useRef<HTMLElement | null>(null)
     const _restoreScroll = useScrollMemory(_viewRef)
-    if (!_pageRes.isSuccess) {
+    if (!_pageRes.data) {
       return null
     }
-
     return (
       <View
         ref={forkRef(ref, _viewRef)}
@@ -202,7 +186,7 @@ export const FlatPageBody: RefForwardingFC<{ page: Page }> = forwardRef(
           }) as InterpolationWithTheme<any>
         }
       >
-        <FlatBlocks page={_pageRes.data!} onLast={_restoreScroll} />
+        <FlatBlocks page={_pageRes.data} onLast={_restoreScroll} />
       </View>
     )
   }

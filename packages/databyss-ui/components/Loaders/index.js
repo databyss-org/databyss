@@ -4,15 +4,21 @@ import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvide
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
+import { useQueryClient } from 'react-query'
 
 export const EditorPageLoader = ({ children, pageId, firstBlockIsTitle }) => {
   const { getPage, removePageFromCache } = useEditorPageContext()
+  const queryClient = useQueryClient()
 
+  const onLoad = (page) => {
+    queryClient.setQueryData(`useDocument_${page._id}`, page)
+  }
   return (
     <MakeLoader
       resources={getPage(pageId, firstBlockIsTitle)}
       children={children}
       onUnload={() => removePageFromCache(pageId)}
+      onLoad={onLoad}
     />
   )
 }
