@@ -43,14 +43,6 @@ export const useDocuments = <T extends Document>(
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) => {
         // console.log('useDocuments.fetch', selector)
-        dbRef.current
-          ?.changes({
-            return_docs: false,
-            since: 0,
-          })
-          .then((changes) => {
-            sequenceDict[queryKey] = changes.last_seq
-          })
         if (docIds) {
           dbRef.current
             ?.allDocs({
@@ -141,6 +133,16 @@ export const useDocuments = <T extends Document>(
   }
 
   useEffect(() => {
+    if (!(dbRef.current instanceof CouchDb) && !sequenceDict[queryKey]) {
+      dbRef.current
+        ?.changes({
+          return_docs: false,
+          since: 0,
+        })
+        .then((changes) => {
+          sequenceDict[queryKey] = changes.last_seq
+        })
+    }
     subscribe()
     return unsubscribe
   }, [options?.enabled, isCouchMode])
