@@ -13,7 +13,7 @@ import { uid } from '../../lib/uid'
 const subscriptionDict: {
   [selector: string]: PouchDB.Core.Changes<any> | undefined
 } = {}
-
+const sequenceDict: { [selector: string]: string | number } = {}
 const subscriptionListeners: { [selector: string]: Set<string> } = {}
 
 export const useDocuments = <T extends Document>(
@@ -43,6 +43,14 @@ export const useDocuments = <T extends Document>(
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) => {
         // console.log('useDocuments.fetch', selector)
+        dbRef.current
+          ?.changes({
+            return_docs: false,
+            since: 0,
+          })
+          .then((changes) => {
+            sequenceDict[queryKey] = changes.last_seq
+          })
         if (docIds) {
           dbRef.current
             ?.allDocs({
@@ -86,10 +94,11 @@ export const useDocuments = <T extends Document>(
       // )
       return
     }
+    // sequenceDict[queryKey] = 'now'
     subscriptionListeners[queryKey] = new Set([listenerIdRef.current])
     subscriptionDict[queryKey] = dbRef.current
       ?.changes({
-        since: 'now',
+        since: sequenceDict[queryKey] ?? 'now',
         live: true,
         include_docs: true,
         ...(docIds
@@ -102,6 +111,7 @@ export const useDocuments = <T extends Document>(
       })
       .on('change', (change) => {
         queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {
+          sequenceDict[queryKey] = change.seq
           if (!oldData) {
             return {}
           }

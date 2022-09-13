@@ -92,6 +92,9 @@ export const useDocument = <T extends Document>(
     // console.log('[useDocument] unsubscribe', _id)
     subscriptionDict[_id]?.cancel()
     delete subscriptionDict[_id]
+
+    // also remove from cache so it will be refetched
+    queryClient.removeQueries(queryKey)
   }
 
   useEffect(() => {
