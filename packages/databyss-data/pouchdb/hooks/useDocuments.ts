@@ -4,7 +4,7 @@ import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvder'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 
-import { dbRef } from '../db'
+import { dbRef, getLastSequence } from '../db'
 import { CouchDb } from '../../couchdb-client/couchdb'
 import { DocumentArrayToDict } from './utils'
 import { defaultUseDocumentOptions, UseDocumentOptions } from './useDocument'
@@ -128,22 +128,14 @@ export const useDocuments = <T extends Document>(
       return
     }
     // console.log('[useDocuments] unsubscribe', queryKey)
+    getLastSequence().then((seq) => {
+      sequenceDict[queryKey] = seq
+    })
     subscriptionDict[queryKey]?.cancel()
     delete subscriptionDict[queryKey]
   }
 
   useEffect(() => {
-    if (!(dbRef.current instanceof CouchDb) && !sequenceDict[queryKey]) {
-      sequenceDict[queryKey] = 'now'
-      dbRef.current
-        ?.changes({
-          return_docs: false,
-          since: 0,
-        })
-        .then((changes) => {
-          sequenceDict[queryKey] = changes.last_seq
-        })
-    }
     subscribe()
     return unsubscribe
   }, [options?.enabled, isCouchMode])

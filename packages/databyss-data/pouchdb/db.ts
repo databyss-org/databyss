@@ -323,6 +323,26 @@ export const pouchDataValidation = (data) => {
   }
 }
 
+export const getLastSequence = () =>
+  new Promise<string | number>((resolve, reject) => {
+    if (dbRef.current instanceof CouchDb) {
+      resolve('now')
+      return
+    }
+    dbRef.current
+      ?.changes({
+        return_docs: false,
+        descending: true,
+        limit: 1,
+        since: 0,
+      })
+      .then((changes) => {
+        resolve(changes.last_seq)
+        console.log('[db] last_seq', changes.last_seq)
+      })
+      .catch(reject)
+  })
+
 export const initDb = ({
   groupId,
   isPublicGroup = false,
