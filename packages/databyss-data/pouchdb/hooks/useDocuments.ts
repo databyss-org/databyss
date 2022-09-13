@@ -134,6 +134,7 @@ export const useDocuments = <T extends Document>(
 
   useEffect(() => {
     if (!(dbRef.current instanceof CouchDb) && !sequenceDict[queryKey]) {
+      sequenceDict[queryKey] = 'now'
       dbRef.current
         ?.changes({
           return_docs: false,
