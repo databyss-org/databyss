@@ -9,8 +9,9 @@ import { toCitation } from '@databyss-org/services/citations'
 import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
 import { useBlocksInPages } from '.'
 import { useDocuments } from './useDocuments'
+import { UseDocumentOptions } from './useDocument'
 
-interface UseBibliographyOptions extends UseQueryOptions {
+interface UseBibliographyOptions extends UseDocumentOptions {
   formatOptions: CitationFormatOptions
   sourceIds?: string[]
 }
@@ -18,14 +19,17 @@ interface UseBibliographyOptions extends UseQueryOptions {
 export const useBibliography = ({
   formatOptions,
   sourceIds,
+  subscribe,
   ...otherOptions
 }: UseBibliographyOptions) => {
   const queryClient = useQueryClient()
   const blocksInPagesRes = useBlocksInPages<Source>(BlockType.Source, {
     enabled: !sourceIds,
+    subscribe,
   })
   const blocksByIdRes = useDocuments<Source>(sourceIds ?? [], {
     enabled: !!sourceIds,
+    subscribe,
   })
 
   const sources =

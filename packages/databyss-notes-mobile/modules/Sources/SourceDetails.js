@@ -2,10 +2,11 @@ import React from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { ScrollView } from '@databyss-org/ui/primitives'
 // import IndexSourceContent from '@databyss-org/ui/components/SourcesContent/IndexSourceContent'
-import { BlockType } from '@databyss-org/services/interfaces'
+import { BlockType, Source } from '@databyss-org/services/interfaces'
 import { IndexPageContent } from '@databyss-org/ui/modules'
-import { useBlockRelations, useBlocks } from '@databyss-org/data/pouchdb/hooks'
+import { useBlockRelations } from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
+import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { getScrollViewMaxHeight } from '../../utils/getScrollViewMaxHeight'
 import { MobileView } from '../Mobile'
 import SourcesMetadata from './SourcesMetadata'
@@ -23,8 +24,8 @@ const SourceDetails = () => {
   const { blockId } = useParams()
 
   const blockRelationRes = useBlockRelations(BlockType.Source)
-  const sourcesRes = useBlocks(BlockType.Source)
-  const queryRes = [blockRelationRes, sourcesRes]
+  const sourceRes = useDocument(blockId)
+  const queryRes = [blockRelationRes, sourceRes]
 
   let pageTitle = 'Loading...'
 
@@ -32,7 +33,7 @@ const SourceDetails = () => {
     return <LoadingFallback queryObserver={queryRes} />
   }
 
-  pageTitle = sourcesRes.data[blockId].text.textValue
+  pageTitle = sourceRes.data[blockId].text.textValue
 
   // // render methods
   const renderSourceDetails = () => (

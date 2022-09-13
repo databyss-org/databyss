@@ -47,8 +47,9 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const { notifySticky, hideSticky } = useNotifyContext()
   const { getPreferredCitationStyle } = useUserPreferencesContext()
 
-  const pagesRes = usePages()
+  const pagesRes = usePages({ subscribe: false })
   const biblioRes = useBibliography({
+    subscribe: false,
     formatOptions: {
       styleId: getPreferredCitationStyle(),
     },
@@ -74,6 +75,7 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
           if (
             Array.isArray(_mark) &&
             _mark.length > 1 &&
+            _mark[1] &&
             !_mark[1].match(validUriRegex) &&
             !linkedDocuments[_mark[1]]
           ) {
@@ -170,18 +172,17 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
         </Text>
       ),
     })
-    while (biblioRes.isFetching) {
-      await sleep(500)
-    }
+    const biblioDict = (await biblioRes.refetch()).data
     _zip.file(
       's/@bibliography.md',
       bibliographyToMarkdown({
-        bibliography: Object.values(biblioRes.data!),
+        bibliography: Object.values(biblioDict!),
         citationStyle: getCitationStyle(getPreferredCitationStyle()),
       })
     )
 
-    for (const _pageHeader of Object.values(pagesRes.data!)) {
+    const pagesDict = (await pagesRes.refetch()).data
+    for (const _pageHeader of Object.values(pagesDict!)) {
       if (_pageHeader.archive) {
         continue
       }

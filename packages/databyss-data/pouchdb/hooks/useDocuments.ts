@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
 import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvder'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
@@ -8,17 +8,19 @@ import { dbRef } from '../db'
 import { CouchDb } from '../../couchdb-client/couchdb'
 import { DocumentArrayToDict } from './utils'
 import { defaultUseDocumentOptions, UseDocumentOptions } from './useDocument'
+import { uid } from '../../lib/uid'
 
 const subscriptionDict: {
   [selector: string]: PouchDB.Core.Changes<any> | undefined
 } = {}
 
-const subscriptionCount: { [selector: string]: number } = {}
+const subscriptionListeners: { [selector: string]: Set<string> } = {}
 
 export const useDocuments = <T extends Document>(
   selectorOrIdList: PouchDB.Find.Selector | string[],
   options: UseDocumentOptions = {}
 ) => {
+  const listenerIdRef = useRef<string>(uid())
   const queryClient = useQueryClient()
   const { isCouchMode } = useDatabaseContext()
   const _options = { ...defaultUseDocumentOptions, ...options }
@@ -76,11 +78,15 @@ export const useDocuments = <T extends Document>(
       return
     }
     if (subscriptionDict[queryKey]) {
-      subscriptionCount[queryKey] += 1
+      subscriptionListeners[queryKey].add(listenerIdRef.current)
+      // console.log(
+      //   '[useDocuments] subscribe',
+      //   queryKey,
+      //   subscriptionListeners[queryKey].size
+      // )
       return
     }
-    // console.log('[useDocuments] subscribe', queryKey)
-    subscriptionCount[queryKey] = 1
+    subscriptionListeners[queryKey] = new Set([listenerIdRef.current])
     subscriptionDict[queryKey] = dbRef.current
       ?.changes({
         since: 'now',
@@ -115,8 +121,8 @@ export const useDocuments = <T extends Document>(
     if (!subscriptionDict[queryKey]) {
       return
     }
-    subscriptionCount[queryKey] -= 1
-    if (subscriptionCount[queryKey] > 0) {
+    subscriptionListeners[queryKey].delete(listenerIdRef.current)
+    if (subscriptionListeners[queryKey].size) {
       return
     }
     // console.log('[useDocuments] unsubscribe', queryKey)

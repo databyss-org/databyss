@@ -48,6 +48,8 @@ export const BlockList = <T extends Block>({
     )
   )
 
+  console.log('[BlockList]', blockType)
+
   return (
     <SidebarList
       menuItems={mapped}
