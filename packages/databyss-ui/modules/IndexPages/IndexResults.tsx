@@ -1,7 +1,8 @@
 import React from 'react'
-import { RawHtml, Text, View } from '@databyss-org/ui/primitives'
+import { BaseControl, RawHtml, Text, View } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
+import BlockSvg from '@databyss-org/ui/assets/arrowRight.svg'
 import {
   IndexResultsContainer,
   IndexResultTitle,
@@ -10,6 +11,7 @@ import {
 } from '@databyss-org/ui/components'
 import {
   getBlockPrefix,
+  getInlineAtomicHref,
   slateBlockToHtmlWithSearch,
 } from '@databyss-org/editor/lib/util'
 import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
@@ -32,20 +34,50 @@ interface IndexResultsProps {
   pages: DocumentDict<Page>
 }
 
-export const IndexResultTags = ({ tags }: { tags: string[] }) => (
-  <View flexDirection="row" flexWrap="wrap">
+/*
+.map((hr) => {
+                    const _type = blocks[hr.relatedBlock].type
+                    const _prefix = getBlockPrefix(_type)
+                    const _text = {
+                      [BlockType.Topic]: blocks[hr.relatedBlock].text.textValue,
+                      [BlockType.Source]: (blocks[hr.relatedBlock] as Source)
+                        .name?.textValue,
+                    }[_type]
+                    return _prefix + _text
+                  })
+                  */
+
+export const IndexResultTags = ({ tags }: { tags: Block[] }) => (
+  <View flexDirection="row" flexWrap="wrap" zIndex={5}>
     {tags
-      .sort((_tagText) => (_tagText.startsWith('#') ? -1 : 1))
-      .map((_tagText, _idx) => (
-        <Text
-          variant="uiTextSmall"
-          key={_idx}
-          color={_tagText.startsWith('#') ? 'inlineTopic' : 'inlineSource'}
-        >
-          {_tagText}
-          {_idx < tags.length - 1 ? ',' : ''}&nbsp;
-        </Text>
-      ))}
+      .sort((_block) => (_block.type === BlockType.Topic ? -1 : 1))
+      .map((_block, _idx) => {
+        const _tagText = {
+          [BlockType.Topic]: _block.text.textValue,
+          [BlockType.Source]: (_block as Source).name?.textValue,
+        }[_block.type]
+        return (
+          <BaseControl
+            href={getInlineAtomicHref({
+              atomicType: _block.type,
+              id: _block._id,
+              name: _tagText,
+            })}
+          >
+            <Text
+              variant="uiTextSmall"
+              key={_idx}
+              color={
+                _block.type === BlockType.Topic ? 'inlineTopic' : 'inlineSource'
+              }
+            >
+              {getBlockPrefix(_block.type)}
+              {_tagText}
+              {_idx < tags.length - 1 ? ',' : ''}&nbsp;
+            </Text>
+          </BaseControl>
+        )
+      })}
   </View>
 )
 
@@ -54,7 +86,7 @@ export const IndexResults = ({
   blocks,
   pages,
 }: IndexResultsProps) => {
-  const { getAccountFromLocation } = useNavigationContext()
+  const { getAccountFromLocation, navigate } = useNavigationContext()
   const blockRelationRes = useDocument<BlockRelation>(`r_${relatedBlockId}`)
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
@@ -103,7 +135,7 @@ export const IndexResults = ({
             const _anchor = e.blockIndex
 
             // build extra tags
-            const _extraTags: string[] = []
+            const _extraTags: Block[] = []
             if (
               blocks[e.block].type === BlockType.Entry &&
               e.activeHeadings?.length
@@ -111,16 +143,7 @@ export const IndexResults = ({
               _extraTags.push(
                 ...e.activeHeadings
                   .filter((hr) => hr.relatedBlock !== relatedBlockId)
-                  .map((hr) => {
-                    const _type = blocks[hr.relatedBlock].type
-                    const _prefix = getBlockPrefix(_type)
-                    const _text = {
-                      [BlockType.Topic]: blocks[hr.relatedBlock].text.textValue,
-                      [BlockType.Source]: (blocks[hr.relatedBlock] as Source)
-                        .name?.textValue,
-                    }[_type]
-                    return _prefix + _text
-                  })
+                  .map((hr) => blocks[hr.relatedBlock])
               )
             }
             return (
@@ -129,19 +152,11 @@ export const IndexResults = ({
                 href={`/${getAccountFromLocation(
                   true
                 )}/pages/${r}/${urlSafeName(pages[r].name)}#${_anchor}`}
-                text={
-                  <>
-                    <RawHtml
-                      html={slateBlockToHtmlWithSearch(
-                        blocks[e.block],
-                        normalizedStemmedTerms
-                      )}
-                      variant={_variant}
-                      mr="tiny"
-                    />
-                    <IndexResultTags tags={_extraTags} />
-                  </>
-                }
+                block={blocks[e.block]}
+                normalizedStemmedTerms={normalizedStemmedTerms}
+                onInlineClick={(d) => navigate(getInlineAtomicHref(d))}
+                icon={<BlockSvg />}
+                tags={<IndexResultTags tags={_extraTags} />}
                 dataTestElement="atomic-result-item"
               />
             )
