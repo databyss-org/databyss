@@ -1,5 +1,5 @@
 import React from 'react'
-import { BaseControl, RawHtml, Text, View } from '@databyss-org/ui/primitives'
+import { BaseControl, Text, View } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import BlockSvg from '@databyss-org/ui/assets/arrowRight.svg'
@@ -12,7 +12,6 @@ import {
 import {
   getBlockPrefix,
   getInlineAtomicHref,
-  slateBlockToHtmlWithSearch,
 } from '@databyss-org/editor/lib/util'
 import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
 import { addPagesToBlockRelation } from '@databyss-org/services/blocks/joins'
@@ -34,19 +33,6 @@ interface IndexResultsProps {
   pages: DocumentDict<Page>
 }
 
-/*
-.map((hr) => {
-                    const _type = blocks[hr.relatedBlock].type
-                    const _prefix = getBlockPrefix(_type)
-                    const _text = {
-                      [BlockType.Topic]: blocks[hr.relatedBlock].text.textValue,
-                      [BlockType.Source]: (blocks[hr.relatedBlock] as Source)
-                        .name?.textValue,
-                    }[_type]
-                    return _prefix + _text
-                  })
-                  */
-
 export const IndexResultTags = ({ tags }: { tags: Block[] }) => (
   <View flexDirection="row" flexWrap="wrap" zIndex={5}>
     {tags
@@ -63,6 +49,7 @@ export const IndexResultTags = ({ tags }: { tags: Block[] }) => (
               id: _block._id,
               name: _tagText,
             })}
+            key={_idx}
           >
             <Text
               variant="uiTextSmall"
@@ -157,6 +144,7 @@ export const IndexResults = ({
                 onInlineClick={(d) => navigate(getInlineAtomicHref(d))}
                 icon={<BlockSvg />}
                 tags={<IndexResultTags tags={_extraTags} />}
+                textVariant={_variant}
                 dataTestElement="atomic-result-item"
               />
             )

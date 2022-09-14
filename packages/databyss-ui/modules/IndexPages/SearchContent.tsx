@@ -4,7 +4,7 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import { Text, RawHtml } from '@databyss-org/ui/primitives'
 import {
-  getBlockPrefix,
+  getInlineAtomicHref,
   slateBlockToHtmlWithSearch,
 } from '@databyss-org/editor/lib/util'
 import {
@@ -14,15 +14,16 @@ import {
   LoadingFallback,
 } from '@databyss-org/ui/components'
 import { useSearchEntries } from '@databyss-org/data/pouchdb/hooks'
-import { BlockType } from '@databyss-org/editor/interfaces'
+import { Block, BlockType } from '@databyss-org/editor/interfaces'
 import { SearchEntriesResultPage } from '@databyss-org/data/pouchdb/entries/lib/searchEntries'
 import { urlSafeName } from '@databyss-org/services/lib/util'
+import BlockSvg from '@databyss-org/ui/assets/arrowRight.svg'
 import { IndexPageView } from './IndexPageContent'
 import { IndexResultTags } from './IndexResults'
 import { useSearchContext } from '../../hooks'
 
 export const SearchContent = () => {
-  const { getAccountFromLocation } = useNavigationContext()
+  const { getAccountFromLocation, navigate } = useNavigationContext()
   const searchQuery = decodeURIComponent(useParams().query!)
   const searchRes = useSearchEntries(searchQuery)
   const normalizedStemmedTerms = useSearchContext(
@@ -53,18 +54,32 @@ export const SearchContent = () => {
             const _anchor = e.index
 
             // build extra tags
-            const _extraTags: string[] = []
+            const _extraTags: Block[] = []
             if (e.type === BlockType.Entry && e.activeHeadings?.length) {
               _extraTags.push(
                 ...e.activeHeadings
                   .filter((hr) => !!hr.relatedBlockText)
                   .map((hr) => {
-                    const _prefix = getBlockPrefix(
-                      hr.relatedBlockType as BlockType
-                    )
-                    return _prefix + hr.relatedBlockText
+                    const _block = {
+                      _id: hr.relatedBlock,
+                      type: hr.relatedBlockType as BlockType,
+                      text: {
+                        textValue: hr.relatedBlockText ?? '',
+                        ranges: [],
+                      },
+                      name: {
+                        textValue: hr.relatedBlockText ?? '',
+                        ranges: [],
+                      },
+                    }
+                    return _block as Block
                   })
               )
+            }
+            const _block: Block = {
+              _id: e.entryId,
+              type: e.type,
+              text: e.text,
             }
             return (
               <IndexResultDetails
@@ -73,19 +88,12 @@ export const SearchContent = () => {
                 href={`/${getAccountFromLocation(true)}/pages/${
                   r.pageId
                 }/${urlSafeName(r.pageName)}#${_anchor}`}
-                text={
-                  <>
-                    <RawHtml
-                      variant={_variant}
-                      html={slateBlockToHtmlWithSearch(
-                        { text: e.text, type: BlockType.Entry, _id: e.entryId },
-                        normalizedStemmedTerms
-                      )}
-                      mr="tiny"
-                    />
-                    <IndexResultTags tags={_extraTags} />
-                  </>
-                }
+                block={_block}
+                normalizedStemmedTerms={normalizedStemmedTerms}
+                onInlineClick={(d) => navigate(getInlineAtomicHref(d))}
+                icon={<BlockSvg />}
+                tags={<IndexResultTags tags={_extraTags} />}
+                textVariant={_variant}
               />
             )
           })}

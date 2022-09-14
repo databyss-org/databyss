@@ -38,6 +38,7 @@ export const IndexResultDetails = ({
   normalizedStemmedTerms,
   onInlineClick,
   tags,
+  textVariant,
   ...others
 }) => (
   <View position="relative" mb="small">
@@ -57,18 +58,19 @@ export const IndexResultDetails = ({
         sizeVariant="tiny"
         color="gray.5"
         my="small"
+        pt={pxUnits(1)}
         // css={{ pointerEvents: 'all' }}
       >
         {icon}
       </Icon>
     </BaseControl>
-    <View
+    <Text
+      variant={textVariant}
       display="inline-block"
       // pt={pxUnits(10)}
       pt="small"
       pb="tiny"
-      zIndex={theme.zIndex.base}
-      css={{ lineHeight: pxUnits(24) }}
+      css={{ lineHeight: pxUnits(22), zIndex: theme.zIndex.base }}
     >
       {renderTextToComponents({
         key: block._id,
@@ -77,7 +79,7 @@ export const IndexResultDetails = ({
         searchTerms: normalizedStemmedTerms,
         onInlineClick,
       })}
-    </View>
+    </Text>
     {tags}
   </View>
 )
