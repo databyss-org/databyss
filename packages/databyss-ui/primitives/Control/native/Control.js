@@ -118,6 +118,7 @@ const Control = forwardRef(
     }))
     const StyledControl = href ? StyledLink : StyledButton
     const StyledComponent = renderAsView ? View : StyledControl
+    /* eslint-disable-next-line */
     const { css: _, ...filteredOthers } = others
     return (
       <ThemeContext.Consumer>

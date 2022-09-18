@@ -56,7 +56,7 @@ export interface IndexPageViewProps extends ScrollViewProps {
   block?: Block
   menuChild?: ReactNode
   handlesRef?: RefObject<IndexPageTitleInputHandles>
-  scrollViewRef: MutableRefObject<HTMLElement | null>
+  scrollViewRef?: MutableRefObject<HTMLElement | null>
 }
 
 export interface IndexPageTitleInputHandles {

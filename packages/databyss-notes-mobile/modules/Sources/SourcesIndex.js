@@ -16,6 +16,7 @@ import {
   TabbedContent,
   TabHeight,
 } from '@databyss-org/ui/components/TabbedContent'
+import { BlockType } from '@databyss-org/services/interfaces'
 import { MobileView } from '../Mobile'
 import { buildListItems } from '../../utils/buildListItems'
 import { getScrollViewMaxHeight } from '../../utils/getScrollViewMaxHeight'
@@ -26,7 +27,6 @@ import SourcesTabItems from '../../constants/SourcesTabItems'
 import AuthorDetails from './AuthorDetails'
 
 import SourcesMetadata from './SourcesMetadata'
-import { BlockType } from '@databyss-org/services/interfaces'
 
 const getAuthorName = (value) => {
   const firstName = value.firstName?.textValue
