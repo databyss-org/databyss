@@ -34,12 +34,12 @@ const App = () => {
   return (
     <Viewport p={0}>
       <NotifyProvider>
-        <DatabaseProvider>
-          <FirefoxWarning />
-          {process.env.MAINTENANCE_MODE?.toLowerCase() === 'true' ? (
-            <Public />
-          ) : (
-            <QueryClientProvider client={queryClient}>
+        <FirefoxWarning />
+        {process.env.MAINTENANCE_MODE?.toLowerCase() === 'true' ? (
+          <Public />
+        ) : (
+          <QueryClientProvider client={queryClient}>
+            <DatabaseProvider>
               <SessionProvider
                 signUp={location.pathname === '/signup'}
                 unauthorizedChildren={<Public />}
@@ -49,9 +49,9 @@ const App = () => {
                 <Private />
               </SessionProvider>
               {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-            </QueryClientProvider>
-          )}
-        </DatabaseProvider>
+            </DatabaseProvider>
+          </QueryClientProvider>
+        )}
       </NotifyProvider>
     </Viewport>
   )

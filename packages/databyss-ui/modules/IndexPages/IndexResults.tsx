@@ -20,6 +20,7 @@ import {
   BlockRelation,
   BlockType,
   DocumentDict,
+  IndexPageResult,
   Page,
   Source,
 } from '@databyss-org/services/interfaces'
@@ -31,6 +32,7 @@ interface IndexResultsProps {
   relatedBlockId: string
   blocks: DocumentDict<Block>
   pages: DocumentDict<Page>
+  onLast: () => void
 }
 
 export const IndexResultTags = ({ tags }: { tags: Block[] }) => (
@@ -72,6 +74,7 @@ export const IndexResults = ({
   relatedBlockId,
   blocks,
   pages,
+  onLast,
 }: IndexResultsProps) => {
   const { getAccountFromLocation, navigate } = useNavigationContext()
   const blockRelationRes = useDocument<BlockRelation>(`r_${relatedBlockId}`)
@@ -95,62 +98,78 @@ export const IndexResults = ({
 
   const groupedRelations = groupBlockRelationsByPage(_relations)
 
-  const _results = Object.keys(groupedRelations)
+  const _filteredPages = Object.keys(groupedRelations)
     // filter out results for archived and missing pages
     .filter((r) => pages[r] && !pages[r].archive)
     // filter out results if no entries are included
     .filter((r) => groupedRelations[r].length)
-    .map((r, i) => (
-      <IndexResultsContainer key={i}>
-        <IndexResultTitle
-          key={`pageHeader-${i}`}
-          href={`/${getAccountFromLocation(true)}/pages/${r}/${urlSafeName(
-            pages[r].name
-          )}`}
-          icon={<PageSvg />}
-          text={pages[r].name}
-          dataTestElement="atomic-results"
+
+  const _renderBlocks = (pageId, results: IndexPageResult[], isLastGroup) => {
+    const _filteredBlocks = results.filter((e) => e.blockText.textValue.length)
+    return _filteredBlocks.map((e, eidx) => {
+      const _variant = {
+        [BlockType.Entry]: 'bodyNormal',
+        [BlockType.Topic]: 'bodyNormalSemibold',
+        [BlockType.Source]: 'bodyNormalUnderline',
+      }[blocks[e.block].type]
+      const _anchor = e.blockIndex
+
+      // build extra tags
+      const _extraTags: Block[] = []
+      if (
+        blocks[e.block].type === BlockType.Entry &&
+        e.activeHeadings?.length
+      ) {
+        _extraTags.push(
+          ...e.activeHeadings
+            .filter((hr) => hr.relatedBlock !== relatedBlockId)
+            .map((hr) => blocks[hr.relatedBlock])
+        )
+      }
+      if (
+        onLast &&
+        isLastGroup &&
+        eidx === groupedRelations[pageId].length - 1
+      ) {
+        onLast()
+      }
+      return (
+        <IndexResultDetails
+          key={eidx}
+          href={`/${getAccountFromLocation(true)}/pages/${pageId}/${urlSafeName(
+            pages[pageId].name
+          )}#${_anchor}`}
+          block={blocks[e.block]}
+          normalizedStemmedTerms={normalizedStemmedTerms}
+          onInlineClick={(d) => navigate(getInlineAtomicHref(d))}
+          icon={<BlockSvg />}
+          tags={<IndexResultTags tags={_extraTags} />}
+          textVariant={_variant}
+          dataTestElement="atomic-result-item"
         />
+      )
+    })
+  }
 
-        {groupedRelations[r]
-          .filter((e) => e.blockText.textValue.length)
-          .map((e, k) => {
-            const _variant = {
-              [BlockType.Topic]: 'bodyNormalSemibold',
-              [BlockType.Source]: 'bodyNormalUnderline',
-            }[blocks[e.block].type]
-            const _anchor = e.blockIndex
+  const _results = _filteredPages.map((r, pidx) => (
+    <IndexResultsContainer key={pidx}>
+      <IndexResultTitle
+        key={`pageHeader-${pidx}`}
+        href={`/${getAccountFromLocation(true)}/pages/${r}/${urlSafeName(
+          pages[r].name
+        )}`}
+        icon={<PageSvg />}
+        text={pages[r].name}
+        dataTestElement="atomic-results"
+      />
 
-            // build extra tags
-            const _extraTags: Block[] = []
-            if (
-              blocks[e.block].type === BlockType.Entry &&
-              e.activeHeadings?.length
-            ) {
-              _extraTags.push(
-                ...e.activeHeadings
-                  .filter((hr) => hr.relatedBlock !== relatedBlockId)
-                  .map((hr) => blocks[hr.relatedBlock])
-              )
-            }
-            return (
-              <IndexResultDetails
-                key={k}
-                href={`/${getAccountFromLocation(
-                  true
-                )}/pages/${r}/${urlSafeName(pages[r].name)}#${_anchor}`}
-                block={blocks[e.block]}
-                normalizedStemmedTerms={normalizedStemmedTerms}
-                onInlineClick={(d) => navigate(getInlineAtomicHref(d))}
-                icon={<BlockSvg />}
-                tags={<IndexResultTags tags={_extraTags} />}
-                textVariant={_variant}
-                dataTestElement="atomic-result-item"
-              />
-            )
-          })}
-      </IndexResultsContainer>
-    ))
+      {_renderBlocks(
+        r,
+        groupedRelations[r],
+        pidx === _filteredPages.length - 1
+      )}
+    </IndexResultsContainer>
+  ))
 
   return <>{_results}</>
 }

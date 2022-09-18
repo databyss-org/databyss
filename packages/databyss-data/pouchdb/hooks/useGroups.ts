@@ -1,14 +1,9 @@
 import { Group } from '@databyss-org/services/interfaces'
 import { QueryOptions } from 'react-query'
-import { DocumentType } from '../interfaces'
+import { selectors } from '../selectors'
 import { useDocuments } from './useDocuments'
 
 export const useGroups = (options?: QueryOptions) => {
-  const query = useDocuments<Group>(
-    {
-      doctype: DocumentType.Group,
-    },
-    options
-  )
+  const query = useDocuments<Group>(selectors.GROUPS, options)
   return query
 }

@@ -9,6 +9,7 @@ import { usePages } from './'
 import { useDocuments } from './useDocuments'
 import { Block } from '../../../databyss-services/interfaces'
 import { CouchDb } from '../../couchdb-client/couchdb'
+import { selectors } from '../selectors'
 
 const changesRef: { current: PouchDB.Core.Changes<any> | undefined } = {
   current: undefined,
@@ -19,9 +20,7 @@ let firstSearchComplete: boolean = false
 
 export const useSearchEntries = (searchQuery: string) => {
   const pagesRes = usePages()
-  const blocksRes = useDocuments<Block>({
-    doctype: DocumentType.Block,
-  })
+  const blocksRes = useDocuments<Block>(selectors.BLOCKS)
   const queryClient = useQueryClient()
   const queryKey = ['searchEntries', searchQuery]
 
@@ -43,8 +42,11 @@ export const useSearchEntries = (searchQuery: string) => {
       })
       .on('change', (change) => {
         if (
-          change.doc?.doctype === DocumentType.Block ||
-          change.doc?.doctype === DocumentType.Page
+          ((change.doc?.doctype === DocumentType.Block ||
+            change.doc?.doctype === DocumentType.Page) &&
+            change.doc?.modifiedAt &&
+            !change.doc?.accessedAt) ||
+          change.doc?.modifiedAt > change.doc?.accessedAt
         ) {
           // reset after a delay so cloud index has time to reset
           setTimeout(() => {

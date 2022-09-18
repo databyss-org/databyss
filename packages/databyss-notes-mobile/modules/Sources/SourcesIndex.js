@@ -26,6 +26,7 @@ import SourcesTabItems from '../../constants/SourcesTabItems'
 import AuthorDetails from './AuthorDetails'
 
 import SourcesMetadata from './SourcesMetadata'
+import { BlockType } from '@databyss-org/services/interfaces'
 
 const getAuthorName = (value) => {
   const firstName = value.firstName?.textValue
@@ -66,9 +67,9 @@ const headerItems = [SourcesMetadata]
 
 // component
 const SourcesIndex = () => {
-  const blocksRes = useBlocks('SOURCE')
+  const blocksRes = useBlocks(BlockType.Source)
   const pagesRes = usePages()
-  const blockRelationsRes = useBlockRelations('SOURCE')
+  const blockRelationsRes = useBlockRelations(BlockType.Source)
 
   const navigationContext = useNavigationContext()
 

@@ -20,7 +20,11 @@ export const useScrollMemory = (
 ) => {
   const location = useLocation()
   const deferredScrollRef = useRef<number | null>(null)
-  const didScrollRef = useRef<boolean | null>(false)
+  const didScrollRef = useRef<boolean>(false)
+
+  useEffect(() => {
+    didScrollRef.current = false
+  }, [location.pathname])
 
   const onScroll = useCallback(
     debounce(
@@ -29,6 +33,7 @@ export const useScrollMemory = (
         const _scroll = elementRef.current?.scrollTop
         const _key = location.pathname
         url.set(_key, _scroll!)
+        console.log('[useScrollMemory]', _key, _scroll)
       },
       100,
       { leading: true, trailing: true }
@@ -66,6 +71,7 @@ export const useScrollMemory = (
       deferredScrollRef.current = _scroll
       return
     }
+    console.log('[useScrollMemory] restore', _scroll, didScrollRef.current)
     if (!didScrollRef.current) {
       elementRef.current.scrollTop = _scroll
     }

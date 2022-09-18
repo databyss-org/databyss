@@ -1,22 +1,19 @@
 import { BlockType, BlockRelation } from '@databyss-org/services/interfaces'
 import { UseQueryOptions } from 'react-query'
-import { DocumentType } from '../interfaces'
+import { selectors } from '../selectors'
 import { useDocuments } from './useDocuments'
 
 export const useBlockRelations = (
-  blockType?: BlockType,
+  blockType: BlockType,
   options?: UseQueryOptions
 ) => {
-  const query = useDocuments<BlockRelation>(
-    {
-      doctype: DocumentType.BlockRelation,
-      ...(blockType
-        ? {
-            blockType,
-          }
-        : {}),
-    },
-    options
-  )
+  const _selector = {
+    [BlockType.Embed]: selectors.EMBED_RELATIONS,
+    [BlockType.Topic]: selectors.TOPIC_RELATIONS,
+    [BlockType.Source]: selectors.SOURCE_RELATIONS,
+    [BlockType.Link]: selectors.LINK_RELATIONS,
+  }[blockType]
+  console.log('[useBlockRelations]', _selector)
+  const query = useDocuments<BlockRelation>(_selector, options)
   return query
 }

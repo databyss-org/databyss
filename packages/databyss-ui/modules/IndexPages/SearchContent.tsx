@@ -1,12 +1,9 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
-import { Text, RawHtml } from '@databyss-org/ui/primitives'
-import {
-  getInlineAtomicHref,
-  slateBlockToHtmlWithSearch,
-} from '@databyss-org/editor/lib/util'
+import { Text } from '@databyss-org/ui/primitives'
+import { getInlineAtomicHref } from '@databyss-org/editor/lib/util'
 import {
   IndexResultsContainer,
   IndexResultTitle,
@@ -21,11 +18,14 @@ import BlockSvg from '@databyss-org/ui/assets/arrowRight.svg'
 import { IndexPageView } from './IndexPageContent'
 import { IndexResultTags } from './IndexResults'
 import { useSearchContext } from '../../hooks'
+import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 
 export const SearchContent = () => {
   const { getAccountFromLocation, navigate } = useNavigationContext()
   const searchQuery = decodeURIComponent(useParams().query!)
   const searchRes = useSearchEntries(searchQuery)
+  const scrollViewRef = useRef<HTMLElement | null>(null)
+  const restoreScroll = useScrollMemory(scrollViewRef)
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
   )
@@ -48,6 +48,7 @@ export const SearchContent = () => {
               return null
             }
             const _variant = {
+              [BlockType.Entry]: 'bodyNormal',
               [BlockType.Topic]: 'bodyNormalSemibold',
               [BlockType.Source]: 'bodyNormalUnderline',
             }[e.type]
@@ -81,6 +82,7 @@ export const SearchContent = () => {
               type: e.type,
               text: e.text,
             }
+
             return (
               <IndexResultDetails
                 key={k}
@@ -105,8 +107,12 @@ export const SearchContent = () => {
     return _Pages
   }
 
+  if (searchRes.isSuccess) {
+    restoreScroll()
+  }
+
   return (
-    <IndexPageView path={['Search', searchQuery]}>
+    <IndexPageView path={['Search', searchQuery]} scrollViewRef={scrollViewRef}>
       {searchRes.isSuccess ? (
         composeResults(searchRes.data)
       ) : (

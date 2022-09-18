@@ -33,7 +33,10 @@ import { processGroupActionQ } from './groups/utils'
 import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
 import embedSchema from '../schemas/embedSchema'
 import { UnauthorizedDatabaseReplication } from '../../databyss-services/interfaces/Errors'
+import { QueryClient } from 'react-query'
+import { initialCaches, warmupCaches } from './warmup'
 
+export { selectors } from './selectors'
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
 // add plugins
@@ -347,7 +350,7 @@ export const getLastSequence = () =>
       })
       .then((changes) => {
         _lastSeqMemo = changes.last_seq
-        // console.log('[db] last_seq', changes.last_seq)
+        console.log('[db] last_seq', changes.last_seq)
         resolve(changes.last_seq)
       })
       .catch(reject)
@@ -357,10 +360,12 @@ export const initDb = ({
   groupId,
   isPublicGroup = false,
   onReplicationComplete,
+  queryClient,
 }: {
   groupId: string
   isPublicGroup: boolean
   onReplicationComplete?: (success: boolean) => void
+  queryClient: QueryClient
 }) =>
   new Promise<void>((resolve) => {
     const _pouchDb = getPouchDb(groupId)
@@ -370,7 +375,10 @@ export const initDb = ({
         console.warn('[DB] replication failed')
       } else {
         console.log('[DB] Replication done, switching to PouchDb')
-        dbRef.lastSeq = await getLastSequence()
+        // dbRef.lastSeq = await getLastSequence()
+        if (!Object.keys(initialCaches).length) {
+          dbRef.lastSeq = await warmupCaches(_pouchDb, queryClient)
+        }
         dbRef.current = _pouchDb
         dbRef.readOnly = isPublicGroup
       }
