@@ -248,6 +248,10 @@ describe('entry search', () => {
 
     // it should click on the first result and verify anchor hyperlink works
     // results can be in random order
+    const entrySearchLink = await getElementsByTag(
+      driver,
+      '[data-test-element="index-result-links"]'
+    )
     const entrySearchResult = await getElementsByTag(
       driver,
       '[data-test-element="search-result-entries"]'
@@ -264,7 +268,7 @@ describe('entry search', () => {
       e.startsWith('keyword appears at the end of an entry something')
     )
 
-    await entrySearchResult[_idx].click()
+    await entrySearchLink[_idx].click()
     await sleep(1000)
     // wait for editor to be visible
     await getEditor(driver)

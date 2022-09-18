@@ -41,8 +41,9 @@ export const IndexResultDetails = ({
   textVariant,
   ...others
 }) => (
-  <View position="relative" mb="small">
+  <View position="relative" mb="small" data-test-element={dataTestElement}>
     <BaseControl
+      data-test-element="index-result-links"
       hoverColor="background.2"
       activeColor="background.3"
       mt="tiny"
@@ -70,7 +71,6 @@ export const IndexResultDetails = ({
       pt="small"
       pb="tiny"
       css={{ lineHeight: pxUnits(22), zIndex: theme.zIndex.base }}
-      data-test-element={dataTestElement}
     >
       {renderTextToComponents({
         key: block._id,
