@@ -127,6 +127,7 @@ export const IndexResults = ({
         )
       }
       if (onLast && isLastGroup && eidx === _filteredBlocks.length - 1) {
+        console.log('[IndexResults] onLast')
         onLast()
       }
       return (

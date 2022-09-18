@@ -38,7 +38,7 @@ export const useScrollMemory = (
       100,
       { leading: true, trailing: true }
     ),
-    [elementRef]
+    [elementRef, location.pathname]
   )
 
   useEffect(() => {
@@ -69,11 +69,11 @@ export const useScrollMemory = (
     if (!_scroll) {
       return
     }
+    // console.log('[useScrollMemory] restore', _scroll, didScrollRef.current)
     if (!elementRef.current) {
       deferredScrollRef.current = _scroll
       return
     }
-    // console.log('[useScrollMemory] restore', _scroll, didScrollRef.current)
     if (!didScrollRef.current) {
       requestAnimationFrame(() => {
         elementRef.current!.scrollTop = _scroll
