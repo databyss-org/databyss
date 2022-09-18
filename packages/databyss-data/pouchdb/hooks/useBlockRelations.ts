@@ -13,7 +13,6 @@ export const useBlockRelations = (
     [BlockType.Source]: selectors.SOURCE_RELATIONS,
     [BlockType.Link]: selectors.LINK_RELATIONS,
   }[blockType]
-  console.log('[useBlockRelations]', _selector)
   const query = useDocuments<BlockRelation>(_selector, options)
   return query
 }

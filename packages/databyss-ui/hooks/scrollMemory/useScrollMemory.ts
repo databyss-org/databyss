@@ -33,7 +33,7 @@ export const useScrollMemory = (
         const _scroll = elementRef.current?.scrollTop
         const _key = location.pathname
         url.set(_key, _scroll!)
-        console.log('[useScrollMemory]', _key, _scroll)
+        // console.log('[useScrollMemory]', _key, _scroll)
       },
       100,
       { leading: true, trailing: true }
@@ -71,7 +71,7 @@ export const useScrollMemory = (
       deferredScrollRef.current = _scroll
       return
     }
-    console.log('[useScrollMemory] restore', _scroll, didScrollRef.current)
+    // console.log('[useScrollMemory] restore', _scroll, didScrollRef.current)
     if (!didScrollRef.current) {
       elementRef.current.scrollTop = _scroll
     }

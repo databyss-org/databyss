@@ -399,7 +399,17 @@ export const initDb = ({
       dbRef.current = _unknown as PouchDB.Database
       dbRef.readOnly = true
 
-      console.log('[DB] Start replication')
+      // if no queryClient, just set couch mode and resolve (skip replication for now)
+      if (!queryClient) {
+        resolve()
+        return
+      }
+
+      console.log(
+        `[DB] Start replication ${groupId} (${
+          isPublicGroup ? 'public' : 'private'
+        })`
+      )
       if (isPublicGroup) {
         replicatePublicGroup({ groupId, pouchDb: _pouchDb }).then(
           _replicationComplete

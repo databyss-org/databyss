@@ -66,8 +66,11 @@ export const useDocuments = <T extends Document>(
               reject(err)
             })
         } else {
+          if (!selector) {
+            return
+          }
           dbRef.current
-            ?.find({ selector: selector! })
+            ?.find({ selector })
             .then((res) => resolve(DocumentArrayToDict(res.docs)))
             .catch((err) => reject(err))
         }
