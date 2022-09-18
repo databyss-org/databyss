@@ -126,11 +126,7 @@ export const IndexResults = ({
             .map((hr) => blocks[hr.relatedBlock])
         )
       }
-      if (
-        onLast &&
-        isLastGroup &&
-        eidx === groupedRelations[pageId].length - 1
-      ) {
+      if (onLast && isLastGroup && eidx === _filteredBlocks.length - 1) {
         onLast()
       }
       return (

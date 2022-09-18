@@ -45,14 +45,16 @@ export const useScrollMemory = (
     if (!elementRef.current) {
       return () => null
     }
-    elementRef.current.addEventListener('scroll', onScroll)
 
     if (deferredScrollRef.current) {
+      // console.log('[useScrollMemory] deferred', !didScrollRef.current)
       if (!didScrollRef.current) {
         elementRef.current.scrollTop = deferredScrollRef.current
       }
       deferredScrollRef.current = null
     }
+
+    elementRef.current.addEventListener('scroll', onScroll)
 
     return () => {
       if (!elementRef.current) {
@@ -73,7 +75,9 @@ export const useScrollMemory = (
     }
     // console.log('[useScrollMemory] restore', _scroll, didScrollRef.current)
     if (!didScrollRef.current) {
-      elementRef.current.scrollTop = _scroll
+      requestAnimationFrame(() => {
+        elementRef.current!.scrollTop = _scroll
+      })
     }
   }
 
