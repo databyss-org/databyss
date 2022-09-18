@@ -41,13 +41,13 @@ export const useDocuments = <T extends Document>(
     selector = selectorOrIdList
   }
   const queryKeyJson = JSON.stringify(queryKey)
+  // console.log('useDocuments', selector)
 
   // console.log('useDocuments.selector', selector)
   const query = useQuery<DocumentDict<T>>(
     queryKey,
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) => {
-        // console.log('useDocuments.fetch', selector)
         if (docIds) {
           dbRef.current
             ?.allDocs({
@@ -67,11 +67,16 @@ export const useDocuments = <T extends Document>(
             })
         } else {
           if (!selector) {
+            console.log('[useDocuments] no selector')
             return
           }
+          // console.log('[useDocuments] fetch', selector)
           dbRef.current
             ?.find({ selector })
-            .then((res) => resolve(DocumentArrayToDict(res.docs)))
+            .then((res) => {
+              // console.log('[useDocuments] resolve', res)
+              resolve(DocumentArrayToDict(res.docs))
+            })
             .catch((err) => reject(err))
         }
       }),
@@ -87,18 +92,14 @@ export const useDocuments = <T extends Document>(
     }
     if (subscriptionDict[queryKeyJson]) {
       subscriptionListeners[queryKeyJson].add(listenerIdRef.current)
-      // console.log(
-      //   '[useDocuments] subscribe',
-      //   queryKeyJson,
-      //   subscriptionListeners[queryKeyJson].size
-      // )
+      console.log('[useDocuments] subscribe', dbRef.lastSeq)
       return
     }
     // sequenceDict[queryKeyJson] = 'now'
     subscriptionListeners[queryKeyJson] = new Set([listenerIdRef.current])
     subscriptionDict[queryKeyJson] = dbRef.current
       ?.changes({
-        since: sequenceDict[queryKeyJson] ?? 'now',
+        since: sequenceDict[queryKeyJson] ?? dbRef.lastSeq,
         live: true,
         include_docs: true,
         ...(docIds
@@ -112,7 +113,8 @@ export const useDocuments = <T extends Document>(
       .on('change', (change) => {
         queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {
           if (!oldData) {
-            return { [change.id]: change.doc }
+            console.log('[useDocuments] no data', queryKey)
+            return { [change.doc._id]: change.doc }
           }
           sequenceDict[queryKeyJson] = change.seq
           if (change.deleted) {

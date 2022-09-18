@@ -146,7 +146,7 @@ describe('editor clipboard', () => {
     await sleep(1000)
 
     await tagButtonListClick(
-      'data-test-element="atomic-result-item"',
+      'data-test-element="index-result-links"',
       0,
       driver
     )

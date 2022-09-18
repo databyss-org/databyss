@@ -93,7 +93,7 @@ describe('block indexing', () => {
     await sleep(500)
 
     await tagButtonListClick(
-      'data-test-element="atomic-result-item"',
+      'data-test-element="index-result-links"',
       0,
       driver
     )
@@ -165,7 +165,7 @@ describe('block indexing', () => {
     assert.equal(topicEntries.length, 3)
 
     await tagButtonListClick(
-      'data-test-element="atomic-result-item"',
+      'data-test-element="index-result-links"',
       2,
       driver
     )
@@ -208,7 +208,7 @@ describe('block indexing', () => {
 
     // remove author from page
     await tagButtonListClick(
-      'data-test-element="atomic-result-item"',
+      'data-test-element="index-result-links"',
       0,
       driver
     )
