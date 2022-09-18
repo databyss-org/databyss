@@ -206,7 +206,11 @@ describe('group sharings', () => {
     // topic should appear on sidebar
     await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
     // should  have a page attached to topic
-    await tagButtonListClick('data-test-element="atomic-results"', 0, driver)
+    await tagButtonListClick(
+      'data-test-element="index-result-links"',
+      0,
+      driver
+    )
 
     // CHECK SECOND COLLECTION
 
@@ -218,7 +222,11 @@ describe('group sharings', () => {
     // topic should appear on sidebar
     await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
     // should  have a page attached to topic
-    await tagButtonListClick('data-test-element="atomic-results"', 0, driver)
+    await tagButtonListClick(
+      'data-test-element="index-result-links"',
+      0,
+      driver
+    )
 
     // CHECK THIRD COLLECTION
     // go to public collection url
@@ -229,7 +237,11 @@ describe('group sharings', () => {
     // topic should appear on sidebar
     await tagButtonListClick('data-test-element="page-sidebar-item"', 0, driver)
     // should  have a page attached to topic
-    await tagButtonListClick('data-test-element="atomic-results"', 0, driver)
+    await tagButtonListClick(
+      'data-test-element="index-result-links"',
+      0,
+      driver
+    )
 
     // log in again
     await login(driver, email)
@@ -318,7 +330,11 @@ describe('group sharings', () => {
     assert.equal(_title, 'New Topic')
 
     // should  have a page attached to topic
-    await tagButtonListClick('data-test-element="atomic-results"', 0, driver)
+    await tagButtonListClick(
+      'data-test-element="index-result-links"',
+      0,
+      driver
+    )
 
     assert.equal(true, true)
   })
