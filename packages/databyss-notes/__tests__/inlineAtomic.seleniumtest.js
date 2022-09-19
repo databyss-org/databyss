@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 import assert from 'assert'
-import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
   getElementsByTag,
