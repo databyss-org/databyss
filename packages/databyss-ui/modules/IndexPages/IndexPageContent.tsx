@@ -372,7 +372,8 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   if (
     !blocksRes.isSuccess ||
     !pagesRes.isSuccess ||
-    !blocksRes.data?.[blockId!]
+    !blocksRes.data?.[blockId!] ||
+    blocksRes.data[blockId!].type !== blockType
   ) {
     return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
   }
