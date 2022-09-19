@@ -105,7 +105,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     const res = await _request(path, {
       ...options,
       responseAsJson: true,
-      timeout: 15000,
+      timeout: 30000,
     })
     if (res.data && res.data.session) {
       const { session } = res.data

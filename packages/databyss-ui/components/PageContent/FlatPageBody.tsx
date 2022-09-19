@@ -192,7 +192,7 @@ export const FlatPageBody: RefForwardingFC<{ page: Page }> = forwardRef(
   }
 )
 
-function renderText(html: string, key?: string) {
+export function renderText(html: string, key?: string) {
   let _html = html
   if (key?.startsWith('END') && !_html?.trim().length) {
     _html = '&nbsp;'

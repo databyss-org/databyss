@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 import assert from 'assert'
-import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
   getElementsByTag,
@@ -27,7 +27,7 @@ let actions
 
 describe('inline atomic', () => {
   beforeEach(async (done) => {
-    driver = await startSession({ platformName: OSX, browserName: CHROME })
+    driver = await startSession()
     await login(driver)
     actions = driver.actions()
     done()
@@ -112,7 +112,7 @@ describe('inline atomic', () => {
 
     // change the name of the inline atomic
     await tagButtonListClick(
-      'data-test-element="atomic-result-item"',
+      'data-test-element="index-result-links"',
       1,
       driver
     )
@@ -161,7 +161,7 @@ describe('inline atomic', () => {
 
     // change the name of the inline atomic
     await tagButtonListClick(
-      'data-test-element="search-result-entries"',
+      'data-test-element="index-result-links"',
       1,
       driver
     )
@@ -207,7 +207,7 @@ describe('inline atomic', () => {
     // assure two results are listed under entry
     assert.equal(topicEntries.length, 2)
     await tagButtonListClick(
-      'data-test-element="atomic-result-item"',
+      'data-test-element="index-result-links"',
       0,
       driver
     )

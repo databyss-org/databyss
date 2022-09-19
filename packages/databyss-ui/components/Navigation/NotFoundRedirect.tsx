@@ -18,7 +18,7 @@ export const NotFoundRedirect = () => {
       _groupName = `${urlSafeName(defaultGroupName)}-`
     }
     let _pageUrl = defaultPageId
-    if (pagesRes.data) {
+    if (pagesRes.data?.[defaultPageId]) {
       _pageUrl = `${defaultPageId}/${urlSafeName(
         pagesRes.data[defaultPageId].name
       )}`

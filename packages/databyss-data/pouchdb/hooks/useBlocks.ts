@@ -1,7 +1,7 @@
 import { Block, BlockType } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 import { QueryOptions } from 'react-query'
-import { DocumentType } from '../interfaces'
+import { selectors } from '../selectors'
 import { useDocuments } from './useDocuments'
 
 interface UseBlocksOptions extends QueryOptions {
@@ -9,14 +9,16 @@ interface UseBlocksOptions extends QueryOptions {
 }
 
 export const useBlocks = (blockType: BlockType, options?: UseBlocksOptions) => {
-  let _selectorOrIds: PouchDB.Find.Selector | string[] = {
-    doctype: DocumentType.Block,
-  }
-  if (blockType !== BlockType._ANY) {
-    _selectorOrIds.type = blockType
-  }
+  let _selectorOrIds: PouchDB.Find.Selector | string[] = selectors.BLOCKS
   if (options && options.includeIds) {
     _selectorOrIds = [options.includeIds]
+  } else {
+    _selectorOrIds = {
+      [BlockType.Embed]: selectors.EMBEDS,
+      [BlockType.Topic]: selectors.TOPICS,
+      [BlockType.Source]: selectors.SOURCES,
+      [BlockType._ANY]: selectors.BLOCKS,
+    }[blockType]
   }
   const query = useDocuments<Block>(_selectorOrIds, options)
   return query

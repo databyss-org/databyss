@@ -1,12 +1,9 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
-import { Text, RawHtml } from '@databyss-org/ui/primitives'
-import {
-  getBlockPrefix,
-  slateBlockToHtmlWithSearch,
-} from '@databyss-org/editor/lib/util'
+import { Text } from '@databyss-org/ui/primitives'
+import { getInlineAtomicHref } from '@databyss-org/editor/lib/util'
 import {
   IndexResultsContainer,
   IndexResultTitle,
@@ -14,17 +11,21 @@ import {
   LoadingFallback,
 } from '@databyss-org/ui/components'
 import { useSearchEntries } from '@databyss-org/data/pouchdb/hooks'
-import { BlockType } from '@databyss-org/editor/interfaces'
+import { Block, BlockType } from '@databyss-org/editor/interfaces'
 import { SearchEntriesResultPage } from '@databyss-org/data/pouchdb/entries/lib/searchEntries'
 import { urlSafeName } from '@databyss-org/services/lib/util'
+import BlockSvg from '@databyss-org/ui/assets/arrowRight.svg'
 import { IndexPageView } from './IndexPageContent'
 import { IndexResultTags } from './IndexResults'
 import { useSearchContext } from '../../hooks'
+import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 
 export const SearchContent = () => {
-  const { getAccountFromLocation } = useNavigationContext()
+  const { getAccountFromLocation, navigate } = useNavigationContext()
   const searchQuery = decodeURIComponent(useParams().query!)
   const searchRes = useSearchEntries(searchQuery)
+  const scrollViewRef = useRef<HTMLElement | null>(null)
+  const restoreScroll = useScrollMemory(scrollViewRef)
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
   )
@@ -47,25 +48,41 @@ export const SearchContent = () => {
               return null
             }
             const _variant = {
+              [BlockType.Entry]: 'bodyNormal',
               [BlockType.Topic]: 'bodyNormalSemibold',
               [BlockType.Source]: 'bodyNormalUnderline',
             }[e.type]
             const _anchor = e.index
 
             // build extra tags
-            const _extraTags: string[] = []
+            const _extraTags: Block[] = []
             if (e.type === BlockType.Entry && e.activeHeadings?.length) {
               _extraTags.push(
                 ...e.activeHeadings
                   .filter((hr) => !!hr.relatedBlockText)
                   .map((hr) => {
-                    const _prefix = getBlockPrefix(
-                      hr.relatedBlockType as BlockType
-                    )
-                    return _prefix + hr.relatedBlockText
+                    const _block = {
+                      _id: hr.relatedBlock,
+                      type: hr.relatedBlockType as BlockType,
+                      text: {
+                        textValue: hr.relatedBlockText ?? '',
+                        ranges: [],
+                      },
+                      name: {
+                        textValue: hr.relatedBlockText ?? '',
+                        ranges: [],
+                      },
+                    }
+                    return _block as Block
                   })
               )
             }
+            const _block: Block = {
+              _id: e.entryId,
+              type: e.type,
+              text: e.text,
+            }
+
             return (
               <IndexResultDetails
                 key={k}
@@ -73,19 +90,12 @@ export const SearchContent = () => {
                 href={`/${getAccountFromLocation(true)}/pages/${
                   r.pageId
                 }/${urlSafeName(r.pageName)}#${_anchor}`}
-                text={
-                  <>
-                    <RawHtml
-                      variant={_variant}
-                      html={slateBlockToHtmlWithSearch(
-                        { text: e.text, type: BlockType.Entry, _id: e.entryId },
-                        normalizedStemmedTerms
-                      )}
-                      mr="tiny"
-                    />
-                    <IndexResultTags tags={_extraTags} />
-                  </>
-                }
+                block={_block}
+                normalizedStemmedTerms={normalizedStemmedTerms}
+                onInlineClick={(d) => navigate(getInlineAtomicHref(d))}
+                icon={<BlockSvg />}
+                tags={<IndexResultTags tags={_extraTags} />}
+                textVariant={_variant}
               />
             )
           })}
@@ -97,8 +107,12 @@ export const SearchContent = () => {
     return _Pages
   }
 
+  if (searchRes.isSuccess) {
+    restoreScroll()
+  }
+
   return (
-    <IndexPageView path={['Search', searchQuery]}>
+    <IndexPageView path={['Search', searchQuery]} scrollViewRef={scrollViewRef}>
       {searchRes.isSuccess ? (
         composeResults(searchRes.data)
       ) : (

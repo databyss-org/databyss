@@ -67,7 +67,7 @@ function request(uri, options: RequestOptions = {}) {
     throw new NetworkUnavailableError(
       `Request timed out after ${_timeoutDuration}ms`
     )
-  }, 15000)
+  }, _timeoutDuration)
 
   return fetch(uri, { ..._options, signal: _controller.signal })
     .catch((err) => {

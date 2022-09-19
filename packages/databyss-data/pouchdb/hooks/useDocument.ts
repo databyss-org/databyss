@@ -41,15 +41,14 @@ export const useDocument = <T extends Document>(
 
   const query = useQuery<T>(
     queryKey,
-    () => {
-      console.log('[useDocument] fetch', _id)
-      return new Promise<T>((resolve, reject) => {
+    () =>
+      // console.log('[useDocument] fetch', _id)
+      new Promise<T>((resolve, reject) => {
         dbRef
           .current!.get(_id)
           .then((res) => resolve(res))
           .catch((err) => reject(err))
-      })
-    },
+      }),
     {
       enabled: _options.enabled,
       initialData: options?.initialData,
@@ -92,6 +91,9 @@ export const useDocument = <T extends Document>(
     // console.log('[useDocument] unsubscribe', _id)
     subscriptionDict[_id]?.cancel()
     delete subscriptionDict[_id]
+
+    // also remove from cache so it will be refetched
+    queryClient.removeQueries(queryKey)
   }
 
   useEffect(() => {

@@ -62,23 +62,23 @@ const SourceModal = ({ refId, visible, onUpdate, id, untitledPlaceholder }) => {
   }
 
   return (
-    <ModalWindow
-      visible={visible}
-      key={id}
-      widthVariant="form"
-      onDismiss={onDismiss}
-      title="Edit Source"
-      dismissChild="done"
-      canDismiss
-    >
-      {blocksRes.isSuccess && values ? (
-        <CitationProvider>
+    <CitationProvider>
+      <ModalWindow
+        visible={visible}
+        key={id}
+        widthVariant="form"
+        onDismiss={onDismiss}
+        title="Edit Source"
+        dismissChild="done"
+        canDismiss
+      >
+        {blocksRes.isSuccess && values ? (
           <EditSourceForm values={values} onChange={onChange} />
-        </CitationProvider>
-      ) : (
-        <LoadingFallback queryObserver={blocksRes} />
-      )}
-    </ModalWindow>
+        ) : (
+          <LoadingFallback queryObserver={blocksRes} />
+        )}
+      </ModalWindow>
+    </CitationProvider>
   )
 }
 

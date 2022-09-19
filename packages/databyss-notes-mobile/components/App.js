@@ -31,8 +31,8 @@ const App = () => {
   // render methods
   const render = () => (
     <NotifyProvider>
-      <DatabaseProvider>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <DatabaseProvider>
           <SessionProvider
             signUp={isSignUp()}
             code={urlParams.get('code')}
@@ -40,8 +40,8 @@ const App = () => {
           >
             <Private />
           </SessionProvider>
-        </QueryClientProvider>
-      </DatabaseProvider>
+        </DatabaseProvider>
+      </QueryClientProvider>
     </NotifyProvider>
   )
 

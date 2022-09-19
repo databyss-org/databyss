@@ -1,6 +1,6 @@
 import React from 'react'
 import { variant } from 'styled-system'
-import css from '@styled-system/css'
+import $css from '@styled-system/css'
 import { get } from '@styled-system/core'
 import { withTheme } from 'emotion-theming'
 import { View } from '../..'
@@ -24,15 +24,17 @@ const Icon = ({
   sizeVariant,
   theme,
   useSvgColors,
+  css,
   ...others
 }) => {
   const webProps = useSvgColors
-    ? {}
+    ? css ?? {}
     : {
-        css: css({
+        css: $css({
           path: {
             fill: color,
           },
+          ...(css ?? {}),
         }),
       }
   const nativeProps = {}

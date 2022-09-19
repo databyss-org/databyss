@@ -5,6 +5,11 @@ export async function toCitation(
   source: SourceDetail,
   options?: CitationFormatOptions
 ): Promise<any> {
-  const csl = toJsonCsl(source)
-  return formatCitation(csl, options)
+  try {
+    const csl = toJsonCsl(source)
+    const citation = await formatCitation(csl, options)
+    return citation
+  } catch (err) {
+    return '[citation unavailable]'
+  }
 }

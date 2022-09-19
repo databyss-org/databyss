@@ -67,7 +67,7 @@ const controlCssMobile = () => ({
 })
 
 const controlCss = (props) => ({
-  position: 'relative',
+  position: props.position ?? 'relative',
   userSelect: props.userSelect,
   borderWidth: '1px',
   textDecoration: 'none',
@@ -82,6 +82,7 @@ const controlCss = (props) => ({
         backgroundColor: props.activeColor,
       }
     : {}),
+  ...(props.css ?? {}),
 })
 
 const _mobile = isMobileOs()
@@ -117,6 +118,8 @@ const Control = forwardRef(
     }))
     const StyledControl = href ? StyledLink : StyledButton
     const StyledComponent = renderAsView ? View : StyledControl
+    /* eslint-disable-next-line */
+    const { css: _, ...filteredOthers } = others
     return (
       <ThemeContext.Consumer>
         {(theme) => (
@@ -151,7 +154,7 @@ const Control = forwardRef(
             ]}
             href={href}
             disabled={disabled}
-            {...others}
+            {...filteredOthers}
           >
             {children}
           </StyledComponent>

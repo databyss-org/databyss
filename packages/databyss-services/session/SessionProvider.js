@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
+import { useQueryClient } from 'react-query'
 // import { debounce } from 'lodash'
 import Login from '@databyss-org/ui/modules/Login/Login'
 import LoadingIcon from '@databyss-org/ui/assets/loading.svg'
@@ -58,6 +59,7 @@ const SessionProvider = ({
   const groupRes = useGroups({
     enabled: !!dbRef.current && !!state.session?.publicAccount,
   })
+  const queryClient = useQueryClient()
 
   const isPublicAccount = useCallback(() => {
     if (state.session.publicAccount?._id) {
@@ -125,6 +127,7 @@ const SessionProvider = ({
         setCouchMode(true)
         await initDb({
           groupId,
+          queryClient,
           onReplicationComplete: (_res) => {
             updateCouchMode()
             if (_res) {
@@ -153,6 +156,7 @@ const SessionProvider = ({
         // await replicateGroup(_publicSession.belongsToGroup)
         setCouchMode(true)
         await initDb({
+          queryClient,
           groupId: _publicSession.belongsToGroup,
           isPublicGroup: true,
           onReplicationComplete: () => updateCouchMode(),
@@ -169,6 +173,7 @@ const SessionProvider = ({
         if (unauthenticatedGroupId) {
           setCouchMode(true)
           await initDb({
+            queryClient,
             groupId: unauthenticatedGroupId,
             isPublicGroup: true,
             onReplicationComplete: () => updateCouchMode(),

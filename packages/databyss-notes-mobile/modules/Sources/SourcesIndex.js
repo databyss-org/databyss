@@ -16,6 +16,7 @@ import {
   TabbedContent,
   TabHeight,
 } from '@databyss-org/ui/components/TabbedContent'
+import { BlockType } from '@databyss-org/services/interfaces'
 import { MobileView } from '../Mobile'
 import { buildListItems } from '../../utils/buildListItems'
 import { getScrollViewMaxHeight } from '../../utils/getScrollViewMaxHeight'
@@ -66,9 +67,9 @@ const headerItems = [SourcesMetadata]
 
 // component
 const SourcesIndex = () => {
-  const blocksRes = useBlocks('SOURCE')
+  const blocksRes = useBlocks(BlockType.Source)
   const pagesRes = usePages()
-  const blockRelationsRes = useBlockRelations('SOURCE')
+  const blockRelationsRes = useBlockRelations(BlockType.Source)
 
   const navigationContext = useNavigationContext()
 

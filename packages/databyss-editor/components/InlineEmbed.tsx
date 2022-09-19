@@ -25,6 +25,11 @@ export const InlineEmbed = ({
       width: '100%',
       position: 'relative',
       display: 'inline-block',
+      ...(embedData
+        ? {}
+        : {
+            height: '350px',
+          }),
       // borderRadius: '3px',
       //    padding: '3px',
     }}

@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/services",
-  "version": "2.7.3",
+  "version": "2.8.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/databyss-org/databyss.git"
@@ -16,10 +16,10 @@
     "@bugsnag/js": "^6.3.2",
     "@bugsnag/node": "^6.3.2",
     "@cloudant/cloudant": "^4.3.0",
-    "@databyss-org/data": "2.7.3",
-    "@databyss-org/editor": "2.7.3",
-    "@databyss-org/services": "2.7.3",
-    "@databyss-org/ui": "2.7.3",
+    "@databyss-org/data": "2.8.0",
+    "@databyss-org/editor": "2.8.0",
+    "@databyss-org/services": "2.8.0",
+    "@databyss-org/ui": "2.8.0",
     "cloudant-upsert": "^0.11.1",
     "json-schema": "^0.2.5",
     "jsonschema": "^1.4.0",
@@ -30,6 +30,7 @@
     "pouchdb-upsert": "^2.2.0",
     "react": "16.9.0",
     "react-dom": "16.9.0",
+    "react-query": "^3.6.0",
     "scored-fuzzysearch": "^1.0.5",
     "transform-pouch": "^1.1.5",
     "tv4": "^1.3.0"

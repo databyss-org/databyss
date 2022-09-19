@@ -7,6 +7,7 @@ import React, {
   useImperativeHandle,
   useRef,
   RefObject,
+  MutableRefObject,
 } from 'react'
 import { debounce } from 'lodash'
 import {
@@ -55,6 +56,7 @@ export interface IndexPageViewProps extends ScrollViewProps {
   block?: Block
   menuChild?: ReactNode
   handlesRef?: RefObject<IndexPageTitleInputHandles>
+  scrollViewRef?: MutableRefObject<HTMLElement | null>
 }
 
 export interface IndexPageTitleInputHandles {
@@ -199,6 +201,7 @@ export const IndexPageView = ({
   block,
   children,
   menuChild,
+  scrollViewRef,
   ...others
 }: PropsWithChildren<IndexPageViewProps>) => {
   const {
@@ -208,14 +211,12 @@ export const IndexPageView = ({
     location,
   } = useNavigationContext()
   const titleInputHandlesRef = useRef<IndexPageTitleInputHandles>(null)
-  const scrollViewRef = useRef<HTMLElement | null>(null)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  const restoreScroll = useScrollMemory(scrollViewRef)
 
-  useEffect(() => {
-    restoreScroll()
-  }, [])
+  // useEffect(() => {
+  //   restoreScroll()
+  // }, [])
 
   const onUpdateBlock = (block: Block) => {
     titleInputHandlesRef.current?.updateTitle(block)
@@ -365,11 +366,14 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const { blockId } = useParams()
   const blocksRes = useBlocks(BlockType._ANY)
   const pagesRes = usePages()
+  const scrollViewRef = useRef<HTMLElement | null>(null)
+  const restoreScroll = useScrollMemory(scrollViewRef)
 
   if (
     !blocksRes.isSuccess ||
     !pagesRes.isSuccess ||
-    !blocksRes.data?.[blockId!]
+    !blocksRes.data?.[blockId!] ||
+    blocksRes.data[blockId!].type !== blockType
   ) {
     return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
   }
@@ -379,12 +383,14 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
       path={getPathFromBlock(blocksRes.data![blockId!])}
       block={blocksRes.data![blockId!]}
       key={blockId}
+      scrollViewRef={scrollViewRef}
     >
       <IndexResults
         relatedBlockId={blockId!}
         key={`${blockType}_${blockId}`}
         blocks={blocksRes.data!}
         pages={pagesRes.data!}
+        onLast={restoreScroll}
       />
     </IndexPageView>
   )

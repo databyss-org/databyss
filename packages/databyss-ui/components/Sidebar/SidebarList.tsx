@@ -27,8 +27,8 @@ import {
 import { useLocation } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import { SidebarHeaderButton } from './SidebarHeaderButton'
 import { unorm } from '@databyss-org/data/couchdb-client/couchdb'
+import { SidebarHeaderButton } from './SidebarHeaderButton'
 
 export interface SidebarListProps
   extends ScrollViewProps,

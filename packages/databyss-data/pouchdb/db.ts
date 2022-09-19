@@ -27,13 +27,16 @@ import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { checkNetwork } from '@databyss-org/services/lib/request'
+import { QueryClient } from 'react-query'
 import { DocumentType } from './interfaces'
 import { setDbBusy } from './utils'
 import { processGroupActionQ } from './groups/utils'
 import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
 import embedSchema from '../schemas/embedSchema'
 import { UnauthorizedDatabaseReplication } from '../../databyss-services/interfaces/Errors'
+import { initialCaches, warmupCaches } from './warmup'
 
+export { selectors } from './selectors'
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
 // add plugins
@@ -45,6 +48,7 @@ PouchDB.plugin(PouchDBUpsert)
 interface DbRef {
   current: PouchDB.Database<any> | null
   readOnly: boolean
+  lastSeq: string | number
 }
 
 const getPouchDb = (groupId: string) => {
@@ -57,6 +61,7 @@ const getPouchDb = (groupId: string) => {
 export const dbRef: DbRef = {
   current: null,
   readOnly: false,
+  lastSeq: 'now',
 }
 
 // try to load pouch_secrets from local storage to init db
@@ -323,23 +328,57 @@ export const pouchDataValidation = (data) => {
   }
 }
 
+let _lastSeqMemo: string | number | undefined
+let _lastSeqMemoRequestedAt: number | undefined
+export const getLastSequence = () =>
+  new Promise<string | number>((resolve, reject) => {
+    if (dbRef.current instanceof CouchDb) {
+      resolve('now')
+      return
+    }
+    if (_lastSeqMemo && Date.now() - _lastSeqMemoRequestedAt! < 1000) {
+      resolve(_lastSeqMemo)
+      return
+    }
+    _lastSeqMemoRequestedAt = Date.now()
+    dbRef.current
+      ?.changes({
+        return_docs: false,
+        descending: true,
+        limit: 1,
+        since: 0,
+      })
+      .then((changes) => {
+        _lastSeqMemo = changes.last_seq
+        console.log('[db] last_seq', changes.last_seq)
+        resolve(changes.last_seq)
+      })
+      .catch(reject)
+  })
+
 export const initDb = ({
   groupId,
   isPublicGroup = false,
   onReplicationComplete,
+  queryClient,
 }: {
   groupId: string
   isPublicGroup: boolean
   onReplicationComplete?: (success: boolean) => void
+  queryClient: QueryClient
 }) =>
   new Promise<void>((resolve) => {
     const _pouchDb = getPouchDb(groupId)
 
-    const _replicationComplete = (success: boolean) => {
+    const _replicationComplete = async (success: boolean) => {
       if (!success) {
         console.warn('[DB] replication failed')
       } else {
         console.log('[DB] Replication done, switching to PouchDb')
+        // dbRef.lastSeq = await getLastSequence()
+        if (!Object.keys(initialCaches).length) {
+          dbRef.lastSeq = await warmupCaches(_pouchDb, queryClient)
+        }
         dbRef.current = _pouchDb
         dbRef.readOnly = isPublicGroup
       }
@@ -360,7 +399,17 @@ export const initDb = ({
       dbRef.current = _unknown as PouchDB.Database
       dbRef.readOnly = true
 
-      console.log('[DB] Start replication')
+      // if no queryClient, just set couch mode and resolve (skip replication for now)
+      if (!queryClient) {
+        resolve()
+        return
+      }
+
+      console.log(
+        `[DB] Start replication ${groupId} (${
+          isPublicGroup ? 'public' : 'private'
+        })`
+      )
       if (isPublicGroup) {
         replicatePublicGroup({ groupId, pouchDb: _pouchDb }).then(
           _replicationComplete

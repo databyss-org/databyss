@@ -1,7 +1,8 @@
 import React from 'react'
-import { RawHtml, Text, View } from '@databyss-org/ui/primitives'
+import { BaseControl, Text, View } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
+import BlockSvg from '@databyss-org/ui/assets/arrowRight.svg'
 import {
   IndexResultsContainer,
   IndexResultTitle,
@@ -10,7 +11,7 @@ import {
 } from '@databyss-org/ui/components'
 import {
   getBlockPrefix,
-  slateBlockToHtmlWithSearch,
+  getInlineAtomicHref,
 } from '@databyss-org/editor/lib/util'
 import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
 import { addPagesToBlockRelation } from '@databyss-org/services/blocks/joins'
@@ -19,6 +20,7 @@ import {
   BlockRelation,
   BlockType,
   DocumentDict,
+  IndexPageResult,
   Page,
   Source,
 } from '@databyss-org/services/interfaces'
@@ -30,22 +32,41 @@ interface IndexResultsProps {
   relatedBlockId: string
   blocks: DocumentDict<Block>
   pages: DocumentDict<Page>
+  onLast?: () => void
 }
 
-export const IndexResultTags = ({ tags }: { tags: string[] }) => (
-  <View flexDirection="row" flexWrap="wrap">
+export const IndexResultTags = ({ tags }: { tags: Block[] }) => (
+  <View flexDirection="row" flexWrap="wrap" zIndex={5}>
     {tags
-      .sort((_tagText) => (_tagText.startsWith('#') ? -1 : 1))
-      .map((_tagText, _idx) => (
-        <Text
-          variant="uiTextSmall"
-          key={_idx}
-          color={_tagText.startsWith('#') ? 'inlineTopic' : 'inlineSource'}
-        >
-          {_tagText}
-          {_idx < tags.length - 1 ? ',' : ''}&nbsp;
-        </Text>
-      ))}
+      .sort((_block) => (_block.type === BlockType.Topic ? -1 : 1))
+      .map((_block, _idx) => {
+        const _tagText = {
+          [BlockType.Topic]: _block.text.textValue,
+          [BlockType.Source]: (_block as Source).name?.textValue,
+        }[_block.type]
+        return (
+          <BaseControl
+            href={getInlineAtomicHref({
+              atomicType: _block.type,
+              id: _block._id,
+              name: _tagText,
+            })}
+            key={_idx}
+          >
+            <Text
+              variant="uiTextSmall"
+              key={_idx}
+              color={
+                _block.type === BlockType.Topic ? 'inlineTopic' : 'inlineSource'
+              }
+            >
+              {getBlockPrefix(_block.type)}
+              {_tagText}
+              {_idx < tags.length - 1 ? ',' : ''}&nbsp;
+            </Text>
+          </BaseControl>
+        )
+      })}
   </View>
 )
 
@@ -53,8 +74,9 @@ export const IndexResults = ({
   relatedBlockId,
   blocks,
   pages,
+  onLast,
 }: IndexResultsProps) => {
-  const { getAccountFromLocation } = useNavigationContext()
+  const { getAccountFromLocation, navigate } = useNavigationContext()
   const blockRelationRes = useDocument<BlockRelation>(`r_${relatedBlockId}`)
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
@@ -76,78 +98,74 @@ export const IndexResults = ({
 
   const groupedRelations = groupBlockRelationsByPage(_relations)
 
-  const _results = Object.keys(groupedRelations)
+  const _filteredPages = Object.keys(groupedRelations)
     // filter out results for archived and missing pages
     .filter((r) => pages[r] && !pages[r].archive)
     // filter out results if no entries are included
     .filter((r) => groupedRelations[r].length)
-    .map((r, i) => (
-      <IndexResultsContainer key={i}>
-        <IndexResultTitle
-          key={`pageHeader-${i}`}
-          href={`/${getAccountFromLocation(true)}/pages/${r}/${urlSafeName(
-            pages[r].name
-          )}`}
-          icon={<PageSvg />}
-          text={pages[r].name}
-          dataTestElement="atomic-results"
+
+  const _renderBlocks = (pageId, results: IndexPageResult[], isLastGroup) => {
+    const _filteredBlocks = results.filter((e) => e.blockText.textValue.length)
+    return _filteredBlocks.map((e, eidx) => {
+      const _variant = {
+        [BlockType.Entry]: 'bodyNormal',
+        [BlockType.Topic]: 'bodyNormalSemibold',
+        [BlockType.Source]: 'bodyNormalUnderline',
+      }[blocks[e.block].type]
+      const _anchor = e.blockIndex
+
+      // build extra tags
+      const _extraTags: Block[] = []
+      if (
+        blocks[e.block].type === BlockType.Entry &&
+        e.activeHeadings?.length
+      ) {
+        _extraTags.push(
+          ...e.activeHeadings
+            .filter((hr) => hr.relatedBlock !== relatedBlockId)
+            .map((hr) => blocks[hr.relatedBlock])
+        )
+      }
+      if (onLast && isLastGroup && eidx === _filteredBlocks.length - 1) {
+        onLast()
+      }
+      return (
+        <IndexResultDetails
+          key={eidx}
+          href={`/${getAccountFromLocation(true)}/pages/${pageId}/${urlSafeName(
+            pages[pageId].name
+          )}#${_anchor}`}
+          block={blocks[e.block]}
+          normalizedStemmedTerms={normalizedStemmedTerms}
+          onInlineClick={(d) => navigate(getInlineAtomicHref(d))}
+          icon={<BlockSvg />}
+          tags={<IndexResultTags tags={_extraTags} />}
+          textVariant={_variant}
+          dataTestElement="atomic-result-item"
         />
+      )
+    })
+  }
 
-        {groupedRelations[r]
-          .filter((e) => e.blockText.textValue.length)
-          .map((e, k) => {
-            const _variant = {
-              [BlockType.Topic]: 'bodyNormalSemibold',
-              [BlockType.Source]: 'bodyNormalUnderline',
-            }[blocks[e.block].type]
-            const _anchor = e.blockIndex
+  const _results = _filteredPages.map((r, pidx) => (
+    <IndexResultsContainer key={pidx}>
+      <IndexResultTitle
+        key={`pageHeader-${pidx}`}
+        href={`/${getAccountFromLocation(true)}/pages/${r}/${urlSafeName(
+          pages[r].name
+        )}`}
+        icon={<PageSvg />}
+        text={pages[r].name}
+        dataTestElement="atomic-results"
+      />
 
-            // build extra tags
-            const _extraTags: string[] = []
-            if (
-              blocks[e.block].type === BlockType.Entry &&
-              e.activeHeadings?.length
-            ) {
-              _extraTags.push(
-                ...e.activeHeadings
-                  .filter((hr) => hr.relatedBlock !== relatedBlockId)
-                  .map((hr) => {
-                    const _type = blocks[hr.relatedBlock].type
-                    const _prefix = getBlockPrefix(_type)
-                    const _text = {
-                      [BlockType.Topic]: blocks[hr.relatedBlock].text.textValue,
-                      [BlockType.Source]: (blocks[hr.relatedBlock] as Source)
-                        .name?.textValue,
-                    }[_type]
-                    return _prefix + _text
-                  })
-              )
-            }
-            return (
-              <IndexResultDetails
-                key={k}
-                href={`/${getAccountFromLocation(
-                  true
-                )}/pages/${r}/${urlSafeName(pages[r].name)}#${_anchor}`}
-                text={
-                  <>
-                    <RawHtml
-                      html={slateBlockToHtmlWithSearch(
-                        blocks[e.block],
-                        normalizedStemmedTerms
-                      )}
-                      variant={_variant}
-                      mr="tiny"
-                    />
-                    <IndexResultTags tags={_extraTags} />
-                  </>
-                }
-                dataTestElement="atomic-result-item"
-              />
-            )
-          })}
-      </IndexResultsContainer>
-    ))
+      {_renderBlocks(
+        r,
+        groupedRelations[r],
+        pidx === _filteredPages.length - 1
+      )}
+    </IndexResultsContainer>
+  ))
 
   return <>{_results}</>
 }

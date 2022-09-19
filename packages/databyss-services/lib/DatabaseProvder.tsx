@@ -13,7 +13,7 @@ export const DatabaseContext = createContext<ContextType>(null!)
 export const DatabaseProvider = ({ children }) => {
   const [isCouchMode, setCouchMode] = useState(false)
 
-  const updateCouchMode = () => {
+  const updateCouchMode = async () => {
     // console.log(
     //   '[DatabaseProvider] updateCouchMode',
     //   dbRef.current instanceof CouchDb
