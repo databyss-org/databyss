@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/notes",
-  "version": "2.7.4",
+  "version": "2.8.0",
   "private": true,
   "dependencies": {
     "an-array-of-english-words": "^2.0.0",
@@ -14,8 +14,8 @@
     "workbox-window": "^6.1.2"
   },
   "peerDependencies": {
-    "@databyss-org/services": "2.7.4",
-    "@databyss-org/ui": "2.7.4",
+    "@databyss-org/services": "2.8.0",
+    "@databyss-org/ui": "2.8.0",
     "react": "16.9.0",
     "react-dom": "16.9.0",
     "react-query": "^3.6.0",
