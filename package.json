@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "description": "The word processor is dead. Long live the word processor.",
   "main": "index.js",
   "repository": {
