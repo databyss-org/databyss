@@ -22,6 +22,7 @@ const buildHeaderItems = (title, id) => [
 // component
 const SourceDetails = () => {
   const { blockId } = useParams()
+  console.log('[SourceDetails] blockId', blockId)
 
   const blockRelationRes = useBlockRelations(BlockType.Source)
   const sourceRes = useDocument(blockId)
@@ -33,7 +34,7 @@ const SourceDetails = () => {
     return <LoadingFallback queryObserver={queryRes} />
   }
 
-  pageTitle = sourceRes.data[blockId].text.textValue
+  pageTitle = sourceRes.data.text.textValue
 
   // // render methods
   const renderSourceDetails = () => (
