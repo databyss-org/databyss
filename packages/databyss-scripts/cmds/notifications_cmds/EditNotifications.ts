@@ -61,7 +61,7 @@ export class EditNotifications extends ServerProcess {
 
   async run() {
     let _notifications: Partial<Notification>[] = []
-    if (!(this.action === EditAction.Remove)) {
+    if (this.action !== EditAction.Remove) {
       try {
         _notifications = JSON.parse(fs.readFileSync(this.args.file).toString())
       } catch (err: any) {
@@ -96,12 +96,7 @@ export class EditNotifications extends ServerProcess {
       fs.writeFileSync(this.args.file, JSON.stringify(_notifications, null, 2))
     }
 
-    const _dbs = await cloudant.current.db.list()
-    for (const _dbName of _dbs) {
-      // only update primary groups (which start with "g_")
-      if (!_dbName.startsWith('g_')) {
-        continue
-      }
+    const _commit = async (_dbName: string) => {
       const _db = cloudant.current.db.use<UserPreference | Group>(_dbName)
 
       let _prefs = await _db.tryGet('user_preference')
@@ -111,7 +106,7 @@ export class EditNotifications extends ServerProcess {
       }
       if (!_prefs) {
         this.logWarning('No user_preference or group doc found', _dbName)
-        continue
+        return
       }
 
       if (this.action === EditAction.Remove) {
@@ -124,10 +119,26 @@ export class EditNotifications extends ServerProcess {
           this.upsertNotification(_prefs!, _notification)
         )
       }
-      await _db.insert(_prefs)
-      // dont exceed cloudant rate limit
-      await sleep(100)
-      this.logSuccess(_dbName)
+      // console.log('remove', JSON.stringify(_prefs.notifications, null, 2))
+      await _db.upsert(_prefs._id, () => _prefs as UserPreference)
+      // await _db.insert(_prefs)
+    }
+
+    if (this.args.db) {
+      await _commit(this.args.db)
+      this.logSuccess(this.args.db)
+    } else {
+      const _dbs = await cloudant.current.db.list()
+      for (const _dbName of _dbs) {
+        // only update primary groups (which start with "g_")
+        // if (!_dbName.startsWith('g_')) {
+        //   continue
+        // }
+        await _commit(_dbName)
+        // dont exceed cloudant rate limit
+        await sleep(100)
+        this.logSuccess(_dbName)
+      }
     }
   }
 }
