@@ -15,6 +15,7 @@ interface QueuedRequest {
   reject: (reason: any) => void
   uri: string
   options: RequestOptions
+  retryCount: number
 }
 const requestQ: QueuedRequest[] = []
 
@@ -54,17 +55,42 @@ export const requestCouch = (
     },
   }
   return new Promise((resolve, reject) => {
-    requestQ.push({ resolve, reject, uri: _uri, options: _options })
+    requestQ.push({
+      resolve,
+      reject,
+      uri: _uri,
+      options: _options,
+      retryCount: 0,
+    })
   })
 }
 
-setInterval(() => {
+const processQ = () => {
   if (!requestQ.length) {
+    // check again soon
+    setTimeout(processQ, 250)
     return
   }
   const _req = requestQ.shift()!
-  request(_req.uri, _req.options).then(_req.resolve).catch(_req.resolve)
-}, 250)
+  request(_req.uri, _req.options)
+    .then((res) => {
+      setTimeout(processQ, 250)
+      _req.resolve(res)
+    })
+    .catch((err) => {
+      // put it back on the Q
+      _req.retryCount += 1
+      if (_req.retryCount > 20) {
+        setTimeout(processQ, 250)
+        _req.resolve(err)
+      } else {
+        requestQ.unshift(_req)
+        setTimeout(processQ, 250 * _req.retryCount)
+      }
+    })
+}
+
+processQ()
 
 export const couchGet = async (path: string, options?: RequestCouchOptions) =>
   requestCouch(path, options)
