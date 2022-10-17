@@ -60,9 +60,14 @@ export const FlatBlock = ({
     (c) => c && c.normalizedStemmedTerms
   )
   const navigate = useNavigationContext((c) => c && c.navigate)
-  const _blockRes = useDocument<Block>(block._id, {
-    initialData: block,
-  })
+  const _blockRes = useDocument<Block>(
+    block._id,
+    block.text?.textValue
+      ? {
+          initialData: block,
+        }
+      : {}
+  )
   const _previousBlockRes = useDocument<Block>(previousId!, {
     initialData: previousBlock,
     enabled: !!previousId,
@@ -74,6 +79,7 @@ export const FlatBlock = ({
   ) {
     return null
   }
+  // console.log('[FlatBlock]', block._id, _blockRes.data)
   if (!_blockRes.data?.text) {
     return null
   }
@@ -134,31 +140,39 @@ export const FlatBlocks = ({
 }: {
   page: Page
   onLast: () => void
-}) => (
-  <>
-    {page.blocks.map((block, idx) => {
-      const _previousBlockId = idx > 0 ? page.blocks[idx - 1]._id : null
-      const _previousBlockType = idx > 0 ? page.blocks[idx - 1].type : null
-      const _last = idx === page.blocks.length - 1
-      if (_last) {
-        onLast()
-      }
-      return (
-        <FlatBlock
-          index={idx}
-          last={_last}
-          key={`${idx}:${block._id}`}
-          previousId={_previousBlockId}
-          previousType={_previousBlockType}
-          block={block}
-          previousBlock={
-            _previousBlockId ? page.blocks[_previousBlockId] : null
-          }
-        />
-      )
-    })}
-  </>
-)
+}) => {
+  const _blockIdDict: { [id: string]: number } = {}
+  return (
+    <>
+      {page.blocks.map((block, idx) => {
+        const _previousBlockId = idx > 0 ? page.blocks[idx - 1]._id : null
+        const _previousBlockType = idx > 0 ? page.blocks[idx - 1].type : null
+        const _last = idx === page.blocks.length - 1
+        if (_last) {
+          onLast()
+        }
+        if (!_blockIdDict[block._id]) {
+          _blockIdDict[block._id] = 0
+        }
+        const _key = `${block._id}:${_blockIdDict[block._id]}`
+        _blockIdDict[block._id] += 1
+        return (
+          <FlatBlock
+            index={idx}
+            last={_last}
+            key={_key}
+            previousId={_previousBlockId}
+            previousType={_previousBlockType}
+            block={block}
+            previousBlock={
+              _previousBlockId ? page.blocks[_previousBlockId] : null
+            }
+          />
+        )
+      })}
+    </>
+  )
+}
 
 export const FlatPageBody: RefForwardingFC<{ page: Page }> = forwardRef(
   ({ page }, ref) => {

@@ -44,6 +44,7 @@ export const useDocument = <T extends Document>(
     () =>
       // console.log('[useDocument] fetch', _id)
       new Promise<T>((resolve, reject) => {
+        console.log('[UseDocument] fetch')
         dbRef
           .current!.get(_id)
           .then((res) => resolve(res))
@@ -88,7 +89,7 @@ export const useDocument = <T extends Document>(
     if (subscriptionCount[_id] > 0) {
       return
     }
-    // console.log('[useDocument] unsubscribe', _id)
+    console.log('[useDocument] unsubscribe', _id)
     subscriptionDict[_id]?.cancel()
     delete subscriptionDict[_id]
 

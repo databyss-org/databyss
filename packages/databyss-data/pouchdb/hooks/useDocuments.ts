@@ -92,7 +92,7 @@ export const useDocuments = <T extends Document>(
     }
     if (subscriptionDict[queryKeyJson]) {
       subscriptionListeners[queryKeyJson].add(listenerIdRef.current)
-      console.log('[useDocuments] subscribe', dbRef.lastSeq)
+      // console.log('[useDocuments] subscribe', dbRef.lastSeq)
       return
     }
     // sequenceDict[queryKeyJson] = 'now'
