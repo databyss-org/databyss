@@ -23,6 +23,8 @@ import {
 } from '../../../databyss-services/interfaces/Block'
 import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/getAtomicsFromSelection'
 import {
+  BATCHES_LIMIT,
+  BATCH_SIZE,
   dbRef,
   MakePouchReplicationErrorHandler,
   REMOTE_CLOUDANT_URL,
@@ -236,7 +238,8 @@ const upsertReplication = async ({
     .current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
       ...opts,
       doc_ids: _docIds,
-      batch_size: 2000,
+      batch_size: BATCH_SIZE,
+      batches_limit: BATCHES_LIMIT,
     })
     .on('error', MakePouchReplicationErrorHandler('[upsertReplication]'))
 }

@@ -13,6 +13,8 @@ import {
   NetworkUnavailableError,
 } from '../interfaces/Errors'
 import {
+  BATCHES_LIMIT,
+  BATCH_SIZE,
   dbRef,
   MakePouchReplicationErrorHandler,
   REMOTE_CLOUDANT_URL,
@@ -57,8 +59,8 @@ export const PageReplicator = ({
     // set up page replication
     const opts = {
       live: true,
-      batch_size: 2000,
-      batches_limit: 100,
+      batch_size: BATCH_SIZE,
+      batches_limit: BATCHES_LIMIT,
       retry: true,
       continuous: true,
       auth: {

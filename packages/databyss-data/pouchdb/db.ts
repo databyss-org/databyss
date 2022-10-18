@@ -35,6 +35,7 @@ import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
 import embedSchema from '../schemas/embedSchema'
 import { UnauthorizedDatabaseReplication } from '../../databyss-services/interfaces/Errors'
 import { initialCaches, warmupCaches } from './warmup'
+import { PROCESS_CITATION } from '@databyss-org/services/citations/constants'
 
 export { selectors } from './selectors'
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
@@ -99,6 +100,11 @@ export const resetPouchDb = async () => {
   dbRef.current = null
 }
 
+export const BATCH_SIZE: number = (process.env.REPLICATE_BATCH_SIZE ??
+  (100 as unknown)) as number
+export const BATCHES_LIMIT: number = (process.env.REPLICATE_BATCHES_LIMIT ??
+  (10 as unknown)) as number
+
 /*
 replicates public remote DB to local
 */
@@ -113,8 +119,8 @@ export const replicatePublicGroup = ({
   new Promise<boolean>((resolve, reject) => {
     const opts = {
       retry: true,
-      batch_size: 2000,
-      batches_limit: 100,
+      batch_size: BATCH_SIZE,
+      batches_limit: BATCHES_LIMIT,
       style: 'main_only',
       checkpoints: false,
     }
@@ -186,8 +192,8 @@ export const replicateDbFromRemote = ({
       // live: true,
       retry: true,
       // continuous: true,
-      batch_size: 2000,
-      batches_limit: 100,
+      batch_size: BATCH_SIZE,
+      batches_limit: BATCHES_LIMIT,
       style: 'main_only',
       checkpoints: false,
       auth: {
@@ -230,8 +236,8 @@ export const syncPouchDb = ({ groupId }: { groupId: string }) => {
     live: true,
     retry: true,
     continuous: true,
-    batch_size: 2000,
-    batches_limit: 100,
+    batch_size: BATCH_SIZE,
+    batches_limit: BATCHES_LIMIT,
     auth: {
       username: _cred.dbKey,
       password: _cred.dbPassword,
