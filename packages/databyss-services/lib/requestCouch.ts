@@ -78,7 +78,10 @@ const processQ = () => {
       _req.resolve(res)
     })
     .catch((err) => {
-      // put it back on the Q
+      // we have to assume that we're hitting cloudant's rate limit and getting a 429
+      // (assume because the lack of CORS headers in the response means we can't read the status code, see SO link below)
+      // https://stackoverflow.com/questions/64341579/why-cant-i-access-the-response-eg-to-check-response-code-when-i-get-a-429-wi
+      // put it back on the Q and try again later
       _req.retryCount += 1
       if (_req.retryCount > 20) {
         setTimeout(processQ, 250)

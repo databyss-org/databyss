@@ -113,7 +113,10 @@ export const replicatePublicGroup = ({
   new Promise<boolean>((resolve, reject) => {
     const opts = {
       retry: true,
-      batch_size: 1000,
+      batch_size: 2000,
+      batches_limit: 100,
+      style: 'main_only',
+      checkpoints: false,
     }
     console.log('[DB] replicatePublicGroup')
     pouchDb.replicate
@@ -183,7 +186,10 @@ export const replicateDbFromRemote = ({
       // live: true,
       retry: true,
       // continuous: true,
-      batch_size: 1000,
+      batch_size: 2000,
+      batches_limit: 100,
+      style: 'main_only',
+      checkpoints: false,
       auth: {
         username: _cred.dbKey,
         password: _cred.dbPassword,
@@ -224,7 +230,8 @@ export const syncPouchDb = ({ groupId }: { groupId: string }) => {
     live: true,
     retry: true,
     continuous: true,
-    batch_size: 1000,
+    batch_size: 2000,
+    batches_limit: 100,
     auth: {
       username: _cred.dbKey,
       password: _cred.dbPassword,

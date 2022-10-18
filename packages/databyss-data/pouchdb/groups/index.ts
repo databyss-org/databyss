@@ -236,7 +236,7 @@ const upsertReplication = async ({
     .current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
       ...opts,
       doc_ids: _docIds,
-      batch_size: 1000,
+      batch_size: 2000,
     })
     .on('error', MakePouchReplicationErrorHandler('[upsertReplication]'))
 }
