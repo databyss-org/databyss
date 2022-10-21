@@ -35,7 +35,6 @@ import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
 import embedSchema from '../schemas/embedSchema'
 import { UnauthorizedDatabaseReplication } from '../../databyss-services/interfaces/Errors'
 import { initialCaches, warmupCaches } from './warmup'
-import { PROCESS_CITATION } from '@databyss-org/services/citations/constants'
 
 export { selectors } from './selectors'
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
