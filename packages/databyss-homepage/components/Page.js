@@ -1,4 +1,5 @@
 import React from 'react'
+import { Helmet } from 'react-helmet'
 import { View } from '@databyss-org/ui/primitives'
 import { Hero } from './Hero/Hero'
 import { LongHero } from './Hero/LongHero'
@@ -36,5 +37,11 @@ export const Page = ({ content }) => (
       )
     })}
     <Footer />
+    <Helmet>
+      <title>{content.title}</title>
+      {(content.meta ?? []).map((metaJson) => (
+        <meta name={metaJson.name} content={metaJson.content} />
+      ))}
+    </Helmet>
   </View>
 )
