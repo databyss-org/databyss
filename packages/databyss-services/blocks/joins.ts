@@ -78,7 +78,7 @@ export const populatePage = ({
   const _page = page
 
   _page.blocks = page.blocks.map((b) => {
-    const _block = { ...blocks[b._id] }
+    const _block = { ...b, ...blocks[b._id] }
     // check for atomic block closure
     if (b.type?.match(/^END_/)) {
       _block.type = b.type

@@ -51,6 +51,7 @@ export const AtomicHeader = ({
 
   return (
     <BaseControl
+      spellCheck={false}
       alignSelf="flex-start"
       flexWrap="nowrap"
       display="inline"
