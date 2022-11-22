@@ -245,26 +245,30 @@ const SuggestSources = ({
   }
 
   if (_mode === LOCAL_SOURCES) {
-    return _composeLocalSources(Object.values(sourcesRes.data)).concat(
-      isOnline ? (
-        _menuItems.map((menuItem) => (
-          <DropdownListItem
-            {...menuItem}
-            key={menuItem.action}
-            data-test-element="suggest-dropdown"
-            onPress={() => {
-              setResultsMode(menuItem.action)
-              focusEditor()
-            }}
-          />
-        ))
-      ) : (
-        <View padding="tiny" pl="small">
-          <Text variant="uiTextSmall" color="text.3">
-            Go online to search source catalogs
-          </Text>
-        </View>
-      )
+    return (
+      <View overflow="hidden">
+        {_composeLocalSources(Object.values(sourcesRes.data)).concat(
+          isOnline ? (
+            _menuItems.map((menuItem) => (
+              <DropdownListItem
+                {...menuItem}
+                key={menuItem.action}
+                data-test-element="suggest-dropdown"
+                onPress={() => {
+                  setResultsMode(menuItem.action)
+                  focusEditor()
+                }}
+              />
+            ))
+          ) : (
+            <View padding="tiny" pl="small">
+              <Text variant="uiTextSmall" color="text.3">
+                Go online to search source catalogs
+              </Text>
+            </View>
+          )
+        )}
+      </View>
     )
   }
 
