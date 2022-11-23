@@ -28,7 +28,11 @@ if (jasmine) {
 }
 /* eslint-enable no-undef */
 
-const sessionDefaults = { platformName: WIN, browserName: CHROME }
+const sessionDefaults = {
+  platformName: WIN,
+  browserName: CHROME,
+  browserVersion: '106.0',
+}
 
 export const startSession = process.env.LOCAL_ENV
   ? async () => {
@@ -37,7 +41,7 @@ export const startSession = process.env.LOCAL_ENV
       return _builder
     }
   : async (options = {}) => {
-      const { name, platformName, browserName } = {
+      const { name, platformName, browserName, browserVersion } = {
         ...sessionDefaults,
         ...options,
       }
@@ -46,7 +50,7 @@ export const startSession = process.env.LOCAL_ENV
         .withCapabilities({
           browserName,
           platformName,
-          browserVersion: 'latest',
+          browserVersion,
           'goog:chromeOptions': { w3c: true },
           'sauce:options': {
             extendedDebugging: true,
