@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Text, View, List } from '@databyss-org/ui/primitives'
 import _ from 'lodash'
 import { CatalogSearchLoader } from '@databyss-org/ui/components/Loaders'
@@ -42,25 +42,32 @@ const CatalogResults = ({ menuHeight, type, dismiss, query, selectSource }) => {
       </View>
     )
 
-  return (
-    <View p={sourcesLoaded && 'small'}>
-      <View overflowX="hidden" overflowY="auto" maxHeight={pxUnits(menuHeight)}>
-        <CatalogSearchLoader type={type} query={query}>
-          {(results) => {
-            setSourcesLoaded(true)
-            return _renderResults(results)
-          }}
-        </CatalogSearchLoader>
+  return useMemo(
+    () => (
+      <View p={sourcesLoaded && 'small'}>
+        <View
+          overflowX="hidden"
+          overflowY="auto"
+          maxHeight={pxUnits(menuHeight)}
+        >
+          <CatalogSearchLoader type={type} query={query}>
+            {(results) => {
+              setSourcesLoaded(true)
+              return _renderResults(results)
+            }}
+          </CatalogSearchLoader>
+        </View>
+        <View
+          pt="small"
+          borderTopWidth="1px"
+          borderColor="border.2"
+          borderStyle="solid"
+        >
+          <CatalogFooter type={type} />
+        </View>
       </View>
-      <View
-        pt="small"
-        borderTopWidth="1px"
-        borderColor="border.2"
-        borderStyle="solid"
-      >
-        <CatalogFooter type={type} />
-      </View>
-    </View>
+    ),
+    [menuHeight, type, query]
   )
 }
 

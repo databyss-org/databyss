@@ -19,7 +19,12 @@ export const getPosition = ({
 }) => {
   if (editor.selection) {
     const _activeNode = editor.children[editor.selection.anchor.path[0]]
-    const _node = ReactEditor.toDOMNode(editor, _activeNode)
+    let _node = null
+    try {
+      _node = ReactEditor.toDOMNode(editor, _activeNode)
+    } catch {
+      // noop
+    }
 
     if (_node) {
       const _rect = _node.getBoundingClientRect()
