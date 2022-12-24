@@ -149,6 +149,7 @@ function getLinkedDocIds(page) {
         if (
           Array.isArray(_mark) &&
           _mark.length > 1 &&
+          _mark[1] &&
           !_mark[1].match(validUriRegex)
         ) {
           _docIds[_mark[1]] = true
