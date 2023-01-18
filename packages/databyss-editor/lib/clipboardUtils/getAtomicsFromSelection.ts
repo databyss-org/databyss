@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { InlineTypes } from '@databyss-org/services/interfaces/Range'
-import { BlockReference } from '@databyss-org/services/interfaces'
+import { BlockReference, BlockType } from '@databyss-org/services/interfaces'
 import { validURL } from '@databyss-org/services/lib/util'
 import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
@@ -25,7 +25,7 @@ export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
               if (!atomics.some((a) => a._id === i[1])) {
                 // inline page link
                 if (i[0] === InlineTypes.Link && !validURL(i[1])) {
-                  atomics.push({ type: InlineTypes.Link, _id: i[1] })
+                  atomics.push({ type: BlockType.Link, _id: i[1] })
                 }
                 const atomicType = getInlineAtomicType(i[0])
                 if (atomicType) {
