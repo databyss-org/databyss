@@ -7,7 +7,6 @@ import {
   getPouchSecret,
 } from '@databyss-org/services/session/clientStorage'
 import { Document } from '@databyss-org/services/interfaces'
-import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { DocumentType, PageDoc } from '../interfaces'
 import {
   upsertImmediate,
@@ -341,7 +340,7 @@ export async function docIdsRelatedToPage(
 
   // we want to include blockRelations for Links, but not the linked pages
   let _relatedBlockIds = _relatedBlocks
-    .filter((_b) => _b.type !== InlineTypes.Link)
+    .filter((_b) => _b.type !== BlockType.Link)
     .map((_b) => _b._id)
   let _relationIds = _relatedBlocks.map((_b) => `r_${_b._id}`)
 

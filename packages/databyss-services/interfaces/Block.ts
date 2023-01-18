@@ -18,7 +18,7 @@ export enum BlockType {
 
 export interface BlockReference {
   _id: string
-  type: BlockType | InlineTypes.Link
+  type: BlockType
 }
 
 export class Block implements BlockReference {
