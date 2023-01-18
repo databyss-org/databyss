@@ -47,6 +47,7 @@ export enum NotificationType {
   Dialog = 'DIALOG',
   Sticky = 'STICKY',
   ForceUpdate = 'FORCE_UPDATE',
+  RunMigration = 'RUN_MIGRATION',
 }
 
 export interface Notification {
@@ -57,6 +58,7 @@ export interface Notification {
   targetVersion?: string
   href?: string
   viewedAt?: number
+  migrationId?: string
 }
 
 export interface UserPreference {

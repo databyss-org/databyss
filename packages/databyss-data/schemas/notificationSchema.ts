@@ -25,6 +25,9 @@ export const notificationSchema: JSONSchema4 = {
     viewedAt: {
       type: 'number',
     },
+    migrationId: {
+      type: 'string',
+    },
   },
   required: ['id', 'type', 'messageHtml', 'createdAt'],
 }

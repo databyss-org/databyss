@@ -352,6 +352,7 @@ const SessionProvider = ({
           state.session &&
           !(state.session instanceof ResourcePending) &&
           !(state.session instanceof Error) &&
+          !dbRef.initialSyncComplete &&
           dbRef.readOnly &&
           !isPublicAccount() &&
           !isMobile()

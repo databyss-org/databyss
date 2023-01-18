@@ -4,8 +4,10 @@ import {
   UserPreference,
 } from '@databyss-org/data/pouchdb/interfaces'
 import semver from 'semver'
+import { runMigration } from '@databyss-org/data/pouchdb/migrations'
 import { version } from '@databyss-org/services'
 import { useUserPreferences } from '@databyss-org/data/pouchdb/hooks'
+import { dbRef } from '@databyss-org/data/pouchdb/db'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { LoadingFallback } from '../../components'
@@ -25,7 +27,8 @@ export const UserPreferencesContext = createContext<UserPreferencesContextType>(
 
 export const UserPreferencesProvider = ({ children }) => {
   const [queryRes, setUserPreferences] = useUserPreferences()
-  const { notifyConfirm } = useNotifyContext() ?? {}
+  const { notifyConfirm, notifyBackgroundTask, hideSticky } =
+    useNotifyContext() ?? {}
   const isPublicAccount =
     useSessionContext((c) => c && c.isPublicAccount) ?? (() => false)
   const [renderChildren, setRenderChildren] = useState(false)
@@ -57,6 +60,7 @@ export const UserPreferencesProvider = ({ children }) => {
         return false
       }
       switch (_notification.type) {
+        case NotificationType.RunMigration:
         case NotificationType.Dialog: {
           if (isPublicAccount()) {
             // TODO: add a `public` flag to Notification
@@ -97,6 +101,24 @@ export const UserPreferencesProvider = ({ children }) => {
           })
           break
         }
+        case NotificationType.RunMigration: {
+          if (!dbRef.initialSyncComplete) {
+            return
+          }
+          setRenderChildren(true)
+          dbRef.readOnly = true
+          notifyBackgroundTask(
+            `${_notification.messageHtml} Your Databyss will be in read-only mode until the migration is complete.`
+          )
+          runMigration(dbRef.current as any, _notification.migrationId!).then(
+            () => {
+              setNotificationRead(_notification.id!)
+              dbRef.readOnly = false
+              hideSticky()
+            }
+          )
+          break
+        }
         case NotificationType.ForceUpdate: {
           setRenderChildren(false)
           notifyConfirm({
@@ -117,7 +139,7 @@ export const UserPreferencesProvider = ({ children }) => {
     } else {
       setRenderChildren(true)
     }
-  }, [JSON.stringify(_notifications)])
+  }, [JSON.stringify(_notifications), dbRef.initialSyncComplete])
 
   const setPreferredCitationStyle = (styleId: string) => {
     // error checks

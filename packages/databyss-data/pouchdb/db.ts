@@ -49,6 +49,7 @@ interface DbRef {
   current: PouchDB.Database<any> | null
   readOnly: boolean
   lastSeq: string | number
+  initialSyncComplete: boolean
 }
 
 const getPouchDb = (groupId: string) => {
@@ -61,6 +62,7 @@ const getPouchDb = (groupId: string) => {
 export const dbRef: DbRef = {
   current: null,
   readOnly: false,
+  initialSyncComplete: false,
   lastSeq: 'now',
 }
 
@@ -393,6 +395,7 @@ export const initDb = ({
         }
         dbRef.current = _pouchDb
         dbRef.readOnly = isPublicGroup
+        dbRef.initialSyncComplete = true
       }
       if (onReplicationComplete) {
         onReplicationComplete(success)
