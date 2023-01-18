@@ -7,6 +7,7 @@ import {
   View,
   RawHtml,
 } from '@databyss-org/ui/primitives'
+import LoadingIcon from '@databyss-org/ui/assets/loading.svg'
 import {
   NotAuthorizedError,
   NetworkUnavailableError,
@@ -45,6 +46,8 @@ export interface DialogOptions {
 
 export interface StickyOptions {
   visible?: boolean
+  backgroundTask?: boolean
+  message?: string
   children?: ReactNode | null
 }
 
@@ -62,6 +65,7 @@ interface ContextType {
   notifyHtml: (options: DialogOptions) => void
   notifySticky: (options: StickyOptions) => void
   notifyConfirm: (options: DialogOptions) => void
+  notifyBackgroundTask: (message: string) => void
   hideDialog: () => void
   hideSticky: () => void
   hideApplication: () => void
@@ -380,6 +384,16 @@ class NotifyProvider extends React.Component {
     })
   }
 
+  notifyBackgroundTask = (message: string) => {
+    this.setState({
+      sticky: {
+        backgroundTask: true,
+        message,
+        visible: true,
+      },
+    })
+  }
+
   hideDialog = () => {
     this.setState({
       dialog: initialDialogState,
@@ -452,6 +466,7 @@ class NotifyProvider extends React.Component {
           notifyHtml: this.notifyHtml,
           notifySticky: this.notifySticky,
           notifyConfirm: this.notifyConfirm,
+          notifyBackgroundTask: this.notifyBackgroundTask,
           hideDialog: this.hideDialog,
           hideSticky: this.hideSticky,
           showApplication: this.showApplication,
@@ -460,9 +475,21 @@ class NotifyProvider extends React.Component {
           isOnline,
         }}
       >
-        <StickyMessage visible={sticky.visible}>
+        <StickyMessage
+          visible={sticky.visible}
+          canDismiss={!sticky.backgroundTask}
+          rightAlignChildren={
+            sticky.backgroundTask ? (
+              <LoadingIcon width={20} height={20} />
+            ) : null
+          }
+        >
           <View flexDirection="row" alignItems="center">
-            {sticky.children}
+            {sticky.message ? (
+              <Text variant="uiTextNormal">{sticky.message}</Text>
+            ) : (
+              sticky.children
+            )}
           </View>
         </StickyMessage>
         <View

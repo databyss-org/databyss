@@ -14,6 +14,8 @@ export const DefaultMessageDict: {
 } = {
   [NotificationType.ForceUpdate]:
     "We've made some changes on our servers that require you to update to the latest version. Click OK to update and reload the application. All your changes will be preserved.",
+  [NotificationType.RunMigration]:
+    'We are running a required migration on your data.',
   [NotificationType.Dialog]: null,
   [NotificationType.Sticky]: null,
 }

@@ -12,7 +12,7 @@ export enum BlockType {
   EndSource = 'END_SOURCE',
   EndTopic = 'END_TOPIC',
   Embed = 'EMBED',
-  Link = 'link',
+  Link = 'LINK',
   _ANY = '_ANY',
 }
 
