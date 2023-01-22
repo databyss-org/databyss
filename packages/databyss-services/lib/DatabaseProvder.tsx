@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { CouchDb } from '@databyss-org/data/couchdb-client/couchdb'
+import { CouchDb } from '@databyss-org/data/couchdb/couchdb'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
 
 interface ContextType {

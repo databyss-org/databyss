@@ -48,7 +48,6 @@ const App = () => {
               >
                 <Private />
               </SessionProvider>
-              {/* <ReactQueryDevtools initialIsOpen={false} /> */}
             </DatabaseProvider>
           </QueryClientProvider>
         )}

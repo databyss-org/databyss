@@ -1,5 +1,5 @@
 import express from 'express'
-import { cloudant } from '@databyss-org/data/couchdb'
+import { cloudant } from '@databyss-org/data/cloudant'
 import { authMiddleware } from '../../middleware'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'

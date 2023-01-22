@@ -1,4 +1,4 @@
-import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { cloudant } from '@databyss-org/data/cloudant/cloudant'
 import {
   CredentialResponse,
   createGroupId,

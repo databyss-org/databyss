@@ -10,7 +10,7 @@ import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 
 import { dbRef, getLastSequence } from '../db'
-import { CouchDb } from '../../couchdb-client/couchdb'
+import { CouchDb } from '../../couchdb/couchdb'
 import { DocumentArrayToDict } from './utils'
 import { defaultUseDocumentOptions, UseDocumentOptions } from './useDocument'
 import { uid } from '../../lib/uid'

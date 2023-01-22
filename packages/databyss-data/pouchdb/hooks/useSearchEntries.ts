@@ -8,7 +8,7 @@ import { DocumentType } from '../interfaces'
 import { usePages } from './'
 import { useDocuments } from './useDocuments'
 import { Block } from '../../../databyss-services/interfaces'
-import { CouchDb } from '../../couchdb-client/couchdb'
+import { CouchDb } from '../../couchdb/couchdb'
 import { selectors } from '../selectors'
 
 const changesRef: { current: PouchDB.Core.Changes<any> | undefined } = {

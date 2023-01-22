@@ -8,7 +8,7 @@ import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
 import { getGroupActionQ } from './groups/utils'
-import { CouchDb } from '../couchdb-client/couchdb'
+import { CouchDb } from '../couchdb/couchdb'
 
 const INTERVAL_TIME = 1000
 

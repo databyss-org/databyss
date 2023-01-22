@@ -6,7 +6,7 @@ import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvder'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 
 import { dbRef } from '../db'
-import { CouchDb } from '../../couchdb-client/couchdb'
+import { CouchDb } from '../../couchdb/couchdb'
 
 export interface UseDocumentOptions {
   enabled?: boolean

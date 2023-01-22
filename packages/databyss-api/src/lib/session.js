@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { cloudant } from '@databyss-org/data/couchdb'
+import { cloudant } from '@databyss-org/data/cloudant'
 
 export const getTokenFromUserId = (userId) =>
   new Promise((resolve, reject) =>

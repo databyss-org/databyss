@@ -1,4 +1,4 @@
-import { cloudant } from '@databyss-org/data/couchdb'
+import { cloudant } from '@databyss-org/data/cloudant'
 import { Role } from '@databyss-org/data/interfaces'
 
 // function checkRequiredRoles(requiredRoles: GroupRole[], userRoles: GroupRole) {

@@ -1,4 +1,4 @@
-import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { cloudant } from '@databyss-org/data/cloudant/cloudant'
 import { run, ServerProcess, sleep } from '@databyss-org/scripts/lib'
 import { Group } from '@databyss-org/services/interfaces'
 

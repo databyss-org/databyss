@@ -1,7 +1,7 @@
 import {
   SearchTerm,
   splitSearchTerms,
-} from '@databyss-org/data/couchdb-client/couchdb'
+} from '@databyss-org/data/couchdb/couchdb'
 import React, { useState, useMemo } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 

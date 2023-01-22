@@ -29,7 +29,7 @@ import { InlineTypes, Mark } from '@databyss-org/services/interfaces/Range'
 import { Leaf as LeafComponent } from '@databyss-org/editor/components/Leaf'
 import { TitleElement } from '@databyss-org/editor/components/TitleElement'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
-import { SearchTerm } from '@databyss-org/data/couchdb-client/couchdb'
+import { SearchTerm } from '@databyss-org/data/couchdb/couchdb'
 import {
   AtomicHeader,
   isAtomicClosure,

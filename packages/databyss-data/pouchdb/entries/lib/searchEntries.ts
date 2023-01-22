@@ -15,11 +15,7 @@ import {
 } from '@databyss-org/editor/lib/util'
 import { cloneDeep } from 'lodash'
 import { searchText } from '../../utils'
-import {
-  couchDbRef,
-  splitSearchTerms,
-  unorm,
-} from '../../../couchdb-client/couchdb'
+import { couchDbRef, splitSearchTerms, unorm } from '../../../couchdb/couchdb'
 
 export interface SearchEntriesResultRow {
   entryId: string

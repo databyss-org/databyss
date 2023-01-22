@@ -5,7 +5,7 @@ import {
   ServerProcess,
   ServerProcessArgs,
 } from '@databyss-org/scripts/lib'
-import { cloudant, DocumentScope } from '@databyss-org/data/couchdb'
+import { cloudant, DocumentScope } from '@databyss-org/data/cloudant'
 import { setSecurity } from '@databyss-org/api/src/lib/createUserDatabase'
 import { Group } from '@databyss-org/services/interfaces'
 

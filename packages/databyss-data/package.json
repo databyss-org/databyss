@@ -33,6 +33,9 @@
   },
   "dependencies": {
     "@types/pouchdb": "^6.4.0",
+    "axios": "^1.2.3",
+    "changesreader": "^2.2.0",
+    "follow": "^1.1.0",
     "js-base64": "^3.6.0",
     "lancaster-stemmer": "^2.0.0",
     "nano": "~8.2.2",

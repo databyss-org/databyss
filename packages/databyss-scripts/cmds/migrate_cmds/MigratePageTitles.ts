@@ -1,4 +1,4 @@
-import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { cloudant } from '@databyss-org/data/cloudant/cloudant'
 import { uid } from '@databyss-org/data/lib/uid'
 import { DocumentType, PageDoc } from '@databyss-org/data/pouchdb/interfaces'
 import {

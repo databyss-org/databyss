@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { cloudant } from '@databyss-org/data/cloudant/cloudant'
 import {
   ServerProcess,
   ServerProcessArgs,
