@@ -25,16 +25,29 @@ export function processChange({
     return
   }
   _selectorKeys.forEach((_key) => {
-    queryClient.setQueryData([selectors[_key]], (docs: DocumentDict<any>) => ({
-      ...(docs ?? {}),
-      [nextDoc._id]: nextDoc,
-    }))
-    queryClient.setQueryData(`useDocument_${nextDoc._id}`, nextDoc)
+    queryClient.setQueryData([selectors[_key]], (docs: DocumentDict<any>) => {
+      const _docs = { ...(docs ?? {}) }
+      if (nextDoc._deleted) {
+        delete _docs[nextDoc._id]
+      } else {
+        _docs[nextDoc._id] = nextDoc
+      }
+      return _docs
+    })
+    if (nextDoc._deleted) {
+      queryClient.removeQueries(`useDocument_${nextDoc._id}`)
+    } else {
+      queryClient.setQueryData(`useDocument_${nextDoc._id}`, nextDoc)
+    }
     // query key is source doc id for useBibliography
-    queryClient.setQueryData([nextDoc._id], (docs: DocumentDict<any>) => ({
-      ...(docs ?? {}),
-      [nextDoc._id]: nextDoc,
-    }))
+    if (nextDoc._deleted) {
+      queryClient.removeQueries([nextDoc._id])
+    } else {
+      queryClient.setQueryData([nextDoc._id], (docs: DocumentDict<any>) => ({
+        ...(docs ?? {}),
+        [nextDoc._id]: nextDoc,
+      }))
+    }
   })
 }
 
@@ -67,5 +80,9 @@ export function initChangeResponder({
     })
     .on('error', (e) => {
       console.error('[ChangeResponder] error', e)
+      if (e.statusCode === 403 || e.statusCode === 401) {
+        // unauthorized, redirect to root
+        window.location.href = '/'
+      }
     })
 }

@@ -36,6 +36,7 @@ export interface DbDocument extends Document {
   doctype: DocumentType
   blockType?: BlockType
   type?: BlockType
+  _deleted?: boolean
 }
 
 export interface UserGroup {
