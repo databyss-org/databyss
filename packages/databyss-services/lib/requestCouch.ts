@@ -88,7 +88,9 @@ const processQ = () => {
         err instanceof InsufficientPermissionError ||
         err instanceof NotAuthorizedError
       ) {
+        console.log('[requestCouch] processQ error response', err)
         _req.reject(err)
+        setTimeout(processQ, 250)
         return
       }
       // we have to assume that we're hitting cloudant's rate limit and getting a 429
