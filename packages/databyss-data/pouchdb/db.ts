@@ -364,7 +364,7 @@ export const getLastSequence = () =>
       })
       .then((changes) => {
         _lastSeqMemo = changes.last_seq
-        console.log('[db] last_seq', changes.last_seq)
+        // console.log('[db] last_seq', changes.last_seq)
         resolve(changes.last_seq)
       })
       .catch(reject)
