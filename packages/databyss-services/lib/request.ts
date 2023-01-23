@@ -31,7 +31,7 @@ function request(uri, options: RequestOptions = {}) {
   const _controller = new AbortController()
   const _timeoutDuration = timeout || FETCH_TIMEOUT
 
-  return new Promise<Response | string>((resolve, reject) => {
+  return new Promise<any>((resolve, reject) => {
     const _timeoutId = setTimeout(() => {
       _controller.abort()
       console.log(`[request] Request timed out after ${_timeoutDuration}ms`)
@@ -94,10 +94,10 @@ export async function checkNetwork() {
     return true
   }
   try {
-    const _res = (await request(process.env.API_URL, {
+    const _res = await request(process.env.API_URL, {
       method: 'HEAD',
       rawResponse: true,
-    })) as Response
+    })
     if (!(_res && (_res.ok || _res.type === 'opaque'))) {
       return false
     }

@@ -67,6 +67,7 @@ export class ChangesReader {
     self.started = true
 
     // handle overidden defaults
+    // eslint-disable-next-line no-param-reassign
     opts = opts || {}
     Object.assign(self, opts)
 
@@ -78,7 +79,7 @@ export class ChangesReader {
         let pause = 0
         const req = {
           baseURL: self.couchURL,
-          url: encodeURIComponent(self.db) + '/_changes',
+          url: `${encodeURIComponent(self.db)}/_changes`,
           method: 'post',
           params: {
             feed: 'longpoll',
@@ -123,6 +124,7 @@ export class ChangesReader {
           // if we have data
           if (data && data.results && data.results.length > 0) {
             // emit 'change' events
+            // eslint-disable-next-line no-restricted-syntax, guard-for-in
             for (const i in data.results) {
               self.ee.emit('change', data.results[i])
             }
