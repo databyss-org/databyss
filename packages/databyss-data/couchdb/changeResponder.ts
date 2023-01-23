@@ -1,4 +1,6 @@
 import { DocumentDict } from '@databyss-org/services/interfaces'
+import { getPouchSecret } from '@databyss-org/services/session/clientStorage'
+import { Base64 } from 'js-base64'
 import { QueryClient } from 'react-query'
 import { DbDocument } from '../pouchdb/interfaces'
 import { getSelectorsForDoc, selectors } from '../pouchdb/selectors'
@@ -18,6 +20,7 @@ export function processChange({
   nextDoc: DbDocument
 }) {
   const _selectorKeys = getSelectorsForDoc(nextDoc)
+  // console.log('[processChange]', _selectorKeys, nextDoc)
   if (!_selectorKeys.length) {
     return
   }
@@ -43,7 +46,21 @@ export function initChangeResponder({
   groupId: string
 }) {
   console.log('[initChangeResponder]', groupId)
-  const cr = new ChangesReader(groupId, `https://${process.env.CLOUDANT_HOST}`)
+  let _headers = {}
+  const _secrets = getPouchSecret()
+  if (_secrets && groupId && _secrets[groupId]) {
+    _headers = {
+      Authorization: `Basic ${Base64.btoa(
+        `${_secrets[groupId].dbKey}:${_secrets[groupId].dbPassword}`
+      )}`,
+    }
+  }
+
+  const cr = new ChangesReader(
+    groupId,
+    `https://${process.env.CLOUDANT_HOST}`,
+    _headers
+  )
   cr.start({ includeDocs: true })
     .on('change', (change) => {
       processChange({ queryClient, nextDoc: change.doc as DbDocument })

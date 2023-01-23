@@ -1,7 +1,7 @@
+// based on: https://github.com/glynnbird/changesreader
 import axios from 'axios'
 
 const EventEmitter = require('events')
-const pkg = require('../package.json')
 
 /**
  * Monitors the changes feed (after calling .start()/.get()) and emits events
@@ -16,10 +16,11 @@ const pkg = require('../package.json')
  */
 export class ChangesReader {
   // constructor
-  constructor(db, couchURL) {
+  constructor(db, couchURL, headers) {
     this.db = db
     this.couchURL = couchURL
     this.setDefaults()
+    this.headers = headers ?? {}
   }
 
   // set defaults

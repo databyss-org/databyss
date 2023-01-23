@@ -27,6 +27,7 @@ import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { checkNetwork } from '@databyss-org/services/lib/request'
+import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import { QueryClient } from 'react-query'
 import { DocumentType } from './interfaces'
 import { setDbBusy } from './utils'
@@ -35,7 +36,7 @@ import { connect, CouchDb, couchDbRef } from '../couchdb/couchdb'
 import embedSchema from '../schemas/embedSchema'
 import { UnauthorizedDatabaseReplication } from '../../databyss-services/interfaces/Errors'
 import { initialCaches, warmupCaches } from './warmup'
-import { initChangeResponder } from '../couchdb/changes'
+import { initChangeResponder } from '../couchdb/changeResponder'
 
 export { selectors } from './selectors'
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
@@ -424,7 +425,7 @@ export const initDb = ({
           isPublicGroup ? 'public' : 'private'
         })`
       )
-      if (isPublicGroup) {
+      if (isPublicGroup || isMobile()) {
         // replicatePublicGroup({ groupId, pouchDb: _pouchDb }).then(
         //   _replicationComplete
         // )

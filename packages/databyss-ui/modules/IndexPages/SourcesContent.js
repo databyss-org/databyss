@@ -48,7 +48,6 @@ export const SourcesContent = () => {
   if (!sourcesRes.isSuccess) {
     return <LoadingFallback queryObserver={sourcesRes} />
   }
-  console.log('[SourcesContent] render', sourcesRes.data)
 
   // if author is provided in the url `.../sources?firstName=''&lastName='' render authors
   let _authorFirstName = null
