@@ -77,13 +77,14 @@ function request(uri, options: RequestOptions = {}) {
           resolve(response)
         }
         if (responseAsJson) {
-          response!.json().then(resolve).catch(reject)
+          response.json().then(resolve).catch(reject)
+          return
         }
-        if (response!.headers.get('Content-Type')?.match('json')) {
-          response!.json().then(resolve).catch(reject)
-        } else {
-          response!.text().then(resolve).catch(reject)
+        if (response.headers.get('Content-Type')?.match('json')) {
+          response.json().then(resolve).catch(reject)
+          return
         }
+        response!.text().then(resolve).catch(reject)
       })
   })
 }
