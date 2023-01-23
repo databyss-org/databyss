@@ -22,11 +22,19 @@ export function processChange({
     return
   }
   _selectorKeys.forEach((_key) => {
-    queryClient.setQueryData([selectors[_key]], (docs: DocumentDict<any>) => ({
+    queryClient.setQueryData([selectors[_key]], (docs: DocumentDict<any>) => {
+      console.log('[processChange]', selectors[_key], nextDoc)
+      return {
+        ...(docs ?? {}),
+        [nextDoc._id]: nextDoc,
+      }
+    })
+    queryClient.setQueryData(`useDocument_${nextDoc._id}`, nextDoc)
+    // query key is source doc id for useBibliography
+    queryClient.setQueryData([nextDoc._id], (docs: DocumentDict<any>) => ({
       ...(docs ?? {}),
       [nextDoc._id]: nextDoc,
     }))
-    queryClient.setQueryData(`useDocument_${nextDoc._id}`, nextDoc)
   })
 }
 

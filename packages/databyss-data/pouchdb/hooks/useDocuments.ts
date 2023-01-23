@@ -12,7 +12,10 @@ import PouchDB from 'pouchdb'
 import { dbRef, getLastSequence } from '../db'
 import { CouchDb } from '../../couchdb/couchdb'
 import { DocumentArrayToDict } from './utils'
-import { defaultUseDocumentOptions, UseDocumentOptions } from './useDocument'
+import {
+  applyDefaultUseDocumentOptions,
+  UseDocumentOptions,
+} from './useDocument'
 import { uid } from '../../lib/uid'
 
 const subscriptionDict: {
@@ -28,7 +31,7 @@ export const useDocuments = <T extends Document>(
   const listenerIdRef = useRef<string>(uid())
   const queryClient = useQueryClient()
   const { isCouchMode } = useDatabaseContext()
-  const _options = { ...defaultUseDocumentOptions, ...options }
+  const _options = applyDefaultUseDocumentOptions(options)
 
   let docIds: string[]
   let queryKey: QueryKey
@@ -41,7 +44,6 @@ export const useDocuments = <T extends Document>(
     selector = selectorOrIdList
   }
   const queryKeyJson = JSON.stringify(queryKey)
-  // console.log('useDocuments', selector)
 
   // console.log('useDocuments.selector', selector)
   const query = useQuery<DocumentDict<T>>(
@@ -84,6 +86,7 @@ export const useDocuments = <T extends Document>(
   )
 
   const subscribe = () => {
+    // console.log('[useDocuments] subscribe', queryKeyJson, _options)
     if (!_options.enabled || !_options.subscribe) {
       return
     }

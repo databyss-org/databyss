@@ -29,6 +29,7 @@ export const updateInlines = async ({
   _id: string
   caches?: DocumentCacheDict
 }) => {
+  console.log('[updateInlines]')
   const _relation = await findOne<BlockRelation>({
     doctype: DocumentType.BlockRelation,
     query: {

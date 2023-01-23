@@ -35,6 +35,7 @@
     "@types/pouchdb": "^6.4.0",
     "axios": "^1.2.3",
     "changesreader": "^2.2.0",
+    "fast-deep-equal": "^3.1.3",
     "follow": "^1.1.0",
     "js-base64": "^3.6.0",
     "lancaster-stemmer": "^2.0.0",
