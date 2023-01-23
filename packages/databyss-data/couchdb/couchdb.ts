@@ -148,7 +148,7 @@ export class CouchDb {
     request: { docs: { id: string }[] },
     options?: RequestCouchOptions
   ): Promise<{ results: { docs: { ok: any }[] }[] } | null> {
-    return couchPost(`${this.dbName}/_bulk_get`, request, {
+    return couchPost(`${this.dbName}/_bulk_get?revs=false`, request, {
       ...options,
       authenticateAsGroupId: this.dbName,
     }) as Promise<{

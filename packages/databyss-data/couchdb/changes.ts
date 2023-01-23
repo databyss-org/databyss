@@ -22,13 +22,10 @@ export function processChange({
     return
   }
   _selectorKeys.forEach((_key) => {
-    queryClient.setQueryData([selectors[_key]], (docs: DocumentDict<any>) => {
-      console.log('[processChange]', selectors[_key], nextDoc)
-      return {
-        ...(docs ?? {}),
-        [nextDoc._id]: nextDoc,
-      }
-    })
+    queryClient.setQueryData([selectors[_key]], (docs: DocumentDict<any>) => ({
+      ...(docs ?? {}),
+      [nextDoc._id]: nextDoc,
+    }))
     queryClient.setQueryData(`useDocument_${nextDoc._id}`, nextDoc)
     // query key is source doc id for useBibliography
     queryClient.setQueryData([nextDoc._id], (docs: DocumentDict<any>) => ({
@@ -46,32 +43,11 @@ export function initChangeResponder({
   groupId: string
 }) {
   console.log('[initChangeResponder]', groupId)
-  // follow(
-  //   {
-  //     db: `https://${process.env.CLOUDANT_HOST}/${groupId}`,
-  //     include_docs: true,
-  //     since: 'now',
-  //   },
-  //   (error, change) => {
-  //     if (error) {
-  //       console.error('[ChangeResponder] error', error)
-  //       return
-  //     }
-  //     console.log('[ChangeResponder] change', change)
-  //   }
-  // )
-
   const cr = new ChangesReader(groupId, `https://${process.env.CLOUDANT_HOST}`)
   cr.start({ includeDocs: true })
     .on('change', (change) => {
-      processChange({ queryClient, nextDoc: change.doc as _Document })
+      processChange({ queryClient, nextDoc: change.doc as DbDocument })
     })
-    // .on('batch', (b) => {
-    //   console.log('[ChangeResponder] batch', b)
-    // })
-    // .on('seq', (s) => {
-    //   console.log('[ChangeResponder] sequence token', s)
-    // })
     .on('error', (e) => {
       console.error('[ChangeResponder] error', e)
     })

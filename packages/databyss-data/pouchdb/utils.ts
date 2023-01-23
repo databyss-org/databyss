@@ -142,7 +142,7 @@ export const getDocuments = async <D>(
   const _options = { docs: ids.map((id) => ({ id })) }
   const _res = await dbRef.current?.bulkGet(_options)
   return _res!.results.reduce((accum, curr) => {
-    const _doc: any = curr.docs[0]
+    const _doc: any = curr.docs[curr.docs.length - 1]
     if (_doc.error) {
       console.warn('[getDocuments] error', _doc.error)
       if (_doc.error.name !== 'not_found' && _doc.error.error !== 'not_found') {

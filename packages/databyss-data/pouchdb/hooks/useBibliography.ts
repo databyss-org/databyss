@@ -54,7 +54,6 @@ export const useBibliography = ({
     }
     const _bibDict = await bibliographyFromSources(sources!, formatOptions)
     if (_bibDict) {
-      console.log('[updateBibliography]', queryKey, sources)
       queryClient.setQueryData<BibliographyDict>(queryKey, _bibDict)
     }
   }
