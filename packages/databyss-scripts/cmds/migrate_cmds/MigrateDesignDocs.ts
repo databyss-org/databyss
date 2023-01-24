@@ -1,10 +1,10 @@
-import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { cloudant } from '@databyss-org/data/cloudant/cloudant'
 import {
   ServerProcess,
   ServerProcessArgs,
   sleep,
 } from '@databyss-org/scripts/lib'
-import { updateGroupDesignDocs } from '@databyss-org/data/couchdb/util'
+import { updateGroupDesignDocs } from '@databyss-org/data/cloudant/util'
 import { DesignDoc } from '@databyss-org/data/interfaces'
 
 export async function groupIdForUser(email: string) {

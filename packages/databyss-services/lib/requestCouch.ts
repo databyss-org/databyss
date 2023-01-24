@@ -1,5 +1,10 @@
 import { Base64 } from 'js-base64'
 import request, { RequestOptions } from './request'
+import {
+  ResourceNotFoundError,
+  InsufficientPermissionError,
+  NotAuthorizedError,
+} from '../interfaces'
 import { getPouchSecret } from './../session/clientStorage'
 
 export interface RequestCouchOptions extends RequestOptions {
@@ -78,6 +83,16 @@ const processQ = () => {
       _req.resolve(res)
     })
     .catch((err) => {
+      if (
+        err instanceof ResourceNotFoundError ||
+        err instanceof InsufficientPermissionError ||
+        err instanceof NotAuthorizedError
+      ) {
+        console.log('[requestCouch] processQ error response', err)
+        _req.reject(err)
+        setTimeout(processQ, 250)
+        return
+      }
       // we have to assume that we're hitting cloudant's rate limit and getting a 429
       // (assume because the lack of CORS headers in the response means we can't read the status code, see SO link below)
       // https://stackoverflow.com/questions/64341579/why-cant-i-access-the-response-eg-to-check-response-code-when-i-get-a-429-wi
@@ -85,7 +100,7 @@ const processQ = () => {
       _req.retryCount += 1
       if (_req.retryCount > 20) {
         setTimeout(processQ, 250)
-        _req.resolve(err)
+        _req.reject(err)
       } else {
         requestQ.unshift(_req)
         setTimeout(processQ, 250 * _req.retryCount)

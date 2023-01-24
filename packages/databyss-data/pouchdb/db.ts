@@ -27,14 +27,16 @@ import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { checkNetwork } from '@databyss-org/services/lib/request'
+import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import { QueryClient } from 'react-query'
 import { DocumentType } from './interfaces'
 import { setDbBusy } from './utils'
 import { processGroupActionQ } from './groups/utils'
-import { connect, CouchDb, couchDbRef } from '../couchdb-client/couchdb'
+import { connect, CouchDb, couchDbRef } from '../couchdb/couchdb'
 import embedSchema from '../schemas/embedSchema'
 import { UnauthorizedDatabaseReplication } from '../../databyss-services/interfaces/Errors'
 import { initialCaches, warmupCaches } from './warmup'
+import { initChangeResponder } from '../couchdb/changeResponder'
 
 export { selectors } from './selectors'
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
@@ -106,10 +108,9 @@ export const BATCH_SIZE: number = (process.env.REPLICATE_BATCH_SIZE ??
 export const BATCHES_LIMIT: number = (process.env.REPLICATE_BATCHES_LIMIT ??
   (10 as unknown)) as number
 
-/*
-replicates public remote DB to local
-*/
-
+/**
+ * Replicates public remote DB to local
+ */
 export const replicatePublicGroup = ({
   groupId,
   pouchDb,
@@ -159,10 +160,9 @@ export const replicatePublicGroup = ({
       })
   })
 
-/*
-replicates remote DB to local
-*/
-
+/**
+ * Replicates remote DB to local
+ */
 export const replicateDbFromRemote = ({
   groupId,
   pouchDb,
@@ -364,7 +364,7 @@ export const getLastSequence = () =>
       })
       .then((changes) => {
         _lastSeqMemo = changes.last_seq
-        console.log('[db] last_seq', changes.last_seq)
+        // console.log('[db] last_seq', changes.last_seq)
         resolve(changes.last_seq)
       })
       .catch(reject)
@@ -425,10 +425,15 @@ export const initDb = ({
           isPublicGroup ? 'public' : 'private'
         })`
       )
-      if (isPublicGroup) {
-        replicatePublicGroup({ groupId, pouchDb: _pouchDb }).then(
-          _replicationComplete
-        )
+      if (isPublicGroup || isMobile()) {
+        // replicatePublicGroup({ groupId, pouchDb: _pouchDb }).then(
+        //   _replicationComplete
+        // )
+        initChangeResponder({ queryClient, groupId })
+        if (onReplicationComplete) {
+          onReplicationComplete(true)
+        }
+        resolve()
       } else {
         replicateDbFromRemote({
           groupId,

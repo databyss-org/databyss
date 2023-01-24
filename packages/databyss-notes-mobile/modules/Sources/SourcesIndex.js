@@ -135,7 +135,6 @@ const SourcesIndex = () => {
       <NoResultsView text="No author found" />
     )
   }
-
   const render = () => {
     const details = parseLocation(location)
 

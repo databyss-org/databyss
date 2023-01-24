@@ -1,5 +1,5 @@
 import express from 'express'
-import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { cloudant } from '@databyss-org/data/cloudant/cloudant'
 import { SysUser, SysGroup, Role } from '@databyss-org/data/interfaces'
 import { groupMiddleware, authMiddleware } from '../../middleware'
 import { UnauthorizedError } from '../../lib/Errors'

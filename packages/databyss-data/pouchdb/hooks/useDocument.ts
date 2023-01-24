@@ -6,7 +6,7 @@ import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvder'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 
 import { dbRef } from '../db'
-import { CouchDb } from '../../couchdb-client/couchdb'
+import { CouchDb } from '../../couchdb/couchdb'
 
 export interface UseDocumentOptions {
   enabled?: boolean
@@ -14,10 +14,12 @@ export interface UseDocumentOptions {
   subscribe?: boolean
 }
 
-export const defaultUseDocumentOptions = {
-  enabled: true,
-  initialData: null,
-  subscribe: true,
+export function applyDefaultUseDocumentOptions(options: UseDocumentOptions) {
+  return {
+    enabled: options.enabled ?? true,
+    initialData: options.initialData ?? null,
+    subscribe: options.subscribe ?? true,
+  }
 }
 
 const subscriptionDict: {
@@ -33,7 +35,7 @@ export const useDocument = <T extends Document>(
   const { isCouchMode } = useDatabaseContext()
   const queryClient = useQueryClient()
   const queryKey = `useDocument_${_id}`
-  const _options = { ...defaultUseDocumentOptions, ...options }
+  const _options = applyDefaultUseDocumentOptions(options)
 
   useEffect(() => {
     EM.process()

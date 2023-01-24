@@ -10,6 +10,7 @@ import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
 import { useBlocksInPages } from '.'
 import { useDocuments } from './useDocuments'
 import { UseDocumentOptions } from './useDocument'
+import { selectors } from '../selectors'
 
 interface UseBibliographyOptions extends UseDocumentOptions {
   formatOptions: CitationFormatOptions
@@ -27,7 +28,7 @@ export const useBibliography = ({
     enabled: !sourceIds,
     subscribe,
   })
-  const blocksByIdRes = useDocuments<Source>(sourceIds ?? [], {
+  const blocksByIdRes = useDocuments<Source>(sourceIds ?? selectors.SOURCES, {
     enabled: !!sourceIds,
     subscribe,
   })

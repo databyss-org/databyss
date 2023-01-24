@@ -1,4 +1,4 @@
-import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { cloudant } from '@databyss-org/data/cloudant/cloudant'
 import {
   ServerProcess,
   ServerProcessArgs,
@@ -7,7 +7,7 @@ import {
 import {
   updateSysDesignDocs,
   initiateDatabases,
-} from '@databyss-org/data/couchdb'
+} from '@databyss-org/data/cloudant'
 import { SysUser } from '@databyss-org/data/interfaces'
 import { Document, Group } from '@databyss-org/services/interfaces'
 

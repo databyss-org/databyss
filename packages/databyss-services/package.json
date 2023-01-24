@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/services",
-  "version": "2.8.4",
+  "version": "2.8.5",
   "repository": {
     "type": "git",
     "url": "https://github.com/databyss-org/databyss.git"
@@ -16,10 +16,10 @@
     "@bugsnag/js": "^6.3.2",
     "@bugsnag/node": "^6.3.2",
     "@cloudant/cloudant": "^4.3.0",
-    "@databyss-org/data": "2.8.4",
-    "@databyss-org/editor": "2.8.4",
-    "@databyss-org/services": "2.8.4",
-    "@databyss-org/ui": "2.8.4",
+    "@databyss-org/data": "2.8.5",
+    "@databyss-org/editor": "2.8.5",
+    "@databyss-org/services": "2.8.5",
+    "@databyss-org/ui": "2.8.5",
     "cloudant-upsert": "^0.11.1",
     "json-schema": "^0.2.5",
     "jsonschema": "^1.4.0",

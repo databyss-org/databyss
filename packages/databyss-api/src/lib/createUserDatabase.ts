@@ -1,7 +1,7 @@
 import { SysUser, Role } from '@databyss-org/data/interfaces'
-import { updateGroupDesignDocs } from '@databyss-org/data/couchdb/util'
+import { updateGroupDesignDocs } from '@databyss-org/data/cloudant/util'
 import { uid, uidlc } from '@databyss-org/data/lib/uid'
-import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { cloudant } from '@databyss-org/data/cloudant/cloudant'
 import { DocumentScope } from 'nano'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import {

@@ -1,6 +1,6 @@
 import PouchDB from 'pouchdb'
 import { QueryClient } from 'react-query'
-import { selectors } from './selectors'
+import { getSelectorsForDoc, selectors } from './selectors'
 
 export const initialCaches: any = {}
 
@@ -16,23 +16,15 @@ export async function warmupCaches(
 
   // console.log('[warmupCaches] allDocs', _docs.total_rows)
   _docs.rows.forEach((_row) => {
-    Object.keys(selectors).forEach((_key) => {
-      if (!_row.doc) {
-        return
+    if (!_row.doc) {
+      return
+    }
+    const _selectors = getSelectorsForDoc(_row.doc)
+    _selectors.forEach((_key) => {
+      if (!initialCaches[_key]) {
+        initialCaches[_key] = {}
       }
-      const _selector = selectors[_key]
-      if (_row.doc.doctype === _selector.doctype) {
-        if (
-          (!_selector.blockType && !_selector.type) ||
-          (_selector.blockType && _row.doc.blockType === _selector.blockType) ||
-          (_selector.type && _row.doc.type === _selector.type)
-        ) {
-          if (!initialCaches[_key]) {
-            initialCaches[_key] = {}
-          }
-          initialCaches[_key][_row.id] = _row.doc
-        }
-      }
+      initialCaches[_key][_row.doc._id] = _row.doc
     })
   })
   // console.log('[warmupCaches] caches', initialCaches)

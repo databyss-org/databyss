@@ -5,7 +5,7 @@ import {
   ServerProcessArgs,
   sleep,
 } from '@databyss-org/scripts/lib'
-import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { cloudant } from '@databyss-org/data/cloudant/cloudant'
 import yargs from 'yargs'
 import findRemoveSync from '@databyss-org/find-remove'
 import { BackupDb } from './BackupDb'

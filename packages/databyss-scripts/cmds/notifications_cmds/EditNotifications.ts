@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { cloudant } from '@databyss-org/data/cloudant/cloudant'
 import { ServerProcess, sleep } from '@databyss-org/scripts/lib'
 import {
   Notification,

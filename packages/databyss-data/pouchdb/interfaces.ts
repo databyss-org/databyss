@@ -1,8 +1,12 @@
 import { PageHeader } from '@databyss-org/services/interfaces/Page'
-import { BlockReference } from '@databyss-org/services/interfaces/Block'
+import {
+  BlockReference,
+  BlockType,
+} from '@databyss-org/services/interfaces/Block'
 import {
   Block,
   BlockRelation,
+  Document,
   DocumentDict,
   Page,
 } from '@databyss-org/services/interfaces'
@@ -26,6 +30,13 @@ export enum DocumentType {
   BlockRelation = 'BLOCK_RELATION',
   UserPreferences = 'USER_PREFERENCES',
   Group = 'GROUP',
+}
+
+export interface DbDocument extends Document {
+  doctype: DocumentType
+  blockType?: BlockType
+  type?: BlockType
+  _deleted?: boolean
 }
 
 export interface UserGroup {

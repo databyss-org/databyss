@@ -3,6 +3,7 @@ import {
   BlockType,
   SourceCitationHeader,
 } from '@databyss-org/services/interfaces'
+import equal from 'fast-deep-equal'
 import { DocumentType, DocumentCacheDict } from '../../interfaces'
 import { getDocument, upsertImmediate } from '../../utils'
 import { InlineTypes } from '../../../../databyss-services/interfaces/Range'
@@ -33,7 +34,7 @@ export const setSource = async (data: Source, caches?: DocumentCacheDict) => {
     doc: blockFields,
   })
 
-  if (_prevSource && _prevSource.name?.textValue !== name?.textValue) {
+  if (_prevSource && !equal(_prevSource, blockFields)) {
     await updateInlines({
       inlineType: InlineTypes.InlineSource,
       text: name,

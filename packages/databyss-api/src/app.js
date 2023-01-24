@@ -5,7 +5,7 @@ import Bugsnag from '@bugsnag/js'
 import {
   updateSysDesignDocs,
   initiateDatabases,
-} from '@databyss-org/data/couchdb'
+} from '@databyss-org/data/cloudant'
 import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import BugsnagPluginExpress from '@bugsnag/plugin-express'
 import { ApiError } from './lib/Errors'

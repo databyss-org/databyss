@@ -10,11 +10,7 @@ import {
 } from '@databyss-org/services/interfaces'
 import { urlSafeName, validUriRegex } from '@databyss-org/services/lib/util'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
-import {
-  SearchTerm,
-  stemmer,
-  unorm,
-} from '@databyss-org/data/couchdb-client/couchdb'
+import { SearchTerm, stemmer, unorm } from '@databyss-org/data/couchdb/couchdb'
 import matchAll from 'string.prototype.matchall'
 import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import { EditorState, PagePath } from '../interfaces'

@@ -1,4 +1,4 @@
-import { CouchDb } from '@databyss-org/data/couchdb-client/couchdb'
+import { CouchDb } from '@databyss-org/data/couchdb/couchdb'
 import { uid } from '@databyss-org/data/lib/uid'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'

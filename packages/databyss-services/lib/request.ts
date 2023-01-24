@@ -9,37 +9,6 @@ import {
 
 export const FETCH_TIMEOUT = parseInt(process.env.FETCH_TIMEOUT!, 10)
 
-function checkStatus(response: Response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response
-  }
-  if (response.status === 401) {
-    throw new NotAuthorizedError('Unauthorized')
-  }
-  if (response.status === 403) {
-    throw new InsufficientPermissionError()
-  }
-  if (response.status === 404) {
-    throw new ResourceNotFoundError()
-  }
-  if (response.status === 409) {
-    throw new VersionConflictError()
-  }
-  throw new UnexpectedServerError(response.statusText, response)
-}
-
-function parseResponse(
-  responseAsJson?: boolean
-): (response: Response) => Promise<any> {
-  if (responseAsJson) {
-    return (response) => response.json()
-  }
-  return (response) =>
-    response.headers.get('Content-Type')?.match('json')
-      ? response.json()
-      : response.text()
-}
-
 // eslint-disable-next-line no-undef
 export interface RequestOptions extends RequestInit {
   /**
@@ -62,28 +31,62 @@ function request(uri, options: RequestOptions = {}) {
   const _controller = new AbortController()
   const _timeoutDuration = timeout || FETCH_TIMEOUT
 
-  const _timeoutId = setTimeout(() => {
-    _controller.abort()
-    throw new NetworkUnavailableError(
-      `Request timed out after ${_timeoutDuration}ms`
-    )
-  }, _timeoutDuration)
-
-  return fetch(uri, { ..._options, signal: _controller.signal })
-    .catch((err) => {
-      throw new NetworkUnavailableError(err)
-    })
-    .then((response) => {
-      clearTimeout(_timeoutId)
-      return response
-    })
-    .then(checkStatus)
-    .then((r) => {
-      if (rawResponse) {
-        return r
-      }
-      return parseResponse(responseAsJson)(r)
-    })
+  return new Promise<any>((resolve, reject) => {
+    const _timeoutId = setTimeout(() => {
+      _controller.abort()
+      console.log(`[request] Request timed out after ${_timeoutDuration}ms`)
+      reject(
+        new NetworkUnavailableError(
+          `Request timed out after ${_timeoutDuration}ms`
+        )
+      )
+    }, _timeoutDuration)
+    fetch(uri, { ..._options, signal: _controller.signal })
+      .catch((err) => {
+        reject(new NetworkUnavailableError(err))
+      })
+      .then((response) => {
+        clearTimeout(_timeoutId)
+        if (!response) {
+          reject(new NetworkUnavailableError('Response is null'))
+          return null
+        }
+        if (response.status >= 200 && response.status < 300) {
+          return response
+        }
+        if (response.status === 401) {
+          reject(new NotAuthorizedError('Unauthorized'))
+        }
+        if (response.status === 403) {
+          reject(new InsufficientPermissionError())
+        }
+        if (response.status === 404) {
+          reject(new ResourceNotFoundError())
+        }
+        if (response.status === 409) {
+          reject(new VersionConflictError())
+        }
+        reject(new UnexpectedServerError(response.statusText, response))
+        return response
+      })
+      .then((response) => {
+        if (!response) {
+          return
+        }
+        if (rawResponse) {
+          resolve(response)
+        }
+        if (responseAsJson) {
+          response.json().then(resolve).catch(reject)
+          return
+        }
+        if (response.headers.get('Content-Type')?.match('json')) {
+          response.json().then(resolve).catch(reject)
+          return
+        }
+        response!.text().then(resolve).catch(reject)
+      })
+  })
 }
 
 export async function checkNetwork() {

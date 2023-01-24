@@ -155,7 +155,7 @@ export const IndexPageTitleInput = ({
     <TitleInput
       autoFocus
       placeholder={isSearch ? 'Search' : `untitled ${indexName}`}
-      value={title}
+      value={isReadOnly ? getTitleFromBlock(block, path) : title}
       readonly={isReadOnly || (!block && !isSearch)}
       onChange={onChange}
       onKeyDown={onKeyDown}

@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "2.8.4",
+  "version": "2.8.5",
   "description": "The word processor is dead. Long live the word processor.",
   "main": "index.js",
   "repository": {
@@ -27,6 +27,7 @@
     "start:api": "PORT=5000 NODE_ENV=production NPM_DEPLOY_TARGET=API_SERVER yarn start",
     "start:notes": "NPM_BUILD_TARGET=NOTES_APP node scripts/start.js",
     "start:notes:test": "NPM_BUILD_TARGET=NOTES_APP NODE_ENV=test node scripts/start.js",
+    "start:notes:prod": "NPM_BUILD_TARGET=NOTES_APP NODE_ENV=production node scripts/start.js",
     "start:homepage": "NPM_BUILD_TARGET=HOMEPAGE node scripts/start.js",
     "start:mobile": "PORT=3001 NPM_BUILD_TARGET=NOTES_MOBILE REACT_APP_FORCE_MOBILE=true node scripts/start.js",
     "start:docs": "cd ./packages/databyss-documentation/website && yarn run start",

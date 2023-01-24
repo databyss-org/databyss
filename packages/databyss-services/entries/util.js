@@ -1,4 +1,4 @@
-import { unorm } from '@databyss-org/data/couchdb-client/couchdb'
+import { unorm } from '@databyss-org/data/couchdb/couchdb'
 
 export const createIndexPageEntries = ({
   text,

@@ -11,7 +11,7 @@ import {
   BlockRelation,
 } from '@databyss-org/services/interfaces'
 import { DocumentType, PageDoc } from '@databyss-org/data/pouchdb/interfaces'
-import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { cloudant } from '@databyss-org/data/cloudant/cloudant'
 import {
   createGroupId,
   createGroupDatabase,

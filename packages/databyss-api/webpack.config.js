@@ -40,7 +40,7 @@ module.exports = {
         {
           from: path.resolve(
             __dirname,
-            '../databyss-data/couchdb/_design_doc_includes'
+            '../databyss-data/cloudant/_design_doc_includes'
           ),
           to: path.resolve(__dirname, '../../build/api/_design_doc_includes'),
         },
