@@ -291,7 +291,7 @@ export const indexPage = ({
 
         // collect heading relations
         for (const [, value] of Object.entries(currentAtomics)) {
-          if (value) {
+          if (value?.text) {
             const _relatedBlockText = {
               [BlockType.Topic]: value.text.textValue,
               [BlockType.Source]: (value as Source).name?.textValue,

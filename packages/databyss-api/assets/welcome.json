@@ -1,8 +1,8 @@
 [
   {
     "type": "DIALOG",
-    "messageHtml": "<p><strong>Welcome to Databyss version 2.0.2!</strong></p><p>For an introduction to Databyss and in-depth help guides, please visit the <a href='/g_7v9n4vjx2h7511' target='_blank'>Databyss Help</a> page (opens in new tab).</p><p>ℹ️ You can access the help guides at any time from the three-dot-menu in the upper-right under \"Help\".</p>",
-    "targetVersion": "2.0.2",
+    "messageHtml": "<p><strong>Welcome to Databyss!</strong></p><p>For an introduction to Databyss and in-depth help guides, please visit the <a href='/databyss-user-guide-7v9n4vjx2h7511' target='_blank'>Databyss Help</a> page (opens in new tab).</p><p>ℹ️ You can access the help guides at any time from the three-dot-menu in the upper-right under \"Help\".</p>",
+    "targetVersion": ">2.0.0",
     "id": "jAiJtCbjUOKh"
   }
 ]
