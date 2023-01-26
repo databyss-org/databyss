@@ -27,7 +27,7 @@ export class RestoreDb extends ServerProcess {
     try {
       await this.restore()
       this.logSuccess('Database restored', this.args.dbName)
-      if (this.args.dbName.startsWith('p_') || this.dbIsPublic(_db)) {
+      if (this.args.dbName.startsWith('p_') || (await this.dbIsPublic(_db))) {
         this.logInfo('Database is public')
         await setSecurity({ groupId: this.args.dbName, isPublic: true })
         this.logSuccess('Add public access credentials')

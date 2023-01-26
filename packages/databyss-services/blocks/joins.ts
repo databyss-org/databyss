@@ -83,7 +83,7 @@ export const populatePage = ({
     if (b.type?.match(/^END_/)) {
       _block.type = b.type
       _block.text = {
-        textValue: getAtomicClosureText(b.type, _block.text.textValue),
+        textValue: getAtomicClosureText(b.type, _block.text?.textValue ?? ''),
         ranges: [],
       }
     }
