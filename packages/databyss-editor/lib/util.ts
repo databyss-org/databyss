@@ -28,15 +28,17 @@ import {
 export const splice = (src: any, idx: number, rem: number, str: any) =>
   src.slice(0, idx) + str + src.slice(idx + Math.abs(rem))
 
-const getInlineAtomicFromBlock = (block: Block): Range[] => {
+const getInlineAtomicFromBlock = (
+  block: Block,
+  includeTypes: InlineTypes[] = [
+    InlineTypes.InlineSource,
+    InlineTypes.InlineTopic,
+  ]
+): Range[] => {
   const _inlineRanges = block.text.ranges.filter(
     (r) =>
-      r.marks.filter(
-        (m) =>
-          Array.isArray(m) &&
-          (m[0] === InlineTypes.InlineTopic ||
-            m[0] === InlineTypes.InlineSource)
-      ).length
+      r.marks.filter((m) => Array.isArray(m) && includeTypes.includes(m[0]))
+        .length
   )
   return _inlineRanges
 }
@@ -83,7 +85,11 @@ const getInlineBlockRelations = (
   const _blockRelations: IndexPageResult[] = []
 
   // find if any inline topics exist on block
-  const _inlineRanges = getInlineAtomicFromBlock(block)
+  const _inlineRanges = getInlineAtomicFromBlock(block, [
+    InlineTypes.InlineSource,
+    InlineTypes.InlineTopic,
+    InlineTypes.Embed,
+  ])
   if (_inlineRanges.length) {
     _inlineRanges.forEach((r) => {
       if (r.marks.length && Array.isArray(r.marks[0])) {
@@ -125,7 +131,8 @@ export const isAtomicInlineType = (type: BlockType) => {
 }
 
 export const isAtomic = (block: Block) => isAtomicInlineType(block.type)
-export const isEmpty = (block: Block) => block.text.textValue.length === 0
+export const isEmpty = (block: Block) =>
+  !block.text?.textValue || block.text.textValue.length === 0
 
 // returns an array of indicies covered by selection
 export const getSelectedIndicies = (selection: Selection) =>
@@ -282,18 +289,11 @@ export const indexPage = ({
           _inlineRelations = getInlineBlockRelations(block, pageId, index)
         }
 
-        // if (_inlineRelations.length) {
-        //   _inlineRelations.forEach((r) => {
-        //     r.activeInlines = _inlineRelations
-        //   })
-        //   blockRelations.push(..._inlineRelations)
-        // }
-
         // collect heading relations
         for (const [, value] of Object.entries(currentAtomics)) {
           if (value?.text) {
             const _relatedBlockText = {
-              [BlockType.Topic]: value.text.textValue,
+              [BlockType.Topic]: value.text?.textValue,
               [BlockType.Source]: (value as Source).name?.textValue,
             }[value.type]
             _headingRelations.push({
@@ -337,8 +337,8 @@ export const slateBlockToHtmlWithSearch = (
   const _block = cloneDeep(block)
 
   const _ranges = [
-    ..._block.text.ranges,
-    ...createHighlightRanges(_block.text.textValue, searchTerms),
+    ...(_block.text?.ranges ?? []),
+    ...createHighlightRanges(_block.text?.textValue ?? '', searchTerms),
   ]
   // sort array by offset
   _ranges.sort((a, b) => {

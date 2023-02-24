@@ -15,6 +15,7 @@ import TopicsSvg from '@databyss-org/ui/assets/topics.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
+import MediaSvg from '@databyss-org/ui/assets/play.svg'
 import GroupSvg from '@databyss-org/ui/assets/logo-thick.svg'
 import {
   ScrollView,
@@ -49,6 +50,7 @@ const menuSvgs: { [key: string]: ReactNode } = {
   topics: <TopicsSvg />,
   archive: <ArchiveSvg />,
   group: <GroupSvg />,
+  embed: <MediaSvg />,
 }
 
 const SidebarList = ({

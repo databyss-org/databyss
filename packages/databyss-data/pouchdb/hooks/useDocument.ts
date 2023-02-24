@@ -44,9 +44,7 @@ export const useDocument = <T extends Document>(
   const query = useQuery<T>(
     queryKey,
     () =>
-      // console.log('[useDocument] fetch', _id)
       new Promise<T>((resolve, reject) => {
-        console.log('[UseDocument] fetch')
         dbRef
           .current!.get(_id)
           .then((res) => resolve(res))

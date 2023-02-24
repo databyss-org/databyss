@@ -10,7 +10,7 @@ import { Tweet } from 'react-twitter-widgets'
 import { parseTweetUrl } from '@databyss-org/services/embeds'
 import { EmbedCard, EmbedCardProps } from '../EmbedCard'
 
-const embedCardPropsFromEmbedDetail = (
+export const embedCardPropsFromEmbedDetail = (
   embedDetail: EmbedDetail
 ): EmbedCardProps => {
   const props: EmbedCardProps = {

@@ -33,6 +33,7 @@ interface IndexResultsProps {
   blocks: DocumentDict<Block>
   pages: DocumentDict<Page>
   onLast?: () => void
+  textOnly?: boolean
 }
 
 export const IndexResultTags = ({ tags }: { tags: Block[] }) => (
@@ -75,6 +76,7 @@ export const IndexResults = ({
   blocks,
   pages,
   onLast,
+  textOnly,
 }: IndexResultsProps) => {
   const { getAccountFromLocation, navigate } = useNavigationContext()
   const blockRelationRes = useDocument<BlockRelation>(`r_${relatedBlockId}`)
@@ -95,6 +97,7 @@ export const IndexResults = ({
     pages,
     blocks,
   }).filter((r) => r.relatedBlock === relatedBlockId)
+  console.log('[indexResults]', _relations)
 
   const groupedRelations = groupBlockRelationsByPage(_relations)
 
@@ -142,6 +145,7 @@ export const IndexResults = ({
           tags={<IndexResultTags tags={_extraTags} />}
           textVariant={_variant}
           dataTestElement="atomic-result-item"
+          textOnly={textOnly}
         />
       )
     })

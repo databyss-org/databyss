@@ -48,7 +48,7 @@ export const normalizeDatabyssBlock = (block: Block): Block => {
  * @param block if multiple \n\n split text into multiple entries
  */
 const splitFragAtBreaks = (block: Block): Block[] => {
-  const _textArray = block.text.textValue.split('\n\n')
+  const _textArray = (block.text?.textValue ?? '').split('\n\n')
   if (_textArray.length === 1) {
     return [block]
   }

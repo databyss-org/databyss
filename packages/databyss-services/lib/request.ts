@@ -51,22 +51,12 @@ function request(uri, options: RequestOptions = {}) {
           reject(new NetworkUnavailableError('Response is null'))
           return null
         }
-        if (response.status >= 200 && response.status < 300) {
-          return response
-        }
-        if (response.status === 401) {
-          reject(new NotAuthorizedError('Unauthorized'))
-        }
-        if (response.status === 403) {
-          reject(new InsufficientPermissionError())
-        }
-        if (response.status === 404) {
-          reject(new ResourceNotFoundError())
-        }
-        if (response.status === 409) {
-          reject(new VersionConflictError())
-        }
-        reject(new UnexpectedServerError(response.statusText, response))
+        checkResponse({
+          status: response.status,
+          statusText: response.statusText,
+          response,
+          reject,
+        })
         return response
       })
       .then((response) => {
@@ -76,11 +66,10 @@ function request(uri, options: RequestOptions = {}) {
         if (rawResponse) {
           resolve(response)
         }
-        if (responseAsJson) {
-          response.json().then(resolve).catch(reject)
-          return
-        }
-        if (response.headers.get('Content-Type')?.match('json')) {
+        if (
+          responseAsJson ||
+          response.headers.get('Content-Type')?.match('json')
+        ) {
           response.json().then(resolve).catch(reject)
           return
         }
@@ -112,3 +101,33 @@ export function getJson(uri) {
 }
 
 export default request
+
+export function checkResponse({
+  status,
+  statusText,
+  response,
+  reject,
+}: {
+  status: number
+  statusText?: string
+  response?: Response
+  reject: (reason?: any) => void
+}) {
+  if (status >= 200 && status < 300) {
+    return true
+  }
+  if (status === 401) {
+    reject(new NotAuthorizedError('Unauthorized'))
+  }
+  if (status === 403) {
+    reject(new InsufficientPermissionError())
+  }
+  if (status === 404) {
+    reject(new ResourceNotFoundError())
+  }
+  if (status === 409) {
+    reject(new VersionConflictError())
+  }
+  reject(new UnexpectedServerError(statusText, response))
+  return false
+}

@@ -21,6 +21,7 @@ import {
   SourcesContent,
   IndexPageContent,
   SearchContent,
+  MediaContent,
 } from '@databyss-org/ui/modules'
 import { EditorPageProvider } from '@databyss-org/services'
 
@@ -92,6 +93,10 @@ const Private = () => {
               element={<IndexPageContent blockType={BlockType.Topic} />}
             />
             <Route path="sources/*" element={<SourcesContent />} />
+            <Route
+              path="embeds/:blockId/*"
+              element={<IndexPageContent blockType={BlockType.Embed} />}
+            />
             <Route path="*" element={<NotFoundRedirect />} />
           </Route>
           <Route path="*" element={<NotFoundRedirect />} />

@@ -15,6 +15,9 @@ export default ({
   text: Text
   offsetAfterInsert: number
 } => {
+  if (!textToInsert?.textValue) {
+    return { text, offsetAfterInsert: offset }
+  }
   let _offset = textToInsert.textValue.length
   const { before, after } = splitTextAtOffset({
     text,

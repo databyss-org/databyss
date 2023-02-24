@@ -73,6 +73,9 @@ export const Sidebar = () => {
             )}
             {menuItem === 'archive' && <PageList archive />}
             {menuItem === 'groups' && <GroupList />}
+            {menuItem === 'media' && (
+              <BlockList blockType={BlockType.Embed} heading="Media" />
+            )}
             <Footer collapsed={false} />
           </List>
         </View>

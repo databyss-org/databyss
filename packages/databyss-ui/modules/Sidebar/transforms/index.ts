@@ -15,6 +15,8 @@ export const blockTypeToListItemType = (blockType: BlockType): string => {
       return 'source'
     case BlockType.Topic:
       return 'topic'
+    case BlockType.Embed:
+      return 'embed'
     default:
       throw new Error(`Invalid block type: ${blockType}`)
   }

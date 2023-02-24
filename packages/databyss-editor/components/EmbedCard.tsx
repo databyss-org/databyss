@@ -31,7 +31,7 @@ export const EmbedCard = React.memo(
         backgroundColor="gray.6"
         p="small"
         {...others}
-        opacity={process.env.NODE_ENV === 'production' ? 1 : 0.5}
+        // opacity={process.env.NODE_ENV === 'production' ? 1 : 0.5}
       >
         {mediaType !== MediaTypes.IMAGE && (
           <>

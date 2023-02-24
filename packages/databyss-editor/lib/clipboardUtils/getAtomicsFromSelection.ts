@@ -41,7 +41,7 @@ export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
       })
     } else if (
       !atomics.some((a) => a._id === b._id) &&
-      b.text.textValue.charAt(0) !== '/'
+      b.text?.textValue.charAt(0) !== '/'
     ) {
       const _atomic = { type: b.type, _id: b._id }
       atomics.push(_atomic)

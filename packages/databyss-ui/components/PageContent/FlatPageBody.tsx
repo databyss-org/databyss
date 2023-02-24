@@ -276,12 +276,14 @@ export function renderTextToComponents({
   searchTerms,
   onInlineClick,
   escapeFn = (_s: string) => _s,
+  textOnly,
 }: {
   key: string
   text: Text
   searchTerms?: SearchTerm[]
   onInlineClick: (d: InlineAtomicDef) => void
   escapeFn?: (_s: string, _key?: string) => ReactNode
+  textOnly?: boolean
 }): ReactNode {
   if (!text) {
     return null
@@ -320,6 +322,7 @@ export function renderTextToComponents({
           <LeafComponent
             key={`${key}.${_idx}`}
             readOnly
+            textOnly={textOnly}
             attributes={{}}
             leaf={rangeToLeaf(_range.marks, _segment)}
             onInlineClick={onInlineClick}

@@ -17,7 +17,12 @@ import {
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Helmet } from 'react-helmet'
 import { useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
-import { Block, BlockType, Source } from '@databyss-org/services/interfaces'
+import {
+  Block,
+  BlockType,
+  Embed,
+  Source,
+} from '@databyss-org/services/interfaces'
 import {
   LoadingFallback,
   SourceCitationView,
@@ -42,9 +47,15 @@ import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import EditSvg from '@databyss-org/ui/assets/edit.svg'
+import MediaSvg from '@databyss-org/ui/assets/play.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import { updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
+import { setEmbed } from '@databyss-org/services/embeds'
+import {
+  EmbedCard,
+  embedCardPropsFromEmbedDetail,
+} from '@databyss-org/editor/components'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 import { useUserPreferencesContext } from '../../hooks'
@@ -68,6 +79,7 @@ const getTitleFromBlock = (block: Block | undefined, path: string[]) =>
     ? {
         [BlockType.Source]: block.text.textValue,
         [BlockType.Topic]: block.text.textValue,
+        [BlockType.Embed]: block.text.textValue,
       }[block.type]
     : path[path.length - 1]
 
@@ -103,6 +115,10 @@ export const IndexPageTitleInput = ({
         case BlockType.Topic:
           block!.text.textValue = value
           setTopic(block!, { pages: pagesRes.data, blocks: blocksRes.data })
+          break
+        case BlockType.Embed:
+          block!.text.textValue = value
+          setEmbed(block! as Embed)
           break
         case BlockType.Source:
           block!.text.textValue = value
@@ -144,6 +160,7 @@ export const IndexPageTitleInput = ({
     ? {
         [BlockType.Source]: <SourceSvg />,
         [BlockType.Topic]: <TopicSvg />,
+        [BlockType.Embed]: <MediaSvg />,
       }[block.type]
     : {
         Bibliography: <SourcesSvg />,
@@ -168,6 +185,15 @@ export const IndexPageTitleInput = ({
 
 interface SourceTitleAndCitationViewProps extends ViewProps {
   block: Block
+}
+
+interface EmbedHeaderProps extends ViewProps {
+  block: Embed
+}
+
+const EmbedHeader = ({ block, ...others }: EmbedHeaderProps) => {
+  const embedCardProps = embedCardPropsFromEmbedDetail(block.detail)
+  return <EmbedCard {...embedCardProps} {...others} />
 }
 
 const SourceTitleAndCitationView = ({
@@ -337,6 +363,14 @@ export const IndexPageView = ({
                 />
               </View>
             ))}
+          {block?.type === BlockType.Embed && (
+            <>
+              <EmbedHeader block={block as Embed} mt="medium" mb="large" />
+              <Text variant="bodyHeading2" color="text.3">
+                References
+              </Text>
+            </>
+          )}
         </View>
         <View px={{ _: 'small', mobile: 'medium' }} flexGrow={1}>
           {children}
@@ -355,6 +389,7 @@ export const getPathFromBlock = (block: Block) => {
   const indexName = {
     [BlockType.Source]: 'Sources',
     [BlockType.Topic]: 'Topics',
+    [BlockType.Embed]: 'Embeds',
   }[block.type]
   if (indexName) {
     path.push(indexName)
@@ -391,6 +426,7 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
         blocks={blocksRes.data!}
         pages={pagesRes.data!}
         onLast={restoreScroll}
+        textOnly={blockType === BlockType.Embed}
       />
     </IndexPageView>
   )

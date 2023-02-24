@@ -24,6 +24,10 @@ const deleteSelectionWithinBlock = ({
   const { index } = anchor
   const block = blocks[index]
 
+  if (!block.text) {
+    return
+  }
+
   // if selection spans over entire block, delete block contents
   if (focus.offset - anchor.offset === block.text.textValue.length) {
     blocks[index] = makeEmptyBlock(block._id)

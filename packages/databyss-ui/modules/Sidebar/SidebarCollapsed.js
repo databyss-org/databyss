@@ -8,6 +8,7 @@ import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import ReferencesSvg from '@databyss-org/ui/assets/references.svg'
 import GroupsImg from '@databyss-org/ui/assets/logo-thick.png'
+import MediaSvg from '@databyss-org/ui/assets/play.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
@@ -87,6 +88,12 @@ const SidebarCollapsed = () => {
         pageReferencesRes.data &&
         pageReferencesRes.data.length > 0 &&
         pageReferencesRes.data.length,
+    },
+    {
+      name: 'media',
+      title: 'Media',
+      icon: <MediaSvg />,
+      onClick: () => onItemClick('media'),
     },
   ]
 

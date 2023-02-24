@@ -54,6 +54,7 @@
     "react-use": "^11.0.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "retry-as-promised": "^7.0.4",
     "scroll-into-view-if-needed": "^2.2.26",
     "string-strip-html": "^5.0.0",
     "use-context-selector": "^1.1.1"

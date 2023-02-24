@@ -19,6 +19,7 @@ export const Leaf = ({
   leaf,
   readOnly,
   onInlineClick,
+  textOnly,
 }) => {
   const { blue, gray, orange, inlineTopic, inlineSource } = colors
 
@@ -42,21 +43,30 @@ export const Leaf = ({
   }
 
   if (leaf.embed) {
-    _children = readOnly ? (
-      <EmbedMedia
-        attributes={attributes}
-        _children={_children}
-        _element={leaf}
-        onInlineClick={onInlineClick}
-      />
-    ) : (
-      <EditorEmbedMedia
-        attributes={attributes}
-        _children={_children}
-        _element={leaf}
-        onInlineClick={onInlineClick}
-      />
-    )
+    if (textOnly) {
+      _children = (
+        <>
+          {_children}
+          <br />
+        </>
+      )
+    } else {
+      _children = readOnly ? (
+        <EmbedMedia
+          attributes={attributes}
+          _children={_children}
+          _element={leaf}
+          onInlineClick={onInlineClick}
+        />
+      ) : (
+        <EditorEmbedMedia
+          attributes={attributes}
+          _children={_children}
+          _element={leaf}
+          onInlineClick={onInlineClick}
+        />
+      )
+    }
   }
 
   if (leaf.inlineEmbedInput) {

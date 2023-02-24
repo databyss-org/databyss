@@ -13,6 +13,9 @@ export default ({
   before: Text
   after: Text
 } => {
+  if (!text?.textValue) {
+    return { before: emptyText, after: emptyText }
+  }
   // if offset is at start of text, return text value
   if (offset === 0) {
     return { before: emptyText, after: text }

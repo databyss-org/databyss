@@ -32,6 +32,24 @@ export const embedSchema: JSONSchema4 = {
           type: 'string',
         },
       },
+      fileDetail: {
+        type: 'object',
+        properties: {
+          filename: {
+            type: 'string',
+          },
+          contentLength: {
+            type: 'string',
+          },
+          contentType: {
+            type: 'string',
+          },
+          storageKey: {
+            type: 'string',
+          },
+        },
+        required: ['filename', 'contentLength', 'contentType', 'storageKey'],
+      },
       required: ['src', 'mediaType'],
     },
   },

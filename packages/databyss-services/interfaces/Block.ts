@@ -68,6 +68,13 @@ export enum MediaTypes {
   UNFETCHED = 'unfetchedMedia',
 }
 
+export interface FileDetail {
+  filename: string
+  contentLength: number
+  contentType: string // TODO replace with MIME types
+  storageKey: string
+}
+
 export interface EmbedDetail {
   title?: string
   src: string
@@ -78,6 +85,7 @@ export interface EmbedDetail {
   mediaType: MediaTypes
   embedCode?: string
   openGraphJson?: string
+  fileDetail: FileDetail
 }
 
 export interface SourceDetail {

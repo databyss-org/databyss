@@ -39,6 +39,7 @@ export const IndexResultDetails = ({
   onInlineClick,
   tags,
   textVariant,
+  textOnly,
   ...others
 }) => (
   <View position="relative" mb="small" data-test-element={dataTestElement}>
@@ -78,6 +79,7 @@ export const IndexResultDetails = ({
         escapeFn: renderText,
         searchTerms: normalizedStemmedTerms,
         onInlineClick,
+        textOnly,
       })}
     </Text>
     {tags}
