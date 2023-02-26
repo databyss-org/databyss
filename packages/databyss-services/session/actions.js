@@ -197,6 +197,8 @@ export const logout = () => async (dispatch) => {
   // deletes databases
   await cleanupDefaultGroup()
 
+  // TODO: call api logout to expire token with cloudant and drive
+
   dispatch({ type: LOGOUT })
   setTimeout(() => (window.location.href = '/'), 50)
 }

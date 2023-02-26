@@ -24,6 +24,8 @@ router.post('/', authMiddleware, async (req, res) => {
         session,
       })
 
+      // use token from cloudant to initialize access on drive
+
       return res.json({ data: { session } })
     }
     return res.json({ data: { isPublic: true } }).status(200)
