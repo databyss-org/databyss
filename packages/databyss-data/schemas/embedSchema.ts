@@ -31,24 +31,24 @@ export const embedSchema: JSONSchema4 = {
         embedCode: {
           type: 'string',
         },
-      },
-      fileDetail: {
-        type: 'object',
-        properties: {
-          filename: {
-            type: 'string',
+        fileDetail: {
+          type: 'object',
+          properties: {
+            filename: {
+              type: 'string',
+            },
+            contentLength: {
+              type: 'number',
+            },
+            contentType: {
+              type: 'string',
+            },
+            storageKey: {
+              type: 'string',
+            },
           },
-          contentLength: {
-            type: 'string',
-          },
-          contentType: {
-            type: 'string',
-          },
-          storageKey: {
-            type: 'string',
-          },
+          required: ['filename', 'contentLength', 'contentType', 'storageKey'],
         },
-        required: ['filename', 'contentLength', 'contentType', 'storageKey'],
       },
       required: ['src', 'mediaType'],
     },

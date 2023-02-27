@@ -26,12 +26,12 @@ export interface RequestOptions extends RequestInit {
   rawResponse?: boolean
 }
 
-function request(uri, options: RequestOptions = {}) {
+function request<T>(uri, options: RequestOptions = {}) {
   const { timeout, responseAsJson, rawResponse, ..._options } = options
   const _controller = new AbortController()
   const _timeoutDuration = timeout || FETCH_TIMEOUT
 
-  return new Promise<any>((resolve, reject) => {
+  return new Promise<T>((resolve, reject) => {
     const _timeoutId = setTimeout(() => {
       _controller.abort()
       console.log(`[request] Request timed out after ${_timeoutDuration}ms`)
@@ -64,7 +64,7 @@ function request(uri, options: RequestOptions = {}) {
           return
         }
         if (rawResponse) {
-          resolve(response)
+          resolve(response as T)
         }
         if (
           responseAsJson ||
@@ -73,7 +73,10 @@ function request(uri, options: RequestOptions = {}) {
           response.json().then(resolve).catch(reject)
           return
         }
-        response!.text().then(resolve).catch(reject)
+        response!
+          .text()
+          .then((txt) => resolve(txt as T))
+          .catch(reject)
       })
   })
 }
@@ -83,7 +86,7 @@ export async function checkNetwork() {
     return true
   }
   try {
-    const _res = await request(process.env.API_URL, {
+    const _res = await request<Response>(process.env.API_URL, {
       method: 'HEAD',
       rawResponse: true,
     })

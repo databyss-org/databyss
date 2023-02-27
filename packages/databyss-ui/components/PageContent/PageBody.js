@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import { PDFDropZoneManager, Text, View } from '@databyss-org/ui'
+import { DropZoneManager, Text, View } from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'
@@ -128,7 +128,7 @@ export const PageBody = ({
                 firstBlockIsTitle: true,
               }}
             >
-              <PDFDropZoneManager />
+              <DropZoneManager />
               <ContentEditable
                 autofocus
                 focusIndex={focusIndex}

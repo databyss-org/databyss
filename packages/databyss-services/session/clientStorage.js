@@ -12,6 +12,9 @@ import { getAccountFromLocation } from './utils'
 
 export function setAuthToken(token) {
   localStorage.setItem('token', token)
+  navigator.serviceWorker.ready.then((registration) => {
+    registration.active.postMessage(`token:${token}`)
+  })
 }
 
 export function setUserId(userId) {

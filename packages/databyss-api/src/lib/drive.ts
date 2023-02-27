@@ -14,9 +14,9 @@ export function setAccess(
   }: {
     secret: string
     groupId: string
-    fileId: string
+    fileId?: string
     token: string
-    isPublic: boolean
+    isPublic?: boolean
     accessLevel: AccessLevel
   },
   authorize: boolean
@@ -30,7 +30,7 @@ export function setAccess(
   if (!isPublic && !token) {
     throw new ApiError('ERR: Token is required if not public')
   }
-  let url = `${process.env.REACT_APP_DRIVE_HOST}/auth/${groupId}`
+  let url = `https://${process.env.REACT_APP_DRIVE_HOST}/auth/${groupId}`
   if (fileId) {
     url += `/${fileId}`
   }

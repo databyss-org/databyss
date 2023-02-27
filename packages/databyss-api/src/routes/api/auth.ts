@@ -7,6 +7,7 @@ import {
   createUserDatabaseCredentials,
   addCredientialsToSession,
 } from '../../lib/createUserDatabase'
+import { setAccess } from '../../lib/drive'
 
 const router = express.Router()
 
@@ -17,7 +18,9 @@ router.post('/', authMiddleware, async (req, res) => {
   try {
     if (req?.user) {
       let session = await getSessionFromUserId(req.user._id)
-      // TODO: on every re-login attempt we are creating new user credentials, should this happen on the back end or should the user save the credentials in their offline database?
+      // TODO: on every re-login attempt we are creating new user credentials,
+      // should this happen on the back end or should the user save the credentials
+      // in their offline database?
       session = await addCredientialsToSession({
         groupId: session.user.defaultGroupId!,
         userId: session.user._id,
@@ -25,6 +28,16 @@ router.post('/', authMiddleware, async (req, res) => {
       })
 
       // use token from cloudant to initialize access on drive
+      const _sar = await setAccess(
+        {
+          accessLevel: 'admin',
+          groupId: session.user.defaultGroupId!,
+          secret: process.env.DRIVE_ROOT_SECRET!,
+          token: session.token,
+        },
+        true
+      )
+      console.log('[auth] setAccess', _sar)
 
       return res.json({ data: { session } })
     }
@@ -70,6 +83,18 @@ router.post(
         )
 
         session.groupCredentials = [credentials]
+
+        // use token from cloudant to initialize access on drive
+        const _sar = await setAccess(
+          {
+            accessLevel: 'admin',
+            groupId: session.user.defaultGroupId!,
+            secret: process.env.DRIVE_ROOT_SECRET!,
+            token: session.token,
+          },
+          true
+        )
+        console.log('[auth] setAccess', _sar)
 
         return res.json({ data: { session } })
       }

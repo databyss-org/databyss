@@ -485,6 +485,7 @@ export const getInlineAtomicHref = ({
   const _blockPath = {
     [BlockType.Source]: 'sources',
     [BlockType.Topic]: 'topics',
+    [BlockType.Embed]: 'embeds',
   }[atomicType]
   return `/${_groupId}/${_blockPath}/${id}${_nice}`
 }

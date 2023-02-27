@@ -1,6 +1,6 @@
 import { Workbox } from 'workbox-window'
 
-export const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`
+export const swUrl = `${process.env.PUBLIC_URL}/sw.js`
 export const registrationRef = {
   current: null,
 }

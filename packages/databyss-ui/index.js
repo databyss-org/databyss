@@ -19,8 +19,7 @@ export { useScrollMemory } from './hooks/scrollMemory/useScrollMemory'
 
 /* modules */
 export { default as ModalManager } from './modules/Modals/ModalManager'
-export { default as PDFDropZoneManager } from './components/PDFDropZone/PDFDropZoneManager'
-
+export { DropZoneManager } from './components/DropZone/DropZoneManager'
 export { default as Content } from './components/Viewport/Content'
 export { default as Raw } from './components/Viewport/Raw'
 export { default as ThemedViewport } from './components/Viewport/ThemedViewport'

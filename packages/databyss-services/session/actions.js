@@ -196,11 +196,14 @@ export const getUserAccount = () => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   // deletes databases
   await cleanupDefaultGroup()
+  navigator.serviceWorker.ready.then((reg) => {
+    reg.unregister().then(() => {
+      dispatch({ type: LOGOUT })
+      setTimeout(() => (window.location.href = '/'), 50)
+    })
+  })
 
   // TODO: call api logout to expire token with cloudant and drive
-
-  dispatch({ type: LOGOUT })
-  setTimeout(() => (window.location.href = '/'), 50)
 }
 
 export const onSetDefaultPage = (id) => async (dispatch) => {

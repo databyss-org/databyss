@@ -499,7 +499,7 @@ module.exports = (webpackEnv) => {
               revision: '3.6.1',
             },
           ],
-          swSrc: path.resolve(__dirname, './service-worker.js'),
+          swSrc: path.resolve(__dirname, './sw.js'),
           include: [/\.(?:html|png|jpg|jpeg|svg|mp4|js|ico)$/],
           maximumFileSizeToCacheInBytes: 3145728,
         }),
