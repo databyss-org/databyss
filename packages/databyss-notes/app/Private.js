@@ -21,7 +21,6 @@ import {
   SourcesContent,
   IndexPageContent,
   SearchContent,
-  MediaContent,
 } from '@databyss-org/ui/modules'
 import { EditorPageProvider } from '@databyss-org/services'
 
