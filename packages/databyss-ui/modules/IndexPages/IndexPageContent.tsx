@@ -25,13 +25,13 @@ import {
 } from '@databyss-org/services/interfaces'
 import {
   LoadingFallback,
-  SourceCitationView,
+  // SourceCitationView,
   StickyHeader,
   TitleInput,
 } from '@databyss-org/ui/components'
 import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import { setSource } from '@databyss-org/data/pouchdb/sources'
-import { CitationOutputTypes } from '@databyss-org/services/citations/constants'
+// import { CitationOutputTypes } from '@databyss-org/services/citations/constants'
 import {
   ScrollView,
   View,
@@ -58,7 +58,7 @@ import {
 } from '@databyss-org/editor/components'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
-import { useUserPreferencesContext } from '../../hooks'
+// import { useUserPreferencesContext } from '../../hooks'
 import IndexPageMenu from '../../components/IndexPage/IndexPageMenu'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 
@@ -183,9 +183,9 @@ export const IndexPageTitleInput = ({
   )
 }
 
-interface SourceTitleAndCitationViewProps extends ViewProps {
-  block: Block
-}
+// interface SourceTitleAndCitationViewProps extends ViewProps {
+//   block: Block
+// }
 
 interface EmbedHeaderProps extends ViewProps {
   block: Embed
@@ -196,31 +196,33 @@ const EmbedHeader = ({ block, ...others }: EmbedHeaderProps) => {
   return <EmbedCard {...embedCardProps} {...others} />
 }
 
-const SourceTitleAndCitationView = ({
-  block,
-  ...others
-}: SourceTitleAndCitationViewProps) => {
-  const { getPreferredCitationStyle } = useUserPreferencesContext()
-  return (
-    <View>
-      {/* <SourceCitationView
-        py="none"
-        pb="tiny"
-        sourceId={block?._id}
-        formatOptions={{
-          outputType: CitationOutputTypes.BIBLIOGRAPHY,
-          styleId: getPreferredCitationStyle(),
-        }}
-        noCitationFallback={
-          <Text variant="bodyNormalUnderline" color="text.3">
-            {block.text.textValue}
-          </Text>
-        }
-        {...others}
-      /> */}
-    </View>
-  )
-}
+// const SourceTitleAndCitationView = ({
+//   block,
+//   ...others
+// }: SourceTitleAndCitationViewProps) => {
+//   const { getPreferredCitationStyle } = useUserPreferencesContext()
+//   return (
+//     <View>
+//       {/* <SourceCitationView
+//         py="none"
+//         pb="tiny"
+//         sourceId={block?._id}
+//         formatOptions={{
+//           outputType: CitationOutputTypes.BIBLIOGRAPHY,
+//           styleId: getPreferredCitationStyle(),
+//         }}
+//         noCitationFallback={
+//           <Text variant="bodyNormalUnderline" color="text.3">
+//             {block.text.textValue}
+//           </Text>
+//         }
+//         {...others}
+//       /> */}
+//     </View>
+//   )
+// }
+
+const SourceTitleAndCitationView = () => null
 
 export const IndexPageView = ({
   path,
@@ -324,14 +326,17 @@ export const IndexPageView = ({
           )}
           {block?.type === BlockType.Source &&
             (isReadOnly ? (
-              <SourceTitleAndCitationView block={block} mb="small" />
+              // <SourceTitleAndCitationView block={block} mb="small" />
+              <SourceTitleAndCitationView />
             ) : (
               <View position="relative" mt="em" mb="small">
-                <SourceTitleAndCitationView
+                {/* <SourceTitleAndCitationView
                   block={block}
                   opacity={0}
                   zIndex={-1}
                 />
+                 */}
+                <SourceTitleAndCitationView />
                 <Button
                   onPress={onPressDetails}
                   variant="uiTextButtonShaded"
@@ -354,13 +359,14 @@ export const IndexPageView = ({
                     View/Edit Citation
                   </Text>
                 </Button>
-                <SourceTitleAndCitationView
+                {/* <SourceTitleAndCitationView
                   block={block}
                   position="absolute"
                   zIndex={1}
                   left={0}
                   top={0}
-                />
+                /> */}
+                <SourceTitleAndCitationView />
               </View>
             ))}
           {block?.type === BlockType.Embed && (
