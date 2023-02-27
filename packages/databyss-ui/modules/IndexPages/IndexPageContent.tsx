@@ -203,7 +203,7 @@ const SourceTitleAndCitationView = ({
   const { getPreferredCitationStyle } = useUserPreferencesContext()
   return (
     <View>
-      <SourceCitationView
+      {/* <SourceCitationView
         py="none"
         pb="tiny"
         sourceId={block?._id}
@@ -217,7 +217,7 @@ const SourceTitleAndCitationView = ({
           </Text>
         }
         {...others}
-      />
+      /> */}
     </View>
   )
 }
