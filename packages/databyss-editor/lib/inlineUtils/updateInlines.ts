@@ -10,7 +10,12 @@ import {
   DocumentType,
   DocumentCacheDict,
 } from '@databyss-org/data/pouchdb/interfaces'
-import { findOne, getDocument, upsert } from '@databyss-org/data/pouchdb/utils'
+import {
+  bulkUpsert,
+  findOne,
+  getDocument,
+  upsert,
+} from '@databyss-org/data/pouchdb/utils'
 import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { replaceInlineText } from '../../state/util'
 
@@ -42,6 +47,7 @@ export const updateInlines = async ({
     return
   }
 
+  const upsertDict = {}
   for (const _pageId of _relation!.pages) {
     const _page = caches?.pages?.[_pageId] ?? (await getDocument<Page>(_pageId))
 
@@ -82,16 +88,21 @@ export const updateInlines = async ({
           }
         })
         if (_inlineRanges.length) {
-          // update block
-          await upsert({
+          upsertDict[_block!._id] = {
+            ..._block,
             doctype: DocumentType.Block,
-            _id: _block!._id,
-            doc: _block,
-          })
+          }
+          // update block
+          // await upsert({
+          //   doctype: DocumentType.Block,
+          //   _id: _block!._id,
+          //   doc: _block,
+          // })
         }
       }
     }
   }
+  await bulkUpsert(upsertDict)
 
   // update all replicated pages related to topic
   const pagesWhereAtomicExists: string[] = _relation.pages

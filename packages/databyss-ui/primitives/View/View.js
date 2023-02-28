@@ -206,25 +206,25 @@ const DropzoneChild = forwardRef(({ children, dropzone, ...others }, ref) => {
 const View = forwardRef(
   ({ children, onLayout, dropzone, theme, css, ...others }, ref) => {
     const viewRef = useRef(null)
-    const clientRect = {}
-    const _onLayout = useCallback(
-      (_clientRect) => {
-        if (onLayout && !fastCompare(_clientRect, clientRect)) {
-          onLayout(clientRect)
-        }
-        Object.assign(clientRect, _clientRect)
-      },
-      [clientRect]
-    )
-    const nativeProps = {
-      onLayout: () =>
-        onLayout &&
-        viewRef &&
-        viewRef.current &&
-        viewRef.current.measure((x, y, width, height) =>
-          _onLayout({ x, y, width, height })
-        ),
-    }
+    // const clientRect = {}
+    // const _onLayout = useCallback(
+    //   (_clientRect) => {
+    //     if (onLayout && !fastCompare(_clientRect, clientRect)) {
+    //       onLayout(clientRect)
+    //     }
+    //     Object.assign(clientRect, _clientRect)
+    //   },
+    //   [clientRect]
+    // )
+    // const nativeProps = {
+    //   onLayout: () =>
+    //     onLayout &&
+    //     viewRef &&
+    //     viewRef.current &&
+    //     viewRef.current.measure((x, y, width, height) =>
+    //       _onLayout({ x, y, width, height })
+    //     ),
+    // }
 
     const ChildContainer = dropzone ? DropzoneChild : Styled
 
@@ -233,7 +233,7 @@ const View = forwardRef(
       <ChildContainer
         ref={forkRef(viewRef, ref)}
         {...defaultProps}
-        {...(IS_NATIVE ? nativeProps : {})}
+        // {...(IS_NATIVE ? nativeProps : {})}
         css={[
           !IS_NATIVE && desktopResetCss,
           !IS_NATIVE && applyTheme(desktopCss(others))(_theme),

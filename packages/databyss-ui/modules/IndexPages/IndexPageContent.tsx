@@ -8,6 +8,7 @@ import React, {
   useRef,
   RefObject,
   MutableRefObject,
+  useMemo,
 } from 'react'
 import { debounce } from 'lodash'
 import {
@@ -19,6 +20,7 @@ import { Helmet } from 'react-helmet'
 import { useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
 import {
   Block,
+  BlockRelation,
   BlockType,
   Embed,
   Source,
@@ -61,6 +63,7 @@ import { getAccountFromLocation } from '../../../databyss-services/session/utils
 // import { useUserPreferencesContext } from '../../hooks'
 import IndexPageMenu from '../../components/IndexPage/IndexPageMenu'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
+import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -241,7 +244,7 @@ export const IndexPageView = ({
   const titleInputHandlesRef = useRef<IndexPageTitleInputHandles>(null)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-
+  // console.log('[IndexPageView] render')
   // useEffect(() => {
   //   restoreScroll()
   // }, [])
@@ -285,104 +288,111 @@ export const IndexPageView = ({
       }
     }
   }, [blockName])
-  return (
-    <>
-      <StickyHeader path={path} contextMenu={<IndexPageMenu block={block} />} />
-      <ScrollView
-        pr="em"
-        pl="large"
-        flex="1"
-        pb="extraLarge"
-        ref={scrollViewRef}
-        {...others}
-      >
-        <Helmet>
-          <meta charSet="utf-8" />
-          <title>{path[path.length - 1]}</title>
-        </Helmet>
-        <View
-          pt={{ _: 'medium', mobile: 'small' }}
-          pb="medium"
-          pl={{ _: 'small', mobile: 'medium' }}
-          widthVariant="content"
+  return useMemo(
+    () => (
+      // console.log('[IndexPageContent] render children')
+      <>
+        <StickyHeader
+          path={path}
+          contextMenu={<IndexPageMenu block={block} />}
+        />
+        <ScrollView
+          pr="em"
+          pl="large"
+          flex="1"
+          pb="extraLarge"
+          ref={scrollViewRef}
+          {...others}
         >
-          {menuChild ? (
-            <Grid singleRow>
-              <View flexGrow={1}>
-                <IndexPageTitleInput
-                  path={path}
-                  block={block}
-                  handlesRef={titleInputHandlesRef}
-                />
-              </View>
-              <View>{menuChild}</View>
-            </Grid>
-          ) : (
-            <IndexPageTitleInput
-              path={path}
-              block={block}
-              handlesRef={titleInputHandlesRef}
-            />
-          )}
-          {block?.type === BlockType.Source &&
-            (isReadOnly ? (
-              // <SourceTitleAndCitationView block={block} mb="small" />
-              <SourceTitleAndCitationView />
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>{path[path.length - 1]}</title>
+          </Helmet>
+          <View
+            pt={{ _: 'medium', mobile: 'small' }}
+            pb="medium"
+            pl={{ _: 'small', mobile: 'medium' }}
+            widthVariant="content"
+          >
+            {menuChild ? (
+              <Grid singleRow>
+                <View flexGrow={1}>
+                  <IndexPageTitleInput
+                    path={path}
+                    block={block}
+                    handlesRef={titleInputHandlesRef}
+                  />
+                </View>
+                <View>{menuChild}</View>
+              </Grid>
             ) : (
-              <View position="relative" mt="em" mb="small">
-                {/* <SourceTitleAndCitationView
+              <IndexPageTitleInput
+                path={path}
+                block={block}
+                handlesRef={titleInputHandlesRef}
+              />
+            )}
+            {block?.type === BlockType.Source &&
+              (isReadOnly ? (
+                // <SourceTitleAndCitationView block={block} mb="small" />
+                <SourceTitleAndCitationView />
+              ) : (
+                <View position="relative" mt="em" mb="small">
+                  {/* <SourceTitleAndCitationView
                   block={block}
                   opacity={0}
                   zIndex={-1}
                 />
                  */}
-                <SourceTitleAndCitationView />
-                <Button
-                  onPress={onPressDetails}
-                  variant="uiTextButtonShaded"
-                  alignSelf="flex-start"
-                  childViewProps={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
-                  mt="small"
-                >
-                  <Icon
-                    data-test-button="open-source-modal"
-                    color="gray.3"
-                    sizeVariant="tiny"
-                    pr="tiny"
+                  <SourceTitleAndCitationView />
+                  <Button
+                    onPress={onPressDetails}
+                    variant="uiTextButtonShaded"
+                    alignSelf="flex-start"
+                    childViewProps={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}
+                    mt="small"
                   >
-                    <EditSvg />
-                  </Icon>
-                  <Text variant="uiTextSmall" color="gray.3">
-                    View/Edit Citation
-                  </Text>
-                </Button>
-                {/* <SourceTitleAndCitationView
+                    <Icon
+                      data-test-button="open-source-modal"
+                      color="gray.3"
+                      sizeVariant="tiny"
+                      pr="tiny"
+                    >
+                      <EditSvg />
+                    </Icon>
+                    <Text variant="uiTextSmall" color="gray.3">
+                      View/Edit Citation
+                    </Text>
+                  </Button>
+                  {/* <SourceTitleAndCitationView
                   block={block}
                   position="absolute"
                   zIndex={1}
                   left={0}
                   top={0}
                 /> */}
-                <SourceTitleAndCitationView />
-              </View>
-            ))}
-          {block?.type === BlockType.Embed && (
-            <>
-              <EmbedHeader block={block as Embed} mt="medium" mb="large" />
-              <Text variant="bodyHeading2" color="text.3">
-                References
-              </Text>
-            </>
-          )}
-        </View>
-        <View px={{ _: 'small', mobile: 'medium' }} flexGrow={1}>
-          {children}
-        </View>
-      </ScrollView>
-    </>
+                  <SourceTitleAndCitationView />
+                </View>
+              ))}
+            {block?.type === BlockType.Embed && (
+              <>
+                <EmbedHeader block={block as Embed} mt="medium" mb="large" />
+                <Text variant="bodyHeading2" color="text.3">
+                  References
+                </Text>
+              </>
+            )}
+          </View>
+          <View px={{ _: 'small', mobile: 'medium' }} flexGrow={1}>
+            {children}
+          </View>
+        </ScrollView>
+      </>
+    ),
+    [path, block]
   )
 }
 
@@ -409,31 +419,49 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const pagesRes = usePages()
   const scrollViewRef = useRef<HTMLElement | null>(null)
   const restoreScroll = useScrollMemory(scrollViewRef)
+  const blockRelationRes = useDocument<BlockRelation>(`r_${blockId}`)
 
-  if (
-    !blocksRes.isSuccess ||
-    !pagesRes.isSuccess ||
-    !blocksRes.data?.[blockId!] ||
-    blocksRes.data[blockId!].type !== blockType
-  ) {
-    return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
-  }
-
-  return (
-    <IndexPageView
-      path={getPathFromBlock(blocksRes.data![blockId!])}
-      block={blocksRes.data![blockId!]}
-      key={blockId}
-      scrollViewRef={scrollViewRef}
-    >
-      <IndexResults
-        relatedBlockId={blockId!}
-        key={`${blockType}_${blockId}`}
-        blocks={blocksRes.data!}
-        pages={pagesRes.data!}
-        onLast={restoreScroll}
-        textOnly={blockType === BlockType.Embed}
-      />
-    </IndexPageView>
+  const pageBlockCount = Object.values(pagesRes.data ?? {}).reduce(
+    (sum, page) => sum + page.blocks.length,
+    0
   )
+
+  return useMemo(() => {
+    // console.log('[IndexPageContent] render')
+    const queryRes = [blockRelationRes, blocksRes, pagesRes]
+    if (queryRes.some((q) => !q.isSuccess)) {
+      return <LoadingFallback queryObserver={queryRes} />
+    }
+    if (
+      !blocksRes.data?.[blockId!] ||
+      blocksRes.data[blockId!].type !== blockType
+    ) {
+      return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
+    }
+    return (
+      <IndexPageView
+        path={getPathFromBlock(blocksRes.data![blockId!])}
+        block={blocksRes.data![blockId!]}
+        key={blockId}
+        scrollViewRef={scrollViewRef}
+      >
+        <IndexResults
+          relatedBlockId={blockId!}
+          key={`${blockType}_${blockId}`}
+          blocks={blocksRes.data!}
+          pages={pagesRes.data!}
+          onLast={restoreScroll}
+          textOnly={blockType === BlockType.Embed}
+          pageBlockCount={pageBlockCount}
+          blockRelation={blockRelationRes.data!}
+        />
+      </IndexPageView>
+    )
+  }, [
+    blockId,
+    blocksRes.data?.[blockId!],
+    Object.keys(blocksRes.data ?? {}).length,
+    pageBlockCount,
+    blockRelationRes.data?.pages.length,
+  ])
 }

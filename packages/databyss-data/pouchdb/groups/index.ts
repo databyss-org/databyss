@@ -40,6 +40,7 @@ import {
   createDatabaseCredentials,
   validateGroupCredentials,
 } from '../../../databyss-services/editorPage/index'
+import { sleep } from '@databyss-org/services/lib/util'
 
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
@@ -489,6 +490,7 @@ export const replicateSharedPage = async (pageIds: string[]) => {
   if (_groups?.length) {
     for (const group of _groups) {
       replicateGroup({ groupId: group._id, isPublic: group.public })
+      await sleep(250)
     }
   }
 }

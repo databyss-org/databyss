@@ -45,7 +45,6 @@
     "lodash": "^4.17.15",
     "lorem-ipsum": "^2.0.3",
     "react-query": "^3.6.0",
-    "react-twitter-widgets": "^1.10.0",
     "scroll-into-view-if-needed": "^2.2.26",
     "slate-dev-environment": "^0.2.2",
     "slate-hyperscript": "^0.57.2",

@@ -6,7 +6,7 @@ import {
   MediaTypes,
 } from '@databyss-org/services/interfaces/Block'
 // import IframeResizer from 'iframe-resizer-react'
-import { Tweet } from 'react-twitter-widgets'
+// import { Tweet } from 'react-twitter-widgets'
 import { parseTweetUrl } from '@databyss-org/services/embeds'
 import { EmbedCard, EmbedCardProps } from '../EmbedCard'
 
@@ -77,10 +77,10 @@ export const IframeComponent = ({
     if (embedDetail.mediaType === MediaTypes.TWITTER && _tweetAttributes) {
       return (
         <View backgroundColor={gray[6]} px="small" {...others}>
-          <Tweet
+          {/* <Tweet
             tweetId={_tweetAttributes.tweetId}
             options={{ width: '350' }}
-          />
+          /> */}
         </View>
       )
     }
