@@ -58,12 +58,12 @@ import {
   EmbedCard,
   embedCardPropsFromEmbedDetail,
 } from '@databyss-org/editor/components'
+import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 // import { useUserPreferencesContext } from '../../hooks'
 import IndexPageMenu from '../../components/IndexPage/IndexPageMenu'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
-import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]

@@ -14,7 +14,6 @@ import {
   bulkUpsert,
   findOne,
   getDocument,
-  upsert,
 } from '@databyss-org/data/pouchdb/utils'
 import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { replaceInlineText } from '../../state/util'
@@ -92,12 +91,6 @@ export const updateInlines = async ({
             ..._block,
             doctype: DocumentType.Block,
           }
-          // update block
-          // await upsert({
-          //   doctype: DocumentType.Block,
-          //   _id: _block!._id,
-          //   doc: _block,
-          // })
         }
       }
     }

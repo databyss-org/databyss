@@ -1,10 +1,9 @@
 import React from 'react'
 import { Text, View, BaseControl, Icon } from '@databyss-org/ui/primitives'
 import theme, { pxUnits } from '@databyss-org/ui/theming/theme'
-import { renderText, renderTextToComponents } from '../PageContent/FlatPageBody'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
-import LoadingFallback from '../Notify/LoadingFallback'
 import { Block } from '@databyss-org/services/interfaces'
+import { renderText, renderTextToComponents } from '../PageContent/FlatPageBody'
 
 export const IndexResultsContainer = ({ children }) => (
   <View mb="medium" widthVariant="content">
