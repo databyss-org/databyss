@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { CouchDb } from '@databyss-org/data/couchdb/couchdb'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
+import { useContextSelector, createContext } from 'use-context-selector'
 
 interface ContextType {
   isCouchMode: boolean
@@ -13,13 +14,9 @@ export const DatabaseContext = createContext<ContextType>(null!)
 export const DatabaseProvider = ({ children }) => {
   const [isCouchMode, setCouchMode] = useState(false)
 
-  const updateCouchMode = async () => {
-    // console.log(
-    //   '[DatabaseProvider] updateCouchMode',
-    //   dbRef.current instanceof CouchDb
-    // )
+  const updateCouchMode = useCallback(() => {
     setCouchMode(dbRef.current instanceof CouchDb)
-  }
+  }, [setCouchMode])
 
   useEffect(() => {
     updateCouchMode()
@@ -34,4 +31,5 @@ export const DatabaseProvider = ({ children }) => {
   )
 }
 
-export const useDatabaseContext = () => useContext(DatabaseContext)
+export const useDatabaseContext = (selector = (x) => x) =>
+  useContextSelector(DatabaseContext, selector)

@@ -54,11 +54,11 @@ router.post(
 
     if (query.docs.length) {
       const _login = query.docs[0]
+      const _res = await cloudant.models.Logins.get(_login._id)
+      await cloudant.models.Logins.destroy(_res._id, _res._rev)
 
       if (_login.createdAt >= Date.now() - 36000000) {
         const token = _login.token
-        const _res = await cloudant.models.Logins.get(_login._id)
-        await cloudant.models.Logins.destroy(_res._id, _res._rev)
         const session = await getSessionFromToken(token)
 
         // give user credentials, if default db does not exist for user, create one

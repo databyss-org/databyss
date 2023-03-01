@@ -310,7 +310,7 @@ export const upsertImmediate = async ({
 }
 
 // todo: use document type interface
-const bulkUpsert = async (upQdict: any) => {
+export const bulkUpsert = async (upQdict: any) => {
   // compose bulk get request
   const _bulkGetQuery = { docs: Object.keys(upQdict).map((d) => ({ id: d })) }
 

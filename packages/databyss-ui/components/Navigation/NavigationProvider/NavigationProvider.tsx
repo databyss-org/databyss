@@ -120,7 +120,6 @@ export const NavigationProvider = ({
     // determine path from location
     const _item = getTokensFromPath().type
     const _derivedPath = sidebarItemAliases[_item] || _item || 'pages'
-    console.log('[getSidebarPath] derivedPath', _derivedPath)
     navigateSidebar(`/${_derivedPath}`)
     return _derivedPath
 
