@@ -118,23 +118,11 @@ export class CouchDb {
     this.dbName = dbName
   }
 
-  async allDocs(
-    request: { keys: string[] },
-    options?: RequestCouchOptions
-  ): Promise<{ rows: { doc: any }[] } | null> {
-    const response = await this.bulkGet(
-      { docs: request.keys.map((id) => ({ id })) },
-      {
-        ...options,
-        authenticateAsGroupId: this.dbName,
-      }
-    )
-    if (!response) {
-      return null
-    }
-    return {
-      rows: response.results.map((r) => ({ doc: r.docs[0].ok })),
-    }
+  async allDocs(request: { keys: string[] }, options?: RequestCouchOptions) {
+    return couchPost(`${this.dbName}/_all_docs`, request, {
+      ...options,
+      authenticateAsGroupId: this.dbName,
+    }) as Promise<{ rows: { doc: any }[] } | null>
   }
 
   get(docId: string, options?: RequestCouchOptions) {
@@ -144,16 +132,43 @@ export class CouchDb {
     })
   }
 
+  // async bulkGet(
+  //   request: { docs: { id: string }[] },
+  //   options?: RequestCouchOptions
+  // ): Promise<{ results: { docs: { ok: any }[] }[] } | null> {
+  //   return couchPost(`${this.dbName}/_bulk_get?revs=false`, request, {
+  //     ...options,
+  //     authenticateAsGroupId: this.dbName,
+  //   }) as Promise<{
+  //     results: any[]
+  //   }>
+  // }
   async bulkGet(
     request: { docs: { id: string }[] },
     options?: RequestCouchOptions
   ): Promise<{ results: { docs: { ok: any }[] }[] } | null> {
-    return couchPost(`${this.dbName}/_bulk_get?revs=false`, request, {
-      ...options,
-      authenticateAsGroupId: this.dbName,
-    }) as Promise<{
-      results: any[]
-    }>
+    const response = (await couchPost(
+      `${this.dbName}/_all_docs`,
+      {
+        keys: request.docs.map(({ id }) => id),
+        include_docs: true,
+      },
+      {
+        ...options,
+        authenticateAsGroupId: this.dbName,
+      }
+    )) as {
+      rows: {
+        id: string
+        doc: any
+      }[]
+    }
+    return {
+      results: response.rows.map((r) => ({
+        id: r.id,
+        docs: [{ ok: r.doc }],
+      })),
+    }
   }
 
   // TODO: add TS defs for find request
