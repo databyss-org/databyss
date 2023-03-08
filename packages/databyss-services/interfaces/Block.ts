@@ -85,7 +85,7 @@ export interface EmbedDetail {
   mediaType: MediaTypes
   embedCode?: string
   openGraphJson?: string
-  fileDetail: FileDetail
+  fileDetail?: FileDetail
 }
 
 export interface SourceDetail {

@@ -115,8 +115,8 @@ export const useDocuments = <T extends Document>(
       })
       .on('change', (change) => {
         queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {
+          // console.log('[useDocuments] change', change)
           if (!oldData) {
-            // console.log('[useDocuments] no data', queryKey)
             return { [change.doc._id]: change.doc }
           }
           sequenceDict[queryKeyJson] = change.seq

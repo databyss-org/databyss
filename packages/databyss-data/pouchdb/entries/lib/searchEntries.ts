@@ -67,7 +67,7 @@ const searchEntries = async ({
     rows: PouchDbSearchRow[]
   ): SearchEntriesResultPage[] => {
     const _queryResponse = rows
-    if (!_queryResponse.length) {
+    if (!_queryResponse?.length) {
       return []
     }
     // if results are found, look up page and append to result
@@ -159,7 +159,7 @@ const searchEntries = async ({
 
     let _results = {}
 
-    if (_expandedQueryResponse.length) {
+    if (_expandedQueryResponse?.length) {
       // normalize response
       const _searchResults = _expandedQueryResponse.map((q) => ({
         ...q.doc,

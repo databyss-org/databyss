@@ -1,6 +1,8 @@
 import React from 'react'
 import { Text, View, BaseControl, Icon } from '@databyss-org/ui/primitives'
 import theme, { pxUnits } from '@databyss-org/ui/theming/theme'
+import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
+import { Block } from '@databyss-org/services/interfaces'
 import { renderText, renderTextToComponents } from '../PageContent/FlatPageBody'
 
 export const IndexResultsContainer = ({ children }) => (
@@ -39,49 +41,60 @@ export const IndexResultDetails = ({
   onInlineClick,
   tags,
   textVariant,
-  textOnly,
+  textOnly = false,
   ...others
-}) => (
-  <View position="relative" mb="small" data-test-element={dataTestElement}>
-    <BaseControl
-      data-test-element="index-result-links"
-      hoverColor="background.2"
-      activeColor="background.3"
-      mt="tiny"
-      left="mediumNegative"
-      position="absolute"
-      // width="100%"
-      height="100%"
-      // css={{ pointerEvents: 'none' }}
-      {...others}
-    >
-      <Icon
-        sizeVariant="tiny"
-        color="gray.5"
-        my="small"
-        pt={pxUnits(1)}
-        // css={{ pointerEvents: 'all' }}
+}) => {
+  const res = useDocument<Block>(block._id)
+  if (!res.isSuccess) {
+    return null
+  }
+  // console.log(
+  //   '[IndexResultDetails] render',
+  //   block._id,
+  //   res.data?.text?.textValue
+  // )
+  return (
+    <View position="relative" mb="small" data-test-element={dataTestElement}>
+      <BaseControl
+        data-test-element="index-result-links"
+        hoverColor="background.2"
+        activeColor="background.3"
+        mt="tiny"
+        left="mediumNegative"
+        position="absolute"
+        // width="100%"
+        height="100%"
+        // css={{ pointerEvents: 'none' }}
+        {...others}
       >
-        {icon}
-      </Icon>
-    </BaseControl>
-    <Text
-      variant={textVariant}
-      display="inline-block"
-      // pt={pxUnits(10)}
-      pt="small"
-      pb="tiny"
-      css={{ lineHeight: pxUnits(22), zIndex: theme.zIndex.base }}
-    >
-      {renderTextToComponents({
-        key: block._id,
-        text: block.text ?? { textValue: '', ranges: [] },
-        escapeFn: renderText,
-        searchTerms: normalizedStemmedTerms,
-        onInlineClick,
-        textOnly,
-      })}
-    </Text>
-    {tags}
-  </View>
-)
+        <Icon
+          sizeVariant="tiny"
+          color="gray.5"
+          my="small"
+          pt={pxUnits(1)}
+          // css={{ pointerEvents: 'all' }}
+        >
+          {icon}
+        </Icon>
+      </BaseControl>
+      <Text
+        variant={textVariant}
+        display="inline-block"
+        // pt={pxUnits(10)}
+        pt="small"
+        pb="tiny"
+        css={{ lineHeight: pxUnits(22), zIndex: theme.zIndex.base }}
+      >
+        {renderTextToComponents({
+          key: block._id,
+          text: res.data.text ?? { textValue: '', ranges: [] },
+          escapeFn: renderText,
+          searchTerms: normalizedStemmedTerms,
+          onInlineClick,
+          textOnly,
+        })}
+      </Text>
+      {tags}
+    </View>
+  )
+}

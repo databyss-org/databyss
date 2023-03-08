@@ -32,7 +32,8 @@ export const useDocument = <T extends Document>(
   _id: string,
   options: UseDocumentOptions = {}
 ) => {
-  const { isCouchMode } = useDatabaseContext()
+  const isCouchMode = useDatabaseContext((c) => c.isCouchMode)
+  // const isCouchMode = false
   const queryClient = useQueryClient()
   const queryKey = `useDocument_${_id}`
   const _options = applyDefaultUseDocumentOptions(options)
@@ -57,6 +58,7 @@ export const useDocument = <T extends Document>(
   )
 
   const subscribe = () => {
+    // console.log('[useDocument] subscribe', _id)
     if (!_options.enabled || !_options.subscribe) {
       return
     }
@@ -67,7 +69,6 @@ export const useDocument = <T extends Document>(
       subscriptionCount[_id] += 1
       return
     }
-    // console.log('[useDocument] subscribe', _id)
     subscriptionCount[_id] = 1
     subscriptionDict[_id] = dbRef!.current
       ?.changes({
@@ -77,6 +78,7 @@ export const useDocument = <T extends Document>(
         doc_ids: [_id],
       })
       .on('change', (change) => {
+        // console.log('[useDocument] change', change)
         queryClient.setQueryData<T>(queryKey, change.doc)
       })!
   }
@@ -89,7 +91,7 @@ export const useDocument = <T extends Document>(
     if (subscriptionCount[_id] > 0) {
       return
     }
-    console.log('[useDocument] unsubscribe', _id)
+    // console.log('[useDocument] unsubscribe', _id)
     subscriptionDict[_id]?.cancel()
     delete subscriptionDict[_id]
 
@@ -100,7 +102,7 @@ export const useDocument = <T extends Document>(
   useEffect(() => {
     subscribe()
     return unsubscribe
-  }, [options?.enabled, isCouchMode])
+  }, [_id, options?.enabled, isCouchMode])
 
   return query
 }

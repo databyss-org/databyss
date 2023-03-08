@@ -6,6 +6,7 @@ import {
   deletePouchSecret,
   getPouchSecret,
 } from '@databyss-org/services/session/clientStorage'
+import { sleep } from '@databyss-org/services/lib/util'
 import { Document } from '@databyss-org/services/interfaces'
 import { DocumentType, PageDoc } from '../interfaces'
 import {
@@ -489,6 +490,7 @@ export const replicateSharedPage = async (pageIds: string[]) => {
   if (_groups?.length) {
     for (const group of _groups) {
       replicateGroup({ groupId: group._id, isPublic: group.public })
+      await sleep(250)
     }
   }
 }
