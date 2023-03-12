@@ -1,16 +1,21 @@
-import { getDefaultGroup } from '@databyss-org/services/session/clientStorage'
+import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { openDB, IDBPDatabase, DBSchema } from 'idb'
+import { init as initSync } from './sync'
+
+export interface DriveDBRecordSchema {
+  id: string
+  data: ArrayBuffer
+  filename: string
+  contentType?: string // TODO: replace with MIME
+  syncProgress: number // 0 to 1
+  retryCount: number
+}
 
 interface DriveDBSchema extends DBSchema {
   files: {
     key: string
-    value: {
-      id: string
-      data: ArrayBuffer
-      filename: string
-      contentType?: string // TODO: replace with MIME
-      syncProgress: number // 0 to 1
-    }
+    value: DriveDBRecordSchema
+    indexes: { 'by-sync-progress': number }
   }
 }
 
@@ -24,23 +29,27 @@ export const ddbRef: DdbRef = {
   current: null,
 }
 
-initDefaultGroupDb()
+const _groupId = getAccountFromLocation()
+if (_groupId) {
+  initDriveDb(_groupId as string)
+}
 
-async function initDefaultGroupDb() {
-  const defaultGroup = getDefaultGroup()
-  if (!defaultGroup) {
-    throw new Error('[DDB] no default groupid found')
+export async function initDriveDb(groupId: string) {
+  if (ddbRef.current) {
+    return
   }
-  ddbRef.name = `ddb_${defaultGroup}`
+  ddbRef.name = `ddb_${groupId}`
   ddbRef.current = await getDriveDb(ddbRef.name)
+  await initSync()
 }
 
 export function getDriveDb(name: string) {
   return openDB<DriveDBSchema>(name, 1, {
     upgrade(db) {
-      db.createObjectStore('files', {
+      const store = db.createObjectStore('files', {
         keyPath: 'id',
       })
+      store.createIndex('by-sync-progress', 'syncProgress')
     },
   })
 }

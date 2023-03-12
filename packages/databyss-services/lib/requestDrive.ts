@@ -11,7 +11,7 @@ export const activeUploads: { [uploadId: string]: ConcurrentUpload } = {}
 export const requestDrive = async <T>(
   path: string,
   options?: RequestOptions
-): Promise<T | Response> => {
+): Promise<T> => {
   const groupId = await getAccountId()
   const token = await getAuthToken()
   const url = `https://${process.env.DRIVE_HOST}/b/${groupId}/${path}`

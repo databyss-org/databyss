@@ -1,7 +1,10 @@
 import contentDisposition from 'content-disposition'
 import { InsufficientPermissionError } from '@databyss-org/services/interfaces'
 import { httpGet } from '@databyss-org/services/lib/requestDrive'
-import { ddbRef } from './ddb'
+import { ddbRef, DriveDBRecordSchema } from './ddb'
+import { syncQueue } from './sync'
+
+export const fileUrlCache: { [id: string]: string } = {}
 
 export async function addFile({
   id,
@@ -14,17 +17,27 @@ export async function addFile({
   contentType?: string
   syncProgress?: number
 }) {
-  return ddbRef.current!.put('files', {
+  const _syncProgress = syncProgress ?? 0
+  const _rec: DriveDBRecordSchema = {
     id,
     filename: file.name,
     data: await file.arrayBuffer(),
-    syncProgress: syncProgress ?? 0,
+    syncProgress: _syncProgress,
     contentType: contentType ?? file.type,
-  })
+    retryCount: 0,
+  }
+  await ddbRef.current!.put('files', _rec)
+  if (_syncProgress < 1) {
+    syncQueue.current.push(_rec)
+  }
 }
 
 export async function getFileUrl(groupId, fileId) {
+  if (fileUrlCache[fileId]) {
+    return fileUrlCache[fileId]
+  }
   let file: File | null = null
+  let url: string | null = null
   const fileRec = await ddbRef.current?.get('files', fileId)
   if (!fileRec) {
     // Cache miss
@@ -33,26 +46,31 @@ export async function getFileUrl(groupId, fileId) {
     if (!file) {
       // If we don't have a token to download the file, return the remote drive URL
       // so that if the file is public, the browser can load it over HTTP
-      return `https://${process.env.DRIVE_HOST}/b/${groupId}/${fileId}`
+      url = `https://${process.env.DRIVE_HOST}/b/${groupId}/${fileId}`
+      fileUrlCache[fileId] = url
+      return url
     }
     // Cache the downloaded file
     await addFile({ id: fileId, file, syncProgress: 1 })
   } else {
     file = new File([fileRec.data], fileRec.filename)
   }
-  return URL.createObjectURL(file)
+  url = URL.createObjectURL(file)
+  fileUrlCache[fileId] = url
+  return url
 }
 
 async function fetchFile(id) {
   try {
-    const res: Response = await httpGet(id, { rawResponse: true })
+    const res = await httpGet<Response>(id, { rawResponse: true })
     const data = await res.arrayBuffer()
-    const disposition = contentDisposition.parse(
-      res.headers.get('content-disposition') ?? ''
-    )
+    const dispositionHeader = res.headers.get('content-disposition')
+    const disposition = dispositionHeader
+      ? contentDisposition.parse(dispositionHeader)
+      : null
     const contentType =
       res.headers.get('content-type') ?? 'application/octet-stream'
-    return new File([data], disposition.parameters?.filename, {
+    return new File([data], disposition?.parameters?.filename ?? id, {
       type: contentType,
     })
   } catch (err) {
@@ -61,4 +79,12 @@ async function fetchFile(id) {
     }
     throw err
   }
+}
+
+export function getFilesPendingSync() {
+  return ddbRef.current!.getAllFromIndex(
+    'files',
+    'by-sync-progress',
+    IDBKeyRange.upperBound(1, true)
+  )
 }

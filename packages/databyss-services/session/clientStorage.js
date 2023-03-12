@@ -5,6 +5,7 @@ import {
   findOne,
 } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { ddbRef } from '@databyss-org/data/drivedb/ddb'
 import { resetPouchDb } from '@databyss-org/data/pouchdb/db'
 import { getAccountFromLocation } from './utils'
 
@@ -90,6 +91,7 @@ export async function deletePouchDbs(matchName) {
     // if we don't do this, we get an error that we're accessing
     //  the db while the connection is closing
     await resetPouchDb()
+    ddbRef.current.close()
 
     await Promise.all(
       dbs.map(
