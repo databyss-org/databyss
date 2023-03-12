@@ -33,9 +33,12 @@
     "tv4": "^1.3.0"
   },
   "dependencies": {
+    "@types/content-disposition": "^0.5.5",
     "@types/pouchdb": "^6.4.0",
     "axios": "^1.2.3",
+    "content-disposition": "^0.5.4",
     "fast-deep-equal": "^3.1.3",
+    "idb": "^7.1.1",
     "js-base64": "^3.6.0",
     "lancaster-stemmer": "^2.0.0",
     "nano": "~8.2.2",

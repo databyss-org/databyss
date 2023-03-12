@@ -1,8 +1,14 @@
-import React from 'react'
-import { Embed, MediaTypes } from '@databyss-org/services/interfaces/Block'
+import React, { useState } from 'react'
+import {
+  Embed,
+  EmbedDetail,
+  MediaTypes,
+} from '@databyss-org/services/interfaces/Block'
 import { ViewProps } from '@databyss-org/ui'
 import { UnfetchedMedia } from './UnfetchedMedia'
 import { IframeComponent } from './Suggest/IframeComponent'
+import { getFileUrl } from '@databyss-org/data/drivedb/files'
+import { LoadingFallback } from '@databyss-org/ui/components'
 
 interface ResolveEmbedProps extends ViewProps {
   data: Embed
@@ -16,27 +22,36 @@ export const ResolveEmbed = ({
   highlight,
   ...others
 }: ResolveEmbedProps) => {
-  if (!data?.detail) {
+  const [detail, setDetail] = useState<EmbedDetail>(data?.detail)
+  const [isFetching, setIsFetching] = useState(false)
+  if (!detail) {
     return null
   }
   const _isUnfetched =
-    !data.detail.mediaType || data.detail.mediaType === MediaTypes.UNFETCHED
+    !detail.mediaType || detail.mediaType === MediaTypes.UNFETCHED
 
   if (_isUnfetched) {
     return (
       <UnfetchedMedia
         atomicId={leaf.atomicId}
-        src={data.detail.src}
+        src={detail.src}
         highlight={highlight}
       />
     )
   }
 
+  if (detail?.src?.startsWith('dbdrive://')) {
+    if (!isFetching) {
+      const [, , _groupId, _fileId] = detail.src.split('/')
+      getFileUrl(_groupId, _fileId).then((url) => {
+        setDetail({ ...detail, src: url })
+      })
+      setIsFetching(true)
+    }
+    return <LoadingFallback />
+  }
+
   return (
-    <IframeComponent
-      embedDetail={data.detail}
-      highlight={highlight}
-      {...others}
-    />
+    <IframeComponent embedDetail={detail} highlight={highlight} {...others} />
   )
 }

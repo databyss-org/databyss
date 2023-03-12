@@ -31,7 +31,7 @@ function request<T>(uri, options: RequestOptions = {}) {
   const _controller = new AbortController()
   const _timeoutDuration = timeout || FETCH_TIMEOUT
 
-  return new Promise<T>((resolve, reject) => {
+  return new Promise<T | Response>((resolve, reject) => {
     const _timeoutId = setTimeout(() => {
       _controller.abort()
       console.log(`[request] Request timed out after ${_timeoutDuration}ms`)
@@ -64,13 +64,16 @@ function request<T>(uri, options: RequestOptions = {}) {
           return
         }
         if (rawResponse) {
-          resolve(response as T)
+          resolve(response)
         }
         if (
           responseAsJson ||
           response.headers.get('Content-Type')?.match('json')
         ) {
-          response.json().then(resolve).catch(reject)
+          response
+            .json()
+            .then((json) => resolve(json as T))
+            .catch(reject)
           return
         }
         response!

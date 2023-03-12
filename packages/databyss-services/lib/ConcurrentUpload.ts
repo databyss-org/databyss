@@ -45,7 +45,7 @@ export class ConcurrentUpload {
     if (this.contentType) {
       postBody.contentType = this.contentType
     }
-    const startRes = await httpPost(
+    const startRes = await httpPost<{ uploadId: string }>(
       `/b/${this.accountId}/${this.fileId}`,
       postBody
     )
