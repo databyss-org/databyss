@@ -1,5 +1,6 @@
 /* eslint-disable no-plusplus */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { throttle } from 'lodash'
 import { uid } from '@databyss-org/data/lib/uid'
 import {
   Block,
@@ -106,6 +107,7 @@ const findMatchesInCrossref = (crossref, metadata) => {
 // component
 export const DropZoneManager = () => {
   const editorContext = useEditorContext()
+  const viewRef = useRef<HTMLElement | null>(null)
 
   const { showModal } = useNavigationContext()
 
@@ -243,12 +245,14 @@ export const DropZoneManager = () => {
   const onDragOver = (event) => {
     event.stopPropagation()
     event.preventDefault()
+    // editorContext.setDragActive(true)
     setDropAreaVisibility(true)
   }
 
   const onDragLeave = (event) => {
     event.stopPropagation()
     event.preventDefault()
+    // editorContext.setDragActive(false)
     setDropAreaVisibility(false)
   }
 
@@ -323,6 +327,7 @@ export const DropZoneManager = () => {
     // (prevent file from being opened)
     event.stopPropagation()
     event.preventDefault()
+    // editorContext.setDragActive(false)
 
     setParsed(false)
 
@@ -378,11 +383,9 @@ export const DropZoneManager = () => {
   }
 
   useEffect(() => {
-    // init
     addDragEventHandlers()
 
     return () => {
-      // cleanup
       removeDragEventHandlers()
     }
   }, [])
@@ -393,14 +396,16 @@ export const DropZoneManager = () => {
   return React.useMemo(
     () => (
       <View
+        ref={viewRef}
         className="pdf-drop-zone-manager"
         position="absolute"
-        bottom="4%"
+        bottom="0"
+        top="0"
+        left="0"
+        right="0"
         height="100%"
-        left="50%"
-        marginLeft="-48%"
+        width="100%"
         overflow="hidden"
-        width="96%"
         css={{ pointerEvents: 'none' }}
       >
         <DashedArea

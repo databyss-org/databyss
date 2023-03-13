@@ -45,8 +45,8 @@ async function sync() {
   }
 
   console.log('[DDB] sync file', rec)
-  setBusy(true)
-
+  setBusy(true, syncQueue.current.length + 1)
+  console.log('[DDB] status', JSON.stringify(getBusy()))
   // upload the next file in the queue
   isProcessing = true
 
@@ -93,7 +93,6 @@ async function upload(fileRec: DriveDBRecordSchema) {
     throw new NetworkUnavailableError('[uploadFile] initUpload failed')
   }
   activeUploads[upload.uploadId] = upload
-  upload.upload().then(() => {
-    delete activeUploads[upload.uploadId!]
-  })
+  await upload.upload()
+  delete activeUploads[upload.uploadId!]
 }
