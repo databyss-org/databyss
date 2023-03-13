@@ -15,7 +15,9 @@ export interface SyncStatus {
 }
 
 const INTERVAL_TIME = 1000
-const MAX_RETRIES = 3
+let _intervalTime = INTERVAL_TIME
+let _backoffMultiplier = 1.5
+let _interval: number | null = null
 
 let isProcessing = false
 export const syncQueue: SyncQueueRef = {
@@ -28,7 +30,25 @@ export async function init() {
   console.log('[DDB] sync init', files)
   syncQueue.current = files
   // start the sync interval
-  setInterval(sync, INTERVAL_TIME)
+  resetInterval()
+}
+
+function resetInterval(time: number = INTERVAL_TIME) {
+  if (_interval) {
+    window.clearInterval(_interval)
+  }
+  _intervalTime = time
+  _interval = window.setInterval(sync, _intervalTime)
+}
+
+export function pauseSync() {
+  if (_interval) {
+    window.clearInterval(_interval)
+  }
+}
+
+export function startSync() {
+  resetInterval()
 }
 
 async function sync() {
@@ -52,12 +72,11 @@ async function sync() {
 
   try {
     await upload(rec)
+    resetInterval()
   } catch (err) {
-    if (rec.retryCount < MAX_RETRIES) {
-      rec.retryCount += 1
-      syncQueue.current.unshift(rec)
-    }
-    console.log('[DDB] sync failed', err)
+    rec.retryCount += 1
+    resetInterval(_intervalTime * _backoffMultiplier)
+    syncQueue.current.push(rec)
   }
   rec.syncProgress = 1
   rec.retryCount = 0

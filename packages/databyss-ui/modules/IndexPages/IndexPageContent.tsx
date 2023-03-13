@@ -54,11 +54,8 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import { updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
 import { setEmbed } from '@databyss-org/services/embeds'
-import {
-  EmbedCard,
-  embedCardPropsFromEmbedDetail,
-} from '@databyss-org/editor/components'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
+import { ResolveEmbed } from '@databyss-org/editor/components/ResolveEmbed'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 // import { useUserPreferencesContext } from '../../hooks'
@@ -186,44 +183,13 @@ export const IndexPageTitleInput = ({
   )
 }
 
-// interface SourceTitleAndCitationViewProps extends ViewProps {
-//   block: Block
-// }
-
 interface EmbedHeaderProps extends ViewProps {
   block: Embed
 }
 
-const EmbedHeader = ({ block, ...others }: EmbedHeaderProps) => {
-  const embedCardProps = embedCardPropsFromEmbedDetail(block.detail)
-  return <EmbedCard {...embedCardProps} {...others} />
-}
-
-// const SourceTitleAndCitationView = ({
-//   block,
-//   ...others
-// }: SourceTitleAndCitationViewProps) => {
-//   const { getPreferredCitationStyle } = useUserPreferencesContext()
-//   return (
-//     <View>
-//       {/* <SourceCitationView
-//         py="none"
-//         pb="tiny"
-//         sourceId={block?._id}
-//         formatOptions={{
-//           outputType: CitationOutputTypes.BIBLIOGRAPHY,
-//           styleId: getPreferredCitationStyle(),
-//         }}
-//         noCitationFallback={
-//           <Text variant="bodyNormalUnderline" color="text.3">
-//             {block.text.textValue}
-//           </Text>
-//         }
-//         {...others}
-//       /> */}
-//     </View>
-//   )
-// }
+const EmbedHeader = ({ block, ...others }: EmbedHeaderProps) => (
+  <ResolveEmbed data={block} position="relative" {...others} />
+)
 
 const SourceTitleAndCitationView = () => null
 
@@ -244,10 +210,6 @@ export const IndexPageView = ({
   const titleInputHandlesRef = useRef<IndexPageTitleInputHandles>(null)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  // console.log('[IndexPageView] render')
-  // useEffect(() => {
-  //   restoreScroll()
-  // }, [])
 
   const onUpdateBlock = (block: Block) => {
     titleInputHandlesRef.current?.updateTitle(block)

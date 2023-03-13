@@ -6,8 +6,6 @@ import { ConcurrentUpload } from './ConcurrentUpload'
 
 export const activeUploads: { [uploadId: string]: ConcurrentUpload } = {}
 
-// export const makeDriveUrl =
-
 export const requestDrive = async <T>(
   path: string,
   options?: RequestOptions
@@ -47,45 +45,18 @@ export const httpDelete = (path: string) =>
     },
   })
 
-// export const uploadFile = async ({
-//   file,
-//   fileId,
-//   contentType,
-// }: {
-//   file: File
-//   fileId: string
-//   contentType?: string // TODO replace with MIME
-// }) => {
-//   const upload = new ConcurrentUpload({ file, fileId, contentType })
-//   await upload.initUpload()
-//   if (!upload.uploadId) {
-//     throw new NetworkUnavailableError('[uploadFile] initUpload failed')
-//   }
-//   activeUploads[upload.uploadId] = upload
-//   upload.upload().then(() => {
-//     delete activeUploads[upload.uploadId!]
-//   })
-//   return upload
-// }
-
 export interface UploadFileResponse {
   contentType: string
 }
 
-export const uploadFile = async ({
+export async function uploadFile({
   file,
   fileId,
 }: {
   file: File
   fileId: string
   // TODO: add contentType
-}) => {
+}) {
   // save to IDB
   return addFile({ id: fileId, file })
-  // const chunkForm = new FormData()
-  // chunkForm.append('file', file, file.name)
-  // return requestDrive<UploadFileResponse>(encodeURI(fileId), {
-  //   method: 'PUT',
-  //   body: chunkForm,
-  // })
 }

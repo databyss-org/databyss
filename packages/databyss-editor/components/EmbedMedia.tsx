@@ -75,7 +75,6 @@ export const EmbedMedia = ({
           <ResolveEmbed
             data={blockRes.data as Embed}
             highlight={highlight}
-            leaf={_element}
             position="relative"
             zIndex={1}
           />

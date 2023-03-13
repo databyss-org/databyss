@@ -5,21 +5,19 @@ import {
   MediaTypes,
 } from '@databyss-org/services/interfaces/Block'
 import { ViewProps } from '@databyss-org/ui'
-import { UnfetchedMedia } from './UnfetchedMedia'
-import { IframeComponent } from './Suggest/IframeComponent'
 import { getFileUrl } from '@databyss-org/data/drivedb/files'
 import { LoadingFallback } from '@databyss-org/ui/components'
+import { UnfetchedMedia } from './UnfetchedMedia'
+import { IframeComponent } from './Suggest/IframeComponent'
 
 interface ResolveEmbedProps extends ViewProps {
   data: Embed
-  highlight: boolean
-  leaf: any
+  highlight?: boolean
 }
 
 export const ResolveEmbed = ({
   data,
-  leaf,
-  highlight,
+  highlight = false,
   ...others
 }: ResolveEmbedProps) => {
   const [detail, setDetail] = useState<EmbedDetail>(data?.detail)
@@ -33,7 +31,7 @@ export const ResolveEmbed = ({
   if (_isUnfetched) {
     return (
       <UnfetchedMedia
-        atomicId={leaf.atomicId}
+        atomicId={data._id}
         src={detail.src}
         highlight={highlight}
       />

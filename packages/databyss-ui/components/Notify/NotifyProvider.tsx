@@ -23,6 +23,7 @@ import { cleanupGroupFromUrl } from '@databyss-org/services/session/clientStorag
 import IS_NATIVE from '../../lib/isNative'
 import StickyMessage from './StickyMessage'
 import { UnauthorizedDatabaseReplication } from '../../../databyss-services/interfaces/Errors'
+import { pauseSync, startSync } from '@databyss-org/data/drivedb/sync'
 
 declare module '@bugsnag/plugin-react' {
   export const formatComponentStack: (str: string) => string
@@ -256,6 +257,11 @@ class NotifyProvider extends React.Component {
   }
 
   setOnlineStatus = (isOnline) => {
+    if (!isOnline) {
+      pauseSync()
+    } else {
+      startSync()
+    }
     this.setState({
       isOnline,
     })
