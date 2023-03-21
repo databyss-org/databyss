@@ -53,7 +53,9 @@ export async function getFileUrl(groupId, fileId) {
     // Cache the downloaded file
     await addFile({ id: fileId, file, syncProgress: 1 })
   } else {
-    file = new File([fileRec.data], fileRec.filename)
+    file = new File([fileRec.data], fileRec.filename, {
+      type: fileRec.contentType,
+    })
   }
   url = URL.createObjectURL(file)
   fileUrlCache[fileId] = url

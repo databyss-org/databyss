@@ -1,6 +1,6 @@
 import express from 'express'
 import { cloudant } from '@databyss-org/data/cloudant'
-import { authMiddleware } from '../../middleware'
+import { authMiddleware, groupMiddleware } from '../../middleware'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
 import {
@@ -8,6 +8,7 @@ import {
   addCredientialsToSession,
 } from '../../lib/createUserDatabase'
 import { setAccess } from '../../lib/drive'
+import { Role } from '@databyss-org/data/interfaces'
 
 const router = express.Router()
 
@@ -48,6 +49,28 @@ router.post('/', authMiddleware, async (req, res) => {
     // throw new Error('err')
   }
 })
+
+// @route    POST api/auth/drive/:id
+// @desc     authorize group access to drive
+// @access   Private
+router.post(
+  '/drive/:id',
+  [authMiddleware, groupMiddleware([Role.Admin])],
+  wrap(async (req, res) => {
+    // use token from cloudant to initialize access on drive
+    const _sar = await setAccess(
+      {
+        accessLevel: 'admin',
+        groupId: req.group._id,
+        secret: process.env.DRIVE_ROOT_SECRET!,
+        token: req.token,
+      },
+      true
+    )
+    console.log('[auth] setAccess', _sar)
+    return res.status(200).json({}).send()
+  })
+)
 
 // @route    POST api/auth/code
 // @desc     verify user with code

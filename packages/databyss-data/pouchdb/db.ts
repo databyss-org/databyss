@@ -124,7 +124,7 @@ export const replicatePublicGroup = ({
       batch_size: BATCH_SIZE,
       batches_limit: BATCHES_LIMIT,
       style: 'main_only',
-      checkpoints: false,
+      checkpoint: false,
     }
     console.log('[DB] replicatePublicGroup')
     pouchDb.replicate
@@ -196,7 +196,7 @@ export const replicateDbFromRemote = ({
       batch_size: BATCH_SIZE,
       batches_limit: BATCHES_LIMIT,
       style: 'main_only',
-      checkpoints: false,
+      checkpoint: false,
       auth: {
         username: _cred.dbKey,
         password: _cred.dbPassword,
