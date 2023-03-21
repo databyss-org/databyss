@@ -114,11 +114,6 @@ const SidebarList = ({
   const recentSidebarItemLimit = parseInt(process.env.RECENT_SIDEBAR_ITEMS!, 10)
   if (!showAll && _menuItems.length > recentSidebarItemLimit) {
     _menuItems = sortEntriesByRecent(menuItems, 'data')
-    // _menuItems = _menuItems.sort(
-    //   (a, b) =>
-    //     (b.data?.accessedAt ?? b.data?.modifiedAt ?? b.data?.createdAt) -
-    //     (a.data?.accessedAt ?? a.data?.modifiedAt ?? a.data?.createdAt)
-    // )
     _menuItems = _menuItems.slice(
       0,
       Math.min(recentSidebarItemLimit, _menuItems.length)

@@ -3,7 +3,12 @@ import { createContext, useContextSelector } from 'use-context-selector'
 import { useQueryClient } from 'react-query'
 import Login from '@databyss-org/ui/modules/Login/Login'
 import LoadingIcon from '@databyss-org/ui/assets/loading.svg'
-import { syncPouchDb, dbRef, initDb } from '@databyss-org/data/pouchdb/db'
+import {
+  syncPouchDb,
+  dbRef,
+  initDb,
+  selectors,
+} from '@databyss-org/data/pouchdb/db'
 import { Text, View, Viewport } from '@databyss-org/ui'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
@@ -24,9 +29,10 @@ import {
 import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
 import { hasUnathenticatedAccess } from './actions'
 import { NetworkUnavailableError } from '../interfaces'
-import { urlSafeName } from '../lib/util'
+import { sleep, urlSafeName } from '../lib/util'
 import { getAccountFromLocation } from './utils'
 import { useDatabaseContext } from '../lib/DatabaseProvder'
+import { sortEntriesByRecent } from '../entries/util'
 
 const useReducer = createReducer()
 
@@ -47,7 +53,7 @@ const SessionProvider = ({
   email,
   unauthorizedChildren,
 }) => {
-  const [state, dispatch] = useReducer(reducer, initialState, {
+  const [state, dispatch, stateRef] = useReducer(reducer, initialState, {
     name: 'SessionProvider',
   })
   const { notify } = useNotifyContext()
@@ -319,6 +325,52 @@ const SessionProvider = ({
     dispatch(actions.onSetDefaultPage(id))
   }, [])
 
+  const getDefaultPage = useCallback(
+    (pages) => {
+      const _pinning = stateRef.current.session?.publicAccount
+      console.log('[getDefaultPage]', _pinning)
+      return sortEntriesByRecent(Object.values(pages), null, _pinning).filter(
+        (p) => !p.archive
+      )[0]
+    },
+    [stateRef.current]
+  )
+
+  const getDefaultPageUrl = useCallback(
+    ({ pages, defaultGroupName, defaultGroupId }) => {
+      let _groupName = ''
+      if (defaultGroupName) {
+        _groupName = `${urlSafeName(defaultGroupName)}-`
+      }
+      const defaultPage = getDefaultPage(pages)
+      const pageUrl = `${defaultPage._id}/${urlSafeName(defaultPage.name)}`
+      return `/${_groupName}${defaultGroupId.substring(2)}/pages/${pageUrl}`
+    },
+    []
+  )
+
+  const navigateToDefaultPage = useCallback(
+    async (replace = true) => {
+      while (!state.session.defaultGroupId) {
+        await sleep(100)
+      }
+      const { defaultGroupName, defaultGroupId } = state.session
+
+      // return most recently accessed page
+      let pages = null
+      do {
+        await sleep(100)
+        pages = queryClient.getQueryData([selectors.PAGES])
+      } while (!pages)
+
+      navigate(getDefaultPageUrl({ pages, defaultGroupName, defaultGroupId }), {
+        hasAccount: true,
+        replace,
+      })
+    },
+    [getDefaultPage, state.session]
+  )
+
   useEffect(() => {
     dispatch(
       actions.setReadOnly(
@@ -335,6 +387,9 @@ const SessionProvider = ({
       value={{
         ...state,
         setDefaultPage,
+        getDefaultPage,
+        getDefaultPageUrl,
+        navigateToDefaultPage,
         getSession,
         endSession,
         isPublicAccount,
