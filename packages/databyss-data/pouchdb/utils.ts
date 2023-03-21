@@ -118,6 +118,9 @@ export const findOne = async <T extends Document>(args: {
 export const getDocument = async <T extends Document>(
   id: string
 ): Promise<T | null> => {
+  if (typeof id !== 'string') {
+    return null
+  }
   try {
     return await dbRef.current!.get(id)
   } catch (err: any) {

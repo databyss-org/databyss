@@ -51,20 +51,17 @@ const Providers = ({ children }) => (
 )
 
 const Private = () => {
-  const { location, navigate } = useNavigationContext()
+  const { location } = useNavigationContext()
   const getSession = useSessionContext((c) => c && c.getSession)
-  const {
-    defaultGroupId,
-    defaultPageId,
-    provisionClientDatabase,
-  } = getSession()
+  const navigateToDefaultPage = useSessionContext(
+    (c) => c && c.navigateToDefaultPage
+  )
+  const { provisionClientDatabase } = getSession()
 
-  // Navigate to default page is nothing in path
+  // Navigate to default page if nothing in path
   useEffect(() => {
     if (location.pathname === '/' || provisionClientDatabase) {
-      navigate(`/${defaultGroupId.substring(2)}/pages/${defaultPageId}`, {
-        hasAccount: true,
-      })
+      navigateToDefaultPage(false)
     }
   }, [])
 

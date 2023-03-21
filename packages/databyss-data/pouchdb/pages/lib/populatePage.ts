@@ -19,6 +19,9 @@ export default (_id: string) =>
     })
 
     const _populatePage = async (_id: string, count: number = 0) => {
+      if (typeof _id !== 'string') {
+        return null
+      }
       try {
         const _retry = () => {
           console.log(`[populatePage] retry ${count + 1}`)
@@ -37,7 +40,7 @@ export default (_id: string) =>
 
         const _page: PageDoc | null = await getDocument(_id)
 
-        if (!_page) {
+        if (!_page || !_page.blocks) {
           console.log('[populatePage] page missing, retry')
           return _retry()
         }
