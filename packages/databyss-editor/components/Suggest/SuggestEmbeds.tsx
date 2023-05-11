@@ -107,7 +107,7 @@ const SuggestEmbeds = ({
   const graphRes = useOpenGraph(debounceQuery)
   // get title data from OG and set as attribute
   useEffect(() => {
-    const _data = graphRes?.data
+    const _data: EmbedDetail | undefined = graphRes?.data
 
     if (_data?.mediaType) {
       setEmbedDetail({ ...embedDetail, ..._data })

@@ -68,7 +68,7 @@ export const addCloudantGroupDatabase = async ({
   groupId: string
   isPublic: boolean
 }) => {
-  const res = await httpPost(`/cloudant/groups/${groupId}`, {
+  const res: any = await httpPost(`/cloudant/groups/${groupId}`, {
     data: { isPublic },
   })
   // if is public, add credentials to localstorage

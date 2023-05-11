@@ -13,7 +13,7 @@ export const useOpenGraph = (
     queryKey,
     async () => {
       const _res = await httpPost('/media/opengraph', { url })
-      return _res
+      return _res as EmbedDetail
     },
     options as UseQueryOptions<EmbedDetail>
   )

@@ -92,7 +92,7 @@ const getFileToProcess = (event: InputEvent | DragEvent) => {
 
 const findMatchesInCrossref = (crossref, metadata) => {
   const { title } = metadata.fromPDF
-  const matches = []
+  const matches: any[] = []
   crossref.message.items.forEach((element) => {
     if (element.title && Array.isArray(element.title)) {
       const elementTitle = element.title[0]

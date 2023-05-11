@@ -15,7 +15,7 @@ const openLibrary: CatalogService = {
   type: OPEN_LIBRARY,
 
   search: async (query: string): Promise<GroupedCatalogResults> => {
-    const results = await request(
+    const results = await request<GroupedCatalogResults>(
       `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`,
       {
         timeout: 15000,

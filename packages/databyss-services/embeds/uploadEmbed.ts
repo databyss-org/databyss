@@ -1,6 +1,6 @@
 import { uid } from '@databyss-org/data/lib/uid'
 import { makeText } from '../blocks'
-import { BlockType, Embed, MediaTypes } from '../interfaces'
+import { BlockType, MediaTypes } from '../interfaces'
 import { uploadFile } from '../lib/requestDrive'
 import { getAccountId } from '../session/clientStorage'
 import { setEmbed } from './setEmbed'
@@ -16,7 +16,7 @@ export const uploadEmbed = async ({
   await uploadFile({ file, fileId })
   const groupId = getAccountId()
   const storageKey = fileId
-  const embed: Embed = {
+  const embed = {
     _id: uid(),
     text: makeText(file.name),
     detail: {

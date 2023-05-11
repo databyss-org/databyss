@@ -1,4 +1,5 @@
 import express from 'express'
+import { check } from 'express-validator/check'
 import { cloudant } from '@databyss-org/data/cloudant'
 import { Role } from '@databyss-org/data/interfaces'
 import { authMiddleware, groupMiddleware } from '../../middleware'
@@ -9,7 +10,6 @@ import {
   addCredientialsToSession,
 } from '../../lib/createUserDatabase'
 import { activateToken, setAccess, SetAccessOptions } from '../../lib/drive'
-import { check } from 'express-validator/check'
 
 const router = express.Router()
 

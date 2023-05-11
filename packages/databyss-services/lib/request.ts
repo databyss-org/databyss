@@ -65,7 +65,7 @@ function request<T>(uri, options: RequestOptions = {}) {
           return
         }
         if (rawResponse) {
-          resolve(response as T)
+          resolve((response as unknown) as T)
           return
         }
         if (
@@ -80,7 +80,7 @@ function request<T>(uri, options: RequestOptions = {}) {
         }
         response!
           .text()
-          .then((txt) => resolve(txt as T))
+          .then((txt) => resolve((txt as unknown) as T))
           .catch(reject)
       })
   })

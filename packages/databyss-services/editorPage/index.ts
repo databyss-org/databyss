@@ -50,7 +50,7 @@ export const createDatabaseCredentials = async ({
   groupId: string
   isPublic?: boolean
 }) => {
-  const _res = await httpPost(`/cloudant/groups/${groupId}/credentials/`, {
+  const _res: any = await httpPost(`/cloudant/groups/${groupId}/credentials/`, {
     data: {
       isPublic,
     },

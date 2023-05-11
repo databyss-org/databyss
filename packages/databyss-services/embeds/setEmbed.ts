@@ -10,7 +10,7 @@ import { InlineTypes } from '../interfaces/Range'
 import { Embed, BlockType } from '../interfaces/Block'
 
 export const setEmbed = async (data: Embed, immediate?: boolean) => {
-  const { text, detail, _id, sharedWithGroups } = data
+  const { text, detail, _id, sharedWithGroups } = data as any
 
   const blockFields = {
     _id,

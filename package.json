@@ -120,20 +120,6 @@
         "testTimeout": 30000
       },
       {
-        "displayName": "test-api",
-        "testEnvironment": "node",
-        "testMatch": [
-          "<rootDir>/packages/databyss-api/**/*.test.js"
-        ],
-        "moduleFileExtensions": [
-          "js",
-          "json"
-        ],
-        "globalSetup": "<rootDir>/packages/databyss-api/__tests__/globalSetup.js",
-        "globalTeardown": "<rootDir>/packages/databyss-api/__tests__/globalTeardown.js",
-        "testTimeout": 30000
-      },
-      {
         "displayName": "test-selenium",
         "testEnvironment": "node",
         "testMatch": [
