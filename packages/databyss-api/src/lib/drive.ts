@@ -3,56 +3,71 @@ import { ApiError } from './Errors'
 
 export type AccessLevel = 'admin' | 'readwrite' | 'readonly'
 
-export function setAccess(
+export interface SetAccessOptions {
+  groupId: string
+  fileId?: string
+  userId?: string
+  isPublic?: boolean
+  accessLevel: AccessLevel
+}
+
+export function activateToken(
   {
-    secret,
-    groupId,
-    fileId,
+    userId,
     token,
-    isPublic,
-    accessLevel,
   }: {
-    secret: string
-    groupId: string
-    fileId?: string
+    userId: string
     token: string
-    isPublic?: boolean
-    accessLevel: AccessLevel
   },
+  activate: boolean
+) {
+  const url = `https://${process.env.REACT_APP_DRIVE_HOST}/auth`
+  return new Promise<string>((resolve, reject) => {
+    request(url, {
+      method: activate ? 'POST' : 'DELETE',
+      headers: {
+        Authorization: `Bearer ${process.env.DRIVE_ROOT_SECRET!}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, token }),
+    })
+      .on('response', (response) => {
+        if (!(response.statusCode >= 200 && response.statusCode < 300)) {
+          reject(
+            new ApiError(
+              `[drive] activateToken failed: ${
+                response.body ?? response.statusMessage
+              }`
+            )
+          )
+          return
+        }
+        resolve(
+          `ACL request accepted: ${response.body ?? response.statusMessage}`
+        )
+      })
+      .on('error', (err) => {
+        reject(new ApiError(`[activateToken] setAccess failed: ${err.message}`))
+      })
+  })
+}
+
+export function setAccess(
+  { groupId, fileId, isPublic, accessLevel, userId }: SetAccessOptions,
   authorize: boolean
 ) {
-  if (!secret) {
-    throw new ApiError('ERR: Admin token is required')
-  }
-  if (!groupId) {
-    throw new ApiError('ERR: Group ID is required')
-  }
-  if (!isPublic && !token) {
-    throw new ApiError('ERR: Token is required if not public')
-  }
   let url = `https://${process.env.REACT_APP_DRIVE_HOST}/auth/${groupId}`
-  if (fileId) {
-    url += `/${fileId}`
-  }
-  const body: {
-    accessLevel: AccessLevel
-    public?: boolean
-    token?: string
-  } = { accessLevel }
+  url += fileId ? `/${fileId}` : `/*`
+  url += `/${accessLevel}`
+  url += isPublic ? '/public' : `/${userId}`
 
-  if (isPublic) {
-    body.public = true
-  } else {
-    body.token = token
-  }
-  return new Promise((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     request(url, {
       method: authorize ? 'POST' : 'DELETE',
       headers: {
-        Authorization: `Bearer ${secret}`,
+        Authorization: `Bearer ${process.env.DRIVE_ROOT_SECRET!}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
     })
       .on('response', (response) => {
         if (!(response.statusCode >= 200 && response.statusCode < 300)) {
@@ -65,12 +80,51 @@ export function setAccess(
           )
           return
         }
+        console.log('[DRIVE]', url, response.statusCode)
         resolve(
           `ACL request accepted: ${response.body ?? response.statusMessage}`
         )
       })
       .on('error', (err) => {
         reject(new ApiError(`[drive] setAccess failed: ${err.message}`))
+      })
+  })
+}
+
+export function setQuotaAllowed({
+  userId,
+  allowed,
+}: {
+  userId: string
+  allowed: number
+}) {
+  return new Promise<string>((resolve, reject) => {
+    const url = `https://${process.env.REACT_APP_DRIVE_HOST}/user/${userId}/quota/allowed`
+    request(url, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${process.env.DRIVE_ROOT_SECRET!}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ allowed: allowed * 1000000 }),
+    })
+      .on('response', (response) => {
+        if (!(response.statusCode >= 200 && response.statusCode < 300)) {
+          reject(
+            new ApiError(
+              `[drive] setQuotaAllowed failed: ${
+                response.body ?? response.statusMessage
+              } (${url})`
+            )
+          )
+          return
+        }
+        resolve(
+          `Quota request accepted: ${response.body ?? response.statusMessage}`
+        )
+      })
+      .on('error', (err) => {
+        reject(new ApiError(`[drive] setQuotaAllowed failed: ${err.message}`))
       })
   })
 }

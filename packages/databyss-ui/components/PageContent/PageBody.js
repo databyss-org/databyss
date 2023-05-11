@@ -128,7 +128,7 @@ export const PageBody = ({
                 firstBlockIsTitle: true,
               }}
             >
-              <DropZoneManager />
+              <DropZoneManager sharedWithGroups={sharedWithGroups} />
               <ContentEditable
                 autofocus
                 focusIndex={focusIndex}

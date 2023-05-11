@@ -32,6 +32,8 @@ const setBlockRelations = async (payload: {
     pages: [],
   }
 
+  console.log('[setBlockRelations]', operationType, _payload)
+
   const res = await getDocument<BlockRelation>(_relationId)
 
   // if no relation exists for atomic, create one
@@ -60,9 +62,13 @@ const setBlockRelations = async (payload: {
     if (operationType === BlockRelationOperation.REMOVE) {
       _payload.pages = res.pages.filter((p) => p !== page)
       // keep up to date with page
-      if (_payload?.sharedWithGroups) {
-        // TODO: this only works with single page share logic
-        await removeGroupsFromDocument([`p_${page}`], _payload)
+      if (res.sharedWithGroups) {
+        const _groupsToRemove = await groupsNotSharedByPages({
+          sharedWithGroups: res.sharedWithGroups,
+          pages: _payload.pages,
+        })
+        console.log('[setBlockRelations] groupsToRemove', _groupsToRemove)
+        await removeGroupsFromDocument(_groupsToRemove, res)
       }
 
       upsert({
@@ -99,6 +105,29 @@ const setBlockRelations = async (payload: {
       addGroupToDocumentsInPage(_pageRes)
     }, 3000)
   }
+}
+
+async function groupsNotSharedByPages({
+  sharedWithGroups,
+  pages,
+}: {
+  sharedWithGroups: string[]
+  pages: string[]
+}): Promise<string[]> {
+  console.log('[groupsNotShareByPages]', sharedWithGroups, pages)
+  let _groups = [...sharedWithGroups]
+  for (const _groupId of sharedWithGroups) {
+    for (const _pageId of pages) {
+      const _pageRes = await getDocument(_pageId)
+      if (_pageRes?.sharedWithGroups?.includes(_groupId)) {
+        // remove group from list because it appeared on another page
+        _groups = _groups.filter((_id) => _id !== _groupId)
+        break
+      }
+      // not shared on this page, keep looking
+    }
+  }
+  return _groups
 }
 
 export default setBlockRelations

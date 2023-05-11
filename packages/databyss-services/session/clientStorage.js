@@ -50,7 +50,7 @@ export function getDefaultGroup() {
   return groupId
 }
 
-export async function getAccountId() {
+export function getAccountId() {
   const defaultGroup = getDefaultGroup()
   return defaultGroup
 }

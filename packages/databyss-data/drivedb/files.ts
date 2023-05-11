@@ -2,7 +2,6 @@ import contentDisposition from 'content-disposition'
 import { InsufficientPermissionError } from '@databyss-org/services/interfaces'
 import { httpGet } from '@databyss-org/services/lib/requestDrive'
 import { ddbRef, DriveDBRecordSchema } from './ddb'
-import { syncQueue } from './sync'
 
 export const fileUrlCache: { [id: string]: string } = {}
 
@@ -25,11 +24,34 @@ export async function addFile({
     syncProgress: _syncProgress,
     contentType: contentType ?? file.type,
     retryCount: 0,
+    shareQueue: [],
+    shareQueueDirty: 0,
+    sharedWithGroups: [],
   }
   await ddbRef.current!.put('files', _rec)
-  if (_syncProgress < 1) {
-    syncQueue.current.push(_rec)
+}
+
+export async function shareFileWithGroup({
+  id,
+  groupId,
+  revokeAccess,
+}: {
+  id: string
+  groupId: string
+  revokeAccess: boolean
+}) {
+  const rec = await ddbRef.current!.get('files', id)
+  if (!rec) {
+    throw new Error(`[DDB] cannot share file, id not found: ${id}`)
   }
+  // remove any actions for the groupId
+  rec.shareQueue = rec.shareQueue.filter((share) => share.groupId !== groupId)
+  // add the action
+  rec.shareQueue.push({
+    accessLevel: 'readonly', // TODO: this is for sharing public groups/pages only rn
+    groupId,
+    revokeAccess,
+  })
 }
 
 export async function getFileUrl(groupId, fileId) {
@@ -38,17 +60,15 @@ export async function getFileUrl(groupId, fileId) {
   }
   let file: File | null = null
   let url: string | null = null
+  console.log('[DDB] getFileUrl', fileId)
   const fileRec = await ddbRef.current?.get('files', fileId)
   if (!fileRec) {
     // Cache miss
     // If we have an auth token, try to download the file
     file = await fetchFile(fileId)
     if (!file) {
-      // If we don't have a token to download the file, return the remote drive URL
-      // so that if the file is public, the browser can load it over HTTP
-      url = `https://${process.env.DRIVE_HOST}/b/${groupId}/${fileId}`
-      fileUrlCache[fileId] = url
-      return url
+      // TODO handle broken files with placeholder image
+      return URL.createObjectURL(new Blob())
     }
     // Cache the downloaded file
     await addFile({ id: fileId, file, syncProgress: 1 })
@@ -64,7 +84,8 @@ export async function getFileUrl(groupId, fileId) {
 
 async function fetchFile(id) {
   try {
-    const res = await httpGet<Response>(id, { rawResponse: true })
+    console.log('[DDB] fetchFile', id)
+    const res = await httpGet<Response>('b', id, { rawResponse: true })
     const data = await res.arrayBuffer()
     const dispositionHeader = res.headers.get('content-disposition')
     const disposition = dispositionHeader
@@ -76,6 +97,7 @@ async function fetchFile(id) {
       type: contentType,
     })
   } catch (err) {
+    console.error('[DDB] fetchFile failed', err)
     if (err instanceof InsufficientPermissionError) {
       return null
     }
@@ -83,10 +105,21 @@ async function fetchFile(id) {
   }
 }
 
-export function getFilesPendingSync() {
-  return ddbRef.current!.getAllFromIndex(
-    'files',
-    'by-sync-progress',
-    IDBKeyRange.upperBound(1, true)
+export async function getFilesPendingSync() {
+  if (!ddbRef.current) {
+    return []
+  }
+  return (
+    await ddbRef.current.getAllFromIndex(
+      'files',
+      'by-sync-progress',
+      IDBKeyRange.upperBound(1, true)
+    )
+  ).concat(
+    await ddbRef.current.getAllFromIndex(
+      'files',
+      'by-share-queue-dirty',
+      IDBKeyRange.only(1)
+    )
   )
 }

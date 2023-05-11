@@ -1,6 +1,7 @@
 import PouchDB from 'pouchdb'
 import { throttle } from 'lodash'
 import EventEmitter from 'es-event-emitter'
+import equal from 'fast-deep-equal'
 import { Document, Group } from '@databyss-org/services/interfaces'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { DocumentType, UserPreference } from './interfaces'
@@ -290,17 +291,17 @@ export const upsertImmediate = async ({
 }) => {
   const { sharedWithGroups, ...docFields } = doc
   return dbRef.current!.upsert(_id, (oldDoc) => {
-    const _groupSet = new Set(
-      (oldDoc?.sharedWithGroups ?? []).concat(sharedWithGroups ?? [])
-    )
+    if (equal(doc, oldDoc)) {
+      return false
+    }
+    // const _groupSet = new Set(
+    //   (oldDoc?.sharedWithGroups ?? []).concat(sharedWithGroups ?? [])
+    // )
     const _doc = {
       ...oldDoc,
       ...addTimeStamp({ ...oldDoc, ...docFields, doctype }),
       // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
-      sharedWithGroups:
-        doctype === DocumentType.Page
-          ? sharedWithGroups ?? oldDoc?.sharedWithGroups
-          : Array.from(_groupSet),
+      sharedWithGroups: sharedWithGroups ?? oldDoc?.sharedWithGroups ?? [],
       belongsToGroup: getAccountFromLocation(),
     }
 
@@ -313,6 +314,10 @@ export const upsertImmediate = async ({
 export const bulkUpsert = async (upQdict: any) => {
   // compose bulk get request
   const _bulkGetQuery = { docs: Object.keys(upQdict).map((d) => ({ id: d })) }
+
+  if (!_bulkGetQuery.docs.length) {
+    return
+  }
 
   const _res = await dbRef.current!.bulkGet(_bulkGetQuery)
 

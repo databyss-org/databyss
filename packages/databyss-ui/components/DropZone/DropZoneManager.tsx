@@ -105,7 +105,11 @@ const findMatchesInCrossref = (crossref, metadata) => {
 }
 
 // component
-export const DropZoneManager = () => {
+export const DropZoneManager = ({
+  sharedWithGroups = [],
+}: {
+  sharedWithGroups: string[]
+}) => {
   const editorContext = useEditorContext()
   const viewRef = useRef<HTMLElement | null>(null)
 
@@ -310,7 +314,7 @@ export const DropZoneManager = () => {
 
   const processImage = async (file: File) => {
     try {
-      const embed = await uploadEmbed(file)
+      const embed = await uploadEmbed({ file, sharedWithGroups })
       const block = buildEntryBlockForEmbed(embed)
       editorContext.insert([block])
     } catch (error) {

@@ -1,8 +1,4 @@
-import {
-  replicatePublicGroup,
-  REMOTE_CLOUDANT_URL,
-  initDb,
-} from '@databyss-org/data/pouchdb/db'
+import { REMOTE_CLOUDANT_URL, initDb } from '@databyss-org/data/pouchdb/db'
 import { initDriveDb } from '@databyss-org/data/drivedb/ddb'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
@@ -128,7 +124,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       await initDb({ groupId: _defaultGroupId })
 
       // init the Drive database
-      await initDriveDb(_defaultGroupId)
+      await initDriveDb({ groupId: _defaultGroupId })
 
       dispatch({
         type: STORE_SESSION_LOCALLY,
@@ -286,9 +282,4 @@ export const hasUnathenticatedAccess = (maxRetries = 5) =>
       }
     }
     _checkAccess()
-  })
-
-export const replicateGroup = (id) =>
-  replicatePublicGroup({
-    groupId: id,
   })

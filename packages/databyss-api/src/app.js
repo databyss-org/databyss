@@ -89,6 +89,7 @@ const run = async () => {
   // Global error handler
   app.use((err, _req, res, _next) => {
     if (err instanceof ApiError) {
+      console.error('API error', err)
       res.status(err.status).json({ error: err })
     } else {
       console.error('Unexpected error', err)

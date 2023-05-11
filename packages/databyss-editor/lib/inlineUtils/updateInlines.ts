@@ -99,5 +99,5 @@ export const updateInlines = async ({
 
   // update all replicated pages related to topic
   const pagesWhereAtomicExists: string[] = _relation.pages
-  replicateSharedPage(pagesWhereAtomicExists)
+  await replicateSharedPage(pagesWhereAtomicExists)
 }

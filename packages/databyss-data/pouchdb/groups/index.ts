@@ -1,6 +1,7 @@
 import { Group } from '@databyss-org/services/interfaces/Group'
 import _ from 'lodash'
 import { httpDelete, httpPost } from '@databyss-org/services/lib/requestApi'
+import { httpPost as drivePost } from '@databyss-org/services/lib/requestDrive'
 import {
   setPouchSecret,
   deletePouchSecret,
@@ -124,7 +125,7 @@ export const removeGroupsFromDocument = async (
   if (document.sharedWithGroups.length !== _sharedWithGroups.length) {
     document.sharedWithGroups = _sharedWithGroups
 
-    // console.log('[removeGroupsFromDocument] upsert', document)
+    console.log('[removeGroupsFromDocument] upsert', document)
     await upsertImmediate({
       doctype: document.doctype,
       _id: document._id,
@@ -201,22 +202,55 @@ export const addPageToGroup = async ({
   return _page
 }
 
+export const replicatePublicEmbeds = async ({
+  docs,
+  groupId,
+}: {
+  docs: any[]
+  groupId: string
+}) => {
+  // add public readonly access to the public groupID
+  // NB this has to be done through the Databyss API because it requires superuser rights
+  await httpPost(`/auth/drive/${groupId}`, {
+    isPublic: true,
+    accessLevel: 'readonly',
+  })
+  for (const _embedDoc of docs) {
+    // only process embeds with attached files
+    if (!_embedDoc?.detail?.fileDetail) {
+      continue
+    }
+    // set file to inherit permission from group
+    const _fileId = _embedDoc.detail.fileDetail.storageKey
+    await drivePost('auth', `/${groupId}/${_fileId}/inherit`)
+  }
+}
+
 const upsertReplication = async ({
   groupId,
   dbKey,
   dbPassword,
+  isPublic,
 }: {
   groupId: string
   dbKey: string
   dbPassword: string
+  isPublic?: boolean
 }) => {
-  const opts = {
+  const opts: any = {
+    batch_size: BATCH_SIZE,
+    batches_limit: BATCHES_LIMIT,
     retry: true,
     auth: {
       username: dbKey,
       password: dbPassword,
     },
   }
+
+  opts.since =
+    dbRef.lastReplicationSeq === 'now'
+      ? dbRef.lastSeq
+      : dbRef.lastReplicationSeq
 
   // console.log('[upsertReplication]', groupId)
 
@@ -230,18 +264,22 @@ const upsertReplication = async ({
     },
   })
 
-  const _docIds = _findRes?.docs.map((doc) => doc._id)
-  // console.log('[upsertReplication] doc ids', _docIds)
+  opts.doc_ids = _findRes?.docs.map((doc) => doc._id)
 
   // upsert replication
-  dbRef
-    .current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
-      ...opts,
-      doc_ids: _docIds,
-      batch_size: BATCH_SIZE,
-      batches_limit: BATCHES_LIMIT,
+  console.log('[upsertReplication] options', opts)
+  const _res = await dbRef
+    .current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, opts)
+    .on('change', async (_info) => {
+      const _embedDocs =
+        _info?.docs?.filter((doc: any) => doc.type === 'EMBED') ?? []
+      await replicatePublicEmbeds({ docs: _embedDocs, groupId })
+      console.log('[upsertReplication] change docs', _info.docs)
+      console.log('[upsertReplication] embed docs', _embedDocs)
     })
     .on('error', MakePouchReplicationErrorHandler('[upsertReplication]'))
+
+  dbRef.lastReplicationSeq = _res.last_seq
 }
 
 /**
@@ -284,6 +322,7 @@ export const replicateGroup = async ({
       groupId,
       dbKey: creds.dbKey,
       dbPassword: creds.dbPassword,
+      isPublic,
     })
   } catch (err) {
     console.error(err)

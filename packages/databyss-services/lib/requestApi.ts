@@ -7,7 +7,7 @@ export const requestApi = async (
   path: string,
   options: RequestOptions = { headers: {} }
 ) => {
-  const _accountId = await getAccountId()
+  const _accountId = getAccountId()
   // const _accountFromLocation = getAccountFromLocation()
   const _token = await getAuthToken()
 

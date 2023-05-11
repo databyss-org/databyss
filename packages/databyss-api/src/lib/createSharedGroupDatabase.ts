@@ -30,28 +30,6 @@ export const verifyDatabaseCredentials = async ({
     })
   })
 
-// export const verifyUserOwnsDatabase = async ({
-//   userId,
-//   dbName,
-// }: {
-//   userId: string
-//   dbName: string
-// }) => {
-//   // look up db in our groups DB
-//   const groupResponse = await cloudant.models.Groups.find({
-//     selector: { _id: dbName },
-//   })
-
-//   if (groupResponse.docs.length) {
-//     const _group = groupResponse.docs[0]
-//     // verify the user owns this group
-//     if (_group.belongsToUserId === userId) {
-//       return true
-//     }
-//   }
-//   return false
-// }
-
 export const getDB = async ({ dbName }: { dbName: string }) => {
   try {
     const _db = await cloudant.current.db.use<any>(dbName)

@@ -20,6 +20,7 @@ import {
   REMOTE_CLOUDANT_URL,
 } from '../../databyss-data/pouchdb/db'
 import { setDbBusy } from '../../databyss-data/pouchdb/utils'
+import { replicatePublicEmbeds } from '@databyss-org/data/pouchdb/groups'
 
 const INTERVAL_TIME = 5000
 const MAX_RETRIES = 10
@@ -85,7 +86,11 @@ export const PageReplicator = ({
       })
       .on('error', MakePouchReplicationErrorHandler('[startReplication]', true))
       // keeps track of the loader wheel
-      .on('change', () => {
+      .on('change', async (_info) => {
+        const _embedDocs =
+          _info?.docs?.filter((doc: any) => doc.type === 'EMBED') ?? []
+        console.log('[PageReplicator] embed docs changed', _embedDocs)
+        await replicatePublicEmbeds({ docs: _embedDocs, groupId })
         setDbBusy(true)
       })
       .on('paused', (err) => {

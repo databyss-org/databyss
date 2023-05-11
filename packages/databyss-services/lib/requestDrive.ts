@@ -1,18 +1,34 @@
 import { addFile } from '@databyss-org/data/drivedb/files'
 import request, { RequestOptions, FETCH_TIMEOUT } from './request'
-import { getAccountId, getAuthToken } from './../session/clientStorage'
+import {
+  getAccountId,
+  getAuthToken,
+  getUserId,
+} from './../session/clientStorage'
 import { version as databyssVersion } from './../version'
 import { ConcurrentUpload } from './ConcurrentUpload'
 
 export const activeUploads: { [uploadId: string]: ConcurrentUpload } = {}
 
+export type DriveRoute = 'auth' | 'b' | 'user'
+
 export const requestDrive = async <T>(
+  route: DriveRoute,
   path: string,
   options?: RequestOptions
 ): Promise<T> => {
-  const groupId = await getAccountId()
+  const groupId = getAccountId()
+  const userId = getUserId()
   const token = await getAuthToken()
-  const url = `https://${process.env.DRIVE_HOST}/b/${groupId}/${path}`
+  let url = `https://${process.env.DRIVE_HOST}/${route}`
+  if (path.startsWith('/') && path.length > 1) {
+    url += path
+  } else {
+    url += `/${route === 'user' ? userId : groupId}`
+    if (path.length) {
+      url += `/${path}`
+    }
+  }
 
   return request(url, {
     ...options,
@@ -25,11 +41,18 @@ export const requestDrive = async <T>(
   })
 }
 
-export const httpGet = async <T>(path: string, options?: RequestOptions) =>
-  requestDrive<T>(path, options)
+export const httpGet = async <T>(
+  route: DriveRoute,
+  path: string,
+  options?: RequestOptions
+) => requestDrive<T>(route, path, options)
 
-export const httpPost = async <T>(path: string, body: any) =>
-  requestDrive<T>(path, {
+export const httpPost = async <T>(
+  route: DriveRoute,
+  path: string,
+  body: any = {}
+) =>
+  requestDrive<T>(route, path, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -37,8 +60,8 @@ export const httpPost = async <T>(path: string, body: any) =>
     body: JSON.stringify(body),
   })
 
-export const httpDelete = (path: string) =>
-  requestDrive(path, {
+export const httpDelete = (route: DriveRoute, path: string) =>
+  requestDrive(route, path, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

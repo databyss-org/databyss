@@ -1,34 +1,26 @@
 import { NetworkUnavailableError } from '@databyss-org/services/interfaces'
 import { ConcurrentUpload } from '@databyss-org/services/lib/ConcurrentUpload'
+import { httpPost } from '@databyss-org/services/lib/requestDrive'
 import { ddbRef, DriveDBRecordSchema } from './ddb'
 import { getFilesPendingSync } from './files'
 
 export const activeUploads: { [uploadId: string]: ConcurrentUpload } = {}
-
-interface SyncQueueRef {
-  current: DriveDBRecordSchema[]
-}
 
 export interface SyncStatus {
   isBusy: boolean
   writesPending: number
 }
 
-const INTERVAL_TIME = 1000
+const INTERVAL_TIME = 3000
 let _intervalTime = INTERVAL_TIME
-let _backoffMultiplier = 1.5
+const _backoffMultiplier = 1.5
 let _interval: number | null = null
 
 let isProcessing = false
-export const syncQueue: SyncQueueRef = {
-  current: [],
-}
 
 export async function init() {
   // seed the queue with unsynched files from IDB
-  const files = await getFilesPendingSync()
-  console.log('[DDB] sync init', files)
-  syncQueue.current = files
+  console.log('[DDB] sync init')
   // start the sync interval
   resetInterval()
 }
@@ -57,7 +49,8 @@ async function sync() {
     return
   }
 
-  const rec = syncQueue.current.shift()
+  const filesPendingSync = await getFilesPendingSync()
+  const rec = filesPendingSync.shift()
   if (!rec) {
     // db is not pending any writes
     setBusy(false)
@@ -65,21 +58,41 @@ async function sync() {
   }
 
   console.log('[DDB] sync file', rec)
-  setBusy(true, syncQueue.current.length + 1)
+  setBusy(true, filesPendingSync.length + 1)
   console.log('[DDB] status', JSON.stringify(getBusy()))
-  // upload the next file in the queue
+
+  // process the next file in the queue
   isProcessing = true
 
-  try {
-    await upload(rec)
-    resetInterval()
-  } catch (err) {
-    rec.retryCount += 1
-    resetInterval(_intervalTime * _backoffMultiplier)
-    syncQueue.current.push(rec)
+  if (rec.syncProgress < 1) {
+    try {
+      await upload(rec)
+      resetInterval()
+      rec.syncProgress = 1
+      rec.retryCount = 0
+    } catch (err) {
+      console.error(`[DDB] upload attempt ${rec.retryCount} failed: ${err}`)
+      rec.retryCount += 1
+      resetInterval(_intervalTime * _backoffMultiplier)
+    }
   }
-  rec.syncProgress = 1
-  rec.retryCount = 0
+  if (rec.shareQueueDirty) {
+    try {
+      for (const shareInfo of rec.shareQueue) {
+        await httpPost(
+          'auth',
+          `${shareInfo.groupId}/${rec.id}/inherit/public`,
+          {}
+        )
+      }
+      rec.shareQueueDirty = 0
+      rec.retryCount = 0
+    } catch (err) {
+      console.error(`[DDB] share attempt ${rec.retryCount} failed: ${err}`)
+      rec.retryCount += 1
+      resetInterval(_intervalTime * _backoffMultiplier)
+    }
+  }
   await ddbRef.current?.put('files', rec)
   isProcessing = false
   setBusy(false)
@@ -88,10 +101,9 @@ async function sync() {
 let _isBusy = false
 let _writesPending = 0
 
-export function setBusy(isBusy: boolean, writesPending?: number) {
-  _writesPending = writesPending ?? syncQueue.current.length
-  // only set busy to false if no writes are left in queue
-  _isBusy = !!(_writesPending || writesPending) || isBusy
+export function setBusy(isBusy: boolean, writesPending: number = 0) {
+  _writesPending = writesPending
+  _isBusy = isBusy
 }
 
 export function getBusy(): SyncStatus {

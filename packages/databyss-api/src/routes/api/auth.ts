@@ -1,5 +1,6 @@
 import express from 'express'
 import { cloudant } from '@databyss-org/data/cloudant'
+import { Role } from '@databyss-org/data/interfaces'
 import { authMiddleware, groupMiddleware } from '../../middleware'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
@@ -7,8 +8,8 @@ import {
   createUserDatabaseCredentials,
   addCredientialsToSession,
 } from '../../lib/createUserDatabase'
-import { setAccess } from '../../lib/drive'
-import { Role } from '@databyss-org/data/interfaces'
+import { activateToken, setAccess, SetAccessOptions } from '../../lib/drive'
+import { check } from 'express-validator/check'
 
 const router = express.Router()
 
@@ -29,13 +30,8 @@ router.post('/', authMiddleware, async (req, res) => {
       })
 
       // use token from cloudant to initialize access on drive
-      const _sar = await setAccess(
-        {
-          accessLevel: 'admin',
-          groupId: session.user.defaultGroupId!,
-          secret: process.env.DRIVE_ROOT_SECRET!,
-          token: session.token,
-        },
+      const _sar = await activateToken(
+        { token: session.token, userId: session.user._id },
         true
       )
       console.log('[auth] setAccess', _sar)
@@ -55,18 +51,33 @@ router.post('/', authMiddleware, async (req, res) => {
 // @access   Private
 router.post(
   '/drive/:id',
-  [authMiddleware, groupMiddleware([Role.Admin])],
+  [
+    authMiddleware,
+    groupMiddleware([Role.Admin]),
+    check('accessLevel', 'invalid or missing accessLevel').isIn([
+      'admin',
+      'readwrite',
+      'readonly',
+    ]),
+    check('userId', 'userId required if isPublic is false').custom(
+      (value, { req }) => !!value || req.body.isPublic
+    ),
+  ],
   wrap(async (req, res) => {
-    // use token from cloudant to initialize access on drive
-    const _sar = await setAccess(
-      {
-        accessLevel: 'admin',
-        groupId: req.group._id,
-        secret: process.env.DRIVE_ROOT_SECRET!,
-        token: req.token,
-      },
-      true
-    )
+    const _opt: SetAccessOptions = {
+      accessLevel: req.body.accessLevel,
+      groupId: req.group._id,
+    }
+    if (req.body.isPublic) {
+      _opt.isPublic = true
+    } else {
+      _opt.userId = req.body.userId
+    }
+    const _sar = await setAccess(_opt, true)
+    // if userId passed is current user, also activate token
+    if (_opt.userId === req.user._id) {
+      await activateToken({ userId: _opt.userId!, token: req.token }, true)
+    }
     console.log('[auth] setAccess', _sar)
     return res.status(200).json({}).send()
   })
@@ -108,16 +119,10 @@ router.post(
         session.groupCredentials = [credentials]
 
         // use token from cloudant to initialize access on drive
-        const _sar = await setAccess(
-          {
-            accessLevel: 'admin',
-            groupId: session.user.defaultGroupId!,
-            secret: process.env.DRIVE_ROOT_SECRET!,
-            token: session.token,
-          },
+        await activateToken(
+          { token: session.token, userId: session.user._id },
           true
         )
-        console.log('[auth] setAccess', _sar)
 
         return res.json({ data: { session } })
       }

@@ -5,11 +5,17 @@ import { uploadFile } from '../lib/requestDrive'
 import { getAccountId } from '../session/clientStorage'
 import { setEmbed } from './setEmbed'
 
-export const uploadEmbed = async (file: File) => {
+export const uploadEmbed = async ({
+  file,
+  sharedWithGroups,
+}: {
+  file: File
+  sharedWithGroups: string[]
+}) => {
   const fileId = uid()
   await uploadFile({ file, fileId })
-  const groupId = await getAccountId()
-  const storageKey = `${groupId}/${fileId}`
+  const groupId = getAccountId()
+  const storageKey = fileId
   const embed: Embed = {
     _id: uid(),
     text: makeText(file.name),
@@ -21,9 +27,10 @@ export const uploadEmbed = async (file: File) => {
         storageKey,
       },
       mediaType: MediaTypes.IMAGE,
-      src: `dbdrive://${storageKey}`,
+      src: `dbdrive://${groupId}/${fileId}`,
     },
     type: BlockType.Embed,
+    sharedWithGroups,
   }
   await setEmbed(embed, true)
   return embed

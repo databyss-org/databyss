@@ -1,5 +1,10 @@
+import equal from 'fast-deep-equal'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
-import { upsert, upsertImmediate } from '@databyss-org/data/pouchdb/utils'
+import {
+  getDocument,
+  upsert,
+  upsertImmediate,
+} from '@databyss-org/data/pouchdb/utils'
 import { updateInlines } from '@databyss-org/editor/lib/inlineUtils/updateInlines'
 import { InlineTypes } from '../interfaces/Range'
 import { Embed, BlockType } from '../interfaces/Block'
@@ -22,15 +27,22 @@ export const setEmbed = async (data: Embed, immediate?: boolean) => {
     doc: blockFields,
   }
 
+  const _prevEmbed: Embed | null = await getDocument(_id)
+
   if (immediate) {
     await upsertImmediate(upsertData)
   } else {
     await upsert(upsertData)
   }
 
-  await updateInlines({
-    inlineType: InlineTypes.Embed,
-    text,
-    _id,
-  })
+  if (
+    _prevEmbed &&
+    (_prevEmbed.text?.textValue !== text?.textValue ||
+      !equal(_prevEmbed.detail, detail))
+  )
+    await updateInlines({
+      inlineType: InlineTypes.Embed,
+      text,
+      _id,
+    })
 }

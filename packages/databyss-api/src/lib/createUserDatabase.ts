@@ -12,6 +12,7 @@ import {
   Notification,
 } from '../../../databyss-data/pouchdb/interfaces'
 import welcomeNotifications from '../../assets/welcome.json'
+import { setAccess, setQuotaAllowed } from './drive'
 
 export interface CredentialResponse {
   dbKey: string
@@ -285,6 +286,24 @@ export const createUserDatabaseCredentials = async (
       ...oldDoc,
       defaultGroupId: _userPreferences.belongsToGroup,
     }))
+
+    // give user access to drive group
+    const _sar = await setAccess(
+      {
+        accessLevel: 'admin',
+        groupId,
+        userId: user._id,
+      },
+      true
+    )
+    console.log('[createUserDatabase] DDB.setAccess OK', _sar)
+
+    // give user a quota of 1GB
+    const _qr = await setQuotaAllowed({
+      userId: user._id,
+      allowed: 1000,
+    })
+    console.log('[createUserDatabase] DDB.setQuotaAllowed OK', _qr)
   }
 
   // add credentials to new database
