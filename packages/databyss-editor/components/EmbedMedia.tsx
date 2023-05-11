@@ -62,46 +62,43 @@ export const EmbedMedia = ({
     }
   }
 
-  return React.useMemo(
-    () => (
-      <InlineEmbed
-        attributes={attributes}
-        embedData={blockRes.data as Embed}
-        onClick={highlightEmbed}
-        _children={_children}
-        textRef={textRef}
-      >
-        <View position="relative">
-          <ResolveEmbed
-            data={blockRes.data as Embed}
-            highlight={highlight}
-            position="relative"
-            zIndex={1}
-          />
-          {highlight && (
-            <View
-              zIndex={2}
-              position="absolute"
-              top="em"
-              right="em"
-              backgroundColor="gray.6"
+  return (
+    <InlineEmbed
+      attributes={attributes}
+      embedData={blockRes.data as Embed}
+      onClick={highlightEmbed}
+      _children={_children}
+      textRef={textRef}
+    >
+      <View position="relative">
+        <ResolveEmbed
+          data={blockRes.data as Embed}
+          highlight={highlight}
+          position="relative"
+          zIndex={1}
+        />
+        {highlight && (
+          <View
+            zIndex={2}
+            position="absolute"
+            top="em"
+            right="em"
+            backgroundColor="gray.6"
+          >
+            <Button
+              variant="editSource"
+              onPress={() =>
+                onInlineClick({ atomicType: 'EMBED', id: _element.atomicId })
+              }
             >
-              <Button
-                variant="editSource"
-                onPress={() =>
-                  onInlineClick({ atomicType: 'EMBED', id: _element.atomicId })
-                }
-              >
-                <Icon sizeVariant="small" color="background.5">
-                  <PenSVG />
-                </Icon>
-              </Button>
-            </View>
-          )}
-        </View>
-      </InlineEmbed>
-    ),
-    [JSON.stringify(blockRes.data), highlight]
+              <Icon sizeVariant="small" color="background.5">
+                <PenSVG />
+              </Icon>
+            </Button>
+          </View>
+        )}
+      </View>
+    </InlineEmbed>
   )
 }
 

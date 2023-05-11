@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Embed,
   EmbedDetail,
@@ -9,6 +9,7 @@ import { getFileUrl } from '@databyss-org/data/drivedb/files'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { getAccountId } from '@databyss-org/services/session/clientStorage'
+import { waitForUrl } from '@databyss-org/services/lib/request'
 import { UnfetchedMedia } from './UnfetchedMedia'
 import { IframeComponent } from './Suggest/IframeComponent'
 
@@ -26,6 +27,13 @@ export const ResolveEmbed = ({
   const getCurrentAccount = useSessionContext((c) => c && c.getCurrentAccount)
   const [detail, setDetail] = useState<EmbedDetail>(data?.detail)
   const [isFetching, setIsFetching] = useState(false)
+
+  useEffect(() => {
+    if (!detail && data?.detail) {
+      setDetail(data.detail)
+    }
+  }, [data?.detail])
+
   if (!detail) {
     return null
   }
@@ -33,6 +41,7 @@ export const ResolveEmbed = ({
     !detail.mediaType || detail.mediaType === MediaTypes.UNFETCHED
 
   if (_isUnfetched) {
+    console.log('[ResolveEmbed] unfetched')
     return (
       <UnfetchedMedia
         atomicId={data._id}
@@ -43,12 +52,23 @@ export const ResolveEmbed = ({
   }
 
   if (detail?.src?.startsWith('dbdrive://')) {
-    if (isPublicAccount()) {
-      // Return the remote drive URL so that the browser can load it over HTTP
-      const _groupId = getCurrentAccount()
-      detail.src = `https://${process.env.DRIVE_HOST}/b/${_groupId}/${detail.fileDetail?.storageKey}`
-    } else {
-      if (!isFetching) {
+    if (!isFetching) {
+      if (isPublicAccount()) {
+        // Return the remote drive URL so that the browser can load it over HTTP
+        const _groupId = getCurrentAccount()
+        const _src = `https://${process.env.DRIVE_HOST}/b/${_groupId}/${detail.fileDetail?.storageKey}`
+        waitForUrl({ url: _src, pollTimer: 2000, maxAttempts: 60 }).then(
+          (imgOk) => {
+            console.log('[ResolveEmbed]')
+            if (imgOk) {
+              setDetail({ ...detail, src: _src })
+            } else {
+              // TODO: show broken img placeholder
+            }
+          }
+        )
+        setIsFetching(true)
+      } else {
         const _groupId = getAccountId()
         const _fileId = detail.fileDetail?.storageKey
         getFileUrl(_groupId, _fileId).then((url) => {
@@ -56,8 +76,8 @@ export const ResolveEmbed = ({
         })
         setIsFetching(true)
       }
-      return <LoadingFallback />
     }
+    return <LoadingFallback />
   }
 
   return (

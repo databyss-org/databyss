@@ -27,6 +27,8 @@ export const setEmbed = async (data: Embed, immediate?: boolean) => {
     doc: blockFields,
   }
 
+  console.log('[setEmbed]', _id, sharedWithGroups)
+
   const _prevEmbed: Embed | null = await getDocument(_id)
 
   if (immediate) {

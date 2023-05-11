@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react'
+import React, { useRef, useEffect, useCallback, Ref } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import scrollIntoView from 'scroll-into-view-if-needed'
 import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
@@ -46,6 +46,7 @@ interface ContextType {
   archivePage: (id: string, boolean: boolean) => Promise<void>
   onPageCached: (id: string, callback: Function) => void
   removePageFromCache: (id: string) => void
+  sharedWithGroupsRef: Ref<string[] | null>
   sharedWithGroups?: string[]
   setFocusIndex: (index: number) => void
   setLastBlockRendered: () => void
@@ -205,6 +206,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         setPagePublic,
         removePageFromCache,
         getPublicAccount,
+        sharedWithGroupsRef,
         sharedWithGroups: sharedWithGroupsRef.current ?? [],
         setFocusIndex,
         focusIndex,

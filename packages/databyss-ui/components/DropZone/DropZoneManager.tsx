@@ -1,6 +1,5 @@
 /* eslint-disable no-plusplus */
-import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { throttle } from 'lodash'
+import React, { useState, useEffect, useRef } from 'react'
 import { uid } from '@databyss-org/data/lib/uid'
 import {
   Block,
@@ -16,6 +15,7 @@ import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import * as services from '@databyss-org/services/pdf'
 import { formatSource } from '@databyss-org/editor/components/Suggest/SuggestSources'
 import { uploadEmbed } from '@databyss-org/services/embeds'
+import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
 import { View } from '../../primitives'
 import DashedArea from './DashedArea'
@@ -105,11 +105,8 @@ const findMatchesInCrossref = (crossref, metadata) => {
 }
 
 // component
-export const DropZoneManager = ({
-  sharedWithGroups = [],
-}: {
-  sharedWithGroups: string[]
-}) => {
+export const DropZoneManager = () => {
+  const sharedWithGroupsRef = useEditorPageContext((c) => c.sharedWithGroupsRef)
   const editorContext = useEditorContext()
   const viewRef = useRef<HTMLElement | null>(null)
 
@@ -314,7 +311,10 @@ export const DropZoneManager = ({
 
   const processImage = async (file: File) => {
     try {
-      const embed = await uploadEmbed({ file, sharedWithGroups })
+      const embed = await uploadEmbed({
+        file,
+        sharedWithGroups: sharedWithGroupsRef.current,
+      })
       const block = buildEntryBlockForEmbed(embed)
       editorContext.insert([block])
     } catch (error) {

@@ -128,7 +128,7 @@ export const PageBody = ({
                 firstBlockIsTitle: true,
               }}
             >
-              <DropZoneManager sharedWithGroups={sharedWithGroups} />
+              <DropZoneManager />
               <ContentEditable
                 autofocus
                 focusIndex={focusIndex}
@@ -144,7 +144,7 @@ export const PageBody = ({
               />
             </EditorProvider>
           ),
-          [page?._id, focusIndex, readOnly]
+          [page?._id, focusIndex, readOnly, sharedWithGroups]
         )}
       </HistoryProvider>
       {process.env.NODE_ENV === 'test' && (

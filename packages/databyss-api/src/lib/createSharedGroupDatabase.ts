@@ -52,6 +52,7 @@ const createSharedGroupDatabase = async ({
   await createGroupId({ groupId, userId })
   await createGroupDatabase(groupId)
   const credentials = await setSecurity({ groupId, isPublic: true })
+
   return credentials
 }
 

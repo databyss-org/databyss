@@ -6,6 +6,7 @@ import {
   VersionConflictError,
   UnexpectedServerError,
 } from '../interfaces'
+import { sleep } from './util'
 
 export const FETCH_TIMEOUT = parseInt(process.env.FETCH_TIMEOUT!, 10)
 
@@ -85,12 +86,16 @@ function request<T>(uri, options: RequestOptions = {}) {
   })
 }
 
-export async function checkNetwork() {
-  if (process.env.NODE_ENV === 'test') {
-    return true
-  }
+export function checkNetwork() {
+  return checkUrl(process.env.API_URL!)
+}
+
+/**
+ * Returns true only if HEAD request for URL returns 200
+ */
+export async function checkUrl(url: string) {
   try {
-    const _res = await request<Response>(process.env.API_URL, {
+    const _res = await request<Response>(url, {
       method: 'HEAD',
       rawResponse: true,
     })
@@ -99,6 +104,26 @@ export async function checkNetwork() {
     }
   } catch (err) {
     return false
+  }
+  return true
+}
+
+export async function waitForUrl({
+  url,
+  pollTimer = 1000,
+  maxAttempts = 10,
+}: {
+  url: string
+  pollTimer?: number
+  maxAttempts?: number
+}) {
+  let tries = 1
+  while (!(await checkUrl(url))) {
+    tries += 1
+    if (tries > maxAttempts) {
+      return false
+    }
+    await sleep(pollTimer)
   }
   return true
 }

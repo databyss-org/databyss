@@ -209,12 +209,6 @@ export const replicatePublicEmbeds = async ({
   docs: any[]
   groupId: string
 }) => {
-  // add public readonly access to the public groupID
-  // NB this has to be done through the Databyss API because it requires superuser rights
-  await httpPost(`/auth/drive/${groupId}`, {
-    isPublic: true,
-    accessLevel: 'readonly',
-  })
   for (const _embedDoc of docs) {
     // only process embeds with attached files
     if (!_embedDoc?.detail?.fileDetail) {
@@ -230,7 +224,6 @@ const upsertReplication = async ({
   groupId,
   dbKey,
   dbPassword,
-  isPublic,
 }: {
   groupId: string
   dbKey: string
