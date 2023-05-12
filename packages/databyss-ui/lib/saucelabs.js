@@ -51,6 +51,11 @@ export const startSession = process.env.LOCAL_ENV
           browserName,
           platformName,
           browserVersion,
+          timeouts: {
+            script: 300000,
+            pageLoad: 300000,
+            implicit: 1000,
+          },
           'goog:chromeOptions': { w3c: true },
           'sauce:options': {
             extendedDebugging: true,
@@ -59,10 +64,10 @@ export const startSession = process.env.LOCAL_ENV
             seleniumVersion: '3.141.59',
             build: 'databyss-org/databyss',
             name: name || getDefaultSessionName(),
-            maxDuration: 10800,
+            maxDuration: 3600,
             maxInstances: 1,
             commandTimeout: 600,
-            idleTimeout: 120,
+            idleTimeout: 600,
           },
         })
         .usingServer('https://ondemand.saucelabs.com/wd/hub')
