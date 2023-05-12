@@ -406,7 +406,7 @@ export const initDb = ({
 
     // if we're offline, check pouch db ref for user_prefs doc
     // (it might already exist locally from prev session)
-    checkNetwork().then((isOnline) =>
+    waitForNetwork({ pollTimer: 500, maxAttempts: 4 }).then((isOnline) =>
       !isOnline
         ? _pouchDb
             .get('user_preference')

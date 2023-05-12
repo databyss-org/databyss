@@ -93,10 +93,16 @@ export function waitForNetwork({
   pollTimer?: number
   maxAttempts?: number
 } = {}) {
+  if (process.env.NODE_ENV === 'test') {
+    return true
+  }
   return waitForUrl({ url: process.env.API_URL!, pollTimer, maxAttempts })
 }
 
 export function checkNetwork() {
+  if (process.env.NODE_ENV === 'test') {
+    return true
+  }
   return checkUrl(process.env.API_URL!)
 }
 
