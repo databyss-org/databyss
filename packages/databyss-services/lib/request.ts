@@ -92,7 +92,7 @@ export function waitForNetwork({
 }: {
   pollTimer?: number
   maxAttempts?: number
-}) {
+} = {}) {
   return waitForUrl({ url: process.env.API_URL!, pollTimer, maxAttempts })
 }
 
