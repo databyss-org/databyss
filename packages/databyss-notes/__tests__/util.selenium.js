@@ -16,7 +16,7 @@ export const parse = (string) => {
 const LOCAL_URL = 'http://localhost:3000'
 const PROXY_URL = 'http://0.0.0.0:3000'
 
-const waitUntilTime = 60000
+const waitUntilTime = 300000
 
 const SLEEP_TIME = 300
 const MAX_RETRIES = 3
