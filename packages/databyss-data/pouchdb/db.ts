@@ -26,7 +26,10 @@ import {
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
-import { checkNetwork } from '@databyss-org/services/lib/request'
+import {
+  checkNetwork,
+  waitForNetwork,
+} from '@databyss-org/services/lib/request'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import { QueryClient } from 'react-query'
 import { DocumentType } from './interfaces'
@@ -154,7 +157,7 @@ export const replicateDbFromRemote = ({
       },
     }
 
-    checkNetwork().then((isOnline) => {
+    waitForNetwork().then((isOnline) => {
       if (isOnline) {
         pouchDb.replicate
           .from(_couchUrl, {

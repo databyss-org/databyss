@@ -86,6 +86,16 @@ function request<T>(uri, options: RequestOptions = {}) {
   })
 }
 
+export function waitForNetwork({
+  pollTimer = 1000,
+  maxAttempts = 10,
+}: {
+  pollTimer?: number
+  maxAttempts?: number
+}) {
+  return waitForUrl({ url: process.env.API_URL!, pollTimer, maxAttempts })
+}
+
 export function checkNetwork() {
   return checkUrl(process.env.API_URL!)
 }
