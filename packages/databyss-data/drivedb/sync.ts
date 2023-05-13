@@ -87,9 +87,13 @@ async function sync() {
         if (!_authGrantRequested) {
           console.log('[DDB] requesting authorization...')
           const _groupId = getAccountId()
-          const _ares = await postApi(`/auth/drive/${_groupId}`, {})
-          console.log('[DDB] authorization request response', _ares)
-          _authGrantRequested = true
+          try {
+            const _ares = await postApi(`/auth/drive/${_groupId}`, {})
+            console.log('[DDB] authorization request response', _ares)
+            _authGrantRequested = true
+          } catch (err) {
+            console.log('[DDB] authorization request failed', err)
+          }
         }
       }
       console.error(`[DDB] upload attempt ${rec.retryCount} failed: ${err}`)
