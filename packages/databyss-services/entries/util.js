@@ -38,16 +38,16 @@ export const sortEntriesAtoZ = (entries, sortBy) =>
     return unorm(_a).toLowerCase() > unorm(_b).toLowerCase() ? 1 : -1
   })
 
-export const sortEntriesByRecent = (entries, sortBy) =>
+export const sortEntriesByRecent = (entries, sortBy, pinning = true) =>
   [...entries]?.sort((a, b) => {
-    const _a = a[sortBy] ?? ''
-    const _b = b[sortBy] ?? ''
+    const _a = (sortBy && a[sortBy]) ?? a
+    const _b = (sortBy && b[sortBy]) ?? b
     const _txtA = _a?.text?.textValue ?? _a?.name ?? ''
     const _txtB = _b?.text?.textValue ?? _b?.name ?? ''
-    if (startsWithEmoji(_txtB) && !startsWithEmoji(_txtA)) {
+    if (pinning && startsWithEmoji(_txtB) && !startsWithEmoji(_txtA)) {
       return 1
     }
-    if (startsWithEmoji(_txtA) && !startsWithEmoji(_txtB)) {
+    if (pinning && startsWithEmoji(_txtA) && !startsWithEmoji(_txtB)) {
       return -1
     }
     return (

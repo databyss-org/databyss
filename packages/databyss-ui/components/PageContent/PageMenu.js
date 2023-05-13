@@ -71,7 +71,9 @@ const PageMenu = React.memo(() => {
 
   const getSession = useSessionContext((c) => c && c.getSession)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
-  const setDefaultPage = useSessionContext((c) => c && c.setDefaultPage)
+  const navigateToDefaultPage = useSessionContext(
+    (c) => c && c.navigateToDefaultPage
+  )
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   const { defaultPageId } = getSession()
@@ -118,13 +120,7 @@ const PageMenu = React.memo(() => {
   const onArchivePress = (bool) => {
     archivePage(params, bool).then(() => {
       if (bool) {
-        // if default page is archived set new page as default page
-        let redirect = defaultPageId
-        if (redirect === params) {
-          redirect = Object.keys(pages).find((_id) => _id !== params)
-          setDefaultPage(redirect)
-        }
-        navigate(`/pages/${redirect}`)
+        navigateToDefaultPage()
       } else {
         navigateSidebar('/pages')
       }
