@@ -1,8 +1,15 @@
-import { NetworkUnavailableError } from '@databyss-org/services/interfaces'
+import {
+  InsufficientPermissionError,
+  NetworkUnavailableError,
+  NotAuthorizedError,
+  ResourceNotFoundError,
+} from '@databyss-org/services/interfaces'
 import { ConcurrentUpload } from '@databyss-org/services/lib/ConcurrentUpload'
-import { httpPost } from '@databyss-org/services/lib/requestDrive'
+import { httpPost as postDrive } from '@databyss-org/services/lib/requestDrive'
+import { httpPost as postApi } from '@databyss-org/services/lib/requestApi'
 import { ddbRef, DriveDBRecordSchema } from './ddb'
 import { getFilesPendingSync } from './files'
+import { getAccountId } from '@databyss-org/services/session/clientStorage'
 
 export const activeUploads: { [uploadId: string]: ConcurrentUpload } = {}
 
@@ -15,6 +22,7 @@ const INTERVAL_TIME = 3000
 let _intervalTime = INTERVAL_TIME
 const _backoffMultiplier = 1.5
 let _interval: number | null = null
+let _authGrantRequested = false
 
 let isProcessing = false
 
@@ -71,6 +79,18 @@ async function sync() {
       rec.syncProgress = 1
       rec.retryCount = 0
     } catch (err) {
+      if (
+        err instanceof InsufficientPermissionError ||
+        err instanceof ResourceNotFoundError
+      ) {
+        if (!_authGrantRequested) {
+          console.log('[DDB] requesting authorization...')
+          const _groupId = getAccountId()
+          const _ares = await postApi(`/auth/drive/${_groupId}`, {})
+          console.log('[DDB] authorization request response', _ares)
+          _authGrantRequested = true
+        }
+      }
       console.error(`[DDB] upload attempt ${rec.retryCount} failed: ${err}`)
       rec.retryCount += 1
       resetInterval(_intervalTime * _backoffMultiplier)
@@ -79,11 +99,7 @@ async function sync() {
   if (rec.shareQueueDirty) {
     try {
       for (const shareInfo of rec.shareQueue) {
-        await httpPost(
-          'auth',
-          `${shareInfo.groupId}/${rec.id}/inherit/public`,
-          {}
-        )
+        await postDrive('auth', `${shareInfo.groupId}/${rec.id}/inherit`, {})
       }
       rec.shareQueueDirty = 0
       rec.retryCount = 0
