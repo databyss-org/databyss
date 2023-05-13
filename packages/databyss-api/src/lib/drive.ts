@@ -129,3 +129,31 @@ export function setQuotaAllowed({
       })
   })
 }
+
+export function getQuota(userId: string) {
+  return new Promise<string | false>((resolve, reject) => {
+    let url = `https://${process.env.REACT_APP_DRIVE_HOST}/user/${userId}/quota`
+    url += `?token=${process.env.DRIVE_ROOT_SECRET!}`
+    request(url, { method: 'GET' })
+      .on('response', (response) => {
+        if (response.statusCode === 404) {
+          resolve(false)
+          return
+        }
+        if (!(response.statusCode >= 200 && response.statusCode < 300)) {
+          reject(
+            new ApiError(
+              `[drive] getQuota failed: ${
+                response.body ?? response.statusMessage
+              } (${url})`
+            )
+          )
+          return
+        }
+        resolve(JSON.parse(response.body))
+      })
+      .on('error', (err) => {
+        reject(new ApiError(`[drive] getQuota failed: ${err.message}`))
+      })
+  })
+}

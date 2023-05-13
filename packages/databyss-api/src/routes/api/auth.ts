@@ -10,6 +10,7 @@ import {
 } from '../../lib/createUserDatabase'
 import {
   activateToken,
+  getQuota,
   setAccess,
   SetAccessOptions,
   setQuotaAllowed,
@@ -64,7 +65,10 @@ router.post(
     }
     await setAccess(_opt, true)
     await activateToken({ userId: _opt.userId!, token: req.token }, true)
-    await setQuotaAllowed({ userId: _opt.userId!, allowed: 1000 })
+    const _userQuota = await getQuota(_opt.userId!)
+    if (!_userQuota) {
+      await setQuotaAllowed({ userId: _opt.userId!, allowed: 1000 })
+    }
     return res.status(200).json({}).send()
   })
 )

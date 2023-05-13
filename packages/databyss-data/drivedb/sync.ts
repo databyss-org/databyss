@@ -112,7 +112,6 @@ async function sync() {
   }
   await ddbRef.current?.put('files', rec)
   isProcessing = false
-  setBusy(false)
 }
 
 let _isBusy = false

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react'
 import { getDbBusy } from '@databyss-org/data/pouchdb/utils'
-import { getBusy as getDdbBusy } from '@databyss-org/data/drivedb/sync'
+import { getBusy as getDriveBusy } from '@databyss-org/data/drivedb/sync'
 import { View } from '../..'
 import { useNotifyContext } from '../Notify/NotifyProvider'
 
@@ -18,7 +18,7 @@ export const Status = React.memo(() => {
   useEffect(() => {
     timerRef.current = window.setInterval(() => {
       const status = getDbBusy()
-      const driveStatus = getDdbBusy()
+      const driveStatus = getDriveBusy()
       if (
         (prevStatusRef.current.isBusy ||
           prevStatusRef.current.writesPending > 0 ||

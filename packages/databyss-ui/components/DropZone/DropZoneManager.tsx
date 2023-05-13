@@ -346,13 +346,13 @@ export const DropZoneManager = () => {
       return
     }
 
-    if (file.size > MAX_FILE_SIZE) {
+    if (PDF_TYPES.includes(file.type) && file.size > MAX_FILE_SIZE) {
       setDropAreaVisibility(false)
       showAlert(
-        '⚠️ Unable to import file',
+        '⚠️ Unable to import PDF',
         `The size of "${file.name}" ` +
           `(${humanReadableFileSize(file.size)}) ` +
-          `exceeds the maximum file size currently allowed ` +
+          `exceeds the maximum file size currently allowed for PDFs` +
           `(${humanReadableFileSize(MAX_FILE_SIZE)}). ` +
           `Reduce the file size, or choose another document.`
       )
