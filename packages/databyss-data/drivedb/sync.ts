@@ -7,9 +7,9 @@ import {
 import { ConcurrentUpload } from '@databyss-org/services/lib/ConcurrentUpload'
 import { httpPost as postDrive } from '@databyss-org/services/lib/requestDrive'
 import { httpPost as postApi } from '@databyss-org/services/lib/requestApi'
+import { getAccountId } from '@databyss-org/services/session/clientStorage'
 import { ddbRef, DriveDBRecordSchema } from './ddb'
 import { getFilesPendingSync } from './files'
-import { getAccountId } from '@databyss-org/services/session/clientStorage'
 
 export const activeUploads: { [uploadId: string]: ConcurrentUpload } = {}
 
@@ -80,6 +80,7 @@ async function sync() {
       rec.retryCount = 0
     } catch (err) {
       if (
+        err instanceof NotAuthorizedError ||
         err instanceof InsufficientPermissionError ||
         err instanceof ResourceNotFoundError
       ) {
