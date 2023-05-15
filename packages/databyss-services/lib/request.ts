@@ -103,7 +103,7 @@ export function checkNetwork() {
   if (process.env.NODE_ENV === 'test') {
     return new Promise((resolve) => resolve(true))
   }
-  return checkUrl(process.env.API_URL!)
+  return checkUrl(`https://${process.env.DRIVE_HOST!}`)
 }
 
 /**
