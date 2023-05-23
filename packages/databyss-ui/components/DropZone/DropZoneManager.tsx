@@ -4,17 +4,17 @@ import { uid } from '@databyss-org/data/lib/uid'
 import {
   Block,
   BlockType,
-  Embed,
   Source,
   Text,
 } from '@databyss-org/services/interfaces'
 import { makeText } from '@databyss-org/services/blocks'
-import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
+import {
+  SUPPORTED_IMAGE_TYPES,
+  useEditorContext,
+} from '@databyss-org/editor/state/EditorProvider'
 import { setSource } from '@databyss-org/services/sources'
-import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import * as services from '@databyss-org/services/pdf'
 import { formatSource } from '@databyss-org/editor/components/Suggest/SuggestSources'
-import { uploadEmbed } from '@databyss-org/services/embeds'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
 import { View } from '../../primitives'
@@ -23,13 +23,12 @@ import DashedArea from './DashedArea'
 // constants
 const ACCEPTABLE_KINDS = ['file']
 const PDF_TYPES = ['application/pdf']
-const IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png']
 const MAX_FILE_SIZE = 7500000 // 7.5 mb // TODO: use env var for this
 
 // methods
 const isAcceptableFile = (item: DataTransferItem | File) =>
   (item instanceof File || ACCEPTABLE_KINDS.includes(item.kind)) &&
-  (PDF_TYPES.includes(item.type) || IMAGE_TYPES.includes(item.type))
+  (PDF_TYPES.includes(item.type) || SUPPORTED_IMAGE_TYPES.includes(item.type))
 
 /* eslint-disable no-prototype-builtins */
 const hasEnoughMetadata = (data) =>
@@ -106,7 +105,7 @@ const findMatchesInCrossref = (crossref, metadata) => {
 
 // component
 export const DropZoneManager = () => {
-  const sharedWithGroupsRef = useEditorPageContext((c) => c.sharedWithGroupsRef)
+  const embedFile = useEditorPageContext((c) => c.embedFile)
   const editorContext = useEditorContext()
   const viewRef = useRef<HTMLElement | null>(null)
 
@@ -136,24 +135,6 @@ export const DropZoneManager = () => {
       setSource(block as Source)
     }
 
-    return block
-  }
-
-  const buildEntryBlockForEmbed = (embed: Embed) => {
-    const block: Block = {
-      _id: uid(),
-      type: BlockType.Entry,
-      text: {
-        textValue: embed.text.textValue,
-        ranges: [
-          {
-            length: embed.text.textValue.length,
-            offset: 0,
-            marks: [[InlineTypes.Embed, embed._id]],
-          },
-        ],
-      },
-    }
     return block
   }
 
@@ -311,11 +292,7 @@ export const DropZoneManager = () => {
 
   const processImage = async (file: File) => {
     try {
-      const embed = await uploadEmbed({
-        file,
-        sharedWithGroups: sharedWithGroupsRef.current,
-      })
-      const block = buildEntryBlockForEmbed(embed)
+      const block = await embedFile(file)
       editorContext.insert([block])
     } catch (error) {
       showAlert(
@@ -363,9 +340,9 @@ export const DropZoneManager = () => {
     setParsing(true)
 
     if (PDF_TYPES.includes(file.type)) {
-      processPDF(file)
+      await processPDF(file)
     } else {
-      processImage(file)
+      await processImage(file)
     }
 
     setParsing(false)

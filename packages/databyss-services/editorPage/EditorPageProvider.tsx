@@ -9,6 +9,7 @@ import {
   useNavigationContext,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
+import { uid } from '@databyss-org/data/lib/uid'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -18,10 +19,14 @@ import {
   PatchBatch,
   ResourceResponse,
   ResourceNotFoundError,
+  BlockType,
+  Block,
 } from '../interfaces'
 import { PageReplicator } from './PageReplicator'
 import * as actions from './actions'
 import { useSessionContext } from '../session/SessionProvider'
+import { uploadEmbed } from '../embeds'
+import { InlineTypes } from '../interfaces/Range'
 
 interface PropsType {
   children: JSX.Element
@@ -51,6 +56,7 @@ interface ContextType {
   setFocusIndex: (index: number) => void
   setLastBlockRendered: () => void
   focusIndex: number
+  embedFile: (file: File) => Promise<Block>
 }
 
 const useReducer = createReducer()
@@ -193,6 +199,28 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     }
   }
 
+  const embedFile = async (file: File) => {
+    const embed = await uploadEmbed({
+      file,
+      sharedWithGroups: sharedWithGroupsRef.current ?? [],
+    })
+    const block: Block = {
+      _id: uid(),
+      type: BlockType.Entry,
+      text: {
+        textValue: embed.text.textValue,
+        ranges: [
+          {
+            length: embed.text.textValue.length,
+            offset: 0,
+            marks: [[InlineTypes.Embed, embed._id]],
+          },
+        ],
+      },
+    }
+    return block
+  }
+
   return (
     <EditorPageContext.Provider
       value={{
@@ -211,6 +239,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         setFocusIndex,
         focusIndex,
         setLastBlockRendered,
+        embedFile,
       }}
     >
       <PageReplicator key={pageId} pageId={pageId}>
