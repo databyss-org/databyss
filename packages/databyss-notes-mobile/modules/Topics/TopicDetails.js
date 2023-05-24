@@ -23,9 +23,9 @@ const buildHeaderItems = (title, id) => [
 const TopicDetails = () => {
   const { topicId } = useParams()
 
-  const blockRelationRes = useBlockRelations(BlockType.Source)
-  const sourcesRes = useBlocks(BlockType.Source)
-  const queryRes = [blockRelationRes, sourcesRes]
+  const blockRelationRes = useBlockRelations(BlockType.Topic)
+  const topicsRes = useBlocks(BlockType.Topic)
+  const queryRes = [blockRelationRes, topicsRes]
 
   let pageTitle = 'Loading...'
 
@@ -33,7 +33,7 @@ const TopicDetails = () => {
     return <LoadingFallback queryObserver={queryRes} />
   }
 
-  pageTitle = sourcesRes.data[topicId]?.text.textValue
+  pageTitle = topicsRes.data[topicId]?.text.textValue
 
   // render methods
   const renderTopicDetails = () => (

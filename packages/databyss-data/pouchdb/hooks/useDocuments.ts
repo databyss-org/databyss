@@ -86,13 +86,13 @@ export const useDocuments = <T extends Document>(
   )
 
   const subscribe = () => {
-    // console.log('[useDocuments] subscribe', queryKeyJson, _options)
     if (!_options.enabled || !_options.subscribe) {
       return
     }
     if (dbRef.current instanceof CouchDb) {
       return
     }
+    // console.log('[useDocuments] subscribe', queryKeyJson)
     if (subscriptionDict[queryKeyJson]) {
       subscriptionListeners[queryKeyJson].add(listenerIdRef.current)
       // console.log('[useDocuments] subscribe', dbRef.lastSeq)
@@ -115,7 +115,7 @@ export const useDocuments = <T extends Document>(
       })
       .on('change', (change) => {
         queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {
-          // console.log('[useDocuments] change', change)
+          console.log('[useDocuments] change', queryKey, change)
           if (!oldData) {
             return { [change.doc._id]: change.doc }
           }

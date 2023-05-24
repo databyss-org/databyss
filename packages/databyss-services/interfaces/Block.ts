@@ -34,6 +34,7 @@ export class Block implements BlockReference {
   __showInlineLinkMenu?: boolean
   __showInlineTopicMenu?: boolean
   __isActive?: boolean
+  sharedWithGroups?: string[]
 
   constructor() {
     this.type = BlockType.Entry

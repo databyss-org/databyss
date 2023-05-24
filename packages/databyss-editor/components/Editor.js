@@ -34,9 +34,9 @@ const Editor = ({
   const searchTerm = useSearchContext((c) => c && c.searchTerm)
 
   // preloads source and topic cache to be used by the suggest menu
-  useBlocksInPages('EMBED')
-  useBlocksInPages('SOURCE')
-  useBlocksInPages('TOPIC')
+  useBlocksInPages('EMBED', { subscribe: false })
+  useBlocksInPages('SOURCE', { subscribe: false })
+  useBlocksInPages('TOPIC', { subscribe: false })
 
   const { copy, paste, cut, embedPaste, state } = useEditorContext()
 

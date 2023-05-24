@@ -1,6 +1,6 @@
 import { BlockRelation, BlockType } from '@databyss-org/services/interfaces'
 import { BlockRelationOperation } from '@databyss-org/editor/interfaces'
-import { getDocument, upsert } from '../../utils'
+import { getDocument, updateSharedWithGroups, upsert } from '../../utils'
 import { DocumentType, PageDoc } from '../../interfaces'
 import {
   removeGroupsFromDocument,
@@ -92,6 +92,9 @@ const setBlockRelations = async (payload: {
       doctype: DocumentType.BlockRelation,
     })
 
+    // add sharedWithGroups to entity
+    await updateSharedWithGroups({ _id, sharedWithGroups })
+
     upsert({
       doctype: DocumentType.BlockRelation,
       _id: _relationId,
@@ -100,11 +103,11 @@ const setBlockRelations = async (payload: {
   }
 
   // update blocks in page, allow time for page to be updated
-  if (operationType === BlockRelationOperation.ADD && _pageRes) {
-    setTimeout(() => {
-      addGroupToDocumentsInPage(_pageRes)
-    }, 3000)
-  }
+  // if (operationType === BlockRelationOperation.ADD && _pageRes) {
+  //   setTimeout(() => {
+  //     addGroupToDocumentsInPage(_pageRes)
+  //   }, 3000)
+  // }
 }
 
 async function groupsNotSharedByPages({

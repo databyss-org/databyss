@@ -282,6 +282,23 @@ export const updateAccessedAt = (_id: string) =>
     accessedAt: Date.now(),
   }))
 
+export const updateSharedWithGroups = ({
+  _id,
+  sharedWithGroups,
+}: {
+  _id: string
+  sharedWithGroups: string[]
+}) =>
+  dbRef.current!.upsert(_id, (oldDoc) => {
+    if (equal(oldDoc.sharedWithGroups, sharedWithGroups)) {
+      return false
+    }
+    return {
+      ...oldDoc,
+      sharedWithGroups,
+    }
+  })
+
 // bypasses upsert queue
 export const upsertImmediate = async ({
   doctype,
@@ -297,13 +314,9 @@ export const upsertImmediate = async ({
     if (equal(doc, oldDoc)) {
       return false
     }
-    // const _groupSet = new Set(
-    //   (oldDoc?.sharedWithGroups ?? []).concat(sharedWithGroups ?? [])
-    // )
     const _doc = {
       ...oldDoc,
       ...addTimeStamp({ ...oldDoc, ...docFields, doctype }),
-      // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
       sharedWithGroups: sharedWithGroups ?? oldDoc?.sharedWithGroups ?? [],
       belongsToGroup: getAccountFromLocation(),
     }
