@@ -65,7 +65,7 @@ export class ActiveUserReport extends ServerProcess {
         (!this.args.inverse && meetsActiveCriteria) ||
         (this.args.inverse && !meetsActiveCriteria)
       ) {
-        this.writeLog(
+        this.logRaw(
           [
             user.doc?.email,
             new Date(mostRecent).toDateString(),
