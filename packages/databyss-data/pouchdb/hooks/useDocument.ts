@@ -80,7 +80,7 @@ export const useDocument = <T extends Document>(
         doc_ids: [_id],
       })
       .on('change', (change) => {
-        // console.log('[useDocument] change', change)
+        console.log('[useDocument] change', change)
         queryClient.setQueryData<T>(queryKey, change.doc)
       })!
   }

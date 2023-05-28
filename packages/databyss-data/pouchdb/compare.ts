@@ -28,7 +28,7 @@ export function docsEqual(docA: any, docB: any) {
 }
 
 export function blocksEqual(blockA: Block, blockB: Block) {
-  console.log('[blocksEqual]', blockA.text, blockB.text)
+  // console.log('[blocksEqual]', blockA.text, blockB.text)
   return equal(blockA.text, blockB.text)
 }
 

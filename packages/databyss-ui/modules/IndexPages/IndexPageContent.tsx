@@ -387,47 +387,47 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const restoreScroll = useScrollMemory(scrollViewRef)
   const blockRelationRes = useDocument<BlockRelation>(`r_${blockId}`)
 
-  const pageBlockCount = Object.values(pagesRes.data ?? {}).reduce(
-    (sum, page) => sum + page.blocks.length,
-    0
-  )
+  // const pageBlockCount = Object.values(pagesRes.data ?? {}).reduce(
+  //   (sum, page) => sum + page.blocks.length,
+  //   0
+  // )
 
-  return useMemo(() => {
-    // console.log('[IndexPageContent] render')
-    const queryRes = [blockRelationRes, blocksRes, pagesRes]
-    if (queryRes.some((q) => !q.isSuccess)) {
-      return <LoadingFallback queryObserver={queryRes} />
-    }
-    if (
-      !blocksRes.data?.[blockId!] ||
-      blocksRes.data[blockId!].type !== blockType
-    ) {
-      return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
-    }
-    return (
-      <IndexPageView
-        path={getPathFromBlock(blocksRes.data![blockId!])}
-        block={blocksRes.data![blockId!]}
-        key={blockId}
-        scrollViewRef={scrollViewRef}
-      >
-        <IndexResults
-          relatedBlockId={blockId!}
-          key={`${blockType}_${blockId}`}
-          blocks={blocksRes.data!}
-          pages={pagesRes.data!}
-          onLast={restoreScroll}
-          textOnly={blockType === BlockType.Embed}
-          pageBlockCount={pageBlockCount}
-          blockRelation={blockRelationRes.data!}
-        />
-      </IndexPageView>
-    )
-  }, [
-    blockId,
-    blocksRes.data?.[blockId!],
-    Object.keys(blocksRes.data ?? {}).length,
-    pageBlockCount,
-    blockRelationRes.data?.pages.length,
-  ])
+  // return useMemo(() => {
+  // console.log('[IndexPageContent] render')
+  const queryRes = [blockRelationRes, blocksRes, pagesRes]
+  if (queryRes.some((q) => !q.isSuccess)) {
+    return <LoadingFallback queryObserver={queryRes} />
+  }
+  if (
+    !blocksRes.data?.[blockId!] ||
+    blocksRes.data[blockId!].type !== blockType
+  ) {
+    return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
+  }
+  return (
+    <IndexPageView
+      path={getPathFromBlock(blocksRes.data![blockId!])}
+      block={blocksRes.data![blockId!]}
+      key={blockId}
+      scrollViewRef={scrollViewRef}
+    >
+      <IndexResults
+        relatedBlockId={blockId!}
+        key={`${blockType}_${blockId}`}
+        blocks={blocksRes.data!}
+        pages={pagesRes.data!}
+        onLast={restoreScroll}
+        textOnly={blockType === BlockType.Embed}
+        // pageBlockCount={pageBlockCount}
+        blockRelation={blockRelationRes.data!}
+      />
+    </IndexPageView>
+  )
+  // }, [
+  //   blockId,
+  //   blocksRes.data?.[blockId!],
+  //   Object.keys(blocksRes.data ?? {}).length,
+  //   pageBlockCount,
+  //   blockRelationRes.data?.pages.length,
+  // ])
 }

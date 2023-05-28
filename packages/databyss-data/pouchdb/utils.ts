@@ -336,7 +336,7 @@ export const bulkUpsert = async (upQdict: any) => {
   }
 
   const _res = await dbRef.current!.bulkGet(_bulkGetQuery)
-  console.log('[bulkUpsert] get', _res.results)
+  // console.log('[bulkUpsert] get', _res.results)
 
   const _oldDocs = {}
   // build old document index
@@ -392,7 +392,7 @@ export const bulkUpsert = async (upQdict: any) => {
       _docs.push(_doc)
     }
   }
-  console.log('[bulkUpsert] put', _docs)
+  // console.log('[bulkUpsert] put', _docs)
   await dbRef.current!.bulkDocs(_docs)
 }
 

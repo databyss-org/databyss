@@ -285,10 +285,16 @@ export const replicateDocs = async (replicateDict: ReplicateDict) => {
       },
       doc_ids: docIds,
     }
-    // console.log('[replicateDocs]', groupId, docIds)
+    console.log('[replicateDocs]', groupId, docIds)
     dbRef
       .current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, opts)
       .on('error', MakePouchReplicationErrorHandler('[replicateDocs]'))
+  })
+}
+
+export const replicateDoc = (doc: Document) => {
+  doc.sharedWithGroups?.forEach((groupId) => {
+    replicateDocs({ [groupId]: new Set(doc._id) })
   })
 }
 

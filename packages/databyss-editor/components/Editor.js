@@ -15,6 +15,7 @@ import FormatMenu from './FormatMenu'
 import { isSelectionCollapsed } from '../lib/clipboardUtils'
 import { convertSelectionToLink } from '../lib/inlineUtils/setPageLink'
 import { createHighlightRanges, createLinkRangesForUrls } from '../lib/util'
+import { BlockType } from '../interfaces'
 
 const Editor = ({
   children,
@@ -34,9 +35,11 @@ const Editor = ({
   const searchTerm = useSearchContext((c) => c && c.searchTerm)
 
   // preloads source and topic cache to be used by the suggest menu
-  useBlocksInPages('EMBED', { subscribe: false })
-  useBlocksInPages('SOURCE')
-  useBlocksInPages('TOPIC')
+  // TODO: consolidate to 1 subscription
+  useBlocksInPages(BlockType.Embed)
+  useBlocksInPages(BlockType.Source)
+  useBlocksInPages(BlockType.Topic)
+  useBlocksInPages(BlockType._ANY)
 
   const { copy, paste, cut, embedPaste, state } = useEditorContext()
 

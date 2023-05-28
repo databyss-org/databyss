@@ -119,17 +119,18 @@ export const useDocuments = <T extends Document>(
           if (!oldData) {
             return { [change.doc._id]: change.doc }
           }
-          console.log(
-            '[useDocuments] change',
-            oldData[change.doc._id],
-            change.doc
-          )
+          // console.log(
+          //   '[useDocuments] change',
+          //   oldData[change.doc._id],
+          //   change.doc
+          // )
           if (
             !change.deleted &&
             docsEqual(oldData[change.doc._id], change.doc)
           ) {
             return undefined
           }
+
           sequenceDict[queryKeyJson] = change.seq
           const nextData = { ...oldData }
           if (change.deleted) {
