@@ -5,7 +5,7 @@ import {
   Page,
   Text,
 } from '@databyss-org/services/interfaces/'
-import { replicateSharedPage } from '@databyss-org/data/pouchdb/groups'
+import { ReplicateDict, replicateDocs } from '@databyss-org/data/pouchdb/groups'
 import {
   DocumentType,
   DocumentCacheDict,
@@ -33,7 +33,7 @@ export const updateInlines = async ({
   _id: string
   caches?: DocumentCacheDict
 }) => {
-  console.log('[updateInlines]')
+  console.log('[updateInlines]', caches)
   const _relation = await findOne<BlockRelation>({
     doctype: DocumentType.BlockRelation,
     query: {
@@ -47,6 +47,8 @@ export const updateInlines = async ({
   }
 
   const upsertDict = {}
+  const replicateDict: ReplicateDict = {}
+
   for (const _pageId of _relation!.pages) {
     const _page = caches?.pages?.[_pageId] ?? (await getDocument<Page>(_pageId))
 
@@ -62,6 +64,16 @@ export const updateInlines = async ({
 
         if (!_block) {
           continue
+        }
+
+        if (_block.sharedWithGroups?.length) {
+          _block.sharedWithGroups.forEach((_groupId) => {
+            if (!replicateDict[_groupId]) {
+              replicateDict[_groupId] = new Set<string>()
+              replicateDict[_groupId].add(_id)
+            }
+            replicateDict[_groupId].add(_block._id)
+          })
         }
 
         // get all inline ranges from block
@@ -86,6 +98,7 @@ export const updateInlines = async ({
             }
           }
         })
+        // console.log('[updateInlines] block', _block)
         if (_inlineRanges.length) {
           upsertDict[_block!._id] = {
             ..._block,
@@ -96,8 +109,5 @@ export const updateInlines = async ({
     }
   }
   await bulkUpsert(upsertDict)
-
-  // update all replicated pages related to topic
-  const pagesWhereAtomicExists: string[] = _relation.pages
-  await replicateSharedPage(pagesWhereAtomicExists)
+  await replicateDocs(replicateDict)
 }

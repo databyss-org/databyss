@@ -38,6 +38,7 @@ const run = async () => {
   // bugsnag middleware must go first
   startBugsnag({
     plugins: [BugsnagPluginExpress],
+    autoTrackSessions: false,
   })
   const bugsnagMiddleware = Bugsnag.getPlugin('express')
   app.use(bugsnagMiddleware.requestHandler)

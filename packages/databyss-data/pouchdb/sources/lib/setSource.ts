@@ -34,7 +34,10 @@ export const setSource = async (data: Source, caches?: DocumentCacheDict) => {
     doc: blockFields,
   })
 
-  if (_prevSource && !equal(_prevSource.text, text)) {
+  if (
+    _prevSource &&
+    (!equal(_prevSource.text, text) || !equal(_prevSource.name, name))
+  ) {
     await updateInlines({
       inlineType: InlineTypes.InlineSource,
       text: name,

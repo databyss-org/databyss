@@ -53,7 +53,6 @@ import {
   enterAtEndOfInlineAtomic,
   onLinkBackspace,
 } from '../lib/inlineUtils'
-import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
 import { loadPage } from '../../databyss-services/editorPage'
 
 const ContentEditable = ({

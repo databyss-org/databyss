@@ -42,7 +42,7 @@ export function activateToken(
           )
           return
         }
-        console.log('[DRIVE] activate token', token, response.statusCode)
+        // console.log('[DRIVE] activate token', token, response.statusCode)
         resolve(
           `ACL request accepted: ${response.body ?? response.statusMessage}`
         )

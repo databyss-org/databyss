@@ -220,6 +220,78 @@ export const replicatePublicEmbeds = async ({
   }
 }
 
+export const getDbCredentials = async ({
+  groupId,
+  isPublic,
+}: {
+  groupId: string
+  isPublic: boolean
+}) => {
+  try {
+    // first check if credentials exist
+    let dbSecretCache = getPouchSecret() || {}
+    let creds = dbSecretCache[groupId]
+    if (!creds) {
+      // credentials are not in local storage
+      // creates new user credentials and adds them to local storage
+      await createDatabaseCredentials({
+        groupId,
+        isPublic,
+      })
+
+      // credentials should be in local storage now
+      dbSecretCache = getPouchSecret()
+      creds = dbSecretCache[groupId]
+      if (!creds) {
+        // user is not authorized
+        return false
+      }
+    }
+    // confirm credentials work
+    await validateGroupCredentials({
+      groupId,
+      dbKey: creds.dbKey,
+    })
+
+    return creds
+  } catch (err) {
+    console.error(err)
+  }
+  return false
+}
+
+export interface ReplicateDict {
+  [groupId: string]: Set<string>
+}
+
+export const replicateDocs = async (replicateDict: ReplicateDict) => {
+  Object.keys(replicateDict).forEach(async (groupId) => {
+    const _group = await getDocument<Group>(groupId)
+    const creds = await getDbCredentials({
+      groupId,
+      isPublic: _group?.public ?? false,
+    })
+    if (!creds) {
+      return
+    }
+    const docIds = Array.from(replicateDict[groupId])
+    const opts: any = {
+      batch_size: BATCH_SIZE,
+      batches_limit: BATCHES_LIMIT,
+      retry: true,
+      auth: {
+        username: creds.dbKey,
+        password: creds.dbPassword,
+      },
+      doc_ids: docIds,
+    }
+    // console.log('[replicateDocs]', groupId, docIds)
+    dbRef
+      .current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, opts)
+      .on('error', MakePouchReplicationErrorHandler('[replicateDocs]'))
+  })
+}
+
 const upsertReplication = async ({
   groupId,
   dbKey,
@@ -285,41 +357,16 @@ export const replicateGroup = async ({
   groupId: string
   isPublic?: boolean
 }) => {
-  try {
-    // first check if credentials exist
-    let dbSecretCache = getPouchSecret() || {}
-    let creds = dbSecretCache[groupId]
-    if (!creds) {
-      // credentials are not in local storage
-      // creates new user credentials and adds them to local storage
-      await createDatabaseCredentials({
-        groupId,
-        isPublic,
-      })
-
-      // credentials should be in local storage now
-      dbSecretCache = getPouchSecret()
-      creds = dbSecretCache[groupId]
-      if (!creds) {
-        // user is not authorized
-        return
-      }
-    }
-    // confirm credentials work
-    await validateGroupCredentials({
-      groupId,
-      dbKey: creds.dbKey,
-    })
-
-    upsertReplication({
-      groupId,
-      dbKey: creds.dbKey,
-      dbPassword: creds.dbPassword,
-      isPublic,
-    })
-  } catch (err) {
-    console.error(err)
+  const creds = await getDbCredentials({ groupId, isPublic: isPublic ?? false })
+  if (!creds) {
+    return
   }
+  upsertReplication({
+    groupId,
+    dbKey: creds.dbKey,
+    dbPassword: creds.dbPassword,
+    isPublic,
+  })
 }
 
 export const setGroup = async (group: Group, pageId?: string) => {

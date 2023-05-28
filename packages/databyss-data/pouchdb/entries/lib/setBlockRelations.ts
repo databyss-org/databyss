@@ -5,7 +5,6 @@ import { DocumentType, PageDoc } from '../../interfaces'
 import {
   removeGroupsFromDocument,
   addGroupToDocument,
-  addGroupToDocumentsInPage,
 } from '../../groups/index'
 
 const setBlockRelations = async (payload: {
