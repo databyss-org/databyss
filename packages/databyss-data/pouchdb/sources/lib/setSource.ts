@@ -3,7 +3,6 @@ import {
   BlockType,
   SourceCitationHeader,
 } from '@databyss-org/services/interfaces'
-import equal from 'fast-deep-equal'
 import { DocumentType, DocumentCacheDict } from '../../interfaces'
 import { getDocument, upsertImmediate } from '../../utils'
 import { InlineTypes } from '../../../../databyss-services/interfaces/Range'

@@ -6,7 +6,7 @@ export const useRemoteMedia = (
   url: string,
   options: UseQueryOptions
 ) => {
-  const queryKey = `media-${url}`
+  const queryKey = [`media-${url}`]
 
   const query = useQuery(
     queryKey,

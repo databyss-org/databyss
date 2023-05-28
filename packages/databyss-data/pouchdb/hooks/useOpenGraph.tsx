@@ -7,7 +7,7 @@ export const useOpenGraph = (
   url: string,
   options?: UseQueryOptions
 ) => {
-  const queryKey = url
+  const queryKey = [url]
 
   const query = useQuery<EmbedDetail>(
     queryKey,

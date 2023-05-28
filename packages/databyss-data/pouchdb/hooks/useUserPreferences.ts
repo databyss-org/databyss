@@ -30,7 +30,7 @@ export const useUserPreferences = (
     isPublicAccount()
       ? () => null
       : (prefs: UserPreference) => {
-          queryClient.setQueryData('user_preference', prefs)
+          queryClient.setQueryData(['user_preference'], prefs)
           upsertUserPreferences(() => prefs)
         },
   ]
