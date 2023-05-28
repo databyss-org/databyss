@@ -1,6 +1,6 @@
 import PouchDB from 'pouchdb'
 import { useEffect } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Document } from '@databyss-org/services/interfaces'
 import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvder'
 import { EM } from '@databyss-org/data/pouchdb/utils'
@@ -12,6 +12,7 @@ export interface UseDocumentOptions {
   enabled?: boolean
   initialData?: any
   subscribe?: boolean
+  forceRefetch?: boolean
 }
 
 export function applyDefaultUseDocumentOptions(options: UseDocumentOptions) {
@@ -19,6 +20,7 @@ export function applyDefaultUseDocumentOptions(options: UseDocumentOptions) {
     enabled: options.enabled ?? true,
     initialData: options.initialData ?? null,
     subscribe: options.subscribe ?? true,
+    forceRefetch: options.forceRefetch ?? false,
   }
 }
 
@@ -35,7 +37,7 @@ export const useDocument = <T extends Document>(
   const isCouchMode = useDatabaseContext((c) => c.isCouchMode)
   // const isCouchMode = false
   const queryClient = useQueryClient()
-  const queryKey = `useDocument_${_id}`
+  const queryKey = [`useDocument_${_id}`]
   const _options = applyDefaultUseDocumentOptions(options)
 
   useEffect(() => {

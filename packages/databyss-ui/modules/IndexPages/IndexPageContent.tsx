@@ -111,18 +111,22 @@ export const IndexPageTitleInput = ({
       if (!block) {
         return
       }
+      const _block: Block = {
+        ...block,
+        text: {
+          ...block.text,
+          textValue: value,
+        },
+      }
       switch (block!.type) {
         case BlockType.Topic:
-          block!.text.textValue = value
-          setTopic(block!, { pages: pagesRes.data, blocks: blocksRes.data })
+          setTopic(_block, { pages: pagesRes.data, blocks: blocksRes.data })
           break
         case BlockType.Embed:
-          block!.text.textValue = value
-          setEmbed(block! as Embed)
+          setEmbed(_block as Embed)
           break
         case BlockType.Source:
-          block!.text.textValue = value
-          setSource(block! as Source, {
+          setSource(_block as Source, {
             pages: pagesRes.data,
             blocks: blocksRes.data,
           })

@@ -336,6 +336,7 @@ export const bulkUpsert = async (upQdict: any) => {
   }
 
   const _res = await dbRef.current!.bulkGet(_bulkGetQuery)
+  console.log('[bulkUpsert] get', _res.results)
 
   const _oldDocs = {}
   // build old document index
@@ -370,6 +371,7 @@ export const bulkUpsert = async (upQdict: any) => {
       const _doc = {
         ..._oldDoc,
         ...addTimeStamp({ ..._oldDoc, ...docFields, doctype }),
+        ...(_oldDoc._rev ? { _rev: _oldDoc._rev } : {}),
         // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
         sharedWithGroups:
           doctype === DocumentType.Page
@@ -390,6 +392,7 @@ export const bulkUpsert = async (upQdict: any) => {
       _docs.push(_doc)
     }
   }
+  console.log('[bulkUpsert] put', _docs)
   await dbRef.current!.bulkDocs(_docs)
 }
 

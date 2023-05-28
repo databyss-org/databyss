@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { EmbedDetail } from '@databyss-org/services/interfaces/Block'
 import { httpPost } from '@databyss-org/services/lib/requestApi'
 

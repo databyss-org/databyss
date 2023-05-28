@@ -2086,7 +2086,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5":
+"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2":
   version "7.12.5"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
   integrity sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
@@ -3961,6 +3961,19 @@
   integrity sha512-PyRA9sm1Yayuj5OIoJ1hGt2YISX45w9WcFbh6ddT0Z/0yaFxOtGLInr4jUfU1EAFVs0Yfyfev4RNwBlUaHdlDQ==
   dependencies:
     defer-to-connect "^2.0.0"
+
+"@tanstack/query-core@4.29.11":
+  version "4.29.11"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.29.11.tgz#fa338f7d6897c6be5de6d8dabd603d9b78ee48c7"
+  integrity sha512-8C+hF6SFAb/TlFZyS9FItgNwrw4PMa7YeX+KQYe2ZAiEz6uzg6yIr+QBzPkUwZ/L0bXvGd1sufTm3wotoz+GwQ==
+
+"@tanstack/react-query@^4.29.11":
+  version "4.29.11"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-4.29.11.tgz#053bd6e9d63ce07a523976263ae78a5e130eb2ad"
+  integrity sha512-aLaOAhBnCr12YKPjDsZOc0fAtkyaW7f9KfVfw49oYpfe0H9EPXBUgDBIKJ8qdHF3uGzTVSMcmpiw1Za41BLZlw==
+  dependencies:
+    "@tanstack/query-core" "4.29.11"
+    use-sync-external-store "^1.2.0"
 
 "@tokenizer/token@^0.3.0":
   version "0.3.0"
@@ -16189,14 +16202,6 @@ markdown-toc@^1.2.0:
     repeat-string "^1.6.1"
     strip-color "^0.1.0"
 
-match-sorter@^6.0.2:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-6.1.0.tgz#7fec6808d94311a35fef7fd842a11634f2361bd7"
-  integrity sha512-sKPMf4kbF7Dm5Crx0bbfLpokK68PUJ/0STUIOPa1ZmTZEA3lCaPK3gapQR573oLmvdkTfGojzySkIwuq6Z6xRQ==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    remove-accents "0.4.2"
-
 matchmediaquery@^0.3.0:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/matchmediaquery/-/matchmediaquery-0.3.1.tgz#8247edc47e499ebb7c58f62a9ff9ccf5b815c6d7"
@@ -20355,14 +20360,6 @@ react-proxy@^1.1.7:
     lodash "^4.6.1"
     react-deep-force-update "^1.0.0"
 
-react-query@^3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.6.0.tgz#3da307a4a4cb6ea95f9c95b7e50b5281d5244e4d"
-  integrity sha512-39ptLt4qaKO1DE+ta6SpPutweEgDvUQj/KlebC+okJ9Nxbs5ExxKV8RYlLeop6vdDFyiMmwYrt1POiF8oWGh1A==
-  dependencies:
-    "@babel/runtime" "^7.5.5"
-    match-sorter "^6.0.2"
-
 react-refresh@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.2.0.tgz#f0cff375e8f75dea7133a847a1b40cf5c073dd0d"
@@ -21155,11 +21152,6 @@ remarkable@^2.0.0:
   dependencies:
     argparse "^1.0.10"
     autolinker "^3.11.0"
-
-remove-accents@0.4.2:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/remove-accents/-/remove-accents-0.4.2.tgz#0a43d3aaae1e80db919e07ae254b285d9e1c7bb5"
-  integrity sha1-CkPTqq4egNuRngeuJUsoXZ4ce7U=
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"
@@ -24332,6 +24324,11 @@ use-pouchdb@^1.2.3:
     pouchdb-core "^7.2.2"
     pouchdb-errors "^7.2.2"
     pouchdb-utils "^7.2.2"
+
+use-sync-external-store@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz#7dbefd6ef3fe4e767a0cf5d7287aacfb5846928a"
+  integrity sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==
 
 use@^3.1.0:
   version "3.1.1"

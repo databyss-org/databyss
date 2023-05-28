@@ -1,5 +1,5 @@
 import { BlockType, BlockRelation } from '@databyss-org/services/interfaces'
-import { UseQueryOptions } from 'react-query'
+import { UseQueryOptions } from '@tanstack/react-query'
 import { selectors } from '../selectors'
 import { useDocuments } from './useDocuments'
 

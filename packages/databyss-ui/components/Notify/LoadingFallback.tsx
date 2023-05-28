@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import LoadingIcon from '@databyss-org/ui/assets/loading.svg'
 import { View, ViewProps } from '@databyss-org/ui/primitives'
-import { QueryObserverResult } from 'react-query'
+import { QueryObserverResult } from '@tanstack/react-query'
 import { useNotifyContext, DialogOptions } from './NotifyProvider'
 import { ErrorText } from './ErrorText'
 

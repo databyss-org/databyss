@@ -35,8 +35,8 @@ const Editor = ({
 
   // preloads source and topic cache to be used by the suggest menu
   useBlocksInPages('EMBED', { subscribe: false })
-  useBlocksInPages('SOURCE', { subscribe: false })
-  useBlocksInPages('TOPIC', { subscribe: false })
+  useBlocksInPages('SOURCE')
+  useBlocksInPages('TOPIC')
 
   const { copy, paste, cut, embedPaste, state } = useEditorContext()
 

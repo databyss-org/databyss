@@ -46,7 +46,7 @@
     "p-cancelable": "^2.1.0",
     "pouchdb": "7.3.0",
     "pouchdb-find": "7.3.0",
-    "react-query": "^3.6.0",
+    "@tanstack/react-query": "^4.29.11",
     "stemmer": "^2.0.0"
   }
 }

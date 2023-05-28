@@ -12,7 +12,7 @@
     "react-dom": "16.9.0",
     "@databyss-org/data": "2.8.6",
     "@databyss-org/notes": "2.8.6",
-    "react-query": "^3.6.0",
+    "@tanstack/react-query": "^4.29.11",
     "@databyss-org/ui": "2.8.6",
     "@databyss-org/services": "2.8.6"
   }

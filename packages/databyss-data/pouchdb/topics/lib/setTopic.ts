@@ -1,10 +1,10 @@
-import equal from 'fast-deep-equal'
 import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import { Topic } from '@databyss-org/services/interfaces'
 import { DocumentType, DocumentCacheDict } from '../../interfaces'
 import { getDocument, upsertImmediate } from '../../utils'
 import { updateInlines } from '../../../../databyss-editor/lib/inlineUtils/updateInlines'
+import { topicsEqual } from '../../compare'
 
 const setTopic = async (data: Topic, caches?: DocumentCacheDict) => {
   const { text, _id } = data
@@ -20,7 +20,7 @@ const setTopic = async (data: Topic, caches?: DocumentCacheDict) => {
     },
   })
 
-  if (_prevTopic && !equal(_prevTopic.text, text)) {
+  if (_prevTopic && !topicsEqual(_prevTopic, data)) {
     await updateInlines({
       inlineType: InlineTypes.InlineTopic,
       text,

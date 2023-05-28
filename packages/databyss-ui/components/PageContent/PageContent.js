@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   useParams,
   useLocation,
@@ -68,7 +68,7 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
 
   if (linkedDocsRes.isSuccess) {
     Object.values(linkedDocsRes.data).forEach((_doc) => {
-      queryClient.setQueryData(`useDocument_${_doc._id}`, _doc)
+      queryClient.setQueryData([`useDocument_${_doc._id}`], _doc)
     })
   }
 

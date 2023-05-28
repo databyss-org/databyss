@@ -1,6 +1,6 @@
 import React from 'react'
 import { Base64 } from 'js-base64'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import SessionProvider from '@databyss-org/services/session/SessionProvider'
 import { DatabaseProvider } from '@databyss-org/services/lib/DatabaseProvder'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'

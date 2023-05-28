@@ -1,5 +1,5 @@
 import { Group } from '@databyss-org/services/interfaces'
-import { QueryOptions } from 'react-query'
+import { QueryOptions } from '@tanstack/react-query'
 import { selectors } from '../selectors'
 import { useDocuments } from './useDocuments'
 
