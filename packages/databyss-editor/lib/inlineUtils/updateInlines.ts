@@ -85,7 +85,7 @@ export const updateInlines = async ({
                 type: inlineType,
               })
               Object.assign(_block, { text: _newText })
-              console.log('[updateInlines] block', _block)
+              // console.log('[updateInlines] block', _block)
               if (_inlineRanges.length) {
                 upsertDict[_block!._id] = {
                   ..._block,

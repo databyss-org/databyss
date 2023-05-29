@@ -26,6 +26,10 @@ export function docsEqual(docA: any, docB: any) {
   return equal(docA, docB)
 }
 
+export function nullOrEqual(objA: any, objB: any) {
+  return !objA || !objB || equal(objA, objB)
+}
+
 export function blocksEqual(blockA: Block, blockB: Block) {
   // console.log('[blocksEqual]', blockA.text, blockB.text)
   return equal(blockA.text, blockB.text)
@@ -34,7 +38,8 @@ export function blocksEqual(blockA: Block, blockB: Block) {
 export function sourcesEqual(sourceA: Source, sourceB: Source) {
   return (
     blocksEqual(sourceA, sourceB) &&
-    (!sourceA.name || !sourceB.name || equal(sourceA.name, sourceB.name))
+    nullOrEqual(sourceA.name, sourceB.name) &&
+    nullOrEqual(sourceA.detail, sourceB.detail)
   )
 }
 
