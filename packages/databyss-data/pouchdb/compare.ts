@@ -12,12 +12,11 @@ export function docsEqual(docA: any, docB: any) {
     return false
   }
   if (docA.doctype !== docB.doctype) {
-    console.error('[docsEqual doctypes do not match', docA, docB)
-    throw new Error('[docsEqual] doctype must match')
+    return false
   }
   if (docA.doctype === 'BLOCK') {
     if (docA.type !== docB.type) {
-      throw new Error('[docsEqual] block type must match')
+      return false
     }
     if (docA.type === 'SOURCE') {
       return sourcesEqual(docA as Source, docB as Source)
