@@ -6,8 +6,8 @@ import {
   ReactEditor,
 } from '@databyss-org/slate-react'
 import { Node, Editor as SlateEditor, Transforms } from '@databyss-org/slate'
-import { View } from '@databyss-org/ui/primitives'
-// import PenSVG from '@databyss-org/ui/assets/pen.svg'
+import { Button, Icon, View } from '@databyss-org/ui/primitives'
+import PenSVG from '@databyss-org/ui/assets/search.svg'
 import { Embed, Block } from '@databyss-org/services/interfaces/Block'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { InlineEmbed } from './InlineEmbed'
@@ -22,7 +22,7 @@ export const EmbedMedia = ({
   _children,
   attributes,
   _element,
-  // onInlineClick,
+  onInlineClick,
   editor,
 }) => {
   const blockRes = useDocument<Block>(_element.atomicId)
@@ -62,31 +62,28 @@ export const EmbedMedia = ({
     }
   }
 
-  return React.useMemo(
-    () => (
-      <InlineEmbed
-        attributes={attributes}
-        embedData={blockRes.data as Embed}
-        onClick={highlightEmbed}
-        _children={_children}
-        textRef={textRef}
-      >
-        <View position="relative">
-          <ResolveEmbed
-            data={blockRes.data as Embed}
-            highlight={highlight}
-            leaf={_element}
-            position="relative"
-            zIndex={1}
-          />
-          {/* {highlight && (
+  return (
+    <InlineEmbed
+      attributes={attributes}
+      embedData={blockRes.data as Embed}
+      onClick={highlightEmbed}
+      _children={_children}
+      textRef={textRef}
+    >
+      <View position="relative">
+        <ResolveEmbed
+          data={blockRes.data as Embed}
+          highlight={highlight}
+          position="relative"
+          zIndex={1}
+        />
+        {highlight && (
           <View
             zIndex={2}
             position="absolute"
-            top="small"
-            right="small"
-            borderRadius="default"
-            // backgroundColor={gray[6]}
+            top="em"
+            right="em"
+            backgroundColor="gray.6"
           >
             <Button
               variant="editSource"
@@ -94,16 +91,14 @@ export const EmbedMedia = ({
                 onInlineClick({ atomicType: 'EMBED', id: _element.atomicId })
               }
             >
-              <Icon sizeVariant="tiny" color="background.5">
+              <Icon sizeVariant="small" color="background.5">
                 <PenSVG />
               </Icon>
             </Button>
           </View>
-        )} */}
-        </View>
-      </InlineEmbed>
-    ),
-    [JSON.stringify(blockRes.data), highlight]
+        )}
+      </View>
+    </InlineEmbed>
   )
 }
 

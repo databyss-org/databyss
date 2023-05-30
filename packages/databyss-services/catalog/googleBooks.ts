@@ -14,7 +14,7 @@ const googleBooks: CatalogService = {
   type: GOOGLE_BOOKS,
 
   search: async (query: string): Promise<GroupedCatalogResults> => {
-    const results = await request(
+    const results = await request<GroupedCatalogResults>(
       `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
         query
       )}&key=AIzaSyCCoJxl3VhVwvM4v4cHSPJY6hsK-kh5VBk`,

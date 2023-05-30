@@ -15,6 +15,7 @@ import FormatMenu from './FormatMenu'
 import { isSelectionCollapsed } from '../lib/clipboardUtils'
 import { convertSelectionToLink } from '../lib/inlineUtils/setPageLink'
 import { createHighlightRanges, createLinkRangesForUrls } from '../lib/util'
+import { BlockType } from '../interfaces'
 
 const Editor = ({
   children,
@@ -34,9 +35,11 @@ const Editor = ({
   const searchTerm = useSearchContext((c) => c && c.searchTerm)
 
   // preloads source and topic cache to be used by the suggest menu
-  useBlocksInPages('EMBED')
-  useBlocksInPages('SOURCE')
-  useBlocksInPages('TOPIC')
+  // TODO: consolidate to 1 subscription
+  useBlocksInPages(BlockType.Embed)
+  useBlocksInPages(BlockType.Source)
+  useBlocksInPages(BlockType.Topic)
+  useBlocksInPages(BlockType._ANY)
 
   const { copy, paste, cut, embedPaste, state } = useEditorContext()
 
@@ -148,6 +151,12 @@ const Editor = ({
     _restoreScroll()
   }, [])
 
+  const dragHandler = (e) => {
+    e.preventDefault()
+    // e.stopPropagation()
+    return false
+  }
+
   return useMemo(
     () => (
       <Slate editor={editor} selection={selection} {...slateProps}>
@@ -164,6 +173,12 @@ const Editor = ({
             cut(e)
           }}
           onFocus={onFocus}
+          onDragOverCapture={dragHandler}
+          onDragOver={dragHandler}
+          onDragLeaveCapture={dragHandler}
+          onDragLeave={dragHandler}
+          onDropCapture={dragHandler}
+          onDrop={dragHandler}
           decorate={decorate}
           spellCheck={process.env.NODE_ENV !== 'test'}
           renderElement={renderElement}
@@ -173,6 +188,7 @@ const Editor = ({
           onKeyDown={onKeyDown}
           style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
           css={styledCss({
+            // pointerEvents: state.dragActive ? 'none' : 'all',
             flexGrow: 1,
             overflowY: 'auto',
             paddingLeft: 'em',

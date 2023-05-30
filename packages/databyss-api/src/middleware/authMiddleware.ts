@@ -7,13 +7,6 @@ dotenv.config()
 export async function authMiddleware(req, res, next) {
   // check if current account is public account
 
-  // TODO: THIS WILL BE REPLPACED IN REFACTOR
-  // const reqHasSharedAccount = await checkForPublicAccount(req)
-
-  // if (reqHasSharedAccount) {
-  //   return next()
-  // }
-
   // Get token from header
   const token = req.header('x-auth-token')
   // Check if not token
@@ -28,6 +21,7 @@ export async function authMiddleware(req, res, next) {
       ...decoded.user,
       _id: decoded.user.id,
     }
+    req.token = token
     return next()
   } catch (err) {
     return res.status(401).json({ msg: 'Token is not valid' })

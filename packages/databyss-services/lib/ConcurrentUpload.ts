@@ -31,24 +31,27 @@ export class ConcurrentUpload {
     this.partProgress = {}
     this.file = file
     this.fileId = fileId
-    this.contentType = contentType
+    this.contentType = contentType ?? file.type
   }
 
   async initUpload() {
-    this.accountId = (await getAccountId()) as string
+    this.accountId = getAccountId() as string
     this.token = await getAuthToken()!
 
     // get the upload id
-    const postBody: { filename: string; contentType?: string } = {
+    const postBody: {
+      fileId: string
+      filename: string
+      contentType?: string
+    } = {
       filename: this.file.name,
+      fileId: this.fileId,
     }
     if (this.contentType) {
       postBody.contentType = this.contentType
     }
-    const startRes = await httpPost(
-      `/b/${this.accountId}/${this.fileId}`,
-      postBody
-    )
+    const startRes = await httpPost<{ uploadId: string }>('b', '', postBody)
+    console.log('[ConcurrentUpload] init response', startRes)
     this.uploadId = startRes.uploadId
   }
 
@@ -78,7 +81,7 @@ export class ConcurrentUpload {
         // upload the chunk and add the promise to the list
         uploads.push(
           this.uploadChunk({
-            url: `/b/${this.accountId}/${this.fileId}/${partNumber}`,
+            url: `https://${process.env.DRIVE_HOST}/b/${this.accountId}/${this.fileId}/${partNumber}`,
             chunkForm,
             progressHandler: this.makeProgressHandler(partNumber),
             headers,
@@ -88,7 +91,7 @@ export class ConcurrentUpload {
 
       const responses = await Promise.all(uploads)
       console.log('[concurrentUpload] all parts uploaded: ', responses)
-      const endRes = await httpPost(`/b/${this.accountId}/${this.fileId}`, {
+      const endRes = await httpPost('b', this.fileId, {
         parts: responses,
         uploadId: this.uploadId,
       })

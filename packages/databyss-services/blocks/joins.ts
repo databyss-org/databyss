@@ -109,7 +109,7 @@ export const addPagesToBlockRelation = ({
     _pages.push(populatePage({ page: pages[p], blocks }))
   })
 
-  // console.log('[addPagesToBlockRelation] pages', _pages)
+  console.log('[addPagesToBlockRelation] pages', _pages)
 
   const relations: IndexPageResult[] = []
   // create a set to prevent duplicates

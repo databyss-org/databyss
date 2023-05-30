@@ -1,7 +1,7 @@
-import { Mark, Range } from '@databyss-org/services/interfaces'
+import { InlineRangeType, Mark, Range } from '@databyss-org/services/interfaces'
 
 interface MarkDict {
-  [mark: string]: boolean | string
+  [mark: string]: boolean | InlineRangeType
 }
 
 export function flattenRanges(ranges: Range[]) {
@@ -10,7 +10,7 @@ export function flattenRanges(ranges: Range[]) {
 
   // find extent of ranges
   let _length = 0
-  ranges.forEach((range) => {
+  ranges.forEach((range, rangeIdx) => {
     // iterate over possible mark positions
     for (let idx = range.offset; idx < range.offset + range.length; idx += 1) {
       if (!marks[idx]) {
@@ -18,7 +18,7 @@ export function flattenRanges(ranges: Range[]) {
       }
       range.marks.forEach((mark) => {
         if (Array.isArray(mark)) {
-          marks[idx][mark[0]] = mark[1]
+          marks[idx][rangeIdx] = mark
         } else {
           marks[idx][mark] = true
         }
@@ -44,9 +44,9 @@ export function flattenRanges(ranges: Range[]) {
         marks: Object.keys(marks[idx])
           .map(
             (key) =>
-              (typeof marks[idx][key] === 'string'
-                ? [key, marks[idx][key]]
-                : key) as Mark
+              (typeof marks[idx][key] === 'boolean'
+                ? key
+                : marks[idx][key]) as Mark
           )
           .sort(),
       }

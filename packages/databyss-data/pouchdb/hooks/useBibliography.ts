@@ -6,7 +6,11 @@ import {
   BibliographyDict,
 } from '@databyss-org/services/interfaces'
 import { toCitation } from '@databyss-org/services/citations'
-import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 import { useBlocksInPages } from '.'
 import { useDocuments } from './useDocuments'
 import { UseDocumentOptions } from './useDocument'

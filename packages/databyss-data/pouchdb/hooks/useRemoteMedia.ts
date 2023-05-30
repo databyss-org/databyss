@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { httpPost } from '../../../databyss-services/lib/requestApi'
 
 export const useRemoteMedia = (
@@ -6,7 +6,7 @@ export const useRemoteMedia = (
   url: string,
   options: UseQueryOptions
 ) => {
-  const queryKey = `media-${url}`
+  const queryKey = [`media-${url}`]
 
   const query = useQuery(
     queryKey,

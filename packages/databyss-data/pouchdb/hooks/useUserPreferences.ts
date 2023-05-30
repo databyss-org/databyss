@@ -1,4 +1,4 @@
-import { useQueryClient, UseQueryResult } from 'react-query'
+import { useQueryClient, UseQueryResult } from '@tanstack/react-query'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Group } from '@databyss-org/services/interfaces'
 import { UserPreference } from '../interfaces'
@@ -30,7 +30,7 @@ export const useUserPreferences = (
     isPublicAccount()
       ? () => null
       : (prefs: UserPreference) => {
-          queryClient.setQueryData('user_preference', prefs)
+          queryClient.setQueryData(['user_preference'], prefs)
           upsertUserPreferences(() => prefs)
         },
   ]

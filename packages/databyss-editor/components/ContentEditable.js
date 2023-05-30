@@ -53,7 +53,6 @@ import {
   enterAtEndOfInlineAtomic,
   onLinkBackspace,
 } from '../lib/inlineUtils'
-import { useBlocks, usePages } from '../../databyss-data/pouchdb/hooks'
 import { loadPage } from '../../databyss-services/editorPage'
 
 const ContentEditable = ({
@@ -66,8 +65,6 @@ const ContentEditable = ({
   firstBlockIsTitle,
   editableRef,
 }) => {
-  const blocksRes = useBlocks()
-  const pagesRes = usePages()
   const editorContext = useEditorContext()
   const editorRef = useRef(null)
   const { navigate } = useNavigationContext()
@@ -172,22 +169,12 @@ const ContentEditable = ({
         const _types = {
           SOURCE: () => {
             if (_data) {
-              window.requestAnimationFrame(() =>
-                setSource(_data, {
-                  pages: pagesRes.data,
-                  blocks: blocksRes.data,
-                })
-              )
+              window.requestAnimationFrame(() => setSource(_data))
             }
           },
           TOPIC: () => {
             if (_data) {
-              window.requestAnimationFrame(() =>
-                setTopic(_data, {
-                  pages: pagesRes.data,
-                  blocks: blocksRes.data,
-                })
-              )
+              window.requestAnimationFrame(() => setTopic(_data))
             }
           },
           EMBED: () => {

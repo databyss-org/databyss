@@ -10,6 +10,7 @@ import createSharedGroupDatabase, {
   removeIdsFromSharedDb,
 } from './../../lib/createSharedGroupDatabase'
 import { setSecurity, deleteGroupId } from '../../lib/createUserDatabase'
+import { setAccess } from '../../lib/drive'
 
 declare module 'express-serve-static-core' {
   export interface Request {
@@ -117,8 +118,28 @@ router.post('/groups/:id', authMiddleware, async (req, res) => {
     })
   }
 
-  // NOTE: if isPublic is false, currently does nothing
+  // add admin rights to drive path
+  await setAccess(
+    {
+      accessLevel: 'admin',
+      groupId,
+      userId,
+    },
+    true
+  )
+  // if the group is public, add public readonly rights to the drive
+  if (isPublic) {
+    await setAccess(
+      {
+        accessLevel: 'readonly',
+        groupId,
+        isPublic: true,
+      },
+      true
+    )
+  }
 
+  // NOTE: if isPublic is false, currently does nothing
   return res.json({ data: { credentials } }).status(200)
 })
 

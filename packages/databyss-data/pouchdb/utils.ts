@@ -1,6 +1,7 @@
 import PouchDB from 'pouchdb'
 import { throttle } from 'lodash'
 import EventEmitter from 'es-event-emitter'
+import equal from 'fast-deep-equal'
 import { Document, Group } from '@databyss-org/services/interfaces'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { DocumentType, UserPreference } from './interfaces'
@@ -281,6 +282,23 @@ export const updateAccessedAt = (_id: string) =>
     accessedAt: Date.now(),
   }))
 
+export const updateSharedWithGroups = ({
+  _id,
+  sharedWithGroups,
+}: {
+  _id: string
+  sharedWithGroups: string[]
+}) =>
+  dbRef.current!.upsert(_id, (oldDoc) => {
+    if (equal(oldDoc.sharedWithGroups, sharedWithGroups)) {
+      return false
+    }
+    return {
+      ...oldDoc,
+      sharedWithGroups,
+    }
+  })
+
 // bypasses upsert queue
 export const upsertImmediate = async ({
   doctype,
@@ -293,17 +311,13 @@ export const upsertImmediate = async ({
 }) => {
   const { sharedWithGroups, ...docFields } = doc
   return dbRef.current!.upsert(_id, (oldDoc) => {
-    const _groupSet = new Set(
-      (oldDoc?.sharedWithGroups ?? []).concat(sharedWithGroups ?? [])
-    )
+    if (equal(doc, oldDoc)) {
+      return false
+    }
     const _doc = {
       ...oldDoc,
       ...addTimeStamp({ ...oldDoc, ...docFields, doctype }),
-      // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
-      sharedWithGroups:
-        doctype === DocumentType.Page
-          ? sharedWithGroups ?? oldDoc?.sharedWithGroups
-          : Array.from(_groupSet),
+      sharedWithGroups: sharedWithGroups ?? oldDoc?.sharedWithGroups ?? [],
       belongsToGroup: getAccountFromLocation(),
     }
 
@@ -317,7 +331,12 @@ export const bulkUpsert = async (upQdict: any) => {
   // compose bulk get request
   const _bulkGetQuery = { docs: Object.keys(upQdict).map((d) => ({ id: d })) }
 
+  if (!_bulkGetQuery.docs.length) {
+    return
+  }
+
   const _res = await dbRef.current!.bulkGet(_bulkGetQuery)
+  // console.log('[bulkUpsert] get', _res.results)
 
   const _oldDocs = {}
   // build old document index
@@ -352,6 +371,7 @@ export const bulkUpsert = async (upQdict: any) => {
       const _doc = {
         ..._oldDoc,
         ...addTimeStamp({ ..._oldDoc, ...docFields, doctype }),
+        ...(_oldDoc._rev ? { _rev: _oldDoc._rev } : {}),
         // except for pages, sharedWithGroups is always additive here (we remove in _bulk_docs)
         sharedWithGroups:
           doctype === DocumentType.Page
@@ -372,6 +392,7 @@ export const bulkUpsert = async (upQdict: any) => {
       _docs.push(_doc)
     }
   }
+  // console.log('[bulkUpsert] put', _docs)
   await dbRef.current!.bulkDocs(_docs)
 }
 

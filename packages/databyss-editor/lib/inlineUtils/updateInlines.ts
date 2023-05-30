@@ -5,7 +5,7 @@ import {
   Page,
   Text,
 } from '@databyss-org/services/interfaces/'
-import { replicateSharedPage } from '@databyss-org/data/pouchdb/groups'
+import { ReplicateDict, replicateDocs } from '@databyss-org/data/pouchdb/groups'
 import {
   DocumentType,
   DocumentCacheDict,
@@ -33,7 +33,6 @@ export const updateInlines = async ({
   _id: string
   caches?: DocumentCacheDict
 }) => {
-  console.log('[updateInlines]')
   const _relation = await findOne<BlockRelation>({
     doctype: DocumentType.BlockRelation,
     query: {
@@ -47,6 +46,9 @@ export const updateInlines = async ({
   }
 
   const upsertDict = {}
+  const replicateDict: ReplicateDict = {}
+  console.log('[updateInlines]', text)
+
   for (const _pageId of _relation!.pages) {
     const _page = caches?.pages?.[_pageId] ?? (await getDocument<Page>(_pageId))
 
@@ -83,21 +85,28 @@ export const updateInlines = async ({
                 type: inlineType,
               })
               Object.assign(_block, { text: _newText })
+              // console.log('[updateInlines] block', _block)
+              if (_inlineRanges.length) {
+                upsertDict[_block!._id] = {
+                  ..._block,
+                  doctype: DocumentType.Block,
+                }
+              }
+              if (_block.sharedWithGroups?.length) {
+                _block.sharedWithGroups.forEach((_groupId) => {
+                  if (!replicateDict[_groupId]) {
+                    replicateDict[_groupId] = new Set<string>()
+                    replicateDict[_groupId].add(_id)
+                  }
+                  replicateDict[_groupId].add(_block._id)
+                })
+              }
             }
           }
         })
-        if (_inlineRanges.length) {
-          upsertDict[_block!._id] = {
-            ..._block,
-            doctype: DocumentType.Block,
-          }
-        }
       }
     }
   }
   await bulkUpsert(upsertDict)
-
-  // update all replicated pages related to topic
-  const pagesWhereAtomicExists: string[] = _relation.pages
-  replicateSharedPage(pagesWhereAtomicExists)
+  await replicateDocs(replicateDict)
 }

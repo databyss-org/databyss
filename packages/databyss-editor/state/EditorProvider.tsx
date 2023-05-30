@@ -9,6 +9,7 @@ import React, {
 } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { Patch } from 'immer'
+import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import {
   SET_SELECTION,
   SPLIT,
@@ -58,6 +59,8 @@ export type TransformArray = {
   selection: Selection
   operations: [Transform]
 }
+
+export const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png']
 
 type ContextType = {
   state: EditorState
@@ -109,9 +112,9 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
   ref
 ) => {
   // get the current page header
-
   const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
   const selectionLastUpdatedAtRef = useRef<number>(Date.now())
+  const embedFile = useEditorPageContext((c) => c.embedFile)
 
   /*
     intercepts onChange props and runs the block relations algorithm, dispatches block relations
@@ -319,9 +322,22 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
     if (!isSelectionCollapsed(state.selection)) {
       removeAtSelection()
     }
-    const data = pasteEventHandler(e)
-    if (data) {
-      insert(data)
+    // check for files
+    if (e.clipboardData?.files?.length) {
+      // just support pasting one file at a time
+      const file = e.clipboardData.files[0]
+      if (SUPPORTED_IMAGE_TYPES.includes(file.type)) {
+        embedFile(file)
+          .then((block: Block) => insert([block]))
+          .catch((err) => {
+            console.error('[EditorProvider] paste file error', err)
+          })
+      }
+    } else {
+      const data = pasteEventHandler(e)
+      if (data) {
+        insert(data)
+      }
     }
   }
 

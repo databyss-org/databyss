@@ -1,7 +1,7 @@
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { getBlocksFromBlockRelations } from '@databyss-org/services/blocks/joins'
 import { Block } from '@databyss-org/services/interfaces'
-import { QueryObserverResult } from 'react-query'
+import { QueryObserverResult } from '@tanstack/react-query'
 import { useBlockRelations, useBlocks, usePages } from '.'
 import { UseDocumentOptions } from './useDocument'
 

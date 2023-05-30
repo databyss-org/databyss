@@ -349,7 +349,7 @@ export default (
           break
         }
         case PASTE: {
-          const _frag = payload.data
+          const _frag = payload.data as Block[]
           const { replace } = payload
 
           if (!_frag.length) {
@@ -412,6 +412,14 @@ export default (
               r.marks.includes(RangeType.InlineAtomicInput)
             ).length
 
+          const _fragContainsEmbed = _frag.find((block) =>
+            block.text.ranges.find((range) =>
+              range.marks.find(
+                (mark) => Array.isArray(mark) && mark[0] === InlineTypes.Embed
+              )
+            )
+          )
+
           // if replacing, fragment contains multiple blocks, the cursor block is empty,
           // the cursor block is atomic, or the fragment starts with an atomic,
           // do not split the cursor block...
@@ -420,7 +428,8 @@ export default (
             (_frag.length > 1 ||
               _replace ||
               isAtomicInlineType(_frag[0].type) ||
-              isAtomicInlineType(_startBlock.type))
+              isAtomicInlineType(_startBlock.type) ||
+              _fragContainsEmbed)
           ) {
             // check if we are pasting inside of an inline atomic field
             if (

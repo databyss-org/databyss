@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import Login from '@databyss-org/ui/modules/Login/Login'
 import LoadingIcon from '@databyss-org/ui/assets/loading.svg'
 import {

@@ -1,7 +1,7 @@
 import { DocumentDict } from '@databyss-org/services/interfaces'
 import { getPouchSecret } from '@databyss-org/services/session/clientStorage'
 import { Base64 } from 'js-base64'
-import { QueryClient } from 'react-query'
+import { QueryClient } from '@tanstack/react-query'
 import { DbDocument } from '../pouchdb/interfaces'
 import { getSelectorsForDoc, selectors } from '../pouchdb/selectors'
 import { ChangesReader } from './ChangesReader'
@@ -35,9 +35,9 @@ export function processChange({
       return _docs
     })
     if (nextDoc._deleted) {
-      queryClient.removeQueries(`useDocument_${nextDoc._id}`)
+      queryClient.removeQueries([`useDocument_${nextDoc._id}`])
     } else {
-      queryClient.setQueryData(`useDocument_${nextDoc._id}`, nextDoc)
+      queryClient.setQueryData([`useDocument_${nextDoc._id}`], nextDoc)
     }
     // query key is source doc id for useBibliography
     if (nextDoc._deleted) {

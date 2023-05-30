@@ -1,6 +1,7 @@
 import { Group } from '@databyss-org/services/interfaces/Group'
 import _ from 'lodash'
 import { httpDelete, httpPost } from '@databyss-org/services/lib/requestApi'
+import { httpPost as drivePost } from '@databyss-org/services/lib/requestDrive'
 import {
   setPouchSecret,
   deletePouchSecret,
@@ -67,7 +68,7 @@ export const addCloudantGroupDatabase = async ({
   groupId: string
   isPublic: boolean
 }) => {
-  const res = await httpPost(`/cloudant/groups/${groupId}`, {
+  const res: any = await httpPost(`/cloudant/groups/${groupId}`, {
     data: { isPublic },
   })
   // if is public, add credentials to localstorage
@@ -124,7 +125,7 @@ export const removeGroupsFromDocument = async (
   if (document.sharedWithGroups.length !== _sharedWithGroups.length) {
     document.sharedWithGroups = _sharedWithGroups
 
-    // console.log('[removeGroupsFromDocument] upsert', document)
+    console.log('[removeGroupsFromDocument] upsert', document)
     await upsertImmediate({
       doctype: document.doctype,
       _id: document._id,
@@ -201,58 +202,30 @@ export const addPageToGroup = async ({
   return _page
 }
 
-const upsertReplication = async ({
+export const replicatePublicEmbeds = async ({
+  docs,
   groupId,
-  dbKey,
-  dbPassword,
 }: {
+  docs: any[]
   groupId: string
-  dbKey: string
-  dbPassword: string
 }) => {
-  const opts = {
-    retry: true,
-    auth: {
-      username: dbKey,
-      password: dbPassword,
-    },
+  for (const _embedDoc of docs) {
+    // only process embeds with attached files
+    if (!_embedDoc?.detail?.fileDetail) {
+      continue
+    }
+    // set file to inherit permission from group
+    const _fileId = _embedDoc.detail.fileDetail.storageKey
+    await drivePost('auth', `/${groupId}/${_fileId}/inherit`)
   }
-
-  // console.log('[upsertReplication]', groupId)
-
-  const _findRes = await dbRef.current?.find({
-    selector: {
-      sharedWithGroups: {
-        $elemMatch: {
-          $eq: groupId,
-        },
-      },
-    },
-  })
-
-  const _docIds = _findRes?.docs.map((doc) => doc._id)
-  // console.log('[upsertReplication] doc ids', _docIds)
-
-  // upsert replication
-  dbRef
-    .current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
-      ...opts,
-      doc_ids: _docIds,
-      batch_size: BATCH_SIZE,
-      batches_limit: BATCHES_LIMIT,
-    })
-    .on('error', MakePouchReplicationErrorHandler('[upsertReplication]'))
 }
 
-/**
- * one time replication to upsert a @groupId to remote DB
- */
-export const replicateGroup = async ({
+export const getDbCredentials = async ({
   groupId,
   isPublic,
 }: {
   groupId: string
-  isPublic?: boolean
+  isPublic: boolean
 }) => {
   try {
     // first check if credentials exist
@@ -271,7 +244,7 @@ export const replicateGroup = async ({
       creds = dbSecretCache[groupId]
       if (!creds) {
         // user is not authorized
-        return
+        return false
       }
     }
     // confirm credentials work
@@ -280,14 +253,126 @@ export const replicateGroup = async ({
       dbKey: creds.dbKey,
     })
 
-    upsertReplication({
-      groupId,
-      dbKey: creds.dbKey,
-      dbPassword: creds.dbPassword,
-    })
+    return creds
   } catch (err) {
     console.error(err)
   }
+  return false
+}
+
+export interface ReplicateDict {
+  [groupId: string]: Set<string>
+}
+
+export const replicateDocs = async (replicateDict: ReplicateDict) => {
+  Object.keys(replicateDict).forEach(async (groupId) => {
+    const _group = await getDocument<Group>(groupId)
+    const creds = await getDbCredentials({
+      groupId,
+      isPublic: _group?.public ?? false,
+    })
+    if (!creds) {
+      return
+    }
+    const docIds = Array.from(replicateDict[groupId])
+    const opts: any = {
+      batch_size: BATCH_SIZE,
+      batches_limit: BATCHES_LIMIT,
+      retry: true,
+      auth: {
+        username: creds.dbKey,
+        password: creds.dbPassword,
+      },
+      doc_ids: docIds,
+    }
+    console.log('[replicateDocs]', groupId, docIds)
+    dbRef
+      .current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, opts)
+      .on('error', MakePouchReplicationErrorHandler('[replicateDocs]'))
+  })
+}
+
+export const replicateDoc = (doc: Document) => {
+  doc.sharedWithGroups?.forEach((groupId) => {
+    replicateDocs({ [groupId]: new Set(doc._id) })
+  })
+}
+
+const upsertReplication = async ({
+  groupId,
+  dbKey,
+  dbPassword,
+}: {
+  groupId: string
+  dbKey: string
+  dbPassword: string
+  isPublic?: boolean
+}) => {
+  const opts: any = {
+    batch_size: BATCH_SIZE,
+    batches_limit: BATCHES_LIMIT,
+    retry: true,
+    auth: {
+      username: dbKey,
+      password: dbPassword,
+    },
+  }
+
+  opts.since =
+    dbRef.lastReplicationSeq === 'now'
+      ? dbRef.lastSeq
+      : dbRef.lastReplicationSeq
+
+  // console.log('[upsertReplication]', groupId)
+
+  const _findRes = await dbRef.current?.find({
+    selector: {
+      sharedWithGroups: {
+        $elemMatch: {
+          $eq: groupId,
+        },
+      },
+    },
+  })
+
+  opts.doc_ids = _findRes?.docs.map((doc) => doc._id)
+
+  // upsert replication
+  console.log('[upsertReplication] options', opts)
+  const _res = await dbRef
+    .current!.replicate!.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, opts)
+    .on('change', async (_info) => {
+      const _embedDocs =
+        _info?.docs?.filter((doc: any) => doc.type === 'EMBED') ?? []
+      await replicatePublicEmbeds({ docs: _embedDocs, groupId })
+      console.log('[upsertReplication] change docs', _info.docs)
+      console.log('[upsertReplication] embed docs', _embedDocs)
+    })
+    .on('error', MakePouchReplicationErrorHandler('[upsertReplication]'))
+
+  dbRef.lastReplicationSeq = _res.last_seq
+}
+
+/**
+ * one time replication to upsert a @groupId to remote DB
+ */
+export const replicateGroup = async ({
+  groupId,
+  isPublic,
+}: {
+  groupId: string
+  isPublic?: boolean
+}) => {
+  const creds = await getDbCredentials({ groupId, isPublic: isPublic ?? false })
+  if (!creds) {
+    return
+  }
+  upsertReplication({
+    groupId,
+    dbKey: creds.dbKey,
+    dbPassword: creds.dbPassword,
+    isPublic,
+  })
 }
 
 export const setGroup = async (group: Group, pageId?: string) => {

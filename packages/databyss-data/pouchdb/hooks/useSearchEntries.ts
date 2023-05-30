@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { checkNetwork } from '@databyss-org/services/lib/request'
 import PouchDB from 'pouchdb'
 import { dbRef, waitForPouchDb } from '../db'

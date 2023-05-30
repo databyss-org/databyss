@@ -20,6 +20,7 @@ import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
 import { checkNetwork } from '@databyss-org/services/lib/request'
 import { cleanupGroupFromUrl } from '@databyss-org/services/session/clientStorage'
+import { pauseSync, startSync } from '@databyss-org/data/drivedb/sync'
 import IS_NATIVE from '../../lib/isNative'
 import StickyMessage from './StickyMessage'
 import { UnauthorizedDatabaseReplication } from '../../../databyss-services/interfaces/Errors'
@@ -256,6 +257,11 @@ class NotifyProvider extends React.Component {
   }
 
   setOnlineStatus = (isOnline) => {
+    if (!isOnline) {
+      pauseSync()
+    } else {
+      startSync()
+    }
     this.setState({
       isOnline,
     })

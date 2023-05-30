@@ -46,7 +46,7 @@ export const Leaf = ({
     if (textOnly) {
       _children = (
         <>
-          {_children}
+          [figure]{_children}
           <br />
         </>
       )

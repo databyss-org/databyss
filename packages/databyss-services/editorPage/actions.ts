@@ -139,7 +139,7 @@ export function setPagePublic(id: string, boolean: boolean, accountId: string) {
       payload: { id, isPublic: boolean },
     })
 
-    const _res = await services.setPagePublic(id, boolean, accountId)
+    const _res: any = await services.setPagePublic(id, boolean, accountId)
 
     dispatch({
       type: CACHE_PUBLIC_PAGE,

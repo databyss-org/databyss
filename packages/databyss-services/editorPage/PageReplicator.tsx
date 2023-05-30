@@ -6,6 +6,7 @@ import { CouchDb } from '@databyss-org/data/couchdb/couchdb'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
+import { replicatePublicEmbeds } from '@databyss-org/data/pouchdb/groups'
 import { validateGroupCredentials, createDatabaseCredentials } from './index'
 import {
   ResourceNotFoundError,
@@ -57,7 +58,7 @@ export const PageReplicator = ({
     }
 
     // set up page replication
-    const opts = {
+    const opts: any = {
       live: true,
       batch_size: BATCH_SIZE,
       batches_limit: BATCHES_LIMIT,
@@ -68,6 +69,10 @@ export const PageReplicator = ({
         password: dbPassword,
       },
     }
+    opts.since =
+      dbRef.lastReplicationSeq === 'now'
+        ? dbRef.lastSeq
+        : dbRef.lastReplicationSeq
     const _replication = dbRef
       .current!.replicate.to(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
         ...opts,
@@ -84,8 +89,11 @@ export const PageReplicator = ({
         },
       })
       .on('error', MakePouchReplicationErrorHandler('[startReplication]', true))
-      // keeps track of the loader wheel
-      .on('change', () => {
+      .on('change', async (_info) => {
+        const _embedDocs =
+          _info?.docs?.filter((doc: any) => doc.type === 'EMBED') ?? []
+        console.log('[PageReplicator] embed docs changed', _embedDocs)
+        await replicatePublicEmbeds({ docs: _embedDocs, groupId })
         setDbBusy(true)
       })
       .on('paused', (err) => {

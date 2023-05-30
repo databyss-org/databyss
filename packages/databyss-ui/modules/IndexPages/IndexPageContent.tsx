@@ -54,11 +54,8 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import { updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
 import { setEmbed } from '@databyss-org/services/embeds'
-import {
-  EmbedCard,
-  embedCardPropsFromEmbedDetail,
-} from '@databyss-org/editor/components'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
+import { ResolveEmbed } from '@databyss-org/editor/components/ResolveEmbed'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 // import { useUserPreferencesContext } from '../../hooks'
@@ -114,18 +111,22 @@ export const IndexPageTitleInput = ({
       if (!block) {
         return
       }
+      const _block: Block = {
+        ...block,
+        text: {
+          ...block.text,
+          textValue: value,
+        },
+      }
       switch (block!.type) {
         case BlockType.Topic:
-          block!.text.textValue = value
-          setTopic(block!, { pages: pagesRes.data, blocks: blocksRes.data })
+          setTopic(_block, { pages: pagesRes.data, blocks: blocksRes.data })
           break
         case BlockType.Embed:
-          block!.text.textValue = value
-          setEmbed(block! as Embed)
+          setEmbed(_block as Embed)
           break
         case BlockType.Source:
-          block!.text.textValue = value
-          setSource(block! as Source, {
+          setSource(_block as Source, {
             pages: pagesRes.data,
             blocks: blocksRes.data,
           })
@@ -186,44 +187,13 @@ export const IndexPageTitleInput = ({
   )
 }
 
-// interface SourceTitleAndCitationViewProps extends ViewProps {
-//   block: Block
-// }
-
 interface EmbedHeaderProps extends ViewProps {
   block: Embed
 }
 
-const EmbedHeader = ({ block, ...others }: EmbedHeaderProps) => {
-  const embedCardProps = embedCardPropsFromEmbedDetail(block.detail)
-  return <EmbedCard {...embedCardProps} {...others} />
-}
-
-// const SourceTitleAndCitationView = ({
-//   block,
-//   ...others
-// }: SourceTitleAndCitationViewProps) => {
-//   const { getPreferredCitationStyle } = useUserPreferencesContext()
-//   return (
-//     <View>
-//       {/* <SourceCitationView
-//         py="none"
-//         pb="tiny"
-//         sourceId={block?._id}
-//         formatOptions={{
-//           outputType: CitationOutputTypes.BIBLIOGRAPHY,
-//           styleId: getPreferredCitationStyle(),
-//         }}
-//         noCitationFallback={
-//           <Text variant="bodyNormalUnderline" color="text.3">
-//             {block.text.textValue}
-//           </Text>
-//         }
-//         {...others}
-//       /> */}
-//     </View>
-//   )
-// }
+const EmbedHeader = ({ block, ...others }: EmbedHeaderProps) => (
+  <ResolveEmbed data={block} position="relative" {...others} />
+)
 
 const SourceTitleAndCitationView = () => null
 
@@ -244,10 +214,6 @@ export const IndexPageView = ({
   const titleInputHandlesRef = useRef<IndexPageTitleInputHandles>(null)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  // console.log('[IndexPageView] render')
-  // useEffect(() => {
-  //   restoreScroll()
-  // }, [])
 
   const onUpdateBlock = (block: Block) => {
     titleInputHandlesRef.current?.updateTitle(block)
@@ -421,47 +387,47 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const restoreScroll = useScrollMemory(scrollViewRef)
   const blockRelationRes = useDocument<BlockRelation>(`r_${blockId}`)
 
-  const pageBlockCount = Object.values(pagesRes.data ?? {}).reduce(
-    (sum, page) => sum + page.blocks.length,
-    0
-  )
+  // const pageBlockCount = Object.values(pagesRes.data ?? {}).reduce(
+  //   (sum, page) => sum + page.blocks.length,
+  //   0
+  // )
 
-  return useMemo(() => {
-    // console.log('[IndexPageContent] render')
-    const queryRes = [blockRelationRes, blocksRes, pagesRes]
-    if (queryRes.some((q) => !q.isSuccess)) {
-      return <LoadingFallback queryObserver={queryRes} />
-    }
-    if (
-      !blocksRes.data?.[blockId!] ||
-      blocksRes.data[blockId!].type !== blockType
-    ) {
-      return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
-    }
-    return (
-      <IndexPageView
-        path={getPathFromBlock(blocksRes.data![blockId!])}
-        block={blocksRes.data![blockId!]}
-        key={blockId}
-        scrollViewRef={scrollViewRef}
-      >
-        <IndexResults
-          relatedBlockId={blockId!}
-          key={`${blockType}_${blockId}`}
-          blocks={blocksRes.data!}
-          pages={pagesRes.data!}
-          onLast={restoreScroll}
-          textOnly={blockType === BlockType.Embed}
-          pageBlockCount={pageBlockCount}
-          blockRelation={blockRelationRes.data!}
-        />
-      </IndexPageView>
-    )
-  }, [
-    blockId,
-    blocksRes.data?.[blockId!],
-    Object.keys(blocksRes.data ?? {}).length,
-    pageBlockCount,
-    blockRelationRes.data?.pages.length,
-  ])
+  // return useMemo(() => {
+  // console.log('[IndexPageContent] render')
+  const queryRes = [blockRelationRes, blocksRes, pagesRes]
+  if (queryRes.some((q) => !q.isSuccess)) {
+    return <LoadingFallback queryObserver={queryRes} />
+  }
+  if (
+    !blocksRes.data?.[blockId!] ||
+    blocksRes.data[blockId!].type !== blockType
+  ) {
+    return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
+  }
+  return (
+    <IndexPageView
+      path={getPathFromBlock(blocksRes.data![blockId!])}
+      block={blocksRes.data![blockId!]}
+      key={blockId}
+      scrollViewRef={scrollViewRef}
+    >
+      <IndexResults
+        relatedBlockId={blockId!}
+        key={`${blockType}_${blockId}`}
+        blocks={blocksRes.data!}
+        pages={pagesRes.data!}
+        onLast={restoreScroll}
+        textOnly={blockType === BlockType.Embed}
+        // pageBlockCount={pageBlockCount}
+        blockRelation={blockRelationRes.data!}
+      />
+    </IndexPageView>
+  )
+  // }, [
+  //   blockId,
+  //   blocksRes.data?.[blockId!],
+  //   Object.keys(blocksRes.data ?? {}).length,
+  //   pageBlockCount,
+  //   blockRelationRes.data?.pages.length,
+  // ])
 }

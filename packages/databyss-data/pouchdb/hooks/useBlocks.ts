@@ -1,6 +1,6 @@
 import { Block, BlockType } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
-import { QueryOptions } from 'react-query'
+import { QueryOptions } from '@tanstack/react-query'
 import { selectors } from '../selectors'
 import { useDocuments } from './useDocuments'
 

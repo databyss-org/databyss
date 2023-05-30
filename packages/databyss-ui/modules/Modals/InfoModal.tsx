@@ -4,7 +4,17 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 
 import { ModalWindow, Text } from '../../primitives'
 
-const InfoModal = ({ id, visible, heading, message }) => {
+const InfoModal = ({
+  id,
+  visible,
+  heading,
+  message,
+}: {
+  id: string
+  visible: boolean
+  heading: string
+  message: string
+}) => {
   const { hideModal } = useNavigationContext()
 
   const render = () => (

@@ -1,8 +1,5 @@
-import {
-  replicatePublicGroup,
-  REMOTE_CLOUDANT_URL,
-  initDb,
-} from '@databyss-org/data/pouchdb/db'
+import { REMOTE_CLOUDANT_URL, initDb } from '@databyss-org/data/pouchdb/db'
+import { initDriveDb } from '@databyss-org/data/drivedb/ddb'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
 import { NetworkUnavailableError, NotAuthorizedError } from '../interfaces'
@@ -126,6 +123,9 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       // this will store session info locally into 'user_preference' doc
       await initDb({ groupId: _defaultGroupId })
 
+      // init the Drive database
+      await initDriveDb({ groupId: _defaultGroupId })
+
       dispatch({
         type: STORE_SESSION_LOCALLY,
       })
@@ -196,9 +196,10 @@ export const getUserAccount = () => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   // deletes databases
   await cleanupDefaultGroup()
-
   dispatch({ type: LOGOUT })
   setTimeout(() => (window.location.href = '/'), 50)
+
+  // TODO: call api logout to expire token with cloudant and drive
 }
 
 export const onSetDefaultPage = (id) => async (dispatch) => {
@@ -281,9 +282,4 @@ export const hasUnathenticatedAccess = (maxRetries = 5) =>
       }
     }
     _checkAccess()
-  })
-
-export const replicateGroup = (id) =>
-  replicatePublicGroup({
-    groupId: id,
   })

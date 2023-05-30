@@ -11,6 +11,7 @@ import { send } from '../../lib/postmark'
 import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
 import { createUserDatabaseCredentials } from '../../lib/createUserDatabase'
+import { activateToken } from '../../lib/drive'
 
 const router = express.Router()
 
@@ -78,6 +79,13 @@ router.post(
       const credentials = await createUserDatabaseCredentials(session.user)
 
       session.groupCredentials = [credentials]
+
+      // use token from cloudant to initialize access on drive
+      await activateToken(
+        { token: session.token, userId: session.user._id },
+        true
+      )
+
       res.json({ data: { session } })
     })
   })

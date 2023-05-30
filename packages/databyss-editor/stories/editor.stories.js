@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createEditor } from '@databyss-org/slate'
 import { withReact } from '@databyss-org/slate-react'
 import { storiesOf } from '@storybook/react'

@@ -1,5 +1,5 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
-import { QueryObserverResult } from 'react-query'
+import { QueryObserverResult } from '@tanstack/react-query'
 import { useBlockRelations, usePages } from '.'
 
 export const usePageReferences = (

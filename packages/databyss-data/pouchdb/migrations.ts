@@ -1,3 +1,5 @@
+import { httpPost } from '@databyss-org/services/lib/requestApi'
+import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import PouchDB from 'pouchdb'
 
 export async function runMigration(
@@ -5,18 +7,9 @@ export async function runMigration(
   migrationId: string
 ) {
   switch (migrationId) {
-    case '2.8.4_FIX_BACKLINKS': {
-      const _res = await db.find({
-        selector: {
-          blockType: 'link',
-        },
-      })
-      for (const _doc of _res.docs) {
-        await db.upsert(_doc._id, () => ({
-          ..._doc,
-          blockType: 'LINK',
-        }))
-      }
+    case '2.8.6_AUTH_DRIVE': {
+      const groupId = getAccountFromLocation()
+      await httpPost(`/auth/drive/${groupId}`, {})
       break
     }
     default:

@@ -4,7 +4,7 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvder'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
@@ -17,6 +17,7 @@ import {
   UseDocumentOptions,
 } from './useDocument'
 import { uid } from '../../lib/uid'
+import { docsEqual } from '../compare'
 
 const subscriptionDict: {
   [selector: string]: PouchDB.Core.Changes<any> | undefined
@@ -86,13 +87,13 @@ export const useDocuments = <T extends Document>(
   )
 
   const subscribe = () => {
-    // console.log('[useDocuments] subscribe', queryKeyJson, _options)
     if (!_options.enabled || !_options.subscribe) {
       return
     }
     if (dbRef.current instanceof CouchDb) {
       return
     }
+    // console.log('[useDocuments] subscribe', queryKeyJson)
     if (subscriptionDict[queryKeyJson]) {
       subscriptionListeners[queryKeyJson].add(listenerIdRef.current)
       // console.log('[useDocuments] subscribe', dbRef.lastSeq)
@@ -115,19 +116,31 @@ export const useDocuments = <T extends Document>(
       })
       .on('change', (change) => {
         queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {
-          // console.log('[useDocuments] change', change)
           if (!oldData) {
             return { [change.doc._id]: change.doc }
           }
+          // console.log(
+          //   '[useDocuments] change',
+          //   oldData[change.doc._id],
+          //   change.doc
+          // )
+          if (
+            !change.deleted &&
+            docsEqual(oldData[change.doc._id], change.doc)
+          ) {
+            return undefined
+          }
+
           sequenceDict[queryKeyJson] = change.seq
+          const nextData = { ...oldData }
           if (change.deleted) {
             // remove from cache
-            delete oldData[change.doc._id]
+            delete nextData[change.doc._id]
           } else {
             // add or update cache
-            oldData[change.doc._id] = change.doc
+            nextData[change.doc._id] = change.doc
           }
-          return oldData as DocumentDict<T>
+          return nextData as DocumentDict<T>
         })
       })!
   }

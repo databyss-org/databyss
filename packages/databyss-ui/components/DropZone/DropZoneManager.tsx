@@ -1,41 +1,34 @@
 /* eslint-disable no-plusplus */
-
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { uid } from '@databyss-org/data/lib/uid'
-import { BlockType } from '@databyss-org/services/interfaces'
+import {
+  Block,
+  BlockType,
+  Source,
+  Text,
+} from '@databyss-org/services/interfaces'
 import { makeText } from '@databyss-org/services/blocks'
-import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
+import {
+  SUPPORTED_IMAGE_TYPES,
+  useEditorContext,
+} from '@databyss-org/editor/state/EditorProvider'
 import { setSource } from '@databyss-org/services/sources'
 import * as services from '@databyss-org/services/pdf'
 import { formatSource } from '@databyss-org/editor/components/Suggest/SuggestSources'
+import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
 import { View } from '../../primitives'
-import InfoModal from '../../modules/Modals/InfoModal'
-
 import DashedArea from './DashedArea'
 
 // constants
 const ACCEPTABLE_KINDS = ['file']
-const ACCEPTABLE_TYPES = ['application/pdf']
+const PDF_TYPES = ['application/pdf']
 const MAX_FILE_SIZE = 7500000 // 7.5 mb // TODO: use env var for this
 
-// styled components
-const viewStyles = () => ({
-  position: 'absolute',
-  bottom: '4%',
-  height: '100%',
-  left: '50%',
-  marginLeft: '-48%',
-  overflow: 'hidden',
-  width: '96%',
-  css: {
-    pointerEvents: 'none',
-  },
-})
-
 // methods
-const isAcceptableFile = (item) =>
-  ACCEPTABLE_KINDS.includes(item.kind) && ACCEPTABLE_TYPES.includes(item.type)
+const isAcceptableFile = (item: DataTransferItem | File) =>
+  (item instanceof File || ACCEPTABLE_KINDS.includes(item.kind)) &&
+  (PDF_TYPES.includes(item.type) || SUPPORTED_IMAGE_TYPES.includes(item.type))
 
 /* eslint-disable no-prototype-builtins */
 const hasEnoughMetadata = (data) =>
@@ -56,23 +49,23 @@ const humanReadableFileSize = (bytes) => {
   /* eslint-enable no-irregular-whitespace */
 }
 
-const getFileToProcess = (event) => {
-  const filesToProcess = []
+const getFileToProcess = (event: InputEvent | DragEvent) => {
+  const filesToProcess: File[] = []
 
-  if (event.dataTransfer.items) {
+  if (event.dataTransfer?.items) {
     // Use DataTransferItemList interface to access the file(s)
     const numItems = event.dataTransfer.items.length
     for (let i = 0; i < numItems; i++) {
       const item = event.dataTransfer.items[i]
       if (isAcceptableFile(item)) {
-        filesToProcess.push(item.getAsFile())
+        filesToProcess.push(item.getAsFile()!)
       }
     }
   } else {
     // Use DataTransfer interface to access the file(s)
-    const numItems = event.dataTransfer.files.length
+    const numItems = event.dataTransfer?.files.length ?? 0
     for (let i = 0; i < numItems; i++) {
-      const item = event.dataTransfer.files[i]
+      const item = event.dataTransfer!.files[i]
       if (isAcceptableFile(item)) {
         filesToProcess.push(item)
       }
@@ -98,7 +91,7 @@ const getFileToProcess = (event) => {
 
 const findMatchesInCrossref = (crossref, metadata) => {
   const { title } = metadata.fromPDF
-  const matches = []
+  const matches: any[] = []
   crossref.message.items.forEach((element) => {
     if (element.title && Array.isArray(element.title)) {
       const elementTitle = element.title[0]
@@ -111,8 +104,10 @@ const findMatchesInCrossref = (crossref, metadata) => {
 }
 
 // component
-const PDFDropZoneManager = () => {
+export const DropZoneManager = () => {
+  const embedFile = useEditorPageContext((c) => c.embedFile)
   const editorContext = useEditorContext()
+  const viewRef = useRef<HTMLElement | null>(null)
 
   const { showModal } = useNavigationContext()
 
@@ -122,21 +117,25 @@ const PDFDropZoneManager = () => {
   const [hasParsed, setParsed] = useState(false)
 
   // utils
-  const buildEntryBlock = (data) => {
-    let response = { _id: uid() }
+  const buildSourceBlock = (data) => {
+    const _id = uid()
+    let type: BlockType
+    let text: Text
+    let block: Block
 
     if (typeof data === 'string') {
       // filename only
-      response.type = BlockType.Entry
-      response.text = makeText(`@${data}`)
+      type = BlockType.Entry
+      text = makeText(`@${data}`)
+      block = { _id, type, text }
     } else {
       // complete metadata
-      response.type = BlockType.Source
-      response = Object.assign(response, data)
-      setSource(response)
+      type = BlockType.Source
+      block = Object.assign({ type }, data)
+      setSource(block as Source)
     }
 
-    return response
+    return block
   }
 
   const toDatabyssBlocks = (entryBlock, annotations) => {
@@ -180,7 +179,7 @@ const PDFDropZoneManager = () => {
   }
 
   // modal methods
-  const showAlert = (heading, message, error) => {
+  const showAlert = (heading: string, message: string, error?: Error) => {
     showModal({
       component: 'INFO',
       props: {
@@ -219,7 +218,7 @@ const PDFDropZoneManager = () => {
       showAlert(
         '⚠️ An error occured',
         'Unable to insert annotations. Please try again later, or try with another document.',
-        error
+        error as Error
       )
     }
   }
@@ -228,51 +227,19 @@ const PDFDropZoneManager = () => {
   const onDragOver = (event) => {
     event.stopPropagation()
     event.preventDefault()
+    // editorContext.setDragActive(true)
     setDropAreaVisibility(true)
   }
 
   const onDragLeave = (event) => {
     event.stopPropagation()
     event.preventDefault()
+    // editorContext.setDragActive(false)
     setDropAreaVisibility(false)
   }
 
-  const onFileDrop = async (event) => {
-    // prevent default behavior
-    // (prevent file from being opened)
-    event.stopPropagation()
-    event.preventDefault()
-
-    setParsed(false)
-
-    const file = getFileToProcess(event)
-
-    if (!file) {
-      setDropAreaVisibility(false)
-      showAlert(
-        '⚠️ Unable to import file',
-        'We are only able to import PDF files at this time. Please ensure to use a PDF document.'
-      )
-      return
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      setDropAreaVisibility(false)
-      showAlert(
-        '⚠️ Unable to import file',
-        `The size of "${file.name}" ` +
-          `(${humanReadableFileSize(file.size)}) ` +
-          `exceeds the maximum file size currently allowed ` +
-          `(${humanReadableFileSize(MAX_FILE_SIZE)}). ` +
-          `Reduce the file size, or choose another document.`
-      )
-      return
-    }
-
+  const processPDF = async (file: File) => {
     try {
-      // show spinner
-      setParsing(true)
-
       // parse pdf annotations
       const response = await services.fetchAnnotations(file)
 
@@ -307,9 +274,9 @@ const PDFDropZoneManager = () => {
       let entryBlock
       if (metadata.fromCrossref) {
         const detailedMetadata = formatSource(await showMetadataModal(metadata))
-        entryBlock = buildEntryBlock(detailedMetadata)
+        entryBlock = buildSourceBlock(detailedMetadata)
       } else {
-        entryBlock = buildEntryBlock(file.name)
+        entryBlock = buildSourceBlock(file.name)
       }
 
       const blocks = toDatabyssBlocks(entryBlock, response.annotations)
@@ -318,13 +285,69 @@ const PDFDropZoneManager = () => {
       showAlert(
         '⚠️ An error occured',
         'Unable to obtain annotations from this document. Please try again later, or try with another document.',
-        error
+        error as Error
       )
-    } finally {
-      setParsing(false)
-      setParsed(true)
-      setDropAreaVisibility(false)
     }
+  }
+
+  const processImage = async (file: File) => {
+    try {
+      const block = await embedFile(file)
+      editorContext.insert([block])
+    } catch (error) {
+      showAlert(
+        '⚠️ An error occured',
+        'Unable to upload file. Please try again later, or try with a different file.',
+        error as Error
+      )
+    }
+  }
+
+  const onFileDrop = async (event: DragEvent) => {
+    // prevent default behavior
+    // (prevent file from being opened)
+    event.stopPropagation()
+    event.preventDefault()
+    // editorContext.setDragActive(false)
+
+    setParsed(false)
+
+    const file = getFileToProcess(event)
+
+    if (!file) {
+      setDropAreaVisibility(false)
+      showAlert(
+        '⚠️ Unable to import file',
+        'We are only able to import PDF and image files (JPG, GIF, PNG) at this time.'
+      )
+      return
+    }
+
+    if (PDF_TYPES.includes(file.type) && file.size > MAX_FILE_SIZE) {
+      setDropAreaVisibility(false)
+      showAlert(
+        '⚠️ Unable to import PDF',
+        `The size of "${file.name}" ` +
+          `(${humanReadableFileSize(file.size)}) ` +
+          `exceeds the maximum file size currently allowed for PDFs` +
+          `(${humanReadableFileSize(MAX_FILE_SIZE)}). ` +
+          `Reduce the file size, or choose another document.`
+      )
+      return
+    }
+
+    // show spinner
+    setParsing(true)
+
+    if (PDF_TYPES.includes(file.type)) {
+      await processPDF(file)
+    } else {
+      await processImage(file)
+    }
+
+    setParsing(false)
+    setParsed(true)
+    setDropAreaVisibility(false)
   }
 
   // init/cleanup methods
@@ -341,31 +364,38 @@ const PDFDropZoneManager = () => {
   }
 
   useEffect(() => {
-    // init
     addDragEventHandlers()
 
     return () => {
-      // cleanup
       removeDragEventHandlers()
     }
   }, [])
 
   // render methods
-  const label = hasParsed ? '' : 'Drop your PDF here'
+  const label = hasParsed ? '' : 'Drop your file here'
 
   return React.useMemo(
     () => (
-      <View {...viewStyles()} className="pdf-drop-zone-manager">
+      <View
+        ref={viewRef}
+        className="pdf-drop-zone-manager"
+        position="absolute"
+        bottom="0"
+        top="0"
+        left="0"
+        right="0"
+        height="100%"
+        width="100%"
+        overflow="hidden"
+        css={{ pointerEvents: 'none' }}
+      >
         <DashedArea
           label={label}
           isVisible={isDropAreaVisible}
           isParsing={isParsing}
         />
-        <InfoModal id="pdfDropZoneModal" />
       </View>
     ),
     [label, isDropAreaVisible, isParsing]
   )
 }
-
-export default PDFDropZoneManager

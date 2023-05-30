@@ -26,9 +26,9 @@ import {
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
-import { checkNetwork } from '@databyss-org/services/lib/request'
+import { waitForNetwork } from '@databyss-org/services/lib/request'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
-import { QueryClient } from 'react-query'
+import { QueryClient } from '@tanstack/react-query'
 import { DocumentType } from './interfaces'
 import { setDbBusy } from './utils'
 import { processGroupActionQ } from './groups/utils'
@@ -37,6 +37,7 @@ import embedSchema from '../schemas/embedSchema'
 import { UnauthorizedDatabaseReplication } from '../../databyss-services/interfaces/Errors'
 import { initialCaches, warmupCaches } from './warmup'
 import { initChangeResponder } from '../couchdb/changeResponder'
+import { initDriveDb } from '../drivedb/ddb'
 
 export { selectors } from './selectors'
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
@@ -52,6 +53,7 @@ interface DbRef {
   readOnly: boolean
   lastSeq: string | number
   initialSyncComplete: boolean
+  lastReplicationSeq: string | number // seq of last upsertReplication
 }
 
 const getPouchDb = (groupId: string) => {
@@ -66,6 +68,7 @@ export const dbRef: DbRef = {
   readOnly: false,
   initialSyncComplete: false,
   lastSeq: 'now',
+  lastReplicationSeq: 'now',
 }
 
 // try to load pouch_secrets from local storage to init db
@@ -73,7 +76,7 @@ const defaultGroup = getDefaultGroup()
 const groupIdFromUrl = getAccountFromLocation()
 
 // if you're logged-in but not on your own group's URL (you're on a public group url, eg),
-//   skip initialization of pouchDb - it happens in replicatePublicGroup
+//   skip initialization of pouchDb - it happens in initDb
 if (
   defaultGroup &&
   (!groupIdFromUrl || groupIdFromUrl === defaultGroup || process.env.STORYBOOK)
@@ -107,58 +110,6 @@ export const BATCH_SIZE: number = (process.env.REPLICATE_BATCH_SIZE ??
   (100 as unknown)) as number
 export const BATCHES_LIMIT: number = (process.env.REPLICATE_BATCHES_LIMIT ??
   (10 as unknown)) as number
-
-/**
- * Replicates public remote DB to local
- */
-export const replicatePublicGroup = ({
-  groupId,
-  pouchDb,
-}: {
-  groupId: string
-  pouchDb: PouchDB.Database<any>
-}) =>
-  new Promise<boolean>((resolve, reject) => {
-    const opts = {
-      retry: true,
-      batch_size: BATCH_SIZE,
-      batches_limit: BATCHES_LIMIT,
-      style: 'main_only',
-      checkpoints: false,
-    }
-    console.log('[DB] replicatePublicGroup')
-    pouchDb.replicate
-      ?.from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
-        ...opts,
-      })
-      .on(
-        'error',
-        MakePouchReplicationErrorHandler('[replicatePublicGroup:replicate]')
-      )
-      .on('complete', () => {
-        console.log('[DB] replicatePublicGroup complete')
-        const _opts = {
-          ...opts,
-          live: true,
-          continuous: true,
-        }
-        // when replication is complete, kick off a live sync
-        pouchDb.replicate
-          .from(`${REMOTE_CLOUDANT_URL}/${groupId}`, {
-            ..._opts,
-          })
-          .on('paused', () => {
-            resolve(true)
-          })
-          .on(
-            'error',
-            MakePouchReplicationErrorHandler('[replicatePublicGroup:sync]')
-          )
-      })
-      .on('error', (err) => {
-        reject(err)
-      })
-  })
 
 /**
  * Replicates remote DB to local
@@ -196,14 +147,14 @@ export const replicateDbFromRemote = ({
       batch_size: BATCH_SIZE,
       batches_limit: BATCHES_LIMIT,
       style: 'main_only',
-      checkpoints: false,
+      checkpoint: false,
       auth: {
         username: _cred.dbKey,
         password: _cred.dbPassword,
       },
     }
 
-    checkNetwork().then((isOnline) => {
+    waitForNetwork().then((isOnline) => {
       if (isOnline) {
         pouchDb.replicate
           .from(_couchUrl, {
@@ -396,6 +347,8 @@ export const initDb = ({
         dbRef.current = _pouchDb
         dbRef.readOnly = isPublicGroup
         dbRef.initialSyncComplete = true
+
+        await initDriveDb({ groupId })
       }
       if (onReplicationComplete) {
         onReplicationComplete(success)
@@ -450,7 +403,7 @@ export const initDb = ({
 
     // if we're offline, check pouch db ref for user_prefs doc
     // (it might already exist locally from prev session)
-    checkNetwork().then((isOnline) =>
+    waitForNetwork({ pollTimer: 500, maxAttempts: 4 }).then((isOnline) =>
       !isOnline
         ? _pouchDb
             .get('user_preference')

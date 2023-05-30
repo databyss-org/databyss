@@ -6,6 +6,7 @@ import {
   VersionConflictError,
   UnexpectedServerError,
 } from '../interfaces'
+import { sleep } from './util'
 
 export const FETCH_TIMEOUT = parseInt(process.env.FETCH_TIMEOUT!, 10)
 
@@ -26,12 +27,12 @@ export interface RequestOptions extends RequestInit {
   rawResponse?: boolean
 }
 
-function request(uri, options: RequestOptions = {}) {
+function request<T>(uri, options: RequestOptions = {}) {
   const { timeout, responseAsJson, rawResponse, ..._options } = options
   const _controller = new AbortController()
   const _timeoutDuration = timeout || FETCH_TIMEOUT
 
-  return new Promise<any>((resolve, reject) => {
+  return new Promise<T>((resolve, reject) => {
     const _timeoutId = setTimeout(() => {
       _controller.abort()
       console.log(`[request] Request timed out after ${_timeoutDuration}ms`)
@@ -64,26 +65,53 @@ function request(uri, options: RequestOptions = {}) {
           return
         }
         if (rawResponse) {
-          resolve(response)
+          resolve((response as unknown) as T)
+          return
         }
         if (
           responseAsJson ||
           response.headers.get('Content-Type')?.match('json')
         ) {
-          response.json().then(resolve).catch(reject)
+          response
+            .json()
+            .then((json) => resolve(json as T))
+            .catch(reject)
           return
         }
-        response!.text().then(resolve).catch(reject)
+        response!
+          .text()
+          .then((txt) => resolve((txt as unknown) as T))
+          .catch(reject)
       })
   })
 }
 
-export async function checkNetwork() {
+export function waitForNetwork({
+  pollTimer = 1000,
+  maxAttempts = 10,
+}: {
+  pollTimer?: number
+  maxAttempts?: number
+} = {}) {
   if (process.env.NODE_ENV === 'test') {
-    return true
+    return new Promise((resolve) => resolve(true))
   }
+  return waitForUrl({ url: process.env.API_URL!, pollTimer, maxAttempts })
+}
+
+export function checkNetwork() {
+  if (process.env.NODE_ENV === 'test') {
+    return new Promise((resolve) => resolve(true))
+  }
+  return checkUrl(`https://${process.env.DRIVE_HOST!}`)
+}
+
+/**
+ * Returns true only if HEAD request for URL returns 200
+ */
+export async function checkUrl(url: string) {
   try {
-    const _res = await request(process.env.API_URL, {
+    const _res = await request<Response>(url, {
       method: 'HEAD',
       rawResponse: true,
     })
@@ -92,6 +120,26 @@ export async function checkNetwork() {
     }
   } catch (err) {
     return false
+  }
+  return true
+}
+
+export async function waitForUrl({
+  url,
+  pollTimer = 1000,
+  maxAttempts = 10,
+}: {
+  url: string
+  pollTimer?: number
+  maxAttempts?: number
+}) {
+  let tries = 1
+  while (!(await checkUrl(url))) {
+    tries += 1
+    if (tries > maxAttempts) {
+      return false
+    }
+    await sleep(pollTimer)
   }
   return true
 }

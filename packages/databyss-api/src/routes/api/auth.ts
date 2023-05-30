@@ -1,12 +1,20 @@
 import express from 'express'
 import { cloudant } from '@databyss-org/data/cloudant'
-import { authMiddleware } from '../../middleware'
+import { Role } from '@databyss-org/data/interfaces'
+import { authMiddleware, groupMiddleware } from '../../middleware'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
 import {
   createUserDatabaseCredentials,
   addCredientialsToSession,
 } from '../../lib/createUserDatabase'
+import {
+  activateToken,
+  getQuota,
+  setAccess,
+  SetAccessOptions,
+  setQuotaAllowed,
+} from '../../lib/drive'
 
 const router = express.Router()
 
@@ -17,12 +25,21 @@ router.post('/', authMiddleware, async (req, res) => {
   try {
     if (req?.user) {
       let session = await getSessionFromUserId(req.user._id)
-      // TODO: on every re-login attempt we are creating new user credentials, should this happen on the back end or should the user save the credentials in their offline database?
+      // TODO: on every re-login attempt we are creating new user credentials,
+      // should this happen on the back end or should the user save the credentials
+      // in their offline database?
       session = await addCredientialsToSession({
         groupId: session.user.defaultGroupId!,
         userId: session.user._id,
         session,
       })
+
+      // use token from cloudant to initialize access on drive
+      const _sar = await activateToken(
+        { token: session.token, userId: session.user._id },
+        true
+      )
+      console.log('[auth] setAccess', _sar)
 
       return res.json({ data: { session } })
     }
@@ -33,6 +50,28 @@ router.post('/', authMiddleware, async (req, res) => {
     // throw new Error('err')
   }
 })
+
+// @route    POST api/auth/drive/:id
+// @desc     grant user admin access to drive group, activate token, and set quota allowed
+// @access   Private
+router.post(
+  '/drive/:id',
+  [authMiddleware, groupMiddleware([Role.Admin])],
+  wrap(async (req, res) => {
+    const _opt: SetAccessOptions = {
+      accessLevel: 'admin',
+      groupId: req.group._id,
+      userId: req.user._id,
+    }
+    await setAccess(_opt, true)
+    await activateToken({ userId: _opt.userId!, token: req.token }, true)
+    const _userQuota = await getQuota(_opt.userId!)
+    if (!_userQuota) {
+      await setQuotaAllowed({ userId: _opt.userId!, allowed: 1000 })
+    }
+    return res.status(200).json({}).send()
+  })
+)
 
 // @route    POST api/auth/code
 // @desc     verify user with code
@@ -68,6 +107,12 @@ router.post(
         )
 
         session.groupCredentials = [credentials]
+
+        // use token from cloudant to initialize access on drive
+        await activateToken(
+          { token: session.token, userId: session.user._id },
+          true
+        )
 
         return res.json({ data: { session } })
       }

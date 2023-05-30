@@ -1,5 +1,5 @@
 import PouchDB from 'pouchdb'
-import { QueryClient } from 'react-query'
+import { QueryClient } from '@tanstack/react-query'
 import { getSelectorsForDoc, selectors } from './selectors'
 
 export const initialCaches: any = {}

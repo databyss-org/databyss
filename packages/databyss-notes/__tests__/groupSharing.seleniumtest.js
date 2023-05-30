@@ -285,7 +285,7 @@ describe('group sharings', () => {
     await sendKeys(actions, 'New Topic')
 
     // allow sync
-    await sleep(5000)
+    await sleep(10000)
 
     // click on page B
     await tagButtonListClick('data-test-element="page-sidebar-item"', 1, driver)

@@ -1,5 +1,6 @@
 import * as pouchDb from '@databyss-org/data/pouchdb/sources'
 import { CitationResponse } from '@databyss-org/data/pouchdb/sources/lib/getSourceCitation'
+import { DocumentCacheDict } from '@databyss-org/data/pouchdb/interfaces'
 import { defaultCitationStyle } from '../citations/constants'
 import { httpDelete } from '../lib/requestApi'
 import { Source, Author, SourceCitationHeader } from '../interfaces'
@@ -13,7 +14,8 @@ export const getSource = (
 ): Promise<SourceCitationHeader | ResourceNotFoundError> =>
   pouchDb.getSource(_id)
 
-export const setSource = (data: Source) => pouchDb.setSource(data)
+export const setSource = (data: Source, caches?: DocumentCacheDict) =>
+  pouchDb.setSource(data, caches)
 
 export const getSources = (): Promise<Source[] | ResourceNotFoundError> =>
   pouchDb.getSources()

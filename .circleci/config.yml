@@ -6,13 +6,15 @@
 version: 2.1
 
 orbs:
-  queue: eddiewebb/queue@1.5.0
+  queue: eddiewebb/queue@2.2.1
 
 jobs:
   jest:
     docker:
       # specify the version you desire here
       - image: cimg/node:14.19.1
+
+    resource_class: large
 
     working_directory: ~/repo
 

@@ -4,6 +4,7 @@ import { Topic } from '@databyss-org/services/interfaces'
 import { DocumentType, DocumentCacheDict } from '../../interfaces'
 import { getDocument, upsertImmediate } from '../../utils'
 import { updateInlines } from '../../../../databyss-editor/lib/inlineUtils/updateInlines'
+import { topicsEqual } from '../../compare'
 
 const setTopic = async (data: Topic, caches?: DocumentCacheDict) => {
   const { text, _id } = data
@@ -19,7 +20,7 @@ const setTopic = async (data: Topic, caches?: DocumentCacheDict) => {
     },
   })
 
-  if (_prevTopic && _prevTopic.text?.textValue !== text?.textValue) {
+  if (_prevTopic && !topicsEqual(_prevTopic, data)) {
     await updateInlines({
       inlineType: InlineTypes.InlineTopic,
       text,
