@@ -18,6 +18,7 @@ export const queryClient = new QueryClient({
       // Never set queries as stale
       staleTime: Infinity,
       cacheTime: Infinity,
+      networkMode: 'always',
     },
   },
 })
