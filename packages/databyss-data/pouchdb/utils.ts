@@ -424,13 +424,12 @@ export const updateGroupPreferences = async (
   dbRef.current!.put(_groupDoc)
 }
 
-export class QueueProcessor extends EventEmitter {
+export class QueueProcessor {
   // on(event: string, listener: Function): this
   // emit(event: string): void
   interval: any
   isProcessing: boolean
   constructor() {
-    super()
     this.interval = null
     this.isProcessing = false
   }

@@ -2,8 +2,7 @@ import { REMOTE_CLOUDANT_URL, initDb } from '@databyss-org/data/pouchdb/db'
 import { initDriveDb } from '@databyss-org/data/drivedb/ddb'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
-import { NetworkUnavailableError, NotAuthorizedError } from '../interfaces'
-import { version as databyssVersion } from '../package.json'
+import { version as databyssVersion } from '../version'
 import {
   FETCH_SESSION,
   DENY_ACCESS,
@@ -154,8 +153,8 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       payload: { error },
     })
     if (
-      !(error instanceof NotAuthorizedError) &&
-      !(error instanceof NetworkUnavailableError)
+      error.name !== 'NotAuthorizedError' &&
+      error.name !== 'NetworkUnavailableError'
     ) {
       throw error
     }

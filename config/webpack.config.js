@@ -22,6 +22,7 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 // const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin')
 // const typescriptFormatter = require('react-dev-utils/typescriptFormatter')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+
 const packageJson = require(paths.appPackageJson)
 const { InjectManifest } = require('workbox-webpack-plugin')
 
@@ -76,55 +77,55 @@ module.exports = (webpackEnv) => {
         : isEnvDevelopment && 'cheap-module-source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
-    entry: [
-      // Include an alternative client for WebpackDevServer. A client's job is to
-      // connect to WebpackDevServer by a socket and get notified about changes.
-      // When you save a file, the client will either apply hot updates (in case
-      // of CSS changes), or refresh the page (in case of JS changes). When you
-      // make a syntax error, this client will display a syntax error overlay.
-      // Note: instead of the default WebpackDevServer client, we use a custom one
-      // to bring better experience for Create React App users. You can replace
-      // the line below with these two lines if you prefer the stock client:
-      isEnvDevelopment && require.resolve('webpack-dev-server/client') + '?/',
-      isEnvDevelopment && require.resolve('webpack/hot/dev-server'),
-      // isEnvDevelopment &&
-      //   require.resolve('react-dev-utils/webpackHotDevClient'),
-      // Finally, this is your app's code:
-      paths.appIndexJs,
-      // We include the app code last so that if there is a runtime error during
-      // initialization, it doesn't blow up the WebpackDevServer client, and
-      // changing JS code would still trigger a refresh.
-    ].filter(Boolean),
-    output: {
-      // The build folder.
-      path: isEnvProduction ? paths.appBuild : undefined,
-      // Add /* filename */ comments to generated require()s in the output.
-      pathinfo: isEnvDevelopment,
-      // There will be one main bundle, and one file per asynchronous chunk.
-      // In development, it does not produce real files.
-      filename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].js'
-        : isEnvDevelopment && 'static/js/bundle.js',
-      // TODO: remove this when upgrading to webpack 5
-      futureEmitAssets: true,
-      // There are also additional JS chunk files if you use code splitting.
-      chunkFilename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].chunk.js'
-        : isEnvDevelopment && 'static/js/[name].chunk.js',
-      // We inferred the "public path" (such as / or /my-project) from homepage.
-      // We use "/" in development.
-      publicPath,
-      // Point sourcemap entries to original disk location (format as URL on Windows)
-      devtoolModuleFilenameTemplate:
-        isEnvProduction || isEnvTest
-          ? (info) =>
-              path
-                .relative(paths.appSrc, info.absoluteResourcePath)
-                .replace(/\\/g, '/')
-          : isEnvDevelopment &&
-            ((info) =>
-              path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
-    },
+    // entry: [
+    //   // Include an alternative client for WebpackDevServer. A client's job is to
+    //   // connect to WebpackDevServer by a socket and get notified about changes.
+    //   // When you save a file, the client will either apply hot updates (in case
+    //   // of CSS changes), or refresh the page (in case of JS changes). When you
+    //   // make a syntax error, this client will display a syntax error overlay.
+    //   // Note: instead of the default WebpackDevServer client, we use a custom one
+    //   // to bring better experience for Create React App users. You can replace
+    //   // the line below with these two lines if you prefer the stock client:
+    //   isEnvDevelopment && require.resolve('webpack-dev-server/client') + '?/',
+    //   isEnvDevelopment && require.resolve('webpack/hot/dev-server'),
+    //   // isEnvDevelopment &&
+    //   //   require.resolve('react-dev-utils/webpackHotDevClient'),
+    //   // Finally, this is your app's code:
+    //   paths.appIndexJs,
+    //   // We include the app code last so that if there is a runtime error during
+    //   // initialization, it doesn't blow up the WebpackDevServer client, and
+    //   // changing JS code would still trigger a refresh.
+    // ].filter(Boolean),
+    // output: {
+    //   // The build folder.
+    //   path: isEnvProduction ? paths.appBuild : undefined,
+    //   // Add /* filename */ comments to generated require()s in the output.
+    //   pathinfo: isEnvDevelopment,
+    //   // There will be one main bundle, and one file per asynchronous chunk.
+    //   // In development, it does not produce real files.
+    //   filename: isEnvProduction
+    //     ? 'static/js/[name].[contenthash:8].js'
+    //     : isEnvDevelopment && 'static/js/bundle.js',
+    //   // TODO: remove this when upgrading to webpack 5
+    //   // futureEmitAssets: true,
+    //   // There are also additional JS chunk files if you use code splitting.
+    //   chunkFilename: isEnvProduction
+    //     ? 'static/js/[name].[contenthash:8].chunk.js'
+    //     : isEnvDevelopment && 'static/js/[name].chunk.js',
+    //   // We inferred the "public path" (such as / or /my-project) from homepage.
+    //   // We use "/" in development.
+    //   publicPath,
+    //   // Point sourcemap entries to original disk location (format as URL on Windows)
+    //   devtoolModuleFilenameTemplate:
+    //     isEnvProduction || isEnvTest
+    //       ? (info) =>
+    //           path
+    //             .relative(paths.appSrc, info.absoluteResourcePath)
+    //             .replace(/\\/g, '/')
+    //       : isEnvDevelopment &&
+    //         ((info) =>
+    //           path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
+    // },
     optimization: {
       minimize: isEnvProduction,
       minimizer: [
@@ -267,10 +268,17 @@ module.exports = (webpackEnv) => {
             // Process application JS with Babel.
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {
-              test: /\.(js|mjs|jsx|ts|tsx)$/,
+              test: /\.m?js/,
+              resolve: {
+                fullySpecified: false,
+              },
+            },
+            {
+              test: /\.(jsx?|tsx)$/,
               include: paths.appSrc,
               loader: require.resolve('babel-loader'),
               options: {
+                exclude: /node_modules/,
                 customize: require.resolve(
                   'babel-preset-react-app/webpack-overrides'
                 ),
@@ -302,30 +310,40 @@ module.exports = (webpackEnv) => {
                 compact: isEnvProduction,
               },
             },
-            // Process any JS outside of the app with Babel.
-            // Unlike the application JS, we only compile the standard ES features.
-            {
-              test: /\.(js|mjs)$/,
-              exclude: /@babel(?:\/|\\{1,2})runtime/,
-              loader: require.resolve('babel-loader'),
-              options: {
-                babelrc: false,
-                configFile: false,
-                compact: false,
-                presets: [
-                  [
-                    require.resolve('babel-preset-react-app/dependencies'),
-                    { helpers: true },
-                  ],
-                ],
-                cacheDirectory: true,
-                cacheCompression: isEnvProduction,
+            // // Process any JS outside of the app with Babel.
+            // // Unlike the application JS, we only compile the standard ES features.
+            // {
+            //   test: /\.(js|mjs)$/,
+            //   exclude: /@babel(?:\/|\\{1,2})runtime/,
+            //   loader: require.resolve('babel-loader'),
+            //   options: {
+            //     babelrc: false,
+            //     configFile: false,
+            //     compact: false,
+            //     presets: [
+            //       [
+            //         require.resolve('babel-preset-react-app/dependencies'),
+            //         { helpers: true },
+            //       ],
+            //     ],
+            //     cacheDirectory: true,
+            //     cacheCompression: isEnvProduction,
 
-                // If an error happens in a package, it's possible to be
-                // because it was compiled. Thus, we don't want the browser
-                // debugger to show the original code. Instead, the code
-                // being evaluated would be much more helpful.
-                sourceMaps: false,
+            //     // If an error happens in a package, it's possible to be
+            //     // because it was compiled. Thus, we don't want the browser
+            //     // debugger to show the original code. Instead, the code
+            //     // being evaluated would be much more helpful.
+            //     sourceMaps: false,
+            //   },
+            // },
+            {
+              test: /\.ts$/,
+              exclude: /(node_modules|\.webpack)/,
+              use: {
+                loader: 'ts-loader',
+                options: {
+                  transpileOnly: true,
+                },
               },
             },
             {
@@ -350,6 +368,23 @@ module.exports = (webpackEnv) => {
                   },
                 },
               ],
+            },
+            // Add support for native node modules
+            {
+              // We're specifying native_modules in the test because the asset relocator loader generates a
+              // "fake" .node file which is really a cjs file.
+              test: /native_modules[/\\].+\.node$/,
+              use: 'node-loader',
+            },
+            {
+              test: /[/\\]node_modules[/\\].+\.(m?js|node)$/,
+              parser: { amd: false },
+              use: {
+                loader: '@vercel/webpack-asset-relocator-loader',
+                options: {
+                  outputAssetBase: 'native_modules',
+                },
+              },
             },
             // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
@@ -461,48 +496,51 @@ module.exports = (webpackEnv) => {
       //   },
       // }),
       // Generate the manifest.json file
-      !isEnvTest &&
-        !process.env.REACT_APP_STORYBOOK &&
-        new CopyWebpackPlugin({
-          patterns: [
-            {
-              from: `${paths.appPublic}/manifest.json`,
-              to: paths.appBuild,
-              transform: (buf) => {
-                const _manifest = JSON.parse(buf.toString())
-                _manifest.version = packageJson.version
-                return JSON.stringify(_manifest, null, 2)
-              },
-            },
-          ],
-        }),
+      // !isEnvTest &&
+      //   !process.env.REACT_APP_STORYBOOK &&
+      //   new CopyWebpackPlugin({
+      //     patterns: [
+      //       {
+      //         from: `${paths.appPublic}/manifest.json`,
+      //         to: paths.appBuild,
+      //         transform: (buf) => {
+      //           const _manifest = JSON.parse(buf.toString())
+      //           _manifest.version = packageJson.version
+      //           return JSON.stringify(_manifest, null, 2)
+      //         },
+      //       },
+      //     ],
+      //   }),
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how Webpack interprets its code. This is a practical
       // solution that requires the user to opt into importing specific locales.
       // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
       // You can remove this if you don't use Moment.js:
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/,
+        contextRegExp: /moment$/,
+      }),
       // Generate a service worker script that will precache, and keep up to date,
       // the HTML & assets that are part of the Webpack build.
-      isEnvProduction &&
-        new InjectManifest({
-          additionalManifestEntries: [
-            {
-              url: 'favicon.ico',
-              revision: hasha.fromFileSync(
-                path.resolve(paths.appPublic, 'favicon.ico'),
-                { algorithm: 'md5' }
-              ),
-            },
-            {
-              url: 'gsap.min.js',
-              revision: '3.6.1',
-            },
-          ],
-          swSrc: path.resolve(__dirname, './service-worker.js'),
-          include: [/\.(?:html|png|jpg|jpeg|svg|mp4|js|ico)$/],
-          maximumFileSizeToCacheInBytes: 3145728,
-        }),
+      // isEnvProduction &&
+      //   new InjectManifest({
+      //     additionalManifestEntries: [
+      //       {
+      //         url: 'favicon.ico',
+      //         revision: hasha.fromFileSync(
+      //           path.resolve(paths.appPublic, 'favicon.ico'),
+      //           { algorithm: 'md5' }
+      //         ),
+      //       },
+      //       {
+      //         url: 'gsap.min.js',
+      //         revision: '3.6.1',
+      //       },
+      //     ],
+      //     swSrc: path.resolve(__dirname, './service-worker.js'),
+      //     include: [/\.(?:html|png|jpg|jpeg|svg|mp4|js|ico)$/],
+      //     maximumFileSizeToCacheInBytes: 3145728,
+      //   }),
       // TypeScript type checking
       // useTypeScript &&
       //   new ForkTsCheckerWebpackPlugin({
@@ -534,16 +572,16 @@ module.exports = (webpackEnv) => {
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.
     // Tell Webpack to provide empty mocks for them so importing them works.
-    node: {
-      module: 'empty',
-      dgram: 'empty',
-      dns: 'mock',
-      fs: 'empty',
-      http2: 'empty',
-      net: 'empty',
-      tls: 'empty',
-      child_process: 'empty',
-    },
+    // node: {
+    //   module: 'empty',
+    //   dgram: 'empty',
+    //   dns: 'mock',
+    //   fs: 'empty',
+    //   http2: 'empty',
+    //   net: 'empty',
+    //   tls: 'empty',
+    //   child_process: 'empty',
+    // },
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
     performance: false,

@@ -441,7 +441,10 @@ class NotifyProvider extends React.Component {
     if (process.env.NODE_ENV === 'test' || process.env.STORYBOOK) {
       return
     }
-    ;(window as any).stopdatabyss()
+    const win = window as any
+    if (typeof win.stopdatabyss === 'function') {
+      win.stopdatabyss()
+    }
     this.setState({
       hideApplication: false,
     })

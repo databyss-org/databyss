@@ -5,7 +5,6 @@ import {
   CatalogService,
   CatalogType,
   GroupedCatalogResults,
-  NetworkUnavailableError,
   Source,
 } from '../interfaces'
 
@@ -20,6 +19,7 @@ import { SEARCH_CATALOG, CACHE_SEARCH_RESULTS } from './constants'
 import crossref from './crossref'
 import googleBooks from './googleBooks'
 import openLibrary from './openLibrary'
+import { DatabyssError } from '../interfaces/Errors'
 
 interface CatalogParsingParams {
   service: CatalogService
@@ -62,7 +62,7 @@ export function searchCatalog({
       })
     } catch (error) {
       // if offline
-      if (error instanceof NetworkUnavailableError) {
+      if ((error as DatabyssError).name !== 'NetworkUnavailableError') {
         dispatch({
           type: CACHE_SEARCH_RESULTS,
           payload: {

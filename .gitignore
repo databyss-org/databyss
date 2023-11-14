@@ -80,3 +80,6 @@ config.json
 
 # obsidian
 .obsidian/
+
+# electron
+.webpack/
