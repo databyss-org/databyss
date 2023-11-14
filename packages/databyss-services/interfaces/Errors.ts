@@ -8,7 +8,7 @@ type DatabyssErrorName =
   | 'VersionConflictError'
   | 'UnauthorizedDatabaseReplication'
 
-class DatabyssError extends Error {
+export class DatabyssError extends Error {
   name: DatabyssErrorName
 
   constructor(message: string, name: DatabyssErrorName) {
