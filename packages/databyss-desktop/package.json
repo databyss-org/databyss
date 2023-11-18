@@ -1,9 +1,9 @@
 {
-  "name": "databyss-desktop",
-  "productName": "databyss-desktop",
-  "version": "1.0.0",
+  "name": "@databyss-org/desktop",
+  "version": "2.9.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
+  "private": false,
   "scripts": {
     "start": "NPM_BUILD_TARGET=NOTES_APP electron-forge start",
     "package": "electron-forge package",
@@ -41,7 +41,9 @@
   },
   "peerDependencies": {
     "react": "16.9.0",
-    "react-dom": "16.9.0"
+    "react-dom": "16.9.0",
+    "@databyss-org/services": "2.9.0",
+    "@databyss-org/ui": "2.9.0"
   },
   "dependencies": {
     "@electron/rebuild": "^3.3.0",

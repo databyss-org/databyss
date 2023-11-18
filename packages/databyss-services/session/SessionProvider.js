@@ -17,6 +17,7 @@ import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { UNTITLED_NAME } from '@databyss-org/services/groups'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import StickyMessage from '@databyss-org/ui/components/Notify/StickyMessage'
+import { vouchDbRef } from '@databyss-org/data/vouchdb/vouchdb'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
@@ -38,6 +39,15 @@ const useReducer = createReducer()
 
 export const SessionContext = createContext()
 
+const localSession = {
+  user: {
+    email: 'local@user.com',
+  },
+  account: {
+    _id: 'LOCAL_SESSION_ACCOUNT_ID',
+  },
+}
+
 // @signUp (bool)
 //   if true, show signup UI
 // @code
@@ -52,6 +62,7 @@ const SessionProvider = ({
   code,
   email,
   unauthorizedChildren,
+  isLocalSession,
 }) => {
   const [state, dispatch, stateRef] = useReducer(reducer, initialState, {
     name: 'SessionProvider',
@@ -73,6 +84,9 @@ const SessionProvider = ({
   }, [state.session?.publicAccount])
 
   const getUserAccount = useCallback(() => {
+    if (isLocalSession) {
+      return localSession.user
+    }
     if (state.userInfo) {
       return state.userInfo
     }
@@ -81,6 +95,9 @@ const SessionProvider = ({
   }, [state.userInfo])
 
   const getCurrentAccount = useCallback(() => {
+    if (isLocalSession) {
+      return localSession.account._id
+    }
     if (state.session.publicAccount?._id) {
       return state.session.publicAccount._id
     }
@@ -93,6 +110,9 @@ const SessionProvider = ({
   // - `googleToken` if we're logging in with Google oAuth
   const getSession = useCallback(
     ({ retry, ...credentials } = {}) => {
+      if (isLocalSession) {
+        return localSession
+      }
       if (state.session && !retry) {
         return state.session
       }
@@ -106,7 +126,12 @@ const SessionProvider = ({
     [state.session]
   )
 
-  const endSession = () => dispatch(actions.endSession())
+  const endSession = () => {
+    if (isLocalSession) {
+      return
+    }
+    dispatch(actions.endSession())
+  }
 
   useEffect(() => {
     if (state.session instanceof NetworkUnavailableError) {
@@ -222,7 +247,13 @@ const SessionProvider = ({
       }
     }
 
-    if (!state.sesson) {
+    if (isLocalSession) {
+      console.log('[SessionProvider] local session')
+      state.session = localSession
+      dbRef.current = vouchDbRef.current
+    }
+
+    if (state.sesson === null) {
       _init()
     }
   }, [state.sessionIsStored])
@@ -261,6 +292,9 @@ const SessionProvider = ({
     }
   }
   useEffect(() => {
+    if (isLocalSession) {
+      return
+    }
     if (isPublicAccount()) {
       _updatePublicGroupInUrl()
     } else {
@@ -301,6 +335,10 @@ const SessionProvider = ({
   }
 
   const logout = useCallback(() => {
+    if (isLocalSession) {
+      console.warn('[Session] not implemented in local session: logout')
+      return
+    }
     dispatch(actions.logout())
   }, [actions.logout])
 
@@ -322,6 +360,10 @@ const SessionProvider = ({
   window.addEventListener('focus', shouldForceLogout)
 
   const setDefaultPage = useCallback((id) => {
+    if (isLocalSession) {
+      console.warn('[Session] not implemented in local session: setDefaultPage')
+      return
+    }
     dispatch(actions.onSetDefaultPage(id))
   }, [])
 

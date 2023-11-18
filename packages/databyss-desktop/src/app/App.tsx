@@ -35,23 +35,13 @@ export const App = () => {
   return (
     <Viewport p={0}>
       <NotifyProvider>
-        <FirefoxWarning />
-        {process.env.MAINTENANCE_MODE?.toLowerCase() === 'true' ? (
-          <Public />
-        ) : (
-          <QueryClientProvider client={queryClient}>
-            <DatabaseProvider>
-              <SessionProvider
-                signUp={location.pathname === '/signup'}
-                unauthorizedChildren={<Public />}
-                email={email}
-                code={code}
-              >
-                <Private />
-              </SessionProvider>
-            </DatabaseProvider>
-          </QueryClientProvider>
-        )}
+        <QueryClientProvider client={queryClient}>
+          <DatabaseProvider>
+            <SessionProvider isLocalSession>
+              <Private />
+            </SessionProvider>
+          </DatabaseProvider>
+        </QueryClientProvider>
       </NotifyProvider>
     </Viewport>
   )

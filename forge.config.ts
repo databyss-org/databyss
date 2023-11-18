@@ -13,6 +13,7 @@ import { rendererConfig } from './packages/databyss-desktop/webpack.renderer.con
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    name: 'Databyss',
   },
   rebuildConfig: {},
   makers: [

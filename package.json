@@ -1,5 +1,6 @@
 {
-  "name": "databyss-org-workspace",
+  "name": "databyss",
+  "productName": "Databyss",
   "version": "2.9.0",
   "description": "The word processor is dead. Long live the word processor.",
   "main": ".webpack/main",
