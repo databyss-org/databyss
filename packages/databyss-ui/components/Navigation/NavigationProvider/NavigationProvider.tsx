@@ -38,17 +38,24 @@ const sidebarItemAliases = {
 
 interface PropsType {
   initialState: NavigationState
+  electron: boolean
 }
 
 export const NavigationProvider = ({
   children,
   initialState = new NavigationState(),
+  electron,
 }: PropsWithChildren<PropsType>) => {
   const [state, dispatch] = useReducer(reducer, initialState, {
     name: 'NavigationProvider',
   })
 
   const location = useLocation()
+
+  // store location in window.routerLocation if in electron mode
+  if (electron) {
+    ;(window as any).routerLocation = location
+  }
 
   const navigateRouter = useNavigate()
 

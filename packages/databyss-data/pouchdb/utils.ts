@@ -1,7 +1,5 @@
 import PouchDB from 'pouchdb'
 import { throttle } from 'lodash'
-import EventEmitter from 'es-event-emitter'
-import equal from 'fast-deep-equal'
 import { Document, Group } from '@databyss-org/services/interfaces'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { DocumentType, UserPreference } from './interfaces'
@@ -10,6 +8,8 @@ import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
 import { getGroupActionQ } from './groups/utils'
 import { CouchDb } from '../couchdb/couchdb'
+import { VouchDb } from '../vouchdb/vouchdb'
+import { addTimeStamp } from './docUtils'
 
 const INTERVAL_TIME = 1000
 
@@ -36,14 +36,6 @@ export const getDbBusy = (): DbStatus => ({
   isBusy: _isBusy,
   writesPending: _writesPending,
 })
-
-export const addTimeStamp = (doc: any): any => {
-  // if document has been created add a modifiedAt timestamp
-  if (doc.createdAt) {
-    return { ...doc, modifiedAt: Date.now() }
-  }
-  return { ...doc, createdAt: Date.now() }
-}
 
 interface Patch {
   doctype: string
@@ -276,11 +268,26 @@ const coallesceQ = (patches: Patch[]) => {
   return _patches
 }
 
+// Abstraction of pouchdb-upsert that takes a regular object (the fields to update)
+// instead of a diff function.
+export const upsertPouch = (
+  id: string,
+  doc: object
+): Promise<PouchDB.UpsertResponse> => {
+  if (dbRef.current instanceof VouchDb) {
+    return (dbRef.current as VouchDb).upsert(id, doc)
+  }
+  return dbRef.current!.upsert(id, (oldDoc) => {
+    const newDoc = { ...oldDoc, ...doc }
+    pouchDataValidation(newDoc)
+    return newDoc
+  })
+}
+
 export const updateAccessedAt = (_id: string) =>
-  dbRef.current!.upsert(_id, (oldDoc) => ({
-    ...oldDoc,
+  upsertPouch(_id, {
     accessedAt: Date.now(),
-  }))
+  })
 
 export const updateSharedWithGroups = ({
   _id,
@@ -288,19 +295,19 @@ export const updateSharedWithGroups = ({
 }: {
   _id: string
   sharedWithGroups: string[]
-}) =>
-  dbRef.current!.upsert(_id, (oldDoc) => {
-    if (equal(oldDoc.sharedWithGroups, sharedWithGroups)) {
-      return false
-    }
-    return {
-      ...oldDoc,
-      sharedWithGroups,
-    }
-  })
+}) => upsertPouch(_id, { sharedWithGroups })
+// dbRef.current!.upsert(_id, (oldDoc) => {
+//   if (equal(oldDoc.sharedWithGroups, sharedWithGroups)) {
+//     return false
+//   }
+//   return {
+//     ...oldDoc,
+//     sharedWithGroups,
+//   }
+// })
 
 // bypasses upsert queue
-export const upsertImmediate = async ({
+export const upsertImmediate = ({
   doctype,
   _id,
   doc,
@@ -309,21 +316,13 @@ export const upsertImmediate = async ({
   _id: string
   doc: any
 }) => {
-  const { sharedWithGroups, ...docFields } = doc
-  return dbRef.current!.upsert(_id, (oldDoc) => {
-    if (equal(doc, oldDoc)) {
-      return false
-    }
-    const _doc = {
-      ...oldDoc,
-      ...addTimeStamp({ ...oldDoc, ...docFields, doctype }),
-      sharedWithGroups: sharedWithGroups ?? oldDoc?.sharedWithGroups ?? [],
-      belongsToGroup: getAccountFromLocation(),
-    }
-
-    pouchDataValidation(_doc)
-    return _doc
+  // const { sharedWithGroups, ...docFields } = doc
+  const _doc = addTimeStamp({
+    ...doc,
+    doctype,
+    belongsToGroup: getAccountFromLocation(),
   })
+  return upsertPouch(_id, _doc)
 }
 
 // todo: use document type interface
@@ -396,17 +395,15 @@ export const bulkUpsert = async (upQdict: any) => {
   await dbRef.current!.bulkDocs(_docs)
 }
 
-export const upsertUserPreferences = async (
-  cb: PouchDB.UpsertDiffCallback<Partial<UserPreference>>
-): Promise<PouchDB.UpsertResponse> =>
-  dbRef.current!.upsert('user_preference', (oldDoc) => {
-    const _doc = addTimeStamp({
-      doctype: DocumentType.UserPreferences,
-      ...cb(oldDoc),
-    })
-    pouchDataValidation(_doc)
-    return _doc
+export const upsertUserPreferences = (
+  prefs: Partial<UserPreference>
+): Promise<PouchDB.UpsertResponse> => {
+  const _doc = addTimeStamp({
+    doctype: DocumentType.UserPreferences,
+    ...prefs,
   })
+  return upsertPouch('user_preference', _doc)
+}
 
 export const updateGroupPreferences = async (
   cb: PouchDB.UpsertDiffCallback<Partial<Group>>

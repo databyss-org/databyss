@@ -242,9 +242,9 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         embedFile,
       }}
     >
-      <PageReplicator key={pageId} pageId={pageId}>
-        {children}
-      </PageReplicator>
+      {/* <PageReplicator key={pageId} pageId={pageId}> */}
+      {children}
+      {/* </PageReplicator> */}
     </EditorPageContext.Provider>
   )
 }

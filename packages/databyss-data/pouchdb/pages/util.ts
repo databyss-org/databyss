@@ -1,9 +1,8 @@
 import { Block, ExtendedPatch } from '@databyss-org/services/interfaces'
 import { PageDoc, DocumentType } from '../interfaces'
-import { upsert, addTimeStamp } from '../utils'
+import { upsert, upsertImmediate } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import { BlockReference } from '../../../databyss-services/interfaces/Block'
-import { dbRef } from '../db'
 
 const applyPatch = (node, path, value) => {
   const key = path.shift()
@@ -145,39 +144,21 @@ export const normalizePage = (page: Page): PageDoc => {
   return _pageDoc
 }
 
-// bypasses upsert queue
-const _upsert = ({
-  doctype,
-  _id,
-  doc,
-}: {
-  doctype: DocumentType
-  _id: string
-  doc: any
-}) =>
-  dbRef.current!.upsert(_id, (oldDoc) => {
-    const _doc = {
-      ...oldDoc,
-      ...addTimeStamp({ ...oldDoc, ...doc, doctype }),
-    }
-    return _doc
-  })
-
 /*
 generic function to add a new page to database given id. this function is a promise and bypasses the queue
 */
 export const addPage = async (page: Page) => {
-  await _upsert({
+  await upsertImmediate({
     doctype: DocumentType.Selection,
     _id: page.selection._id,
     doc: page.selection,
   })
-  await _upsert({
+  await upsertImmediate({
     doctype: DocumentType.Block,
     _id: page.blocks[0]._id,
     doc: { ...page.blocks[0] },
   })
-  await _upsert({
+  await upsertImmediate({
     doctype: DocumentType.Page,
     _id: page._id,
     doc: normalizePage(page),

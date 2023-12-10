@@ -2,26 +2,30 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import {
   NavigationProvider,
-  BrowserRouter,
+  HashRouter,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { ThemeProvider } from '@databyss-org/ui/theming'
 import { App } from './app/App'
-import { connect, vouchDbRef } from '@databyss-org/data/vouchdb/vouchdb'
+import { connect } from '@databyss-org/data/vouchdb/vouchdb'
+import { dbRef } from '@databyss-org/data/pouchdb/db'
 
 ReactDOM.render(
   <ThemeProvider>
-    <BrowserRouter>
+    <HashRouter>
       <NavigationProvider>
         <App />
       </NavigationProvider>
-    </BrowserRouter>
+    </HashRouter>
   </ThemeProvider>,
   document.getElementById('root')
 )
 
+eapi.db.onSetGroupId((groupId) => {
+  console.log('[App] IPC db-setGroupId', groupId)
+  // setGroupId(groupId)
+  connect(groupId)
+  dbRef.current.info().then((info) => console.log(info))
+  dbRef.current.allDocs().then((docs) => console.log(docs?.total_rows))
+})
 // eapi.db.info().then((info) => console.log(info))
 // eapi.db.allDocs().then((docs) => console.log(docs.total_rows))
-
-connect()
-vouchDbRef.current.info().then((info) => console.log(info))
-vouchDbRef.current.allDocs().then((docs) => console.log(docs.total_rows))

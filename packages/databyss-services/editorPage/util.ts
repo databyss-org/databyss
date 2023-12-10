@@ -4,6 +4,7 @@ import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { Block, BlockType, Page, UNTITLED_PAGE_NAME } from '../interfaces'
 import { getAccountFromLocation } from '../session/utils'
+import { upsertImmediate } from '@databyss-org/data/pouchdb/utils'
 
 export const newPage = (): Page => new Page()
 
@@ -64,8 +65,11 @@ export async function ensureTitleBlock(page: Page) {
     type: BlockType.Entry,
   })
 
-  await dbRef.current!.upsert(page._id, (oldDoc) => ({
-    ...oldDoc,
-    blocks: _pageDoc.blocks,
-  }))
+  await upsertImmediate({
+    doctype: DocumentType.Page,
+    _id: page._id,
+    doc: {
+      blocks: _pageDoc.blocks,
+    },
+  })
 }

@@ -43,9 +43,7 @@ const AppView = ({ children }) => (
 const Providers = ({ children }) => (
   <UserPreferencesProvider>
     <ExportProvider>
-      <SearchProvider>
-        <GestureProvider>{children}</GestureProvider>
-      </SearchProvider>
+      <GestureProvider>{children}</GestureProvider>
     </ExportProvider>
   </UserPreferencesProvider>
 )
@@ -66,39 +64,41 @@ export const Private = () => {
   }, [])
 
   return (
-    <Providers>
+    <SearchProvider>
       <AppView>
-        <Routes>
-          <Route path="/:accountId/*">
-            <Route
-              path="pages/:id/*"
-              element={
-                <EditorPageProvider>
-                  <PageContent />
-                </EditorPageProvider>
-              }
-            />
-            <Route path="search/:query" element={<SearchContent />} />
-            <Route path="collections/:id" element={<GroupDetail />} />
-            <Route
-              path="sources/:blockId/*"
-              element={<IndexPageContent blockType={BlockType.Source} />}
-            />
-            <Route
-              path="topics/:blockId/*"
-              element={<IndexPageContent blockType={BlockType.Topic} />}
-            />
-            <Route path="sources/*" element={<SourcesContent />} />
-            <Route
-              path="embeds/:blockId/*"
-              element={<IndexPageContent blockType={BlockType.Embed} />}
-            />
+        <Providers>
+          <Routes>
+            <Route path="/:accountId/*">
+              <Route
+                path="pages/:id/*"
+                element={
+                  <EditorPageProvider>
+                    <PageContent />
+                  </EditorPageProvider>
+                }
+              />
+              <Route path="search/:query" element={<SearchContent />} />
+              <Route path="collections/:id" element={<GroupDetail />} />
+              <Route
+                path="sources/:blockId/*"
+                element={<IndexPageContent blockType={BlockType.Source} />}
+              />
+              <Route
+                path="topics/:blockId/*"
+                element={<IndexPageContent blockType={BlockType.Topic} />}
+              />
+              <Route path="sources/*" element={<SourcesContent />} />
+              <Route
+                path="embeds/:blockId/*"
+                element={<IndexPageContent blockType={BlockType.Embed} />}
+              />
+              <Route path="*" element={<NotFoundRedirect />} />
+            </Route>
             <Route path="*" element={<NotFoundRedirect />} />
-          </Route>
-          <Route path="*" element={<NotFoundRedirect />} />
-        </Routes>
+          </Routes>
+          <ModalManager />
+        </Providers>
       </AppView>
-      <ModalManager />
-    </Providers>
+    </SearchProvider>
   )
 }

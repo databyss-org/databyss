@@ -49,7 +49,7 @@ export const pouchDocSchema: JSONSchema4 = {
       },
     },
   },
-  required: ['_id', 'doctype', 'createdAt', 'belongsToGroup'],
+  required: ['_id', 'doctype', 'createdAt'],
 }
 
 export default pouchDocSchema

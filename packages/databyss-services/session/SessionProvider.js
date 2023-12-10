@@ -15,9 +15,8 @@ import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvi
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { UNTITLED_NAME } from '@databyss-org/services/groups'
-import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
+import { isMobile, isMobileOs } from '@databyss-org/ui/lib/mediaQuery'
 import StickyMessage from '@databyss-org/ui/components/Notify/StickyMessage'
-import { vouchDbRef } from '@databyss-org/data/vouchdb/vouchdb'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
@@ -70,7 +69,7 @@ const SessionProvider = ({
   const { notify } = useNotifyContext()
   const location = useNavigationContext((c) => c && c.location)
   const navigate = useNavigationContext((c) => c && c.navigate)
-  const { updateCouchMode, setCouchMode } = useDatabaseContext()
+  const { updateDatabaseStatus, setCouchMode } = useDatabaseContext()
   const groupRes = useGroups({
     enabled: !!dbRef.current && !!state.session?.publicAccount,
   })
@@ -158,7 +157,7 @@ const SessionProvider = ({
           groupId,
           queryClient,
           onReplicationComplete: (_res) => {
-            updateCouchMode()
+            updateDatabaseStatus()
             if (_res) {
               // set up live sync
               syncPouchDb({
@@ -188,7 +187,7 @@ const SessionProvider = ({
           queryClient,
           groupId: _publicSession.belongsToGroup,
           isPublicGroup: true,
-          onReplicationComplete: () => updateCouchMode(),
+          onReplicationComplete: () => updateDatabaseStatus(),
         })
       } else {
         // try to get public access
@@ -205,7 +204,7 @@ const SessionProvider = ({
             queryClient,
             groupId: unauthenticatedGroupId,
             isPublicGroup: true,
-            onReplicationComplete: () => updateCouchMode(),
+            onReplicationComplete: () => updateDatabaseStatus(),
           })
           _publicSession = await localStorageHasPublicSession(3)
         }
@@ -250,7 +249,7 @@ const SessionProvider = ({
     if (isLocalSession) {
       console.log('[SessionProvider] local session')
       state.session = localSession
-      dbRef.current = vouchDbRef.current
+      // dbRef.current = vouchDbRef.current
     }
 
     if (state.sesson === null) {
@@ -346,6 +345,9 @@ const SessionProvider = ({
    * checks on window focus if user should be forced logged out
    */
   const shouldForceLogout = () => {
+    if (localSession) {
+      return
+    }
     if (
       !(state.session instanceof ResourcePending) &&
       !document.hidden &&
@@ -418,7 +420,7 @@ const SessionProvider = ({
       actions.setReadOnly(
         dbRef.readOnly ||
           isPublicAccount() ||
-          !!isMobile() ||
+          !!isMobileOs() ||
           window.location.search.includes('__readonly')
       )
     )

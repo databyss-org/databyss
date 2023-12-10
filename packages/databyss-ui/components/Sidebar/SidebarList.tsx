@@ -210,7 +210,7 @@ const SidebarList = ({
             <SidebarListItem
               isActive={getActiveItem(item)}
               text={item.text}
-              // href={getHref(item)}
+              href={getHref(item)}
               key={`${item.type}-${index}`}
               draggable={getDraggable(item)}
               icon={item.icon ? item.icon : menuSvgs[item.type]}

@@ -38,6 +38,9 @@ import { UnauthorizedDatabaseReplication } from '../../databyss-services/interfa
 import { initialCaches, warmupCaches } from './warmup'
 import { initChangeResponder } from '../couchdb/changeResponder'
 import { initDriveDb } from '../drivedb/ddb'
+import { dbRef } from './dbRef'
+
+export { dbRef } from './dbRef'
 
 export { selectors } from './selectors'
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
@@ -48,27 +51,11 @@ PouchDB.plugin(PouchDbQuickSearch)
 PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 
-interface DbRef {
-  current: PouchDB.Database<any> | null
-  readOnly: boolean
-  lastSeq: string | number
-  initialSyncComplete: boolean
-  lastReplicationSeq: string | number // seq of last upsertReplication
-}
-
 const getPouchDb = (groupId: string) => {
   const _db = new PouchDB(groupId, {
     auto_compaction: true,
   })
   return _db.setMaxListeners(100)
-}
-
-export const dbRef: DbRef = {
-  current: null,
-  readOnly: false,
-  initialSyncComplete: false,
-  lastSeq: 'now',
-  lastReplicationSeq: 'now',
 }
 
 // try to load pouch_secrets from local storage to init db
@@ -81,6 +68,7 @@ if (
   defaultGroup &&
   (!groupIdFromUrl || groupIdFromUrl === defaultGroup || process.env.STORYBOOK)
 ) {
+  dbRef.groupId = defaultGroup
   dbRef.current = getPouchDb(defaultGroup)
 }
 
@@ -261,7 +249,7 @@ export const pouchDataValidation = (data) => {
   tv4.addSchema('blockSchema', blockSchema)
   tv4.addSchema('notification', notificationSchema)
 
-  if (data._id.includes('design/')) {
+  if (data?._id?.includes('design/')) {
     return
   }
   let schema
@@ -345,6 +333,7 @@ export const initDb = ({
           dbRef.lastSeq = await warmupCaches(_pouchDb, queryClient)
         }
         dbRef.current = _pouchDb
+        dbRef.groupId = groupId
         dbRef.readOnly = isPublicGroup
         dbRef.initialSyncComplete = true
 

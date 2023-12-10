@@ -3,9 +3,12 @@
   "include": [
     "./**/*",
     "../databyss-data/schemas/users.ts",
+    "../databyss-data/pouchdb/dbRef.ts",
+    "../databyss-desktop/src/eapi/*",
     "database/interfaces/.d.ts"
   ],
   "compilerOptions": {
+    "rootDir": "../",
     "composite": true,
     "resolveJsonModule": true
   },

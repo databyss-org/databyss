@@ -1,7 +1,7 @@
 import { JSONSchema4 } from 'json-schema'
 
 export const groupSchema: JSONSchema4 = {
-  title: 'Page',
+  title: 'Group',
   type: 'object',
   properties: {
     name: {
@@ -19,6 +19,9 @@ export const groupSchema: JSONSchema4 = {
     public: {
       type: 'boolean',
     },
+    localGroup: {
+      type: 'boolean',
+    },
     defaultPageId: {
       type: 'string',
     },
@@ -31,7 +34,7 @@ export const groupSchema: JSONSchema4 = {
   },
   // extend pouchdb types
   allOf: [{ $ref: 'pouchDb' }],
-  required: ['pages'],
+  required: ['name', 'pages'],
 }
 
 export default groupSchema
