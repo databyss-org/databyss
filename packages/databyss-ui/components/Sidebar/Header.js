@@ -1,16 +1,13 @@
 import React from 'react'
-import { Text, BaseControl } from '@databyss-org/ui/primitives'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { Text, TextInput } from '@databyss-org/ui/primitives'
 import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
-import { pxUnits } from '../..'
 import LoadingFallback from '../Notify/LoadingFallback'
+import { pxUnits } from '../../theming/views'
 
 const Header = () => {
-  const getSession = useSessionContext((c) => c && c.getSession)
-  const getDefaultPageUrl = useSessionContext((c) => c && c.getDefaultPageUrl)
+  // const getSession = useSessionContext((c) => c && c.getSession)
+  // const getDefaultPageUrl = useSessionContext((c) => c && c.getDefaultPageUrl)
   const pagesRes = usePages()
-
-  const { defaultGroupId, defaultGroupName } = getSession()
 
   const groupRes = useGroups()
 
@@ -23,24 +20,21 @@ const Header = () => {
   const _groupName = Object.values(groupRes.data)?.[0]?.name
 
   return (
-    <BaseControl
-      href={
-        _groupName
-          ? getDefaultPageUrl({
-              pages: pagesRes.data,
-              defaultGroupId,
-              defaultGroupName,
-            })
-          : 'https://www.databyss.org'
-      }
+    <TextInput
+      variant="uiTextLargeSemibold"
+      bg="gray.1"
+      color="text.3"
       px="em"
-      mt={pxUnits(11)}
-      mb="extraSmall"
-    >
-      <Text variant="heading4" color="text.3">
-        {_groupName || 'Databyss'}
-      </Text>
-    </BaseControl>
+      pt="em"
+      pb="em"
+      mb={pxUnits(2)}
+      height="2em"
+      css={{
+        display: 'flex',
+        alignItems: 'center',
+      }}
+      value={{ textValue: _groupName || 'Databyss' }}
+    />
   )
 }
 

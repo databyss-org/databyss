@@ -46,11 +46,10 @@ export const Sidebar = () => {
             height="100%"
             flexGrow={1}
             flexShrink={1}
-            mt={pxUnits(5)}
+            // mt={pxUnits(5)}
             overflow="hidden"
           >
-            {/* TODO: on public collections, change name and link it to defaultPage */}
-            {isPublicAccount() && <Header />}
+            <Header />
             <Search />
             {(menuItem === 'pages' || !menuItem) && <PageList />}
             {menuItem === 'references' && <ReferencesList />}

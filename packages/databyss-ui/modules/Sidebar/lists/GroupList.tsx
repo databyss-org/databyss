@@ -20,12 +20,12 @@ export const GroupList = (others) => {
     return <LoadingFallback queryObserver={groupsRes} />
   }
   const namedGroups = Object.values(groupsRes.data).filter(
-    (group) => !!group.name
+    (group) => !!group.name && !group.localGroup
   )
 
   return (
     <SidebarList
-      heading="Collections"
+      heading="Shared Collections"
       menuItems={getGroupItems(namedGroups)}
       {...others}
     />

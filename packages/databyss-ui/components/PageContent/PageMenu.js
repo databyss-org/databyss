@@ -30,24 +30,7 @@ import { useExportContext } from '@databyss-org/services/export'
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import LoadingFallback from '../Notify/LoadingFallback'
 import { pxUnits } from '../../theming/views'
-
-export const DropdownList = ({ menuItems }) =>
-  menuItems.map(({ separator, ...menuItem }, idx) =>
-    separator ? (
-      <Separator {...menuItem} key={idx} lineWidth={idx > 0 ? 1 : 0} />
-    ) : (
-      <DropdownListItem
-        {...menuItem}
-        action={menuItem.actionType}
-        onPress={() => {
-          if (menuItem.action) {
-            menuItem.action()
-          }
-        }}
-        key={menuItem.label}
-      />
-    )
-  )
+import { DropdownList } from '../Menu/DropdownList'
 
 export function copyToClipboard(text) {
   const dummy = document.createElement('textarea')
