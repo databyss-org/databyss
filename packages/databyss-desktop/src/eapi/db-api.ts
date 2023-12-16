@@ -1,8 +1,8 @@
 import PouchDB from 'pouchdb-node'
 import { ipcRenderer } from 'electron'
 
-export const onSetGroupId = (callback: (groupId: string) => void) =>
-  ipcRenderer.on('db-setGroupId', (_, groupId: string) => callback(groupId))
+export const onGroupLoaded = (callback: (groupId: string) => void) =>
+  ipcRenderer.on('db-groupLoaded', (_, groupId: string) => callback(groupId))
 
 export const info: PouchDB.Database['info'] = () =>
   ipcRenderer.invoke('db-info')
@@ -10,6 +10,9 @@ export const info: PouchDB.Database['info'] = () =>
 export const getGroupId = async () => {
   const dbPathArr = (await info()).db_name.split('/')
   return dbPathArr[dbPathArr.length - 1]
+}
+export const loadGroup = (groupId: string) => {
+  ipcRenderer.send('db-loadGroup', groupId)
 }
 
 export const allDocs: PouchDB.Database['allDocs'] = (

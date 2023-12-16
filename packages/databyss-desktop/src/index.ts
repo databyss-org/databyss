@@ -27,6 +27,7 @@ const createWindow = (): void => {
       nodeIntegration: true,
       // enableRemoteModule: true,
     },
+    titleBarStyle: 'hiddenInset',
   })
 
   // console.log('[Main]', Menu.getApplicationMenu())

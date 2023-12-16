@@ -1,9 +1,9 @@
 import React from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+// import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { View, List } from '@databyss-org/ui/primitives'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
-import { Header } from '@databyss-org/ui/components/Sidebar'
+// import { Header } from '@databyss-org/ui/components/Sidebar'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { darkTheme, pxUnits } from '@databyss-org/ui/theming/theme'
 import { sidebar } from '@databyss-org/ui/theming/components'
@@ -15,7 +15,6 @@ import { ReferencesList } from './lists/ReferencesList'
 
 export const Sidebar = () => {
   const { getSidebarPath, isMenuOpen } = useNavigationContext()
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const menuItem = getSidebarPath()
 
   /*
@@ -38,6 +37,8 @@ export const Sidebar = () => {
           flexShrink={1}
           overflow="hidden"
           css={{ transform: 'translate(0,0)' }}
+          borderLeftColor="border.1"
+          borderLeftWidth={pxUnits(1)}
         >
           <List
             verticalItemPadding={0}
@@ -49,7 +50,7 @@ export const Sidebar = () => {
             // mt={pxUnits(5)}
             overflow="hidden"
           >
-            <Header />
+            {/* <Header /> */}
             <Search />
             {(menuItem === 'pages' || !menuItem) && <PageList />}
             {menuItem === 'references' && <ReferencesList />}

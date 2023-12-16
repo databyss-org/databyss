@@ -50,12 +50,12 @@ const SidebarCollapsed = () => {
       title: 'Databyss',
       icon: <img src={DatabyssImg} />,
       sizeVariant: 'large',
-      bg: 'gray.1',
+      // height: pxUnits(55),
       onClick: () => {
-        console.log('[SidebarCollapsed] open Databyss menu')
         setShowDatabyssMenu(!showDatabyssMenu)
       },
       hamburger: true,
+      pt: 'em',
     },
     {
       name: 'search',
@@ -122,15 +122,8 @@ const SidebarCollapsed = () => {
       {showDatabyssMenu && (
         <DatabyssMenu onDismiss={() => setShowDatabyssMenu(false)} />
       )}
-      <View
-        theme={darkTheme}
-        bg="background.1"
-        borderRightColor="border.1"
-        borderRightWidth={pxUnits(1)}
-        width={sidebar.collapsedWidth}
-      >
+      <View theme={darkTheme} bg="background.1" width={sidebar.collapsedWidth}>
         <List
-          mt={pxUnits(2)}
           verticalItemPadding={2}
           horizontalItemPadding={1}
           py="none"
@@ -138,6 +131,7 @@ const SidebarCollapsed = () => {
         >
           {sideBarCollapsedItems.map((item, i) => (
             <SidebarIconButton
+              key={item.name}
               isActive={isIconButtonActive(item)}
               seperatorTop={
                 sideBarCollapsedItems.length === i + 1 && !isPublicAccount()

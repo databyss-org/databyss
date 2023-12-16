@@ -1,6 +1,7 @@
 import React from 'react'
-import { View, Text } from '@databyss-org/ui'
+import { View, Text, Icon } from '@databyss-org/ui'
 import { UNTITLED_PAGE_NAME } from '@databyss-org/services/interfaces'
+import PageSvg from '@databyss-org/ui/assets/page.svg'
 
 export const TitleElement = ({ attributes, children, element, text }) => {
   const _text = text ?? element.children[0]?.text
@@ -9,8 +10,17 @@ export const TitleElement = ({ attributes, children, element, text }) => {
       position="relative"
       ml={process.env.FORCE_MOBILE ? 'none' : 'medium'}
       mb={!process.env.FORCE_MOBILE ? 'em' : 'none'}
-      mt={process.env.FORCE_MOBILE ? 'em' : 'none'}
+      mt={process.env.FORCE_MOBILE ? 'em' : 'large'}
     >
+      <Icon
+        position="absolute"
+        left="mediumNegative"
+        top="small"
+        color="gray.5"
+        sizeVariant="small"
+      >
+        <PageSvg />
+      </Icon>
       {!_text?.length && (
         <View
           position="absolute"

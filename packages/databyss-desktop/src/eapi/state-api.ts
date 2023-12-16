@@ -1,5 +1,7 @@
 import { ipcRenderer } from 'electron'
+import { StateData } from './handlers/state-handlers'
 
-export const get = (key: string) => ipcRenderer.invoke('state-get', key)
-export const set = (key: string, value: any) =>
-  ipcRenderer.invoke('state-set', key)
+export const get = <K extends keyof StateData>(key: K) =>
+  ipcRenderer.invoke('state-get', key) as Promise<StateData[K]>
+export const set = <K extends keyof StateData>(key: K, value: StateData[K]) =>
+  ipcRenderer.send('state-set', key)

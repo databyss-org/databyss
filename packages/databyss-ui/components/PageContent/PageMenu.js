@@ -357,12 +357,12 @@ const PageMenu = React.memo(() => {
       <BaseControl
         onPress={() => setShowMenu(!showMenu)}
         onKeyDown={handleEscKey}
-        hoverColor="background.2"
+        hoverColor="background.1"
         p="tiny"
         data-test-element="archive-dropdown"
         label="Archive Page"
       >
-        <Icon sizeVariant="medium" color="text.1">
+        <Icon sizeVariant="medium" color="text.2">
           <MenuSvg />
         </Icon>
       </BaseControl>
@@ -376,7 +376,7 @@ const PageMenu = React.memo(() => {
               right: 0,
             }}
           >
-            {!isPublicAccount() && !_page.archive ? (
+            {/* {!isPublicAccount() && !_page.archive ? (
               <>
                 <DropdownListItem
                   height={pxUnits(34)}
@@ -396,7 +396,7 @@ const PageMenu = React.memo(() => {
                 ) : null}
                 <Separator />
               </>
-            ) : null}
+            ) : null} */}
 
             <DropdownList menuItems={menuItems} />
             {/* {Object.values(groups).length ? <Separator /> : null}

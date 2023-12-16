@@ -263,8 +263,9 @@ export const IndexPageView = ({
           contextMenu={<IndexPageMenu block={block} />}
         />
         <ScrollView
+          pt="medium"
           pr="em"
-          pl="large"
+          pl="medium"
           flex="1"
           pb="extraLarge"
           ref={scrollViewRef}
@@ -367,7 +368,14 @@ interface IndexPageContentProps {
 }
 
 export const getPathFromBlock = (block: Block) => {
-  const path = [block.text.textValue]
+  let _text = block.text.textValue
+  if (
+    block.type === BlockType.Source &&
+    (block as Source).name?.textValue !== null
+  ) {
+    _text = (block as Source).name?.textValue!
+  }
+  const path = [_text]
   const indexName = {
     [BlockType.Source]: 'Sources',
     [BlockType.Topic]: 'Topics',

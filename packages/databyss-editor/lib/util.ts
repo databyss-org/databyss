@@ -228,9 +228,14 @@ export const getPagePath = (page: EditorState): PagePath => {
 
   _currentAtomics.reverse().forEach((_block) => {
     if (!_block.closed) {
-      _path.push(
-        `${getBlockPrefix(_block.type)} ${stateBlockToHtmlHeader(_block)}`
-      )
+      let _text = _block.text.textValue
+      if (
+        _block.type === BlockType.Source &&
+        (_block as Source).name?.textValue !== null
+      ) {
+        _text = (_block as Source).name?.textValue!
+      }
+      _path.push(`${getBlockPrefix(_block.type)} ${_text}`)
     }
   })
 

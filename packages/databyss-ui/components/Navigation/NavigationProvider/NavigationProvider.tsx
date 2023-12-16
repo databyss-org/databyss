@@ -38,7 +38,7 @@ const sidebarItemAliases = {
 
 interface PropsType {
   initialState: NavigationState
-  electron: boolean
+  electron?: boolean
 }
 
 export const NavigationProvider = ({

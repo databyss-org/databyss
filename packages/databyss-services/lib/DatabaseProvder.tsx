@@ -4,6 +4,8 @@ import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { useContextSelector, createContext } from 'use-context-selector'
 import { VouchDb, connect } from '@databyss-org/data/vouchdb/vouchdb'
 import { Text } from '@databyss-org/ui'
+import { useQueryClient } from '@tanstack/react-query'
+import { useNavigationContext } from '@databyss-org/ui/components'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
@@ -25,6 +27,8 @@ export interface DatabaseStatus {
 }
 
 export const DatabaseProvider = ({ children }) => {
+  const queryClient = useQueryClient()
+  const navigate = useNavigationContext((c) => c && c.navigate)
   const [databaseStatus, setDatabaseStatus] = useState<DatabaseStatus>({
     isCouchMode: false,
     isDesktopMode: false,
@@ -50,7 +54,11 @@ export const DatabaseProvider = ({ children }) => {
   )
 
   useEffect(() => {
-    dbRef.on('groupIdUpdated', updateDatabaseStatus)
+    dbRef.on('groupIdUpdated', () => {
+      queryClient.clear()
+      updateDatabaseStatus()
+      navigate('/')
+    })
 
     // check for group loaded by electron
     if (eapi) {

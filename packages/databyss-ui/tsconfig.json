@@ -3,10 +3,12 @@
   "include": [
     "./**/*",
     "../databyss-homepage/modules/Homepage",
-    "../databyss-homepage/components/Footer"
+    "../databyss-homepage/components/Footer",
+    "../databyss-desktop/src/hooks"
   ],
   "compilerOptions": {
-    "composite": true
+    "composite": true,
+    "rootDir": "../"
   },
   "references": []
 }

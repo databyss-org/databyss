@@ -1,7 +1,7 @@
 import React from 'react'
-import { Group } from '@databyss-org/services/interfaces'
-import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
+import { Group } from '@databyss-org/services/interfaces'
+import { useAppState } from '../../../databyss-desktop/src/hooks'
 import ClickAwayListener from '../Util/ClickAwayListener'
 import { DropdownContainer } from '../..'
 import { DropdownList, MenuItem } from './DropdownList'
@@ -13,15 +13,13 @@ import DatabyssSvg from '../../assets/logo-vector.svg'
 declare const eapi: typeof import('../../../databyss-desktop/src/eapi').default
 
 export function DatabyssMenu({ onDismiss }: { onDismiss: () => void }) {
-  const groupsRes = useGroups()
+  const groupsRes = useAppState('localGroups')
 
   const groups: Group[] = groupsRes.isSuccess
     ? Object.values(groupsRes.data)
     : []
   const sortedGroups = Object.values(groups)
-    .filter(
-      (group) => !!group.name && group.localGroup && group._id !== dbRef.groupId
-    )
+    .filter((group) => group._id !== dbRef.groupId)
     .sort((a, b) => (a.name < b.name ? -1 : 1))
 
   const menuItems: MenuItem[] = [
@@ -36,6 +34,11 @@ export function DatabyssMenu({ onDismiss }: { onDismiss: () => void }) {
     ...sortedGroups.map((group) => ({
       label: group.name,
       icon: <DatabyssSvg />,
+      action: () => {
+        console.log('[DatabyssMenu] load group', group._id)
+        eapi.db.loadGroup(group._id)
+        return true
+      },
     })),
     {
       label: 'Add a Databyss',
@@ -61,7 +64,7 @@ export function DatabyssMenu({ onDismiss }: { onDismiss: () => void }) {
         minWidth={250}
         open
         position={{
-          top: 64,
+          top: 100,
           left: 35,
         }}
       >

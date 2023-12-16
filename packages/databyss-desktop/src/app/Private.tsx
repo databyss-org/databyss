@@ -13,18 +13,22 @@ import {
   ModalManager,
   PageContent,
   GroupDetail,
+  Text,
 } from '@databyss-org/ui'
 
 import { GestureProvider, View } from '@databyss-org/ui/primitives'
-import { BlockType } from '@databyss-org/services/interfaces'
+import { BlockType, Group } from '@databyss-org/services/interfaces'
 import {
   SourcesContent,
   IndexPageContent,
   SearchContent,
 } from '@databyss-org/ui/modules'
 import { EditorPageProvider } from '@databyss-org/services'
+import { pxUnits } from '@databyss-org/ui/theming/views'
+import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
+import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 
-const AppView = ({ children }) => (
+const AppView: React.FC<{ title: string }> = ({ children, title }) => (
   <View
     flexDirection="row"
     display="flex"
@@ -32,7 +36,27 @@ const AppView = ({ children }) => (
     overflow="hidden"
     flexShrink={1}
     flexGrow={1}
+    mt={pxUnits(36)}
   >
+    <View
+      position="absolute"
+      top={0}
+      left={0}
+      height={pxUnits(36)}
+      bg="gray.0"
+      width="100%"
+      alignItems="center"
+      justifyContent="center"
+      css={{
+        // userSelect: 'none',
+        '-webkit-user-select': 'none',
+        '-webkit-app-region': 'drag',
+      }}
+    >
+      <Text color="white" variant="uiTextSmall">
+        {title}
+      </Text>
+    </View>
     <Sidebar />
     <View data-test-element="body" flexGrow={1} flexShrink={1}>
       {children}
@@ -55,9 +79,15 @@ export const Private = () => {
     (c) => c && c.navigateToDefaultPage
   )
   const { provisionClientDatabase } = getSession()
+  const groupRes = useDocument<Group>(dbRef.groupId ?? '', {
+    enabled: dbRef.groupId !== null,
+  })
+
+  const appTitle = groupRes.isSuccess ? groupRes.data.name : 'Databyss'
 
   // Navigate to default page if nothing in path
   useEffect(() => {
+    console.log('[Desktop] location', location.pathname)
     if (location.pathname === '/' || provisionClientDatabase) {
       navigateToDefaultPage(false)
     }
@@ -65,7 +95,7 @@ export const Private = () => {
 
   return (
     <SearchProvider>
-      <AppView>
+      <AppView title={appTitle}>
         <Providers>
           <Routes>
             <Route path="/:accountId/*">

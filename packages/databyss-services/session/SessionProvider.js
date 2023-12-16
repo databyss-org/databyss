@@ -38,15 +38,6 @@ const useReducer = createReducer()
 
 export const SessionContext = createContext()
 
-const localSession = {
-  user: {
-    email: 'local@user.com',
-  },
-  account: {
-    _id: 'LOCAL_SESSION_ACCOUNT_ID',
-  },
-}
-
 // @signUp (bool)
 //   if true, show signup UI
 // @code
@@ -74,6 +65,16 @@ const SessionProvider = ({
     enabled: !!dbRef.current && !!state.session?.publicAccount,
   })
   const queryClient = useQueryClient()
+
+  const localSession = {
+    user: {
+      email: 'local@user.com',
+    },
+    account: {
+      _id: dbRef.groupId,
+    },
+    defaultGroupId: dbRef.groupId,
+  }
 
   const isPublicAccount = useCallback(() => {
     if (state.session.publicAccount?._id) {
@@ -398,6 +399,10 @@ const SessionProvider = ({
       while (!state.session.defaultGroupId) {
         await sleep(100)
       }
+      // console.log(
+      //   '[SessionProvider] defaultGroupId',
+      //   state.session.defaultGroupId
+      // )
       const { defaultGroupName, defaultGroupId } = state.session
 
       // return most recently accessed page

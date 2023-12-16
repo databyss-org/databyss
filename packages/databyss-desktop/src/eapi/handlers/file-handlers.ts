@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, ipcMain } from 'electron'
+import { dialog, ipcMain } from 'electron'
 import { handleImport } from '../../nodeDb'
 
 export async function importDatabyssFile() {
@@ -10,10 +10,7 @@ export async function importDatabyssFile() {
   if (dialogRes.canceled) {
     return false
   }
-  const groupId = await handleImport(dialogRes.filePaths[0])
-  if (!!groupId) {
-    BrowserWindow.getFocusedWindow().webContents.send('db-setGroupId', groupId)
-  }
+  await handleImport(dialogRes.filePaths[0])
   return true
 }
 

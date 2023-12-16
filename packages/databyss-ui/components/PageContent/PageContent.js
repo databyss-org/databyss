@@ -77,13 +77,7 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
       linkedDocsRes.isSuccess ? (
         <>
           <PageSticky pagePath={editorPath} pageId={page._id} />
-          <View
-            pt="small"
-            flexShrink={1}
-            flexGrow={1}
-            overflow="hidden"
-            {...others}
-          >
+          <View flexShrink={1} flexGrow={1} overflow="hidden" {...others}>
             {isReadOnly ? (
               <FlatPageBody page={page} />
             ) : (

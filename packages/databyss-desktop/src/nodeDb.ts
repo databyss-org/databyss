@@ -2,7 +2,7 @@ import PouchDB from 'pouchdb-node'
 import PouchDBFind from 'pouchdb-find'
 import PouchDBUpsert from 'pouchdb-upsert'
 // import PouchDbQuickSearch from 'pouchdb-quick-search'
-import { app, ipcMain, ipcRenderer } from 'electron'
+import { BrowserWindow, app, ipcMain, ipcRenderer } from 'electron'
 import path from 'path'
 import fs from 'fs'
 import { Group } from '@databyss-org/services/interfaces'
@@ -24,11 +24,13 @@ if (!fs.existsSync(appDbPath)) {
 export interface NodeDbRef {
   current: PouchDB.Database<any> | null
   dbPath: string | null
+  groupId: string | null
 }
 
 export const nodeDbRef: NodeDbRef = {
   current: null,
   dbPath: null,
+  groupId: null,
 }
 
 export async function handleImport(filePath: string) {
@@ -79,9 +81,8 @@ export async function handleImport(filePath: string) {
   // add GROUP doc to app state
   const groups = (appState.get('localGroups') ?? []) as Group[]
   appState.set('localGroups', [...groups, groupDoc])
-  appState.set('lastActiveGroupId', groupId)
-
   console.log('[DB] import done', res)
+  setGroupLoaded()
   return groupId
 }
 
@@ -89,4 +90,13 @@ export function initNodeDb(groupId: string) {
   nodeDbRef.dbPath = path.join(appDbPath, groupId)
   console.log('[DB] db path', nodeDbRef.dbPath)
   nodeDbRef.current = new PouchDB(nodeDbRef.dbPath)
+  nodeDbRef.groupId = groupId
+  appState.set('lastActiveGroupId', groupId)
+}
+
+export function setGroupLoaded() {
+  BrowserWindow.getFocusedWindow().webContents.send(
+    'db-groupLoaded',
+    nodeDbRef.groupId
+  )
 }

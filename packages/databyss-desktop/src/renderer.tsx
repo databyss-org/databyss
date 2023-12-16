@@ -20,8 +20,8 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-eapi.db.onSetGroupId((groupId) => {
-  console.log('[App] IPC db-setGroupId', groupId)
+eapi.db.onGroupLoaded((groupId) => {
+  console.log('[App] IPC db-onGroupLoaded', groupId)
   // setGroupId(groupId)
   connect(groupId)
   dbRef.current.info().then((info) => console.log(info))

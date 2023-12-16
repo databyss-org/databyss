@@ -1,8 +1,13 @@
 import { ipcMain } from 'electron'
-import { nodeDbRef } from '../../nodeDb'
+import { initNodeDb, nodeDbRef, setGroupLoaded } from '../../nodeDb'
 
 export function registerDbHandlers() {
   ipcMain.handle('db-info', async () => await nodeDbRef.current?.info())
+  ipcMain.on('db-loadGroup', (_, groupId: string) => {
+    console.log('[DB] loadGroup', groupId)
+    initNodeDb(groupId)
+    setGroupLoaded()
+  })
   ipcMain.handle(
     'db-get',
     async (_, ...args: Parameters<typeof nodeDbRef.current.get>) => {
