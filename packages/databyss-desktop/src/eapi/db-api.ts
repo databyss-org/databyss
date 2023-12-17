@@ -43,3 +43,7 @@ export const bulkDocs: PouchDB.Database['bulkDocs'] = (
 export const find: PouchDB.Database['find'] = (
   ...args: Parameters<PouchDB.Database['find']>
 ) => ipcRenderer.invoke('db-find', ...args)
+
+export const search: PouchDB.Database['search'] = (
+  ...args: Parameters<PouchDB.Database['search']>
+) => ipcRenderer.invoke('db-search', ...args)

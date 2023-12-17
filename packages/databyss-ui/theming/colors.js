@@ -62,26 +62,33 @@ _c = {
 }
 
 // dark mode
+const _darkUi = {
+  // [lightest...darkest]
+  text: [_c.white, ..._c.gray.slice().reverse().slice(1)],
+  // [darkest...lightest]
+  background: _c.gray.slice(1),
+  // borders [darkest...lightest]
+  border: [_c.gray[7], _c.gray[3], _c.gray[1]],
+  // control colors [enabled, hover, active, label]
+  secondary: [_c.blue[1], _c.gray[2], _c.gray[0], _c.blue[2]],
+  activeTextInputBackground: _c.black,
+  pageBackground: 'transparent',
+  // BaseControl colors [enabled, hover, pressed]
+  control: [_c.transparent].concat(
+    [_c.gray[4], _c.gray[3]].map((c) => Color(c).alpha(0.4).rgb().string())
+  ),
+  scrollShadow: '#222',
+}
+const _darkContent = {
+  ..._darkUi,
+  background: ['#1E1E1E', '#1E1E1E', '#3C3C3C'],
+  text: _darkUi.text.slice(1),
+}
 _c = {
   ..._c,
   modes: {
-    dark: {
-      // [lightest...darkest]
-      text: [_c.white, ..._c.gray.slice().reverse().slice(1)],
-      // [darkest...lightest]
-      background: _c.gray.slice(1),
-      // borders [darkest...lightest]
-      border: [_c.gray[7], _c.gray[3], _c.gray[1]],
-      // control colors [enabled, hover, active, label]
-      secondary: [_c.blue[1], _c.gray[2], _c.gray[0], _c.blue[2]],
-      activeTextInputBackground: _c.black,
-      pageBackground: 'transparent',
-      // BaseControl colors [enabled, hover, pressed]
-      control: [_c.transparent].concat(
-        [_c.gray[4], _c.gray[3]].map((c) => Color(c).alpha(0.4).rgb().string())
-      ),
-      scrollShadow: '#222',
-    },
+    dark: _darkUi,
+    darkContent: _darkContent,
   },
 }
 

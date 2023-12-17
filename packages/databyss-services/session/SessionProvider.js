@@ -75,7 +75,9 @@ const SessionProvider = ({
     account: {
       _id: dbRef.groupId,
     },
-    defaultGroupId: `g_${dbRef.groupId}`,
+    defaultGroupId: dbRef.groupId.startsWith('g_')
+      ? dbRef.groupId
+      : `g_${dbRef.groupId}`,
   }
 
   const isPublicAccount = useCallback(() => {
@@ -399,8 +401,12 @@ const SessionProvider = ({
   const navigateToDefaultPage = useCallback(
     async (replace = true) => {
       const _lastRoute = await eapi.state.get('lastRoute')
-      console.log('[SessionProvider] lastRoute', _lastRoute)
-      if (_lastRoute) {
+      console.log(
+        '[SessionProvider] lastRoute',
+        _lastRoute,
+        state.session.defaultGroupId
+      )
+      if (_lastRoute?.includes(state.session.defaultGroupId)) {
         navigate(_lastRoute)
         navigateSidebar(getSidebarPath(true))
         return

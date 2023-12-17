@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode, useRef } from 'react'
+import React, { forwardRef, ReactChildren, ReactNode, useRef } from 'react'
 import styledCss from '@styled-system/css'
 import {
   createHighlightRanges,
@@ -13,6 +13,7 @@ import {
   RangeType,
   Block,
   BlockType,
+  Source,
 } from '@databyss-org/services/interfaces'
 import cloneDeep from 'clone-deep'
 import {
@@ -35,7 +36,12 @@ import {
   isAtomicClosure,
 } from '@databyss-org/editor/components/AtomicHeader'
 import { splitOverlappingRanges } from '@databyss-org/services/blocks/textRanges'
-import { atomicClosureText } from '@databyss-org/editor/state/util'
+import {
+  atomicClosureText,
+  atomicTypeToInlineRangeType,
+  inlineTypeToSymbol,
+  replaceInlineText,
+} from '@databyss-org/editor/state/util'
 import { useSearchContext } from '../../hooks'
 import { useNavigationContext } from '../Navigation'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
@@ -266,6 +272,44 @@ export function rangeToLeaf(marks: Mark[], text: string) {
   return _leaf
 }
 
+export function BoundLeafComponent({
+  children,
+  leaf,
+  escapeFn,
+  ...others
+}: {
+  leaf: Leaf
+  children: ReactNode
+  escapeFn: (_s: string, _key?: string) => ReactNode
+}) {
+  const _blockRes = useDocument(leaf.atomicId!, {
+    enabled: !!leaf.atomicId,
+  })
+  const _block: Block = _blockRes.data as Block
+  // console.log('[BoundLeafComponent] block', _block)
+  const _symbol = inlineTypeToSymbol(atomicTypeToInlineRangeType(_block?.type))
+  let _text = leaf.text
+  let _leaf = leaf
+  let _children = children
+  if (_blockRes.isSuccess) {
+    _text = `${_symbol}${_block?.text?.textValue}`
+    if (_block.type === BlockType.Source) {
+      _text = (_block as Source).name?.textValue ?? _text
+    }
+    _leaf = {
+      ...leaf,
+      text: _text,
+      children: renderText(_text),
+    }
+    _children = escapeFn(_text)
+  }
+  return (
+    <LeafComponent leaf={_leaf} {...others}>
+      {_children}
+    </LeafComponent>
+  )
+}
+
 /**
  * Renders Text using Editor Components
  * NB this assumes that ranges do not overlap
@@ -277,6 +321,7 @@ export function renderTextToComponents({
   onInlineClick,
   escapeFn = (_s: string) => _s,
   textOnly,
+  bindResults,
 }: {
   key: string
   text: Text
@@ -284,6 +329,7 @@ export function renderTextToComponents({
   onInlineClick: (d: InlineAtomicDef) => void
   escapeFn?: (_s: string, _key?: string) => ReactNode
   textOnly?: boolean
+  bindResults?: boolean
 }): ReactNode {
   if (!text) {
     return null
@@ -294,7 +340,7 @@ export function renderTextToComponents({
   // add link ranges
   _ranges = _ranges.concat(createLinkRangesForUrls(_text))
 
-  if (searchTerms) {
+  if (searchTerms && !bindResults) {
     _ranges = _ranges.concat(createHighlightRanges(_text, searchTerms))
   }
 
@@ -308,6 +354,8 @@ export function renderTextToComponents({
 
   let _lastRangeEnd = 0
 
+  const LEAF_COMPONENT = bindResults ? BoundLeafComponent : LeafComponent
+
   return (
     <>
       {_ranges.reduce((_components: ReactNode[], _range, _idx) => {
@@ -317,21 +365,23 @@ export function renderTextToComponents({
           _range.offset + _range.length
         )
         _lastRangeEnd = _range.offset + _range.length
+        const _leaf = rangeToLeaf(_range.marks, _segment)
         return _components.concat([
           _before.length ? escapeFn(_before, `${key}.${_idx}b`) : null,
-          <LeafComponent
+          <LEAF_COMPONENT
             key={`${key}.${_idx}`}
             readOnly
             textOnly={textOnly}
             attributes={{}}
-            leaf={rangeToLeaf(_range.marks, _segment)}
+            leaf={_leaf}
             onInlineClick={onInlineClick}
+            escapeFn={escapeFn}
           >
             {escapeFn(
               _segment,
               _lastRangeEnd === _text.length - 1 ? `END_${key}` : undefined
             )}
-          </LeafComponent>,
+          </LEAF_COMPONENT>,
         ])
       }, [])}
       {_lastRangeEnd < _text.length - 1

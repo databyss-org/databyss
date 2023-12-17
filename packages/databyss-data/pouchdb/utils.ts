@@ -213,12 +213,12 @@ export const getGroupSession = async (
 
 export const searchText = async ({
   query,
-  onUpdated,
-  allowStale,
-}: {
+}: // onUpdated,
+// allowStale,
+{
   query: string
-  onUpdated: (res: PouchDB.SearchResponse<{}>) => void
-  allowStale: boolean
+  // onUpdated: (res: PouchDB.SearchResponse<{}>) => void
+  // allowStale: boolean
 }) => {
   // calculate how strict we want the search to be
 
@@ -233,24 +233,24 @@ export const searchText = async ({
     query,
     fields: ['text.textValue'],
     include_docs: true,
-    filter: (doc: any) => doc.doctype === DocumentType.Block,
+    // filter: (doc: any) => doc.doctype === DocumentType.Block,
     mm: `${_percentageToMatch}%`,
   }
 
   const _res = await (dbRef.current as PouchDB.Database).search({
     ..._params,
-    ...(allowStale
-      ? {
-          stale: 'ok',
-        }
-      : {}),
+    // ...(allowStale
+    //   ? {
+    //       stale: 'ok',
+    //     }
+    //   : {}),
   })
 
-  if (allowStale) {
-    ;(dbRef.current as PouchDB.Database).search(_params).then(onUpdated)
-  } else {
-    onUpdated(_res)
-  }
+  // if (allowStale) {
+  //   ;(dbRef.current as PouchDB.Database).search(_params).then(onUpdated)
+  // } else {
+  //   onUpdated(_res)
+  // }
 
   return _res
 }

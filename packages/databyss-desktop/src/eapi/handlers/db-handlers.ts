@@ -45,4 +45,13 @@ export function registerDbHandlers() {
     async (_, ...args: Parameters<typeof nodeDbRef.current.find>) =>
       await nodeDbRef.current?.find(...args)
   )
+  ipcMain.handle(
+    'db-search',
+    async (_, ...args: Parameters<typeof nodeDbRef.current.search>) => {
+      console.log('[DB] search', args)
+      const res = await nodeDbRef.current?.search(...args)
+      console.log('[DB] search results', res)
+      return res
+    }
+  )
 }

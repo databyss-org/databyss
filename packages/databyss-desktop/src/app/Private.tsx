@@ -27,6 +27,7 @@ import { EditorPageProvider } from '@databyss-org/services'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
+import { darkContentTheme } from '@databyss-org/ui/theming/theme'
 
 const AppView: React.FC<{ title: string }> = ({ children, title }) => (
   <View
@@ -58,7 +59,13 @@ const AppView: React.FC<{ title: string }> = ({ children, title }) => (
       </Text>
     </View>
     <Sidebar />
-    <View data-test-element="body" flexGrow={1} flexShrink={1}>
+    <View
+      data-test-element="body"
+      flexGrow={1}
+      flexShrink={1}
+      // theme={darkContentTheme}
+      bg="background.0"
+    >
       {children}
     </View>
   </View>
@@ -66,9 +73,7 @@ const AppView: React.FC<{ title: string }> = ({ children, title }) => (
 
 const Providers = ({ children }) => (
   <UserPreferencesProvider>
-    <ExportProvider>
-      <GestureProvider>{children}</GestureProvider>
-    </ExportProvider>
+    <ExportProvider>{children}</ExportProvider>
   </UserPreferencesProvider>
 )
 
@@ -95,40 +100,42 @@ export const Private = () => {
 
   return (
     <SearchProvider>
-      <AppView title={appTitle}>
-        <Providers>
-          <Routes>
-            <Route path="/:accountId/*">
-              <Route
-                path="pages/:id/*"
-                element={
-                  <EditorPageProvider>
-                    <PageContent />
-                  </EditorPageProvider>
-                }
-              />
-              <Route path="search/:query" element={<SearchContent />} />
-              <Route path="collections/:id" element={<GroupDetail />} />
-              <Route
-                path="sources/:blockId/*"
-                element={<IndexPageContent blockType={BlockType.Source} />}
-              />
-              <Route
-                path="topics/:blockId/*"
-                element={<IndexPageContent blockType={BlockType.Topic} />}
-              />
-              <Route path="sources/*" element={<SourcesContent />} />
-              <Route
-                path="embeds/:blockId/*"
-                element={<IndexPageContent blockType={BlockType.Embed} />}
-              />
+      <GestureProvider>
+        <AppView title={appTitle}>
+          <Providers>
+            <Routes>
+              <Route path="/:accountId/*">
+                <Route
+                  path="pages/:id/*"
+                  element={
+                    <EditorPageProvider>
+                      <PageContent />
+                    </EditorPageProvider>
+                  }
+                />
+                <Route path="search/:query" element={<SearchContent />} />
+                <Route path="collections/:id" element={<GroupDetail />} />
+                <Route
+                  path="sources/:blockId/*"
+                  element={<IndexPageContent blockType={BlockType.Source} />}
+                />
+                <Route
+                  path="topics/:blockId/*"
+                  element={<IndexPageContent blockType={BlockType.Topic} />}
+                />
+                <Route path="sources/*" element={<SourcesContent />} />
+                <Route
+                  path="embeds/:blockId/*"
+                  element={<IndexPageContent blockType={BlockType.Embed} />}
+                />
+                <Route path="*" element={<NotFoundRedirect />} />
+              </Route>
               <Route path="*" element={<NotFoundRedirect />} />
-            </Route>
-            <Route path="*" element={<NotFoundRedirect />} />
-          </Routes>
-          <ModalManager />
-        </Providers>
-      </AppView>
+            </Routes>
+            <ModalManager />
+          </Providers>
+        </AppView>
+      </GestureProvider>
     </SearchProvider>
   )
 }

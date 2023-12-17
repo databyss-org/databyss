@@ -53,3 +53,11 @@ export const darkTheme = {
     ...theme.colors.modes.dark,
   },
 }
+
+export const darkContentTheme = {
+  ...theme,
+  colors: {
+    ...theme.colors,
+    ...theme.colors.modes.darkContent,
+  },
+}

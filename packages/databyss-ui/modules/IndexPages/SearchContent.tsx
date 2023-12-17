@@ -96,6 +96,7 @@ export const SearchContent = () => {
                 icon={<BlockSvg />}
                 tags={<IndexResultTags tags={_extraTags} />}
                 textVariant={_variant}
+                bindResults={false}
               />
             )
           })}
@@ -118,14 +119,14 @@ export const SearchContent = () => {
       ) : (
         <LoadingFallback
           queryObserver={searchRes}
-          showLongWaitMessage
-          longWaitMs={7000}
-          longWaitDialogOptions={{
-            message:
-              "<strong>⏳ Databyss is still building your search index, which may take a while but will allow fast searching once it's done.</strong>",
-            html: true,
-            showConfirmButtons: true,
-          }}
+          // showLongWaitMessage
+          // longWaitMs={7000}
+          // longWaitDialogOptions={{
+          //   message:
+          //     "<strong>⏳ Databyss is still building your search index, which may take a while but will allow fast searching once it's done.</strong>",
+          //   html: true,
+          //   showConfirmButtons: true,
+          // }}
         />
       )}
     </IndexPageView>

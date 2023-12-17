@@ -43,6 +43,7 @@ import {
   Grid,
   ViewProps,
   Button,
+  RawHtml,
 } from '@databyss-org/ui/primitives'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
@@ -57,11 +58,14 @@ import { setEmbed } from '@databyss-org/services/embeds'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { ResolveEmbed } from '@databyss-org/editor/components/ResolveEmbed'
 import { useQueryClient } from '@tanstack/react-query'
+import { textToHtml } from '@databyss-org/services/blocks/serialize'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 // import { useUserPreferencesContext } from '../../hooks'
 import IndexPageMenu from '../../components/IndexPage/IndexPageMenu'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
+import { darkTheme } from '../../theming/theme'
+import { ThemeProvider } from 'emotion-theming'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -78,11 +82,23 @@ export interface IndexPageTitleInputHandles {
 const getTitleFromBlock = (block: Block | undefined, path: string[]) =>
   block
     ? {
-        [BlockType.Source]: block.text.textValue,
+        [BlockType.Source]: (block as Source).name?.textValue,
         [BlockType.Topic]: block.text.textValue,
         [BlockType.Embed]: block.text.textValue,
       }[block.type]
     : path[path.length - 1]
+
+const setTitleOnBlock = (block: Block, title: string) => ({
+  ...block,
+  ...(block.type === BlockType.Source
+    ? { name: { textValue: title, ranges: [] } }
+    : {
+        text: {
+          ...block.text,
+          textValue: title,
+        },
+      }),
+})
 
 export const IndexPageTitleInput = ({
   path,
@@ -113,13 +129,8 @@ export const IndexPageTitleInput = ({
       if (!block) {
         return
       }
-      const _block: Block = {
-        ...block,
-        text: {
-          ...block.text,
-          textValue: value,
-        },
-      }
+      const _block = setTitleOnBlock(block, value)
+      queryClient.setQueryData([`useDocument_${_block._id}`], _block)
       switch (block!.type) {
         case BlockType.Topic:
           setTopic(_block, { pages: pagesRes.data, blocks: blocksRes.data })
@@ -134,7 +145,7 @@ export const IndexPageTitleInput = ({
           })
           break
       }
-    }, 3000),
+    }, 1000),
     [block]
   )
 
@@ -143,16 +154,6 @@ export const IndexPageTitleInput = ({
   const onChange = (value: string) => {
     // console.log('[IndexPageContent] onChange', value)
     setTitle(value)
-    if (block) {
-      const _block: Block = {
-        ...block,
-        text: {
-          ...block.text,
-          textValue: value,
-        },
-      }
-      queryClient.setQueryData([`useDocument_${_block._id}`], _block)
-    }
     setBlockText(value)
   }
 
@@ -207,7 +208,12 @@ const EmbedHeader = ({ block, ...others }: EmbedHeaderProps) => (
   <ResolveEmbed data={block} position="relative" {...others} />
 )
 
-const SourceTitleAndCitationView = () => null
+const SourceTitleAndCitationView = ({ source }: { source: Source }) =>
+  source ? (
+    <Text variant="uiTextNormal" mb="small" color="text.2">
+      <RawHtml html={textToHtml(source.text)} />
+    </Text>
+  ) : null
 
 export const IndexPageView = ({
   path,
@@ -281,6 +287,7 @@ export const IndexPageView = ({
           flex="1"
           pb="extraLarge"
           ref={scrollViewRef}
+          bg="background.0"
           {...others}
         >
           <Helmet>
@@ -314,7 +321,7 @@ export const IndexPageView = ({
             {block?.type === BlockType.Source &&
               (isReadOnly ? (
                 // <SourceTitleAndCitationView block={block} mb="small" />
-                <SourceTitleAndCitationView />
+                <SourceTitleAndCitationView source={block as Source} />
               ) : (
                 <View position="relative" mt="em" mb="small">
                   {/* <SourceTitleAndCitationView
@@ -323,7 +330,7 @@ export const IndexPageView = ({
                   zIndex={-1}
                 />
                  */}
-                  <SourceTitleAndCitationView />
+                  <SourceTitleAndCitationView source={block as Source} />
                   <Button
                     onPress={onPressDetails}
                     variant="uiTextButtonShaded"
@@ -428,6 +435,7 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
       block={blockRes.data}
       key={blockId}
       scrollViewRef={scrollViewRef}
+      theme={darkTheme}
     >
       <IndexResults
         relatedBlockId={blockId!}

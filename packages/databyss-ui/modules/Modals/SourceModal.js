@@ -5,25 +5,28 @@ import { useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { setSource } from '@databyss-org/services/sources'
 import CitationProvider from '@databyss-org/services/citations/CitationProvider'
-import { BlockType } from '@databyss-org/editor/interfaces'
 import { LoadingFallback, EditSourceForm } from '@databyss-org/ui/components'
+import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
+import { useQueryClient } from '@tanstack/react-query'
 
 const SourceModal = ({ refId, visible, onUpdate, id, untitledPlaceholder }) => {
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
-  const blocksRes = useBlocks(BlockType._ANY)
+  const blockRes = useDocument(refId)
   const pagesRes = usePages()
+  const queryClient = useQueryClient()
 
-  const source = blocksRes.isSuccess && blocksRes.data[refId]
+  const source = blockRes.isSuccess && blockRes.data
 
   const saveSource = useCallback(
     (values) => {
       if (!values?.text?.textValue.length) {
         values.text.textValue = untitledPlaceholder
       }
+      queryClient.setQueryData([`useDocument_${refId}`], values)
       setSource(values, {
         pages: pagesRes.data,
-        blocks: blocksRes.data,
+        // blocks: blocksRes.data,
       })
     },
     [setSource]
@@ -72,10 +75,10 @@ const SourceModal = ({ refId, visible, onUpdate, id, untitledPlaceholder }) => {
         dismissChild="done"
         canDismiss
       >
-        {blocksRes.isSuccess && values ? (
+        {blockRes.isSuccess && values ? (
           <EditSourceForm values={values} onChange={onChange} />
         ) : (
-          <LoadingFallback queryObserver={blocksRes} />
+          <LoadingFallback queryObserver={blockRes} />
         )}
       </ModalWindow>
     </CitationProvider>

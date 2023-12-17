@@ -50,15 +50,15 @@ const searchEntries = async ({
   encodedQuery,
   pages,
   blocks,
-  onUpdated,
-  allowStale,
+  // onUpdated,
+  // allowStale,
   localSearch,
 }: {
   encodedQuery: string
   pages: Page[]
   blocks: DocumentDict<Block>
-  onUpdated?: (res: SearchEntriesResultPage[]) => void
-  allowStale: boolean
+  // onUpdated?: (res: SearchEntriesResultPage[]) => void
+  // allowStale: boolean
   localSearch: boolean
 }): Promise<SearchEntriesResultPage[]> => {
   const _query = decodeURIComponent(encodedQuery)
@@ -241,15 +241,15 @@ const searchEntries = async ({
   if (localSearch) {
     const _res = await searchText({
       query: _query,
-      onUpdated: (_updatedRes) => {
-        if (!onUpdated) {
-          return
-        }
-        onUpdated(
-          _buildSearchEntriesResults(_updatedRes.rows as PouchDbSearchRow[])
-        )
-      },
-      allowStale,
+      // onUpdated: (_updatedRes) => {
+      //   if (!onUpdated) {
+      //     return
+      //   }
+      //   onUpdated(
+      //     _buildSearchEntriesResults(_updatedRes.rows as PouchDbSearchRow[])
+      //   )
+      // },
+      // allowStale,
     })
     _searchRows = _res.rows as PouchDbSearchRow[]
   } else {

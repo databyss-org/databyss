@@ -1,7 +1,7 @@
 import PouchDB from 'pouchdb-node'
 import PouchDBFind from 'pouchdb-find'
 import PouchDBUpsert from 'pouchdb-upsert'
-// import PouchDbQuickSearch from 'pouchdb-quick-search'
+import PouchDbQuickSearch from 'pouchdb-quick-search'
 import { BrowserWindow, app, ipcMain, ipcRenderer } from 'electron'
 import path from 'path'
 import fs from 'fs'
@@ -15,6 +15,7 @@ import { addTimeStamp } from '@databyss-org/data/pouchdb/docUtils'
 
 PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
+PouchDB.plugin(PouchDbQuickSearch)
 
 export const appDbPath = path.join(app.getPath('userData'), 'pouchdb')
 if (!fs.existsSync(appDbPath)) {

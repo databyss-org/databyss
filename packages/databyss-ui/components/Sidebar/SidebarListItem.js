@@ -54,7 +54,7 @@ const SidebarListItem = ({
   ...others
 }) => {
   const docRes = useDocument(data?._id, {
-    enabled: data !== null,
+    enabled: !!data?._id,
   })
   // console.log(docRes.data)
   const _controlHandle = useRef()

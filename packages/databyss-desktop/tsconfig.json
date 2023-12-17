@@ -17,5 +17,5 @@
     }
   },
   "include": ["src/**/*"],
-  "files": ["src/index.d.ts"]
+  "files": ["src/index.d.ts", "../databyss-data/pouchdb/interfaces/index.d.ts"]
 }

@@ -38,6 +38,11 @@ export class VouchDb {
   upsert(id: string, doc: object) {
     return eapi.db.upsert(id, doc)
   }
+
+  search(...args: Parameters<typeof eapi.db.search>) {
+    // console.log('[VouchDB] search', args)
+    return eapi.db.search(...args)
+  }
 }
 
 export const connect = (groupId) => {

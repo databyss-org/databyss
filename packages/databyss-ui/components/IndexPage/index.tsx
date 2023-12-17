@@ -42,6 +42,7 @@ export const IndexResultDetails = ({
   tags,
   textVariant,
   textOnly = false,
+  bindResults = true,
   ...others
 }) => {
   const res = useDocument<Block>(block._id)
@@ -92,6 +93,7 @@ export const IndexResultDetails = ({
           searchTerms: normalizedStemmedTerms,
           onInlineClick,
           textOnly,
+          bindResults,
         })}
       </Text>
       {tags}

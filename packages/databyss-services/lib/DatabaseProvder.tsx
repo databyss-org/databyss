@@ -38,7 +38,7 @@ export const DatabaseProvider = ({ children }) => {
   // console.log('[DatabaseProvider] groupId', dbRef.groupId)
 
   const updateDatabaseStatus = useCallback(() => {
-    console.log('[DatabaseProvider] update', databaseStatus, dbRef)
+    // console.log('[DatabaseProvider] update', databaseStatus, dbRef)
     setDatabaseStatus({
       isCouchMode: dbRef.current instanceof CouchDb,
       isDesktopMode: dbRef.current instanceof VouchDb,
@@ -63,7 +63,7 @@ export const DatabaseProvider = ({ children }) => {
     // check for group loaded by electron
     if (eapi) {
       eapi.db.getGroupId().then((groupId) => {
-        console.log('[DatabaseProvider] preload groupId', groupId)
+        // console.log('[DatabaseProvider] preload groupId', groupId)
         if (groupId !== null) {
           connect(groupId)
           updateDatabaseStatus()
