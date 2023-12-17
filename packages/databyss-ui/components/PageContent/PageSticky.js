@@ -2,18 +2,20 @@
 import React from 'react'
 import { StickyHeader } from '@databyss-org/ui/components'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import PageMenu from './PageMenu'
 
 const PageSticky = ({ pagePath, pageId }) => {
   const pagesRes = usePages()
+  const pageRes = useDocument(pageId)
 
   const currentPath = []
 
   const pages = pagesRes.data
 
   // get page title
-  if (pages?.[pageId]?.name) {
-    currentPath.push(pages[pageId].name)
+  if (pageRes.data?.name) {
+    currentPath.push(pageRes.data?.name)
   }
 
   // get page path

@@ -2,6 +2,7 @@ import React, { useImperativeHandle, useRef } from 'react'
 import { Text, BaseControl, View, Icon } from '@databyss-org/ui/primitives'
 import { pxUnits } from '../../theming/views'
 import { withKeyboardNavigation } from '../../primitives/List/KeyboardNavigationItem'
+import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 
 export const SidebarListRow = ({
   children,
@@ -41,6 +42,7 @@ export const SidebarListRow = ({
 const SidebarListItem = ({
   isActive,
   text,
+  data,
   href,
   icon,
   onPress,
@@ -51,6 +53,10 @@ const SidebarListItem = ({
   draggable,
   ...others
 }) => {
+  const docRes = useDocument(data?._id, {
+    enabled: data !== null,
+  })
+  // console.log(docRes.data)
   const _controlHandle = useRef()
   useImperativeHandle(navigationItemHandle, () => ({
     selectNavigationItem: () => {
@@ -62,6 +68,12 @@ const SidebarListItem = ({
     },
   }))
 
+  const _text =
+    docRes.data?.name?.textValue ??
+    docRes.data?.name ??
+    docRes.data?.text?.textValue ??
+    text
+
   return (
     <BaseControl
       data-test-element="page-sidebar-item"
@@ -72,7 +84,7 @@ const SidebarListItem = ({
       handle={_controlHandle}
       draggable={draggable}
     >
-      <SidebarListRow isActive={isActive} icon={icon} text={text} {...others}>
+      <SidebarListRow isActive={isActive} icon={icon} text={_text} {...others}>
         {children}
       </SidebarListRow>
     </BaseControl>

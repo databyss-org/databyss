@@ -4,21 +4,21 @@ import { initNodeDb, nodeDbRef, setGroupLoaded } from '../../nodeDb'
 export function registerDbHandlers() {
   ipcMain.handle('db-info', async () => await nodeDbRef.current?.info())
   ipcMain.on('db-loadGroup', (_, groupId: string) => {
-    console.log('[DB] loadGroup', groupId)
+    // console.log('[DB] loadGroup', groupId)
     initNodeDb(groupId)
     setGroupLoaded()
   })
   ipcMain.handle(
     'db-get',
     async (_, ...args: Parameters<typeof nodeDbRef.current.get>) => {
-      console.log('[DB] get', args)
+      // console.log('[DB] get', args)
       return await nodeDbRef.current?.get(...args)
     }
   )
   ipcMain.handle(
     'db-put',
     async (_, ...args: Parameters<typeof nodeDbRef.current.put>) => {
-      console.log('[DB] put', args)
+      // console.log('[DB] put', args)
       return await nodeDbRef.current?.put(...args)
     }
   )

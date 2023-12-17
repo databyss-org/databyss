@@ -14,6 +14,9 @@ import {
   PathTokens,
 } from './interfaces'
 
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('../../../../databyss-desktop/src/eapi').default
+
 interface ContextType extends NavigationState {
   location: Location
   setMenuOpen: (isOpen: boolean) => void
@@ -34,17 +37,16 @@ export const NavigationContext = createContext<ContextType>(null!)
 
 const sidebarItemAliases = {
   collections: 'groups',
+  embeds: 'media',
 }
 
 interface PropsType {
   initialState: NavigationState
-  electron?: boolean
 }
 
 export const NavigationProvider = ({
   children,
   initialState = new NavigationState(),
-  electron,
 }: PropsWithChildren<PropsType>) => {
   const [state, dispatch] = useReducer(reducer, initialState, {
     name: 'NavigationProvider',
@@ -52,9 +54,12 @@ export const NavigationProvider = ({
 
   const location = useLocation()
 
-  // store location in window.routerLocation if in electron mode
-  if (electron) {
-    ;(window as any).routerLocation = location
+  if (eapi) {
+    const _path = location.pathname.split('/')
+    if (_path.length > 3) {
+      // console.log('[NavigationProvider] set lastRoute', location.pathname)
+      eapi.state.set('lastRoute', location.pathname)
+    }
   }
 
   const navigateRouter = useNavigate()
@@ -80,8 +85,12 @@ export const NavigationProvider = ({
     navigateRouter(_url, { replace })
   }
 
-  const navigateSidebar = (options) =>
+  const navigateSidebar = (options) => {
+    if (eapi) {
+      eapi.state.set('lastSidebarRoute', options)
+    }
     dispatch(actions.navigateSidebar(options))
+  }
 
   const getQueryParams = () => location.search
 
@@ -117,11 +126,13 @@ export const NavigationProvider = ({
     return { type, params, anchor, author, nice }
   }
 
-  const getSidebarPath = () => {
-    const _path = state.sidebarPath.split('/')
-    const type = _path[1]
-    if (type) {
-      return type
+  const getSidebarPath = (derive?: boolean) => {
+    if (!derive) {
+      const _path = state.sidebarPath.split('/')
+      const type = _path[1]
+      if (type) {
+        return type
+      }
     }
 
     // determine path from location

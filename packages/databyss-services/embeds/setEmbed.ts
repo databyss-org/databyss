@@ -29,7 +29,7 @@ export const setEmbed = async (data: Embed, immediate?: boolean) => {
 
   console.log('[setEmbed]', _id, sharedWithGroups)
 
-  const _prevEmbed: Embed | null = await getDocument(_id)
+  // const _prevEmbed: Embed | null = await getDocument(_id)
 
   if (immediate) {
     await upsertImmediate(upsertData)
@@ -37,14 +37,14 @@ export const setEmbed = async (data: Embed, immediate?: boolean) => {
     await upsert(upsertData)
   }
 
-  if (
-    _prevEmbed &&
-    (_prevEmbed.text?.textValue !== text?.textValue ||
-      !equal(_prevEmbed.detail, detail))
-  )
-    await updateInlines({
-      inlineType: InlineTypes.Embed,
-      text,
-      _id,
-    })
+  // if (
+  //   _prevEmbed &&
+  //   (_prevEmbed.text?.textValue !== text?.textValue ||
+  //     !equal(_prevEmbed.detail, detail))
+  // )
+  //   await updateInlines({
+  //     inlineType: InlineTypes.Embed,
+  //     text,
+  //     _id,
+  //   })
 }

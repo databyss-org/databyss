@@ -41,17 +41,18 @@ export const Sidebar = () => {
           borderLeftWidth={pxUnits(1)}
         >
           <List
-            verticalItemPadding={0}
-            verticalItemMargin={pxUnits(10)}
+            verticalItemPadding={pxUnits(11)}
+            verticalItemMargin={0}
             horizontalItemPadding={0}
             height="100%"
             flexGrow={1}
             flexShrink={1}
             // mt={pxUnits(5)}
+            py={0}
             overflow="hidden"
           >
             {/* <Header /> */}
-            <Search />
+            <Search bg="gray.1" />
             {(menuItem === 'pages' || !menuItem) && <PageList />}
             {menuItem === 'references' && <ReferencesList />}
             {menuItem === 'sources' && (

@@ -50,12 +50,13 @@ const SidebarCollapsed = () => {
       title: 'Databyss',
       icon: <img src={DatabyssImg} />,
       sizeVariant: 'large',
-      // height: pxUnits(55),
+      height: pxUnits(58),
+      bg: 'gray.1',
       onClick: () => {
         setShowDatabyssMenu(!showDatabyssMenu)
       },
       hamburger: true,
-      pt: 'em',
+      pt: pxUnits(12),
     },
     {
       name: 'search',

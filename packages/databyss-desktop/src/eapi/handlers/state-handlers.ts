@@ -14,6 +14,8 @@ export interface StateData {
    * group in the window that last received focus.
    */
   lastActiveGroupId: string
+  lastRoute: string
+  lastSidebarRoute: string
 }
 
 class State extends EventEmitter {
@@ -22,6 +24,7 @@ class State extends EventEmitter {
     return this.data[key] as StateData[K]
   }
   set<K extends keyof StateData>(key: K, value: StateData[K]) {
+    console.log('[State] set', key, value)
     this.data[key] = value
     fs.writeFileSync(statePath, JSON.stringify(this.data))
     this.emit('valueChanged', key)
@@ -42,5 +45,5 @@ export const appState = new State()
 
 export function registerStateHandlers() {
   ipcMain.handle('state-get', (_, key) => appState.get(key))
-  ipcMain.handle('state-set', (_, key, value) => appState.set(key, value))
+  ipcMain.on('state-set', (_, key, value) => appState.set(key, value))
 }

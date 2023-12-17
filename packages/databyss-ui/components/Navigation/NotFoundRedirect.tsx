@@ -7,7 +7,7 @@ export const NotFoundRedirect = () => {
   )
   // if no page found, navigate to default page
   useEffect(() => {
-    console.log('[NotFoundRedirect] navigateToDefaultPage')
+    // console.log('[NotFoundRedirect] navigateToDefaultPage')
     navigateToDefaultPage()
   }, [])
 

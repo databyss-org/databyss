@@ -60,6 +60,8 @@ const SessionProvider = ({
   const { notify } = useNotifyContext()
   const location = useNavigationContext((c) => c && c.location)
   const navigate = useNavigationContext((c) => c && c.navigate)
+  const getSidebarPath = useNavigationContext((c) => c && c.getSidebarPath)
+  const navigateSidebar = useNavigationContext((c) => c && c.navigateSidebar)
   const { updateDatabaseStatus, setCouchMode } = useDatabaseContext()
   const groupRes = useGroups({
     enabled: !!dbRef.current && !!state.session?.publicAccount,
@@ -73,7 +75,7 @@ const SessionProvider = ({
     account: {
       _id: dbRef.groupId,
     },
-    defaultGroupId: dbRef.groupId,
+    defaultGroupId: `g_${dbRef.groupId}`,
   }
 
   const isPublicAccount = useCallback(() => {
@@ -373,7 +375,7 @@ const SessionProvider = ({
   const getDefaultPage = useCallback(
     (pages) => {
       const _pinning = stateRef.current.session?.publicAccount
-      console.log('[getDefaultPage]', _pinning)
+      // console.log('[getDefaultPage]', _pinning)
       return sortEntriesByRecent(Object.values(pages), null, _pinning).filter(
         (p) => !p.archive
       )[0]
@@ -396,6 +398,14 @@ const SessionProvider = ({
 
   const navigateToDefaultPage = useCallback(
     async (replace = true) => {
+      const _lastRoute = await eapi.state.get('lastRoute')
+      console.log('[SessionProvider] lastRoute', _lastRoute)
+      if (_lastRoute) {
+        navigate(_lastRoute)
+        navigateSidebar(getSidebarPath(true))
+        return
+      }
+
       while (!state.session.defaultGroupId) {
         await sleep(100)
       }

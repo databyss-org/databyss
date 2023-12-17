@@ -35,7 +35,7 @@ export const DatabaseProvider = ({ children }) => {
     groupId: null,
   })
 
-  console.log('[DatabaseProvider] groupId', dbRef.groupId)
+  // console.log('[DatabaseProvider] groupId', dbRef.groupId)
 
   const updateDatabaseStatus = useCallback(() => {
     console.log('[DatabaseProvider] update', databaseStatus, dbRef)

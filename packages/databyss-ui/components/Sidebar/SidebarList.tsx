@@ -85,8 +85,17 @@ const SidebarList = ({
         location.search ? `?${location.search}` : ''
       }`
     )
-    // console.log('[SidebarList]', _hrefCurrent, _hrefRoute)
-    return _hrefRoute === _hrefCurrent
+    // ignore differences in nice url by excluding last segment
+    const denicePath = (path: string) => {
+      const parts = path.split('/')
+      return parts.length > 4 ? parts.slice(0, -1).join('/') : path
+    }
+    // console.log(
+    //   '[SidebarList]',
+    //   denicePath(_hrefRoute),
+    //   denicePath(_hrefCurrent)
+    // )
+    return denicePath(_hrefRoute) === denicePath(_hrefCurrent)
   }
 
   const getDraggable = (item: SidebarListItemData<any>) => {
@@ -158,7 +167,7 @@ const SidebarList = ({
       flexGrow={1}
       {...others}
       my={0}
-      shadowOnScroll
+      // shadowOnScroll
     >
       <List
         orderKey={orderKey}
@@ -209,6 +218,7 @@ const SidebarList = ({
           return (
             <SidebarListItem
               isActive={getActiveItem(item)}
+              data={item.data}
               text={item.text}
               href={getHref(item)}
               key={`${item.type}-${index}`}

@@ -26,7 +26,7 @@ export const setSource = async (data: Source, caches?: DocumentCacheDict) => {
     sharedWithGroups,
   }
 
-  const _prevSource: SourceCitationHeader | null = await getDocument(_id)
+  // const _prevSource: SourceCitationHeader | null = await getDocument(_id)
 
   await upsertImmediate({
     doctype: DocumentType.Block,
@@ -34,14 +34,14 @@ export const setSource = async (data: Source, caches?: DocumentCacheDict) => {
     doc: blockFields,
   })
 
-  if (_prevSource && !sourcesEqual(_prevSource, blockFields)) {
-    await updateInlines({
-      inlineType: InlineTypes.InlineSource,
-      text: name,
-      _id,
-      caches,
-    })
-  }
+  // if (_prevSource && !sourcesEqual(_prevSource, blockFields)) {
+  //   await updateInlines({
+  //     inlineType: InlineTypes.InlineSource,
+  //     text: name,
+  //     _id,
+  //     caches,
+  //   })
+  // }
 }
 
 export default setSource

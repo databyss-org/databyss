@@ -93,13 +93,13 @@ export const IndexResults = ({
   // )
 
   // return useMemo(() => {
-  console.log('[indexResults] blockRelations', blockRelation)
+  // console.log('[indexResults] blockRelations', blockRelation)
   const _relations = addPagesToBlockRelation({
     blockRelation,
     pages,
     blocks,
   }).filter((r) => r.relatedBlock === relatedBlockId)
-  console.log('[indexResults]', _relations)
+  // console.log('[indexResults]', _relations)
 
   const groupedRelations = groupBlockRelationsByPage(_relations)
 

@@ -52,31 +52,31 @@ export const ResolveEmbed = ({
   }
 
   if (detail?.src?.startsWith('dbdrive://')) {
-    if (!isFetching) {
-      if (isPublicAccount()) {
-        // Return the remote drive URL so that the browser can load it over HTTP
-        const _groupId = getCurrentAccount()
-        const _src = `https://${process.env.DRIVE_HOST}/b/${_groupId}/${detail.fileDetail?.storageKey}`
-        waitForUrl({ url: _src, pollTimer: 2000, maxAttempts: 60 }).then(
-          (imgOk) => {
-            console.log('[ResolveEmbed]')
-            if (imgOk) {
-              setDetail({ ...detail, src: _src })
-            } else {
-              // TODO: show broken img placeholder
-            }
-          }
-        )
-        setIsFetching(true)
-      } else {
-        const _groupId = getAccountId()
-        const _fileId = detail.fileDetail?.storageKey
-        getFileUrl(_groupId, _fileId).then((url) => {
-          setDetail({ ...detail, src: url })
-        })
-        setIsFetching(true)
-      }
-    }
+    // if (!isFetching) {
+    //   if (isPublicAccount()) {
+    //     // Return the remote drive URL so that the browser can load it over HTTP
+    //     const _groupId = getCurrentAccount()
+    //     const _src = `https://${process.env.DRIVE_HOST}/b/${_groupId}/${detail.fileDetail?.storageKey}`
+    //     waitForUrl({ url: _src, pollTimer: 2000, maxAttempts: 60 }).then(
+    //       (imgOk) => {
+    //         console.log('[ResolveEmbed]')
+    //         if (imgOk) {
+    //           setDetail({ ...detail, src: _src })
+    //         } else {
+    //           // TODO: show broken img placeholder
+    //         }
+    //       }
+    //     )
+    //     setIsFetching(true)
+    //   } else {
+    //     const _groupId = getAccountId()
+    //     const _fileId = detail.fileDetail?.storageKey
+    //     getFileUrl(_groupId, _fileId).then((url) => {
+    //       setDetail({ ...detail, src: url })
+    //     })
+    //     setIsFetching(true)
+    //   }
+    // }
     return <LoadingFallback />
   }
 

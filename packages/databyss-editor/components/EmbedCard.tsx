@@ -4,6 +4,9 @@ import PlaySvg from '@databyss-org/ui/assets/play.svg'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
 import { isHttpInsecure } from './EmbedMedia'
 
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
+
 export interface EmbedCardProps {
   src: string
   mediaType: MediaTypes
@@ -26,6 +29,19 @@ export const EmbedCard = React.memo(
     ...others
   }: EmbedCardProps) => {
     const [mediaActive, setMediaActive] = useState(false)
+    console.log('[EmbedCard] src', imageSrc)
+    let _src = src
+    if (eapi && src.includes('media/proxy')) {
+      _src = decodeURIComponent(src.split('url=')[1])
+    }
+    let _mediaSrc = mediaSrc
+    if (eapi && mediaSrc?.includes('media/proxy')) {
+      _mediaSrc = decodeURIComponent(mediaSrc.split('url=')[1])
+    }
+    let _imageSrc = imageSrc
+    if (eapi && imageSrc?.includes('media/proxy')) {
+      _imageSrc = decodeURIComponent(imageSrc.split('url=')[1])
+    }
     return (
       <View
         backgroundColor="gray.6"
@@ -37,24 +53,24 @@ export const EmbedCard = React.memo(
           <>
             {mediaType !== MediaTypes.INSTAGRAM && title ? (
               <Text variant="uiTextSmall" color="gray.3" userSelect="none">
-                {siteName ?? formatHostname(src)}
+                {siteName ?? formatHostname(_src)}
               </Text>
             ) : (
               <Button
                 variant="uiLink"
                 textVariant="uiTextSmall"
                 textColor="blue.0"
-                href={src}
+                href={_src}
                 target="_blank"
               >
-                {siteName ?? formatHostname(src)}
+                {siteName ?? formatHostname(_src)}
               </Button>
             )}
             {mediaType !== MediaTypes.INSTAGRAM && (
               <Button
                 variant="uiLink"
                 textColor="blue.0"
-                href={src}
+                href={_src}
                 target="_blank"
                 mb="small"
               >
@@ -68,7 +84,7 @@ export const EmbedCard = React.memo(
             <Text variant="uiTextMultiline">{description}</Text>
           </View>
         )}
-        {imageSrc && (
+        {_imageSrc && (
           <View
             height={
               mediaType === MediaTypes.IMAGE ||
@@ -85,7 +101,7 @@ export const EmbedCard = React.memo(
               mediaActive
                 ? {}
                 : {
-                    backgroundImage: `url(${imageSrc})`,
+                    backgroundImage: `url(${_imageSrc})`,
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'contain',
                     backgroundPosition: 'center center',
@@ -95,9 +111,9 @@ export const EmbedCard = React.memo(
             {mediaActive ? (
               <iframe
                 seamless
-                id={mediaSrc}
-                title={mediaSrc}
-                src={`${mediaSrc}?autoplay=1`}
+                id={_mediaSrc}
+                title={_mediaSrc}
+                src={`${_mediaSrc}?autoplay=1`}
                 allow="autoplay"
                 frameBorder="0px"
                 width="100%"
@@ -106,7 +122,7 @@ export const EmbedCard = React.memo(
               />
             ) : (
               <>
-                {mediaSrc && (
+                {_mediaSrc && (
                   <View
                     backgroundColor="#00000055"
                     position="absolute"
@@ -121,7 +137,7 @@ export const EmbedCard = React.memo(
                   </View>
                 )}
                 <img
-                  src={imageSrc}
+                  src={_imageSrc}
                   alt={title}
                   style={{
                     opacity: 0,
@@ -139,7 +155,7 @@ export const EmbedCard = React.memo(
             )}
           </View>
         )}
-        {mediaType === MediaTypes.WEBSITE && !imageSrc && (
+        {mediaType === MediaTypes.WEBSITE && !_imageSrc && (
           <iframe
             src={proxySrc(src)}
             height="350px"
@@ -159,7 +175,7 @@ function formatHostname(src: string) {
 }
 
 function proxySrc(src: string) {
-  if (isHttpInsecure(src)) {
+  if (!eapi && isHttpInsecure(src)) {
     return `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(src!)}`
   }
   return src

@@ -56,6 +56,7 @@ import { updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
 import { setEmbed } from '@databyss-org/services/embeds'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { ResolveEmbed } from '@databyss-org/editor/components/ResolveEmbed'
+import { useQueryClient } from '@tanstack/react-query'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 // import { useUserPreferencesContext } from '../../hooks'
@@ -91,6 +92,7 @@ export const IndexPageTitleInput = ({
 }: IndexPageViewProps) => {
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const [title, setTitle] = useState(getTitleFromBlock(block, path))
+  const queryClient = useQueryClient()
   const { navigate } = useNavigationContext()
   const blocksRes = useBlocks(BlockType._ANY)
   const pagesRes = usePages()
@@ -141,6 +143,16 @@ export const IndexPageTitleInput = ({
   const onChange = (value: string) => {
     // console.log('[IndexPageContent] onChange', value)
     setTitle(value)
+    if (block) {
+      const _block: Block = {
+        ...block,
+        text: {
+          ...block.text,
+          textValue: value,
+        },
+      }
+      queryClient.setQueryData([`useDocument_${_block._id}`], _block)
+    }
     setBlockText(value)
   }
 
@@ -379,7 +391,7 @@ export const getPathFromBlock = (block: Block) => {
   const indexName = {
     [BlockType.Source]: 'Sources',
     [BlockType.Topic]: 'Topics',
-    [BlockType.Embed]: 'Embeds',
+    [BlockType.Embed]: 'Media',
   }[block.type]
   if (indexName) {
     path.push(indexName)
@@ -390,6 +402,7 @@ export const getPathFromBlock = (block: Block) => {
 export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const { blockId } = useParams()
   const blocksRes = useBlocks(BlockType._ANY)
+  const blockRes = useDocument<Block>(blockId!)
   const pagesRes = usePages()
   const scrollViewRef = useRef<HTMLElement | null>(null)
   const restoreScroll = useScrollMemory(scrollViewRef)
@@ -406,16 +419,13 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   if (queryRes.some((q) => !q.isSuccess)) {
     return <LoadingFallback queryObserver={queryRes} />
   }
-  if (
-    !blocksRes.data?.[blockId!] ||
-    blocksRes.data[blockId!].type !== blockType
-  ) {
-    return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
+  if (!blockRes.data || blockRes.data.type !== blockType) {
+    return <LoadingFallback queryObserver={[blockRes, pagesRes]} />
   }
   return (
     <IndexPageView
-      path={getPathFromBlock(blocksRes.data![blockId!])}
-      block={blocksRes.data![blockId!]}
+      path={getPathFromBlock(blockRes.data)}
+      block={blockRes.data}
       key={blockId}
       scrollViewRef={scrollViewRef}
     >

@@ -20,14 +20,14 @@ const setTopic = async (data: Topic, caches?: DocumentCacheDict) => {
     },
   })
 
-  if (_prevTopic && !topicsEqual(_prevTopic, data)) {
-    await updateInlines({
-      inlineType: InlineTypes.InlineTopic,
-      text,
-      _id,
-      caches,
-    })
-  }
+  // if (_prevTopic && !topicsEqual(_prevTopic, data)) {
+  //   await updateInlines({
+  //     inlineType: InlineTypes.InlineTopic,
+  //     text,
+  //     _id,
+  //     caches,
+  //   })
+  // }
 }
 
 export default setTopic
