@@ -15,15 +15,20 @@ import { sidebar } from '@databyss-org/ui/theming/components'
 import { Page, Group } from '@databyss-org/services/interfaces'
 import { savePage } from '@databyss-org/services/editorPage'
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
+import { useQueryClient } from '@tanstack/react-query'
+import { selectors } from '@databyss-org/data/pouchdb/selectors'
+import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
+// import { dbRef } from '@databyss-org/data/db'
 
 const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const { navigate, navigateSidebar, getSidebarPath } = useNavigationContext()
+  const queryClient = useQueryClient()
 
   const sidebarPath = getSidebarPath()
 
-  const onNewPageClick = () => {
+  const onNewPageClick = async () => {
     if (sidebarPath === 'groups') {
       const _group = new Group(UNTITLED_NAME)
       saveGroup(_group).then(() => navigate(`/collections/${_group._id}`))
@@ -31,7 +36,14 @@ const Footer = ({ collapsed }) => {
     }
 
     const _page = new Page()
-    savePage(_page).then(() => navigate(`/pages/${_page._id}`))
+
+    await savePage(_page)
+    const _newPage = await dbRef.current!.get(_page._id)
+    queryClient.setQueryData([selectors.PAGES], (oldData: any) => ({
+      ...(oldData ?? {}),
+      [_page._id]: _newPage,
+    }))
+    navigate(`/pages/${_page._id}`)
 
     navigateSidebar('/pages')
   }
@@ -76,7 +88,7 @@ const Footer = ({ collapsed }) => {
             <View
               flexDirection="row"
               justifyContent="space-between"
-              flexGrow="1"
+              flexGrow={1}
             >
               <Text variant="uiTextNormal" color="text.2" ml="small">
                 {create.text}

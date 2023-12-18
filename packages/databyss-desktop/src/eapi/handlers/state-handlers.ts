@@ -24,7 +24,7 @@ class State extends EventEmitter {
     return this.data[key] as StateData[K]
   }
   set<K extends keyof StateData>(key: K, value: StateData[K]) {
-    console.log('[State] set', key, value)
+    // console.log('[State] set', key, value)
     this.data[key] = value
     fs.writeFileSync(statePath, JSON.stringify(this.data))
     this.emit('valueChanged', key)

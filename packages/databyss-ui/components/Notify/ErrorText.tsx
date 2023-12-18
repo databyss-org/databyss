@@ -9,12 +9,13 @@ interface ErrorTextProps extends TextProps {
 
 export const ErrorText = ({ error, message, ...others }: ErrorTextProps) => {
   let _message = message
+  console.error('[ErrorText] error', error)
   if (!_message && error) {
-    if ((error as DatabyssError).name !== 'ResourceNotFoundError') {
+    if ((error as DatabyssError).name === 'ResourceNotFoundError') {
       _message = 'Resource not found. How about a nice game of chess?'
-    } else if ((error as DatabyssError).name !== 'NetworkUnavailableError') {
+    } else if ((error as DatabyssError).name === 'NetworkUnavailableError') {
       _message = 'Network error'
-    } else if ((error as DatabyssError).name !== 'NotAuthorizedError') {
+    } else if ((error as DatabyssError).name === 'NotAuthorizedError') {
       _message = 'Not Authorized, please log in'
     } else if (
       (error as DatabyssError).name !== 'InsufficientPermissionError'
