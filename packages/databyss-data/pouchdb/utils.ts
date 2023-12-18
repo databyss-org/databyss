@@ -3,13 +3,14 @@ import { throttle } from 'lodash'
 import { Document, Group } from '@databyss-org/services/interfaces'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { DocumentType, UserPreference } from './interfaces'
-import { dbRef, pouchDataValidation } from './db'
+import { dbRef, pouchDataValidation, selectors } from './db'
 import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
 import { getGroupActionQ } from './groups/utils'
 import { CouchDb } from '../couchdb/couchdb'
 import { VouchDb } from '../vouchdb/vouchdb'
 import { addTimeStamp } from './docUtils'
+import { QueryClient } from '@tanstack/query-core'
 
 const INTERVAL_TIME = 1000
 
@@ -283,11 +284,25 @@ export const upsertPouch = (
     return newDoc
   })
 }
-
-export const updateAccessedAt = (_id: string) =>
-  upsertPouch(_id, {
+type ValueOf<T> = T[keyof T]
+export const updateAccessedAt = (
+  _id: string,
+  queryClient: QueryClient,
+  selector: ValueOf<typeof selectors>
+) => {
+  const fds = {
     accessedAt: Date.now(),
-  })
+  }
+  upsertPouch(_id, fds)
+  queryClient.setQueryData([selector], (oldData: any) =>
+    oldData
+      ? {
+          ...oldData,
+          [_id]: { ...oldData[_id], ...fds },
+        }
+      : oldData
+  )
+}
 
 export const updateSharedWithGroups = ({
   _id,

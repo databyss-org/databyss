@@ -33,7 +33,10 @@ export function fetchPage(_id: string, firstBlockIsTitle: boolean) {
     })
     pPage
       .then(async (page) => {
-        if (firstBlockIsTitle && !(page instanceof ResourceNotFoundError)) {
+        if (page instanceof Error) {
+          throw page
+        }
+        if (firstBlockIsTitle) {
           await ensureTitleBlock(page)
         }
         dispatch({

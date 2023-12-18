@@ -66,6 +66,7 @@ import IndexPageMenu from '../../components/IndexPage/IndexPageMenu'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 import { darkTheme } from '../../theming/theme'
 import { ThemeProvider } from 'emotion-theming'
+import { selectors } from '@databyss-org/data/pouchdb/selectors'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -232,6 +233,7 @@ export const IndexPageView = ({
   const titleInputHandlesRef = useRef<IndexPageTitleInputHandles>(null)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const queryClient = useQueryClient()
 
   const onUpdateBlock = (block: Block) => {
     titleInputHandlesRef.current?.updateTitle(block)
@@ -251,10 +253,20 @@ export const IndexPageView = ({
     block?.type === BlockType.Source
       ? (block as Source).name?.textValue ?? block.text.textValue
       : block?.text.textValue
+  const blockTypeToSelector = (blockType: BlockType) =>
+    ({
+      [BlockType.Embed]: selectors.EMBEDS,
+      [BlockType.Source]: selectors.SOURCES,
+      [BlockType.Topic]: selectors.TOPICS,
+    }[blockType])
   useEffect(() => {
     if (block) {
       if (block && !isPublicAccount()) {
-        updateAccessedAt(block!._id)
+        updateAccessedAt(
+          block!._id,
+          queryClient,
+          blockTypeToSelector(block.type)
+        )
       }
       const path = getTokensFromPath()
       const niceName = urlSafeName(blockName!)

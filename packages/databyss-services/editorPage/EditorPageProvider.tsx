@@ -10,6 +10,8 @@ import {
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
 import { uid } from '@databyss-org/data/lib/uid'
+import { useQueryClient } from '@tanstack/react-query'
+import { selectors } from '@databyss-org/data/pouchdb/selectors'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -22,7 +24,7 @@ import {
   BlockType,
   Block,
 } from '../interfaces'
-import { PageReplicator } from './PageReplicator'
+// import { PageReplicator } from './PageReplicator'
 import * as actions from './actions'
 import { useSessionContext } from '../session/SessionProvider'
 import { uploadEmbed } from '../embeds'
@@ -74,6 +76,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
   const { anchor } = getTokensFromPath()
+  const queryClient = useQueryClient()
 
   const pageIdParams = useParams()
   let pageId
@@ -140,21 +143,31 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         return state.cache[id]
       }
       if (!isPublicAccount()) {
-        updateAccessedAt(id)
+        updateAccessedAt(id, queryClient, selectors.PAGES)
       }
       dispatch(actions.fetchPage(id, firstBlockIsTitle))
+
       return null
     },
     [JSON.stringify(state.cache), pagesRes.data]
   )
 
   const deletePage = (id: string) => {
+    queryClient.setQueryData([selectors.PAGES], (oldData: any) => {
+      const nextData = { ...oldData }
+      delete nextData[id]
+      return nextData
+    })
     dispatch(actions.deletePage(id))
   }
 
   const archivePage = useCallback(
     (id: string, boolean: boolean): Promise<void> =>
       new Promise((res) => {
+        queryClient.setQueryData([selectors.PAGES], (oldData: any) => ({
+          ...oldData,
+          [id]: { ...oldData[id], archive: boolean },
+        }))
         dispatch(actions.onArchivePage(id, state.cache[id], boolean, res))
       }),
     [state.cache]

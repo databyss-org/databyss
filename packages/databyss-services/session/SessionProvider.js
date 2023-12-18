@@ -385,28 +385,29 @@ const SessionProvider = ({
     [stateRef.current]
   )
 
-  const getDefaultPageUrl = useCallback(
-    ({ pages, defaultGroupName, defaultGroupId }) => {
-      let _groupName = ''
-      if (defaultGroupName) {
-        _groupName = `${urlSafeName(defaultGroupName)}-`
-      }
-      const defaultPage = getDefaultPage(pages)
-      const pageUrl = `${defaultPage._id}/${urlSafeName(defaultPage.name)}`
-      return `/${_groupName}${defaultGroupId.substring(2)}/pages/${pageUrl}`
-    },
-    []
-  )
+  const getDefaultPageUrl = useCallback(({ pages, defaultGroupId }) => {
+    // let _groupName = ''
+    // if (defaultGroupName) {
+    //   _groupName = `${urlSafeName(defaultGroupName)}-`
+    // }
+    const defaultPage = getDefaultPage(pages)
+    const pageUrl = `${defaultPage._id}/${urlSafeName(defaultPage.name)}`
+    // return `/${_groupName}${defaultGroupId.substring(2)}/pages/${pageUrl}`
+    return `/${defaultGroupId}/pages/${pageUrl}`
+  }, [])
 
   const navigateToDefaultPage = useCallback(
     async (replace = true) => {
       const _lastRoute = await eapi.state.get('lastRoute')
-      console.log(
-        '[SessionProvider] lastRoute',
-        _lastRoute,
-        state.session.defaultGroupId
-      )
-      if (_lastRoute?.includes(state.session.defaultGroupId)) {
+      // console.log(
+      //   '[SessionProvider] lastRoute',
+      //   _lastRoute,
+      //   state.session.defaultGroupId
+      // )
+      if (
+        _lastRoute?.includes(state.session.defaultGroupId) &&
+        _lastRoute !== location.pathname
+      ) {
         navigate(_lastRoute)
         navigateSidebar(getSidebarPath(true))
         return
@@ -419,7 +420,7 @@ const SessionProvider = ({
       //   '[SessionProvider] defaultGroupId',
       //   state.session.defaultGroupId
       // )
-      const { defaultGroupName, defaultGroupId } = state.session
+      const { defaultGroupId } = state.session
 
       // return most recently accessed page
       let pages = null
@@ -428,12 +429,12 @@ const SessionProvider = ({
         pages = queryClient.getQueryData([selectors.PAGES])
       } while (!pages)
 
-      navigate(getDefaultPageUrl({ pages, defaultGroupName, defaultGroupId }), {
+      navigate(getDefaultPageUrl({ pages, defaultGroupId }), {
         hasAccount: true,
         replace,
       })
     },
-    [getDefaultPage, state.session]
+    [getDefaultPage, state.session, location]
   )
 
   useEffect(() => {
