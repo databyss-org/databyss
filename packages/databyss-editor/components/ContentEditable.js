@@ -88,6 +88,18 @@ const ContentEditable = ({
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
+  const safelyResetSelection = () => {
+    const _selection = {
+      anchor: { index: 0, offset: 0 },
+      focus: { index: 0, offset: 0 },
+    }
+    const _slateSelection = stateSelectionToSlateSelection(
+      editor.children,
+      _selection
+    )
+    Transforms.select(editor, _slateSelection)
+  }
+
   try {
     if (!valueRef.current || state.operations.reloadAll) {
       let _scroll = null
@@ -101,11 +113,14 @@ const ContentEditable = ({
           editor.children,
           state.selection
         )
-
-        Transforms.select(editor, selection)
-
         if (!state.operations.reloadAll) {
+          Transforms.select(editor, selection)
           setSelection(state.selection)
+        } else {
+          safelyResetSelection()
+          requestAnimationFrame(() => {
+            Transforms.select(editor, selection)
+          })
         }
       }
       if (_scroll) {
@@ -901,16 +916,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
     const onFocus = () => {
       setTimeout(() => {
         if (!editor.selection) {
-          const _selection = {
-            anchor: { index: 0, offset: 0 },
-            focus: { index: 0, offset: 0 },
-          }
-          const _slateSelection = stateSelectionToSlateSelection(
-            editor.children,
-            _selection
-          )
-
-          Transforms.select(editor, _slateSelection)
+          safelyResetSelection()
           ReactEditor.focus(editor)
         }
       }, 5)

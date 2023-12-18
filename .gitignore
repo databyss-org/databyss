@@ -83,3 +83,4 @@ config.json
 
 # electron
 .webpack/
+out/

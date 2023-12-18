@@ -22,6 +22,7 @@
     "build:notes": "NODE_ENV=production NPM_DEPLOY_TARGET=NOTES_APP yarn build",
     "build:homepage": "NODE_ENV=production NPM_DEPLOY_TARGET=HOMEPAGE yarn build",
     "build:mobile": "NODE_ENV=production NPM_DEPLOY_TARGET=NOTES_MOBILE REACT_APP_FORCE_MOBILE=true yarn build",
+    "build:desktop": "NODE_ENV=production NPM_BUILD_TARGET=NOTES_APP electron-forge make",
     "start": "bash scripts/start.sh",
     "start:pouchdb": "pouchdb-server --port 5001 -d ../pouchdb_data -c ./config/pouchdbServer.json",
     "start:api": "PORT=5000 NODE_ENV=production NPM_DEPLOY_TARGET=API_SERVER yarn start",
