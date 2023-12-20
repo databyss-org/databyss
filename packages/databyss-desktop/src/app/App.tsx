@@ -1,25 +1,11 @@
-import React, { useState } from 'react'
-import { Base64 } from 'js-base64'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import React from 'react'
+import { QueryClientProvider } from '@tanstack/react-query'
 import SessionProvider from '@databyss-org/services/session/SessionProvider'
 import { DatabaseProvider } from '@databyss-org/services/lib/DatabaseProvder'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
+import { queryClient } from '@databyss-org/services/lib/queryClient'
 import { Viewport, useNavigationContext } from '@databyss-org/ui'
 import { Private } from './Private'
-
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // Disable window focus refetching globally for all react-query hooks
-      // see: https://react-query.tanstack.com/guides/window-focus-refetching
-      refetchOnWindowFocus: false,
-      // Never set queries as stale
-      staleTime: Infinity,
-      cacheTime: Infinity,
-      networkMode: 'always',
-    },
-  },
-})
 
 export const App = () => {
   const { location } = useNavigationContext()

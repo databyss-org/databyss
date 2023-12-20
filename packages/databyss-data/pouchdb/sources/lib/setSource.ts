@@ -8,6 +8,8 @@ import { getDocument, upsertImmediate } from '../../utils'
 import { InlineTypes } from '../../../../databyss-services/interfaces/Range'
 import { updateInlines } from '../../../../databyss-editor/lib/inlineUtils/updateInlines'
 import { sourcesEqual } from '../../compare'
+import { selectors } from '../../selectors'
+import { queryClient } from '@databyss-org/services/lib/queryClient'
 
 export const setSource = async (data: Source, caches?: DocumentCacheDict) => {
   const { text, detail, _id, sharedWithGroups } = data as any
@@ -27,6 +29,15 @@ export const setSource = async (data: Source, caches?: DocumentCacheDict) => {
   }
 
   // const _prevSource: SourceCitationHeader | null = await getDocument(_id)
+
+  // update caches
+  ;[selectors.SOURCES, selectors.BLOCKS].forEach((selector) =>
+    queryClient.setQueryData([selector], (oldData: any) => ({
+      ...(oldData ?? {}),
+      [_id]: blockFields,
+    }))
+  )
+  queryClient.setQueryData([`useDocument_${_id}`], blockFields)
 
   await upsertImmediate({
     doctype: DocumentType.Block,

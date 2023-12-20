@@ -1,18 +1,28 @@
 import { BlockRelation, BlockType } from '@databyss-org/services/interfaces'
 import { BlockRelationOperation } from '@databyss-org/editor/interfaces'
-import { getDocument, updateSharedWithGroups, upsert } from '../../utils'
+import { QueryClient } from '@tanstack/query-core'
+import {
+  getDocument,
+  updateSharedWithGroups,
+  // upsert,
+  upsertImmediate,
+} from '../../utils'
 import { DocumentType, PageDoc } from '../../interfaces'
 import {
   removeGroupsFromDocument,
   addGroupToDocument,
 } from '../../groups/index'
+import { blockTypeToRelationSelector } from '../../selectors'
 
-const setBlockRelations = async (payload: {
-  _id: string
-  type: BlockType
-  page: string
-  operationType: BlockRelationOperation
-}) => {
+const setBlockRelations = async (
+  payload: {
+    _id: string
+    type: BlockType
+    page: string
+    operationType: BlockRelationOperation
+  },
+  queryClient: QueryClient
+) => {
   const { _id, page, operationType, type } = payload
 
   let sharedWithGroups: string[] = []
@@ -31,9 +41,19 @@ const setBlockRelations = async (payload: {
     pages: [],
   }
 
-  console.log('[setBlockRelations]', operationType, _payload)
-
   const res = await getDocument<BlockRelation>(_relationId)
+
+  const updateCache = (doc: BlockRelation) => {
+    console.log('[setBlockRelations]', doc)
+    queryClient.setQueryData(
+      [blockTypeToRelationSelector(type)],
+      (oldData: any) => ({
+        ...(oldData ?? {}),
+        [doc._id]: doc,
+      })
+    )
+    queryClient.setQueryData([`useDocument_${doc._id}`], doc)
+  }
 
   // if no relation exists for atomic, create one
   if (!res) {
@@ -51,7 +71,8 @@ const setBlockRelations = async (payload: {
       doctype: DocumentType.BlockRelation,
     })
 
-    upsert({
+    updateCache(_payload)
+    upsertImmediate({
       doctype: DocumentType.BlockRelation,
       _id: _relationId,
       doc: _payload,
@@ -70,7 +91,8 @@ const setBlockRelations = async (payload: {
         await removeGroupsFromDocument(_groupsToRemove, res)
       }
 
-      upsert({
+      updateCache(_payload)
+      upsertImmediate({
         doctype: DocumentType.BlockRelation,
         _id: _relationId,
         doc: _payload,
@@ -94,7 +116,8 @@ const setBlockRelations = async (payload: {
     // add sharedWithGroups to entity
     await updateSharedWithGroups({ _id, sharedWithGroups })
 
-    upsert({
+    updateCache(_payload)
+    upsertImmediate({
       doctype: DocumentType.BlockRelation,
       _id: _relationId,
       doc: _payload,

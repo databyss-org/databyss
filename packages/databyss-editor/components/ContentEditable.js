@@ -10,10 +10,14 @@ import { EM, updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { setSource } from '@databyss-org/services/sources'
 import { setEmbed } from '@databyss-org/services/embeds'
-import { setBlockRelations } from '@databyss-org/services/entries'
 import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { copyToClipboard } from '@databyss-org/ui/components/PageContent/PageMenu'
+import { useQueryClient } from '@tanstack/react-query'
+import {
+  blockTypeToSelector,
+  selectors,
+} from '@databyss-org/data/pouchdb/selectors'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -54,6 +58,8 @@ import {
   onLinkBackspace,
 } from '../lib/inlineUtils'
 import { loadPage } from '../../databyss-services/editorPage'
+import { setBlockRelations } from '@databyss-org/data/pouchdb/entries'
+import { BlockType } from '../interfaces'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -68,7 +74,7 @@ const ContentEditable = ({
   const editorContext = useEditorContext()
   const editorRef = useRef(null)
   const { navigate } = useNavigationContext()
-
+  const queryClient = useQueryClient()
   const historyContext = useHistoryContext()
 
   const {
@@ -119,7 +125,11 @@ const ContentEditable = ({
         } else {
           safelyResetSelection()
           requestAnimationFrame(() => {
-            Transforms.select(editor, selection)
+            try {
+              Transforms.select(editor, selection)
+            } catch (e) {
+              console.warn('[ContentEditable] err', e)
+            }
           })
         }
       }
@@ -144,7 +154,7 @@ const ContentEditable = ({
         _id: e._id,
         page: state.pageHeader?._id,
       }
-      setBlockRelations(_payload)
+      setBlockRelations(_payload, queryClient)
     })
   }, [state.removedEntities])
 
@@ -181,25 +191,21 @@ const ContentEditable = ({
           })
         }
 
-        const _types = {
-          SOURCE: () => {
-            if (_data) {
+        if (_data) {
+          const _types = {
+            SOURCE: () => {
               window.requestAnimationFrame(() => setSource(_data))
-            }
-          },
-          TOPIC: () => {
-            if (_data) {
+            },
+            TOPIC: () => {
               window.requestAnimationFrame(() => setTopic(_data))
-            }
-          },
-          EMBED: () => {
-            if (_data) {
+            },
+            EMBED: () => {
               window.requestAnimationFrame(() => setEmbed(_data))
-            }
-          },
-          LINK: () => null,
+            },
+            LINK: () => null,
+          }
+          _types[entity.type.toUpperCase()]()
         }
-        _types[entity.type.toUpperCase()]()
 
         // set BlockRelation property
         const _payload = {
@@ -209,9 +215,13 @@ const ContentEditable = ({
           page: state.pageHeader?._id,
         }
 
-        updateAccessedAt(entity._id)
+        updateAccessedAt(
+          entity._id,
+          queryClient,
+          blockTypeToSelector(entity.type)
+        )
 
-        setBlockRelations(_payload)
+        setBlockRelations(_payload, queryClient)
         removeEntityFromQueue(entity._id)
       })
     }

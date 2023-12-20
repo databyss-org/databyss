@@ -20,6 +20,8 @@ import {
 } from '@databyss-org/editor/state/util'
 import { UNTITLED_PAGE_NAME } from '@databyss-org/services/interfaces'
 import _, { debounce } from 'lodash'
+import { queryClient } from '@databyss-org/services/lib/queryClient'
+import { selectors } from '@databyss-org/data/pouchdb/selectors'
 
 export const PageBody = ({
   page,
@@ -88,6 +90,21 @@ export const PageBody = ({
     ) {
       const { _id } = value.nextState.pageHeader
       const _page = { blocks: _nextBlocks, _id }
+
+      // update page cache
+      console.log('[PageBody] update pages cache', _page)
+      queryClient.setQueryData([selectors.PAGES], (oldData) =>
+        oldData
+          ? {
+              ...oldData,
+              [_page._id]: {
+                ...oldData[_page._id],
+                ..._page,
+              },
+            }
+          : oldData
+      )
+
       upsert({ doctype: DocumentType.Page, _id: _page._id, doc: _page })
     }
   }

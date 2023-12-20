@@ -29,7 +29,7 @@ export const EmbedCard = React.memo(
     ...others
   }: EmbedCardProps) => {
     const [mediaActive, setMediaActive] = useState(false)
-    console.log('[EmbedCard] src', imageSrc)
+    // console.log('[EmbedCard] src', imageSrc)
     let _src = src
     if (eapi && src.includes('media/proxy')) {
       _src = decodeURIComponent(src.split('url=')[1])

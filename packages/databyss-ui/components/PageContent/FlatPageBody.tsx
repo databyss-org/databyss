@@ -46,6 +46,11 @@ import { useSearchContext } from '../../hooks'
 import { useNavigationContext } from '../Navigation'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 import forkRef from '../../lib/forkRef'
+import {
+  DbDocument,
+  DocumentType,
+  PageDoc,
+} from '@databyss-org/data/pouchdb/interfaces'
 
 export const FlatBlock = ({
   index,
@@ -282,19 +287,24 @@ export function BoundLeafComponent({
   children: ReactNode
   escapeFn: (_s: string, _key?: string) => ReactNode
 }) {
-  const _blockRes = useDocument(leaf.atomicId!, {
+  const _docRes = useDocument<DbDocument>(leaf.atomicId!, {
     enabled: !!leaf.atomicId,
   })
-  const _block: Block = _blockRes.data as Block
   // console.log('[BoundLeafComponent] block', _block)
-  const _symbol = inlineTypeToSymbol(atomicTypeToInlineRangeType(_block?.type))
+  let _symbol = ''
   let _text = leaf.text
   let _leaf = leaf
   let _children = children
-  if (_blockRes.isSuccess) {
-    _text = `${_symbol}${_block?.text?.textValue}`
-    if (_block.type === BlockType.Source) {
-      _text = (_block as Source).name?.textValue ?? _text
+  if (_docRes.isSuccess && _docRes.data) {
+    if (_docRes.data.doctype === DocumentType.Page) {
+      _text = ((_docRes.data as unknown) as PageDoc).name
+    } else {
+      const _block: Block = (_docRes.data as unknown) as Block
+      _symbol = inlineTypeToSymbol(atomicTypeToInlineRangeType(_block?.type))
+      _text = `${_symbol}${_block?.text?.textValue}`
+      if (_block.type === BlockType.Source) {
+        _text = (_block as Source).name?.textValue ?? _text
+      }
     }
     _leaf = {
       ...leaf,
@@ -321,7 +331,7 @@ export function renderTextToComponents({
   onInlineClick,
   escapeFn = (_s: string) => _s,
   textOnly,
-  bindResults,
+  bindAtomicId,
 }: {
   key: string
   text: Text
@@ -329,7 +339,7 @@ export function renderTextToComponents({
   onInlineClick: (d: InlineAtomicDef) => void
   escapeFn?: (_s: string, _key?: string) => ReactNode
   textOnly?: boolean
-  bindResults?: boolean
+  bindAtomicId?: string
 }): ReactNode {
   if (!text) {
     return null
@@ -340,7 +350,7 @@ export function renderTextToComponents({
   // add link ranges
   _ranges = _ranges.concat(createLinkRangesForUrls(_text))
 
-  if (searchTerms && !bindResults) {
+  if (searchTerms && !bindAtomicId) {
     _ranges = _ranges.concat(createHighlightRanges(_text, searchTerms))
   }
 
@@ -354,8 +364,6 @@ export function renderTextToComponents({
 
   let _lastRangeEnd = 0
 
-  const LEAF_COMPONENT = bindResults ? BoundLeafComponent : LeafComponent
-
   return (
     <>
       {_ranges.reduce((_components: ReactNode[], _range, _idx) => {
@@ -366,6 +374,10 @@ export function renderTextToComponents({
         )
         _lastRangeEnd = _range.offset + _range.length
         const _leaf = rangeToLeaf(_range.marks, _segment)
+        const LEAF_COMPONENT =
+          bindAtomicId && _leaf.atomicId === bindAtomicId
+            ? BoundLeafComponent
+            : LeafComponent
         return _components.concat([
           _before.length ? escapeFn(_before, `${key}.${_idx}b`) : null,
           <LEAF_COMPONENT

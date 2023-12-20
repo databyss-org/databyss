@@ -214,6 +214,7 @@ export const atomicTypeToInlineRangeType = (type: BlockType): InlineTypes => {
     [BlockType.Source]: InlineTypes.InlineSource,
     [BlockType.Topic]: InlineTypes.InlineTopic,
     [BlockType.Embed]: InlineTypes.Embed,
+    [BlockType.Link]: InlineTypes.Link,
   }
 
   const inlineType: InlineTypes = getSymbolObj[type]
@@ -225,6 +226,7 @@ export const atomicTypeToSymbol = (type: BlockType): string => {
   const getSymbolObj = {
     [BlockType.Source]: '@',
     [BlockType.Topic]: '#',
+    [BlockType.Link]: '',
   }
 
   const symbol = getSymbolObj[type]
@@ -237,6 +239,7 @@ export const inlineTypeToSymbol = (inlineType: InlineTypes): string => {
     [InlineTypes.InlineSource]: BlockType.Source,
     [InlineTypes.InlineTopic]: BlockType.Topic,
     [InlineTypes.Embed]: BlockType.Embed,
+    [InlineTypes.Link]: BlockType.Link,
   }
   const type = getType[inlineType]
 

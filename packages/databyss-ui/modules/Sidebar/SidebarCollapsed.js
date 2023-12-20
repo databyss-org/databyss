@@ -17,7 +17,6 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { usePageReferences } from '@databyss-org/data/pouchdb/hooks'
 import { darkTheme } from '../../theming/theme'
 import { sidebar } from '../../theming/components'
-import { DatabyssMenu } from '../../components/Menu/DatabyssMenu'
 
 const SidebarCollapsed = () => {
   const {
@@ -31,7 +30,7 @@ const SidebarCollapsed = () => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const activeItem = getSidebarPath()
   const pageReferencesRes = usePageReferences(pageId)
-  const [showDatabyssMenu, setShowDatabyssMenu] = useState(false)
+  // const [showDatabyssMenu, setShowDatabyssMenu] = useState(false)
 
   const onItemClick = (item) => {
     if (!isMenuOpen) {
@@ -45,19 +44,19 @@ const SidebarCollapsed = () => {
   const isIconButtonActive = (item) => activeItem === item.name && isMenuOpen
 
   const sideBarCollapsedItems = [
-    {
-      name: 'databyss',
-      title: 'Databyss',
-      icon: <img src={DatabyssImg} />,
-      sizeVariant: 'large',
-      height: pxUnits(58),
-      bg: 'gray.1',
-      onClick: () => {
-        setShowDatabyssMenu(!showDatabyssMenu)
-      },
-      hamburger: true,
-      pt: pxUnits(12),
-    },
+    // {
+    //   name: 'databyss',
+    //   title: 'Databyss',
+    //   icon: <img src={DatabyssImg} />,
+    //   sizeVariant: 'large',
+    //   height: pxUnits(58),
+    //   bg: 'gray.1',
+    //   onClick: () => {
+    //     setShowDatabyssMenu(!showDatabyssMenu)
+    //   },
+    //   hamburger: true,
+    //   pt: pxUnits(12),
+    // },
     {
       name: 'search',
       title: 'Search',
@@ -120,9 +119,6 @@ const SidebarCollapsed = () => {
 
   return (
     <>
-      {showDatabyssMenu && (
-        <DatabyssMenu onDismiss={() => setShowDatabyssMenu(false)} />
-      )}
       <View theme={darkTheme} bg="background.1" width={sidebar.collapsedWidth}>
         <List
           verticalItemPadding={2}

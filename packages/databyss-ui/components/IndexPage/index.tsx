@@ -1,9 +1,17 @@
-import React from 'react'
-import { Text, View, BaseControl, Icon } from '@databyss-org/ui/primitives'
+import React, { ReactNode } from 'react'
+import {
+  Text,
+  View,
+  BaseControl,
+  Icon,
+  BaseControlProps,
+} from '@databyss-org/ui/primitives'
 import theme, { pxUnits } from '@databyss-org/ui/theming/theme'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { Block } from '@databyss-org/services/interfaces'
 import { renderText, renderTextToComponents } from '../PageContent/FlatPageBody'
+import { SearchTerm } from '@databyss-org/data/couchdb/couchdb'
+import { InlineAtomicDef } from '@databyss-org/editor/lib/util'
 
 export const IndexResultsContainer = ({ children }) => (
   <View mb="medium" widthVariant="content">
@@ -33,6 +41,18 @@ export const IndexResultTitle = ({ href, text, icon, dataTestElement }) => (
   </BaseControl>
 )
 
+export interface IndexResultDetailsProps extends BaseControlProps {
+  dataTestElement: string
+  block: Block
+  icon: ReactNode
+  normalizedStemmedTerms: SearchTerm[]
+  onInlineClick: (d: InlineAtomicDef) => null
+  tags: ReactNode
+  textVariant: string
+  textOnly: boolean
+  bindAtomicId: string | null
+}
+
 export const IndexResultDetails = ({
   dataTestElement,
   block,
@@ -42,9 +62,9 @@ export const IndexResultDetails = ({
   tags,
   textVariant,
   textOnly = false,
-  bindResults = true,
+  bindAtomicId = null,
   ...others
-}) => {
+}: IndexResultDetailsProps) => {
   const res = useDocument<Block>(block._id)
   if (!res.isSuccess) {
     return null
@@ -93,7 +113,7 @@ export const IndexResultDetails = ({
           searchTerms: normalizedStemmedTerms,
           onInlineClick,
           textOnly,
-          bindResults,
+          bindAtomicId,
         })}
       </Text>
       {tags}

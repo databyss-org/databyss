@@ -23,6 +23,7 @@ import {
   BlockRelation,
   BlockType,
   Embed,
+  ResourceNotFoundError,
   Source,
 } from '@databyss-org/services/interfaces'
 import {
@@ -66,7 +67,11 @@ import IndexPageMenu from '../../components/IndexPage/IndexPageMenu'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 import { darkTheme } from '../../theming/theme'
 import { ThemeProvider } from 'emotion-theming'
-import { selectors } from '@databyss-org/data/pouchdb/selectors'
+import {
+  blockTypeToSelector,
+  selectors,
+} from '@databyss-org/data/pouchdb/selectors'
+import ErrorFallback from '../../components/Notify/ErrorFallback'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -253,12 +258,6 @@ export const IndexPageView = ({
     block?.type === BlockType.Source
       ? (block as Source).name?.textValue ?? block.text.textValue
       : block?.text.textValue
-  const blockTypeToSelector = (blockType: BlockType) =>
-    ({
-      [BlockType.Embed]: selectors.EMBEDS,
-      [BlockType.Source]: selectors.SOURCES,
-      [BlockType.Topic]: selectors.TOPICS,
-    }[blockType])
   useEffect(() => {
     if (block) {
       if (block && !isPublicAccount()) {
@@ -440,6 +439,14 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   }
   if (!blockRes.data || blockRes.data.type !== blockType) {
     return <LoadingFallback queryObserver={[blockRes, pagesRes]} />
+  }
+  if (blockRelationRes.isSuccess && !blockRelationRes.data) {
+    return (
+      <ErrorFallback
+        error={new ResourceNotFoundError()}
+        message="Resource not found"
+      />
+    )
   }
   return (
     <IndexPageView

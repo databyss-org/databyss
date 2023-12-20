@@ -1,3 +1,4 @@
+import { BlockType } from '@databyss-org/services/interfaces'
 import { DbDocument } from './interfaces'
 
 export const selectors = {
@@ -39,6 +40,22 @@ export const selectors = {
     blockType: 'LINK',
   },
 }
+
+export const blockTypeToSelector = (blockType: BlockType) =>
+  ({
+    [BlockType.Embed]: selectors.EMBEDS,
+    [BlockType.Source]: selectors.SOURCES,
+    [BlockType.Topic]: selectors.TOPICS,
+    [BlockType._ANY]: selectors.BLOCKS,
+  }[blockType])
+
+export const blockTypeToRelationSelector = (blockType: BlockType) =>
+  ({
+    [BlockType.Embed]: selectors.EMBED_RELATIONS,
+    [BlockType.Topic]: selectors.TOPIC_RELATIONS,
+    [BlockType.Source]: selectors.SOURCE_RELATIONS,
+    [BlockType.Link]: selectors.LINK_RELATIONS,
+  }[blockType])
 
 /**
  * Given a document with a `doctype`, `blockType` and 'type` fields, returns all relevant selector keys

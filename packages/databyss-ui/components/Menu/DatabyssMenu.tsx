@@ -64,8 +64,8 @@ export function DatabyssMenu({ onDismiss }: { onDismiss: () => void }) {
         minWidth={250}
         open
         position={{
-          top: 100,
-          left: 35,
+          top: 35,
+          right: 25,
         }}
       >
         <DropdownList menuItems={menuItems} dismiss={onDismiss} />

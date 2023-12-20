@@ -74,7 +74,7 @@ const IndexPageMenu = ({ block }) => {
       <BaseControl
         onPress={() => setShowMenu(!showMenu)}
         onKeyDown={handleEscKey}
-        hoverColor="background.2"
+        hoverColor="background.1"
         p="tiny"
         data-test-element="archive-dropdown"
         label="Archive Page"

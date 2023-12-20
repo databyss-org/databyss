@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron'
 import { initNodeDb, nodeDbRef, setGroupLoaded } from '../../nodeDb'
+import { sleep } from '@databyss-org/services/lib/util'
 
 export function registerDbHandlers() {
   ipcMain.handle('db-info', async () => await nodeDbRef.current?.info())
@@ -11,8 +12,21 @@ export function registerDbHandlers() {
   ipcMain.handle(
     'db-get',
     async (_, ...args: Parameters<typeof nodeDbRef.current.get>) => {
-      // console.log('[DB] get', args)
-      return await nodeDbRef.current?.get(...args)
+      // return await nodeDbRef.current?.get(...args)
+      // let res = null
+      let attempts = 0
+      let lastErr = null
+      do {
+        attempts += 1
+        try {
+          return await nodeDbRef.current?.get(...args)
+        } catch (e) {
+          lastErr = e
+        }
+        await sleep(500)
+      } while (attempts < 4)
+      console.error(lastErr)
+      return null
     }
   )
   ipcMain.handle(

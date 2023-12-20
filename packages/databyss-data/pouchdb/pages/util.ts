@@ -1,8 +1,10 @@
 import { Block, ExtendedPatch } from '@databyss-org/services/interfaces'
+import { queryClient } from '@databyss-org/services/lib/queryClient'
 import { PageDoc, DocumentType } from '../interfaces'
 import { upsert, upsertImmediate } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import { BlockReference } from '../../../databyss-services/interfaces/Block'
+import { selectors } from '../selectors'
 
 const applyPatch = (node, path, value) => {
   const key = path.shift()
@@ -51,6 +53,24 @@ const addOrReplaceBlock = async (p) => {
   }
 
   // console.log('[addOrReplaceBlock]', _id, p.sharedWithGroups)
+
+  // update block cache
+  // console.log('[Patch] update block cache', _blockId)
+  queryClient.setQueryData([selectors.BLOCKS], (oldData) =>
+    oldData
+      ? {
+          ...oldData,
+          [_blockId]: {
+            ...oldData[_blockId],
+            ..._block,
+          },
+        }
+      : oldData
+  )
+  queryClient.setQueryData([`useDocument_${_blockId}`], (oldData: any) => ({
+    ...oldData,
+    ..._block,
+  }))
 
   upsert({
     doctype: DocumentType.Block,

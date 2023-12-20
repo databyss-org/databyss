@@ -2557,10 +2557,10 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
-"@databyss-org/slate-react@0.57.2-b7":
-  version "0.57.2-b7"
-  resolved "https://registry.yarnpkg.com/@databyss-org/slate-react/-/slate-react-0.57.2-b7.tgz#92678aa00e6d40b2a430b23cc5fc4da3e79b7b3c"
-  integrity sha512-zBYefY0LSeCoo8/i0BeKALfz6r8hX7UmkOS+1Jn01n9E3K7fAm093zJ3lnjE/vaHqksCECPCzxt4tsEgZtaHTg==
+"@databyss-org/slate-react@0.57.2-b8":
+  version "0.57.2-b8"
+  resolved "https://registry.yarnpkg.com/@databyss-org/slate-react/-/slate-react-0.57.2-b8.tgz#75e8250e109ed5bb6b0d3ab40bba164f04c450bf"
+  integrity sha512-PHXE1ILSh5k7gAuzB5WDZQVKC8SfC1Ii17dVVzL95+MNOFwifhqlLCMACXT5yHQFMpnmOzwrbuOci95oPwL9iQ==
   dependencies:
     "@types/is-hotkey" "^0.1.1"
     "@types/lodash" "^4.14.149"
@@ -23395,6 +23395,13 @@ react-input-autosize@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/react-input-autosize/-/react-input-autosize-2.2.2.tgz#fcaa7020568ec206bc04be36f4eb68e647c4d8c2"
   integrity sha512-jQJgYCA3S0j+cuOwzuCd1OjmBmnZLdqQdiLKRYrsMMzbjUrVDS5RvJUDwJqA7sKuksDuzFtm6hZGKFu7Mjk5aw==
+  dependencies:
+    prop-types "^15.5.8"
+
+react-input-autosize@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-input-autosize/-/react-input-autosize-3.0.0.tgz#6b5898c790d4478d69420b55441fcc31d5c50a85"
+  integrity sha512-nL9uS7jEs/zu8sqwFE5MAPx6pPkNAriACQ2rGLlqmKr2sPGtN7TXTyDdQt4lbNXVx7Uzadb40x8qotIuru6Rhg==
   dependencies:
     prop-types "^15.5.8"
 

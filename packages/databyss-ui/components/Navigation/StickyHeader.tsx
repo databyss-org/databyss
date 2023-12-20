@@ -6,6 +6,7 @@ import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 // import { AccountMenu } from '@databyss-org/ui/components'
 // import { Status } from './Status'
 import { theme } from '../../theming'
+import { pxUnits } from '../../theming/views'
 // import { pxUnits } from '../../theming/views'
 
 interface StickyHeaderProps {
@@ -33,7 +34,7 @@ export const StickyHeader = ({
         zIndex={theme.zIndex.sticky}
         py="em"
         pr="medium"
-        pl="em"
+        pl={pxUnits(18)}
         bg="background.2"
       >
         <Helmet>

@@ -87,10 +87,6 @@ export const IndexResults = ({
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
   )
-  // console.log(
-  //   '[IndexResults] related pages',
-  //   blockRelationRes.data?.pages.length
-  // )
 
   // return useMemo(() => {
   // console.log('[indexResults] blockRelations', blockRelation)
@@ -111,7 +107,11 @@ export const IndexResults = ({
 
   const _renderBlocks = (pageId, results: IndexPageResult[], isLastGroup) => {
     const _filteredBlocks = results.filter((e) => e.blockText.textValue.length)
+    // console.log('[IndexResults] blocks', _filteredBlocks)
     return _filteredBlocks.map((e, eidx) => {
+      if (!blocks[e.block]) {
+        return null
+      }
       const _variant = {
         [BlockType.Entry]: 'bodyNormal',
         [BlockType.Topic]: 'bodyNormalSemibold',
@@ -147,7 +147,8 @@ export const IndexResults = ({
           tags={<IndexResultTags tags={_extraTags} />}
           textVariant={_variant}
           dataTestElement="atomic-result-item"
-          textOnly={textOnly}
+          textOnly={textOnly ?? false}
+          bindAtomicId={relatedBlockId}
         />
       )
     })

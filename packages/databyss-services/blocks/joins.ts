@@ -122,7 +122,7 @@ export const addPagesToBlockRelation = ({
     }).forEach((r: IndexPageResult) => {
       // do not allow duplicates
       if (
-        blocks[r.block].type !== BlockType.Entry ||
+        blocks[r.block]?.type !== BlockType.Entry ||
         !_duplicateDict[`${r.block + r.relatedBlock}`]
       ) {
         relations.push(r)

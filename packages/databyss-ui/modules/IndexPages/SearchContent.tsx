@@ -96,7 +96,6 @@ export const SearchContent = () => {
                 icon={<BlockSvg />}
                 tags={<IndexResultTags tags={_extraTags} />}
                 textVariant={_variant}
-                bindResults={false}
               />
             )
           })}

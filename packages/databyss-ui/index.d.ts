@@ -24,7 +24,7 @@ import {
 import * as ReactModal from 'react-modal'
 import * as ReactDnd from 'react-dnd'
 import { InterpolationWithTheme } from '@emotion/core'
-import { Text as TextInterface } from '@databyss-org/editor/interfaces'
+import { Text, Text as TextInterface } from '@databyss-org/editor/interfaces'
 import { CSSObject } from '@styled-system/css'
 
 export type RefForwardingFC<P, T = HTMLElement> = ForwardRefExoticComponent<
@@ -234,6 +234,7 @@ export interface TextInputProps extends TextProps {
   autoFocus?: boolean
   placeholder?: string
   maxRows?: number
+  autoSize?: boolean
 }
 
 declare const TextInput: RefForwardingFC<TextInputProps>
@@ -253,6 +254,9 @@ export interface TextControlProps extends BaseControlProps, ControlLabelProps {
   focusOnMount?: boolean
   css?: InterpolationWithTheme<any>
   dataTestId?: string
+  value: TextInterface
+  onChange?: (value: TextInterface) => void
+  inputProps?: TextInputProps
 }
 
 declare const TextControl: FC<TextControlProps>
