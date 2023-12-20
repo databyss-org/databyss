@@ -10,13 +10,8 @@ import {
 import { sleep } from '@databyss-org/services/lib/util'
 import { Document } from '@databyss-org/services/interfaces'
 import { DocumentType, PageDoc } from '../interfaces'
-import {
-  upsertImmediate,
-  findOne,
-  findAll,
-  getDocument,
-  getDocuments,
-} from '../utils'
+import { upsertImmediate, getDocuments } from '../utils'
+import { findOne, findAll, getDocument } from '../crudUtils'
 import {
   Block,
   BlockRelation,

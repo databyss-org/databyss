@@ -1,9 +1,9 @@
-import { Text, Range } from '../../interfaces'
+import { Range, Text } from '../interfaces'
 
 const emptyText = { textValue: '', ranges: [] }
 
 // returns before and after value for text split at `offset`
-export default ({
+export const splitTextAtOffset = ({
   text,
   offset,
 }: {

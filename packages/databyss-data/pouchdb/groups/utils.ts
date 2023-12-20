@@ -9,8 +9,9 @@ import {
   removePageFromGroup,
   removeSharedDatabase,
 } from './index'
-import { getDocument, setDbBusy } from '../utils'
+import { setDbBusy } from '../utils'
 import { PageDoc } from '../interfaces'
+import { getDocument } from '../crudUtils'
 
 export enum GroupAction {
   SHARED = 'SHARED',

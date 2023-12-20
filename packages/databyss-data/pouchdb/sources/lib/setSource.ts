@@ -1,17 +1,14 @@
-import {
-  Source,
-  BlockType,
-  SourceCitationHeader,
-} from '@databyss-org/services/interfaces'
-import { DocumentType, DocumentCacheDict } from '../../interfaces'
-import { getDocument, upsertImmediate } from '../../utils'
-import { InlineTypes } from '../../../../databyss-services/interfaces/Range'
-import { updateInlines } from '../../../../databyss-editor/lib/inlineUtils/updateInlines'
-import { sourcesEqual } from '../../compare'
-import { selectors } from '../../selectors'
+import { Source, BlockType } from '@databyss-org/services/interfaces'
 import { queryClient } from '@databyss-org/services/lib/queryClient'
+import { InlineTypes } from '@databyss-org/services/interfaces/Range'
+import { DocumentType } from '../../interfaces'
+import { upsertImmediate } from '../../utils'
+import { selectors } from '../../selectors'
 
-export const setSource = async (data: Source, caches?: DocumentCacheDict) => {
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('../../../../databyss-desktop/src/eapi').default
+
+export const setSource = async (data: Source) => {
   const { text, detail, _id, sharedWithGroups } = data as any
 
   let { name } = data as any
@@ -28,8 +25,6 @@ export const setSource = async (data: Source, caches?: DocumentCacheDict) => {
     sharedWithGroups,
   }
 
-  // const _prevSource: SourceCitationHeader | null = await getDocument(_id)
-
   // update caches
   ;[selectors.SOURCES, selectors.BLOCKS].forEach((selector) =>
     queryClient.setQueryData([selector], (oldData: any) => ({
@@ -45,14 +40,11 @@ export const setSource = async (data: Source, caches?: DocumentCacheDict) => {
     doc: blockFields,
   })
 
-  // if (_prevSource && !sourcesEqual(_prevSource, blockFields)) {
-  //   await updateInlines({
-  //     inlineType: InlineTypes.InlineSource,
-  //     text: name,
-  //     _id,
-  //     caches,
-  //   })
-  // }
+  eapi.db.updateInlines({
+    inlineType: InlineTypes.InlineSource,
+    text: name,
+    _id,
+  })
 }
 
 export default setSource

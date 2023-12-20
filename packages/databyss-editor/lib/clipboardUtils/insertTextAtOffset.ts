@@ -1,6 +1,6 @@
+import { mergeText } from '@databyss-org/services/text/mergeText'
+import { splitTextAtOffset } from '@databyss-org/services/text/splitTextAtOffset'
 import { Text } from '../../interfaces'
-import splitTextAtOffset from './splitTextAtOffset'
-import { mergeText } from './index'
 
 // returns text value of inserted text and new offset position
 export default ({

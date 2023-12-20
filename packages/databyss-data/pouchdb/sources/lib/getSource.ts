@@ -4,7 +4,7 @@ import {
 } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { DocumentType } from '../../interfaces'
-import { findAll, getDocument } from '../../utils'
+import { findAll, getDocument } from '../../crudUtils'
 
 const getSource = async (
   _id: string

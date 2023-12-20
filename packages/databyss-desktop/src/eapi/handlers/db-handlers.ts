@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron'
 import { initNodeDb, nodeDbRef, setGroupLoaded } from '../../nodeDb'
 import { sleep } from '@databyss-org/services/lib/util'
+import { updateInlines } from '@databyss-org/data/nodedb/updateInlines'
 
 export function registerDbHandlers() {
   ipcMain.handle('db-info', async () => await nodeDbRef.current?.info())
@@ -66,6 +67,13 @@ export function registerDbHandlers() {
       const res = await nodeDbRef.current?.search(...args)
       console.log('[DB] search results', res)
       return res
+    }
+  )
+  ipcMain.on(
+    'db-updateInlines',
+    (_, ...args: Parameters<typeof updateInlines>) => {
+      console.log('[DB] updateInlines', args)
+      updateInlines(...args)
     }
   )
 }

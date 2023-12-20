@@ -1,6 +1,6 @@
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { PageDoc, DocumentType } from '../../interfaces'
-import { findAll } from '../../utils'
+import { findAll } from '../../crudUtils'
 
 const fetchAllPages = async (): Promise<PageDoc[] | ResourceNotFoundError> => {
   const _pages = await findAll({

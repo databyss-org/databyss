@@ -39,8 +39,6 @@ import { splitOverlappingRanges } from '@databyss-org/services/blocks/textRanges
 import {
   atomicClosureText,
   atomicTypeToInlineRangeType,
-  inlineTypeToSymbol,
-  replaceInlineText,
 } from '@databyss-org/editor/state/util'
 import { useSearchContext } from '../../hooks'
 import { useNavigationContext } from '../Navigation'
@@ -51,6 +49,7 @@ import {
   DocumentType,
   PageDoc,
 } from '@databyss-org/data/pouchdb/interfaces'
+import { inlineTypeToSymbol } from '@databyss-org/services/text/inlineUtils'
 
 export const FlatBlock = ({
   index,

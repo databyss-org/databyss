@@ -8,6 +8,7 @@ import {
   Topic,
   Source,
 } from '@databyss-org/services/interfaces'
+import { replaceInlineText } from '@databyss-org/services/text/inlineUtils'
 import {
   SPLIT,
   MERGE,
@@ -52,7 +53,6 @@ import {
   splitBlockAtEmptyLine,
   convertInlineToAtomicBlocks,
   convertInlineToEmbed,
-  replaceInlineText,
   getRangesAtPoint,
   pushAtomicChangeUpstream,
   getTextOffsetWithRange,
@@ -60,7 +60,6 @@ import {
   selectionIncludesInlineAtomics,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
-
 import mergeInlineAtomicMenuRange from '../lib/clipboardUtils/mergeInlineAtomicMenuRange'
 import {
   RangeType,

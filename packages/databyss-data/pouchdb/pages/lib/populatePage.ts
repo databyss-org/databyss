@@ -5,7 +5,8 @@ import { Block } from '@databyss-org/editor/interfaces'
 import { getAtomicClosureText } from '@databyss-org/services/blocks'
 import { PageDoc } from '../../interfaces'
 import { Selection } from '../../../../databyss-services/interfaces/Selection'
-import { getDocument, getDocuments } from '../../utils'
+import { getDocuments } from '../../utils'
+import { getDocument } from '../../crudUtils'
 
 const RETRY_DELAY = 1500
 const MAX_RETRIES = 5

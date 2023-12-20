@@ -2,7 +2,6 @@ import { BlockRelation, BlockType } from '@databyss-org/services/interfaces'
 import { BlockRelationOperation } from '@databyss-org/editor/interfaces'
 import { QueryClient } from '@tanstack/query-core'
 import {
-  getDocument,
   updateSharedWithGroups,
   // upsert,
   upsertImmediate,
@@ -13,6 +12,7 @@ import {
   addGroupToDocument,
 } from '../../groups/index'
 import { blockTypeToRelationSelector } from '../../selectors'
+import { getDocument } from '../../crudUtils'
 
 const setBlockRelations = async (
   payload: {

@@ -1,5 +1,6 @@
 import PouchDB from 'pouchdb-node'
 import { ipcRenderer } from 'electron'
+import { updateInlines as updateInlinesFn } from '@databyss-org/data/nodedb/updateInlines'
 
 export const onGroupLoaded = (callback: (groupId: string) => void) =>
   ipcRenderer.on('db-groupLoaded', (_, groupId: string) => callback(groupId))
@@ -47,3 +48,6 @@ export const find: PouchDB.Database['find'] = (
 export const search: PouchDB.Database['search'] = (
   ...args: Parameters<PouchDB.Database['search']>
 ) => ipcRenderer.invoke('db-search', ...args)
+
+export const updateInlines = (...args: Parameters<typeof updateInlinesFn>) =>
+  ipcRenderer.send('db-updateInlines', ...args)

@@ -1,5 +1,6 @@
+import { mergeText } from '@databyss-org/services/text/mergeText'
 import { Block, Text } from '../../interfaces'
-import { splitTextAtOffset, mergeText } from './'
+import { splitTextAtOffset } from './'
 
 // inserts @text into @block at @offset
 // NOTE: modifies in place, so @block should be a draft
