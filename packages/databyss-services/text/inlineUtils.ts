@@ -119,7 +119,7 @@ export const updateInlinesInBlock = ({
   text: Text
   inlineId: string
 }) => {
-  // const _id = block._id
+  // console.log('[updateInlinesInBlock]', block, inlineType, text, inlineId)
   // get all inline ranges from block
   const _inlineRanges = block!.text.ranges.filter(
     (r) => r.marks.filter((m) => m.includes(inlineType)).length
@@ -138,7 +138,7 @@ export const updateInlinesInBlock = ({
           newText: text,
           type: inlineType,
         })
-        console.log('[updateInlines] new Text', _newText)
+        // console.log('[updateInlines] new Text', _newText)
         return Object.assign({}, block!, { text: _newText })
       }
     }

@@ -7,6 +7,9 @@ import {
   IndexPageResult,
   Range,
   BlockReference,
+  Page,
+  Document,
+  Text,
 } from '@databyss-org/services/interfaces'
 import { urlSafeName, validUriRegex } from '@databyss-org/services/lib/util'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
@@ -52,6 +55,14 @@ export const blockTypeToInlineType = (
     [BlockType.Source]: InlineTypes.InlineSource,
     [BlockType.Topic]: InlineTypes.InlineTopic,
   }[blockType] ?? null)
+
+export const inlineTextFromBlock = (doc: Document): Text =>
+  ({
+    [BlockType.Embed]: (doc as Block).text,
+    [BlockType.Link]: { textValue: (doc as Page).name, ranges: [] },
+    [BlockType.Source]: (doc as Source).name,
+    [BlockType.Topic]: (doc as Block).text,
+  }[(doc as Block).type])
 
 export const getInlineAtomicType = (
   type: InlineTypes | string

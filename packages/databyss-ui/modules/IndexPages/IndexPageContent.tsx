@@ -139,19 +139,16 @@ export const IndexPageTitleInput = ({
       queryClient.setQueryData([`useDocument_${_block._id}`], _block)
       switch (block!.type) {
         case BlockType.Topic:
-          setTopic(_block, { pages: pagesRes.data, blocks: blocksRes.data })
+          setTopic(_block)
           break
         case BlockType.Embed:
           setEmbed(_block as Embed)
           break
         case BlockType.Source:
-          setSource(_block as Source, {
-            pages: pagesRes.data,
-            blocks: blocksRes.data,
-          })
+          setSource(_block as Source)
           break
       }
-    }, 1000),
+    }, 750),
     [block]
   )
 

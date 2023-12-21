@@ -13,6 +13,7 @@ import {
   blockTypeToInlineType,
   getBlockPrefix,
   getInlineAtomicHref,
+  inlineTextFromBlock,
 } from '@databyss-org/editor/lib/util'
 import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
 import { addPagesToBlockRelation } from '@databyss-org/services/blocks/joins'
@@ -98,27 +99,29 @@ export const IndexResults = ({
     if (!relatedBlockRes.data?.text?.textValue) {
       return
     }
-    if (!lastRelatedTextRef.current) {
-      lastRelatedTextRef.current = relatedBlockRes.data!.text!.textValue
-      return
-    }
-    console.log(
-      '[IndexResults] relatedBlocks',
-      Object.values(relatedBlocksRef.current).length
-    )
+    // this will prevent the update of all the page blocks on initial load
+    // commented out because this side effect helps fix an outdated page block
+    // if (!lastRelatedTextRef.current) {
+    //   lastRelatedTextRef.current = relatedBlockRes.data!.text!.textValue
+    //   return
+    // }
     Object.values(relatedBlocksRef.current).forEach((block) => {
       const _updatedBlock = updateInlinesInBlock({
         block,
         inlineType: blockTypeToInlineType(blockRelation.blockType)!,
-        text: relatedBlockRes.data!.text,
+        text: inlineTextFromBlock(relatedBlockRes.data!),
         inlineId: relatedBlockId,
       })
       if (_updatedBlock) {
+        // console.log('[IndexResults] cache', _updatedBlock)
         queryClient.setQueryData([`useDocument_${block._id}`], _updatedBlock)
       }
     })
     lastRelatedTextRef.current = relatedBlockRes.data!.text!.textValue
-  }, [relatedBlockRes.data?.text.textValue])
+  }, [
+    relatedBlockRes.data?.text?.textValue,
+    (relatedBlockRes.data as Source)?.name?.textValue,
+  ])
 
   // return useMemo(() => {
   // console.log('[indexResults] blockRelations', blockRelation)
