@@ -1,5 +1,5 @@
 import { InlineTypes } from '../interfaces/Range'
-import { BlockType, Text } from '../interfaces'
+import { Block, BlockType, Text } from '../interfaces'
 import { splitTextAtOffset } from './splitTextAtOffset'
 import { mergeText } from './mergeText'
 
@@ -104,6 +104,44 @@ export const replaceInlineText = ({
   })
   if (_rangesWithId.length) {
     return _textToUpdate
+  }
+  return null
+}
+
+export const updateInlinesInBlock = ({
+  block,
+  inlineType,
+  text,
+  inlineId,
+}: {
+  block: Block
+  inlineType: InlineTypes
+  text: Text
+  inlineId: string
+}) => {
+  // const _id = block._id
+  // get all inline ranges from block
+  const _inlineRanges = block!.text.ranges.filter(
+    (r) => r.marks.filter((m) => m.includes(inlineType)).length
+  )
+
+  // eslint-disable-next-line no-loop-func
+  for (const r of _inlineRanges) {
+    // if inline range matches the ID, update block
+    if (r.marks[0].length === 2) {
+      const _inlineMark = r.marks[0]
+      const _inlineId = _inlineMark[1]
+      if (_inlineId === inlineId) {
+        const _newText = replaceInlineText({
+          text: block!.text,
+          refId: inlineId,
+          newText: text,
+          type: inlineType,
+        })
+        console.log('[updateInlines] new Text', _newText)
+        return Object.assign({}, block!, { text: _newText })
+      }
+    }
   }
   return null
 }

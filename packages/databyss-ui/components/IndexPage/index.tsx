@@ -50,7 +50,7 @@ export interface IndexResultDetailsProps extends BaseControlProps {
   tags: ReactNode
   textVariant: string
   textOnly: boolean
-  bindAtomicId: string | null
+  bindAtomicId?: string
 }
 
 export const IndexResultDetails = ({
@@ -62,7 +62,7 @@ export const IndexResultDetails = ({
   tags,
   textVariant,
   textOnly = false,
-  bindAtomicId = null,
+  bindAtomicId,
   ...others
 }: IndexResultDetailsProps) => {
   const res = useDocument<Block>(block._id)

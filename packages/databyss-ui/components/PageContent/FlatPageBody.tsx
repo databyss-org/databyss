@@ -289,7 +289,7 @@ export function BoundLeafComponent({
   const _docRes = useDocument<DbDocument>(leaf.atomicId!, {
     enabled: !!leaf.atomicId,
   })
-  // console.log('[BoundLeafComponent] block', _block)
+  console.log('[BoundLeafComponent] block', leaf.atomicId)
   let _symbol = ''
   let _text = leaf.text
   let _leaf = leaf

@@ -7,6 +7,7 @@ import { PageDoc } from '../../interfaces'
 import { Selection } from '../../../../databyss-services/interfaces/Selection'
 import { getDocuments } from '../../utils'
 import { getDocument } from '../../crudUtils'
+import { queryClient } from '@databyss-org/services/lib/queryClient'
 
 const RETRY_DELAY = 1500
 const MAX_RETRIES = 5
@@ -39,8 +40,12 @@ export default (_id: string) =>
           return resolve(new ResourceNotFoundError(`page ${_id} not found`))
         }
 
-        const _page: PageDoc | null = await getDocument(_id)
+        // let _page: PageDoc = queryClient.getQueryData([`useDocument_${_id}`])!
+        // if (!_page) {
+        //   _page = (await getDocument(_id))!
+        // }
 
+        const _page = (await getDocument(_id)) as PageDoc
         if (!_page || !_page.blocks) {
           console.log('[populatePage] page missing, retry')
           return _retry()
@@ -50,18 +55,30 @@ export default (_id: string) =>
           (await getDocument(_page.selection)) ?? new Selection()
 
         // coallesce page blocks into dict to filter duplicates and end blocks
+        let _blocksDict: { [docId: string]: Block | null } = {}
         const _blocksToGetDict = _page.blocks.reduce((accum, curr) => {
           if (curr?.type?.match(/^END_/)) {
+            return accum
+          }
+          const _cachedBlock = queryClient.getQueryData<Block>([
+            `useDocument_${curr._id}`,
+          ])
+          if (_cachedBlock) {
+            _blocksDict[curr._id] = _cachedBlock
             return accum
           }
           accum[curr._id] = curr
           return accum
         }, {})
 
+        // console.log('[populatePage] cached blocks', _blocksDict)
+
         // get all blocks in one request using bulk getDocuments
-        let _blocksDict
         try {
-          _blocksDict = await getDocuments<Block>(Object.keys(_blocksToGetDict))
+          _blocksDict = {
+            ..._blocksDict,
+            ...(await getDocuments<Block>(Object.keys(_blocksToGetDict))),
+          }
         } catch (err) {
           console.log(`[populatePage] getDocuments error: `, err)
           if (err instanceof ResourceNotFoundError) {
@@ -74,6 +91,8 @@ export default (_id: string) =>
         const _blocks = _page.blocks
           .map((_pageBlock) => {
             const _block = _blocksDict[_pageBlock._id]
+            // cache the block
+            queryClient.setQueryData([`useDocument_${_pageBlock._id}`], _block)
             if (_pageBlock.type?.match(/^END_/)) {
               if (!_block) {
                 console.warn(

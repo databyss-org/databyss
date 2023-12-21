@@ -43,6 +43,16 @@ const getInlineAtomicFromBlock = (
   return _inlineRanges
 }
 
+export const blockTypeToInlineType = (
+  blockType: BlockType
+): InlineTypes | null =>
+  ({
+    [BlockType.Embed]: InlineTypes.Embed,
+    [BlockType.Link]: InlineTypes.Link,
+    [BlockType.Source]: InlineTypes.InlineSource,
+    [BlockType.Topic]: InlineTypes.InlineTopic,
+  }[blockType] ?? null)
+
 export const getInlineAtomicType = (
   type: InlineTypes | string
 ): BlockType | null => {

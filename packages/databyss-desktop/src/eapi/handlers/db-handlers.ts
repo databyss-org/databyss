@@ -2,6 +2,40 @@ import { ipcMain } from 'electron'
 import { initNodeDb, nodeDbRef, setGroupLoaded } from '../../nodeDb'
 import { sleep } from '@databyss-org/services/lib/util'
 import { updateInlines } from '@databyss-org/data/nodedb/updateInlines'
+import { BlockRelation, BlockType } from '@databyss-org/services/interfaces'
+import { addTimeStamp } from '@databyss-org/data/pouchdb/docUtils'
+
+export async function upsertRelation(
+  {
+    blockId,
+    blockType,
+    pageId,
+  }: { blockId: string; blockType: BlockType; pageId: string },
+  operation: 'add' | 'remove'
+) {
+  let _updatedRelation: BlockRelation
+  const _id = `r_${blockId}`
+  await nodeDbRef.current.upsert(_id, (oldDoc: BlockRelation) => {
+    let _pageIds = [...(oldDoc?.pages ?? [])]
+    if (operation === 'add') {
+      if (!_pageIds.includes(pageId)) {
+        _pageIds.push(pageId)
+      }
+    } else {
+      _pageIds = _pageIds.filter((p) => p !== pageId)
+    }
+    _updatedRelation = addTimeStamp({
+      ...(oldDoc ?? {}),
+      _id,
+      blockId,
+      blockType,
+      pages: _pageIds,
+      belongsToGroup: nodeDbRef.groupId,
+    })
+    return _updatedRelation
+  })
+  return _updatedRelation
+}
 
 export function registerDbHandlers() {
   ipcMain.handle('db-info', async () => await nodeDbRef.current?.info())
@@ -25,8 +59,8 @@ export function registerDbHandlers() {
           lastErr = e
         }
         await sleep(500)
-      } while (attempts < 4)
-      console.error(lastErr)
+      } while (attempts < 10)
+      console.error(attempts, lastErr)
       return null
     }
   )
@@ -72,8 +106,20 @@ export function registerDbHandlers() {
   ipcMain.on(
     'db-updateInlines',
     (_, ...args: Parameters<typeof updateInlines>) => {
-      console.log('[DB] updateInlines', args)
+      // console.log('[DB] updateInlines', args)
       updateInlines(...args)
+    }
+  )
+  ipcMain.handle(
+    'db-addRelation',
+    async (_, payload: Parameters<typeof upsertRelation>[0]) => {
+      return await upsertRelation(payload, 'add')
+    }
+  )
+  ipcMain.handle(
+    'db-removeRelation',
+    async (_, payload: Parameters<typeof upsertRelation>[0]) => {
+      return await upsertRelation(payload, 'remove')
     }
   )
 }

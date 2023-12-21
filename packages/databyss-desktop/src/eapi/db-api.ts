@@ -1,6 +1,8 @@
 import PouchDB from 'pouchdb-node'
 import { ipcRenderer } from 'electron'
 import { updateInlines as updateInlinesFn } from '@databyss-org/data/nodedb/updateInlines'
+import { upsertRelation } from './handlers/db-handlers'
+import { BlockRelation } from '@databyss-org/services/interfaces'
 
 export const onGroupLoaded = (callback: (groupId: string) => void) =>
   ipcRenderer.on('db-groupLoaded', (_, groupId: string) => callback(groupId))
@@ -51,3 +53,10 @@ export const search: PouchDB.Database['search'] = (
 
 export const updateInlines = (...args: Parameters<typeof updateInlinesFn>) =>
   ipcRenderer.send('db-updateInlines', ...args)
+
+export const addRelation = (
+  payload: Parameters<typeof upsertRelation>[0]
+): Promise<BlockRelation> => ipcRenderer.invoke('db-addRelation', payload)
+
+export const removeRelation = (payload: Parameters<typeof upsertRelation>[0]) =>
+  ipcRenderer.invoke('db-removeRelation', payload)

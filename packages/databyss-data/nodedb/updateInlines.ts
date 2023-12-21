@@ -9,7 +9,10 @@ import {
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { addTimeStamp } from '@databyss-org/data/pouchdb/docUtils'
-import { replaceInlineText } from '@databyss-org/services/text/inlineUtils'
+import {
+  replaceInlineText,
+  updateInlinesInBlock,
+} from '@databyss-org/services/text/inlineUtils'
 import { nodeDbRef } from '../../databyss-desktop/src/nodeDb'
 
 const bulkUpsert = async (upQdict: any) => {
@@ -119,52 +122,25 @@ export const updateInlines = async ({
         } catch (_) {
           _block = null
         }
-
         if (!_block) {
           continue
         }
 
-        // get all inline ranges from block
-        const _inlineRanges = _block!.text.ranges.filter(
-          (r) => r.marks.filter((m) => m.includes(inlineType)).length
-        )
-
-        // eslint-disable-next-line no-loop-func
-        _inlineRanges.forEach((r) => {
-          // if inline range is matches the ID, update block
-          if (r.marks[0].length === 2) {
-            const _inlineMark = r.marks[0]
-            const _inlineId = _inlineMark[1]
-            if (_inlineId === _id) {
-              const _newText = replaceInlineText({
-                text: _block!.text,
-                refId: _id,
-                newText: text,
-                type: inlineType,
-              })
-              Object.assign(_block!, { text: _newText })
-              // console.log('[updateInlines] block', _block)
-              if (_inlineRanges.length) {
-                upsertDict[_block!._id] = {
-                  ..._block,
-                  doctype: DocumentType.Block,
-                }
-              }
-              // if (_block.sharedWithGroups?.length) {
-              //   _block.sharedWithGroups.forEach((_groupId) => {
-              //     if (!replicateDict[_groupId]) {
-              //       replicateDict[_groupId] = new Set<string>()
-              //       replicateDict[_groupId].add(_id)
-              //     }
-              //     replicateDict[_groupId].add(_block._id)
-              //   })
-              // }
-            }
-          }
+        const _updatedBlock = updateInlinesInBlock({
+          block: _block,
+          inlineType,
+          text,
+          inlineId: _id,
         })
+
+        if (_updatedBlock) {
+          upsertDict[_block!._id] = {
+            ..._updatedBlock,
+            doctype: DocumentType.Block,
+          }
+        }
       }
     }
   }
   await bulkUpsert(upsertDict)
-  // await replicateDocs(replicateDict)
 }

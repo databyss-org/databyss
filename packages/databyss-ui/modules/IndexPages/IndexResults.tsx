@@ -1,5 +1,5 @@
 // import React, { useMemo } from 'react'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { BaseControl, Text, View } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
@@ -10,6 +10,7 @@ import {
   IndexResultDetails,
 } from '@databyss-org/ui/components'
 import {
+  blockTypeToInlineType,
   getBlockPrefix,
   getInlineAtomicHref,
 } from '@databyss-org/editor/lib/util'
@@ -27,6 +28,9 @@ import {
 import { urlSafeName } from '@databyss-org/services/lib/util'
 // import { useDocument } from '../../../databyss-data/pouchdb/hooks/useDocument'
 import { useSearchContext } from '../../hooks'
+import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
+import { updateInlinesInBlock } from '@databyss-org/services/text/inlineUtils'
+import { queryClient } from '@databyss-org/services/lib/queryClient'
 
 interface IndexResultsProps {
   relatedBlockId: string
@@ -83,10 +87,38 @@ export const IndexResults = ({
   blockRelation,
 }: IndexResultsProps) => {
   const { getAccountFromLocation, navigate } = useNavigationContext()
+  const relatedBlockRes = useDocument<Block>(relatedBlockId)
+  const lastRelatedTextRef = useRef<string | null>(null)
+  const relatedBlocksRef = useRef<{ [blockId: string]: Block }>({})
   // const blockRelationRes = useDocument<BlockRelation>(`r_${relatedBlockId}`)
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
   )
+  useEffect(() => {
+    if (!relatedBlockRes.data?.text?.textValue) {
+      return
+    }
+    if (!lastRelatedTextRef.current) {
+      lastRelatedTextRef.current = relatedBlockRes.data!.text!.textValue
+      return
+    }
+    console.log(
+      '[IndexResults] relatedBlocks',
+      Object.values(relatedBlocksRef.current).length
+    )
+    Object.values(relatedBlocksRef.current).forEach((block) => {
+      const _updatedBlock = updateInlinesInBlock({
+        block,
+        inlineType: blockTypeToInlineType(blockRelation.blockType)!,
+        text: relatedBlockRes.data!.text,
+        inlineId: relatedBlockId,
+      })
+      if (_updatedBlock) {
+        queryClient.setQueryData([`useDocument_${block._id}`], _updatedBlock)
+      }
+    })
+    lastRelatedTextRef.current = relatedBlockRes.data!.text!.textValue
+  }, [relatedBlockRes.data?.text.textValue])
 
   // return useMemo(() => {
   // console.log('[indexResults] blockRelations', blockRelation)
@@ -112,6 +144,7 @@ export const IndexResults = ({
       if (!blocks[e.block]) {
         return null
       }
+      relatedBlocksRef.current[e.block] = blocks[e.block]
       const _variant = {
         [BlockType.Entry]: 'bodyNormal',
         [BlockType.Topic]: 'bodyNormalSemibold',
