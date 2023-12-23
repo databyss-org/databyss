@@ -4,6 +4,7 @@ import { sleep } from '@databyss-org/services/lib/util'
 import { updateInlines } from '@databyss-org/data/nodedb/updateInlines'
 import { BlockRelation, BlockType } from '@databyss-org/services/interfaces'
 import { addTimeStamp } from '@databyss-org/data/pouchdb/docUtils'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 
 export async function upsertRelation(
   {
@@ -31,6 +32,7 @@ export async function upsertRelation(
       blockType,
       pages: _pageIds,
       belongsToGroup: nodeDbRef.groupId,
+      doctype: DocumentType.BlockRelation,
     })
     return _updatedRelation
   })

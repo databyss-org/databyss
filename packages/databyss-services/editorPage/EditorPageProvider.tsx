@@ -225,10 +225,8 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   }
 
   const embedFile = async (file: File) => {
-    const embed = await uploadEmbed({
-      file,
-      sharedWithGroups: sharedWithGroupsRef.current ?? [],
-    })
+    // console.log('[embedFile]', file)
+    const embed = await uploadEmbed(file)
     const block: Block = {
       _id: uid(),
       type: BlockType.Entry,

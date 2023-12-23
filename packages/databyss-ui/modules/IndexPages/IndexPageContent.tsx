@@ -116,8 +116,8 @@ export const IndexPageTitleInput = ({
   const [title, setTitle] = useState(getTitleFromBlock(block, path))
   const queryClient = useQueryClient()
   const { navigate } = useNavigationContext()
-  const blocksRes = useBlocks(BlockType._ANY)
-  const pagesRes = usePages()
+  // const blocksRes = useBlocks(BlockType._ANY)
+  // const pagesRes = usePages()
   const isSearch = path[0] === 'Search'
 
   useImperativeHandle(handlesRef, () => ({

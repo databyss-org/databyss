@@ -19,11 +19,13 @@ export interface StateData {
   lastSidebarRoute: string
   sidebarWidth: number
   sidebarVisible: boolean
+  dataPath: string
 }
 
 const defaultData: Partial<StateData> = {
   sidebarWidth: sidebar.width,
   sidebarVisible: true,
+  dataPath: app.getPath('userData'),
 }
 
 class State extends EventEmitter {

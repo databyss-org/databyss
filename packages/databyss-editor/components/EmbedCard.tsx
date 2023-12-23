@@ -101,7 +101,7 @@ export const EmbedCard = React.memo(
               mediaActive
                 ? {}
                 : {
-                    backgroundImage: `url(${_imageSrc})`,
+                    backgroundImage: `url(${encodeURI(_imageSrc)})`,
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'contain',
                     backgroundPosition: 'center center',

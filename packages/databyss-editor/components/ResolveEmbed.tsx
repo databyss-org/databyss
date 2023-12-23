@@ -23,10 +23,10 @@ export const ResolveEmbed = ({
   highlight = false,
   ...others
 }: ResolveEmbedProps) => {
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  const getCurrentAccount = useSessionContext((c) => c && c.getCurrentAccount)
+  // const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  // const getCurrentAccount = useSessionContext((c) => c && c.getCurrentAccount)
   const [detail, setDetail] = useState<EmbedDetail>(data?.detail)
-  const [isFetching, setIsFetching] = useState(false)
+  // const [isFetching, setIsFetching] = useState(false)
 
   useEffect(() => {
     if (!detail && data?.detail) {
@@ -51,34 +51,34 @@ export const ResolveEmbed = ({
     )
   }
 
-  if (detail?.src?.startsWith('dbdrive://')) {
-    // if (!isFetching) {
-    //   if (isPublicAccount()) {
-    //     // Return the remote drive URL so that the browser can load it over HTTP
-    //     const _groupId = getCurrentAccount()
-    //     const _src = `https://${process.env.DRIVE_HOST}/b/${_groupId}/${detail.fileDetail?.storageKey}`
-    //     waitForUrl({ url: _src, pollTimer: 2000, maxAttempts: 60 }).then(
-    //       (imgOk) => {
-    //         console.log('[ResolveEmbed]')
-    //         if (imgOk) {
-    //           setDetail({ ...detail, src: _src })
-    //         } else {
-    //           // TODO: show broken img placeholder
-    //         }
-    //       }
-    //     )
-    //     setIsFetching(true)
-    //   } else {
-    //     const _groupId = getAccountId()
-    //     const _fileId = detail.fileDetail?.storageKey
-    //     getFileUrl(_groupId, _fileId).then((url) => {
-    //       setDetail({ ...detail, src: url })
-    //     })
-    //     setIsFetching(true)
-    //   }
-    // }
-    return <LoadingFallback />
-  }
+  // if (detail?.src?.startsWith('dbdrive://')) {
+  // if (!isFetching) {
+  //   if (isPublicAccount()) {
+  //     // Return the remote drive URL so that the browser can load it over HTTP
+  //     const _groupId = getCurrentAccount()
+  //     const _src = `https://${process.env.DRIVE_HOST}/b/${_groupId}/${detail.fileDetail?.storageKey}`
+  //     waitForUrl({ url: _src, pollTimer: 2000, maxAttempts: 60 }).then(
+  //       (imgOk) => {
+  //         console.log('[ResolveEmbed]')
+  //         if (imgOk) {
+  //           setDetail({ ...detail, src: _src })
+  //         } else {
+  //           // TODO: show broken img placeholder
+  //         }
+  //       }
+  //     )
+  //     setIsFetching(true)
+  //   } else {
+  //     const _groupId = getAccountId()
+  //     const _fileId = detail.fileDetail?.storageKey
+  //     getFileUrl(_groupId, _fileId).then((url) => {
+  //       setDetail({ ...detail, src: url })
+  //     })
+  //     setIsFetching(true)
+  //   }
+  // }
+  // return <LoadingFallback />
+  // }
 
   return (
     <IframeComponent embedDetail={detail} highlight={highlight} {...others} />
