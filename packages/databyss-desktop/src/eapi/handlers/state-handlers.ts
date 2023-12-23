@@ -1,4 +1,5 @@
 import { Group } from '@databyss-org/services/interfaces'
+import { sidebar } from '@databyss-org/ui/theming/components'
 import { app, ipcMain } from 'electron'
 import { EventEmitter } from 'events'
 import fs from 'fs'
@@ -16,12 +17,19 @@ export interface StateData {
   lastActiveGroupId: string
   lastRoute: string
   lastSidebarRoute: string
+  sidebarWidth: number
+  sidebarVisible: boolean
+}
+
+const defaultData: Partial<StateData> = {
+  sidebarWidth: sidebar.width,
+  sidebarVisible: true,
 }
 
 class State extends EventEmitter {
   private data: Partial<StateData> = {}
   get<K extends keyof StateData>(key: K) {
-    return this.data[key] as StateData[K]
+    return (this.data[key] as StateData[K]) ?? defaultData[key]
   }
   set<K extends keyof StateData>(key: K, value: StateData[K]) {
     // console.log('[State] set', key, value)
@@ -36,7 +44,7 @@ class State extends EventEmitter {
       const buf = fs.readFileSync(statePath)
       this.data = JSON.parse(buf.toString())
     } else {
-      this.data = {}
+      this.data = defaultData
     }
   }
 }

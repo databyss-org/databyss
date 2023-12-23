@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren, useEffect } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import { useNavigate, useLocation } from 'react-router-dom'
 import createReducer from '@databyss-org/services/lib/createReducer'
@@ -52,6 +52,12 @@ export const NavigationProvider = ({
     name: 'NavigationProvider',
   })
 
+  useEffect(() => {
+    eapi.state.get('sidebarVisible').then((visible) => {
+      dispatch(actions.menuOpen(visible))
+    })
+  }, [])
+
   const location = useLocation()
 
   if (eapi) {
@@ -65,7 +71,10 @@ export const NavigationProvider = ({
   const navigateRouter = useNavigate()
 
   const showModal = (options) => dispatch(actions.showModal(options))
-  const setMenuOpen = (bool) => dispatch(actions.menuOpen(bool))
+  const setMenuOpen = (bool) => {
+    eapi.state.set('sidebarVisible', bool)
+    dispatch(actions.menuOpen(bool))
+  }
 
   const hideModal = () => dispatch(actions.hideModal())
   const navigate = (url, options) => {

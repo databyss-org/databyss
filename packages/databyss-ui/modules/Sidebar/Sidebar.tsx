@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 // import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { View, List } from '@databyss-org/ui/primitives'
@@ -12,8 +12,15 @@ import { BlockList, PageList, GroupList } from './lists'
 import { authorsToListItemData } from './transforms'
 import Search from './Search'
 import { ReferencesList } from './lists/ReferencesList'
+import { ResizableColumnView } from '../../primitives/View/ResizableColumnView'
 
-export const Sidebar = () => {
+export const Sidebar = ({
+  onResized,
+  width,
+}: {
+  onResized?: (width: number) => void
+  width: number
+}) => {
   const { getSidebarPath, isMenuOpen } = useNavigationContext()
   const menuItem = getSidebarPath()
 
@@ -24,11 +31,13 @@ export const Sidebar = () => {
   return isMenuOpen ? (
     <>
       <SidebarCollapsed />
-      <View
+      <ResizableColumnView
         position="relative"
-        width={sidebar.width}
+        width={width}
         key={`sidebar-key-${menuItem}`}
         overflow="hidden"
+        onResized={onResized}
+        minWidth={sidebar.width}
       >
         <View
           theme={darkTheme}
@@ -80,7 +89,7 @@ export const Sidebar = () => {
             <Footer collapsed={false} />
           </List>
         </View>
-      </View>
+      </ResizableColumnView>
     </>
   ) : (
     <SidebarCollapsed />

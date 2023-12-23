@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Routes,
   Route,
@@ -43,6 +43,21 @@ const AppView: React.FC<{ title: string }> = ({ children, title }) => {
   const onToggleSidebar = () => {
     setMenuOpen(!isMenuOpen)
   }
+  const [sidebarWidth, setSidebarWidth] = useState(null)
+
+  useEffect(() => {
+    eapi.state.get('sidebarWidth').then((width) => {
+      setSidebarWidth(width)
+    })
+  }, [])
+
+  const onSidebarResized = useCallback(
+    (width: number) => {
+      setSidebarWidth(width)
+      eapi.state.set('sidebarWidth', width)
+    },
+    [eapi]
+  )
 
   return (
     <View
@@ -138,7 +153,9 @@ const AppView: React.FC<{ title: string }> = ({ children, title }) => {
       {showDatabyssMenu && (
         <DatabyssMenu onDismiss={() => setShowDatabyssMenu(false)} />
       )}
-      <Sidebar />
+      {sidebarWidth && (
+        <Sidebar onResized={onSidebarResized} width={sidebarWidth} />
+      )}
       <View
         data-test-element="body"
         flexGrow={1}

@@ -56,15 +56,17 @@ const SearchInputContainer = React.forwardRef(
             onFocus={onFocus}
             onBlur={onBlur}
             ref={ref}
+            // width="100%"
             concatCss={styledCss({
               '::placeholder': {
                 color: 'text.3',
                 opacity: 0.6,
               },
+              flexGrow: 1,
             })(theme)}
           />
           {value && (
-            <View position="absolute" right="small">
+            <View mx="small" flexShrink={1}>
               <BaseControl
                 data-test-element="clear-search-results"
                 onClick={onClear}
