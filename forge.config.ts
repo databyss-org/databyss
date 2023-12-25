@@ -14,6 +14,7 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     name: 'Databyss',
+    icon: 'public/appIcon',
   },
   rebuildConfig: {},
   makers: [

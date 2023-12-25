@@ -25,7 +25,11 @@ import {
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
 import { ElementView } from '@databyss-org/editor/components/ElementView'
 import { InterpolationWithTheme } from '@emotion/core'
-import { mergeRanges, SortOptions } from '@databyss-org/services/blocks'
+import {
+  mergeRanges,
+  SortOptions,
+  textToHtml,
+} from '@databyss-org/services/blocks'
 import { InlineTypes, Mark } from '@databyss-org/services/interfaces/Range'
 import { Leaf as LeafComponent } from '@databyss-org/editor/components/Leaf'
 import { TitleElement } from '@databyss-org/editor/components/TitleElement'
@@ -280,16 +284,19 @@ export function BoundLeafComponent({
   children,
   leaf,
   escapeFn,
+  childKey,
+  searchTerms,
   ...others
 }: {
   leaf: Leaf
   children: ReactNode
   escapeFn: (_s: string, _key?: string) => ReactNode
+  childKey: string | undefined
+  searchTerms?: SearchTerm[]
 }) {
   const _docRes = useDocument<DbDocument>(leaf.atomicId!, {
     enabled: !!leaf.atomicId,
   })
-  // console.log('[BoundLeafComponent] block', leaf.atomicId)
   let _symbol = ''
   let _text = leaf.text
   let _leaf = leaf
@@ -305,12 +312,19 @@ export function BoundLeafComponent({
         _text = (_block as Source).name?.textValue ?? _text
       }
     }
+    if (searchTerms) {
+      const _highlightRanges = createHighlightRanges(_text, searchTerms)
+      _text = textToHtml({
+        textValue: _text,
+        ranges: _highlightRanges,
+      })
+    }
     _leaf = {
       ...leaf,
       text: _text,
       children: renderText(_text),
     }
-    _children = escapeFn(_text)
+    _children = escapeFn(_text, childKey)
   }
   return (
     <LeafComponent leaf={_leaf} {...others}>
@@ -349,8 +363,19 @@ export function renderTextToComponents({
   // add link ranges
   _ranges = _ranges.concat(createLinkRangesForUrls(_text))
 
-  if (searchTerms && !bindAtomicId) {
-    _ranges = _ranges.concat(createHighlightRanges(_text, searchTerms))
+  if (searchTerms) {
+    _ranges = _ranges.concat(
+      createHighlightRanges(
+        _text,
+        searchTerms,
+        bindAtomicId
+          ? {
+              currentRanges: _ranges,
+              ignoreInlineId: bindAtomicId,
+            }
+          : undefined
+      )
+    )
   }
 
   if (!_ranges.length) {
@@ -387,6 +412,8 @@ export function renderTextToComponents({
             leaf={_leaf}
             onInlineClick={onInlineClick}
             escapeFn={escapeFn}
+            searchTerms={searchTerms}
+            childKey={_lastRangeEnd === _text.length ? `END_${key}` : undefined}
           >
             {escapeFn(
               _segment,

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _, { isArray } from 'lodash'
 import cloneDeep from 'clone-deep'
 import {
   Block,
@@ -459,7 +459,15 @@ export function stemMatch(
   )
 }
 
-export function createHighlightRanges(text: string, searchTerms: SearchTerm[]) {
+export interface HighlightRangeIgnoreOptions {
+  currentRanges: Range[]
+  ignoreInlineId: string
+}
+export function createHighlightRanges(
+  text: string,
+  searchTerms: SearchTerm[],
+  options?: HighlightRangeIgnoreOptions
+) {
   const _ranges: Range[] = []
 
   // normalize diacritics
@@ -481,6 +489,18 @@ export function createHighlightRanges(text: string, searchTerms: SearchTerm[]) {
         //   stemmer(match[0]),
         //   stemmer(term.original)
         // )
+        continue
+      }
+      // skip highlighting ranges that coincide with specified inline atomic id
+      if (
+        options &&
+        options.currentRanges.find(
+          (r) =>
+            r.offset === match.index! - 1 &&
+            isArray(r.marks[0]) &&
+            r.marks[0][1] === options.ignoreInlineId
+        )
+      ) {
         continue
       }
       _ranges.push({
