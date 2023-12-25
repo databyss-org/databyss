@@ -76,9 +76,8 @@ export function DatabyssMenuItems({
     localGroupsRes.isSuccess && groupsRes.isSuccess
       ? localGroupsRes.data.map(
           (localGroup) => groupsRes.data[localGroup._id] ?? localGroup
-        )
-      : // .filter((g) => !!g)
-        []
+        ) // .filter((g) => !!g)
+      : []
   const sortedGroups = Object.values(groups)
     // .filter((group) => group._id !== dbRef.groupId)
     .sort((a, b) => (a.name < b.name ? -1 : 1))
