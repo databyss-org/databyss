@@ -70,6 +70,8 @@ export interface ViewProps
 
 declare const View: RefForwardingFC<PropsWithChildren<ViewProps>>
 
+declare const Viewport: RefForwardingFC<PropsWithChildren<ViewProps>>
+
 export interface ScrollViewProps extends ViewProps {
   /**
    * Add a small inset shadow to the top of the scroll view when scrolled.

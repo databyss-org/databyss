@@ -11,7 +11,11 @@ export const info: PouchDB.Database['info'] = () =>
   ipcRenderer.invoke('db-info')
 
 export const getGroupId = async () => {
-  const dbPathArr = (await info()).db_name.split('/')
+  const dbInfo = await info()
+  if (!dbInfo) {
+    return null
+  }
+  const dbPathArr = dbInfo.db_name.split('/')
   return dbPathArr[dbPathArr.length - 1]
 }
 export const loadGroup = (groupId: string) => {

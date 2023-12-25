@@ -3,9 +3,16 @@ import { CouchDb } from '@databyss-org/data/couchdb/couchdb'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { useContextSelector, createContext } from 'use-context-selector'
 import { VouchDb, connect } from '@databyss-org/data/vouchdb/vouchdb'
-import { Text } from '@databyss-org/ui'
+import { Viewport, Text, View } from '@databyss-org/ui'
 import { useQueryClient } from '@tanstack/react-query'
-import { useNavigationContext } from '@databyss-org/ui/components'
+import {
+  LoadingFallback,
+  useNavigationContext,
+} from '@databyss-org/ui/components'
+import { DatabyssMenuItems } from '@databyss-org/ui/components/Menu/DatabyssMenu'
+import DatabyssLogo from '@databyss-org/ui/assets/logo-thick.png'
+import { darkTheme } from '@databyss-org/ui/theming/theme'
+import { version } from '../version'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
@@ -34,6 +41,7 @@ export const DatabaseProvider = ({ children }) => {
     isDesktopMode: false,
     groupId: null,
   })
+  const [isBusy, setIsBusy] = useState<boolean>(false)
 
   // console.log('[DatabaseProvider] groupId', dbRef.groupId)
 
@@ -92,7 +100,26 @@ export const DatabaseProvider = ({ children }) => {
       {databaseStatus.groupId !== null ? (
         children
       ) : (
-        <Text variant="uiTextNormal">No database</Text>
+        <Viewport justifyContent="center" theme={darkTheme} bg="background.1">
+          {isBusy ? (
+            <LoadingFallback />
+          ) : (
+            <View alignItems="center" flexDirection="row">
+              <View mr="medium" alignItems="center">
+                <img src={DatabyssLogo} width={128} />
+                <Text variant="uiTextExtraLarge">Databyss</Text>
+                <Text variant="uiTextSmall">version {version}</Text>
+              </View>
+              <View>
+                <DatabyssMenuItems
+                  onLoading={(group) => {
+                    setIsBusy(!!group)
+                  }}
+                />
+              </View>
+            </View>
+          )}
+        </Viewport>
       )}
     </DatabaseContext.Provider>
   )

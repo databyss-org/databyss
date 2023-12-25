@@ -18,7 +18,7 @@ const StyledInput = styled('input', styleProps)
 const StyledDiv = styled('div', styleProps)
 
 const AutosizeInput = forwardRef(
-  ({ concatCss, value, variant, ...props }, ref) => {
+  ({ concatCss, value, variant, placeholder, ...props }, ref) => {
     const [textWidth, setTextWidth] = useState(null)
     const _css = [resetCss].concat(concatCss)
     const textRef = useRef(null)
@@ -55,6 +55,7 @@ const AutosizeInput = forwardRef(
           }
           value={value}
           variant={variant}
+          placeholder={placeholder}
           {...props}
         />
         <StyledDiv
@@ -62,7 +63,7 @@ const AutosizeInput = forwardRef(
           variant={variant}
           css={[_css].concat(sizerCss)}
         >
-          {value}
+          {value.length ? value : placeholder}
         </StyledDiv>
       </>
     )

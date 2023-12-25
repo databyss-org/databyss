@@ -76,6 +76,7 @@ const headingVariants = {
 }
 
 const uiTextVariants = {
+  uiTextExtraLarge: uiText(28),
   uiTextLarge: uiText(22),
   uiTextMedium: uiText(18),
   uiTextNormal: uiText(16),

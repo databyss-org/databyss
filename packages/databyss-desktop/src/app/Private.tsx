@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import {
   Routes,
   Route,
@@ -35,8 +41,67 @@ import SidebarSvg from '@databyss-org/ui/assets/sidebar.svg'
 import ChevronSvg from '@databyss-org/ui/assets/chevron-right.svg'
 import DatabyssImg from '@databyss-org/ui/assets/logo-thick.png'
 import { DatabyssMenu } from '@databyss-org/ui/components/Menu/DatabyssMenu'
+import { setGroup } from '@databyss-org/data/pouchdb/groups'
+import { debounce } from 'lodash'
 
-const AppView: React.FC<{ title: string }> = ({ children, title }) => {
+const UNTITLED_GROUP_NAME = 'Untitled Databyss'
+
+const GroupNameInput = ({
+  groupName,
+  onGroupNameChanged,
+}: {
+  groupName: string
+  onGroupNameChanged: (name: string) => void
+}) => {
+  const prevGroupNameRef = useRef(groupName)
+  const [_groupName, _setGroupName] = useState<string>(groupName)
+
+  const debouncedGroupNameChanged = debounce((name) => {
+    onGroupNameChanged(name)
+  }, 500)
+
+  useEffect(() => {
+    if (_groupName === prevGroupNameRef.current) {
+      _setGroupName(groupName)
+      prevGroupNameRef.current = groupName
+    }
+  }, [groupName])
+
+  return (
+    <TextControl
+      color="gray.5"
+      inputVariant="uiTextSmall"
+      hoverColor="background.1"
+      ml="small"
+      px="tiny"
+      value={{
+        textValue: _groupName === UNTITLED_GROUP_NAME ? '' : _groupName,
+        ranges: [],
+      }}
+      placeholder={UNTITLED_GROUP_NAME}
+      inputProps={{
+        textAlign: 'left',
+        autoSize: true,
+      }}
+      flexGrow={1}
+      onChange={({ textValue }) => {
+        const _name = textValue.trim().length ? textValue : UNTITLED_GROUP_NAME
+        _setGroupName(textValue)
+        debouncedGroupNameChanged(_name)
+      }}
+    />
+  )
+}
+
+const AppView = ({
+  children,
+  title,
+  onGroupNameChanged,
+}: {
+  children: ReactNode
+  title: string
+  onGroupNameChanged: (name: string) => void
+}) => {
   const { setMenuOpen, isMenuOpen } = useNavigationContext()
   const [showDatabyssMenu, setShowDatabyssMenu] = useState(false)
   const navigate = useNavigate()
@@ -126,18 +191,9 @@ const AppView: React.FC<{ title: string }> = ({ children, title }) => {
             '-webkit-app-region': 'no-drag',
           }}
         >
-          <TextControl
-            color="gray.5"
-            inputVariant="uiTextSmall"
-            hoverColor="background.1"
-            ml="small"
-            px="tiny"
-            value={{ textValue: title, ranges: [] }}
-            inputProps={{
-              textAlign: 'right',
-              autoSize: true,
-            }}
-            flexGrow={1}
+          <GroupNameInput
+            groupName={title}
+            onGroupNameChanged={onGroupNameChanged}
           />
           <BaseControl
             onPress={() => setShowDatabyssMenu(!showDatabyssMenu)}
@@ -186,7 +242,27 @@ export const Private = () => {
     enabled: dbRef.groupId !== null,
   })
 
-  const appTitle = groupRes.isSuccess ? groupRes.data.name : 'Databyss'
+  const groupName = groupRes.isSuccess ? groupRes.data.name : 'Databyss'
+
+  const onGroupNameChanged = useCallback(
+    async (name: string) => {
+      setGroup({ ...groupRes.data, name })
+      const _localGroups = await eapi.state.get('localGroups')
+      await eapi.state.set(
+        'localGroups',
+        _localGroups.map((group) => {
+          if (group._id === groupRes.data._id) {
+            return {
+              ...group,
+              name,
+            }
+          }
+          return group
+        })
+      )
+    },
+    [groupRes.data]
+  )
 
   // Navigate to default page if nothing in path
   useEffect(() => {
@@ -199,7 +275,10 @@ export const Private = () => {
   return (
     <SearchProvider>
       <GestureProvider>
-        <AppView title={appTitle}>
+        <AppView
+          title={groupName ?? 'Databyss'}
+          onGroupNameChanged={onGroupNameChanged}
+        >
           <Providers>
             <Routes>
               <Route path="/:accountId/*">

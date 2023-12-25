@@ -20,7 +20,7 @@ export const DropdownList = ({
 }: {
   menuItems: MenuItem[]
   dismiss?: () => void
-  data: any
+  data?: any
 }) => (
   <>
     {menuItems.map(({ separator, ...menuItem }, idx) =>
