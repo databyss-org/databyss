@@ -6,6 +6,8 @@ import { Text } from '@databyss-org/ui/primitives'
 import { getDocuments } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { useBibliography, usePages } from '@databyss-org/data/pouchdb/hooks'
+import { backupDbToJson } from '@databyss-org/data/pouchdb/backup'
+import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { useUserPreferencesContext } from '@databyss-org/ui/hooks'
 import {
   bibliographyToMarkdown,
@@ -28,6 +30,7 @@ import { getCitationStyle } from '../citations/lib'
 import { CitationStyle } from '../citations/constants'
 import { sleep, validUriRegex } from '../lib/util'
 import { loadPage } from '../editorPage'
+import { getAccountFromLocation } from '../session/utils'
 
 interface ContextType {
   exportSinglePage: (id: string) => void
@@ -39,6 +42,7 @@ interface ContextType {
     source: Source
     author: AuthorName
   }) => void
+  exportDatabase: () => void
 }
 
 export const ExportContext = createContext<ContextType>(null!)
@@ -266,12 +270,39 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     }
   }
 
+  const exportDatabase = async () => {
+    const groupId = getAccountFromLocation() as string
+    notifySticky({
+      visible: true,
+      children: (
+        <Text variant="uiTextSmall" color="text.2">
+          Your export is being prepared and will download when complete.
+        </Text>
+      ),
+    })
+    const name = `databyss-db-${groupId.substring(
+      2
+    )}-${new Date()
+      .toISOString()
+      .replace('T', '_')
+      .replaceAll(':', '')
+      .substring(0, 17)}`
+    const dbJson = await backupDbToJson(dbRef.current!)
+    // ZIPping the file doesn't seem to do much
+    // const zip = new JSZip()
+    // zip.file(name, dbJson)
+    // const zipContent = await zip.generateAsync({ type: 'arraybuffer' })
+    hideSticky()
+    fileDownload(dbJson, `${name}.json`)
+  }
+
   return (
     <ExportContext.Provider
       value={{
         exportSinglePage,
         exportAllPages,
         exportBibliography,
+        exportDatabase,
       }}
     >
       {children}

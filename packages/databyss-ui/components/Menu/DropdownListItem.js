@@ -75,7 +75,7 @@ const DropdownListItem = ({
               {icon}
             </Icon>
           )}
-          <View pt={pxUnits(1)}>
+          <View pt={pxUnits(1)} flexShrink={1}>
             {labelHtml ? (
               <RawHtml html={labelHtml} />
             ) : (
