@@ -92,7 +92,6 @@ export const PageBody = ({
       const _page = { blocks: _nextBlocks, _id }
 
       // update page cache
-      console.log('[PageBody] update pages cache', _page)
       queryClient.setQueryData([selectors.PAGES], (oldData) =>
         oldData
           ? {

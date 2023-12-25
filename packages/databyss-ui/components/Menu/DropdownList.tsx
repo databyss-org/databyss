@@ -5,7 +5,9 @@ import { Separator } from '../..'
 export interface MenuItem {
   label: string
   icon?: React.ReactElement
-  action?: (() => boolean) | (() => Promise<boolean>)
+  iconSize?: string
+  iconColor?: string
+  action?: (data: any) => boolean | void | Promise<boolean>
   actionType?: string
   disabled?: boolean
   separator?: boolean
@@ -14,9 +16,11 @@ export interface MenuItem {
 export const DropdownList = ({
   menuItems,
   dismiss,
+  data,
 }: {
   menuItems: MenuItem[]
   dismiss?: () => void
+  data: any
 }) => (
   <>
     {menuItems.map(({ separator, ...menuItem }, idx) =>
@@ -27,7 +31,7 @@ export const DropdownList = ({
           {...menuItem}
           action={menuItem.actionType}
           onPress={async () => {
-            if (menuItem.action && (await menuItem.action()) && dismiss) {
+            if (menuItem.action && (await menuItem.action(data)) && dismiss) {
               dismiss()
             }
           }}

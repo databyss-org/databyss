@@ -14,6 +14,7 @@ const DropdownListItem = ({
   action,
   textSymbol,
   icon,
+  iconSize,
   iconColor,
   textColor,
   label,
@@ -68,7 +69,7 @@ const DropdownListItem = ({
           )}
           {icon && (
             <Icon
-              sizeVariant="small"
+              sizeVariant={iconSize ?? 'small'}
               mr="small"
               color={light ? 'text.3' : iconColor}
             >

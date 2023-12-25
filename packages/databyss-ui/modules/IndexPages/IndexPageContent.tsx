@@ -43,14 +43,11 @@ import {
   Icon,
   Grid,
   ViewProps,
-  Button,
-  RawHtml,
 } from '@databyss-org/ui/primitives'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
-import EditSvg from '@databyss-org/ui/assets/edit.svg'
 import MediaSvg from '@databyss-org/ui/assets/play.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { urlSafeName } from '@databyss-org/services/lib/util'
@@ -59,19 +56,15 @@ import { setEmbed } from '@databyss-org/services/embeds'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { ResolveEmbed } from '@databyss-org/editor/components/ResolveEmbed'
 import { useQueryClient } from '@tanstack/react-query'
-import { textToHtml } from '@databyss-org/services/blocks/serialize'
+import { blockTypeToSelector } from '@databyss-org/data/pouchdb/selectors'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 // import { useUserPreferencesContext } from '../../hooks'
 import IndexPageMenu from '../../components/IndexPage/IndexPageMenu'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 import { darkTheme } from '../../theming/theme'
-import { ThemeProvider } from 'emotion-theming'
-import {
-  blockTypeToSelector,
-  selectors,
-} from '@databyss-org/data/pouchdb/selectors'
 import ErrorFallback from '../../components/Notify/ErrorFallback'
+import { SourceHeader } from './SourceHeader'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -211,13 +204,6 @@ const EmbedHeader = ({ block, ...others }: EmbedHeaderProps) => (
   <ResolveEmbed data={block} position="relative" {...others} />
 )
 
-const SourceTitleAndCitationView = ({ source }: { source: Source }) =>
-  source ? (
-    <Text variant="uiTextNormal" mb="small" color="text.2">
-      <RawHtml html={textToHtml(source.text)} />
-    </Text>
-  ) : null
-
 export const IndexPageView = ({
   path,
   block,
@@ -326,51 +312,13 @@ export const IndexPageView = ({
                 handlesRef={titleInputHandlesRef}
               />
             )}
-            {block?.type === BlockType.Source &&
-              (isReadOnly ? (
-                // <SourceTitleAndCitationView block={block} mb="small" />
-                <SourceTitleAndCitationView source={block as Source} />
-              ) : (
-                <View position="relative" mt="em" mb="small">
-                  {/* <SourceTitleAndCitationView
-                  block={block}
-                  opacity={0}
-                  zIndex={-1}
-                />
-                 */}
-                  <SourceTitleAndCitationView source={block as Source} />
-                  <Button
-                    onPress={onPressDetails}
-                    variant="uiTextButtonShaded"
-                    alignSelf="flex-start"
-                    childViewProps={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                    }}
-                    mt="small"
-                  >
-                    <Icon
-                      data-test-button="open-source-modal"
-                      color="gray.3"
-                      sizeVariant="tiny"
-                      pr="tiny"
-                    >
-                      <EditSvg />
-                    </Icon>
-                    <Text variant="uiTextSmall" color="gray.3">
-                      View/Edit Citation
-                    </Text>
-                  </Button>
-                  {/* <SourceTitleAndCitationView
-                  block={block}
-                  position="absolute"
-                  zIndex={1}
-                  left={0}
-                  top={0}
-                /> */}
-                  <SourceTitleAndCitationView />
-                </View>
-              ))}
+            {block?.type === BlockType.Source && (
+              <SourceHeader
+                source={block as Source}
+                onPressDetails={onPressDetails}
+                readOnly={isReadOnly}
+              />
+            )}
             {block?.type === BlockType.Embed && (
               <>
                 <EmbedHeader block={block as Embed} mt="medium" mb="large" />

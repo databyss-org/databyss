@@ -1,4 +1,4 @@
-import { dialog, ipcMain } from 'electron'
+import { dialog, ipcMain, shell } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import { handleImport, nodeDbRef } from '../../nodeDb'
@@ -50,5 +50,18 @@ export function registerFileHandlers() {
       path.join(_mediaItemDir, 'meta.json'),
       JSON.stringify(meta)
     )
+  })
+  ipcMain.on('file-openNative', (_, path: string) => {
+    // const _path = path.replace('dbdrive://', `file://${mediaPath()}/`)
+    const _path = decodeURIComponent(
+      path.replace('dbdrive://', `${mediaPath()}/`)
+    )
+    console.log('[FILE] openNative', _path)
+    // shell.openExternal(path)
+    shell.openPath(_path)
+  })
+  ipcMain.handle('file-deleteMedia', (_, fileId: string) => {
+    const _mediaItemDir = path.join(mediaPath(), nodeDbRef.groupId, fileId)
+    fs.rmdirSync(_mediaItemDir, { recursive: true })
   })
 }

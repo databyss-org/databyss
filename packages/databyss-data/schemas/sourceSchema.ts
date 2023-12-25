@@ -138,6 +138,12 @@ export const sourceSchema: JSONSchema4 = {
     title: {
       $ref: 'text',
     },
+    media: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    },
   },
   // extend pouchdb types
   // block schema

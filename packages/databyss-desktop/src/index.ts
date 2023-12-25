@@ -1,4 +1,4 @@
-import { app, BrowserWindow, net, protocol } from 'electron'
+import { app, BrowserWindow, net, protocol, shell } from 'electron'
 import url from 'url'
 import { initNodeDb } from './nodeDb'
 import { registerHandlers } from './eapi/handlers'
@@ -49,6 +49,11 @@ const createWindow = (): void => {
       // enableRemoteModule: true,
     },
     titleBarStyle: 'hiddenInset',
+  })
+
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url)
+    return { action: 'deny' }
   })
 
   // console.log('[Main]', Menu.getApplicationMenu())

@@ -9,7 +9,7 @@ import { selectors } from '../../selectors'
 declare const eapi: typeof import('../../../../databyss-desktop/src/eapi').default
 
 export const setSource = async (data: Source) => {
-  const { text, detail, _id, sharedWithGroups } = data as any
+  const { text, detail, _id, sharedWithGroups, media } = data
 
   let { name } = data as any
   if (!name?.textValue?.length) {
@@ -23,6 +23,7 @@ export const setSource = async (data: Source) => {
     doctype: DocumentType.Block,
     detail,
     sharedWithGroups,
+    media,
   }
 
   // update caches

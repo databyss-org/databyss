@@ -122,15 +122,14 @@ const ContentEditable = ({
         if (!state.operations.reloadAll) {
           Transforms.select(editor, selection)
           setSelection(state.selection)
-        } else {
-          safelyResetSelection()
+        } else if (!Range.isCollapsed(selection)) {
+          Transforms.move(editor, { distance: 1 })
+          Transforms.move(editor, { distance: 0 })
           requestAnimationFrame(() => {
-            try {
-              Transforms.select(editor, selection)
-            } catch (e) {
-              console.warn('[ContentEditable] err', e)
-            }
+            Transforms.select(editor, selection)
           })
+        } else {
+          Transforms.select(editor, selection)
         }
       }
       if (_scroll) {

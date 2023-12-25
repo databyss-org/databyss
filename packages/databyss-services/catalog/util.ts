@@ -1,6 +1,7 @@
 import stripHtml from 'string-strip-html'
 import { CatalogParsingParams } from '../interfaces/CatalogState'
-import { Text, RangeType } from '../interfaces'
+import { Text, RangeType, Source, BlockType } from '../interfaces'
+import { makeText } from '../blocks'
 /**
  * Removes unwanted entities (e.g. html tags) from catalog results
  * @param text string or array of strings to cleanup
@@ -108,4 +109,58 @@ export function splitName(name: string) {
     name.split(' ').slice(0, -1).join(' '),
     name.split(' ').slice(-1).join(' '),
   ]
+}
+
+/**
+ * composes Source from api result
+ */
+export function sourceFromCatalogResult(options: CatalogParsingParams): Source {
+  const { service, result } = options
+
+  const _authors = service.getAuthors(result)
+
+  const publicationType = service.getPublicationType(result)
+
+  return {
+    _id: '', // will be generated if imported
+    type: BlockType.Source,
+    text: buildDatabyssName(options),
+    detail: {
+      authors: _authors.length
+        ? _authors.map((_a: string) => {
+            const _n = splitName(_a)
+            return {
+              firstName: makeText(_n[0]),
+              lastName: makeText(_n[1]),
+            }
+          })
+        : [],
+      editors: [],
+      translators: [],
+      citations: [],
+      title: buildOnlyTitle(options),
+
+      // publication details (common)
+      publicationType,
+      publisherName: makeText(service.getPublisher(result)),
+      publisherPlace: makeText(service.getPublisherPlace(result)),
+      year: makeText(service.getPublishedYear(result)),
+      month:
+        publicationType && service.getPublishedMonth(result, publicationType),
+
+      // publication details (articles)
+      journalTitle:
+        publicationType &&
+        makeText(service.getJournalTitle(result, publicationType)),
+      volume: makeText(service.getVolume(result)),
+      issue: makeText(service.getIssue(result)),
+
+      // catalog identifiers (book)
+      isbn: makeText(service.getISBN(result)),
+
+      // catalog identifiers (articles)
+      doi: makeText(service.getDOI(result)),
+      issn: makeText(service.getISSN(result)),
+    },
+  }
 }

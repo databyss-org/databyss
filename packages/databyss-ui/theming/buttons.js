@@ -59,7 +59,7 @@ const buttonVariants = {
   },
   uiLink: {
     padding: space.none,
-    color: 'secondary.3',
+    color: 'blue.2',
     textDecoration: 'underline',
   },
   formatButton: {

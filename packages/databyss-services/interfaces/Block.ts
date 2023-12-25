@@ -67,6 +67,8 @@ export enum MediaTypes {
   HTML = 'html',
   WEBSITE = 'website',
   UNFETCHED = 'unfetchedMedia',
+  PDF = 'pdf',
+  UNKNOWN = 'unknown',
 }
 
 export interface FileDetail {
@@ -125,6 +127,7 @@ export interface SourceCitationHeader extends Source {
 export interface Source extends Block {
   detail: SourceDetail
   name?: Text
+  media?: string[]
 }
 
 export interface Embed extends Block {
