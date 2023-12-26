@@ -16,26 +16,18 @@ import {
   blocksToListItemData,
 } from './transforms'
 import { FindInPage, useFindInPage } from '../../hooks/search/useFindInPage'
-import { ListHandle } from '../..'
+import { Icon, ListHandle } from '../..'
+import FindInPageSvg from '../../assets/find-in-page.svg'
+import FindInPagesSvg from '../../assets/find-in-pages.svg'
 
 const FulltextSearchItem = (props) => (
   <SidebarListItem
     text="Find in notes"
     id="sidebarListItem-entry-search"
     icon={
-      <View
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="center"
-        width={iconSizeVariants.tiny.width}
-      >
-        <Text variant="uiTextTiny" color="text.3">
-          A
-        </Text>
-        <Text variant="uiTextTinyItalic" color="text.3">
-          a
-        </Text>
-      </View>
+      <Icon sizeVariant="tiny" color="text.3">
+        <FindInPagesSvg />
+      </Icon>
     }
     {...props}
   >
@@ -60,7 +52,11 @@ const FindInPageSearchItem = ({
       // console.log('[SidebarSearchResults] findNext')
       findInPage.findNext()
     }}
-    icon={<View alignItems="center" justifyContent="center" />}
+    icon={
+      <Icon sizeVariant="tiny" color="text.3">
+        <FindInPageSvg />
+      </Icon>
+    }
     {...props}
   >
     <View>
@@ -91,11 +87,8 @@ const SidebarSearchResults = ({
   const listHandleRef = useRef<ListHandle>(null)
   const findInPage = useFindInPage({
     onMatchesUpdated: (matches) => {
-      if (matches.length === 0) {
-        listHandleRef.current?.setActiveIndex(1)
-      } else {
-        listHandleRef.current?.setActiveIndex(0)
-      }
+      const _nextSelectedItem = matches.length === 0 ? 1 : 0
+      listHandleRef.current?.setActiveIndex(_nextSelectedItem)
     },
   })
 
@@ -132,6 +125,7 @@ const SidebarSearchResults = ({
   const _menuItems = filterQuery === '' ? sortedSources : filteredEntries
   return (
     <SidebarList
+      // key={filterQuery}
       data-test-element="search-results"
       heading={_menuItems.length ? 'Quick Matches' : ''}
       menuItems={_menuItems}
@@ -139,7 +133,7 @@ const SidebarSearchResults = ({
       keyboardNavigation
       keyboardEventsActive={searchHasFocus}
       orderKey={filterQuery}
-      initialActiveIndex={0}
+      initialActiveIndex={findInPage.matches.length === 0 ? 1 : 0}
       onItemSelected={() => {
         // HACK: replace with an "onLoadersComplete" event
         setTimeout(() => {
