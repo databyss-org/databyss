@@ -26,7 +26,7 @@ export class HighlightManager {
     this.debouncedDispatch()
   }
 
-  resetHighlightElenents() {
+  resetHighlightElements() {
     this._highlightElements = []
   }
 
@@ -58,7 +58,11 @@ export interface FindInPage {
   findPrev: () => void
 }
 
-export const useFindInPage = (): FindInPage => {
+export interface UseFindInPageOptions {
+  onMatchesUpdated?: (matches: FindInPageMatch[]) => void
+}
+
+export const useFindInPage = (options?: UseFindInPageOptions): FindInPage => {
   const [matches, setMatches] = useState<FindInPageMatch[]>([])
   const [currentIndex, setCurrentIndex] = useState<number>(0)
   const location = useNavigationContext((c) => c && c.location)
@@ -119,6 +123,9 @@ export const useFindInPage = (): FindInPage => {
   useEffect(() => {
     setCurrentIndex(0)
     activateMatch(0)
+    if (options?.onMatchesUpdated) {
+      options.onMatchesUpdated(matches)
+    }
   }, [matches])
 
   useEffect(() => {
@@ -128,7 +135,8 @@ export const useFindInPage = (): FindInPage => {
 
   useEffect(() => {
     // console.log('[useFindInPage] location changed, reset highlightManager')
-    highlightManager.resetHighlightElenents()
+    highlightManager.resetHighlightElements()
+    runQuery()
   }, [location])
 
   const resetQuery = useCallback(() => {

@@ -1,4 +1,10 @@
-import React, { useMemo, useRef, useEffect, useImperativeHandle } from 'react'
+import React, {
+  useMemo,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+  useCallback,
+} from 'react'
 import {
   createEditor,
   Node,
@@ -14,10 +20,10 @@ import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { copyToClipboard } from '@databyss-org/ui/components/PageContent/PageMenu'
 import { useQueryClient } from '@tanstack/react-query'
-import {
-  blockTypeToSelector,
-  selectors,
-} from '@databyss-org/data/pouchdb/selectors'
+import { blockTypeToSelector } from '@databyss-org/data/pouchdb/selectors'
+import { setBlockRelations } from '@databyss-org/data/pouchdb/entries'
+import { appCommands } from '@databyss-org/ui/lib/appCommands'
+
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -58,8 +64,6 @@ import {
   onLinkBackspace,
 } from '../lib/inlineUtils'
 import { loadPage } from '../../databyss-services/editorPage'
-import { setBlockRelations } from '@databyss-org/data/pouchdb/entries'
-import { BlockType } from '../interfaces'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -291,6 +295,27 @@ const ContentEditable = ({
   const onInlineAtomicClick = (inlineData) => {
     navigate(getInlineAtomicHref(inlineData))
   }
+
+  const undo = useCallback(() => {
+    if (historyContext) {
+      historyContext.undo()
+    }
+  }, [historyContext])
+
+  const redo = useCallback(() => {
+    if (historyContext) {
+      historyContext.redo()
+    }
+  }, [historyContext])
+
+  useEffect(() => {
+    appCommands.addListener('undo', undo)
+    appCommands.addListener('redo', redo)
+    return () => {
+      appCommands.removeListener('undo', undo)
+      appCommands.removeListener('redo', redo)
+    }
+  }, [appCommands])
 
   return useMemo(() => {
     const onChange = (value) => {

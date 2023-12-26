@@ -15,7 +15,7 @@ import {
   pagesToListItemData,
   blocksToListItemData,
 } from './transforms'
-import { useFindInPage } from '../../hooks/search/useFindInPage'
+import { FindInPage, useFindInPage } from '../../hooks/search/useFindInPage'
 import { ListHandle } from '../..'
 
 const FulltextSearchItem = (props) => (
@@ -47,34 +47,35 @@ const FulltextSearchItem = (props) => (
   </SidebarListItem>
 )
 
-const FindInPageSearchItem = ({ query, ...props }) => {
-  const findInPage = useFindInPage()
-  useEffect(() => {
-    if (query?.trim().length) {
-      findInPage.runQuery()
-    }
-  }, [query])
-  return (
-    <SidebarListItem
-      text="Find in page"
-      id="sidebarListItem-findInPage"
-      onPress={() => {
-        // console.log('[SidebarSearchResults] findNext')
-        findInPage.findNext()
-      }}
-      icon={<View alignItems="center" justifyContent="center" />}
-      {...props}
-    >
-      <View>
-        {findInPage.matches.length > 0 && (
-          <Text variant="uiTextSmall" color="text.3">
-            {findInPage.currentIndex + 1} / {findInPage.matches.length}
-          </Text>
-        )}
-      </View>
-    </SidebarListItem>
-  )
-}
+const FindInPageSearchItem = ({
+  findInPage,
+  ...props
+}: {
+  findInPage: FindInPage
+}) => (
+  <SidebarListItem
+    text="Find in page"
+    id="sidebarListItem-findInPage"
+    onPress={() => {
+      // console.log('[SidebarSearchResults] findNext')
+      findInPage.findNext()
+    }}
+    icon={<View alignItems="center" justifyContent="center" />}
+    {...props}
+  >
+    <View>
+      {findInPage.matches.length > 0 ? (
+        <Text variant="uiTextSmall" color="text.3">
+          {findInPage.currentIndex + 1} / {findInPage.matches.length}
+        </Text>
+      ) : (
+        <Text variant="uiTextTiny" color="text.3">
+          no results
+        </Text>
+      )}
+    </View>
+  </SidebarListItem>
+)
 
 const SidebarSearchResults = ({
   filterQuery,
@@ -88,6 +89,21 @@ const SidebarSearchResults = ({
   const topicsRes = useBlocksInPages<Topic>(BlockType.Topic)
   const pagesRes = usePages()
   const listHandleRef = useRef<ListHandle>(null)
+  const findInPage = useFindInPage({
+    onMatchesUpdated: (matches) => {
+      if (matches.length === 0) {
+        listHandleRef.current?.setActiveIndex(1)
+      } else {
+        listHandleRef.current?.setActiveIndex(0)
+      }
+    },
+  })
+
+  useEffect(() => {
+    if (filterQuery?.trim().length) {
+      findInPage.runQuery()
+    }
+  }, [filterQuery])
 
   const queryRes = [sourcesRes, topicsRes, pagesRes]
 
@@ -133,7 +149,7 @@ const SidebarSearchResults = ({
       handlesRef={listHandleRef}
       {...others}
     >
-      <FindInPageSearchItem query={filterQuery} />
+      <FindInPageSearchItem findInPage={findInPage} />
       <FulltextSearchItem
         onPress={() => {
           onSearch()

@@ -12,7 +12,9 @@ import { rendererConfig } from './packages/databyss-desktop/webpack.renderer.con
 
 const config: ForgeConfig = {
   packagerConfig: {
-    asar: true,
+    asar: {
+      unpack: '*.{node,dll}',
+    },
     name: 'Databyss',
     icon: 'public/appIcon',
   },

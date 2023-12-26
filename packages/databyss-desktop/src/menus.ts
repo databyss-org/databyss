@@ -1,4 +1,4 @@
-import { Menu, app } from 'electron'
+import { BrowserWindow, Menu, app } from 'electron'
 import { importDatabyssFile } from './eapi/handlers/file-handlers'
 
 const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
@@ -20,9 +20,17 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
     label: 'File',
     submenu: [
       {
-        id: 'menu.open',
-        label: 'Open…',
-        accelerator: 'Cmd+O',
+        label: 'New page',
+        accelerator: 'CmdOrCtrl+N',
+        click: () => {
+          BrowserWindow.getFocusedWindow().webContents.send(
+            'cmd-command',
+            'newPage'
+          )
+        },
+      },
+      {
+        label: 'Import Databyss',
         click: importDatabyssFile,
       },
     ],
@@ -31,8 +39,30 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
   {
     label: 'Edit',
     submenu: [
-      { label: 'Undo', accelerator: 'CmdOrCtrl+Z', role: 'undo' },
-      { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', role: 'redo' },
+      {
+        label: 'Undo',
+        accelerator: 'CmdOrCtrl+Z',
+        // role: 'undo',
+        click: () => {
+          BrowserWindow.getFocusedWindow().webContents.undo()
+          BrowserWindow.getFocusedWindow().webContents.send(
+            'cmd-command',
+            'undo'
+          )
+        },
+      },
+      {
+        label: 'Redo',
+        accelerator: 'Shift+CmdOrCtrl+Z',
+        // role: 'redo',
+        click: () => {
+          BrowserWindow.getFocusedWindow().webContents.redo()
+          BrowserWindow.getFocusedWindow().webContents.send(
+            'cmd-command',
+            'redo'
+          )
+        },
+      },
       { type: 'separator' },
       { label: 'Cut', accelerator: 'CmdOrCtrl+X', role: 'cut' },
       { label: 'Copy', accelerator: 'CmdOrCtrl+C', role: 'copy' },
@@ -41,6 +71,17 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         label: 'Select All',
         accelerator: 'CmdOrCtrl+A',
         role: 'selectAll',
+      },
+      { type: 'separator' },
+      {
+        label: 'Find',
+        accelerator: 'CmdOrCtrl+F',
+        click: () => {
+          BrowserWindow.getFocusedWindow().webContents.send(
+            'cmd-command',
+            'find'
+          )
+        },
       },
     ],
   },

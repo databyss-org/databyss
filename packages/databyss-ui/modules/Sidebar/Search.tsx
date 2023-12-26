@@ -6,6 +6,7 @@ import { View } from '@databyss-org/ui/primitives'
 import SearchInputContainer from '../../components/Sidebar/SearchInputContainer'
 
 import SidebarSearchResults from './SidebarSearchResults'
+import { appCommands } from '../../lib/appCommands'
 
 const Search = (others) => {
   const {
@@ -57,6 +58,19 @@ const Search = (others) => {
       setValue(decodeURIComponent(params))
     }
   }, [params])
+
+  const focusInput = useCallback(() => {
+    if (inputRef.current) {
+      inputRef.current!.focus()
+    }
+  }, [inputRef.current])
+
+  useEffect(() => {
+    appCommands.addListener('find', focusInput)
+    return () => {
+      appCommands.removeListener('find', focusInput)
+    }
+  }, [appCommands])
 
   const onSearchClick = () => {
     // if not currently in search page, navigate to search page
