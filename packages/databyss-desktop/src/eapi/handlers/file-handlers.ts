@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import { handleImport, nodeDbRef } from '../../nodeDb'
 import { appState } from './state-handlers'
+import { createDatabyss } from '../../lib/createDatabyss'
 
 export interface IpcFile {
   buffer: ArrayBuffer
@@ -38,6 +39,7 @@ export function registerFileHandlers() {
     async (_, args) => await dialog.showOpenDialog({ properties: ['openFile'] })
   )
   ipcMain.handle('file-importDatabyss', importDatabyssFile)
+  ipcMain.handle('file-newDatabyss', createDatabyss)
   ipcMain.handle('file-importMedia', (_, file: IpcFile, fileId: string) => {
     console.log('[IPC] importMedia', file.name)
     const _mediaItemDir = path.join(mediaPath(), nodeDbRef.groupId, fileId)
@@ -56,7 +58,7 @@ export function registerFileHandlers() {
     const _path = decodeURIComponent(
       path.replace('dbdrive://', `${mediaPath()}/`)
     )
-    console.log('[FILE] openNative', _path)
+    // console.log('[FILE] openNative', _path)
     // shell.openExternal(path)
     shell.openPath(_path)
   })

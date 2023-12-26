@@ -23,7 +23,7 @@ const Search = (others) => {
   const [value, setValue] = useState(searchTerm)
   const [hasFocus, setHasFocus] = useState(false)
 
-  const inputRef = useRef()
+  const inputRef = useRef<HTMLElement | null>(null)
 
   // wait until user stopped typing for 200ms before setting the value
   const debounced = useCallback(
@@ -41,7 +41,7 @@ const Search = (others) => {
   const clear = () => {
     setQuery('')
     setValue('')
-    inputRef.current.focus()
+    inputRef.current?.focus()
   }
 
   // encode the search term and remove '?'

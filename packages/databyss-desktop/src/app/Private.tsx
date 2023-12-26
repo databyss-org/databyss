@@ -44,8 +44,6 @@ import { DatabyssMenu } from '@databyss-org/ui/components/Menu/DatabyssMenu'
 import { setGroup } from '@databyss-org/data/pouchdb/groups'
 import { debounce } from 'lodash'
 
-const UNTITLED_GROUP_NAME = 'Untitled Databyss'
-
 const GroupNameInput = ({
   groupName,
   onGroupNameChanged,
@@ -75,17 +73,20 @@ const GroupNameInput = ({
       ml="small"
       px="tiny"
       value={{
-        textValue: _groupName === UNTITLED_GROUP_NAME ? '' : _groupName,
+        textValue:
+          _groupName === process.env.UNTITLED_GROUP_NAME ? '' : _groupName,
         ranges: [],
       }}
-      placeholder={UNTITLED_GROUP_NAME}
+      placeholder={process.env.UNTITLED_GROUP_NAME}
       inputProps={{
         textAlign: 'left',
         autoSize: true,
       }}
       flexGrow={1}
       onChange={({ textValue }) => {
-        const _name = textValue.trim().length ? textValue : UNTITLED_GROUP_NAME
+        const _name = textValue.trim().length
+          ? textValue
+          : process.env.UNTITLED_GROUP_NAME
         _setGroupName(textValue)
         debouncedGroupNameChanged(_name)
       }}

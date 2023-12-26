@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import colors from '@databyss-org/ui/theming/colors'
 import { urlSafeName } from '@databyss-org/services/lib/util'
+import { highlightManager } from '@databyss-org/ui/hooks/search/useFindInPage'
 import { EditorEmbedMedia, EmbedMedia } from './EmbedMedia'
 import { Link } from './Link'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
@@ -21,7 +22,15 @@ export const Leaf = ({
   onInlineClick,
   textOnly,
 }) => {
+  const highlightRef = useRef(null)
   const { blue, gray, orange, inlineTopic, inlineSource } = colors
+
+  useEffect(() => {
+    if (!highlightRef.current) {
+      return
+    }
+    highlightManager.addHighlightElement(highlightRef.current)
+  }, [highlightRef.current])
 
   let _children = children
 
@@ -214,8 +223,16 @@ export const Leaf = ({
 
   return (
     <span
+      {...(leaf.highlight
+        ? {
+            style: {
+              backgroundColor: orange[3],
+            },
+            'data-find-highlight': true,
+            ref: highlightRef,
+          }
+        : {})}
       {...attributes}
-      style={{ backgroundColor: leaf.highlight && orange[3] }}
     >
       {_children}
     </span>

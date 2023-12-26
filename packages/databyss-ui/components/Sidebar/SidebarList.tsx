@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactNode, useState } from 'react'
+import React, { PropsWithChildren, ReactNode, Ref, useState } from 'react'
 import {
   SidebarListItemData,
   useNavigationContext,
@@ -30,6 +30,7 @@ import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { unorm } from '@databyss-org/data/couchdb/couchdb'
 import { SidebarHeaderButton } from './SidebarHeaderButton'
+import { ListHandle } from '../..'
 
 export interface SidebarListProps
   extends ScrollViewProps,
@@ -38,6 +39,7 @@ export interface SidebarListProps
   keyboardNavigation?: boolean
   heading?: string
   prependItems?: SidebarListItemData<any>[]
+  handlesRef?: Ref<ListHandle>
 }
 
 const menuSvgs: { [key: string]: ReactNode } = {
@@ -65,6 +67,7 @@ const SidebarList = ({
   onItemSelected,
   heading,
   prependItems,
+  handlesRef,
   ...others
 }: PropsWithChildren<SidebarListProps>) => {
   const { getAccountFromLocation, navigate } = useNavigationContext()
@@ -179,6 +182,7 @@ const SidebarList = ({
         verticalItemMargin="tiny"
         onItemSelected={onItemSelected}
         py={0}
+        handlesRef={handlesRef}
       >
         {children}
         {_menuItems.map((item, index) => {

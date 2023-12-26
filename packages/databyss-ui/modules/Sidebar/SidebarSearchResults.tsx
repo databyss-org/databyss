@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import {
   sortEntriesAtoZ,
   filterEntries,
@@ -15,6 +15,8 @@ import {
   pagesToListItemData,
   blocksToListItemData,
 } from './transforms'
+import { useFindInPage } from '../../hooks/search/useFindInPage'
+import { ListHandle } from '../..'
 
 const FulltextSearchItem = (props) => (
   <SidebarListItem
@@ -38,12 +40,41 @@ const FulltextSearchItem = (props) => (
     {...props}
   >
     <View>
-      <Text variant="uiTextTiny" color="text.3">
+      {/* <Text variant="uiTextTiny" color="text.3">
         ENTER
-      </Text>
+      </Text> */}
     </View>
   </SidebarListItem>
 )
+
+const FindInPageSearchItem = ({ query, ...props }) => {
+  const findInPage = useFindInPage()
+  useEffect(() => {
+    if (query?.trim().length) {
+      findInPage.runQuery()
+    }
+  }, [query])
+  return (
+    <SidebarListItem
+      text="Find in page"
+      id="sidebarListItem-findInPage"
+      onPress={() => {
+        // console.log('[SidebarSearchResults] findNext')
+        findInPage.findNext()
+      }}
+      icon={<View alignItems="center" justifyContent="center" />}
+      {...props}
+    >
+      <View>
+        {findInPage.matches.length > 0 && (
+          <Text variant="uiTextSmall" color="text.3">
+            {findInPage.currentIndex + 1} / {findInPage.matches.length}
+          </Text>
+        )}
+      </View>
+    </SidebarListItem>
+  )
+}
 
 const SidebarSearchResults = ({
   filterQuery,
@@ -56,6 +87,7 @@ const SidebarSearchResults = ({
   const sourcesRes = useBlocksInPages<Source>(BlockType.Source)
   const topicsRes = useBlocksInPages<Topic>(BlockType.Topic)
   const pagesRes = usePages()
+  const listHandleRef = useRef<ListHandle>(null)
 
   const queryRes = [sourcesRes, topicsRes, pagesRes]
 
@@ -81,11 +113,12 @@ const SidebarSearchResults = ({
 
   const filteredEntries = filterEntries(sortedSources, filterQuery)
 
+  const _menuItems = filterQuery === '' ? sortedSources : filteredEntries
   return (
     <SidebarList
       data-test-element="search-results"
-      heading="Quick Matches"
-      menuItems={filterQuery === '' ? sortedSources : filteredEntries}
+      heading={_menuItems.length ? 'Quick Matches' : ''}
+      menuItems={_menuItems}
       height={height}
       keyboardNavigation
       keyboardEventsActive={searchHasFocus}
@@ -97,9 +130,16 @@ const SidebarSearchResults = ({
           inputRef.current.focus()
         }, 50)
       }}
+      handlesRef={listHandleRef}
       {...others}
     >
-      <FulltextSearchItem onPress={onSearch} />
+      <FindInPageSearchItem query={filterQuery} />
+      <FulltextSearchItem
+        onPress={() => {
+          onSearch()
+          listHandleRef.current?.setActiveIndex(0)
+        }}
+      />
       <View />
     </SidebarList>
   )

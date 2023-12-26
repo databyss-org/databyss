@@ -126,6 +126,10 @@ export function DatabyssMenuItems({
     {
       label: 'Create new Databyss',
       icon: <AddSvg />,
+      action: async () => {
+        await eapi.file.newDatabyss()
+        return true
+      },
     },
   ]
   return <DropdownList menuItems={menuItems} dismiss={onDismiss} />

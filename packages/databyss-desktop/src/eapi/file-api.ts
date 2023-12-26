@@ -4,6 +4,8 @@ import { IpcFile } from './handlers/file-handlers'
 export const open = () => ipcRenderer.invoke('file-open')
 export const importDatabyss = () =>
   ipcRenderer.invoke('file-importDatabyss') as Promise<boolean>
+export const newDatabyss = () =>
+  ipcRenderer.invoke('file-newDatabyss') as Promise<boolean>
 export const importMedia = async (
   file: File,
   fileId: string,

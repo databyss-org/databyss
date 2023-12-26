@@ -21,7 +21,7 @@ const markToHtml: TagMapFnType = (mark) =>
     [RangeType.Bold]: ['<strong>', '</strong>'],
     [RangeType.Italic]: ['<i>', '</i>'],
     [RangeType.Highlight]: [
-      `<span style="background-color: ${colors.orange[3]}">`,
+      `<span style="background-color: ${colors.orange[3]}" data-find-highlight="true">`,
       '</span>',
     ],
     [RangeType.Location]: [

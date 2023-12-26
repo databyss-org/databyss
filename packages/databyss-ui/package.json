@@ -52,6 +52,7 @@
     "emotion-normalize": "^10.1.0",
     "emotion-reset": "^2.0.3",
     "emotion-theming": "^10.0.10",
+    "events": "^3.3.0",
     "fetch-mock": "^8.0.1",
     "immer": "^6.0.5",
     "immutable": "^4.0.0-rc.12",

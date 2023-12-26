@@ -496,7 +496,9 @@ export function createHighlightRanges(
         options &&
         options.currentRanges.find(
           (r) =>
-            r.offset === match.index! - 1 &&
+            // r.offset === match.index! - 1 &&
+            match.index! > r.offset &&
+            match.index! < r.offset + r.length &&
             isArray(r.marks[0]) &&
             r.marks[0][1] === options.ignoreInlineId
         )

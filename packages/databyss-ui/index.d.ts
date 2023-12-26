@@ -9,6 +9,7 @@ import React, {
   ReactNode,
   KeyboardEvent,
   MouseEvent,
+  Ref,
 } from 'react'
 import {
   SpaceProps,
@@ -24,7 +25,7 @@ import {
 import * as ReactModal from 'react-modal'
 import * as ReactDnd from 'react-dnd'
 import { InterpolationWithTheme } from '@emotion/core'
-import { Text, Text as TextInterface } from '@databyss-org/editor/interfaces'
+import { Text as TextInterface } from '@databyss-org/editor/interfaces'
 import { CSSObject } from '@styled-system/css'
 
 export type RefForwardingFC<P, T = HTMLElement> = ForwardRefExoticComponent<
@@ -145,6 +146,10 @@ declare const KeyboardNavigationProvider: FC<PropsWithChildren<
   KeyboardNavigationProps
 >>
 
+export interface ListHandle {
+  setActiveIndex: (index: number) => void
+}
+
 export interface ListProps extends ViewProps, KeyboardNavigationProps {
   horizontalItemPadding?: ReactText
   horizontalItemMargin?: ReactText
@@ -152,6 +157,7 @@ export interface ListProps extends ViewProps, KeyboardNavigationProps {
   verticalItemMargin?: ReactText
   removeBorderRadius?: boolean
   keyboardNavigation?: boolean
+  handlesRef?: Ref<ListHandle>
 }
 
 declare const List: FC<PropsWithChildren<ListProps>>

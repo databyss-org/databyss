@@ -5,6 +5,7 @@ import React, {
   useRef,
   useEffect,
   useCallback,
+  useImperativeHandle,
 } from 'react'
 
 export const KeyboardNavigationContext = createContext()
@@ -16,12 +17,20 @@ export const KeyboardNavigationProvider = ({
   keyboardEventsActive,
   initialActiveIndex,
   onItemSelected,
+  handlesRef,
 }) => {
   const itemCountRef = useRef(0)
   const activeIndexRef = useRef(initialActiveIndex)
   const [orderKeyValue, setOrderKeyValue] = useState('')
   const activeItemRef = useRef()
   const [, setActiveIndex] = useState(activeIndexRef.current)
+
+  useImperativeHandle(handlesRef, () => ({
+    setActiveIndex: (index) => {
+      activeIndexRef.current = index
+      setActiveIndex(index)
+    },
+  }))
 
   /**
    * Gets the next item index and increments the state.itemCount
