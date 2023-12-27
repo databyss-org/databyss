@@ -25,3 +25,4 @@ export const openNative = (path: string) =>
   ipcRenderer.send('file-openNative', path)
 export const deleteMedia = (fileId: string) =>
   ipcRenderer.invoke('file-deleteMedia', fileId)
+export const chooseDataPath = () => ipcRenderer.invoke('file-chooseDataPath')

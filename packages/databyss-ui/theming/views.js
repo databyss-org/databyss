@@ -36,7 +36,7 @@ const borderVariants = {
   thinLight: border(1, 'border.3'),
   thickDark: border(3, 'border.0'),
   thickLight: border(3, 'border.3'),
-  formField: border(2, 'border.1'),
+  formField: border(2, 'border.2'),
   formError: border(2, 'red.0'),
   activeFormField: border(2, 'primary.0'),
   round: { borderRadius: '50%' },

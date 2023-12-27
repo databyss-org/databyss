@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 import { Group } from '@databyss-org/services/interfaces'
+import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { useAppState } from '../../../databyss-desktop/src/hooks'
 import ClickAwayListener from '../Util/ClickAwayListener'
 import { DropdownContainer, View } from '../..'
@@ -8,10 +9,11 @@ import { DropdownList, MenuItem } from './DropdownList'
 import FolderSvg from '../../assets/folder-open.svg'
 import AddSvg from '../../assets/add-menu.svg'
 import DatabyssSvg from '../../assets/logo-vector.svg'
+import DiskSvg from '../../assets/save.svg'
 import CheckSvg from '../../assets/check.svg'
-import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import LoadingFallback from '../Notify/LoadingFallback'
 import { theme } from '../../theming'
+import { useNotifyContext } from '../Notify/NotifyProvider'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../../databyss-desktop/src/eapi').default
@@ -70,7 +72,10 @@ export function DatabyssMenuItems({
   onLoading?: (group?: Group | boolean) => void
 }) {
   const localGroupsRes = useAppState('localGroups')
+  const dataPath = useAppState('dataPath')
   const groupsRes = useGroups()
+  const notify = useNotifyContext((c) => c && c.notify)
+  const hideDialog = useNotifyContext((c) => c && c.hideDialog)
 
   const groups: Group[] = localGroupsRes.isSuccess
     ? localGroupsRes.data.map(
@@ -107,7 +112,7 @@ export function DatabyssMenuItems({
       separator: true,
     },
     {
-      label: 'From a file...',
+      label: 'Import from a file...',
       icon: <FolderSvg />,
       action: async () => {
         if (onLoading) {
@@ -133,5 +138,29 @@ export function DatabyssMenuItems({
       },
     },
   ]
+
+  if (!dbRef.groupId) {
+    menuItems.push(
+      {
+        label: 'Data settings',
+        separator: true,
+      },
+      {
+        icon: <DiskSvg />,
+        label: 'Set data directory...',
+        subLabel: dataPath.data ?? '',
+        action: async () => {
+          notify({
+            showConfirmButtons: false,
+            message: 'Moving data directory...',
+          })
+          await eapi.file.chooseDataPath()
+          hideDialog()
+          return true
+        },
+      }
+    )
+  }
+
   return <DropdownList menuItems={menuItems} dismiss={onDismiss} />
 }

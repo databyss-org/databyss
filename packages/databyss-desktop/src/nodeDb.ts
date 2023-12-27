@@ -4,7 +4,7 @@ import PouchDBUpsert from 'pouchdb-upsert'
 import PouchDbQuickSearch from 'pouchdb-quick-search'
 import { BrowserWindow, app, ipcMain, ipcRenderer } from 'electron'
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs-extra'
 import { Group } from '@databyss-org/services/interfaces'
 import {
   DocumentType,
@@ -17,10 +17,10 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 PouchDB.plugin(PouchDbQuickSearch)
 
-export const appDbPath = path.join(app.getPath('userData'), 'pouchdb')
-if (!fs.existsSync(appDbPath)) {
-  fs.mkdirSync(appDbPath)
-}
+// export const appDbPath = path.join(app.getPath('userData'), 'pouchdb')
+// if (!fs.existsSync(appDbPath)) {
+//   fs.mkdirSync(appDbPath)
+// }
 
 export interface NodeDbRef {
   current: PouchDB.Database<any> | null
@@ -87,8 +87,77 @@ export async function handleImport(filePath: string) {
   return groupId
 }
 
+export async function reconstructLocalGroups(dataPath: string) {
+  const _pouchDir = path.join(dataPath, 'pouchdb')
+  const _localGroups: Group[] = []
+  const _dbNames = fs
+    .readdirSync(_pouchDir)
+    .filter((n) => n.startsWith('g_') && !n.includes('-search'))
+  for (const _dbName of _dbNames) {
+    console.log('[DB] restore', _dbName)
+    const _db = new PouchDB(path.join(_pouchDir, _dbName))
+    try {
+      const _groupDoc = await _db.get<Group>(_dbName)
+      _localGroups.push(_groupDoc)
+      appState.set('localGroups', _localGroups)
+      _db.close()
+    } catch (ex) {
+      console.warn('[DB] failed to restore group doc', _dbName, ex)
+      continue
+    }
+  }
+}
+
+export async function setDataPath(dataPath: string) {
+  let _nextDataPath = dataPath
+  // if dir is not empty, see if it's an existing Databyss data dir
+  let _ls = fs.readdirSync(_nextDataPath).filter((name) => name !== '.DS_Store')
+  // console.log('[DB] setDataPath ls', _ls)
+  if (_ls.includes('pouchdb')) {
+    // reconstruct localGroups
+    await reconstructLocalGroups(_nextDataPath)
+  } else {
+    // otherwise move existing data
+    // if dir is not empty, create a subdir called 'Databyss'
+    if (_ls.length > 0) {
+      _nextDataPath = path.join(_nextDataPath, 'Databyss')
+      fs.mkdirSync(_nextDataPath)
+    }
+    // if current data path has 'pouchdb' dir already, move it (and media)
+    // to new directory
+    _ls = fs.readdirSync(appState.get('dataPath'))
+    // console.log('[DB] setDataPath ls', _ls)
+    if (_ls.includes('pouchdb')) {
+      fs.copySync(
+        path.join(appState.get('dataPath'), 'pouchdb'),
+        path.join(_nextDataPath, 'pouchdb'),
+        {
+          preserveTimestamps: true,
+          recursive: true,
+        }
+      )
+      if (_ls.includes('media')) {
+        fs.copySync(
+          path.join(appState.get('dataPath'), 'media'),
+          path.join(_nextDataPath, 'media'),
+          {
+            preserveTimestamps: true,
+            recursive: true,
+          }
+        )
+      }
+    }
+  }
+  // update dataPath in state
+  appState.set('dataPath', _nextDataPath)
+}
+
 export function initNodeDb(groupId: string) {
-  nodeDbRef.dbPath = path.join(appDbPath, groupId)
+  const _dbDirPath = path.join(appState.get('dataPath'), 'pouchdb')
+  if (!fs.existsSync(_dbDirPath)) {
+    fs.mkdirSync(_dbDirPath)
+  }
+  nodeDbRef.dbPath = path.join(_dbDirPath, groupId)
   console.log('[DB] db path', nodeDbRef.dbPath)
   nodeDbRef.current = new PouchDB(nodeDbRef.dbPath)
   nodeDbRef.groupId = groupId

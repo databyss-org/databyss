@@ -46,7 +46,7 @@ export const Sidebar = ({
           flexShrink={1}
           overflow="hidden"
           css={{ transform: 'translate(0,0)' }}
-          borderLeftColor="border.1"
+          borderLeftColor="border.2"
           borderLeftWidth={pxUnits(1)}
         >
           <List

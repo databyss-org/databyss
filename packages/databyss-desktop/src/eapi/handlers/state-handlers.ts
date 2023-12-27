@@ -1,6 +1,6 @@
 import { Group } from '@databyss-org/services/interfaces'
 import { sidebar } from '@databyss-org/ui/theming/components'
-import { app, ipcMain } from 'electron'
+import { BrowserWindow, app, ipcMain } from 'electron'
 import { EventEmitter } from 'events'
 import fs from 'fs'
 import path from 'path'
@@ -38,6 +38,11 @@ class State extends EventEmitter {
     this.data[key] = value
     fs.writeFileSync(statePath, JSON.stringify(this.data, null, 2))
     this.emit('valueChanged', key)
+    BrowserWindow.getFocusedWindow().webContents.send(
+      'state-updated',
+      key,
+      value
+    )
   }
 
   constructor() {

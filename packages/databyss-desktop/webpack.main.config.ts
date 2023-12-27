@@ -12,6 +12,9 @@ export const mainConfig: Configuration = {
   module: {
     rules,
   },
+  // externals: {
+  //   'fs-extra': 'fs-extra',
+  // },
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
   },

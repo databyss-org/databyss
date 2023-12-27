@@ -87,7 +87,7 @@ const formatActionButtons = () => {
           return acc.concat(
             <View
               key={i}
-              borderRightColor="border.1"
+              borderRightColor="border.2"
               borderRightWidth={pxUnits(1)}
               marginLeft="extraSmall"
               marginRight="extraSmall"

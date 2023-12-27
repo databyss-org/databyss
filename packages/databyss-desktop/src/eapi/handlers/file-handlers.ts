@@ -1,7 +1,12 @@
 import { dialog, ipcMain, shell } from 'electron'
 import fs from 'fs'
 import path from 'path'
-import { handleImport, nodeDbRef, setGroupLoaded } from '../../nodeDb'
+import {
+  handleImport,
+  nodeDbRef,
+  setDataPath,
+  setGroupLoaded,
+} from '../../nodeDb'
 import { appState } from './state-handlers'
 import { createDatabyss } from '../../lib/createDatabyss'
 
@@ -16,17 +21,28 @@ export interface IpcFile {
 
 export const mediaPath = () => path.join(appState.get('dataPath'), 'media')
 
-export async function importDatabyssFile() {
+export async function onImportDatabyss() {
   const dialogRes = await dialog.showOpenDialog({
     properties: ['openFile'],
     filters: [{ extensions: ['json'], name: 'Databyss collection' }],
   })
-  console.log('[Menu] open', dialogRes)
+  console.log('[FILE] onImportDatabyss', dialogRes)
   if (dialogRes.canceled) {
     return false
   }
   await handleImport(dialogRes.filePaths[0])
   return true
+}
+
+export async function onChooseDataPath() {
+  const dialogRes = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+  })
+  console.log('[FILE] onChooseDataPath', dialogRes)
+  if (dialogRes.canceled) {
+    return false
+  }
+  setDataPath(dialogRes.filePaths[0])
 }
 
 export async function closeDatabyss() {
@@ -46,7 +62,8 @@ export function registerFileHandlers() {
     'file-open',
     async (_, args) => await dialog.showOpenDialog({ properties: ['openFile'] })
   )
-  ipcMain.handle('file-importDatabyss', importDatabyssFile)
+  ipcMain.handle('file-chooseDataPath', onChooseDataPath)
+  ipcMain.handle('file-importDatabyss', onImportDatabyss)
   ipcMain.handle('file-newDatabyss', createDatabyss)
   ipcMain.handle('file-importMedia', (_, file: IpcFile, fileId: string) => {
     console.log('[IPC] importMedia', file.name)
@@ -62,12 +79,9 @@ export function registerFileHandlers() {
     )
   })
   ipcMain.on('file-openNative', (_, path: string) => {
-    // const _path = path.replace('dbdrive://', `file://${mediaPath()}/`)
     const _path = decodeURIComponent(
       path.replace('dbdrive://', `${mediaPath()}/`)
     )
-    // console.log('[FILE] openNative', _path)
-    // shell.openExternal(path)
     shell.openPath(_path)
   })
   ipcMain.handle('file-deleteMedia', (_, fileId: string) => {

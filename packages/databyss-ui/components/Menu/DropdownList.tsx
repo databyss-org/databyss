@@ -11,6 +11,7 @@ export interface MenuItem {
   actionType?: string
   disabled?: boolean
   separator?: boolean
+  subLabel?: string
 }
 
 export const DropdownList = ({

@@ -11,6 +11,9 @@ export const rendererConfig: Configuration = {
   module: {
     rules,
   },
+  // externals: {
+  //   'fs-extra': 'fs-extra',
+  // },
   plugins,
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],

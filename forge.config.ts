@@ -8,7 +8,6 @@ import { WebpackPlugin } from '@electron-forge/plugin-webpack'
 
 import { mainConfig } from './packages/databyss-desktop/webpack.main.config'
 import { rendererConfig } from './packages/databyss-desktop/webpack.renderer.config'
-// import rendererConfig from './config/webpack.config'
 
 const config: ForgeConfig = {
   packagerConfig: {

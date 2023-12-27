@@ -63,7 +63,6 @@ const Footer = ({ collapsed }) => {
     tip: 'New Page',
     text: 'New Page',
   }
-  console.log('[Footer] os', eapi.platform)
   let shortcutText = eapi.platform.isMac ? '⌘ N' : 'Ctrl+N'
   if (sidebarPath === 'groups') {
     create = {
@@ -76,7 +75,7 @@ const Footer = ({ collapsed }) => {
 
   return !isPublicAccount() ? (
     <>
-      <Separator color="border.1" spacing="none" />
+      <Separator color="border.2" spacing="none" />
       <BaseControl
         px="small"
         py="extraSmall"

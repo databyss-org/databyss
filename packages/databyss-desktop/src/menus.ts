@@ -1,8 +1,5 @@
 import { BrowserWindow, Menu, app } from 'electron'
-import {
-  closeDatabyss,
-  importDatabyssFile,
-} from './eapi/handlers/file-handlers'
+import { closeDatabyss, onImportDatabyss } from './eapi/handlers/file-handlers'
 
 const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
   // APP MENU
@@ -38,7 +35,7 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
       },
       {
         label: 'Import Databyss',
-        click: importDatabyssFile,
+        click: onImportDatabyss,
       },
     ],
   },

@@ -103,7 +103,7 @@ export const ComplexItems = () => {
               acc.push(
                 <Separator
                   spacing="none"
-                  color="border.1"
+                  color="border.2"
                   key={`separator${index}`}
                 />
               )
