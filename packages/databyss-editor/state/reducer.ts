@@ -1110,13 +1110,11 @@ export default (
         _selectedBlock.__showCitationMenu =
           _selectedBlock.text.textValue.startsWith('@') &&
           !_selectedBlock.text.textValue.match(`\n`) &&
-          _selectedBlock.text.textValue.replaceAll(/\s/g, '').length > 3 &&
           !_doesBlockHaveInlineAtomicRange
 
         _selectedBlock.__showTopicMenu =
           _selectedBlock.text.textValue.startsWith('#') &&
           !_selectedBlock.text.textValue.match(`\n`) &&
-          _selectedBlock.text.textValue.replaceAll(/\s/g, '').length > 3 &&
           !_doesBlockHaveInlineAtomicRange
 
         // check if selected block has range type 'inlineAtomicMenu'
@@ -1177,11 +1175,7 @@ export default (
           rangeType: RangeType.InlineLinkInput,
         })
 
-        if (
-          inlineLinkData &&
-          !selectionHasRange(draft.selection) &&
-          _selectedBlock.text.textValue.replaceAll(/\s/g, '').length > 4
-        ) {
+        if (inlineLinkData && !selectionHasRange(draft.selection)) {
           _selectedBlock.__showInlineLinkMenu = true
         }
 

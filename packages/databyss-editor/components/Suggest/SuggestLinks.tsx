@@ -81,6 +81,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
           .map(weightedSearch(query, 'name'))
           .filter(prefixSearchAll(query, 'name'))
           .sort((a, b) => (a.weight < b.weight ? 1 : -1))
+          .slice(0, 20)
       : []
   }
 

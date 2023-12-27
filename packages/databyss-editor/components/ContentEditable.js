@@ -117,6 +117,7 @@ const ContentEditable = ({
         _scroll = editorRef.current?.scrollTop
       }
       editor.children = stateToSlate(state)
+      Transforms.select(editor, { path: [0, 0], offset: 0 })
       // load selection from DB
       if (state.selection) {
         const selection = stateSelectionToSlateSelection(

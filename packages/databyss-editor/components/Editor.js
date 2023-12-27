@@ -92,7 +92,7 @@ const Editor = ({
       if (
         node?.inlineEmbedInput ||
         node?.embed ||
-        node?.link ||
+        // node?.link ||
         node?.inlineLinkInput
       ) {
         return ranges
