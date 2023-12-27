@@ -65,6 +65,7 @@ export const DatabaseProvider = ({ children }) => {
     dbRef.on('groupIdUpdated', () => {
       queryClient.clear()
       updateDatabaseStatus()
+      setIsBusy(false)
       navigate('/')
     })
 
