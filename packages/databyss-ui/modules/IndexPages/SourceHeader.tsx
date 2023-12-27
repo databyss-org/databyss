@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { BlockType, Embed, Source } from '@databyss-org/services/interfaces'
-import { textToHtml } from '@databyss-org/services/blocks'
+import { mergeRanges, textToHtml } from '@databyss-org/services/blocks'
 import EditSvg from '@databyss-org/ui/assets/edit.svg'
 import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
 import {
@@ -10,21 +10,44 @@ import {
 } from '@databyss-org/services/pdf'
 import { uploadEmbed } from '@databyss-org/services/embeds'
 import { setSource } from '@databyss-org/services/sources'
+import { createHighlightRanges } from '@databyss-org/editor/lib/util'
+import {
+  SortOptions,
+  splitOverlappingRanges,
+} from '@databyss-org/services/blocks/textRanges'
 import { Button, RawHtml, Text, View, Icon } from '../..'
 import { LoadingFallback } from '../../components'
 import { FileDropZone } from '../../components/DropZone/FileDropZone'
 import { DList } from '../../components/DynamicList/DList'
 import { MenuItem } from '../../components/Menu/DropdownList'
+import { useSearchContext } from '../../hooks'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../../databyss-desktop/src/eapi').default
 
-const SourceTitleAndCitationView = ({ source }: { source: Source }) =>
-  source ? (
+const SourceTitleAndCitationView = ({ source }: { source: Source }) => {
+  const searchTerms = useSearchContext((c) => c && c.normalizedStemmedTerms)
+  if (!source) {
+    return null
+  }
+  const _highlightRanges = createHighlightRanges(
+    source.text.textValue,
+    searchTerms
+  )
+  let _ranges = [...source.text.ranges, ..._highlightRanges]
+  _ranges = mergeRanges(_ranges, SortOptions.Ascending)
+  splitOverlappingRanges(_ranges)
+  return (
     <Text variant="uiTextNormal" mb="small" color="text.2">
-      <RawHtml html={textToHtml(source.text)} />
+      <RawHtml
+        html={textToHtml({
+          textValue: source.text.textValue,
+          ranges: _ranges,
+        })}
+      />
     </Text>
-  ) : null
+  )
+}
 
 export const MediaLinks = ({ source }: { source: Source }) => {
   const sourceRef = useRef(source)

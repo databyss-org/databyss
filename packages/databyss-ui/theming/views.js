@@ -33,9 +33,9 @@ export const hline = (thickness, color) => ({
 const borderVariants = {
   none: border(0, 'transparent'),
   thinDark: border(1, 'border.0'),
-  thinLight: border(1, 'border.2'),
+  thinLight: border(1, 'border.3'),
   thickDark: border(3, 'border.0'),
-  thickLight: border(3, 'border.2'),
+  thickLight: border(3, 'border.3'),
   formField: border(2, 'border.1'),
   formError: border(2, 'red.0'),
   activeFormField: border(2, 'primary.0'),
@@ -45,9 +45,9 @@ const borderVariants = {
 const hlineVariants = {
   none: hline(0, 'transparent'),
   thinDark: hline(1, 'border.0'),
-  thinLight: hline(1, 'border.2'),
+  thinLight: hline(1, 'border.3'),
   thickDark: hline(3, 'border.0'),
-  thickLight: hline(3, 'border.2'),
+  thickLight: hline(3, 'border.3'),
 }
 
 export const widthVariants = {

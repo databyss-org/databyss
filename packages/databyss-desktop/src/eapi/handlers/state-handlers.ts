@@ -14,7 +14,7 @@ export interface StateData {
    * the next time the app is run. In a multiwindow situation, it should be the
    * group in the window that last received focus.
    */
-  lastActiveGroupId: string
+  lastActiveGroupId: string | null
   lastRoute: string
   lastSidebarRoute: string
   sidebarWidth: number

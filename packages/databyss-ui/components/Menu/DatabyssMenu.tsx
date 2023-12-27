@@ -72,15 +72,16 @@ export function DatabyssMenuItems({
   const localGroupsRes = useAppState('localGroups')
   const groupsRes = useGroups()
 
-  const groups: Group[] =
-    localGroupsRes.isSuccess && groupsRes.isSuccess
-      ? localGroupsRes.data.map(
-          (localGroup) => groupsRes.data[localGroup._id] ?? localGroup
-        ) // .filter((g) => !!g)
-      : []
+  const groups: Group[] = localGroupsRes.isSuccess
+    ? localGroupsRes.data.map(
+        (localGroup) => groupsRes.data?.[localGroup._id] ?? localGroup
+      ) // .filter((g) => !!g)
+    : []
   const sortedGroups = Object.values(groups)
     // .filter((group) => group._id !== dbRef.groupId)
     .sort((a, b) => (a.name < b.name ? -1 : 1))
+
+  // console.log('[DatabyssMenu] localGroups', sortedGroups)
 
   const menuItems: MenuItem[] = [
     ...(sortedGroups.length > 0

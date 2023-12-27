@@ -1,7 +1,7 @@
 import { dialog, ipcMain, shell } from 'electron'
 import fs from 'fs'
 import path from 'path'
-import { handleImport, nodeDbRef } from '../../nodeDb'
+import { handleImport, nodeDbRef, setGroupLoaded } from '../../nodeDb'
 import { appState } from './state-handlers'
 import { createDatabyss } from '../../lib/createDatabyss'
 
@@ -27,6 +27,14 @@ export async function importDatabyssFile() {
   }
   await handleImport(dialogRes.filePaths[0])
   return true
+}
+
+export async function closeDatabyss() {
+  nodeDbRef.groupId = null
+  appState.set('lastActiveGroupId', null)
+  appState.set('lastRoute', null)
+  appState.set('lastSidebarRoute', null)
+  setGroupLoaded()
 }
 
 export function registerFileHandlers() {

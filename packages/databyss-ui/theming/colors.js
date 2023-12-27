@@ -68,7 +68,7 @@ const _darkUi = {
   // [darkest...lightest]
   background: _c.gray.slice(1),
   // borders [darkest...lightest]
-  border: [_c.gray[7], _c.gray[3], _c.gray[1]],
+  border: [_c.gray[7], _c.gray[5], _c.gray[4], _c.gray[3]],
   // control colors [enabled, hover, active, label]
   secondary: [_c.blue[1], _c.gray[2], _c.gray[0], _c.blue[2]],
   activeTextInputBackground: _c.black,
