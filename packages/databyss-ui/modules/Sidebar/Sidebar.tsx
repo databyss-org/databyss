@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 // import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { View, List } from '@databyss-org/ui/primitives'
@@ -13,6 +13,7 @@ import { authorsToListItemData } from './transforms'
 import Search from './Search'
 import { ReferencesList } from './lists/ReferencesList'
 import { ResizableColumnView } from '../../primitives/View/ResizableColumnView'
+import { appCommands } from '../../lib/appCommands'
 
 export const Sidebar = ({
   onResized,
@@ -21,8 +22,20 @@ export const Sidebar = ({
   onResized?: (width: number) => void
   width: number
 }) => {
-  const { getSidebarPath, isMenuOpen } = useNavigationContext()
+  const { getSidebarPath, isMenuOpen, setMenuOpen, navigateSidebar } = useNavigationContext()
   const menuItem = getSidebarPath()
+
+  const openMenu = useCallback(() => {
+    navigateSidebar('/search')
+    setMenuOpen(true)
+  }, [setMenuOpen, navigateSidebar])
+
+  useEffect(() => {
+    appCommands.addListener('find', openMenu)
+    return () => {
+      appCommands.removeListener('find', openMenu)
+    }
+  }, [appCommands, openMenu])
 
   /*
   if item active in menuItem, SidebarContent will compose a list to pass to SidebarList

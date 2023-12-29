@@ -6,9 +6,92 @@ import {
   MediaTypes,
 } from '@databyss-org/services/interfaces/Block'
 import { parseTweetUrl } from '@databyss-org/services/embeds/twitter'
+import { validURL } from '@databyss-org/services/lib/util'
 import InstagramApi from 'simple-instagram-api'
 import { decode } from 'html-entities'
-import { _regExValidator } from '../media'
+
+export async function opengraph(urlOrHtml: string): Promise<EmbedDetail> {
+  const _unknown: EmbedDetail = {
+    src: urlOrHtml,
+    mediaType: MediaTypes.UNFETCHED
+  }
+  if (!(isHTML(urlOrHtml) || validURL(urlOrHtml))) {
+    return _unknown
+  }
+
+  // check if string is code
+  if (isHTML(urlOrHtml)) {
+    return getHtmlAttributes(urlOrHtml)
+  }
+
+  if (validURL(urlOrHtml)) {
+    // check for image
+    // TODO: just fetch headers
+    const _fetchRes = await fetch(urlOrHtml)
+
+    const contentType = _fetchRes.headers.get('Content-Type')
+    // return image content
+    if (contentType && contentType?.search('image') > -1) {
+      return getImageAttributes(urlOrHtml)
+    }
+
+    if (regExValidator.twitter.test(urlOrHtml)) {
+      return getTwitterAttributes(urlOrHtml)
+    }
+    if (regExValidator.youtube.test(urlOrHtml)) {
+      return getYoutubeAttributes(urlOrHtml)
+    }
+    if (regExValidator.instagram.test(urlOrHtml)) {
+      return getInstagramAttributes(urlOrHtml)
+    }
+    if (regExValidator.dropbox.test(urlOrHtml)) {
+      return getDropboxAttributes(urlOrHtml)
+    }
+
+    // assume regular url
+    return getWebsiteAttributes(urlOrHtml)
+  }
+
+  return _unknown
+}
+
+export const isHTML = (str: string) => {
+  try {
+    const _regEx = /<("[^"]*"|'[^']*'|[^'">])*>/
+    const index = str.search(_regEx)
+    if (index === -1) {
+      return false
+    }
+    new DOMParser({
+      errorHandler: {
+        // warning: (w) => {
+        //   throw new Error(w)
+        // },
+        error: (e) => {
+          throw new Error(e)
+        },
+        fatalError: (e) => {
+          throw new Error(e)
+        },
+      },
+    }).parseFromString(str, 'text/html')
+
+    return true
+  } catch (err) {
+    return false
+  }
+}
+
+export const regExValidator = {
+  twitter: /http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/,
+  youtube: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/,
+  image: /^((https?|ftp):)?\/\/.*(jpeg|jpg|png|gif|bmp)/,
+  dropbox: /https*:\/\/www\.dropbox\.com\/s\/(?<FID>.+?)\/(?<FNAME>.+?)\?dl=0/,
+  instagram: /http(?:s)?:\/\/(?:www\.)?instagram\.com\/p\/(?<PID>[^/]+)\/?/,
+}
+
+export const MAX_WIDTH = 484
+
 
 export const getImageAttributes = async (url: string) => {
   const _response: EmbedDetail = {
@@ -145,7 +228,7 @@ export const getInstagramAttributes = async (url) => {
     src: url,
   }
 
-  const _matches = _regExValidator.instagram.exec(url)
+  const _matches = regExValidator.instagram.exec(url)
   if (!_matches?.groups?.PID) {
     console.log('[getInstagramAttributes] no Post ID found')
     return url
@@ -181,7 +264,7 @@ export const getDropboxAttributes = async (url) => {
     src: url,
   }
 
-  const match = _regExValidator.dropbox.exec(url)
+  const match = regExValidator.dropbox.exec(url)
   let FID = ''
   let FNAME = ''
   if (match?.groups) {

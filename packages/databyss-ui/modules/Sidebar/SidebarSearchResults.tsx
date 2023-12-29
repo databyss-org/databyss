@@ -86,6 +86,7 @@ const SidebarSearchResults = ({
   const pagesRes = usePages()
   const listHandleRef = useRef<ListHandle>(null)
   const findInPage = useFindInPage({
+    paused: !searchHasFocus,
     onMatchesUpdated: (matches) => {
       const _nextSelectedItem = matches.length === 0 ? 1 : 0
       listHandleRef.current?.setActiveIndex(_nextSelectedItem)

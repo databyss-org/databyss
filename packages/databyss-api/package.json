@@ -39,7 +39,6 @@
     "express-validator": "^5.3.1",
     "googleapis": "^50.0.0",
     "gravatar": "^1.8.0",
-    "html-entities": "^2.3.2",
     "human-readable-ids": "^1.0.4",
     "ioredis": "^4.19.2",
     "jest": "^24.8.0",

@@ -39,10 +39,12 @@ const Search = (others) => {
     debounced(value)
   }, [value])
 
-  const clear = () => {
+  const clear = (setFocus: boolean = true) => {
     setQuery('')
     setValue('')
-    inputRef.current?.focus()
+    if (setFocus) {
+      inputRef.current?.focus()
+    }
   }
 
   // encode the search term and remove '?'
@@ -70,7 +72,24 @@ const Search = (others) => {
     return () => {
       appCommands.removeListener('find', focusInput)
     }
-  }, [appCommands])
+  }, [appCommands, focusInput])
+
+  const onKeyDown = useCallback((event) => {
+    if (event.key === 'Escape') {
+      clear(false)
+    }
+  }, [clear])
+
+  useEffect(() => {
+    if (menuItem === 'search') {
+      focusInput()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      clear()
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [])
 
   const onSearchClick = () => {
     // if not currently in search page, navigate to search page

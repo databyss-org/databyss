@@ -60,6 +60,7 @@ export interface FindInPage {
 
 export interface UseFindInPageOptions {
   onMatchesUpdated?: (matches: FindInPageMatch[]) => void
+  paused?: boolean
 }
 
 export const useFindInPage = (options?: UseFindInPageOptions): FindInPage => {
@@ -121,6 +122,9 @@ export const useFindInPage = (options?: UseFindInPageOptions): FindInPage => {
   }
 
   useEffect(() => {
+    if (options?.paused) {
+      return
+    }
     setCurrentIndex(0)
     activateMatch(0)
     if (options?.onMatchesUpdated) {
@@ -129,6 +133,9 @@ export const useFindInPage = (options?: UseFindInPageOptions): FindInPage => {
   }, [matches])
 
   useEffect(() => {
+    if (options?.paused) {
+      return
+    }
     // console.log('[useFindInPage] currentIndex changed, update focus')
     activateMatch(currentIndex)
   }, [currentIndex])

@@ -1,3 +1,4 @@
+import { EmbedDetail } from '@databyss-org/services/interfaces/Block'
 import { ipcRenderer } from 'electron'
 import { IpcFile } from './handlers/file-handlers'
 
@@ -26,3 +27,5 @@ export const openNative = (path: string) =>
 export const deleteMedia = (fileId: string) =>
   ipcRenderer.invoke('file-deleteMedia', fileId)
 export const chooseDataPath = () => ipcRenderer.invoke('file-chooseDataPath')
+export const getEmbedDetail = (urlOrHtml: string) => 
+  ipcRenderer.invoke('file-getEmbedDetail', urlOrHtml) as Promise<EmbedDetail>

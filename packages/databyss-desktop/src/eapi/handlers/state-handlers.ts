@@ -38,11 +38,14 @@ class State extends EventEmitter {
     this.data[key] = value
     fs.writeFileSync(statePath, JSON.stringify(this.data, null, 2))
     this.emit('valueChanged', key)
-    BrowserWindow.getFocusedWindow().webContents.send(
-      'state-updated',
-      key,
-      value
-    )
+    const _win = BrowserWindow.getFocusedWindow()
+    if (_win) {
+      _win.webContents.send(
+        'state-updated',
+        key,
+        value
+      )
+    }
   }
 
   constructor() {

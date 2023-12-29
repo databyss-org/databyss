@@ -9,6 +9,7 @@ import {
 } from '../../nodeDb'
 import { appState } from './state-handlers'
 import { createDatabyss } from '../../lib/createDatabyss'
+import { opengraph } from '@databyss-org/services/embeds/remoteMedia'
 
 export interface IpcFile {
   buffer: ArrayBuffer
@@ -87,5 +88,9 @@ export function registerFileHandlers() {
   ipcMain.handle('file-deleteMedia', (_, fileId: string) => {
     const _mediaItemDir = path.join(mediaPath(), nodeDbRef.groupId, fileId)
     fs.rmdirSync(_mediaItemDir, { recursive: true })
+  })
+  ipcMain.handle('file-getEmbedDetail', async (_, urlOrHtml: string) => {
+    const _detail = await opengraph(urlOrHtml)
+    return _detail
   })
 }

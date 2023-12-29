@@ -138,6 +138,9 @@ const PageContent = (others) => {
 function getLinkedDocIds(page) {
   const _docIds = {}
   page.blocks.forEach((_block) => {
+    if (!_block?.text?.ranges) {
+      return
+    }
     _block.text.ranges.forEach((_range) => {
       _range.marks.forEach((_mark) => {
         if (

@@ -30,6 +30,8 @@ export const EmbedMedia = ({
   const textRef = useRef<any>()
   const _isSelected = useSelected()
 
+  // console.log('[EmbedMedia] blockRes.data', blockRes.data)
+
   // only compute if current block is focused
   const _isFocused = useFocused()
   // check if embed should have anoutline

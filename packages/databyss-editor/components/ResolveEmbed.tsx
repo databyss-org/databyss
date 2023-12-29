@@ -28,8 +28,13 @@ export const ResolveEmbed = ({
   const [detail, setDetail] = useState<EmbedDetail>(data?.detail)
   // const [isFetching, setIsFetching] = useState(false)
 
+  // console.log('[ResolveEmbed] detail', detail)
+
   useEffect(() => {
-    if (!detail && data?.detail) {
+    if (
+      (!detail || detail.mediaType === MediaTypes.UNFETCHED) && 
+      data?.detail
+    ) {
       setDetail(data.detail)
     }
   }, [data?.detail])
@@ -41,7 +46,7 @@ export const ResolveEmbed = ({
     !detail.mediaType || detail.mediaType === MediaTypes.UNFETCHED
 
   if (_isUnfetched) {
-    console.log('[ResolveEmbed] unfetched')
+    // console.log('[ResolveEmbed] unfetched')
     return (
       <UnfetchedMedia
         atomicId={data._id}

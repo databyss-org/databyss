@@ -40,8 +40,11 @@ const StickyMessage = ({
   }
   return (
     <View
+      position="absolute"
+      bottom="tiny"
+      right="small"
+      width={pxUnits(360)}
       bg="background.0"
-      width="100%"
       alignItems="left"
       py="em"
       pl="em"
@@ -50,11 +53,11 @@ const StickyMessage = ({
       flexShrink={0}
       flexGrow={0}
       overflow="hidden"
-      borderBottomWidth={pxUnits(1)}
-      borderBottomColor="gray.3"
-      borderBottomStyle="solid"
+      borderWidth={pxUnits(1)}
+      borderColor="gray.3"
+      borderStyle="solid"
     >
-      <Grid singleRow columnGap="large" flexWrap="nowrap">
+      <Grid singleRow columnGap="large" flexWrap="nowrap" alignItems="center">
         <View flexGrow={1} flexShrink={1} overflow="hidden">
           {html ? (
             <RawHtml html={html} color="text.0" variant="uiTextNormal" />
@@ -69,7 +72,8 @@ const StickyMessage = ({
         {canDismiss && (
           <BaseControl
             onPress={dismiss}
-            py="tiny"
+            pb="tiny"
+            pt={pxUnits(1)}
             px="tiny"
             alignSelf="flex-start"
           >

@@ -10,6 +10,7 @@ export const UnfetchedMedia = ({ atomicId, src, highlight }) => {
   const graphRes = useOpenGraph(src)
 
   useEffect(() => {
+    // console.log('[UnfetchedMedia] graphdata', graphRes.data)
     if (graphRes.data) {
       const _attributes = graphRes.data
 

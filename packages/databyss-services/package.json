@@ -45,6 +45,7 @@
     "clone-deep": "^4.0.1",
     "core-js": "^3.16.2",
     "fs-extra": "^11.2.0",
+    "html-entities": "^2.4.0",
     "immer": "^6.0.5",
     "imurmurhash": "^0.1.4",
     "js-base64": "^3.6.0",

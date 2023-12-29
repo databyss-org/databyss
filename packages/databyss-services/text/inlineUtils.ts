@@ -39,6 +39,10 @@ export const replaceInlineText = ({
   newText: Text
   type: InlineTypes
 }): Text | null => {
+  if (!newText?.textValue || !newText?.ranges) {
+    return null
+  }
+  // console.log('[DB] replaceInlineText', text, newText)
   const _symbol = inlineTypeToSymbol(type)
 
   const _isEmbed = type === InlineTypes.Embed

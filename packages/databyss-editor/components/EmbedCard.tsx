@@ -3,6 +3,7 @@ import { BaseControl, View, Text, Button, Icon } from '@databyss-org/ui'
 import PlaySvg from '@databyss-org/ui/assets/play.svg'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
 import { isHttpInsecure } from './EmbedMedia'
+import { LoadingFallback } from '@databyss-org/ui/components'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
@@ -29,7 +30,9 @@ export const EmbedCard = React.memo(
     ...others
   }: EmbedCardProps) => {
     const [mediaActive, setMediaActive] = useState(false)
-    // console.log('[EmbedCard] src', imageSrc)
+    if (!src) {
+      return <LoadingFallback />
+    }
     let _src = src
     if (eapi && src.includes('media/proxy')) {
       _src = decodeURIComponent(src.split('url=')[1])
