@@ -107,7 +107,6 @@ export const useFindInPage = (options?: UseFindInPageOptions): FindInPage => {
       _nextIndex = 0
     }
     deactivateMatch(currentIndex)
-    // activateMatch(_nextIndex)
     setCurrentIndex(_nextIndex)
   }
 
@@ -117,16 +116,11 @@ export const useFindInPage = (options?: UseFindInPageOptions): FindInPage => {
       _prevIndex = matches.length - 1
     }
     deactivateMatch(currentIndex)
-    // activateMatch(_prevIndex)
     setCurrentIndex(_prevIndex)
   }
 
   useEffect(() => {
-    if (options?.paused) {
-      return
-    }
-    setCurrentIndex(0)
-    activateMatch(0)
+    setCurrentIndex(-1)
     if (options?.onMatchesUpdated) {
       options.onMatchesUpdated(matches)
     }

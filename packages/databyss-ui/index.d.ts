@@ -147,6 +147,7 @@ declare const KeyboardNavigationProvider: FC<PropsWithChildren<
 >>
 
 export interface ListHandle {
+  getActiveIndex: () => number
   setActiveIndex: (index: number) => void
 }
 

@@ -41,9 +41,11 @@ const FulltextSearchItem = (props) => (
 
 const FindInPageSearchItem = ({
   findInPage,
+  onPress,
   ...props
 }: {
   findInPage: FindInPage
+  onPress?: () => void
 }) => (
   <SidebarListItem
     text="Find in page"
@@ -51,6 +53,9 @@ const FindInPageSearchItem = ({
     onPress={() => {
       // console.log('[SidebarSearchResults] findNext')
       findInPage.findNext()
+      if (onPress) {
+        onPress()
+      }
     }}
     icon={
       <Icon sizeVariant="tiny" color="text.3">
@@ -62,7 +67,7 @@ const FindInPageSearchItem = ({
     <View>
       {findInPage.matches.length > 0 ? (
         <Text variant="uiTextSmall" color="text.3">
-          {findInPage.currentIndex + 1} / {findInPage.matches.length}
+          {findInPage.currentIndex >= 0 ? findInPage.currentIndex + 1 : '-'} / {findInPage.matches.length}
         </Text>
       ) : (
         <Text variant="uiTextTiny" color="text.3">
@@ -88,8 +93,13 @@ const SidebarSearchResults = ({
   const findInPage = useFindInPage({
     paused: !searchHasFocus,
     onMatchesUpdated: (matches) => {
+      if (!listHandleRef.current) {
+        return
+      }
       const _nextSelectedItem = matches.length === 0 ? 1 : 0
-      listHandleRef.current?.setActiveIndex(_nextSelectedItem)
+      if (listHandleRef.current.getActiveIndex() <= 1) {
+        listHandleRef.current.setActiveIndex(_nextSelectedItem)
+      }
     },
   })
 
@@ -144,7 +154,9 @@ const SidebarSearchResults = ({
       handlesRef={listHandleRef}
       {...others}
     >
-      <FindInPageSearchItem findInPage={findInPage} />
+      <FindInPageSearchItem findInPage={findInPage} onPress={() => {
+        inputRef.current.focus()
+      }} />
       <FulltextSearchItem
         onPress={() => {
           onSearch()

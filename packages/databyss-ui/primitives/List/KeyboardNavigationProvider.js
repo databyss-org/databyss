@@ -27,6 +27,7 @@ export const KeyboardNavigationProvider = ({
   const [, setActiveIndex] = useState(activeIndexRef.current)
 
   useImperativeHandle(handlesRef, () => ({
+    getActiveIndex: () => activeIndexRef.current,
     setActiveIndex: (index) => {
       activeIndexRef.current = index
       nextInitialActiveIndex.current = index
