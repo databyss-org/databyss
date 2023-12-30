@@ -148,7 +148,8 @@ export function renderText({
   }
 
   // sort ranges by offset, descending
-  const _ranges = text.ranges.sort((a, b) => {
+  const _ranges = [...text.ranges]
+  _ranges.sort((a, b) => {
     if (a.offset < b.offset) {
       return 1
     }

@@ -1,4 +1,4 @@
-import React, { createContext, FC, PropsWithChildren, useContext } from 'react'
+import React, { createContext, FC, PropsWithChildren, useContext, useEffect, useRef } from 'react'
 import fileDownload from 'js-file-download'
 import JSZip from 'jszip'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
@@ -6,7 +6,10 @@ import { Text } from '@databyss-org/ui/primitives'
 import { getDocuments } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { useBibliography, usePages } from '@databyss-org/data/pouchdb/hooks'
+import { backupDbToJson } from '@databyss-org/data/pouchdb/backup'
+ import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { useUserPreferencesContext } from '@databyss-org/ui/hooks'
+import { appCommands } from '@databyss-org/ui/lib/appCommands'
 import {
   bibliographyToMarkdown,
   blockToMarkdown,
@@ -26,8 +29,10 @@ import {
 } from '../interfaces'
 import { getCitationStyle } from '../citations/lib'
 import { CitationStyle } from '../citations/constants'
-import { sleep, validUriRegex } from '../lib/util'
+import { validUriRegex } from '../lib/util'
 import { loadPage } from '../editorPage'
+import { getAccountFromLocation } from '../session/utils'
+import { useParams } from '@databyss-org/ui/components/Navigation'
 
 interface ContextType {
   exportSinglePage: (id: string) => void
@@ -39,6 +44,8 @@ interface ContextType {
     source: Source
     author: AuthorName
   }) => void
+  exportDatabase: () => void
+  setCurrentPageId: (pageId: string) => void
 }
 
 export const ExportContext = createContext<ContextType>(null!)
@@ -46,6 +53,8 @@ export const ExportContext = createContext<ContextType>(null!)
 export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const { notifySticky, hideSticky } = useNotifyContext()
   const { getPreferredCitationStyle } = useUserPreferencesContext()
+  
+  const pageIdRef = useRef<string | null>(null)
 
   const pagesRes = usePages({ subscribe: false })
   const biblioRes = useBibliography({
@@ -54,6 +63,10 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
       styleId: getPreferredCitationStyle(),
     },
   })
+
+  const setCurrentPageId = (pageId: string) => {
+    pageIdRef.current = pageId
+  }
 
   const exportPage = async ({
     page,
@@ -142,9 +155,11 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     }
   }
 
-  const exportSinglePage = async (id: string) => {
+  const exportSinglePage = async (id?: string) => {
+    let _id = id ?? pageIdRef.current!
+    console.log('[ExportProvider] single page', _id)
     const _c = cleanFilename
-    const _page = (await loadPage(id)) as Page
+    const _page = (await loadPage(_id)) as Page
     const _zip = new JSZip().folder(_c(_page.name))!
     const _linkedDocs = {}
     await exportPage({
@@ -208,9 +223,10 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     styleId,
   }: {
     items: BibliographyItem[]
-    author: AuthorName
+    author?: AuthorName
     styleId?: string
   }) => {
+    console.log('[ExportProvider] downloadBibliography', items, author, styleId)
     fileDownload(
       bibliographyToMarkdown({
         bibliography: items,
@@ -240,20 +256,17 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     fileDownload(_sourcemd, `${_filename}.md`)
   }
 
-  const exportBibliography = async ({
-    author,
-    source,
-  }: {
+  const exportBibliography = async (options?: {
     author: AuthorName
     source: Source
   }) => {
-    while (biblioRes.isFetching) {
-      await sleep(500)
-    }
+    let author = options?.author
+    let source = options?.source
+    const biblioDict = (await biblioRes.refetch()).data
     if (!source) {
       // bibliography (full or filtered by author)
       await downloadBibliography({
-        items: Object.values(biblioRes.data!),
+        items: Object.values(biblioDict!),
         author,
         styleId: getPreferredCitationStyle(),
       })
@@ -266,12 +279,52 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     }
   }
 
+  const exportDatabase = async () => {
+    const groupId = getAccountFromLocation() as string
+    notifySticky({
+      visible: true,
+      children: (
+        <Text variant="uiTextSmall" color="text.2">
+          Your export is being prepared and will download when complete.
+        </Text>
+      ),
+    })
+    const name = `databyss-db-${groupId.substring(
+      2
+    )}-${new Date()
+      .toISOString()
+      .replace('T', '_')
+      .replaceAll(':', '')
+      .substring(0, 17)}`
+    const dbJson = await backupDbToJson(dbRef.current!)
+    // ZIPping the file doesn't seem to do much
+    // const zip = new JSZip()
+    // zip.file(name, dbJson)
+    // const zipContent = await zip.generateAsync({ type: 'arraybuffer' })
+    hideSticky()
+    fileDownload(dbJson, `${name}.json`)
+  }
+  useEffect(() => {
+    appCommands.addListener('exportAllAsMarkdown', exportAllPages)
+    appCommands.addListener('exportBibliography', exportBibliography)
+    appCommands.addListener('exportDatabase', exportDatabase)
+    appCommands.addListener('exportPageAsMarkdown', exportSinglePage)
+    return () => {
+      appCommands.removeListener('exportAllAsMarkdown', exportAllPages)
+      appCommands.removeListener('exportBibliography', exportBibliography)
+      appCommands.removeListener('exportDatabase', exportDatabase)
+      appCommands.removeListener('exportPageAsMarkdown', exportSinglePage)
+    }
+  }, [])
+
   return (
     <ExportContext.Provider
       value={{
         exportSinglePage,
         exportAllPages,
         exportBibliography,
+        exportDatabase,
+        setCurrentPageId
       }}
     >
       {children}

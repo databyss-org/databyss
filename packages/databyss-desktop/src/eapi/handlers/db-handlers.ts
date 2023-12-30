@@ -73,7 +73,11 @@ export function registerDbHandlers() {
       return await nodeDbRef.current?.put(...args)
     }
   )
-  ipcMain.handle('db-allDocs', async () => await nodeDbRef.current?.allDocs())
+  ipcMain.handle(
+    'db-allDocs', 
+    async (_, options: PouchDB.Core.AllDocsOptions) => 
+      await nodeDbRef.current?.allDocs(options)
+  )
   ipcMain.handle(
     'db-bulkGet',
     async (_, options: PouchDB.Core.BulkGetOptions) =>

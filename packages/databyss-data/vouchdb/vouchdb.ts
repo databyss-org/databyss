@@ -11,8 +11,8 @@ export class VouchDb {
     return eapi.db.info()
   }
 
-  allDocs() {
-    return eapi.db.allDocs()
+  allDocs(...args: Parameters<typeof eapi.db.allDocs>) {
+    return eapi.db.allDocs(...args)
   }
 
   get(docId: string) {

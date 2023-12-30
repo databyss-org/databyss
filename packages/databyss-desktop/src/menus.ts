@@ -1,6 +1,8 @@
 import { BrowserWindow, Menu, app } from 'electron'
 import { closeDatabyss, onImportDatabyss } from './eapi/handlers/file-handlers'
 
+const fwc = () => BrowserWindow.getFocusedWindow()?.webContents
+
 const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
   // APP MENU
   // {
@@ -23,19 +25,73 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         label: 'New page',
         accelerator: 'CmdOrCtrl+N',
         click: () => {
-          BrowserWindow.getFocusedWindow().webContents.send(
+          fwc().send(
             'cmd-command',
             'newPage'
           )
         },
       },
       {
-        label: 'Close Databyss',
-        click: closeDatabyss,
+        label: 'New collection',
+        accelerator: 'CmdOrCtrl+G',
+        click: () => {
+          fwc().send(
+            'cmd-command',
+            'newGroup'
+          )
+        },
+      },
+      { type: 'separator' },
+      { 
+        label: 'Export',
+        submenu: [
+          {
+            id: 'export-page-as-markdown',
+            label: 'Page as Markdown...',
+            click: () => {
+              fwc().send(
+                'cmd-command',
+                'exportPageAsMarkdown'
+              )
+            },
+            enabled: fwc()?.getURL().includes('/pages/')
+          },
+          {
+            label: 'Bibliography...',
+            click: () => {
+              fwc().send(
+                'cmd-command',
+                'exportBibliography'
+              )
+            },
+          },
+          {
+            label: 'Everything as Markdown...',
+            click: () => {
+              fwc().send(
+                'cmd-command',
+                'exportAllAsMarkdown'
+              )
+            },
+          },
+          {
+            label: 'Database..',
+            click: () => {
+              fwc().send(
+                'cmd-command',
+                'exportDatabase'
+              )
+            },
+          },
+        ]
       },
       {
         label: 'Import Databyss',
         click: onImportDatabyss,
+      },
+      {
+        label: 'Close Databyss',
+        click: closeDatabyss,
       },
     ],
   },
@@ -48,8 +104,8 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         accelerator: 'CmdOrCtrl+Z',
         // role: 'undo',
         click: () => {
-          BrowserWindow.getFocusedWindow().webContents.undo()
-          BrowserWindow.getFocusedWindow().webContents.send(
+          fwc().undo()
+          fwc().send(
             'cmd-command',
             'undo'
           )
@@ -60,8 +116,8 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         accelerator: 'Shift+CmdOrCtrl+Z',
         // role: 'redo',
         click: () => {
-          BrowserWindow.getFocusedWindow().webContents.redo()
-          BrowserWindow.getFocusedWindow().webContents.send(
+          fwc().redo()
+          fwc().send(
             'cmd-command',
             'redo'
           )
@@ -81,7 +137,7 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         label: 'Find',
         accelerator: 'CmdOrCtrl+F',
         click: () => {
-          BrowserWindow.getFocusedWindow().webContents.send(
+          fwc().send(
             'cmd-command',
             'find'
           )
@@ -168,5 +224,7 @@ if (process.platform === 'darwin') {
 }
 
 export function createMenus() {
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template))
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+  return menu
 }
