@@ -1,4 +1,4 @@
-import { BrowserWindow, Menu, app } from 'electron'
+import { BrowserWindow, Menu, app, MenuItem } from 'electron'
 import { closeDatabyss, onImportDatabyss } from './eapi/handlers/file-handlers'
 
 const fwc = () => BrowserWindow.getFocusedWindow()?.webContents
@@ -47,7 +47,7 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         submenu: [
           {
             id: 'export-page-as-markdown',
-            label: 'Page as Markdown...',
+            label: 'Page (Markdown)…',
             click: () => {
               fwc().send(
                 'cmd-command',
@@ -57,7 +57,7 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
             enabled: fwc()?.getURL().includes('/pages/')
           },
           {
-            label: 'Bibliography...',
+            label: 'Bibliography (Markdown)…',
             click: () => {
               fwc().send(
                 'cmd-command',
@@ -66,7 +66,7 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
             },
           },
           {
-            label: 'Everything as Markdown...',
+            label: 'Everything (Markdown)…',
             click: () => {
               fwc().send(
                 'cmd-command',
@@ -75,7 +75,7 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
             },
           },
           {
-            label: 'Database..',
+            label: 'Database…',
             click: () => {
               fwc().send(
                 'cmd-command',
@@ -86,7 +86,7 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         ]
       },
       {
-        label: 'Import Databyss',
+        label: 'Import Databyss…',
         click: onImportDatabyss,
       },
       {
@@ -223,8 +223,40 @@ if (process.platform === 'darwin') {
   })
 }
 
-export function createMenus() {
+function registerWindowEvents(win: BrowserWindow, menu: Menu) {
+  win.webContents.addListener('did-navigate-in-page', (event, url) => {
+    // console.log('[Main] did-navigate-in-page', url)
+    menu.getMenuItemById('export-page-as-markdown').enabled = 
+      url.includes('/pages/')
+  })
+  win.webContents.on('context-menu', (event, params) => {
+    const menu = new Menu()
+  
+    // Add each spelling suggestion
+    for (const suggestion of params.dictionarySuggestions) {
+      menu.append(new MenuItem({
+        label: suggestion,
+        click: () => win.webContents.replaceMisspelling(suggestion)
+      }))
+    }
+  
+    // Allow users to add the misspelled word to the dictionary
+    if (params.misspelledWord) {
+      menu.append(
+        new MenuItem({
+          label: 'Add to dictionary',
+          click: () => win.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
+        })
+      )
+    }
+  
+    menu.popup()
+  })
+}
+
+export function createMenus(win: BrowserWindow) {
   const menu = Menu.buildFromTemplate(template)
   Menu.setApplicationMenu(menu)
+  registerWindowEvents(win, menu)
   return menu
 }

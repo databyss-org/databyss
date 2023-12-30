@@ -57,13 +57,7 @@ const createWindow = (): void => {
   })
 
   // console.log('[Main]', Menu.getApplicationMenu())
-  const menu = createMenus()
-
-  mainWindow.webContents.addListener('did-navigate-in-page', (event, url) => {
-    // console.log('[Main] did-navigate-in-page', url)
-    menu.getMenuItemById('export-page-as-markdown').enabled = 
-      url.includes('/pages/')
-  })
+  const menu = createMenus(mainWindow)
 
   // load the last active db, if one exists
   const lastActiveGroupId = appState.get('lastActiveGroupId')
