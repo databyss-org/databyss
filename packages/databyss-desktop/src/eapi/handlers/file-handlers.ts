@@ -38,8 +38,9 @@ export async function onImportDatabyss() {
 export async function onChooseDataPath() {
   const dialogRes = await dialog.showOpenDialog({
     properties: ['openDirectory'],
+    
   })
-  console.log('[FILE] onChooseDataPath', dialogRes)
+  // console.log('[FILE] onChooseDataPath', dialogRes)
   if (dialogRes.canceled) {
     return false
   }

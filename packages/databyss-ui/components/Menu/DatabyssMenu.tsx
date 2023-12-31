@@ -150,12 +150,7 @@ export function DatabyssMenuItems({
         label: 'Set data directory...',
         subLabel: dataPath.data ?? '',
         action: async () => {
-          notify({
-            showConfirmButtons: false,
-            message: 'Moving data directory...',
-          })
           await eapi.file.chooseDataPath()
-          hideDialog()
           return true
         },
       }

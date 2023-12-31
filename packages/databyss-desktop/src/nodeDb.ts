@@ -12,6 +12,8 @@ import {
 } from '@databyss-org/data/pouchdb/interfaces'
 import { appState } from './eapi/handlers/state-handlers'
 import { addTimeStamp } from '@databyss-org/data/pouchdb/docUtils'
+import { appCommands } from '@databyss-org/ui/lib/appCommands'
+import { sendCommandToBrowser } from './menus'
 
 PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
@@ -89,7 +91,16 @@ export async function handleImport(filePath: string) {
 
 export async function reconstructLocalGroups(dataPath: string) {
   const _pouchDir = path.join(dataPath, 'pouchdb')
-  const _localGroups: Group[] = []
+  if (!fs.existsSync(_pouchDir)) {
+    return false
+  }
+  let _localGroups = appState.get('localGroups') ?? []
+  if (_localGroups.length > 0) {
+    sendCommandToBrowser('notify', {
+      message: 'Warning: Collections already exist in current data directory. These will not be available in the Databyss menu unless you change back to the current data directory.' 
+    })
+    _localGroups = []
+  }
   const _dbNames = fs
     .readdirSync(_pouchDir)
     .filter((n) => n.startsWith('g_') && !n.includes('-search'))
@@ -106,50 +117,68 @@ export async function reconstructLocalGroups(dataPath: string) {
       continue
     }
   }
+  return true
 }
 
 export async function setDataPath(dataPath: string) {
-  let _nextDataPath = dataPath
   // if dir is not empty, see if it's an existing Databyss data dir
+  // console.log('[DB] setDataPath ls', _ls)
+  
+  // reconstruct localGroups
+  if (await reconstructLocalGroups(dataPath)) {
+    appState.set('dataPath', dataPath)
+    return
+  }
+  if (await reconstructLocalGroups(path.join(dataPath, 'Databyss'))) {
+    appState.set('dataPath', (path.join(dataPath, 'Databyss')))
+    return
+  }
+    
+  // otherwise move existing data
+  sendCommandToBrowser('notify', { 
+    message: 'Moving data directory…', 
+    showConfirmButtons: false 
+  })
+  // if dir is not empty, create a subdir called 'Databyss'
+  let _nextDataPath = dataPath
   let _ls = fs.readdirSync(_nextDataPath).filter((name) => name !== '.DS_Store')
+  if (_ls.length > 0) {
+    _nextDataPath = path.join(_nextDataPath, 'Databyss')
+    if (fs.existsSync(_nextDataPath)){
+      sendCommandToBrowser('notify', { 
+        message: 'Cannot move data because selected directory is not empty or an existing Databyss directory', 
+        error: true
+      })
+      return
+    }
+    fs.mkdirSync(_nextDataPath)
+  }
+  // if current data path has 'pouchdb' dir already, move it (and media)
+  // to new directory
+  _ls = fs.readdirSync(appState.get('dataPath'))
   // console.log('[DB] setDataPath ls', _ls)
   if (_ls.includes('pouchdb')) {
-    // reconstruct localGroups
-    await reconstructLocalGroups(_nextDataPath)
-  } else {
-    // otherwise move existing data
-    // if dir is not empty, create a subdir called 'Databyss'
-    if (_ls.length > 0) {
-      _nextDataPath = path.join(_nextDataPath, 'Databyss')
-      fs.mkdirSync(_nextDataPath)
-    }
-    // if current data path has 'pouchdb' dir already, move it (and media)
-    // to new directory
-    _ls = fs.readdirSync(appState.get('dataPath'))
-    // console.log('[DB] setDataPath ls', _ls)
-    if (_ls.includes('pouchdb')) {
+    fs.copySync(
+      path.join(appState.get('dataPath'), 'pouchdb'),
+      path.join(_nextDataPath, 'pouchdb'),
+      {
+        preserveTimestamps: true,
+        recursive: true,
+      }
+    )
+    if (_ls.includes('media')) {
       fs.copySync(
-        path.join(appState.get('dataPath'), 'pouchdb'),
-        path.join(_nextDataPath, 'pouchdb'),
+        path.join(appState.get('dataPath'), 'media'),
+        path.join(_nextDataPath, 'media'),
         {
           preserveTimestamps: true,
           recursive: true,
         }
       )
-      if (_ls.includes('media')) {
-        fs.copySync(
-          path.join(appState.get('dataPath'), 'media'),
-          path.join(_nextDataPath, 'media'),
-          {
-            preserveTimestamps: true,
-            recursive: true,
-          }
-        )
-      }
     }
   }
-  // update dataPath in state
   appState.set('dataPath', _nextDataPath)
+  sendCommandToBrowser('hideNotify')
 }
 
 export function initNodeDb(groupId: string) {

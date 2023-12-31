@@ -1,7 +1,12 @@
 import { BrowserWindow, Menu, app, MenuItem } from 'electron'
+import { CommandArgs, CommandName } from './eapi/cmd-api'
 import { closeDatabyss, onImportDatabyss } from './eapi/handlers/file-handlers'
 
 const fwc = () => BrowserWindow.getFocusedWindow()?.webContents
+
+export function sendCommandToBrowser<K extends keyof CommandArgs>(command: K, ...args: CommandArgs[K]) {
+  fwc().send('cmd-command', command, ...args)
+}
 
 const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
   // APP MENU

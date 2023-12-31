@@ -24,6 +24,7 @@ import { pauseSync, startSync } from '@databyss-org/data/drivedb/sync'
 import IS_NATIVE from '../../lib/isNative'
 import StickyMessage from './StickyMessage'
 import { UnauthorizedDatabaseReplication } from '../../../databyss-services/interfaces/Errors'
+import { appCommands } from '../../lib/appCommands'
 
 declare module '@bugsnag/plugin-react' {
   export const formatComponentStack: (str: string) => string
@@ -152,6 +153,8 @@ class NotifyProvider extends React.Component {
     // )
     // this.checkOnlineStatus()
     // }
+    appCommands.addListener('notify', this.notify)
+    appCommands.addListener('hideNotify', this.hideDialog)
   }
   state: NotifyProviderState = {
     dialog: initialDialogState,
@@ -181,6 +184,8 @@ class NotifyProvider extends React.Component {
       window.removeEventListener('online', this.setOnlineStatus)
       window.removeEventListener('error', this.onUnhandledError)
       window.removeEventListener('unhandledrejection', this.onUnhandledError)
+      appCommands.removeListener('notify', this.notify)
+      appCommands.removeListener('hideNotify', this.hideDialog)
       // window.removeEventListener('focus', this.onWindowFocus)
 
       // window.clearInterval(this.checkOnlineStatusTimer)

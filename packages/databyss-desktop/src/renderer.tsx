@@ -26,11 +26,11 @@ eapi.db.onGroupLoaded((groupId) => {
   // setGroupId(groupId)
   connect(groupId)
   dbRef.current.info().then((info) => console.log(info))
-  dbRef.current.allDocs().then((docs) => console.log(docs?.total_rows))
+  // dbRef.current.allDocs().then((docs) => console.log(docs?.total_rows))
 })
 eapi.cmd.onCommand((commandName, ...args) => {
   // console.log('[App] IPC cmd-command', commandName, args)
-  appCommands.dispatch(commandName)
+  appCommands.dispatch(commandName, ...args)
 })
 // eapi.db.info().then((info) => console.log(info))
 // eapi.db.allDocs().then((docs) => console.log(docs.total_rows))
