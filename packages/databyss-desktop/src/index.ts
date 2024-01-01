@@ -61,8 +61,15 @@ const createWindow = (): void => {
 
   // load the last active db, if one exists
   const lastActiveGroupId = appState.get('lastActiveGroupId')
-  if (lastActiveGroupId) {
+  const localGroups = appState.get('localGroups')
+  if (
+    lastActiveGroupId && 
+    localGroups?.find((g) => g._id === lastActiveGroupId)
+  ) {
     initNodeDb(lastActiveGroupId)
+  } else {
+    // clean up groups
+    appState.set('lastActiveGroupId', null)
   }
 
   mainWindow.maximize()

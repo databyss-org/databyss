@@ -1,7 +1,8 @@
 import { dialog, ipcMain, shell } from 'electron'
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import {
+  archiveDatabyss,
   handleImport,
   nodeDbRef,
   setDataPath,
@@ -10,6 +11,8 @@ import {
 import { appState } from './state-handlers'
 import { createDatabyss } from '../../lib/createDatabyss'
 import { opengraph } from '@databyss-org/services/embeds/remoteMedia'
+import { backupDbToJson, makeBackupFilename } from '@databyss-org/data/pouchdb/backup'
+import PouchDb from 'pouchdb-node'
 
 export interface IpcFile {
   buffer: ArrayBuffer
@@ -27,17 +30,15 @@ export async function onImportDatabyss() {
     properties: ['openFile'],
     filters: [{ extensions: ['json'], name: 'Databyss collection' }],
   })
-  console.log('[FILE] onImportDatabyss', dialogRes)
   if (dialogRes.canceled) {
     return false
   }
-  await handleImport(dialogRes.filePaths[0])
-  return true
+  return handleImport(dialogRes.filePaths[0])
 }
 
 export async function onChooseDataPath() {
   const dialogRes = await dialog.showOpenDialog({
-    properties: ['openDirectory'],
+    properties: ['openDirectory', 'createDirectory'],
     
   })
   // console.log('[FILE] onChooseDataPath', dialogRes)
@@ -55,6 +56,24 @@ export async function closeDatabyss() {
   setGroupLoaded()
 }
 
+async function archiveAndRemoveDatabyss(groupId: string) {
+  // backup databyss to json 
+  const _archivePath = await archiveDatabyss(groupId)
+  if (!_archivePath) {
+    return false
+  }
+  // remove from groups
+  const _groups = appState.get('localGroups')
+  appState.set('localGroups', _groups.filter((group) => group._id !== groupId))
+  // delete db files
+  const _ls = fs.readdirSync(path.join(appState.get('dataPath'), 'pouchdb'))
+    .filter((dir) => dir.startsWith(groupId))
+    .forEach((dir) => {
+      fs.removeSync(path.join(appState.get('dataPath'), 'pouchdb', dir))
+    })
+  return _archivePath
+}
+
 export function registerFileHandlers() {
   // ensure media dir
   if (!fs.existsSync(mediaPath())) {
@@ -67,6 +86,7 @@ export function registerFileHandlers() {
   ipcMain.handle('file-chooseDataPath', onChooseDataPath)
   ipcMain.handle('file-importDatabyss', onImportDatabyss)
   ipcMain.handle('file-newDatabyss', createDatabyss)
+  ipcMain.handle('file-archiveDatabyss', (_, groupId: string) => archiveAndRemoveDatabyss(groupId))
   ipcMain.handle('file-importMedia', (_, file: IpcFile, fileId: string) => {
     console.log('[IPC] importMedia', file.name)
     const _mediaItemDir = path.join(mediaPath(), nodeDbRef.groupId, fileId)
@@ -88,7 +108,7 @@ export function registerFileHandlers() {
   })
   ipcMain.handle('file-deleteMedia', (_, fileId: string) => {
     const _mediaItemDir = path.join(mediaPath(), nodeDbRef.groupId, fileId)
-    fs.rmdirSync(_mediaItemDir, { recursive: true })
+    fs.removeSync(_mediaItemDir)
   })
   ipcMain.handle('file-getEmbedDetail', async (_, urlOrHtml: string) => {
     const _detail = await opengraph(urlOrHtml)

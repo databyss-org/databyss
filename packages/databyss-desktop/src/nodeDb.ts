@@ -14,6 +14,7 @@ import { appState } from './eapi/handlers/state-handlers'
 import { addTimeStamp } from '@databyss-org/data/pouchdb/docUtils'
 import { appCommands } from '@databyss-org/ui/lib/appCommands'
 import { sendCommandToBrowser } from './menus'
+import { backupDbToJson, makeBackupFilename } from '@databyss-org/data/pouchdb/backup'
 
 PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
@@ -50,6 +51,15 @@ export async function handleImport(filePath: string) {
   }
   const groupId = prefsDoc.belongsToGroup
   console.log('[DB] found groupid', groupId)
+  const groups = (appState.get('localGroups') ?? []) as Group[]
+  const _existingGroup = groups.find(group => group._id === groupId)
+  if (_existingGroup) {
+    sendCommandToBrowser('notify', {
+      message: `Cannot import Databyss because it already exists as "${_existingGroup.name}". If you are sure this is correct, you must remove the existing Databyss named "${_existingGroup.name}" before importing the selected file.`,
+      error: true
+    })
+    return false
+  }
   // init pouchdb with groupid as path
   initNodeDb(groupId)
   // import all the docs
@@ -82,11 +92,10 @@ export async function handleImport(filePath: string) {
     )
   }
   // add GROUP doc to app state
-  const groups = (appState.get('localGroups') ?? []) as Group[]
   appState.set('localGroups', [...groups, groupDoc])
   console.log('[DB] import done', res)
   setGroupLoaded()
-  return groupId
+  return true
 }
 
 export async function reconstructLocalGroups(dataPath: string) {
@@ -157,6 +166,7 @@ export async function setDataPath(dataPath: string) {
   // to new directory
   _ls = fs.readdirSync(appState.get('dataPath'))
   // console.log('[DB] setDataPath ls', _ls)
+  const _pathsToDelete: string[] = []
   if (_ls.includes('pouchdb')) {
     fs.copySync(
       path.join(appState.get('dataPath'), 'pouchdb'),
@@ -166,6 +176,7 @@ export async function setDataPath(dataPath: string) {
         recursive: true,
       }
     )
+    _pathsToDelete.push(path.join(appState.get('dataPath'), 'pouchdb'))
     if (_ls.includes('media')) {
       fs.copySync(
         path.join(appState.get('dataPath'), 'media'),
@@ -175,10 +186,43 @@ export async function setDataPath(dataPath: string) {
           recursive: true,
         }
       )
+      _pathsToDelete.push(path.join(appState.get('dataPath'), 'media'))
+    }
+    if (_ls.includes('archive')) {
+      fs.copySync(
+        path.join(appState.get('dataPath'), 'archive'),
+        path.join(_nextDataPath, 'archive'),
+        {
+          preserveTimestamps: true,
+          recursive: true,
+        }
+      )
+      _pathsToDelete.push(path.join(appState.get('dataPath'), 'archive'))
     }
   }
+  _pathsToDelete.forEach((_pathToDelete) => {
+    fs.removeSync(_pathToDelete)
+  })
   appState.set('dataPath', _nextDataPath)
   sendCommandToBrowser('hideNotify')
+}
+
+export async function archiveDatabyss(groupId: string) {
+  const _dbDirPath = path.join(appState.get('dataPath'), 'pouchdb')
+  if (!fs.existsSync(_dbDirPath)) {
+    console.warn('[DB] cannot archive, database not found', groupId)
+    return false
+  }
+  const _db = new PouchDB(path.join(_dbDirPath, groupId))
+  const _dbJson = await backupDbToJson(_db)
+  const _archiveDir = path.join(appState.get('dataPath'), 'archive')
+  if (!fs.existsSync(_archiveDir)) {
+    fs.mkdirSync(_archiveDir)
+  }
+  const _filename = `${makeBackupFilename(groupId)}.json`
+  const _archivePath = path.join(_archiveDir, _filename)
+  fs.writeFileSync(_archivePath, _dbJson)
+  return _archivePath
 }
 
 export function initNodeDb(groupId: string) {

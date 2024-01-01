@@ -5,3 +5,13 @@ import PouchDB from 'pouchdb'
    const data = rows.map((row) => row.doc)
    return JSON.stringify(data, null, 2)
  }
+
+ export function makeBackupFilename(groupId: string) {
+    return `databyss-db-${groupId.substring(
+        2
+      )}-${new Date()
+        .toISOString()
+        .replace('T', '_')
+        .replaceAll(':', '')
+        .substring(0, 17)}`
+ }

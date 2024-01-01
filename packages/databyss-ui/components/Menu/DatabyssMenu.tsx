@@ -4,8 +4,8 @@ import { Group } from '@databyss-org/services/interfaces'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { useAppState } from '../../../databyss-desktop/src/hooks'
 import ClickAwayListener from '../Util/ClickAwayListener'
-import { DropdownContainer, View } from '../..'
-import { DropdownList, MenuItem } from './DropdownList'
+import { DropdownContainer, View, Icon } from '../..'
+import { DropdownList, makeDropdownListChildren, MenuItem } from './DropdownList'
 import FolderSvg from '../../assets/folder-open.svg'
 import AddSvg from '../../assets/add-menu.svg'
 import DatabyssSvg from '../../assets/logo-vector.svg'
@@ -13,6 +13,7 @@ import DiskSvg from '../../assets/save.svg'
 import CheckSvg from '../../assets/check.svg'
 import LoadingFallback from '../Notify/LoadingFallback'
 import { theme } from '../../theming'
+import MenuSvg from '../../assets/menu_horizontal.svg'
 import { useNotifyContext } from '../Notify/NotifyProvider'
 
 // eslint-disable-next-line no-undef
@@ -74,8 +75,8 @@ export function DatabyssMenuItems({
   const localGroupsRes = useAppState('localGroups')
   const dataPath = useAppState('dataPath')
   const groupsRes = useGroups()
-  const notify = useNotifyContext((c) => c && c.notify)
-  const hideDialog = useNotifyContext((c) => c && c.hideDialog)
+  const notifyConfirm = useNotifyContext(c => c && c.notifyConfirm)
+  const notify = useNotifyContext(c => c && c.notify)
 
   const groups: Group[] = localGroupsRes.isSuccess
     ? localGroupsRes.data.map(
@@ -88,6 +89,24 @@ export function DatabyssMenuItems({
 
   // console.log('[DatabyssMenu] localGroups', sortedGroups)
 
+  const dbContextMenuItems: MenuItem[] = [
+    {
+      label: 'Archive Databyss',
+      action: (group: Group) => {
+        notifyConfirm({
+          message: `Are you sure you want to archive and remove "${group.name}"? Data will be backed up to a JSON file and the Databyss will be removed from the list.`,
+          onOk: async () => {
+            console.log('[DatabyssMenu] delete', group.name)
+            const _archivePath = await eapi.file.archiveDatabyss(group._id)
+            notify({
+              message: `Databyss archived to: ${_archivePath}`
+            })
+          }
+        })
+      }
+    }
+  ]
+
   const menuItems: MenuItem[] = [
     ...(sortedGroups.length > 0
       ? [
@@ -99,6 +118,15 @@ export function DatabyssMenuItems({
       : []),
     ...sortedGroups.map((group) => ({
       label: group.name,
+      subMenu: dbContextMenuItems,
+      subMenuProps: {
+        data: group,
+        menuViewProps: {
+          right: 0,
+          theme,
+        },
+        menuIcon: <Icon sizeVariant="tiny" color="white"><MenuSvg /></Icon>,
+      },
       icon: group._id === dbRef.groupId ? <CheckSvg /> : <DatabyssSvg />,
       action: () => {
         if (group._id !== dbRef.groupId) {
@@ -158,4 +186,20 @@ export function DatabyssMenuItems({
   }
 
   return <DropdownList menuItems={menuItems} dismiss={onDismiss} />
+  // return (
+  //   <DList 
+  //     verticalItemPadding={0} 
+  //     verticalItemMargin={0} 
+  //     dropdownContainerProps={{
+  //       position: {
+  //         top: '20px'
+  //       },
+  //     }}
+  //     menuViewProps={{
+  //       theme,
+  //     }}
+  //   >
+  //     {makeDropdownListChildren({ menuItems, dismiss: onDismiss })}
+  //   </DList>
+  // )
 }

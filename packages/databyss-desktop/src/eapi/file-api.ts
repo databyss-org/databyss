@@ -7,6 +7,8 @@ export const importDatabyss = () =>
   ipcRenderer.invoke('file-importDatabyss') as Promise<boolean>
 export const newDatabyss = () =>
   ipcRenderer.invoke('file-newDatabyss') as Promise<boolean>
+export const archiveDatabyss = (groupId: string) =>
+  ipcRenderer.invoke('file-archiveDatabyss', groupId) as Promise<string>
 export const importMedia = async (
   file: File,
   fileId: string,

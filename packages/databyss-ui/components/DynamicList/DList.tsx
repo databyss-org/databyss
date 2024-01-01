@@ -19,6 +19,77 @@ export interface DListProps extends ListProps {
   dropdownContainerProps?: any
 }
 
+export interface DListItemProps extends DListProps {
+  data: any
+}
+
+export const DListItem = ({
+  menuItems,
+  menuIcon = (<Icon sizeVariant="tiny"><MenuSvg /></Icon>),
+  menuViewProps,
+  dropdownContainerProps,
+  children,
+  data
+}: DListItemProps) => {
+  const [menuVisible, setMenuVisible] = useState(false)
+  const [hoverVisible, setHoverVisible] = useState(false)
+  const hoverTimerRef = useRef<any>(0)
+  return (
+  <View
+      onMouseOver={() => {
+        clearTimeout(hoverTimerRef.current)
+        setHoverVisible(true)
+      }}
+      onMouseOut={() => {
+        hoverTimerRef.current = setTimeout(() => {
+          setHoverVisible(false)
+          setMenuVisible(false)
+        }, 200)
+      }}
+      position="relative"
+      justifyContent="center"
+    >
+      {menuItems && hoverVisible && (
+        <View position="absolute" {...menuViewProps}>
+          <BaseControl onPress={() => setMenuVisible(true)}>
+            {menuIcon}
+          </BaseControl>
+          {menuVisible && (
+            <ClickAwayListener onClickAway={() => setMenuVisible(false)}>
+              <DropdownContainer
+                widthVariant="dropdownMenuMedium"
+                open
+                {...dropdownContainerProps}
+              >
+                <DropdownList
+                  data={data}
+                  menuItems={menuItems}
+                  dismiss={() => {
+                    setMenuVisible(false)
+                    setHoverVisible(false)
+                  }}
+                />
+              </DropdownContainer>
+            </ClickAwayListener>
+          )}
+        </View>
+      )}
+      {children}
+    </View>
+  )
+}
+
+DListItem.defaultProps = {
+  menuViewProps: {
+    right: 0
+  },
+  dropdownContainerProps: {
+    position: {
+      top: '20px'
+    }
+  }
+}
+
 export const DList = ({
   children,
   menuItems,
@@ -27,52 +98,17 @@ export const DList = ({
   dropdownContainerProps,
   ...others
 }: DListProps) => {
-  const [menuIndex, setMenuIndex] = useState(-1)
-  const [hoverIndex, setHoverIndex] = useState(-1)
-  const hoverTimerRef = useRef<any>(0)
   const _children = React.Children.map(children, (child, idx) => (
-    <View
-      onMouseOver={() => {
-        clearTimeout(hoverTimerRef.current)
-        setHoverIndex(idx)
-      }}
-      onMouseOut={() => {
-        hoverTimerRef.current = setTimeout(() => {
-          setHoverIndex(-1)
-          setMenuIndex(-1)
-        }, 1000)
-      }}
-      position="relative"
-      key={(child as ReactElement)?.key ?? idx}
-      justifyContent="center"
+    <DListItem 
+      menuItems={menuItems} 
+      menuIcon={menuIcon} 
+      menuViewProps={menuViewProps} 
+      dropdownContainerProps={dropdownContainerProps}
+      data={idx}
+      key={idx}
     >
-      {menuItems && hoverIndex === idx && (
-        <View position="absolute" {...menuViewProps}>
-          <BaseControl onPress={() => setMenuIndex(idx)}>
-            <Icon sizeVariant="tiny">{menuIcon}</Icon>
-          </BaseControl>
-          {menuIndex === idx && (
-            <ClickAwayListener onClickAway={() => setMenuIndex(-1)}>
-              <DropdownContainer
-                widthVariant="dropdownMenuMedium"
-                open
-                {...dropdownContainerProps}
-              >
-                <DropdownList
-                  data={idx}
-                  menuItems={menuItems}
-                  dismiss={() => {
-                    setMenuIndex(-1)
-                    setHoverIndex(-1)
-                  }}
-                />
-              </DropdownContainer>
-            </ClickAwayListener>
-          )}
-        </View>
-      )}
       {child}
-    </View>
+    </DListItem>
   ))
   return <List {...others}>{_children}</List>
 }

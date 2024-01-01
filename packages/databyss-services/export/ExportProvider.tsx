@@ -6,7 +6,7 @@ import { Text } from '@databyss-org/ui/primitives'
 import { getDocuments } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { useBibliography, usePages } from '@databyss-org/data/pouchdb/hooks'
-import { backupDbToJson } from '@databyss-org/data/pouchdb/backup'
+import { backupDbToJson, makeBackupFilename } from '@databyss-org/data/pouchdb/backup'
  import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { useUserPreferencesContext } from '@databyss-org/ui/hooks'
 import { appCommands } from '@databyss-org/ui/lib/appCommands'
@@ -289,13 +289,7 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
         </Text>
       ),
     })
-    const name = `databyss-db-${groupId.substring(
-      2
-    )}-${new Date()
-      .toISOString()
-      .replace('T', '_')
-      .replaceAll(':', '')
-      .substring(0, 17)}`
+    const name = makeBackupFilename(groupId)
     const dbJson = await backupDbToJson(dbRef.current!)
     // ZIPping the file doesn't seem to do much
     // const zip = new JSZip()
