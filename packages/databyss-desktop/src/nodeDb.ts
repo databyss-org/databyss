@@ -61,7 +61,7 @@ export async function handleImport(filePath: string) {
     return false
   }
   // init pouchdb with groupid as path
-  initNodeDb(groupId)
+  await initNodeDb(groupId)
   // import all the docs
   const res = await nodeDbRef.current.bulkDocs(
     dbJson,
@@ -120,7 +120,7 @@ export async function reconstructLocalGroups(dataPath: string) {
       const _groupDoc = await _db.get<Group>(_dbName)
       _localGroups.push(_groupDoc)
       appState.set('localGroups', _localGroups)
-      _db.close()
+      await _db.close()
     } catch (ex) {
       console.warn('[DB] failed to restore group doc', _dbName, ex)
       continue
@@ -225,7 +225,11 @@ export async function archiveDatabyss(groupId: string) {
   return _archivePath
 }
 
-export function initNodeDb(groupId: string) {
+export async function initNodeDb(groupId: string) {
+  //close existing db if necessary
+  if (nodeDbRef.current) {
+    await nodeDbRef.current.close()
+  }
   const _dbDirPath = path.join(appState.get('dataPath'), 'pouchdb')
   if (!fs.existsSync(_dbDirPath)) {
     fs.mkdirSync(_dbDirPath)

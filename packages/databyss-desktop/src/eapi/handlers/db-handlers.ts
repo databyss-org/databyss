@@ -41,9 +41,9 @@ export async function upsertRelation(
 
 export function registerDbHandlers() {
   ipcMain.handle('db-info', async () => await nodeDbRef.current?.info())
-  ipcMain.on('db-loadGroup', (_, groupId: string) => {
+  ipcMain.on('db-loadGroup', async (_, groupId: string) => {
     // console.log('[DB] loadGroup', groupId)
-    initNodeDb(groupId)
+    await initNodeDb(groupId)
     setGroupLoaded()
   })
   ipcMain.handle(

@@ -77,7 +77,7 @@ export const initializeNewPage = async ({
 
 export const createDatabyss = async () => {
   const _groupId = `g_${uidlc()}`
-  initNodeDb(_groupId)
+  await initNodeDb(_groupId)
   await initializeNewPage({ groupId: _groupId, pageId: uid() })
   const _groupDoc: Group = {
     _id: _groupId,

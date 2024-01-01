@@ -1,6 +1,6 @@
 import { app, BrowserWindow, net, protocol, shell } from 'electron'
 import url from 'url'
-import { initNodeDb } from './nodeDb'
+import { initNodeDb, nodeDbRef } from './nodeDb'
 import { registerHandlers } from './eapi/handlers'
 import { appState } from './eapi/handlers/state-handlers'
 import { createMenus } from './menus'
@@ -28,7 +28,7 @@ protocol.registerSchemesAsPrivileged([
   },
 ])
 
-const createWindow = (): void => {
+const createWindow = async () => {
   registerHandlers()
 
   protocol.handle('dbdrive', (request) => {
@@ -66,7 +66,7 @@ const createWindow = (): void => {
     lastActiveGroupId && 
     localGroups?.find((g) => g._id === lastActiveGroupId)
   ) {
-    initNodeDb(lastActiveGroupId)
+    await initNodeDb(lastActiveGroupId)
   } else {
     // clean up groups
     appState.set('lastActiveGroupId', null)
@@ -90,9 +90,23 @@ app.on('ready', createWindow)
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  app.quit()
+})
+
+app.on('will-quit', async (evt) => {
+  if (nodeDbRef.groupId && nodeDbRef.current) {
+    console.log('[Main] shutting down the database...')
+    evt.preventDefault()
+    try {
+      nodeDbRef.groupId = null
+      await nodeDbRef.current.close()
+    } catch (e) {
+      console.warn('[Main] error shutting down', e)
+    }
     app.quit()
+    return
   }
+  console.log('[Main] goodbye!')
 })
 
 app.on('activate', () => {
