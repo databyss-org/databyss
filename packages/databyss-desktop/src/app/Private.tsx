@@ -43,6 +43,7 @@ import DatabyssImg from '@databyss-org/ui/assets/logo-thick.png'
 import { DatabyssMenu } from '@databyss-org/ui/components/Menu/DatabyssMenu'
 import { setGroup } from '@databyss-org/data/pouchdb/groups'
 import { debounce } from 'lodash'
+import { TitleBar } from '../components/TitleBar'
 
 const GroupNameInput = ({
   groupName,
@@ -135,22 +136,7 @@ const AppView = ({
       flexGrow={1}
       mt={pxUnits(38)}
     >
-      <View
-        position="absolute"
-        top={0}
-        left={0}
-        height={pxUnits(38)}
-        bg="gray.0"
-        width="100%"
-        alignItems="center"
-        justifyContent="left"
-        flexDirection="row"
-        pl={pxUnits(74)}
-        css={{
-          '-webkit-user-select': 'none',
-          '-webkit-app-region': 'drag',
-        }}
-      >
+      <TitleBar>
         <View
           alignItems="center"
           flexDirection="row"
@@ -206,7 +192,7 @@ const AppView = ({
             </Icon>
           </BaseControl>
         </View>
-      </View>
+      </TitleBar>
       {showDatabyssMenu && (
         <DatabyssMenu onDismiss={() => setShowDatabyssMenu(false)} />
       )}

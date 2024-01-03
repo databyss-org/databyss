@@ -1,4 +1,5 @@
 import { BrowserWindow, Menu, app, MenuItem } from 'electron'
+import { createWindow } from './'
 import { CommandArgs, CommandName } from './eapi/cmd-api'
 import { closeDatabyss, onImportDatabyss } from './eapi/handlers/file-handlers'
 
@@ -45,6 +46,13 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
             'newGroup'
           )
         },
+      },
+      {
+        label: 'New Window',
+        accelerator: 'Shift+CmdOrCtrl+N',
+        click: () => {
+          createWindow()
+        }
       },
       { type: 'separator' },
       { 
@@ -189,6 +197,18 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
       },
     ],
   },
+  // WINDOW MENU
+  {
+    role: 'window',
+    submenu: [
+      {
+        role: 'minimize'
+      },
+      {
+        role: 'close'
+      }
+    ]
+  }
 ]
 
 if (process.platform === 'darwin') {

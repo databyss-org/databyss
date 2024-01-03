@@ -1,13 +1,12 @@
-import { ipcMain } from 'electron'
-import { initNodeDb, nodeDbRef, setGroupLoaded } from '../../nodeDb'
+import { BrowserWindow, ipcMain } from 'electron'
+import { getWindowIdForGroup, initNodeDb, NodeDbRef, nodeDbRefs, setGroupLoaded } from '../../nodeDb'
 import { sleep } from '@databyss-org/services/lib/util'
 import { updateInlines } from '@databyss-org/data/nodedb/updateInlines'
 import { BlockRelation, BlockType } from '@databyss-org/services/interfaces'
 import { addTimeStamp } from '@databyss-org/data/pouchdb/docUtils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 
-export async function upsertRelation(
-  {
+export async function upsertRelation(windowId: number, {
     blockId,
     blockType,
     pageId,
@@ -16,7 +15,7 @@ export async function upsertRelation(
 ) {
   let _updatedRelation: BlockRelation
   const _id = `r_${blockId}`
-  await nodeDbRef.current.upsert(_id, (oldDoc: BlockRelation) => {
+  await nodeDbRefs[windowId].current.upsert(_id, (oldDoc: BlockRelation) => {
     let _pageIds = [...(oldDoc?.pages ?? [])]
     if (operation === 'add') {
       if (!_pageIds.includes(pageId)) {
@@ -31,7 +30,7 @@ export async function upsertRelation(
       blockId,
       blockType,
       pages: _pageIds,
-      belongsToGroup: nodeDbRef.groupId,
+      belongsToGroup: nodeDbRefs[windowId].groupId,
       doctype: DocumentType.BlockRelation,
     })
     return _updatedRelation
@@ -40,15 +39,23 @@ export async function upsertRelation(
 }
 
 export function registerDbHandlers() {
-  ipcMain.handle('db-info', async () => await nodeDbRef.current?.info())
-  ipcMain.on('db-loadGroup', async (_, groupId: string) => {
-    // console.log('[DB] loadGroup', groupId)
-    await initNodeDb(groupId)
-    setGroupLoaded()
+  ipcMain.handle('db-info', async (evt) => 
+    await nodeDbRefs[evt.sender.id]?.current?.info())
+  ipcMain.on('db-loadGroup', async (evt, groupId: string) => {
+    console.log('[DB] loadGroup', groupId)
+    const _windowId = getWindowIdForGroup(groupId)
+    if (_windowId) {
+      const _win = BrowserWindow.fromId(_windowId)
+      _win.show()
+      _win.focus()
+      return
+    }
+    await initNodeDb(evt.sender.id, groupId)
+    setGroupLoaded(evt.sender.id)
   })
   ipcMain.handle(
     'db-get',
-    async (_, ...args: Parameters<typeof nodeDbRef.current.get>) => {
+    async (evt, ...args: Parameters<PouchDB.Database['get']>) => {
       // return await nodeDbRef.current?.get(...args)
       // let res = null
       let attempts = 0
@@ -56,7 +63,7 @@ export function registerDbHandlers() {
       do {
         attempts += 1
         try {
-          return await nodeDbRef.current?.get(...args)
+          return await nodeDbRefs[evt.sender.id]?.current?.get(...args)
         } catch (e) {
           lastErr = e
         }
@@ -68,64 +75,64 @@ export function registerDbHandlers() {
   )
   ipcMain.handle(
     'db-put',
-    async (_, ...args: Parameters<typeof nodeDbRef.current.put>) => {
+    async (evt, ...args: Parameters<PouchDB.Database['put']>) => {
       // console.log('[DB] put', args)
-      return await nodeDbRef.current?.put(...args)
+      return await nodeDbRefs[evt.sender.id]?.current?.put(...args)
     }
   )
   ipcMain.handle(
     'db-allDocs', 
-    async (_, options: PouchDB.Core.AllDocsOptions) => 
-      await nodeDbRef.current?.allDocs(options)
+    async (evt, options: PouchDB.Core.AllDocsOptions) => 
+      await nodeDbRefs[evt.sender.id]?.current?.allDocs(options)
   )
   ipcMain.handle(
     'db-bulkGet',
-    async (_, options: PouchDB.Core.BulkGetOptions) =>
-      await nodeDbRef.current?.bulkGet(options)
+    async (evt, options: PouchDB.Core.BulkGetOptions) =>
+      await nodeDbRefs[evt.sender.id]?.current?.bulkGet(options)
   )
   ipcMain.handle(
     'db-upsert',
-    async (_, id: string, doc: object) =>
-      await nodeDbRef.current?.upsert(id, (oldDoc) => {
+    async (evt, id: string, doc: object) =>
+      await nodeDbRefs[evt.sender.id]?.current?.upsert(id, (oldDoc) => {
         return { ...oldDoc, ...doc }
       })
   )
   ipcMain.handle(
     'db-bulkDocs',
-    async (_, ...args: Parameters<typeof nodeDbRef.current.bulkDocs>) =>
-      await nodeDbRef.current?.bulkDocs(...args)
+    async (evt, ...args: Parameters<PouchDB.Database['bulkDocs']>) =>
+      await nodeDbRefs[evt.sender.id]?.current?.bulkDocs(...args)
   )
   ipcMain.handle(
     'db-find',
-    async (_, ...args: Parameters<typeof nodeDbRef.current.find>) =>
-      await nodeDbRef.current?.find(...args)
+    async (evt, ...args: Parameters<PouchDB.Database['find']>) =>
+      await nodeDbRefs[evt.sender.id]?.current?.find(...args)
   )
   ipcMain.handle(
     'db-search',
-    async (_, ...args: Parameters<typeof nodeDbRef.current.search>) => {
+    async (evt, ...args: Parameters<PouchDB.Database['search']>) => {
       console.log('[DB] search', args)
-      const res = await nodeDbRef.current?.search(...args)
+      const res = await nodeDbRefs[evt.sender.id]?.current?.search(...args)
       console.log('[DB] search results', res)
       return res
     }
   )
   ipcMain.on(
     'db-updateInlines',
-    (_, ...args: Parameters<typeof updateInlines>) => {
+    (evt, args: Parameters<typeof updateInlines>[1]) => {
       // console.log('[DB] updateInlines', args)
-      updateInlines(...args)
+      updateInlines(evt.sender.id, args)
     }
   )
   ipcMain.handle(
     'db-addRelation',
-    async (_, payload: Parameters<typeof upsertRelation>[0]) => {
-      return await upsertRelation(payload, 'add')
+    async (evt, payload: Parameters<typeof upsertRelation>[1]) => {
+      return await upsertRelation(evt.sender.id, payload, 'add')
     }
   )
   ipcMain.handle(
     'db-removeRelation',
-    async (_, payload: Parameters<typeof upsertRelation>[0]) => {
-      return await upsertRelation(payload, 'remove')
+    async (evt, payload: Parameters<typeof upsertRelation>[1]) => {
+      return await upsertRelation(evt.sender.id, payload, 'remove')
     }
   )
 }

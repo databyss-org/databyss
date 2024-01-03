@@ -5,7 +5,6 @@ import {
   // useQueryClient
 } from '@tanstack/react-query'
 import { Document } from '@databyss-org/services/interfaces'
-// import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvder'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 
 import { dbRef } from '../db'

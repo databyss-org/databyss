@@ -12,7 +12,6 @@ import {
 } from '@databyss-org/data/pouchdb/interfaces'
 import { appState } from './eapi/handlers/state-handlers'
 import { addTimeStamp } from '@databyss-org/data/pouchdb/docUtils'
-import { appCommands } from '@databyss-org/ui/lib/appCommands'
 import { sendCommandToBrowser } from './menus'
 import { backupDbToJson, makeBackupFilename } from '@databyss-org/data/pouchdb/backup'
 
@@ -20,22 +19,19 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 PouchDB.plugin(PouchDbQuickSearch)
 
-// export const appDbPath = path.join(app.getPath('userData'), 'pouchdb')
-// if (!fs.existsSync(appDbPath)) {
-//   fs.mkdirSync(appDbPath)
-// }
-
 export interface NodeDbRef {
   current: PouchDB.Database<any> | null
   dbPath: string | null
   groupId: string | null
 }
 
-export const nodeDbRef: NodeDbRef = {
-  current: null,
-  dbPath: null,
-  groupId: null,
-}
+// const initialDbRef = (): NodeDbRef => ({
+//   current: null,
+//   dbPath: null,
+//   groupId: null,
+// })
+
+export const nodeDbRefs: { [windowId: number]: NodeDbRef } = {}
 
 export async function handleImport(filePath: string) {
   console.log('[DB] import', filePath)
@@ -61,16 +57,17 @@ export async function handleImport(filePath: string) {
     return false
   }
   // init pouchdb with groupid as path
-  await initNodeDb(groupId)
+  const windowId = BrowserWindow.getFocusedWindow().id
+  await initNodeDb(windowId, groupId)
   // import all the docs
-  const res = await nodeDbRef.current.bulkDocs(
+  const res = await nodeDbRefs[windowId].current.bulkDocs(
     dbJson,
     { new_edits: false } // not change revision
   )
   // if GROUP doc doesn't exist, create it
   let groupDoc: Group = null
   try {
-    groupDoc = await nodeDbRef.current.get<Group>(groupId)
+    groupDoc = await nodeDbRefs[windowId].current.get<Group>(groupId)
   } catch (_) {}
   if (groupDoc === null) {
     let username = prefsDoc.email.split('@')[0]
@@ -84,7 +81,7 @@ export async function handleImport(filePath: string) {
       _id: groupId,
       localGroup: true,
     }
-    await nodeDbRef.current.put(
+    await nodeDbRefs[windowId].current.put(
       addTimeStamp({
         doctype: DocumentType.Group,
         ...groupDoc,
@@ -94,7 +91,7 @@ export async function handleImport(filePath: string) {
   // add GROUP doc to app state
   appState.set('localGroups', [...groups, groupDoc])
   console.log('[DB] import done', res)
-  setGroupLoaded()
+  setGroupLoaded(windowId)
   return true
 }
 
@@ -225,25 +222,42 @@ export async function archiveDatabyss(groupId: string) {
   return _archivePath
 }
 
-export async function initNodeDb(groupId: string) {
-  //close existing db if necessary
-  if (nodeDbRef.current) {
-    await nodeDbRef.current.close()
+export function getWindowIdForGroup(groupId: string) {
+  const _windowId = Object.entries(nodeDbRefs).find(
+    ([windowId, dbRef]) => (dbRef.groupId === groupId)
+  )?.[0]
+  if (!_windowId) {
+    return null
+  }
+  return parseInt(_windowId, 10)
+}
+
+export async function initNodeDb(windowId: number, groupId: string) {
+  // bail if group is already loaded
+  if (getWindowIdForGroup(groupId)) {
+    console.warn('[DB] group already loaded', groupId)
+  }
+  // close existing db if necessary
+  if (nodeDbRefs[windowId]?.current) {
+    await nodeDbRefs[windowId].current.close()
   }
   const _dbDirPath = path.join(appState.get('dataPath'), 'pouchdb')
   if (!fs.existsSync(_dbDirPath)) {
     fs.mkdirSync(_dbDirPath)
   }
-  nodeDbRef.dbPath = path.join(_dbDirPath, groupId)
-  console.log('[DB] db path', nodeDbRef.dbPath)
-  nodeDbRef.current = new PouchDB(nodeDbRef.dbPath)
-  nodeDbRef.groupId = groupId
+  nodeDbRefs[windowId] = {
+    dbPath: path.join(_dbDirPath, groupId),
+    groupId: groupId,
+    current: null
+  }
+  console.log('[DB] db path', nodeDbRefs[windowId].dbPath)
+  nodeDbRefs[windowId].current = new PouchDB(nodeDbRefs[windowId].dbPath)
   appState.set('lastActiveGroupId', groupId)
 }
 
-export function setGroupLoaded() {
-  BrowserWindow.getFocusedWindow().webContents.send(
+export function setGroupLoaded(windowId: number) {
+  BrowserWindow.fromId(windowId).webContents.send(
     'db-groupLoaded',
-    nodeDbRef.groupId
+    nodeDbRefs[windowId].groupId
   )
 }

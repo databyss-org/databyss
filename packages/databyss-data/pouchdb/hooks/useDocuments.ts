@@ -5,7 +5,6 @@ import {
   // useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
-// import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvder'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 

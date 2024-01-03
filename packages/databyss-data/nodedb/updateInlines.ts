@@ -13,9 +13,9 @@ import {
   replaceInlineText,
   updateInlinesInBlock,
 } from '@databyss-org/services/text/inlineUtils'
-import { nodeDbRef } from '../../databyss-desktop/src/nodeDb'
+import { nodeDbRefs } from '../../databyss-desktop/src/nodeDb'
 
-const bulkUpsert = async (upQdict: any) => {
+const bulkUpsert = async (windowId: number, upQdict: any) => {
   // compose bulk get request
   const _bulkGetQuery = { docs: Object.keys(upQdict).map((d) => ({ id: d })) }
 
@@ -23,7 +23,7 @@ const bulkUpsert = async (upQdict: any) => {
     return
   }
 
-  const _res = await nodeDbRef.current!.bulkGet(_bulkGetQuery)
+  const _res = await nodeDbRefs[windowId].current!.bulkGet(_bulkGetQuery)
   // console.log('[bulkUpsert] get', _res.results)
 
   const _oldDocs = {}
@@ -55,7 +55,7 @@ const bulkUpsert = async (upQdict: any) => {
         ..._oldDoc,
         ...addTimeStamp({ ..._oldDoc, ...docFields, doctype }),
         ...(_oldDoc._rev ? { _rev: _oldDoc._rev } : {}),
-        belongsToGroup: nodeDbRef.groupId,
+        belongsToGroup: nodeDbRefs[windowId].groupId,
       }
       // EDGE CASE
       /**
@@ -68,14 +68,14 @@ const bulkUpsert = async (upQdict: any) => {
     }
   }
   // console.log('[bulkUpsert] put', _docs)
-  await nodeDbRef.current!.bulkDocs(_docs)
+  await nodeDbRefs[windowId].current!.bulkDocs(_docs)
 }
 
 /**
  * Get the BlockRelations doc for this topic,
  * iterate through the pages and update blocks that have the topic as an inline entity
  */
-export const updateInlines = async ({
+export const updateInlines = async (windowId: number, {
   inlineType,
   text,
   _id,
@@ -84,7 +84,7 @@ export const updateInlines = async ({
   text: Text
   _id: string
 }) => {
-  const _findRes = await nodeDbRef.current?.find({
+  const _findRes = await nodeDbRefs[windowId].current?.find({
     selector: {
       doctype: DocumentType.BlockRelation,
       blockId: _id,
@@ -105,7 +105,7 @@ export const updateInlines = async ({
   for (const _pageId of _relation!.pages) {
     let _page: Page | null
     try {
-      _page = await nodeDbRef.current?.get<Page>(_pageId)
+      _page = await nodeDbRefs[windowId].current?.get<Page>(_pageId)
     } catch (_) {
       _page = null
     }
@@ -118,7 +118,7 @@ export const updateInlines = async ({
         // get the block to scan
         let _block: Block | null
         try {
-          _block = await nodeDbRef.current?.get<Block>(_blockRef._id)
+          _block = await nodeDbRefs[windowId].current?.get<Block>(_blockRef._id)
         } catch (_) {
           _block = null
         }
@@ -142,5 +142,5 @@ export const updateInlines = async ({
       }
     }
   }
-  await bulkUpsert(upsertDict)
+  await bulkUpsert(windowId, upsertDict)
 }

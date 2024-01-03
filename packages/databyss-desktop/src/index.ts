@@ -1,6 +1,6 @@
 import { app, BrowserWindow, net, protocol, shell } from 'electron'
 import url from 'url'
-import { initNodeDb, nodeDbRef } from './nodeDb'
+import { getWindowIdForGroup, initNodeDb, nodeDbRefs } from './nodeDb'
 import { registerHandlers } from './eapi/handlers'
 import { appState } from './eapi/handlers/state-handlers'
 import { createMenus } from './menus'
@@ -11,6 +11,8 @@ import { mediaPath } from './eapi/handlers/file-handlers'
 // whether you're running in development or production).
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
+
+const windows = new Set<BrowserWindow>()
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -28,21 +30,29 @@ protocol.registerSchemesAsPrivileged([
   },
 ])
 
-const createWindow = async () => {
-  registerHandlers()
+export const createWindow = async () => {
+  let x
+  let y
+  let height
+  let width
+  const currentWindow = BrowserWindow.getFocusedWindow()
+  if (currentWindow) {
+    const [currentWindowX, currentWindowY] = currentWindow.getPosition()
+    x = currentWindowX + 24
+    y = currentWindowY + 24
+  }
 
-  protocol.handle('dbdrive', (request) => {
-    const filePath = url.fileURLToPath(
-      `file://${mediaPath()}/${request.url.slice('dbdrive://'.length)}`
-    )
-    console.log('[DDB] fetch', filePath)
-    return net.fetch(`file://${filePath}`)
-  })
+  const _lastSize = appState.get('lastWindowSize')
+  if (_lastSize) {
+    width = _lastSize[0]
+    height = _lastSize[1]
+  }
 
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
+  const window = new BrowserWindow({
+    height,
+    width,
+    x,
+    y,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
@@ -51,40 +61,73 @@ const createWindow = async () => {
     titleBarStyle: 'hiddenInset',
   })
 
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+  window.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url)
     return { action: 'deny' }
   })
 
   // console.log('[Main]', Menu.getApplicationMenu())
-  const menu = createMenus(mainWindow)
+  const menu = createMenus(window)
 
   // load the last active db, if one exists
   const lastActiveGroupId = appState.get('lastActiveGroupId')
   const localGroups = appState.get('localGroups')
   if (
     lastActiveGroupId && 
-    localGroups?.find((g) => g._id === lastActiveGroupId)
+    localGroups?.find((g) => g._id === lastActiveGroupId) &&
+    !getWindowIdForGroup(lastActiveGroupId)
   ) {
-    await initNodeDb(lastActiveGroupId)
+    await initNodeDb(window.id, lastActiveGroupId)
   } else {
     // clean up groups
     appState.set('lastActiveGroupId', null)
   }
 
-  mainWindow.maximize()
+  window.on('closed', async () => {
+    console.log('[Main] shutting down the database...')
+    try {
+      await nodeDbRefs[window.id].current.close()
+      delete nodeDbRefs[window.id]
+    } catch (e) {
+      console.warn('[Main] error shutting down database', e)
+    }
+    windows.delete(window)
+  })
+
+  window.on('focus', () => {
+    if (nodeDbRefs[window.id]) {
+      appState.set('lastActiveGroupId', nodeDbRefs[window.id].groupId)
+    }
+  })
+
+  window.on('resized', () => {
+    appState.set('lastWindowSize', window.getSize() as [number, number])
+  })
 
   // and load the index.html of the app.
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
+  window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  windows.add(window)
+  return window
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', () => {
+  protocol.handle('dbdrive', (request) => {
+    const filePath = url.fileURLToPath(
+      `file://${mediaPath()}/${request.url.slice('dbdrive://'.length)}`
+    )
+    console.log('[DDB] fetch', filePath)
+    return net.fetch(`file://${filePath}`)
+  })
+  registerHandlers()
+  createWindow()
+})
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -94,18 +137,18 @@ app.on('window-all-closed', () => {
 })
 
 app.on('will-quit', async (evt) => {
-  if (nodeDbRef.groupId && nodeDbRef.current) {
-    console.log('[Main] shutting down the database...')
-    evt.preventDefault()
-    try {
-      nodeDbRef.groupId = null
-      await nodeDbRef.current.close()
-    } catch (e) {
-      console.warn('[Main] error shutting down', e)
-    }
-    app.quit()
-    return
-  }
+//   if (nodeDbRef.groupId && nodeDbRef.current) {
+//     console.log('[Main] shutting down the database...')
+//     evt.preventDefault()
+//     try {
+//       nodeDbRef.groupId = null
+//       await nodeDbRef.current.close()
+//     } catch (e) {
+//       console.warn('[Main] error shutting down', e)
+//     }
+//     app.quit()
+//     return
+//   }
   console.log('[Main] goodbye!')
 })
 

@@ -1,7 +1,7 @@
 import { useQueryClient, UseQueryResult } from '@tanstack/react-query'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Group } from '@databyss-org/services/interfaces'
-import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvder'
+import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvider'
 import { UserPreference } from '../interfaces'
 import { useDocument, UseDocumentOptions } from './useDocument'
 import { upsertUserPreferences } from '../utils'

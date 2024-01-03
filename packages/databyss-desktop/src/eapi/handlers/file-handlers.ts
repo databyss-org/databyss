@@ -1,10 +1,10 @@
-import { dialog, ipcMain, shell } from 'electron'
+import { BrowserWindow, dialog, ipcMain, shell } from 'electron'
 import fs from 'fs-extra'
 import path from 'path'
 import {
   archiveDatabyss,
   handleImport,
-  nodeDbRef,
+  nodeDbRefs,
   setDataPath,
   setGroupLoaded,
 } from '../../nodeDb'
@@ -49,11 +49,12 @@ export async function onChooseDataPath() {
 }
 
 export async function closeDatabyss() {
-  nodeDbRef.groupId = null
+  const windowId = BrowserWindow.getFocusedWindow().id
+  nodeDbRefs[windowId].groupId = null
   appState.set('lastActiveGroupId', null)
   appState.set('lastRoute', null)
   appState.set('lastSidebarRoute', null)
-  setGroupLoaded()
+  setGroupLoaded(windowId)
 }
 
 async function archiveAndRemoveDatabyss(groupId: string) {
@@ -89,7 +90,8 @@ export function registerFileHandlers() {
   ipcMain.handle('file-archiveDatabyss', (_, groupId: string) => archiveAndRemoveDatabyss(groupId))
   ipcMain.handle('file-importMedia', (_, file: IpcFile, fileId: string) => {
     console.log('[IPC] importMedia', file.name)
-    const _mediaItemDir = path.join(mediaPath(), nodeDbRef.groupId, fileId)
+    const windowId = BrowserWindow.getFocusedWindow().id
+    const _mediaItemDir = path.join(mediaPath(), nodeDbRefs[windowId].groupId, fileId)
     const { buffer, ...meta } = file
     fs.mkdirSync(_mediaItemDir, { recursive: true })
     // write the buffer
@@ -107,7 +109,8 @@ export function registerFileHandlers() {
     shell.openPath(_path)
   })
   ipcMain.handle('file-deleteMedia', (_, fileId: string) => {
-    const _mediaItemDir = path.join(mediaPath(), nodeDbRef.groupId, fileId)
+    const windowId = BrowserWindow.getFocusedWindow().id
+    const _mediaItemDir = path.join(mediaPath(), nodeDbRefs[windowId].groupId, fileId)
     fs.removeSync(_mediaItemDir)
   })
   ipcMain.handle('file-getEmbedDetail', async (_, urlOrHtml: string) => {

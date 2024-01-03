@@ -20,6 +20,7 @@ export interface StateData {
   sidebarWidth: number
   sidebarVisible: boolean
   dataPath: string
+  lastWindowSize: [number, number]
 }
 
 const defaultData: Partial<StateData> = {

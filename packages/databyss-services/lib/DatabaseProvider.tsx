@@ -15,7 +15,7 @@ import { darkTheme } from '@databyss-org/ui/theming/theme'
 import { version } from '../version'
 
 // eslint-disable-next-line no-undef
-declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
+declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
 
 interface ContextType {
   isCouchMode: boolean
@@ -33,7 +33,7 @@ export interface DatabaseStatus {
   groupId: string | null
 }
 
-export const DatabaseProvider = ({ children }) => {
+export const DatabaseProvider = ({ children, noGroupHeader }) => {
   const queryClient = useQueryClient()
   const navigate = useNavigationContext((c) => c && c.navigate)
   const [databaseStatus, setDatabaseStatus] = useState<DatabaseStatus>({
@@ -102,6 +102,7 @@ export const DatabaseProvider = ({ children }) => {
         children
       ) : (
         <Viewport justifyContent="center" theme={darkTheme} bg="background.1">
+          {noGroupHeader}
           {isBusy ? (
             <LoadingFallback />
           ) : (

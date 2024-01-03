@@ -31,7 +31,7 @@ import { hasUnathenticatedAccess } from './actions'
 import { NetworkUnavailableError } from '../interfaces'
 import { sleep, urlSafeName } from '../lib/util'
 import { getAccountFromLocation } from './utils'
-import { useDatabaseContext } from '../lib/DatabaseProvder'
+import { useDatabaseContext } from '../lib/DatabaseProvider'
 import { sortEntriesByRecent } from '../entries/util'
 
 const useReducer = createReducer()
