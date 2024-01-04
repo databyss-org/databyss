@@ -12,9 +12,9 @@ export const mainConfig: Configuration = {
   module: {
     rules,
   },
-  // externals: {
-  //   'fs-extra': 'fs-extra',
-  // },
+  externals: {
+    canvas: 'canvas',
+  },
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
   },

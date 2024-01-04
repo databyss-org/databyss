@@ -88,9 +88,9 @@ export function registerFileHandlers() {
   ipcMain.handle('file-importDatabyss', onImportDatabyss)
   ipcMain.handle('file-newDatabyss', createDatabyss)
   ipcMain.handle('file-archiveDatabyss', (_, groupId: string) => archiveAndRemoveDatabyss(groupId))
-  ipcMain.handle('file-importMedia', (_, file: IpcFile, fileId: string) => {
+  ipcMain.handle('file-importMedia', (evt, file: IpcFile, fileId: string) => {
     console.log('[IPC] importMedia', file.name)
-    const windowId = BrowserWindow.getFocusedWindow().id
+    const windowId = evt.sender.id
     const _mediaItemDir = path.join(mediaPath(), nodeDbRefs[windowId].groupId, fileId)
     const { buffer, ...meta } = file
     fs.mkdirSync(_mediaItemDir, { recursive: true })
@@ -108,8 +108,8 @@ export function registerFileHandlers() {
     )
     shell.openPath(_path)
   })
-  ipcMain.handle('file-deleteMedia', (_, fileId: string) => {
-    const windowId = BrowserWindow.getFocusedWindow().id
+  ipcMain.handle('file-deleteMedia', (evt, fileId: string) => {
+    const windowId = evt.sender.id
     const _mediaItemDir = path.join(mediaPath(), nodeDbRefs[windowId].groupId, fileId)
     fs.removeSync(_mediaItemDir)
   })

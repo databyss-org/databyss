@@ -42,6 +42,7 @@
   "peerDependencies": {
     "@databyss-org/services": "3.0.5",
     "@databyss-org/ui": "3.0.5",
+    "pdfjs-dist": "2.7.570",
     "react": "16.9.0",
     "react-dom": "16.9.0"
   },

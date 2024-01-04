@@ -22,6 +22,10 @@ import { useNavigationContext } from '../../components/Navigation/NavigationProv
 import { FileDropZone } from './FileDropZone'
 import { buildSourceDetail } from '@databyss-org/services/sources/lib'
 import { uploadEmbed } from '@databyss-org/services/embeds'
+import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
+
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('../../../databyss-desktop/src/eapi').default
 
 // component
 export const DropZoneManager = () => {
@@ -152,11 +156,13 @@ export const DropZoneManager = () => {
     try {
       let entryBlock
       // parse pdf annotations and metadata
-      const response = await fetchAnnotations(file)
+      // const response = await fetchAnnotations(file)
       // get extended metadata from catalog service
       let _source: Source | null = null
+      const _embed: Embed = await uploadEmbed(file, file.name)
+      const response = await eapi.pdf.parse(_embed.detail?.src)
+      // console.log('[DropZoneManager] PDF parse results', response)
       const _title = response.metadata?.title?.text ?? file.name
-      const _embed: Embed = await uploadEmbed(file, _title)
       if (hasEnoughMetadata(response.metadata)) {
         _source = await queryMetadataFromCatalog(response.metadata)
       }
@@ -173,6 +179,7 @@ export const DropZoneManager = () => {
       const blocks = toDatabyssBlocks(entryBlock, response.annotations)
       insert(blocks)
     } catch (error) {
+      console.error(error)
       showAlert(
         '⚠️ An error occured',
         'Unable to obtain annotations from this document. Please try again later, or try with another document.',

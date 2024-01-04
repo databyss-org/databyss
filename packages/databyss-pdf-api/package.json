@@ -13,7 +13,7 @@
     "express": "^4.17.1",
     "lodash": "^4.17.19",
     "he": "^1.2.0",
-    "pdfjs-dist": "^2.4.456",
+    "pdfjs-dist": "2.7.570",
     "puppeteer-core": "3.3.0",
     "puppeteer": "3.3.0",
     "signals": "^1.0.0"

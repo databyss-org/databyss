@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <title>ANNOTATIONS EXTRACTIONS</title>
+  <head>
+    <script type="text/javascript" src="lib/pdfjs/src/shared/util.js"></script>
+    <script type="text/javascript" src="lib/pdfjs/src/core/colorspace.js"></script>
+    <script type="text/javascript" src="lib/pdfjs/src/core/pattern.js"></script>
+    <script type="text/javascript" src="lib/pdfjs/src/display/pattern_helper.js"></script>
+    <script type="text/javascript" src="lib/pdfjs/src/core/function.js"></script>
+    <script type="text/javascript" src="lib/pdfjs/src/core/annotation.js"></script>
+    <script type="text/javascript" src="lib/pdfjs/src/display/api.js"></script>
+    <script type="text/javascript" src="lib/pdfjs/src/display/metadata.js"></script>
+    <script type="text/javascript" src="lib/pdfjs/src/display/canvas.js"></script>
+    <script type="text/javascript" src="lib/pdfjs/src/display/font_loader.js"></script>
+    <script type="text/javascript" src="lib/pdfjs/src/display/webgl.js"></script>
+    <script type="text/javascript" src="lib/pdfjs/src/getPDFAnnotations.js"></script>
+    <script type="text/javascript">
+      // Specify the main script used to create a new PDF.JS web worker.
+      PDFJS.workerSrc = 'lib/pdfjs/src/worker_loader.js';
+    </script>
+    <!-- <script type="text/javascript" src="./main.js"></script> -->
+    <script>
+      console.log('✅ index.html loaded');
+    </script>
+  </head>
+
+  <body>
+    <canvas id="pdf-canvas" style="border: 1px solid black;"/>
+  </body>
+</html>
