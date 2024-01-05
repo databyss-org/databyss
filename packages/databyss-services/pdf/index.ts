@@ -2,22 +2,11 @@ import { sourceFromCatalogResult } from '../catalog/util'
 import crossref from '../catalog/crossref'
 import request from '../lib/request'
 
+export { processPDF } from './processPdf'
+
 const PDF_API_URL = `${process.env.PDF_API_URL}/pdf/parse`
 const CROSSREF_BASE_URL = 'https://api.crossref.org/works'
 const PDF_TYPES = ['application/pdf']
-
-export const fetchAnnotations = (file: File): Promise<any> => {
-  // const formData = new FormData()
-  // formData.append('pdf', file)
-
-  // return request(PDF_API_URL, {
-  //   method: 'POST',
-  //   body: formData,
-  //   timeout: 30000,
-  //   responseAsJson: false,
-  // })
-  
-}
 
 export interface Metadata {
   author?: string

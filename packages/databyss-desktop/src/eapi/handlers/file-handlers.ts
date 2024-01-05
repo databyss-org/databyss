@@ -102,6 +102,26 @@ export function registerFileHandlers() {
       JSON.stringify(meta)
     )
   })
+  ipcMain.handle('file-renameMedia', (evt, fileId: string, renameTo: string) => {
+    console.log('[IPC] renameMedia', fileId, renameTo)
+    const windowId = evt.sender.id
+    const _mediaItemDir = path.join(mediaPath(), nodeDbRefs[windowId].groupId, fileId)
+    const _meta = JSON.parse(
+      fs.readFileSync(path.join(_mediaItemDir, 'meta.json')).toString()
+    ) as IpcFile
+    const _safeFilename = renameTo
+      .replace(/[/\\?%*:|"<>]/g, '-')
+      .substring(0, 254)
+    fs.renameSync(
+      path.join(_mediaItemDir, _meta.name), 
+      path.join(_mediaItemDir, _safeFilename))
+    _meta.name = _safeFilename
+    fs.writeFileSync(
+      path.join(_mediaItemDir, 'meta.json'),
+      JSON.stringify(_meta)
+    )
+    return _safeFilename
+  })
   ipcMain.on('file-openNative', (_, path: string) => {
     const _path = decodeURIComponent(
       path.replace('dbdrive://', `${mediaPath()}/`)

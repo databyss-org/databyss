@@ -186,20 +186,4 @@ export function DatabyssMenuItems({
   }
 
   return <DropdownList menuItems={menuItems} dismiss={onDismiss} />
-  // return (
-  //   <DList 
-  //     verticalItemPadding={0} 
-  //     verticalItemMargin={0} 
-  //     dropdownContainerProps={{
-  //       position: {
-  //         top: '20px'
-  //       },
-  //     }}
-  //     menuViewProps={{
-  //       theme,
-  //     }}
-  //   >
-  //     {makeDropdownListChildren({ menuItems, dismiss: onDismiss })}
-  //   </DList>
-  // )
 }

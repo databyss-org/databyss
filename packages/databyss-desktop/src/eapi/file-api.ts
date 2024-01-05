@@ -24,6 +24,8 @@ export const importMedia = async (
   }
   await ipcRenderer.invoke('file-importMedia', ipcFile, fileId)
 }
+export const renameMedia = async (fileId: string, renameTo: string): Promise<string> =>
+  ipcRenderer.invoke('file-renameMedia', fileId, renameTo)
 export const openNative = (path: string) =>
   ipcRenderer.send('file-openNative', path)
 export const deleteMedia = (fileId: string) =>

@@ -93,7 +93,7 @@ DListItem.defaultProps = {
 export const DList = ({
   children,
   menuItems,
-  menuIcon = <MenuSvg />,
+  menuIcon = <Icon sizeVariant="tiny"><MenuSvg /></Icon>,
   menuViewProps,
   dropdownContainerProps,
   ...others

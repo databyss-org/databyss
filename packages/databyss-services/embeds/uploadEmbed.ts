@@ -23,8 +23,8 @@ export const uploadEmbed = async (file: File, renameTo?: string) => {
   const ext = _filename.includes('.')
     ? `.${_filename.split('.').slice(-1)}`
     : ''
-  if (renameTo && !renameTo.endsWith(ext)) {
-    _filename = `${renameTo}${ext}`
+  if (renameTo) {
+    _filename =  renameTo.endsWith(ext) ? renameTo : `${renameTo}${ext}`
   }
   // await uploadFile({ file, fileId })
   await eapi.file.importMedia(file, _fileId, _filename)

@@ -16,7 +16,7 @@ import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
-import { generateShortName } from '@databyss-org/services/sources/lib'
+import { formatSource } from '@databyss-org/services/sources/lib'
 
 import { useEditorContext } from '../../state/EditorProvider'
 
@@ -31,23 +31,6 @@ export const LOCAL_SOURCES = 'LOCAL_SOURCES'
 // use to truncate no more than a max amount of characters
 const truncate = (input, max) =>
   input.length > max ? `${input.substring(0, max)}...` : input
-
-export const formatSource = (value) => {
-  const _value = JSON.parse(JSON.stringify(value))
-  // format year
-  const year = value?.detail?.year?.textValue
-  // TODO: THIS SHOULD BE TRUTHY IF ZERO
-
-  if (typeof year === 'number' || year) {
-    _value.detail.year.textValue = year.toString()
-  }
-  // ensure short name exists, if not create one
-  if (!value.name) {
-    _value.name = generateShortName(value)
-  }
-
-  return _value
-}
 
 const SuggestSources = ({
   query,

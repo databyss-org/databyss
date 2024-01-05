@@ -4,9 +4,8 @@ import { mergeRanges, textToHtml } from '@databyss-org/services/blocks'
 import EditSvg from '@databyss-org/ui/assets/edit.svg'
 import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
 import {
-  fetchAnnotations,
   fileIsPDF,
-  queryMetadataFromCatalog,
+  processPDF,
 } from '@databyss-org/services/pdf'
 import { uploadEmbed } from '@databyss-org/services/embeds'
 import { setSource } from '@databyss-org/services/sources'
@@ -142,15 +141,15 @@ export const SourceHeader = ({
     // console.log('[SourceHeader] file', file)
     setIsBusy(true)
     let _filename = file.name
+    let _embed: Embed
     if (fileIsPDF(file)) {
-      const _pdfResults = await fetchAnnotations(file)
-      // console.log('[SourceHeader] PDF results', _pdfResults)
-      if (_pdfResults?.metadata?.title) {
-        _filename = _pdfResults.metadata.title.text
-      }
+     const _processResults = await processPDF(file)
+     _filename = _processResults.embed.detail.fileDetail!.filename
+     _embed = _processResults.embed
+    } else {
+      _embed = await uploadEmbed(file, _filename)
     }
     console.log('[SourceHeader] filename', _filename)
-    const _embed: Embed = await uploadEmbed(file, _filename)
     await setSource({
       ...sourceRef.current,
       media: [...(sourceRef.current.media ?? []), _embed._id],
