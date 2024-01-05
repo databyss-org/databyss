@@ -1,3 +1,4 @@
+import lcs from 'node-lcs'
 import { sourceFromCatalogResult } from '../catalog/util'
 import crossref from '../catalog/crossref'
 import request from '../lib/request'
@@ -62,7 +63,14 @@ export const findMatchesInCrossref = (crossref, metadata: Metadata) => {
   crossref.message.items.forEach((element) => {
     if (element.title && Array.isArray(element.title)) {
       const elementTitle = element.title[0] as string
-      if (elementTitle.toLowerCase().startsWith(_title.toLowerCase())) {
+      // if (elementTitle.toLowerCase().startsWith(_title.toLowerCase())) {
+      //   matches.push(element)
+      // }
+      const lcsResults = lcs(
+        elementTitle.toLowerCase(),
+        _title.toLowerCase()
+      )
+      if (lcsResults.length > 20) {
         matches.push(element)
       }
     }

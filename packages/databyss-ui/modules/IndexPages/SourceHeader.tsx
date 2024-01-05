@@ -112,6 +112,7 @@ export const MediaLinks = ({ source }: { source: Source }) => {
             hoverColor="transparent"
             textVariant="uiTextSmall"
             onPress={() => {
+              console.log('[SourceHeader] openNative', _embed.detail.src)
               eapi.file.openNative(_embed.detail.src)
             }}
           >

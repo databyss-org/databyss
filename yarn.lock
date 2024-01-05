@@ -20022,6 +20022,11 @@ node-int64@^0.4.0:
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
   integrity sha1-h6kGXNs1XTGC2PlM4RGIuCXGijs=
 
+node-lcs@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/node-lcs/-/node-lcs-1.0.4.tgz#2f47a72ac9ffcc740a762f7eee2df6dc4b968fdd"
+  integrity sha512-aNEp6PcffC4T9UBY1ddQZvY3rj5vx1+ahOB0R9O7zHn+Dpbzk94V0zxYXquTISo3XHsthKkWa4NLeSh7iHLkSw==
+
 node-libs-browser@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/node-libs-browser/-/node-libs-browser-2.2.1.tgz#b64f513d18338625f90346d27b0d235e631f6425"

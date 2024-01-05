@@ -10,7 +10,10 @@ declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
 
 /* eslint-disable no-prototype-builtins */
 const hasEnoughMetadata = (data) =>
-  data.hasOwnProperty('author') || data.hasOwnProperty('title')
+  data.hasOwnProperty('author') || 
+  data.hasOwnProperty('title') ||
+  data.hasOwnProperty('extractedDOI') ||
+  data.hasOwnProperty('extractedTitle')
 /* eslint-enable no-prototype-builtins */
 
 function buildSourceBlock(data: Source | string, embed: Embed) {
@@ -49,7 +52,7 @@ export async function processPDF(file: File) {
     let _filename = `${_entryBlock.text.textValue}.pdf`
     _filename = await eapi.file.renameMedia(_embed._id, _filename)
     _embed.detail.fileDetail!.filename = _filename
-    _embed.detail.src = _embed.detail.src.replace(file.name, _filename)
+    _embed.detail.src = _embed.detail.src.split('/').slice(0, -1).concat(_filename).join('/')
     // console.log('[DropZoneManager] renamed embed', _embed)
     await setEmbed(_embed)
   }

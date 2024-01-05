@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/desktop",
-  "version": "3.0.5",
+  "version": "3.0.7",
   "description": "",
   "main": ".webpack/main",
   "private": false,
@@ -40,8 +40,8 @@
     "typescript": "~4.5.4"
   },
   "peerDependencies": {
-    "@databyss-org/services": "3.0.5",
-    "@databyss-org/ui": "3.0.5",
+    "@databyss-org/services": "3.0.7",
+    "@databyss-org/ui": "3.0.7",
     "pdfjs-dist": "2.7.570",
     "react": "16.9.0",
     "react-dom": "16.9.0"
