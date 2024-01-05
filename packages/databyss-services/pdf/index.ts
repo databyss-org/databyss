@@ -14,36 +14,55 @@ export interface Metadata {
     src: string
     text: string
   }
+  extractedTitle?: string
+  extractedDOI?: string
 }
 
 export const fileIsPDF = (file: File) => PDF_TYPES.includes(file.type)
 
 export const fetchMetadata = (data: Metadata): Promise<any> => {
-  const { title, author } = data
+  const { title, author, extractedDOI, extractedTitle } = data
 
-  const queries: string[] = []
-  if (title) {
-    const t = title.text.replace(/ /g, '+')
-    queries.push(`query.bibliographic=${t.toLowerCase()}`)
-  }
-  if (author) {
-    const a = author.replace(/ /g, '+')
-    queries.push(`query.author=${a.toLowerCase()}`)
-  }
-  // queries.push('select=title,author,DOI,ISSN')
+  let url: string = CROSSREF_BASE_URL
 
-  const url = `${CROSSREF_BASE_URL}?${queries.join('&')}`
+  if (extractedDOI) {
+    url += `/${extractedDOI.trim()}`
+  }
+  else {
+    const queries: string[] = []
+    if (extractedTitle) {
+      const t = extractedTitle.trim().replace(/ /g, '+')
+      queries.push(`query.bibliographic=${t.toLowerCase()}`)
+    } else {
+      if (title) {
+        const t = title.text.replace(/ /g, '+')
+        queries.push(`query.bibliographic=${t.toLowerCase()}`)
+      }
+      if (author) {
+        const a = author.replace(/ /g, '+')
+        queries.push(`query.author=${a.toLowerCase()}`)
+      }
+      // queries.push('select=title,author,DOI,ISSN')
+    }
+    url += `?${queries.join('&')}`
+  }
 
   return request(url, { method: 'GET', timeout: 30000, responseAsJson: true })
 }
 
 export const findMatchesInCrossref = (crossref, metadata: Metadata) => {
-  const { title } = metadata
+  console.log('[PDF] findMatchesInCrossref', crossref, metadata)
+  if (metadata.extractedDOI) {
+    return [crossref.message]
+  }
+  const _title = (
+    metadata.extractedTitle ?? metadata.title?.text ?? metadata.title?.src
+  )?.trim() ?? ''
   const matches: any[] = []
   crossref.message.items.forEach((element) => {
     if (element.title && Array.isArray(element.title)) {
-      const elementTitle = element.title[0]
-      if (elementTitle === title?.src || elementTitle === title?.text) {
+      const elementTitle = element.title[0] as string
+      if (elementTitle.toLowerCase().startsWith(_title.toLowerCase())) {
         matches.push(element)
       }
     }

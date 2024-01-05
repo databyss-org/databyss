@@ -23,6 +23,38 @@ function stripOfHTML(source) {
   return he.decode(striped)
 }
 
+async function getPageText(pageData) {
+  let render_options = {
+    //replaces all occurrences of whitespace with standard spaces (0x20). The default value is `false`.
+    normalizeWhitespace: false,
+    //do not attempt to combine same line TextItem's. The default value is `false`.
+    disableCombineTextItems: false
+  }
+
+  const textContent = await pageData.getTextContent(render_options)
+  // console.log('[PDF] text', textContent)
+
+
+  let lastY, text = ''
+  const lines = []
+  //https://github.com/mozilla/pdf.js/issues/8963
+  //https://github.com/mozilla/pdf.js/issues/2140
+  //https://gist.github.com/hubgit/600ec0c224481e910d2a0f883a7b98e3
+  //https://gist.github.com/hubgit/600ec0c224481e910d2a0f883a7b98e3
+  for (let item of textContent.items) {
+    if (lastY == item.transform[5] || !lastY){
+      text += item.str
+    } else {
+      lines.push(text)
+      text = item.str
+    }    
+    lastY = item.transform[5]
+    // lines.push(item)
+  }
+  lines.push(text)
+  return lines
+}
+
 // public api
 export async function parse(path) {
   let pdf
@@ -49,6 +81,12 @@ export async function parse(path) {
 
   try {
     await getAllAnnotations()
+  } catch (error) {
+    return Promise.reject(error)
+  }
+
+  try {
+    await getAllPageText()
   } catch (error) {
     return Promise.reject(error)
   }
@@ -117,6 +155,23 @@ function getAllPages(pdf) {
   })
 }
 
+function getAllPageText() {
+  return new Promise((resolve, reject) => {
+    const allPromises = []
+    allPagesData.forEach((page) => {
+      const textPromise = getPageText(page.data)
+        .then((pageLines) => {
+          page.textLines = pageLines
+        })
+        .catch(reject)
+      allPromises.push(textPromise)
+    })
+    Promise.all(allPromises)
+      .then(() => resolve(allPagesData))
+      .catch(reject)
+  })
+} 
+
 function getAllAnnotations() {
   return new Promise((resolve, reject) => {
     const allPromises = []
@@ -158,6 +213,23 @@ function parseAnnotation(data) {
   return response
 }
 
+function getFirstNonEmptyLine(textLines: string[]) {
+  for (const text of textLines) {
+    if (text.trim().length > 0) {
+      return text
+    }
+  }
+}
+
+function findDoi(textLines: string[]) {
+  for (const text of textLines) {
+    const matches = text.match(/doi\.org\/(.+)\s?/)
+    if (matches) {
+      return matches[1]
+    }
+  }
+}
+
 function prepareResponse() {
   const allAnnotations = []
 
@@ -172,6 +244,11 @@ function prepareResponse() {
     // remove superfluous property
     delete annotation.data
   })
+
+  metadata.extractedTitle = getFirstNonEmptyLine(allPagesData[0].textLines)
+  metadata.extractedDOI = findDoi(allPagesData[0].textLines)
+
+  // console.log('[PDF] metadata', metadata)
 
   return { metadata, annotations }
 }

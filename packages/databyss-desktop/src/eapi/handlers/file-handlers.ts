@@ -110,7 +110,7 @@ export function registerFileHandlers() {
       fs.readFileSync(path.join(_mediaItemDir, 'meta.json')).toString()
     ) as IpcFile
     const _safeFilename = renameTo
-      .replace(/[/\\?%*:|"<>]/g, '-')
+      .replace(/[/\\?%*:|"<>]/g, '')
       .substring(0, 254)
     fs.renameSync(
       path.join(_mediaItemDir, _meta.name), 
