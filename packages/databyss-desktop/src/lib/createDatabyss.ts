@@ -4,7 +4,7 @@ import {
   UserPreference,
 } from '@databyss-org/data/pouchdb/interfaces'
 import { Page } from '@databyss-org/services/interfaces/Page'
-import { initNodeDb, nodeDbRef, setGroupLoaded } from '../nodeDb'
+import { initNodeDb, NodeDbRef, nodeDbRefs, setGroupLoaded } from '../nodeDb'
 import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { Group } from '@databyss-org/services/interfaces'
 import { addTimeStamp } from '@databyss-org/data/pouchdb/docUtils'
@@ -26,10 +26,12 @@ export const initializeNewPage = async ({
   groupId,
   pageId,
   skipTitleBlock,
+  nodeDbRef,
 }: {
   groupId: string
   pageId: string
   skipTitleBlock?: boolean
+  nodeDbRef: NodeDbRef
 }) => {
   const _page: any = new Page(pageId, { skipTitleBlock })
   // upsert selection
@@ -75,19 +77,23 @@ export const initializeNewPage = async ({
   }))
 }
 
-export const createDatabyss = async () => {
+export const createDatabyss = async (windowId: number) => {
   const _groupId = `g_${uidlc()}`
-  await initNodeDb(_groupId)
-  await initializeNewPage({ groupId: _groupId, pageId: uid() })
+  await initNodeDb(windowId, _groupId)
+  await initializeNewPage({ 
+    groupId: _groupId, 
+    pageId: uid(),
+    nodeDbRef: nodeDbRefs[windowId]
+  })
   const _groupDoc: Group = {
     _id: _groupId,
     name: process.env.UNTITLED_GROUP_NAME,
     pages: [],
     localGroup: true,
   }
-  await nodeDbRef.current.put(addTimeStamp(_groupDoc))
+  await nodeDbRefs[windowId].current.put(addTimeStamp(_groupDoc))
   // add GROUP doc to app state
   const groups = (appState.get('localGroups') ?? []) as Group[]
   appState.set('localGroups', [...groups, _groupDoc])
-  setGroupLoaded()
+  setGroupLoaded(windowId)
 }

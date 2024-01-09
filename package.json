@@ -1,7 +1,7 @@
 {
   "name": "databyss",
   "productName": "Databyss",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "description": "The word processor is dead. Long live the word processor.",
   "main": ".webpack/main",
   "repository": {

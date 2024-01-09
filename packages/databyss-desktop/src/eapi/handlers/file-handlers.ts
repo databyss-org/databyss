@@ -86,7 +86,7 @@ export function registerFileHandlers() {
   )
   ipcMain.handle('file-chooseDataPath', onChooseDataPath)
   ipcMain.handle('file-importDatabyss', onImportDatabyss)
-  ipcMain.handle('file-newDatabyss', createDatabyss)
+  ipcMain.handle('file-newDatabyss', (evt) => createDatabyss(evt.sender.id))
   ipcMain.handle('file-archiveDatabyss', (_, groupId: string) => archiveAndRemoveDatabyss(groupId))
   ipcMain.handle('file-importMedia', (evt, file: IpcFile, fileId: string) => {
     console.log('[IPC] importMedia', file.name)
