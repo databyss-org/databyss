@@ -1,6 +1,11 @@
 import type { Configuration } from 'webpack'
+import * as webpack from 'webpack'
+import getClientEnvironment from '../../config/env'
 
 import { rules } from './webpack.rules'
+
+// Get environment variables to inject into our app.
+const env = getClientEnvironment('static://')
 
 export const mainConfig: Configuration = {
   /**
@@ -12,6 +17,7 @@ export const mainConfig: Configuration = {
   module: {
     rules,
   },
+  plugins: [new webpack.DefinePlugin(env.stringified)],
   externals: {
     canvas: 'canvas',
   },
