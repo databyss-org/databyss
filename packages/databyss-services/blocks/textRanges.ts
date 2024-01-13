@@ -18,8 +18,12 @@ export function mergeRanges(
   const _rangeKey = (range: Range) => `[${range.offset}, ${range.length}]`
   ranges.forEach((range) => {
     if (_rangeDict[_rangeKey(range)]) {
-      // merge the marks
-      _rangeDict[_rangeKey(range)].marks.push(...range.marks)
+      // merge the marks (ignoring duplicates)
+      range.marks.forEach((mark) => {
+        if (!_rangeDict[_rangeKey(range)].marks.includes(mark)) {
+          _rangeDict[_rangeKey(range)].marks.push(mark)
+        }
+      })
       return
     }
     _rangeDict[_rangeKey(range)] = cloneDeep(range)

@@ -102,6 +102,10 @@ export const useFindInPage = (options?: UseFindInPageOptions): FindInPage => {
   }
 
   const findNext = () => {
+    //special case: 1 match, already highlighted
+    if (currentIndex === 0 && matches.length === 1) {
+      return
+    }
     let _nextIndex = currentIndex + 1
     if (_nextIndex > matches.length - 1) {
       _nextIndex = 0
