@@ -17,7 +17,7 @@ import {
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Helmet } from 'react-helmet'
-import { useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
+import { useBlocks, useDocuments, usePages } from '@databyss-org/data/pouchdb/hooks'
 import {
   Block,
   BlockRelation,
@@ -364,13 +364,29 @@ export const getPathFromBlock = (block: Block) => {
 
 export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const { blockId } = useParams()
-  const blocksRes = useBlocks(BlockType._ANY)
+  // const blocksRes = useBlocks(BlockType._ANY)
   const blockRes = useDocument<Block>(blockId!)
   const pagesRes = usePages()
   const scrollViewRef = useRef<HTMLElement | null>(null)
   const restoreScroll = useScrollMemory(scrollViewRef)
   const blockRelationRes = useDocument<BlockRelation>(`r_${blockId}`)
 
+  const blockIds: string[] = []
+
+  if (blockRelationRes.isSuccess && pagesRes.isSuccess) {
+    // gather the pages to fetch
+    blockRelationRes.data!.pages.forEach((page) => {
+      pagesRes.data[page].blocks.forEach((block) => {
+        blockIds.push(block._id)
+      })
+    })
+  }
+
+  const blocksRes = useDocuments<Block>(
+    blockIds, 
+    { enabled: !!blockIds.length }
+  )
+  
   // const pageBlockCount = Object.values(pagesRes.data ?? {}).reduce(
   //   (sum, page) => sum + page.blocks.length,
   //   0
@@ -393,6 +409,7 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
       />
     )
   }
+
   return (
     <IndexPageView
       path={getPathFromBlock(blockRes.data)}

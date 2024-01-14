@@ -34,13 +34,6 @@ const Editor = ({
   )
   const searchTerm = useSearchContext((c) => c && c.searchTerm)
 
-  // preloads source and topic cache to be used by the suggest menu
-  // TODO: consolidate to 1 subscription
-  useBlocksInPages(BlockType.Embed)
-  useBlocksInPages(BlockType.Source)
-  useBlocksInPages(BlockType.Topic)
-  useBlocksInPages(BlockType._ANY)
-
   const { copy, paste, cut, embedPaste, state } = useEditorContext()
 
   // check if paste is an embed or regular paste

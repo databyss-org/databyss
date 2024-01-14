@@ -1,5 +1,7 @@
+import { queryClient } from '@databyss-org/services/lib/queryClient'
 import PouchDB from 'pouchdb'
 import { dbRef } from '../pouchdb/db'
+import { warmupCaches } from '../pouchdb/warmup'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
@@ -48,4 +50,5 @@ export class VouchDb {
 export const connect = (groupId) => {
   dbRef.current = new VouchDb() as PouchDB.Database<any>
   dbRef.groupId = groupId
+  warmupCaches(dbRef.current, queryClient)
 }

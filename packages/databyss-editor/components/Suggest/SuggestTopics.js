@@ -103,6 +103,7 @@ const SuggestTopics = ({
   }
   if (!suggestions) {
     setSuggestions(Object.values(topicsRes.data))
+    return <LoadingFallback />
   }
 
   return (

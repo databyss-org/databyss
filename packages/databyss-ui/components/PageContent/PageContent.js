@@ -17,6 +17,7 @@ import { PageBody } from './PageBody'
 import { FlatPageBody } from './FlatPageBody'
 import PageSticky from './PageSticky'
 import LoadingFallback from '../Notify/LoadingFallback'
+import { selectors } from '@databyss-org/data/pouchdb/selectors'
 
 // const INTERACTION_EVENTS = 'pointerdown keydown wheel touchstart focusin'
 
@@ -27,8 +28,8 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
   const location = useLocation()
   const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
   const navigate = useNavigationContext((c) => c.navigate)
-  const pagesRes = usePages()
-  const path = getTokensFromPath()
+  // const pagesRes = usePages()
+  // const path = getTokensFromPath()
 
   // confirms a token is in local pouch in order to show account menu
   useEffect(() => {
@@ -44,37 +45,44 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
     }, 1000)
   )
 
-  useEffect(() => {
-    const niceName = urlSafeName(pagesRes.data?.[page._id]?.name)
-    let redirectTo = location.pathname
+  // useEffect(() => {
+  //   const niceName = urlSafeName(pagesRes.data?.[page._id]?.name)
+  //   let redirectTo = location.pathname
 
-    if (niceName) {
-      if (!path.nice?.length) {
-        redirectTo = `${location.pathname}/${niceName}${location.hash}`
-      } else if (path.nice.join('/') !== niceName) {
-        redirectTo = `/${path.type}/${path.params}/${niceName}${location.hash}`
-      }
-    }
-    if (redirectTo !== location.pathname) {
-      updateUrl(redirectTo)
-    }
-  }, [pagesRes.data?.[page._id]?.name])
+  //   if (niceName) {
+  //     if (!path.nice?.length) {
+  //       redirectTo = `${location.pathname}/${niceName}${location.hash}`
+  //     } else if (path.nice.join('/') !== niceName) {
+  //       redirectTo = `/${path.type}/${path.params}/${niceName}${location.hash}`
+  //     }
+  //   }
+  //   if (redirectTo !== location.pathname) {
+  //     updateUrl(redirectTo)
+  //   }
+  // }, [pagesRes.data?.[page._id]?.name])
 
   // preload embed docs into cache
   const queryClient = useQueryClient()
-  const linkedDocsRes = useDocuments(getLinkedDocIds(page), {
-    subscribe: false,
-  })
+  // const linkedDocIds = getLinkedDocIds(page)
+  // const linkedDocsRes = useDocuments(linkedDocIds, {
+  //   subscribe: false,
+  // })
 
-  if (linkedDocsRes.isSuccess) {
-    Object.values(linkedDocsRes.data).forEach((_doc) => {
-      queryClient.setQueryData([`useDocument_${_doc._id}`], _doc)
-    })
-  }
+  // useEffect(() => {
+  //   if (linkedDocsRes.isSuccess) {
+  //     Object.values(linkedDocsRes.data).forEach((_doc) => {
+  //       queryClient.setQueryData([`useDocument_${_doc._id}`], _doc)
+  //     })
+  //   }
+  // }, [linkedDocsRes.isSuccess])
+
+  useEffect(() => {
+    queryClient.resetQueries({ queryKey: [selectors.BLOCKS], exact: true })
+  }, [])
 
   return useMemo(
-    () =>
-      linkedDocsRes.isSuccess ? (
+    () => (
+      // linkedDocsRes.isSuccess ? (
         <>
           <PageSticky pagePath={editorPath} pageId={page._id} />
           <View flexShrink={1} flexGrow={1} overflow="hidden" {...others}>
@@ -89,11 +97,12 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
             )}
           </View>
         </>
-      ) : (
-        <LoadingFallback resource={linkedDocsRes} />
-      ),
+      // ) : (
+        // <LoadingFallback resource={linkedDocsRes} />
+      // ),
+    ),
     [
-      linkedDocsRes.isSuccess,
+      // linkedDocsRes.isSuccess,
       isReadOnly,
       page._id,
       focusIndex,
