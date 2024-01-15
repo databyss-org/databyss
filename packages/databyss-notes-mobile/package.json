@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/notes-mobile",
-  "version": "3.0.12",
+  "version": "3.0.14",
   "private": true,
   "dependencies": {
     "@databyss-org/reach-router": "1.3.4-b1",
@@ -10,10 +10,10 @@
   "peerDependencies": {
     "react": "16.9.0",
     "react-dom": "16.9.0",
-    "@databyss-org/data": "3.0.12",
-    "@databyss-org/notes": "3.0.12",
+    "@databyss-org/data": "3.0.14",
+    "@databyss-org/notes": "3.0.14",
     "@tanstack/react-query": "^4.29.11",
-    "@databyss-org/ui": "3.0.12",
-    "@databyss-org/services": "3.0.12"
+    "@databyss-org/ui": "3.0.14",
+    "@databyss-org/services": "3.0.14"
   }
 }

@@ -376,6 +376,10 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   if (blockRelationRes.isSuccess && pagesRes.isSuccess) {
     // gather the pages to fetch
     blockRelationRes.data!.pages.forEach((page) => {
+      if (!pagesRes.data[page]) {
+        console.warn('[IndexPageContent] page missing', page)
+        return
+      }
       pagesRes.data[page].blocks.forEach((block) => {
         blockIds.push(block._id)
       })
@@ -393,7 +397,7 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   // )
 
   // return useMemo(() => {
-  // console.log('[IndexPageContent] render')
+  // console.log('[IndexPageContent] blockIds', blockIds)
   const queryRes = [blockRelationRes, blocksRes, pagesRes]
   if (queryRes.some((q) => !q.isSuccess)) {
     return <LoadingFallback queryObserver={queryRes} />

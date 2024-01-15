@@ -313,11 +313,15 @@ export function BoundLeafComponent({
       }
     }
     if (searchTerms) {
-      const _highlightRanges = createHighlightRanges(_text, searchTerms)
+      // console.log('[FlatPageBody] highlightRanges', _text)
+      let _highlightRanges = createHighlightRanges(_text, searchTerms)
+      _highlightRanges = mergeRanges(_highlightRanges, SortOptions.Ascending)
+      splitOverlappingRanges(_highlightRanges)
       _text = textToHtml({
         textValue: _text,
         ranges: _highlightRanges,
       })
+      // console.log('[FlatPageBody] highlightRanges', _highlightRanges)
     }
     _leaf = {
       ...leaf,
@@ -363,7 +367,7 @@ export function renderTextToComponents({
   // add link ranges
   _ranges = _ranges.concat(createLinkRangesForUrls(_text))
 
-  if (searchTerms) {
+  if (searchTerms?.length && searchTerms[0].text?.length) {
     _ranges = _ranges.concat(
       createHighlightRanges(
         _text,

@@ -26,12 +26,12 @@ const Search = (others) => {
 
   const inputRef = useRef<HTMLElement | null>(null)
 
-  // wait until user stopped typing for 200ms before setting the value
+  // wait until user stopped typing for 500ms before setting the value
   const debounced = useCallback(
     debounce((val) => {
       // only allow alphanumeric, hyphen and space
       setQuery(val.replace(/[^a-zA-Z0-9À-ž-'" ]/gi, ''))
-    }, 200),
+    }, 500),
     [setQuery]
   )
 
