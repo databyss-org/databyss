@@ -1,4 +1,10 @@
-import React, { PropsWithChildren, ReactNode, Ref, useState } from 'react'
+import React, {
+  PropsWithChildren,
+  ReactNode,
+  Ref,
+  useCallback,
+  useState,
+} from 'react'
 import {
   SidebarListItemData,
   useNavigationContext,
@@ -70,14 +76,19 @@ const SidebarList = ({
   handlesRef,
   ...others
 }: PropsWithChildren<SidebarListProps>) => {
-  const { getAccountFromLocation, navigate } = useNavigationContext()
+  const {
+    getAccountFromLocation,
+    navigate,
+    getSidebarPath,
+  } = useNavigationContext()
   const location = useLocation()
   const account = getAccountFromLocation(true)
   const [showAll, setShowAll] = useState<boolean>(false)
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([])
 
-  const getHref = (item: SidebarListItemData<any>) => `/${account}${item.route}`
+  const getHref = (item: SidebarListItemData) => `/${account}${item.route}`
 
-  const getActiveItem = (item: SidebarListItemData<any>) => {
+  const getActiveItem = (item: SidebarListItemData) => {
     // if we're using keyboard navigation, that takes precedence
     if (keyboardNavigation && keyboardEventsActive) {
       return false
@@ -102,7 +113,8 @@ const SidebarList = ({
   }
 
   const getDraggable = (item: SidebarListItemData<any>) => {
-    if (item.type !== 'page' || !location.pathname.match(/\/collections\//)) {
+    const sidebarPath = getSidebarPath()
+    if (!(sidebarPath === 'group' && item.type === 'page')) {
       return false
     }
     return {
@@ -163,6 +175,18 @@ const SidebarList = ({
     ]
   }
 
+  const onExpandItem = useCallback(
+    (evt: Event, id: string) => {
+      evt.preventDefault()
+      if (!expandedGroups.includes(id)) {
+        setExpandedGroups(expandedGroups.concat(id))
+      } else {
+        setExpandedGroups(expandedGroups.filter((g) => g !== id))
+      }
+    },
+    [expandedGroups]
+  )
+
   return (
     <ScrollView
       height={height}
@@ -220,17 +244,46 @@ const SidebarList = ({
             )
           }
           return (
-            <SidebarListItem
-              isActive={getActiveItem(item)}
-              data={item.data}
-              text={item.text}
-              href={getHref(item)}
-              key={`${item.type}-${index}`}
-              draggable={getDraggable(item)}
-              icon={item.icon ? item.icon : menuSvgs[item.type]}
-              iconColor={item.iconColor}
-              {..._pressSelector(item)}
-            />
+            <>
+              <SidebarListItem
+                isActive={getActiveItem(item)}
+                data={item.data}
+                text={item.text}
+                href={getHref(item)}
+                key={`${item.type}-${index}`}
+                draggable={getDraggable(item)}
+                icon={item.icon ? item.icon : menuSvgs[item.type]}
+                iconColor={item.iconColor}
+                expandable
+                onExpand={(evt) => onExpandItem(evt, item.data._id)}
+                expanded={
+                  item.subItems && expandedGroups.includes(item.data._id)
+                }
+                {..._pressSelector(item)}
+              />
+              {item.subItems &&
+                expandedGroups.includes(item.data._id) &&
+                item.subItems.map((_subItem, _subIndex) => (
+                  <SidebarListItem
+                    depth={1}
+                    isActive={getActiveItem(_subItem)}
+                    data={_subItem.data}
+                    text={_subItem.text}
+                    href={getHref(_subItem)}
+                    key={`${item.type}-${index}-${_subItem.type}-${_subIndex}`}
+                    draggable={getDraggable(_subItem)}
+                    icon={
+                      <View p={pxUnits(1)}>
+                        {_subItem.icon
+                          ? _subItem.icon
+                          : menuSvgs[_subItem.type]}
+                      </View>
+                    }
+                    iconColor={_subItem.iconColor}
+                    {..._pressSelector(_subItem)}
+                  />
+                ))}
+            </>
           )
         })}
       </List>

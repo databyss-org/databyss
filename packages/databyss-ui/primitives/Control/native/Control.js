@@ -69,7 +69,7 @@ const controlCssMobile = () => ({
 const controlCss = (props) => ({
   position: props.position ?? 'relative',
   userSelect: props.userSelect,
-  borderWidth: '1px',
+  borderWidth: props.borderWidth ?? '1px',
   textDecoration: 'none',
   '&:active': {
     backgroundColor: props.pressedColor,

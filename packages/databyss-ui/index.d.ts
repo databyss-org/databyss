@@ -191,7 +191,7 @@ export interface BaseControlProps extends ViewProps {
   onPress?: (e: MouseEvent | KeyboardEvent) => void
   href?: string
   target?: string
-  handle?: MutableRefObject<ControlHandle>
+  handle?: MutableRefObject<ControlHandle | null>
   noFeedback?: boolean
   childViewProps?: ViewProps
   onKeyDown?: (e: KeyboardEvent) => void

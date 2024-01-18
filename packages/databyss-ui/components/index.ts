@@ -31,7 +31,7 @@ export interface SidebarListItemLink {
   onPress: () => void
 }
 
-export interface SidebarListItemData<T> {
+export interface SidebarListItemData<T = any, S = never> {
   text: string
   type: string
   route?: string
@@ -40,4 +40,5 @@ export interface SidebarListItemData<T> {
   iconColor?: string | null
   name?: string
   links?: SidebarListItemLink[]
+  subItems?: SidebarListItemData<S>[]
 }
