@@ -236,6 +236,7 @@ declare const Button: RefForwardingFC<PropsWithChildren<ButtonProps>>
 export interface TextInputProps extends TextProps {
   value?: Partial<TextInterface>
   onChange?: (value: TextInterface) => void
+  onKeyDown?: (event: KeyboardEvent) => void
   multiline?: boolean
   active?: boolean
   concatCss?: CSSObject

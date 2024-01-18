@@ -155,7 +155,6 @@ export const IndexPageTitleInput = ({
 
   const onKeyDown = (evt: KeyboardEvent) => {
     if (evt.key === 'Enter') {
-      evt.preventDefault()
       if (isSearch) {
         navigate(`/${getAccountFromLocation(true)}/search/${title}`)
       }

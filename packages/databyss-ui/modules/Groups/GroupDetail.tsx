@@ -10,6 +10,7 @@ import {
   Grid,
   ViewProps,
   ScrollView,
+  Icon,
 } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
@@ -17,6 +18,7 @@ import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import { useQueryClient } from '@tanstack/react-query'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
+import GroupSvg from '@databyss-org/ui/assets/folder-open.svg'
 import { debounce } from 'lodash'
 import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
@@ -116,23 +118,15 @@ export const GroupFields = ({
 
   return (
     <ValueListProvider onChange={onChange} values={_values}>
-      <View pl="em" pr="medium" pt="none" flexGrow={1}>
+      <View pl="medium" pr="medium" pt="none" flexGrow={1}>
         <ValueListItem path="name">
-          <TitleInput readonly={readOnly} placeholder={UNTITLED_NAME} />
+          <TitleInput 
+            readonly={readOnly} 
+            placeholder={UNTITLED_NAME} 
+            icon={<Icon><GroupSvg /></Icon>} 
+          />
         </ValueListItem>
         <Grid columnGap="large" widthVariant="content" flexGrow={1}>
-          <GroupSection title="Pages" flexGrow={1} flexBasis={1}>
-            <View theme={darkTheme} flexGrow={1}>
-              <ValueListItem path="pages" pages={pages} group={group}>
-                <PageDropzone
-                  pages={pages}
-                  group={group}
-                  bg="background.2"
-                  height="100%"
-                />
-              </ValueListItem>
-            </View>
-          </GroupSection>
           <View flexGrow={1} flexBasis={1}>
             <GroupSection title="Share with Everyone">
               <ValueListItem path="public">

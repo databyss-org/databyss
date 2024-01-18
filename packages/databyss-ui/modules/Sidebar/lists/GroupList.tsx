@@ -25,7 +25,7 @@ export const GroupList = (others) => {
 
   return (
     <SidebarList
-      heading="Shared Collections"
+      heading="Collections"
       menuItems={getGroupItems(namedGroups)}
       {...others}
     />

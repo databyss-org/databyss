@@ -16,7 +16,7 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import MediaSvg from '@databyss-org/ui/assets/play.svg'
-import GroupSvg from '@databyss-org/ui/assets/logo-thick.svg'
+import GroupSvg from '@databyss-org/ui/assets/folder-closed.svg'
 import {
   ScrollView,
   List,

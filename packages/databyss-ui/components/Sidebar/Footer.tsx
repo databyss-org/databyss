@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import AddPageSvg from '@databyss-org/ui/assets/add_page.svg'
-import AddGroupSvg from '@databyss-org/ui/assets/add_group.svg'
+import AddGroupSvg from '@databyss-org/ui/assets/add-folder.svg'
 import {
   Text,
   View,

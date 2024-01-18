@@ -8,7 +8,7 @@ import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import ReferencesSvg from '@databyss-org/ui/assets/references.svg'
 import DatabyssImg from '@databyss-org/ui/assets/logo-thick.png'
-import PublishSvg from '@databyss-org/ui/assets/publish.svg'
+import FolderSvg from '@databyss-org/ui/assets/folder-open.svg'
 import MediaSvg from '@databyss-org/ui/assets/play.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
@@ -70,6 +70,13 @@ const SidebarCollapsed = () => {
       onClick: () => onItemClick('pages'),
     },
     {
+      name: 'groups',
+      title: 'Collections',
+      icon: <FolderSvg />,
+      sizeVariant: 'large',
+      onClick: () => onItemClick('groups'),
+    },
+    {
       name: 'sources',
       title: 'Sources',
       icon: <SourceSvg />,
@@ -96,13 +103,6 @@ const SidebarCollapsed = () => {
       title: 'Media',
       icon: <MediaSvg />,
       onClick: () => onItemClick('media'),
-    },
-    {
-      name: 'groups',
-      title: 'Shared Collections',
-      icon: <PublishSvg />,
-      sizeVariant: 'large',
-      onClick: () => onItemClick('groups'),
     },
   ]
 
