@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useRef, useState } from 'react'
+import React, { ReactNode, useRef, useState } from 'react'
 import { DropdownList, MenuItem } from '../Menu/DropdownList'
 import {
   BaseControl,
@@ -11,6 +11,8 @@ import {
 } from '../..'
 import ClickAwayListener from '../Util/ClickAwayListener'
 import MenuSvg from '../../assets/menu_horizontal.svg'
+import { pxUnits } from '../../theming/views'
+import { theme } from '../../theming'
 
 export interface DListProps extends ListProps {
   menuItems?: MenuItem[]
@@ -25,33 +27,46 @@ export interface DListItemProps extends DListProps {
 
 export const DListItem = ({
   menuItems,
-  menuIcon = (<Icon sizeVariant="tiny"><MenuSvg /></Icon>),
+  menuIcon = (
+    <Icon sizeVariant="tiny">
+      <MenuSvg />
+    </Icon>
+  ),
   menuViewProps,
   dropdownContainerProps,
   children,
-  data
+  data,
 }: DListItemProps) => {
   const [menuVisible, setMenuVisible] = useState(false)
-  const [hoverVisible, setHoverVisible] = useState(false)
+  const [hoverVisible, setHoverVisible] = useState(true)
   const hoverTimerRef = useRef<any>(0)
   return (
-  <View
+    <View
       onMouseOver={() => {
         clearTimeout(hoverTimerRef.current)
         setHoverVisible(true)
       }}
       onMouseOut={() => {
-        hoverTimerRef.current = setTimeout(() => {
-          setHoverVisible(false)
-          setMenuVisible(false)
-        }, 200)
+        // hoverTimerRef.current = setTimeout(() => {
+        //   setHoverVisible(false)
+        //   setMenuVisible(false)
+        // }, 200)
       }}
       position="relative"
       justifyContent="center"
     >
       {menuItems && hoverVisible && (
-        <View position="absolute" {...menuViewProps}>
-          <BaseControl onPress={() => setMenuVisible(true)}>
+        <View
+          position="absolute"
+          zIndex={theme.zIndex.menu + 1}
+          {...menuViewProps}
+        >
+          <BaseControl
+            onPress={(evt) => {
+              evt.preventDefault()
+              setMenuVisible(true)
+            }}
+          >
             {menuIcon}
           </BaseControl>
           {menuVisible && (
@@ -81,28 +96,32 @@ export const DListItem = ({
 
 DListItem.defaultProps = {
   menuViewProps: {
-    right: 0
+    right: 'small',
   },
   dropdownContainerProps: {
     position: {
-      top: '20px'
-    }
-  }
+      top: pxUnits(20),
+    },
+  },
 }
 
 export const DList = ({
   children,
   menuItems,
-  menuIcon = <Icon sizeVariant="tiny"><MenuSvg /></Icon>,
+  menuIcon = (
+    <Icon sizeVariant="tiny">
+      <MenuSvg />
+    </Icon>
+  ),
   menuViewProps,
   dropdownContainerProps,
   ...others
 }: DListProps) => {
   const _children = React.Children.map(children, (child, idx) => (
-    <DListItem 
-      menuItems={menuItems} 
-      menuIcon={menuIcon} 
-      menuViewProps={menuViewProps} 
+    <DListItem
+      menuItems={menuItems}
+      menuIcon={menuIcon}
+      menuViewProps={menuViewProps}
       dropdownContainerProps={dropdownContainerProps}
       data={idx}
       key={idx}

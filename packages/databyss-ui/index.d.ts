@@ -196,6 +196,7 @@ export interface BaseControlProps extends ViewProps {
   childViewProps?: ViewProps
   onKeyDown?: (e: KeyboardEvent) => void
   draggable?: boolean | Partial<DraggableItem>
+  renderAsView?: boolean
 }
 
 declare const BaseControl: RefForwardingFC<PropsWithChildren<BaseControlProps>>

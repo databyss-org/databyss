@@ -194,7 +194,10 @@ const AppView = ({
         </View>
       </TitleBar>
       {showDatabyssMenu && (
-        <DatabyssMenu onDismiss={() => setShowDatabyssMenu(false)} />
+        <DatabyssMenu
+          allowContextMenus={false}
+          onDismiss={() => setShowDatabyssMenu(false)}
+        />
       )}
       {sidebarWidth && (
         <Sidebar onResized={onSidebarResized} width={sidebarWidth} />

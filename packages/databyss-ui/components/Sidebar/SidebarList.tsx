@@ -254,7 +254,7 @@ const SidebarList = ({
                 draggable={getDraggable(item)}
                 icon={item.icon ? item.icon : menuSvgs[item.type]}
                 iconColor={item.iconColor}
-                expandable
+                expandable={item.type === 'group'}
                 onExpand={(evt) => onExpandItem(evt, item.data._id)}
                 expanded={
                   item.subItems && expandedGroups.includes(item.data._id)

@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import DropdownListItem from './DropdownListItem'
 import { Separator } from '../..'
 import { DListItem, DListItemProps } from '../DynamicList/DList'
+import { ContextMenu } from './ContextMenu'
 
 export interface MenuItem {
   label: string
@@ -15,6 +16,8 @@ export interface MenuItem {
   subLabel?: string
   subMenu?: MenuItem[]
   subMenuProps?: Partial<DListItemProps>
+  hoverColor?: string
+  activeColor?: string
 }
 
 export interface DropdownListOptions {
@@ -23,46 +26,54 @@ export interface DropdownListOptions {
   data?: any
 }
 
-export const makeDropdownListChildren = ({
+export const DropdownList = ({
   menuItems,
   dismiss,
   data,
-}: DropdownListOptions ) => menuItems.map(({ separator, ...menuItem }, idx) => {
-  if (separator) {
-    return <Separator {...menuItem} key={idx} lineWidth={idx > 0 ? 1 : 0} />
-  }
+}: DropdownListOptions) => {
+  const [activeIdx, setActiveIdx] = useState(-1)
 
-  const _item = (
-    <DropdownListItem
-      {...menuItem}
-      action={menuItem.actionType}
-      onPress={async () => {
-        if (menuItem.action && (await menuItem.action(data)) && dismiss) {
-          dismiss()
+  return (
+    <>
+      {menuItems.map(({ separator, ...menuItem }, idx) => {
+        if (separator) {
+          return (
+            <Separator {...menuItem} key={idx} lineWidth={idx > 0 ? 1 : 0} />
+          )
         }
-      }}
-      key={menuItem.label}
-    />
+
+        const _item = (
+          <DropdownListItem
+            {...menuItem}
+            action={menuItem.actionType}
+            onPress={async () => {
+              if (menuItem.action && (await menuItem.action(data)) && dismiss) {
+                dismiss()
+              }
+            }}
+            isActive={activeIdx === idx}
+            key={menuItem.label}
+          >
+            {menuItem.subMenu ? (
+              <ContextMenu
+                menuItems={menuItem.subMenu}
+                data={idx}
+                onActiveChanged={(isActive) => {
+                  if (!isActive && activeIdx === idx) {
+                    setActiveIdx(-1)
+                  }
+                  if (isActive) {
+                    setActiveIdx(idx)
+                  }
+                }}
+                {...menuItem.subMenuProps}
+              />
+            ) : null}
+          </DropdownListItem>
+        )
+
+        return _item
+      })}
+    </>
   )
-
-  if (menuItem.subMenu) {
-    return (
-      <DListItem 
-        menuItems={menuItem.subMenu} 
-        data={idx} 
-        key={idx} 
-        {...menuItem.subMenuProps}
-      >
-        {_item}
-      </DListItem>
-    )
-  }
-
-  return _item
-})
-
-export const DropdownList = (options: DropdownListOptions) => (
-  <>
-    {makeDropdownListChildren(options)}
-  </>
-)
+}

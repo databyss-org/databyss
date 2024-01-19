@@ -25,10 +25,12 @@ const DropdownListItem = ({
   onKeyDown,
   switchControl,
   value,
+  isActive,
   activeNavigationItem,
   navigationItemRef,
   navigationItemHandle,
   light,
+  children,
   ...others
 }) => {
   useImperativeHandle(navigationItemHandle, () => ({
@@ -38,14 +40,17 @@ const DropdownListItem = ({
   return (
     <BaseControl
       data-test-block-menu={action}
-      onPress={onPress}
+      onPress={(evt) => {
+        evt.stopPropagation()
+        onPress()
+      }}
       onKeyDown={onKeyDown}
       childViewProps={{ width: '100%' }}
       px="small"
       py="extraSmall"
       hoverColor="background.1"
       activeColor="background.1"
-      active={activeNavigationItem}
+      active={activeNavigationItem || isActive}
       ref={navigationItemRef}
       {...others}
     >
@@ -54,6 +59,7 @@ const DropdownListItem = ({
         justifyContent="space-between"
         width="100%"
         alignItems="center"
+        position="relative"
       >
         <View flexDirection="row" alignItems="flex-start" flexShrink={1}>
           {textSymbol && (
@@ -78,14 +84,22 @@ const DropdownListItem = ({
           )}
           <View pt={pxUnits(1)} flexShrink={1}>
             {labelHtml ? (
-              <RawHtml html={labelHtml} />
+              <RawHtml html={labelHtml} css={{ userSelect: 'none' }} />
             ) : (
-              <Text variant="uiTextSmall" color={light ? 'text.3' : textColor}>
+              <Text
+                variant="uiTextSmall"
+                color={light ? 'text.3' : textColor}
+                css={{ userSelect: 'none' }}
+              >
                 {label}
               </Text>
             )}
             {subLabel && (
-              <Text variant="uiTextTiny" color="text.3">
+              <Text
+                variant="uiTextTiny"
+                color="text.3"
+                css={{ userSelect: 'none' }}
+              >
                 {subLabel}
               </Text>
             )}
@@ -97,6 +111,7 @@ const DropdownListItem = ({
             {shortcut}
           </Text>
         )}
+        {children}
       </View>
     </BaseControl>
   )

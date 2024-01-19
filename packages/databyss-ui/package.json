@@ -31,6 +31,7 @@
     "@emotion/native": "^10.0.14",
     "@emotion/styled": "^10.0.14",
     "@emotion/styled-base": "^10.0.27",
+    "@floating-ui/react": "^0.26.6",
     "@material-ui/utils": "^4.4.0",
     "@storybook/addons": "^5.2.1",
     "@styled-system/core": "^5.1.1",

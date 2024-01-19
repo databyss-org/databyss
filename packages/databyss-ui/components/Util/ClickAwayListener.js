@@ -16,8 +16,8 @@ function mapEventPropToEvent(eventProp) {
 const ClickAwayListener = (props) => {
   const {
     children,
-    mouseEvent = 'onClick',
-    touchEvent = 'onTouchEnd',
+    mouseEvents = ['onClick', 'onContextMenu'],
+    touchEvents = ['onTouchEnd'],
     additionalNodeRefs = [],
     onClickAway,
   } = props
@@ -66,33 +66,37 @@ const ClickAwayListener = (props) => {
   }, [])
 
   React.useEffect(() => {
-    if (touchEvent !== false) {
+    touchEvents.forEach((touchEvent) => {
       const mappedTouchEvent = mapEventPropToEvent(touchEvent)
 
       document.addEventListener(mappedTouchEvent, handleClickAway)
       document.addEventListener('touchmove', handleTouchMove)
+    })
+    return () => {
+      touchEvents.forEach((touchEvent) => {
+        const mappedTouchEvent = mapEventPropToEvent(touchEvent)
 
-      return () => {
         document.removeEventListener(mappedTouchEvent, handleClickAway)
         document.removeEventListener('touchmove', handleTouchMove)
-      }
+      })
     }
-
-    return undefined
-  }, [handleClickAway, handleTouchMove, touchEvent])
+  }, [handleClickAway, handleTouchMove, touchEvents])
 
   React.useEffect(() => {
-    if (mouseEvent !== false) {
+    mouseEvents.forEach((mouseEvent) => {
       const mappedMouseEvent = mapEventPropToEvent(mouseEvent)
-      document.addEventListener(mappedMouseEvent, handleClickAway)
+      document.addEventListener(mappedMouseEvent, handleClickAway, {
+        capture: true,
+      })
+    })
 
-      return () => {
+    return () => {
+      mouseEvents.forEach((mouseEvent) => {
+        const mappedMouseEvent = mapEventPropToEvent(mouseEvent)
         document.removeEventListener(mappedMouseEvent, handleClickAway)
-      }
+      })
     }
-
-    return undefined
-  }, [handleClickAway, mouseEvent])
+  }, [handleClickAway, mouseEvents])
 
   return (
     <React.Fragment>
@@ -109,7 +113,9 @@ ClickAwayListener.propTypes = {
   /**
    * The mouse event to listen to. You can disable the listener by providing `false`.
    */
-  mouseEvent: PropTypes.oneOf(['onClick', 'onMouseDown', 'onMouseUp', false]),
+  mouseEvents: PropTypes.arrayOf(
+    PropTypes.oneOf(['onClick', 'onMouseDown', 'onMouseUp', false])
+  ),
   /**
    * Callback fired when a "click away" event is detected.
    */
@@ -117,7 +123,9 @@ ClickAwayListener.propTypes = {
   /**
    * The touch event to listen to. You can disable the listener by providing `false`.
    */
-  touchEvent: PropTypes.oneOf(['onTouchStart', 'onTouchEnd', false]),
+  touchEvents: PropTypes.arrayOf(
+    PropTypes.oneOf(['onTouchStart', 'onTouchEnd', false])
+  ),
   /**
    * In addition to the child node, we whitelist these node refs so they do not trigger a "click away" event
    */

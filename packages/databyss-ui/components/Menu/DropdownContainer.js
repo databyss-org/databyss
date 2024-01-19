@@ -66,7 +66,7 @@ const DropdownContainer = forwardRef(
 )
 
 DropdownContainer.defaultProps = {
-  position: { top: 0 },
+  // position: { top: 0 },
   widthVariant: 'dropdownMenuMedium',
   horizontalItemPadding: 'small',
   maxWidth: pxUnits(500),

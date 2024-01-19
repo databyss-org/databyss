@@ -5,12 +5,13 @@ import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { useAppState } from '../../../databyss-desktop/src/hooks'
 import ClickAwayListener from '../Util/ClickAwayListener'
 import { DropdownContainer, View, Icon } from '../..'
-import { DropdownList, makeDropdownListChildren, MenuItem } from './DropdownList'
+import { DropdownList, MenuItem } from './DropdownList'
 import FolderSvg from '../../assets/folder-open.svg'
 import AddSvg from '../../assets/add-menu.svg'
 import DatabyssSvg from '../../assets/logo-vector.svg'
 import DiskSvg from '../../assets/save.svg'
 import CheckSvg from '../../assets/check.svg'
+import ArchiveSvg from '../../assets/archive.svg'
 import LoadingFallback from '../Notify/LoadingFallback'
 import { theme } from '../../theming'
 import MenuSvg from '../../assets/menu_horizontal.svg'
@@ -19,7 +20,13 @@ import { useNotifyContext } from '../Notify/NotifyProvider'
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../../databyss-desktop/src/eapi').default
 
-export function DatabyssMenu({ onDismiss }: { onDismiss?: () => void }) {
+export function DatabyssMenu({
+  onDismiss,
+  allowContextMenus = true,
+}: {
+  onDismiss?: () => void
+  allowContextMenus?: boolean
+}) {
   const [isLoading, setIsLoading] = useState(false)
   return (
     <>
@@ -54,6 +61,7 @@ export function DatabyssMenu({ onDismiss }: { onDismiss?: () => void }) {
           }}
         >
           <DatabyssMenuItems
+            allowContextMenus={allowContextMenus}
             onDismiss={onDismiss}
             onLoading={(group) => {
               setIsLoading(!!group)
@@ -68,15 +76,17 @@ export function DatabyssMenu({ onDismiss }: { onDismiss?: () => void }) {
 export function DatabyssMenuItems({
   onDismiss,
   onLoading,
+  allowContextMenus = true,
 }: {
   onDismiss?: () => void
   onLoading?: (group?: Group | boolean) => void
+  allowContextMenus?: boolean
 }) {
   const localGroupsRes = useAppState('localGroups')
   const dataPath = useAppState('dataPath')
   const groupsRes = useGroups()
-  const notifyConfirm = useNotifyContext(c => c && c.notifyConfirm)
-  const notify = useNotifyContext(c => c && c.notify)
+  const notifyConfirm = useNotifyContext((c) => c && c.notifyConfirm)
+  const notify = useNotifyContext((c) => c && c.notify)
 
   const groups: Group[] = localGroupsRes.isSuccess
     ? localGroupsRes.data.map(
@@ -92,6 +102,7 @@ export function DatabyssMenuItems({
   const dbContextMenuItems: MenuItem[] = [
     {
       label: 'Archive Databyss',
+      icon: <ArchiveSvg />,
       action: (group: Group) => {
         notifyConfirm({
           message: `Are you sure you want to archive and remove "${group.name}"? Data will be backed up to a JSON file and the Databyss will be removed from the list.`,
@@ -99,12 +110,12 @@ export function DatabyssMenuItems({
             console.log('[DatabyssMenu] delete', group.name)
             const _archivePath = await eapi.file.archiveDatabyss(group._id)
             notify({
-              message: `Databyss archived to: ${_archivePath}`
+              message: `Databyss archived to: ${_archivePath}`,
             })
-          }
+          },
         })
-      }
-    }
+      },
+    },
   ]
 
   const menuItems: MenuItem[] = [
@@ -118,14 +129,20 @@ export function DatabyssMenuItems({
       : []),
     ...sortedGroups.map((group) => ({
       label: group.name,
-      subMenu: dbContextMenuItems,
+      hoverColor: 'background.2',
+      activeColor: 'pink',
+      subMenu: allowContextMenus ? dbContextMenuItems : undefined,
       subMenuProps: {
         data: group,
         menuViewProps: {
-          right: 0,
+          right: 'small',
           theme,
         },
-        menuIcon: <Icon sizeVariant="tiny" color="white"><MenuSvg /></Icon>,
+        menuIcon: (
+          <Icon sizeVariant="tiny" color="white">
+            <MenuSvg />
+          </Icon>
+        ),
       },
       icon: group._id === dbRef.groupId ? <CheckSvg /> : <DatabyssSvg />,
       action: () => {
@@ -142,6 +159,8 @@ export function DatabyssMenuItems({
     {
       label: 'Import from a file...',
       icon: <FolderSvg />,
+      hoverColor: 'background.2',
+      activeColor: 'pink',
       action: async () => {
         if (onLoading) {
           // console.log('[DatabyssMenu] onLoading')
@@ -160,6 +179,8 @@ export function DatabyssMenuItems({
     {
       label: 'Create new Databyss',
       icon: <AddSvg />,
+      hoverColor: 'background.2',
+      activeColor: 'pink',
       action: async () => {
         await eapi.file.newDatabyss()
         return true
@@ -176,6 +197,8 @@ export function DatabyssMenuItems({
       {
         icon: <DiskSvg />,
         label: 'Set data directory...',
+        hoverColor: 'background.2',
+        activeColor: 'pink',
         subLabel: dataPath.data ?? '',
         action: async () => {
           await eapi.file.chooseDataPath()
