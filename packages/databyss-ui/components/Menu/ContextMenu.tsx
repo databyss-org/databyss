@@ -1,20 +1,16 @@
-import React, {
-  MutableRefObject,
-  ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import React, { MutableRefObject, ReactNode, useRef, useState } from 'react'
 import { BaseControl, Icon, ListProps, ViewProps, View } from '../..'
 import MenuSvg from '../../assets/menu_horizontal.svg'
 import { pxUnits } from '../../theming/views'
 import { useContextMenu } from './ContextMenuProvider'
 import { MenuItem } from './DropdownList'
+import { theme } from '../../theming'
 
 export interface ContextMenuProps extends ListProps {
   menuItems: MenuItem[]
   menuIcon?: ReactNode
   menuViewProps?: ViewProps
+  menuActivatorProps?: ViewProps
   dropdownContainerProps?: any
   data: any
   parentRef?: MutableRefObject<HTMLElement>
@@ -28,6 +24,7 @@ export const ContextMenu = ({
     </Icon>
   ),
   menuViewProps,
+  menuActivatorProps,
   dropdownContainerProps,
   data,
   parentRef,
@@ -63,6 +60,8 @@ export const ContextMenu = ({
       top="0"
       bottom="0"
       right="0"
+      zIndex={theme.zIndex.menu + 1}
+      {...menuActivatorProps}
     />
   )
   const _menuButtonView = (
@@ -81,6 +80,7 @@ export const ContextMenu = ({
       {hoverVisible ? (
         <BaseControl
           renderAsView
+          zIndex={theme.zIndex.menu + 2}
           onPress={(evt: any) => {
             evt.stopPropagation()
             evt.preventDefault()

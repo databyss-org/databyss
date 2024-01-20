@@ -199,6 +199,7 @@ export interface BaseControlProps extends ViewProps {
   draggable?: boolean | Partial<DraggableItem>
   renderAsView?: boolean
   focusVisible?: boolean
+  focusActive?: boolean
 }
 
 declare const BaseControl: RefForwardingFC<PropsWithChildren<BaseControlProps>>

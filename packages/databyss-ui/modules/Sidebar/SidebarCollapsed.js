@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { View, List } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
@@ -7,16 +7,13 @@ import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import ReferencesSvg from '@databyss-org/ui/assets/references.svg'
-import DatabyssImg from '@databyss-org/ui/assets/logo-thick.png'
 import FolderSvg from '@databyss-org/ui/assets/folder-open.svg'
 import MediaSvg from '@databyss-org/ui/assets/play.svg'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { usePageReferences } from '@databyss-org/data/pouchdb/hooks'
 import { darkTheme } from '../../theming/theme'
-import { sidebar } from '../../theming/components'
 
 const SidebarCollapsed = () => {
   const {

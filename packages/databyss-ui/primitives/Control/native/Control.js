@@ -2,7 +2,6 @@ import React, { forwardRef, useImperativeHandle, useRef } from 'react'
 import css from '@styled-system/css'
 import { ThemeContext } from '@emotion/core'
 import forkRef from '@databyss-org/ui/lib/forkRef'
-import Color from 'color'
 import View, {
   styleProps,
   defaultProps,
@@ -58,7 +57,14 @@ const controlCssDesktop = (props) => ({
           // borderRadius,
         },
       }),
-  '&:hover': {
+  ...(props.focusActive
+    ? {
+        '&:focus': {
+          backgroundColor: props.activeColor,
+        },
+      }
+    : {}),
+  '&:hover:not(:focus)': {
     backgroundColor: props.hoverColor,
   },
   '&:active': {

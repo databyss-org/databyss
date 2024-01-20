@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 // import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { View, List } from '@databyss-org/ui/primitives'
@@ -22,7 +22,12 @@ export const Sidebar = ({
   onResized?: (width: number) => void
   width: number
 }) => {
-  const { getSidebarPath, isMenuOpen, setMenuOpen, navigateSidebar } = useNavigationContext()
+  const {
+    getSidebarPath,
+    isMenuOpen,
+    setMenuOpen,
+    navigateSidebar,
+  } = useNavigationContext()
   const menuItem = getSidebarPath()
 
   const openMenu = useCallback(() => {
