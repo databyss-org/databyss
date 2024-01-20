@@ -9,6 +9,17 @@ import DashedArea from './DashedArea'
 const ACCEPTABLE_KINDS = ['file']
 const PDF_TYPES = ['application/pdf']
 
+export function containsFiles(event: DragEvent) {
+  if (event.dataTransfer?.types) {
+    for (let i = 0; i < event.dataTransfer.types.length; i++) {
+      if (event.dataTransfer.types[i] === 'Files') {
+        return true
+      }
+    }
+  }
+  return false
+}
+
 // methods
 const isAcceptableFile = (item: DataTransferItem | File) =>
   (item instanceof File || ACCEPTABLE_KINDS.includes(item.kind)) &&
@@ -84,7 +95,11 @@ export const FileDropZone = ({
   }
 
   // drag handlers
-  const onDragOver = (event) => {
+  const onDragOver = (event: DragEvent) => {
+    if (!containsFiles(event)) {
+      return
+    }
+    // console.log('[FileDropzone] dragOver', event)
     event.stopPropagation()
     event.preventDefault()
     // editorContext.setDragActive(true)
@@ -92,6 +107,9 @@ export const FileDropZone = ({
   }
 
   const onDragLeave = (event) => {
+    if (!containsFiles(event)) {
+      return
+    }
     event.stopPropagation()
     event.preventDefault()
     // editorContext.setDragActive(false)
@@ -99,6 +117,9 @@ export const FileDropZone = ({
   }
 
   const onFileDrop = async (event: DragEvent) => {
+    if (!containsFiles(event)) {
+      return
+    }
     // prevent default behavior
     // (prevent file from being opened)
     event.stopPropagation()

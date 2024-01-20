@@ -102,7 +102,9 @@ export const ContextMenu = ({
         >
           {menuIcon}
         </BaseControl>
-      ) : null}
+      ) : (
+        <View opacity={0}>{menuIcon}</View>
+      )}
     </View>
   )
 

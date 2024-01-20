@@ -81,6 +81,7 @@ export const ResizableColumnView = forwardRef<
                   '&:hover': {
                     background: css({ color: 'purple.3' })(theme).color,
                   },
+                  userSelect: 'none',
                 }}
                 onMouseDown={startResizing}
               />

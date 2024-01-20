@@ -10,7 +10,7 @@ import { Block, Page, Source } from '@databyss-org/services/interfaces'
 import ChevronSvg from '@databyss-org/ui/assets/chevron-filled.svg'
 import { pxUnits } from '../../theming/views'
 import { withKeyboardNavigation } from '../../primitives/List/KeyboardNavigationItem'
-import { ControlHandle } from '../..'
+import { ControlHandle, ViewProps } from '../..'
 import { MenuItem } from '../Menu/DropdownList'
 import { ContextMenu } from '../Menu/ContextMenu'
 
@@ -41,7 +41,7 @@ export const SidebarListRow = ({
   <View
     width="100%"
     flexDirection="row"
-    alignItems="center"
+    alignItems="flex-start"
     justifyContent="space-between"
     {...others}
     {...(expandable
@@ -119,6 +119,7 @@ export interface SidebarListItemProps {
   draggable: boolean
   depth: number
   contextMenu?: MenuItem[]
+  dropzone?: ViewProps['dropzone']
 }
 
 const SidebarListItem = ({
@@ -186,7 +187,11 @@ const SidebarListItem = ({
           <ContextMenu
             menuItems={contextMenu}
             data={data}
-            menuViewProps={{ hoverColor: 'background.3' }}
+            menuViewProps={{
+              hoverColor: 'background.3',
+              mt: pxUnits(2),
+              ml: pxUnits(7),
+            }}
             parentRef={navigationItemRef}
           />
         ) : null}

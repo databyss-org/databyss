@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import { MenuItem } from './Menu/DropdownList'
+import { ViewProps } from '../'
 
 export { LoadingFallback } from './Notify/LoadingFallback'
 export { default as SidebarList } from './Sidebar/SidebarList'
@@ -44,4 +45,6 @@ export interface SidebarListItemData<T = any, S = never> {
   subItems?: SidebarListItemData<S>[]
   contextMenu?: MenuItem[]
   depth?: number
+  isDropzone?: boolean
+  dropzoneProps?: ViewProps['dropzone']
 }

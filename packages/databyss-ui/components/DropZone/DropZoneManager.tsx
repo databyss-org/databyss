@@ -5,13 +5,10 @@ import { BlockType, Source } from '@databyss-org/services/interfaces'
 import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { fileIsPDF, processPDF } from '@databyss-org/services/pdf'
-import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
-import { FileDropZone } from './FileDropZone'
 import { setSource } from '@databyss-org/data/pouchdb/sources'
 import { formatSource } from '@databyss-org/services/sources/lib'
-
-// eslint-disable-next-line no-undef
-declare const eapi: typeof import('../../../databyss-desktop/src/eapi').default
+import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
+import { FileDropZone } from './FileDropZone'
 
 // component
 export const DropZoneManager = () => {
@@ -127,7 +124,7 @@ export const DropZoneManager = () => {
         try {
           const _processResults = await processPDF(file)
           await setSource(_processResults.source)
-          const _source = _processResults.catalogQueryResults 
+          const _source = _processResults.catalogQueryResults
             ? formatSource(await showMetadataModal(_processResults.source))
             : _processResults.source
           const _blocks = toDatabyssBlocks(_source, _processResults.annotations)

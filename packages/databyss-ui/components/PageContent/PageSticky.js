@@ -12,9 +12,10 @@ const PageSticky = ({ pagePath, pageId }) => {
   const currentPath = []
 
   const pages = pagesRes.data
+  const page = pageRes.data
 
   // get page title
-  if (pageRes.data?.name) {
+  if (page?.name) {
     currentPath.push(pageRes.data?.name)
   }
 
@@ -25,7 +26,7 @@ const PageSticky = ({ pagePath, pageId }) => {
 
   return React.useMemo(() => {
     // console.log('[PageSticky]', pagePath)
-    if (!pagesRes.isSuccess) {
+    if (!pagesRes.isSuccess || !pageRes.isSuccess) {
       return null
     }
 
@@ -33,6 +34,12 @@ const PageSticky = ({ pagePath, pageId }) => {
       <StickyHeader
         path={currentPath}
         contextMenu={<PageMenu pages={pages} />}
+        draggable={
+          !page.archive && {
+            payload: page,
+            type: 'PAGE',
+          }
+        }
       />
     )
   }, [currentPath.join('/'), pageId])

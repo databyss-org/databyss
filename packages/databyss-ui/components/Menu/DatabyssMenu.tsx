@@ -16,6 +16,7 @@ import LoadingFallback from '../Notify/LoadingFallback'
 import { theme } from '../../theming'
 import MenuSvg from '../../assets/menu_horizontal.svg'
 import { useNotifyContext } from '../Notify/NotifyProvider'
+import { pxUnits } from '../../theming/views'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../../databyss-desktop/src/eapi').default
@@ -54,6 +55,7 @@ export function DatabyssMenu({
       <ClickAwayListener onClickAway={onDismiss}>
         <DropdownContainer
           minWidth={250}
+          maxWidth={300}
           open
           position={{
             top: 35,
@@ -131,11 +133,13 @@ export function DatabyssMenuItems({
       label: group.name,
       hoverColor: 'background.2',
       activeColor: 'pink',
-      subMenu: allowContextMenus ? dbContextMenuItems : undefined,
+      subMenu: allowContextMenus,
       subMenuProps: {
+        menuItems: dbContextMenuItems,
         data: group,
         menuViewProps: {
-          right: 'small',
+          mt: pxUnits(2),
+          ml: pxUnits(7),
           theme,
         },
         menuIcon: (

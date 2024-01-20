@@ -1,23 +1,16 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import {
-  useParams,
-  useLocation,
-} from '@databyss-org/ui/components/Navigation/NavigationProvider'
+import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { EditorPageLoader } from '@databyss-org/ui/components/Loaders'
 import { View } from '@databyss-org/ui/primitives'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useNavigationContext } from '@databyss-org/ui'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
-import { urlSafeName, validUriRegex } from '@databyss-org/services/lib/util'
-import { useDocuments, usePages } from '@databyss-org/data/pouchdb/hooks'
-import { debounce } from 'lodash'
+import { selectors } from '@databyss-org/data/pouchdb/selectors'
 import { PageBody } from './PageBody'
 import { FlatPageBody } from './FlatPageBody'
 import PageSticky from './PageSticky'
-import LoadingFallback from '../Notify/LoadingFallback'
-import { selectors } from '@databyss-org/data/pouchdb/selectors'
 
 // const INTERACTION_EVENTS = 'pointerdown keydown wheel touchstart focusin'
 
@@ -25,9 +18,7 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
   const focusIndex = useEditorPageContext((c) => c.focusIndex)
   const [, setAuthToken] = useState()
   const [editorPath, setEditorPath] = useState(null)
-  const location = useLocation()
-  const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
-  const navigate = useNavigationContext((c) => c.navigate)
+  // const navigate = useNavigationContext((c) => c.navigate)
   // const pagesRes = usePages()
   // const path = getTokensFromPath()
 
@@ -39,11 +30,11 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
     }
   }, [])
 
-  const updateUrl = useCallback(
-    debounce((url) => {
-      navigate(url, { replace: true })
-    }, 1000)
-  )
+  // const updateUrl = useCallback(
+  //   debounce((url) => {
+  //     navigate(url, { replace: true })
+  //   }, 1000)
+  // )
 
   // useEffect(() => {
   //   const niceName = urlSafeName(pagesRes.data?.[page._id]?.name)
@@ -83,22 +74,22 @@ export const PageContainer = ({ page, isReadOnly, ...others }) => {
   return useMemo(
     () => (
       // linkedDocsRes.isSuccess ? (
-        <>
-          <PageSticky pagePath={editorPath} pageId={page._id} />
-          <View flexShrink={1} flexGrow={1} overflow="hidden" {...others}>
-            {isReadOnly ? (
-              <FlatPageBody page={page} />
-            ) : (
-              <PageBody
-                onEditorPathChange={setEditorPath}
-                page={page}
-                focusIndex={focusIndex}
-              />
-            )}
-          </View>
-        </>
+      <>
+        <PageSticky pagePath={editorPath} pageId={page._id} />
+        <View flexShrink={1} flexGrow={1} overflow="hidden" {...others}>
+          {isReadOnly ? (
+            <FlatPageBody page={page} />
+          ) : (
+            <PageBody
+              onEditorPathChange={setEditorPath}
+              page={page}
+              focusIndex={focusIndex}
+            />
+          )}
+        </View>
+      </>
       // ) : (
-        // <LoadingFallback resource={linkedDocsRes} />
+      // <LoadingFallback resource={linkedDocsRes} />
       // ),
     ),
     [
@@ -144,26 +135,26 @@ const PageContent = (others) => {
   )
 }
 
-function getLinkedDocIds(page) {
-  const _docIds = {}
-  page.blocks.forEach((_block) => {
-    if (!_block?.text?.ranges) {
-      return
-    }
-    _block.text.ranges.forEach((_range) => {
-      _range.marks.forEach((_mark) => {
-        if (
-          Array.isArray(_mark) &&
-          _mark.length > 1 &&
-          _mark[1] &&
-          !_mark[1].match(validUriRegex)
-        ) {
-          _docIds[_mark[1]] = true
-        }
-      })
-    })
-  })
-  return Object.keys(_docIds)
-}
+// function getLinkedDocIds(page) {
+//   const _docIds = {}
+//   page.blocks.forEach((_block) => {
+//     if (!_block?.text?.ranges) {
+//       return
+//     }
+//     _block.text.ranges.forEach((_range) => {
+//       _range.marks.forEach((_mark) => {
+//         if (
+//           Array.isArray(_mark) &&
+//           _mark.length > 1 &&
+//           _mark[1] &&
+//           !_mark[1].match(validUriRegex)
+//         ) {
+//           _docIds[_mark[1]] = true
+//         }
+//       })
+//     })
+//   })
+//   return Object.keys(_docIds)
+// }
 
 export default PageContent

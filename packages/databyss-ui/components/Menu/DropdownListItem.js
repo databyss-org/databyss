@@ -59,7 +59,7 @@ const DropdownListItem = ({
         flexDirection="row"
         justifyContent="space-between"
         width="100%"
-        alignItems="center"
+        alignItems="flex-start"
         position="relative"
       >
         <View flexDirection="row" alignItems="flex-start" flexShrink={1}>

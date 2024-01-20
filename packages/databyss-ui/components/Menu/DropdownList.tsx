@@ -1,8 +1,7 @@
 import React from 'react'
 import DropdownListItem from './DropdownListItem'
 import { Separator } from '../..'
-import { ContextMenu } from './ContextMenu'
-import { ContextMenuOptions } from './ContextMenuProvider'
+import { ContextMenu, ContextMenuProps } from './ContextMenu'
 
 export interface MenuItem {
   label: string
@@ -14,8 +13,8 @@ export interface MenuItem {
   disabled?: boolean
   separator?: boolean
   subLabel?: string
-  subMenu?: MenuItem[]
-  subMenuProps?: ContextMenuOptions
+  subMenu?: boolean
+  subMenuProps?: ContextMenuProps
   hoverColor?: string
   activeColor?: string
 }
@@ -49,11 +48,7 @@ export const DropdownList = ({
           key={menuItem.label}
         >
           {menuItem.subMenu ? (
-            <ContextMenu
-              menuItems={menuItem.subMenu}
-              data={idx}
-              {...menuItem.subMenuProps}
-            />
+            <ContextMenu {...menuItem.subMenuProps!} />
           ) : null}
         </DropdownListItem>
       )

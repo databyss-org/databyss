@@ -11,7 +11,7 @@ import {
 } from '@databyss-org/ui/components'
 import { DatabyssMenuItems } from '@databyss-org/ui/components/Menu/DatabyssMenu'
 import DatabyssLogo from '@databyss-org/ui/assets/logo-thick.png'
-import { darkTheme } from '@databyss-org/ui/theming/theme'
+import { darkTheme, pxUnits } from '@databyss-org/ui/theming/theme'
 import { version } from '../version'
 
 // eslint-disable-next-line no-undef
@@ -112,7 +112,7 @@ export const DatabaseProvider = ({ children, noGroupHeader }) => {
                 <Text variant="uiTextExtraLarge">Databyss</Text>
                 <Text variant="uiTextSmall">version {version}</Text>
               </View>
-              <View>
+              <View maxWidth={pxUnits(300)}>
                 <DatabyssMenuItems
                   onLoading={(group) => {
                     setIsBusy(!!group)

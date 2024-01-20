@@ -103,14 +103,14 @@ const PageMenu = React.memo(() => {
   const pages = pagesRes.data
   const groups = groupsRes.data
 
-  const getSession = useSessionContext((c) => c && c.getSession)
+  // const getSession = useSessionContext((c) => c && c.getSession)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const navigateToDefaultPage = useSessionContext(
     (c) => c && c.navigateToDefaultPage
   )
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
-  const { defaultPageId } = getSession()
+  // const { defaultPageId } = getSession()
   const [showMenu, setShowMenu] = useState(false)
   // const [isPagePublic, setIsPagePublic] = useState(false)
   // const [pageInGroups, setPageInGroups] = useState([])
@@ -127,7 +127,11 @@ const PageMenu = React.memo(() => {
 
   const archivePage = useEditorPageContext((c) => c.archivePage)
   const deletePage = useEditorPageContext((c) => c.deletePage)
-  const { exportSinglePage, exportAllPages, setCurrentPageId } = useExportContext()
+  const {
+    // exportSinglePage,
+    // exportAllPages,
+    setCurrentPageId,
+  } = useExportContext()
 
   useEffect(() => {
     setCurrentPageId(params)
@@ -380,6 +384,10 @@ const PageMenu = React.memo(() => {
     >
       <BaseControl
         onPress={() => setShowMenu(!showMenu)}
+        // draggable={{
+        //   payload: _page,
+        //   type: 'PAGE',
+        // }}
         onKeyDown={handleEscKey}
         hoverColor="background.1"
         p="tiny"

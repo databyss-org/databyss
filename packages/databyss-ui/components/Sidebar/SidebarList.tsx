@@ -272,6 +272,7 @@ const SidebarList = ({
               onExpand={(evt) => onExpandItem(evt, item.data._id)}
               expanded={item.subItems && expandedGroups.includes(item.data._id)}
               contextMenu={item.contextMenu}
+              dropzone={item.isDropzone ? item.dropzoneProps : undefined}
               {..._pressSelector(item)}
             />
           )

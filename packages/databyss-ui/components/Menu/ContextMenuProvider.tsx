@@ -14,7 +14,6 @@ import {
   offset,
   shift,
   flip,
-  UseFloatingReturn,
 } from '@floating-ui/react'
 import { DropdownList, MenuItem } from '../Menu/DropdownList'
 import { DropdownContainer, ListProps } from '../..'
