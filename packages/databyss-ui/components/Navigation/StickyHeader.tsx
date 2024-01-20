@@ -56,7 +56,7 @@ export const StickyHeader = ({
         </Helmet>
         {/* {showDragHandle && ( */}
         <BaseControl
-          // ml="tinyNegative"
+          ml="tinyNegative"
           position="absolute"
           mr="tiny"
           flexShrink={1}

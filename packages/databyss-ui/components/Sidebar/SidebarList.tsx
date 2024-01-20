@@ -253,6 +253,10 @@ const SidebarList = ({
               </View>
             )
           }
+          let _icon = item.icon ? item.icon : menuSvgs[item.type]
+          if (item.depth) {
+            _icon = (<View p={pxUnits(1)}>{_icon}</View>)
+          }
           return (
             <SidebarListItem
               depth={item.depth}
@@ -262,11 +266,7 @@ const SidebarList = ({
               href={getHref(item)}
               key={`${item.type}-${index}`}
               draggable={getDraggable(item)}
-              icon={
-                <View p={item.depth ? pxUnits(1) : 0}>
-                  {item.icon ? item.icon : menuSvgs[item.type]}
-                </View>
-              }
+              icon={_icon}
               iconColor={item.iconColor}
               expandable={item.type === 'group'}
               onExpand={(evt) => onExpandItem(evt, item.data._id)}

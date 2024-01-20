@@ -88,7 +88,7 @@ export const SidebarListRow = ({
         sizeVariant="tiny"
         color={iconColor ?? (isActive ? 'text.1' : 'text.3')}
         mr="small"
-        ml={depth > 0 ? pxUnits(14.5) : 'none'}
+        ml={depth > 0 ? pxUnits(13) : 'none'}
         mt={pxUnits(1)}
       >
         {icon}
