@@ -6,7 +6,11 @@ import { urlSafeName } from '@databyss-org/services/lib/util'
 import { createHighlightRanges } from '@databyss-org/editor/lib/util'
 import { textToHtml } from '@databyss-org/services/blocks'
 import { htmlToDatabyssFrag } from '@databyss-org/editor/lib/clipboardUtils/databyssFragToHtmlString'
-import { mergeRanges, SortOptions, splitOverlappingRanges } from '@databyss-org/services/blocks/textRanges'
+import {
+  mergeRanges,
+  SortOptions,
+  splitOverlappingRanges,
+} from '@databyss-org/services/blocks/textRanges'
 import { useSearchContext, useUserPreferencesContext } from '../../hooks'
 
 export const SourcesResults = ({ entries }) => {
@@ -29,10 +33,16 @@ export const SourcesResults = ({ entries }) => {
       if (entry.source?.text) {
         const _nameText = {
           textValue: entry.source.name?.textValue ?? '',
-          ranges: entry.source.name ? [...entry.source.name.ranges] : []
+          ranges: entry.source.name ? [...entry.source.name.ranges] : [],
         }
-        const _highlightRanges = createHighlightRanges(_nameText.textValue, searchTerms)
-        _nameText.ranges = mergeRanges([..._nameText.ranges, ..._highlightRanges], SortOptions.Ascending)
+        const _highlightRanges = createHighlightRanges(
+          _nameText.textValue,
+          searchTerms
+        )
+        _nameText.ranges = mergeRanges(
+          [..._nameText.ranges, ..._highlightRanges],
+          SortOptions.Ascending
+        )
         splitOverlappingRanges(_nameText.ranges)
 
         let _citationHtml = ''
@@ -42,17 +52,20 @@ export const SourcesResults = ({ entries }) => {
           if (_citationBlock[0]?.text) {
             const _citationText = {
               textValue: _citationBlock[0]?.text.textValue,
-              ranges: [..._citationBlock[0]?.text.ranges]
+              ranges: [..._citationBlock[0]?.text.ranges],
             }
-            _citationText.ranges = mergeRanges([
-              ..._citationText.ranges,
-              ...createHighlightRanges(_citationText.textValue, searchTerms)
-            ], SortOptions.Ascending)
+            _citationText.ranges = mergeRanges(
+              [
+                ..._citationText.ranges,
+                ...createHighlightRanges(_citationText.textValue, searchTerms),
+              ],
+              SortOptions.Ascending
+            )
             splitOverlappingRanges(_citationText.ranges)
             _citationHtml = textToHtml(_citationText)
           }
         }
-        
+
         return (
           <BaseControl
             key={index}
@@ -67,8 +80,8 @@ export const SourcesResults = ({ entries }) => {
             userSelect="text"
           >
             <View>
-              <Text variant="uiTextSmall" color="text.3" userSelect="none">
-                <RawHtml html={textToHtml(_nameText)} />
+              <Text variant="uiTextSmall" userSelect="none">
+                <RawHtml color="text.3" html={textToHtml(_nameText)} />
               </Text>
             </View>
             {/* {renderStyledCitation(entry.citation)} */}

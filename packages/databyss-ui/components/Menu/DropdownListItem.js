@@ -42,7 +42,7 @@ const DropdownListItem = ({
       data-test-block-menu={action}
       onPress={(evt) => {
         evt.stopPropagation()
-        onPress()
+        onPress(evt)
       }}
       onKeyDown={onKeyDown}
       childViewProps={{ width: '100%' }}
