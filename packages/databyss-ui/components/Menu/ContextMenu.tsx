@@ -1,25 +1,15 @@
-import React, { ReactNode, useRef, useState } from 'react'
-import {
-  useFloating,
-  FloatingPortal,
-  useClientPoint,
-  useInteractions,
-  offset,
-  shift,
-  flip,
-} from '@floating-ui/react'
-import { DropdownList, MenuItem } from '../Menu/DropdownList'
-import {
-  BaseControl,
-  DropdownContainer,
-  Icon,
-  ListProps,
-  ViewProps,
-  View,
-} from '../..'
-import ClickAwayListener from '../Util/ClickAwayListener'
+import React, {
+  MutableRefObject,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+import { BaseControl, Icon, ListProps, ViewProps, View } from '../..'
 import MenuSvg from '../../assets/menu_horizontal.svg'
 import { pxUnits } from '../../theming/views'
+import { useContextMenu } from './ContextMenuProvider'
+import { MenuItem } from './DropdownList'
 
 export interface ContextMenuProps extends ListProps {
   menuItems: MenuItem[]
@@ -27,7 +17,7 @@ export interface ContextMenuProps extends ListProps {
   menuViewProps?: ViewProps
   dropdownContainerProps?: any
   data: any
-  onActiveChanged?: (isActive: boolean) => void
+  parentRef?: MutableRefObject<HTMLElement>
 }
 
 export const ContextMenu = ({
@@ -40,32 +30,11 @@ export const ContextMenu = ({
   menuViewProps,
   dropdownContainerProps,
   data,
-  onActiveChanged,
+  parentRef,
 }: ContextMenuProps) => {
-  const { refs, floatingStyles, context } = useFloating({
-    placement: 'right-start',
-    middleware: [
-      offset({
-        mainAxis: 10,
-        crossAxis: 10,
-      }),
-      shift(),
-      flip({
-        crossAxis: false,
-      }),
-    ],
-  })
-  const menuPosX = useRef(0)
-  const [menuVisible, setMenuVisible] = useState(false)
+  const { showMenu, setClientPoint } = useContextMenu()
   const [hoverVisible, setHoverVisible] = useState(false)
   const hoverTimerRef = useRef<any>(0)
-
-  const clientPoint = useClientPoint(context, {
-    axis: 'x',
-    x: menuPosX.current,
-  })
-
-  const { getReferenceProps, getFloatingProps } = useInteractions([clientPoint])
 
   const _activatorView = (
     <View
@@ -74,28 +43,26 @@ export const ContextMenu = ({
         setHoverVisible(true)
       }}
       onMouseOut={() => {
-        if (!menuVisible) {
-          hoverTimerRef.current = setTimeout(() => {
-            setHoverVisible(false)
-          }, 50)
-        }
+        hoverTimerRef.current = setTimeout(() => {
+          setHoverVisible(false)
+        }, 50)
       }}
-      // onMouseDown={(evt) => {
-      //   if (evt.button === )
-      // }}
       onContextMenu={(evt) => {
-        menuPosX.current = (evt as any).clientX
-        setMenuVisible(true)
-        if (onActiveChanged) {
-          onActiveChanged(true)
-        }
+        setClientPoint(evt.clientX, evt.clientY)
+        showMenu({
+          data,
+          menuItems,
+          dropdownContainerProps,
+          onDismiss: () => {
+            setHoverVisible(false)
+          },
+        })
       }}
       position="absolute"
       left="0"
       top="0"
       bottom="0"
       right="0"
-      // bg={menuVisible ? 'pink' : 'transparent'}
     />
   )
   const _menuButtonView = (
@@ -104,26 +71,32 @@ export const ContextMenu = ({
         clearTimeout(hoverTimerRef.current)
       }}
       onMouseOut={() => {
-        if (!menuVisible) {
-          hoverTimerRef.current = setTimeout(() => {
-            setHoverVisible(false)
-          }, 50)
-        }
+        hoverTimerRef.current = setTimeout(() => {
+          setHoverVisible(false)
+        }, 50)
       }}
-      ref={refs.setReference}
-      {...getReferenceProps()}
+      // {...getReferenceProps()}
       {...menuViewProps}
     >
       {hoverVisible ? (
         <BaseControl
           renderAsView
-          onPress={(evt) => {
+          onPress={(evt: any) => {
             evt.stopPropagation()
-            // evt.preventDefault()
-            menuPosX.current = (evt as any).clientX
-            setMenuVisible(true)
-            if (onActiveChanged) {
-              onActiveChanged(true)
+            evt.preventDefault()
+            setClientPoint(evt.clientX, evt.clientY)
+            showMenu({
+              data,
+              menuItems,
+              dropdownContainerProps,
+              onDismiss: () => {
+                hoverTimerRef.current = setTimeout(() => {
+                  setHoverVisible(false)
+                }, 50)
+              },
+            })
+            if (parentRef?.current) {
+              parentRef.current.focus()
             }
           }}
         >
@@ -133,43 +106,10 @@ export const ContextMenu = ({
     </View>
   )
 
-  const _menuView = (
-    <FloatingPortal>
-      <ClickAwayListener
-        onClickAway={() => {
-          setHoverVisible(false)
-          setMenuVisible(false)
-          if (onActiveChanged) {
-            onActiveChanged(false)
-          }
-        }}
-      >
-        <DropdownContainer
-          widthVariant="dropdownMenuMedium"
-          open
-          ref={refs.setFloating}
-          style={floatingStyles}
-          {...getFloatingProps()}
-          {...dropdownContainerProps}
-        >
-          <DropdownList
-            data={data}
-            menuItems={menuItems}
-            dismiss={() => {
-              setMenuVisible(false)
-              setHoverVisible(false)
-            }}
-          />
-        </DropdownContainer>
-      </ClickAwayListener>
-    </FloatingPortal>
-  )
-
   return (
     <>
       {_activatorView}
       {_menuButtonView}
-      {menuVisible ? _menuView : null}
     </>
   )
 }
@@ -184,30 +124,3 @@ ContextMenu.defaultProps = {
     },
   },
 }
-
-// export const ContextMenu = ({
-//   children,
-//   menuItems,
-//   menuIcon = (
-//     <Icon sizeVariant="tiny">
-//       <MenuSvg />
-//     </Icon>
-//   ),
-//   menuViewProps,
-//   dropdownContainerProps,
-//   ...others
-// }: DListProps) => {
-//   const _children = React.Children.map(children, (child, idx) => (
-//     <DListItem
-//       menuItems={menuItems}
-//       menuIcon={menuIcon}
-//       menuViewProps={menuViewProps}
-//       dropdownContainerProps={dropdownContainerProps}
-//       data={idx}
-//       key={idx}
-//     >
-//       {child}
-//     </DListItem>
-//   ))
-//   return <List {...others}>{_children}</List>
-// }

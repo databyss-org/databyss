@@ -79,7 +79,7 @@ const SidebarIconButton = ({
       borderTopColor={seperatorTop && 'border.2'}
       alignItems="center"
       onClick={onClick}
-      width="100%"
+      // width="100%"
       position="relative"
       {...others}
     >

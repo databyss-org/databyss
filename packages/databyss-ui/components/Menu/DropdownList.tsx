@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import DropdownListItem from './DropdownListItem'
 import { Separator } from '../..'
-import { DListItem, DListItemProps } from '../DynamicList/DList'
+import { DListItemProps } from '../DynamicList/DList'
 import { ContextMenu } from './ContextMenu'
 
 export interface MenuItem {
@@ -30,50 +30,35 @@ export const DropdownList = ({
   menuItems,
   dismiss,
   data,
-}: DropdownListOptions) => {
-  const [activeIdx, setActiveIdx] = useState(-1)
+}: DropdownListOptions) => (
+  <>
+    {menuItems.map(({ separator, ...menuItem }, idx) => {
+      if (separator) {
+        return <Separator {...menuItem} key={idx} lineWidth={idx > 0 ? 1 : 0} />
+      }
 
-  return (
-    <>
-      {menuItems.map(({ separator, ...menuItem }, idx) => {
-        if (separator) {
-          return (
-            <Separator {...menuItem} key={idx} lineWidth={idx > 0 ? 1 : 0} />
-          )
-        }
+      const _item = (
+        <DropdownListItem
+          {...menuItem}
+          action={menuItem.actionType}
+          onPress={async () => {
+            if (menuItem.action && (await menuItem.action(data)) && dismiss) {
+              dismiss()
+            }
+          }}
+          key={menuItem.label}
+        >
+          {menuItem.subMenu ? (
+            <ContextMenu
+              menuItems={menuItem.subMenu}
+              data={idx}
+              {...menuItem.subMenuProps}
+            />
+          ) : null}
+        </DropdownListItem>
+      )
 
-        const _item = (
-          <DropdownListItem
-            {...menuItem}
-            action={menuItem.actionType}
-            onPress={async () => {
-              if (menuItem.action && (await menuItem.action(data)) && dismiss) {
-                dismiss()
-              }
-            }}
-            isActive={activeIdx === idx}
-            key={menuItem.label}
-          >
-            {menuItem.subMenu ? (
-              <ContextMenu
-                menuItems={menuItem.subMenu}
-                data={idx}
-                onActiveChanged={(isActive) => {
-                  if (!isActive && activeIdx === idx) {
-                    setActiveIdx(-1)
-                  }
-                  if (isActive) {
-                    setActiveIdx(idx)
-                  }
-                }}
-                {...menuItem.subMenuProps}
-              />
-            ) : null}
-          </DropdownListItem>
-        )
-
-        return _item
-      })}
-    </>
-  )
-}
+      return _item
+    })}
+  </>
+)

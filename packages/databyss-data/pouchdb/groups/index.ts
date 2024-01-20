@@ -372,11 +372,11 @@ export const replicateGroup = async ({
   })
 }
 
-export const setGroup = async (group: Group, pageId?: string) => {
+export const setGroup = async (group: Group) => {
   // if pageId is passed, crawl pageId and append group id to all documents associated with the page
-  if (pageId) {
-    addPageToGroup({ pageId, groupId: group._id })
-  }
+  // if (pageId) {
+  //   addPageToGroup({ pageId, groupId: group._id })
+  // }
 
   // prevent duplicates
   if (group.pages) {
@@ -390,12 +390,10 @@ export const setGroup = async (group: Group, pageId?: string) => {
   })
 
   // update caches
-  ;[selectors.GROUPS, selectors.BLOCKS].forEach((selector) =>
-    queryClient.setQueryData([selector], (oldData: any) => ({
-      ...(oldData ?? {}),
-      [group._id]: group,
-    }))
-  )
+  queryClient.setQueryData([selectors.GROUPS], (oldData: any) => ({
+    ...(oldData ?? {}),
+    [group._id]: group,
+  }))
   queryClient.setQueryData([`useDocument_${group._id}`], group)
 
   await upsertImmediate({

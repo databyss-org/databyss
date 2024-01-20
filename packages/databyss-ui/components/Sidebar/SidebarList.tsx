@@ -187,6 +187,16 @@ const SidebarList = ({
     [expandedGroups]
   )
 
+  const _expandedMenuItems: SidebarListItemData[] = []
+  _menuItems.forEach((_item) => {
+    _expandedMenuItems.push({ ..._item, depth: 0 })
+    if (_item.subItems && expandedGroups.includes(_item.data._id)) {
+      _item.subItems.forEach((_subItem, _subIndex) => {
+        _expandedMenuItems.push({ ..._subItem, depth: 1 })
+      })
+    }
+  })
+
   return (
     <ScrollView
       height={height}
@@ -209,7 +219,7 @@ const SidebarList = ({
         handlesRef={handlesRef}
       >
         {children}
-        {_menuItems.map((item, index) => {
+        {_expandedMenuItems.map((item, index) => {
           if (!item.text) {
             return null
           }
@@ -244,46 +254,26 @@ const SidebarList = ({
             )
           }
           return (
-            <>
-              <SidebarListItem
-                isActive={getActiveItem(item)}
-                data={item.data}
-                text={item.text}
-                href={getHref(item)}
-                key={`${item.type}-${index}`}
-                draggable={getDraggable(item)}
-                icon={item.icon ? item.icon : menuSvgs[item.type]}
-                iconColor={item.iconColor}
-                expandable={item.type === 'group'}
-                onExpand={(evt) => onExpandItem(evt, item.data._id)}
-                expanded={
-                  item.subItems && expandedGroups.includes(item.data._id)
-                }
-                {..._pressSelector(item)}
-              />
-              {item.subItems &&
-                expandedGroups.includes(item.data._id) &&
-                item.subItems.map((_subItem, _subIndex) => (
-                  <SidebarListItem
-                    depth={1}
-                    isActive={getActiveItem(_subItem)}
-                    data={_subItem.data}
-                    text={_subItem.text}
-                    href={getHref(_subItem)}
-                    key={`${item.type}-${index}-${_subItem.type}-${_subIndex}`}
-                    draggable={getDraggable(_subItem)}
-                    icon={
-                      <View p={pxUnits(1)}>
-                        {_subItem.icon
-                          ? _subItem.icon
-                          : menuSvgs[_subItem.type]}
-                      </View>
-                    }
-                    iconColor={_subItem.iconColor}
-                    {..._pressSelector(_subItem)}
-                  />
-                ))}
-            </>
+            <SidebarListItem
+              depth={item.depth}
+              isActive={getActiveItem(item)}
+              data={item.data}
+              text={item.text}
+              href={getHref(item)}
+              key={`${item.type}-${index}`}
+              draggable={getDraggable(item)}
+              icon={
+                <View p={item.depth ? pxUnits(1) : 0}>
+                  {item.icon ? item.icon : menuSvgs[item.type]}
+                </View>
+              }
+              iconColor={item.iconColor}
+              expandable={item.type === 'group'}
+              onExpand={(evt) => onExpandItem(evt, item.data._id)}
+              expanded={item.subItems && expandedGroups.includes(item.data._id)}
+              contextMenu={item.contextMenu}
+              {..._pressSelector(item)}
+            />
           )
         })}
       </List>

@@ -11,6 +11,8 @@ import ChevronSvg from '@databyss-org/ui/assets/chevron-filled.svg'
 import { pxUnits } from '../../theming/views'
 import { withKeyboardNavigation } from '../../primitives/List/KeyboardNavigationItem'
 import { ControlHandle } from '../..'
+import { MenuItem } from '../Menu/DropdownList'
+import { ContextMenu } from '../Menu/ContextMenu'
 
 export const SidebarListRow = ({
   children,
@@ -116,6 +118,7 @@ export interface SidebarListItemProps {
   navigationItemHandle: MutableRefObject<any>
   draggable: boolean
   depth: number
+  contextMenu?: MenuItem[]
 }
 
 const SidebarListItem = ({
@@ -131,6 +134,7 @@ const SidebarListItem = ({
   navigationItemHandle,
   draggable,
   depth = 0,
+  contextMenu,
   ...others
 }: SidebarListItemProps) => {
   const docRes = useDocument(data?._id, {
@@ -164,6 +168,7 @@ const SidebarListItem = ({
       handle={_controlHandle}
       draggable={draggable}
       position="relative"
+      focusVisible
       {...(depth > 0
         ? {
             borderWidth: 0,
@@ -177,6 +182,14 @@ const SidebarListItem = ({
         depth={depth}
         {...others}
       >
+        {contextMenu ? (
+          <ContextMenu
+            menuItems={contextMenu}
+            data={data}
+            menuViewProps={{ hoverColor: 'background.3' }}
+            parentRef={navigationItemRef}
+          />
+        ) : null}
         {children}
       </SidebarListRow>
     </BaseControl>

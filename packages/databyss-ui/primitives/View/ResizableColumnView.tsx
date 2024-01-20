@@ -9,6 +9,7 @@ import React, {
 import { ThemeContext } from '@emotion/core'
 import css from '@styled-system/css'
 import { View, ViewProps } from '../..'
+import { useContextMenu } from '../../components/Menu/ContextMenuProvider'
 
 export interface ResizableColumnViewProps extends ViewProps {
   children?: ReactNode
@@ -24,6 +25,7 @@ export const ResizableColumnView = forwardRef<
   const viewRef = useRef<HTMLElement | null>(null)
   const [isResizing, setIsResizing] = useState(false)
   const [viewWidth, setViewWidth] = useState<number>(width)
+  const { isMenuVisible } = useContextMenu()
 
   const startResizing = useCallback(() => {
     setIsResizing(true)
@@ -66,21 +68,23 @@ export const ResizableColumnView = forwardRef<
             <View {...others} ref={ref} width={viewWidth}>
               {children}
             </View>
-            <View
-              width="6px"
-              position="absolute"
-              top={0}
-              bottom={0}
-              right="-3px"
-              zIndex={theme.zIndex.menu + 1}
-              css={{
-                cursor: 'col-resize',
-                '&:hover': {
-                  background: css({ color: 'purple.3' })(theme).color,
-                },
-              }}
-              onMouseDown={startResizing}
-            />
+            {!isMenuVisible && (
+              <View
+                width="6px"
+                position="absolute"
+                top={0}
+                bottom={0}
+                right="-3px"
+                zIndex={theme.zIndex.menu + 1}
+                css={{
+                  cursor: 'col-resize',
+                  '&:hover': {
+                    background: css({ color: 'purple.3' })(theme).color,
+                  },
+                }}
+                onMouseDown={startResizing}
+              />
+            )}
           </View>
           {isResizing && (
             <View

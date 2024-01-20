@@ -66,6 +66,7 @@ export interface ViewProps
   shadowVariant?: string
   widthVariant?: string
   wrapVariant?: string
+  hoverColor?: string
   dropzone?: boolean | DropzoneProps
 }
 
@@ -197,6 +198,7 @@ export interface BaseControlProps extends ViewProps {
   onKeyDown?: (e: KeyboardEvent) => void
   draggable?: boolean | Partial<DraggableItem>
   renderAsView?: boolean
+  focusVisible?: boolean
 }
 
 declare const BaseControl: RefForwardingFC<PropsWithChildren<BaseControlProps>>

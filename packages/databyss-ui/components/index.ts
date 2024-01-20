@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { MenuItem } from './Menu/DropdownList'
 
 export { LoadingFallback } from './Notify/LoadingFallback'
 export { default as SidebarList } from './Sidebar/SidebarList'
@@ -41,4 +42,6 @@ export interface SidebarListItemData<T = any, S = never> {
   name?: string
   links?: SidebarListItemLink[]
   subItems?: SidebarListItemData<S>[]
+  contextMenu?: MenuItem[]
+  depth?: number
 }

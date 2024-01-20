@@ -31,32 +31,39 @@ const viewProps = {
   ...defaultProps,
 }
 
-const controlCssDesktop = (props, theme) => ({
+const controlCssDesktop = (props) => ({
   cursor: 'pointer',
   transition: `background-color ${timing.flash}ms ${timing.ease}`,
   ...(props.active
     ? {
         backgroundColor: props.activeColor,
       }
-    : {
+    : {}),
+  ...(!props.focusVisible
+    ? {
         '&[data-focusvisible-polyfill]': {
-          borderStyle: 'solid',
-          borderColor: 'primary.0',
-          borderRadius,
-          boxShadow: `0 0 0 5px ${Color(
-            css({ color: 'primary.0' })(theme).color
-          )
-            .alpha(0.6)
-            .rgb()
-            .string()}`,
+          outlineStyle: 'solid',
+          outlineWidth: '1.5px',
+          outlineColor: 'primary.0',
+          outlineOffset: '-3px',
+          // borderRadius,
         },
-        '&:hover': {
-          backgroundColor: props.hoverColor,
-        },
-        '&:active': {
-          backgroundColor: props.pressedColor,
+      }
+    : {
+        '&:focus': {
+          outlineStyle: 'solid',
+          outlineWidth: '1.5px',
+          outlineColor: 'primary.0',
+          outlineOffset: '-3px',
+          // borderRadius,
         },
       }),
+  '&:hover': {
+    backgroundColor: props.hoverColor,
+  },
+  '&:active': {
+    backgroundColor: props.pressedColor,
+  },
 })
 
 const controlCssMobile = () => ({
@@ -69,7 +76,8 @@ const controlCssMobile = () => ({
 const controlCss = (props) => ({
   position: props.position ?? 'relative',
   userSelect: props.userSelect,
-  borderWidth: props.borderWidth ?? '1px',
+  // borderWidth: props.borderWidth ?? 0,
+  // marginRight: props.marginRight ?? '1px',
   textDecoration: 'none',
   '&:active': {
     backgroundColor: props.pressedColor,

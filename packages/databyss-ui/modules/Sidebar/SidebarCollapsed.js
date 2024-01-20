@@ -119,7 +119,7 @@ const SidebarCollapsed = () => {
 
   return (
     <>
-      <View theme={darkTheme} bg="background.1" width={sidebar.collapsedWidth}>
+      <View theme={darkTheme} bg="background.1">
         <List
           verticalItemPadding={2}
           horizontalItemPadding={1}

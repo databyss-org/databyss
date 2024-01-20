@@ -52,6 +52,7 @@ const DropdownListItem = ({
       activeColor="background.1"
       active={activeNavigationItem || isActive}
       ref={navigationItemRef}
+      focusVisible
       {...others}
     >
       <View
@@ -111,7 +112,11 @@ const DropdownListItem = ({
             {shortcut}
           </Text>
         )}
-        {children}
+        {React.Children.map(children, (child) =>
+          React.cloneElement(child, {
+            parentRef: navigationItemRef,
+          })
+        )}
       </View>
     </BaseControl>
   )
