@@ -37,20 +37,18 @@ export const useBibliography = ({
     subscribe,
   })
 
-  const sources =
+  const sources: Source[] | undefined =
     blocksByIdRes.isSuccess && sourceIds
       ? Object.values(blocksByIdRes.data!)
       : blocksInPagesRes.data
 
   const queryKey = ['bibliography', formatOptions, sourceIds]
-  const query = useQuery<BibliographyDict>(
+  const query = useQuery<BibliographyDict>({
+    queryFn: () => bibliographyFromSources(sources!, formatOptions),
+    enabled: sourceIds ? blocksByIdRes.isSuccess : blocksInPagesRes.isSuccess,
+    ...(otherOptions as UseQueryOptions<BibliographyDict>),
     queryKey,
-    () => bibliographyFromSources(sources!, formatOptions),
-    {
-      enabled: sourceIds ? blocksByIdRes.isSuccess : blocksInPagesRes.isSuccess,
-      ...(otherOptions as UseQueryOptions<BibliographyDict>),
-    }
-  )
+  })
 
   const updateBibliography = async () => {
     if (!sources) {

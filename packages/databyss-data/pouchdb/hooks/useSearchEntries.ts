@@ -58,9 +58,9 @@ export const useSearchEntries = (searchQuery: string) => {
   //     })
   // }
 
-  const query = useQuery<SearchEntriesResultPage[]>(
+  const query = useQuery<SearchEntriesResultPage[]>({
     queryKey,
-    async () => {
+    queryFn: async () => {
       // const isOnline = await checkNetwork()
       // subscribeOnce()
       // if (!isOnline && !(await waitForPouchDb())) {
@@ -79,11 +79,9 @@ export const useSearchEntries = (searchQuery: string) => {
       // firstSearchComplete = true
       return results
     },
-    {
-      enabled: pagesRes.isSuccess && blocksRes.isSuccess,
-      cacheTime: 5000,
-    }
-  )
+    enabled: pagesRes.isSuccess && blocksRes.isSuccess,
+    // gcTime: 5000,
+  })
 
   return query
 }

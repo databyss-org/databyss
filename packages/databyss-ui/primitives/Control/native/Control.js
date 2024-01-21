@@ -1,7 +1,7 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react'
+import React, { forwardRef, useImperativeHandle, useMemo, useRef } from 'react'
 import css from '@styled-system/css'
-import { ThemeContext } from '@emotion/core'
 import forkRef from '@databyss-org/ui/lib/forkRef'
+import { withTheme } from 'emotion-theming'
 import View, {
   styleProps,
   defaultProps,
@@ -9,7 +9,7 @@ import View, {
 } from '../../View/View'
 import styled from '../../styled'
 import { isMobileOs } from '../../../lib/mediaQuery'
-import { borderRadius, timing } from '../../../theming/theme'
+import  { borderRadius, timing } from '../../../theming/theme'
 
 const resetProps = {
   padding: 0,
@@ -118,6 +118,7 @@ const Control = forwardRef(
       href,
       handle,
       draggable,
+      theme,
       ...others
     },
     ref
@@ -134,46 +135,50 @@ const Control = forwardRef(
     const StyledComponent = renderAsView ? View : StyledControl
     /* eslint-disable-next-line */
     const { css: _, ...filteredOthers } = others
+    const _computedCss = useMemo(() => ([
+      !renderAsView && resetCss,
+      css(controlCss(others))(theme),
+      _mobile && css(controlCssMobile(others))(theme),
+      !_mobile && desktopResetCss,
+      !_mobile && css(controlCssDesktop(others, theme))(theme),
+      draggable && {
+        // note this is necessary to remove extra junk around the edges of the
+        // drag preview. see: https://github.com/react-dnd/react-dnd/issues/788#issuecomment-393620979
+        transform: 'translate(0, 0)',
+        cursor: 'grab',
+      },
+    ]), [
+      theme,
+      renderAsView,
+      others.active, 
+      others.focusVisible, 
+      others.focusActive, 
+      others.css
+    ])
     return (
-      <ThemeContext.Consumer>
-        {(theme) => (
-          <StyledComponent
-            ref={forkRef(ref, _childRef)}
-            tabIndex={0}
-            onClick={(e) => {
-              if (disabled) {
-                return
-              }
-              if (e.getModifierState && e.getModifierState('Meta')) {
-                return
-              }
-              if (onPress) {
-                onPress(e)
-              }
-            }}
-            {...(draggable ? {} : { onDragStart: (e) => e.preventDefault() })}
-            {...(renderAsView ? {} : viewProps)}
-            css={[
-              !renderAsView && resetCss,
-              css(controlCss(others))(theme),
-              _mobile && css(controlCssMobile(others))(theme),
-              !_mobile && desktopResetCss,
-              !_mobile && css(controlCssDesktop(others, theme))(theme),
-              draggable && {
-                // note this is necessary to remove extra junk around the edges of the
-                // drag preview. see: https://github.com/react-dnd/react-dnd/issues/788#issuecomment-393620979
-                transform: 'translate(0, 0)',
-                cursor: 'grab',
-              },
-            ]}
-            href={href}
-            disabled={disabled}
-            {...filteredOthers}
-          >
-            {children}
-          </StyledComponent>
-        )}
-      </ThemeContext.Consumer>
+      <StyledComponent
+        ref={forkRef(ref, _childRef)}
+        tabIndex={0}
+        onClick={(e) => {
+          if (disabled) {
+            return
+          }
+          if (e.getModifierState && e.getModifierState('Meta')) {
+            return
+          }
+          if (onPress) {
+            onPress(e)
+          }
+        }}
+        {...(draggable ? {} : { onDragStart: (e) => e.preventDefault() })}
+        {...(renderAsView ? {} : viewProps)}
+        css={_computedCss}
+        href={href}
+        disabled={disabled}
+        {...filteredOthers}
+      >
+        {children}
+      </StyledComponent>
     )
   }
 )
@@ -186,4 +191,4 @@ Control.defaultProps = {
   userSelect: 'none',
 }
 
-export default Control
+export default withTheme(Control)

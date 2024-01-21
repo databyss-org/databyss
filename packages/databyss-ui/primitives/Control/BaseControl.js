@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useCallback } from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import Control from './native/Control'
 import DraggableControl from './native/DraggableControl'
@@ -24,9 +24,7 @@ const BaseControl = forwardRef(
     ref
   ) => {
     // may not exist
-    const navigationContext = useNavigationContext()
-
-    // may not exist
+    const navigate = useNavigationContext((c) => c && c.navigate)
 
     const Styled = draggable ? DraggableControl : Control
 
@@ -35,7 +33,7 @@ const BaseControl = forwardRef(
       (child) => child && React.cloneElement(child, { disabled })
     )
 
-    const _onPress = (event) => {
+    const _onPress = useCallback((event) => {
       if (!disabled && typeof onPress === 'function') {
         onPress(event)
       }
@@ -45,14 +43,14 @@ const BaseControl = forwardRef(
         !target &&
         !href.match(/^http/) &&
         !event.defaultPrevented &&
-        navigationContext
+        navigate
       ) {
         event.preventDefault()
         if (!disabled) {
-          navigationContext.navigate(href)
+          navigate(href)
         }
       }
-    }
+    }, [onPress, disabled, href, target, navigate])
 
     return (
       <Styled

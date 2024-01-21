@@ -13,15 +13,15 @@ export const useOpenGraph = (
 ) => {
   const queryKey = [url]
 
-  const query = useQuery<EmbedDetail>(
-    queryKey,
-    async () => {
+  const query = useQuery<EmbedDetail>({
+    queryFn: async () => {
       // const _res = await httpPost('/media/opengraph', { url })
       // return opengraph(url)
       return eapi.file.getEmbedDetail(url)
     },
-    options as UseQueryOptions<EmbedDetail>
-  )
+    ...options as UseQueryOptions<EmbedDetail>,
+    queryKey,
+  })
 
   return query
 }

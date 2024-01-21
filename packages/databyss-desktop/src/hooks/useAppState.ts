@@ -6,7 +6,10 @@ import { queryClient } from '@databyss-org/services/lib/queryClient'
 declare const eapi: typeof import('../../../databyss-desktop/src/eapi').default
 
 export const useAppState = <K extends keyof StateData>(key: K) => {
-  return useQuery<StateData[K]>([`appState_${key}`], () => eapi.state.get(key))
+  return useQuery<StateData[K]>({
+    queryKey: [`appState_${key}`], 
+    queryFn: () => eapi.state.get(key)
+  })
 }
 
 eapi.state.onStateUpdated((key, value) => {

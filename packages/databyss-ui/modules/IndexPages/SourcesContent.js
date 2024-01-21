@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { CitationStyleOptions } from '@databyss-org/services/citations/constants'
 import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -48,53 +48,61 @@ export const SourcesContent = () => {
   if (!sourcesRes.isSuccess) {
     return <LoadingFallback queryObserver={sourcesRes} />
   }
-
-  // if author is provided in the url `.../sources?firstName=''&lastName='' render authors
-  let _authorFirstName = null
-  let _authorLastName = null
-  let _authorFullName = null
   const _path = getTokensFromPath()
-  if (_path.author) {
-    _authorFirstName = _path.author.firstName
-    _authorLastName = _path.author.lastName
-    _authorFullName = composeAuthorName(_authorFirstName, _authorLastName)
-  }
 
-  const sortedSources = sortBibliography(Object.values(sourcesRes.data))
+  // return useMemo(() => {
+    // if author is provided in the url `.../sources?firstName=''&lastName='' render authors
+    let _authorFirstName = null
+    let _authorLastName = null
+    let _authorFullName = null
+    if (_path.author) {
+      _authorFirstName = _path.author.firstName
+      _authorLastName = _path.author.lastName
+      _authorFullName = composeAuthorName(_authorFirstName, _authorLastName)
+    }
 
-  const filteredSources = _authorFullName
-    ? filterBibliographyByAuthor({
-        items: sortedSources,
-        author: { firstName: _authorFirstName, lastName: _authorLastName },
+    const sortedSources = sortBibliography(Object.values(sourcesRes.data))
+
+    const filteredSources = _authorFullName
+      ? filterBibliographyByAuthor({
+          items: sortedSources,
+          author: { firstName: _authorFirstName, lastName: _authorLastName },
+        })
+      : sortedSources
+
+    let _citationStyleOptions = CitationStyleOptions
+    // if we're offline, only show the current option and a message to go online
+    if (!isOnline) {
+      _citationStyleOptions = _citationStyleOptions.filter(
+        (option) => option.id === citationStyleOption.id
+      )
+      _citationStyleOptions.push({
+        label: 'Please go online to change the citation style',
+        id: -1,
       })
-    : sortedSources
+    }
 
-  let _citationStyleOptions = CitationStyleOptions
-  // if we're offline, only show the current option and a message to go online
-  if (!isOnline) {
-    _citationStyleOptions = _citationStyleOptions.filter(
-      (option) => option.id === citationStyleOption.id
+    return (
+      <IndexPageView
+        path={_authorFullName ? ['Authors', _authorFullName] : ['Bibliography']}
+        key={_authorFullName}
+        position="relative"
+        // menuChild={
+        //   <CitationStyleDropDown
+        //     items={_citationStyleOptions}
+        //     value={citationStyleOption}
+        //     onChange={onCitationStyleChange}
+        //   />
+        // }
+      >
+        <SourcesResults entries={filteredSources} />
+      </IndexPageView>
     )
-    _citationStyleOptions.push({
-      label: 'Please go online to change the citation style',
-      id: -1,
-    })
-  }
-
-  return (
-    <IndexPageView
-      path={_authorFullName ? ['Authors', _authorFullName] : ['Bibliography']}
-      key={_authorFullName}
-      position="relative"
-      menuChild={
-        <CitationStyleDropDown
-          items={_citationStyleOptions}
-          value={citationStyleOption}
-          onChange={onCitationStyleChange}
-        />
-      }
-    >
-      <SourcesResults entries={filteredSources} />
-    </IndexPageView>
-  )
+  // }, [
+  //   _path, 
+  //   // sourcesRes.isSuccess, 
+  //   getTokensFromPath, 
+  //   sortBibliography, 
+  //   filterBibliographyByAuthor
+  // ])
 }

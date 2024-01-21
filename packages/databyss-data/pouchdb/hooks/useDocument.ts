@@ -46,9 +46,9 @@ export const useDocument = <T extends Document>(
     EM.process()
   }, [])
 
-  const query = useQuery<T>(
+  const query = useQuery<T>({
     queryKey,
-    () =>
+    queryFn: () =>
       new Promise<T>((resolve, reject) => {
         dbRef
           .current!.get(_id)
@@ -58,11 +58,9 @@ export const useDocument = <T extends Document>(
             reject(err)
           })
       }),
-    {
-      enabled: _options.enabled,
-      initialData: options?.initialData,
-    }
-  )
+    enabled: _options.enabled,
+    initialData: options?.initialData,
+  })
 
   // const subscribe = () => {
   //   // console.log('[useDocument] subscribe', _id)

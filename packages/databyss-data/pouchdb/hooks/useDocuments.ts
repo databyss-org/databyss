@@ -49,9 +49,8 @@ export const useDocuments = <T extends Document>(
   // const queryKeyJson = JSON.stringify(queryKey)
 
   // console.log('useDocuments.selector', selector)
-  const query = useQuery<DocumentDict<T>>(
-    queryKey,
-    () =>
+  const query = useQuery<DocumentDict<T>>({
+    queryFn: () =>
       new Promise<DocumentDict<T>>((resolve, reject) => {
         if (docIds) {
           dbRef.current
@@ -85,8 +84,9 @@ export const useDocuments = <T extends Document>(
             .catch((err) => reject(err))
         }
       }),
-    options as UseQueryOptions<DocumentDict<T>>
-  )
+    ...options as UseQueryOptions<DocumentDict<T>>,
+    queryKey,
+  })
 
   // const subscribe = () => {
   //   if (!_options.enabled || !_options.subscribe) {

@@ -8,7 +8,7 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       // Never set queries as stale
       staleTime: Infinity,
-      cacheTime: Infinity,
+      // gcTime: Infinity,
       networkMode: 'always',
     },
   },
