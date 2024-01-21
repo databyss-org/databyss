@@ -110,9 +110,6 @@
           "^.+\\.(jsx?|tsx?)$": "<rootDir>/config/jest/babelTransform.js",
           "^(?!.*\\.(js|json)$)": "<rootDir>/config/jest/fileTransform.js"
         },
-        "transformIgnorePatterns": [
-          "node_modules/(?!(react-native-web)/)"
-        ],
         "moduleFileExtensions": [
           "js",
           "json",
@@ -229,7 +226,6 @@
     "kill-port": "^1.5.1",
     "links-finder": "^1.0.0",
     "lodash": "^4.17.15",
-    "metro-react-native-babel-preset": "^0.55.0",
     "mini-css-extract-plugin": "^0.7.0",
     "mongoose": "^5.6.5",
     "node-fetch": "^2.6.1",
@@ -254,15 +250,14 @@
     "promise": "8.0.1",
     "query-string": "^6.13.1",
     "raf": "3.4.0",
-    "react": "16.9.0",
+    "react": "18.2.0",
     "react-dev-utils": "^9.0.1",
-    "react-dom": "16.9.0",
+    "react-dom": "18.2.0",
     "react-flexbox-grid": "^2.1.2",
     "react-google-login": "^5.0.4",
     "react-helmet": "^6.1.0",
     "react-iframe": "^1.8.0",
     "react-jss": "^8.6.1",
-    "react-native": "0.60.4",
     "react-styleguidist": "^9.1.5",
     "react-svg-loader": "3.0.3",
     "react-test-renderer": "16.9.0",

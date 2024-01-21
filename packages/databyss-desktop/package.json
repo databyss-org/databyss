@@ -43,7 +43,7 @@
     "@databyss-org/services": "3.1.0",
     "@databyss-org/ui": "3.1.0",
     "pdfjs-dist": "2.7.570",
-    "react": "16.9.0",
+    "react": "18.2.0",
     "react-dom": "16.9.0"
   },
   "dependencies": {

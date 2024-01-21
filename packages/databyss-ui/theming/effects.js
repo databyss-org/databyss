@@ -1,14 +1,6 @@
-import { Platform } from 'react-native'
 import Color from 'color'
 
 export const shadow = (offsetLeft, offsetTop, blur, color, opacity) => {
-  const native = {
-    shadowOffset: { width: offsetLeft, height: offsetTop },
-    shadowRadius: blur,
-    shadowColor: color,
-    shadowOpacity: opacity,
-    backgroundColor: 'inherit',
-  }
   const web = {
     boxShadow: `${offsetLeft}px ${offsetTop + 0.2}px ${blur * 2}px ${Color(
       color
@@ -17,11 +9,7 @@ export const shadow = (offsetLeft, offsetTop, blur, color, opacity) => {
       .rgb()
       .string()}`,
   }
-  return Platform.select({
-    ios: native,
-    android: native,
-    default: web,
-  })
+  return web
 }
 
 const shadowColor = 'black'

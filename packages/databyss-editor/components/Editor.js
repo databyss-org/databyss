@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { Slate, Editable, ReactEditor } from '@databyss-org/slate-react'
-import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import styledCss from '@styled-system/css'
@@ -15,7 +14,6 @@ import FormatMenu from './FormatMenu'
 import { isSelectionCollapsed } from '../lib/clipboardUtils'
 import { convertSelectionToLink } from '../lib/inlineUtils/setPageLink'
 import { createHighlightRanges, createLinkRangesForUrls } from '../lib/util'
-import { BlockType } from '../interfaces'
 
 const Editor = ({
   children,

@@ -16,6 +16,8 @@ const Viewport = ({ children, ...others }) => (
       styles={{
         body: {
           overflow: 'hidden',
+          margin: 0,
+          padding: 0,
         },
       }}
     />

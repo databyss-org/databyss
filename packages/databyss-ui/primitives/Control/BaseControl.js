@@ -1,7 +1,6 @@
 import React, { forwardRef } from 'react'
-import { Platform } from 'react-native'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import Control, { ControlNoFeedback } from './native/Control'
+import Control from './native/Control'
 import DraggableControl from './native/DraggableControl'
 import { View } from '../'
 
@@ -14,7 +13,7 @@ const BaseControl = forwardRef(
       onPress,
       children,
       disabled,
-      noFeedback,
+      // noFeedback,
       childViewProps,
       href,
       target,
@@ -29,11 +28,7 @@ const BaseControl = forwardRef(
 
     // may not exist
 
-    const Styled = Platform.select({
-      ios: disabled || noFeedback ? ControlNoFeedback : Control,
-      android: disabled || noFeedback ? ControlNoFeedback : Control,
-      default: draggable ? DraggableControl : Control,
-    })
+    const Styled = draggable ? DraggableControl : Control
 
     const _children = React.Children.map(
       children,

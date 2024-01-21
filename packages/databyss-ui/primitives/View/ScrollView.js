@@ -1,15 +1,13 @@
 import React, { useCallback, useRef, useState, forwardRef } from 'react'
-import { ScrollView as NativeScrollView } from 'react-native'
 import { throttle } from 'lodash'
 import css from '@styled-system/css'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import { get } from '@styled-system/core'
 import { withTheme } from 'emotion-theming'
-import styled from '../styled'
-import View, { styleProps } from './View'
+import View from './View'
 import IS_NATIVE from '../../lib/isNative'
 
-const Styled = IS_NATIVE ? styled(NativeScrollView, styleProps) : View
+const Styled = View
 
 const ScrollView = forwardRef(
   ({ children, shadowOnScroll, theme, ...others }, ref) => {

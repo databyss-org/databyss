@@ -21,9 +21,8 @@
     "@databyss-org/ui": "3.1.0",
     "@storybook/react": "5.2.1",
     "@tanstack/react-query": "^4.29.11",
-    "react": "16.9.0",
-    "react-dom": "16.9.0",
-    "react-native": "0.60.4"
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "dependencies": {
     "@bugsnag/plugin-react": "^7.3.5",
@@ -43,7 +42,6 @@
     "@types/styled-system": "^5.1.10",
     "@types/styled-system__css": "^5.0.14",
     "alea": "^1.0.0",
-    "babel-plugin-react-native-web": "^0.11.5",
     "bson-objectid": "^1.3.0",
     "classnames": "^2.2.6",
     "clone-deep": "^4.0.1",
@@ -74,8 +72,6 @@
     "react-keyed-flatten-children": "^1.1.0",
     "react-markdown": "^4.3.1",
     "react-modal": "^3.8.1",
-    "react-native-svg": "^9.6.4",
-    "react-native-web": "^0.11.0",
     "react-nl2br": "^0.6.0",
     "react-responsive": "^8.1.0",
     "react-router-dom": "6.3.0",
@@ -98,11 +94,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "workspaces": {
-    "nohoist": [
-      "**/react-native-svg",
-      "**/react-native-svg-transformer"
-    ]
   }
 }

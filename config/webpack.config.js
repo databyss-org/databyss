@@ -294,12 +294,6 @@ module.exports = (webpackEnv) => {
                       },
                     },
                   ],
-                  [
-                    require.resolve('babel-plugin-react-native-web'),
-                    {
-                      commonjs: true,
-                    },
-                  ],
                   [require.resolve('babel-plugin-emotion'), {}],
                 ],
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
