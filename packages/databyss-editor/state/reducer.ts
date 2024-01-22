@@ -1,6 +1,7 @@
 import 'core-js/features/string/replace-all'
 import { uid } from '@databyss-org/data/lib/uid'
-import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
+// import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
+import { create, apply, Patch } from 'mutative'
 import {
   FSA,
   BlockType,
@@ -297,7 +298,7 @@ export const bakeAtomicClosureBlock = ({
   return null
 }
 
-enablePatches()
+// enablePatches()
 
 export default (
   state: EditorState,
@@ -306,8 +307,8 @@ export default (
 ): EditorState => {
   let clearBlockRelations = false
 
-  const [nextState, patches, inversePatches] = produceWithPatches(
-    state,
+  const [nextState, patches, inversePatches] = create(
+  state,
     (draft: EditorState) => {
       draft.operations = []
       draft.preventDefault = false
@@ -322,7 +323,7 @@ export default (
         case UNDO: {
           payload.patches.forEach((p: Patch) => {
             if (p.path[0] === 'blocks' || p.path[0] === 'selection') {
-              applyPatches(draft, [p])
+              apply(draft, [p])
             }
           })
           pushAtomicChangeUpstream({ state, draft })
@@ -332,7 +333,7 @@ export default (
         case REDO: {
           payload.patches.forEach((p: Patch) => {
             if (p.path[0] === 'blocks' || p.path[0] === 'selection') {
-              applyPatches(draft, [p])
+              apply(draft, [p])
             }
           })
 
@@ -1188,6 +1189,8 @@ export default (
       }
 
       return draft
+    }, {
+      enablePatches: true
     }
   )
 
