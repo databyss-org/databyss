@@ -77,7 +77,7 @@ export const ContextMenu = ({
       // {...getReferenceProps()}
       {...menuViewProps}
     >
-      {hoverVisible ? (
+      {hoverVisible && (
         <BaseControl
           renderAsView
           zIndex={theme.zIndex.menu + 2}
@@ -102,8 +102,6 @@ export const ContextMenu = ({
         >
           {menuIcon}
         </BaseControl>
-      ) : (
-        <View opacity={0}>{menuIcon}</View>
       )}
     </View>
   )

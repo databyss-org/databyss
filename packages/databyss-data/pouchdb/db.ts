@@ -267,17 +267,17 @@ export const pouchDataValidation = (data) => {
     console.error(
       `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
     )
-    throw new Error(
-      `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
-    )
+    // throw new Error(
+    //   `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+    // )
   }
 
   if (!schema) {
     console.log('NOT FOUND', data)
     console.error(`no schema found`)
-    throw new Error(
-      `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
-    )
+    // throw new Error(
+    //   `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+    // )
   }
 }
 

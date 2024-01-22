@@ -53,8 +53,9 @@ export const SidebarListRow = ({
     <View
       flexDirection="row"
       flexWrap="nowrap"
-      maxWidth="100%"
+      minWidth="0"
       flexShrink={1}
+      title={text}
       // alignItems={expandable ? 'center' : 'unset'}
     >
       {depth > 0 && (

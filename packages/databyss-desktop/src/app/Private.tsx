@@ -208,6 +208,7 @@ const AppView = ({
         flexShrink={1}
         // theme={darkContentTheme}
         bg="background.0"
+        minWidth={0}
       >
         {children}
       </View>

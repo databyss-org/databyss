@@ -5,7 +5,7 @@ import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { pagesToListItemData } from '@databyss-org/ui/modules/Sidebar/transforms'
 import { useNavigationContext } from '../../../components'
 
-export const ReferencesList = () => {
+export const ReferencesList = ({ ...others }) => {
   const { getTokensFromPath } = useNavigationContext()
   const { params: pageId } = getTokensFromPath()
   const pageReferencesRes = usePageReferences(pageId)
@@ -17,5 +17,5 @@ export const ReferencesList = () => {
   const _pages = pageReferencesRes.data
   const _mapped = pagesToListItemData(_pages)
 
-  return <SidebarList heading="Backlinks" menuItems={_mapped} />
+  return <SidebarList heading="Backlinks" menuItems={_mapped} {...others} />
 }

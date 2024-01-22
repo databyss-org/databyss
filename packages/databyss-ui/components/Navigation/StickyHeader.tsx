@@ -7,6 +7,7 @@ import {
   BaseControlProps,
   Icon,
   BaseControl,
+  RawHtml,
 } from '@databyss-org/ui/primitives'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
@@ -21,6 +22,30 @@ interface StickyHeaderProps {
   contextMenu?: ReactNode
   draggable?: BaseControlProps['draggable']
 }
+
+export const StickyPath = ({ path }: { path: string[] }) => (
+  <>
+    {path.map((part, idx) => (
+      <>
+        <RawHtml
+          color="text.1"
+          variant="uiTextSmall"
+          html={part}
+          css={{
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+          }}
+        />
+        {idx < path.length - 1 ? (
+          <Text color="text.1" variant="uiTextSmall" px="tiny">
+            /
+          </Text>
+        ) : null}
+      </>
+    ))}
+  </>
+)
 
 export const StickyHeader = ({
   path,
@@ -128,9 +153,11 @@ export const StickyHeader = ({
         )}
         <View
           flexGrow={1}
+          flexShrink={1}
           css={{
             paddingLeft: _showDragHandle ? '20px' : 0,
             transition: 'padding-left 0.2s ease',
+            ...(isDragging ? { cursor: 'pointer' } : {}),
           }}
           position="relative"
           onMouseOver={() => {
@@ -145,19 +172,12 @@ export const StickyHeader = ({
               setShowDragHandle(false)
             }, 50)
           }}
+          flexDirection="row"
+          flexWrap="nowrap"
+          minWidth={0}
+          overflow="hidden"
         >
-          {!dragHandlePressed && (
-            <Text
-              color="text.1"
-              variant="uiTextSmall"
-              css={isDragging ? { cursor: 'pointer' } : {}}
-            >
-              <div
-                data-test-element="editor-sticky-header"
-                dangerouslySetInnerHTML={{ __html: _joinedPath }}
-              />
-            </Text>
-          )}
+          {!dragHandlePressed && <StickyPath path={path} />}
         </View>
         <View alignItems="center" justifyContent="flex-end" flexDirection="row">
           {children}
