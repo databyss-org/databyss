@@ -45,12 +45,13 @@ export const SourcesContent = () => {
     setPreferredCitationStyle(value.id)
   }
 
-  if (!sourcesRes.isSuccess) {
-    return <LoadingFallback queryObserver={sourcesRes} />
-  }
   const _path = getTokensFromPath()
 
-  // return useMemo(() => {
+  return useMemo(() => {
+    if (!sourcesRes.isSuccess) {
+      return <LoadingFallback queryObserver={sourcesRes} />
+    }
+
     // if author is provided in the url `.../sources?firstName=''&lastName='' render authors
     let _authorFirstName = null
     let _authorLastName = null
@@ -87,22 +88,16 @@ export const SourcesContent = () => {
         path={_authorFullName ? ['Authors', _authorFullName] : ['Bibliography']}
         key={_authorFullName}
         position="relative"
-        // menuChild={
-        //   <CitationStyleDropDown
-        //     items={_citationStyleOptions}
-        //     value={citationStyleOption}
-        //     onChange={onCitationStyleChange}
-        //   />
-        // }
+        menuChild={
+          <CitationStyleDropDown
+            items={_citationStyleOptions}
+            value={citationStyleOption}
+            onChange={onCitationStyleChange}
+          />
+        }
       >
         <SourcesResults entries={filteredSources} />
       </IndexPageView>
     )
-  // }, [
-  //   _path, 
-  //   // sourcesRes.isSuccess, 
-  //   getTokensFromPath, 
-  //   sortBibliography, 
-  //   filterBibliographyByAuthor
-  // ])
+  }, [JSON.stringify(_path), sourcesRes.data])
 }

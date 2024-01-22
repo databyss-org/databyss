@@ -7,7 +7,11 @@ import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
 import { Text, View } from '@databyss-org/ui/primitives'
-import { useBlocksInPages, usePages } from '@databyss-org/data/pouchdb/hooks'
+import {
+  useBlocksInPages,
+  useGroups,
+  usePages,
+} from '@databyss-org/data/pouchdb/hooks'
 import { Source, BlockType, Topic } from '@databyss-org/services/interfaces'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import {
@@ -19,6 +23,7 @@ import { FindInPage, useFindInPage } from '../../hooks/search/useFindInPage'
 import { Icon, ListHandle } from '../..'
 import FindInPageSvg from '../../assets/find-in-page.svg'
 import FindInPagesSvg from '../../assets/find-in-pages.svg'
+import { groupsToListItemData } from './lists/GroupList'
 
 const FulltextSearchItem = (props) => (
   <SidebarListItem
@@ -67,7 +72,8 @@ const FindInPageSearchItem = ({
     <View>
       {findInPage.matches.length > 0 ? (
         <Text variant="uiTextSmall" color="text.3">
-          {findInPage.currentIndex >= 0 ? findInPage.currentIndex + 1 : '-'} / {findInPage.matches.length}
+          {findInPage.currentIndex >= 0 ? findInPage.currentIndex + 1 : '-'} /{' '}
+          {findInPage.matches.length}
         </Text>
       ) : (
         <Text variant="uiTextTiny" color="text.3">
@@ -88,6 +94,7 @@ const SidebarSearchResults = ({
 }) => {
   const sourcesRes = useBlocksInPages<Source>(BlockType.Source)
   const topicsRes = useBlocksInPages<Topic>(BlockType.Topic)
+  const groupsRes = useGroups()
   const pagesRes = usePages()
   const listHandleRef = useRef<ListHandle>(null)
   const findInPage = useFindInPage({
@@ -109,7 +116,7 @@ const SidebarSearchResults = ({
     }
   }, [filterQuery])
 
-  const queryRes = [sourcesRes, topicsRes, pagesRes]
+  const queryRes = [sourcesRes, topicsRes, pagesRes, groupsRes]
 
   if (queryRes.some((q) => !q.isSuccess)) {
     return <LoadingFallback queryObserver={queryRes} />
@@ -119,7 +126,7 @@ const SidebarSearchResults = ({
   const mappedTopics = blocksToListItemData(topicsRes.data!)
 
   const mappedAuthors = authorsToListItemData(Object.values(sourcesRes.data!))
-
+  const mappedGroups = groupsToListItemData(Object.values(groupsRes.data!))
   const mappedPages = pagesToListItemData(Object.values(pagesRes.data!))
 
   const allResults = [
@@ -127,13 +134,13 @@ const SidebarSearchResults = ({
     ...mappedPages,
     ...mappedAuthors,
     ...mappedTopics,
+    ...mappedGroups,
   ]
 
-  const sortedSources = sortEntriesAtoZ(allResults, 'text')
+  const sorted = sortEntriesAtoZ(allResults, 'text')
+  const filtered = filterEntries(sorted, filterQuery)
 
-  const filteredEntries = filterEntries(sortedSources, filterQuery)
-
-  const _menuItems = filterQuery === '' ? sortedSources : filteredEntries
+  const _menuItems = filterQuery === '' ? sorted : filtered
   return (
     <SidebarList
       // key={filterQuery}
@@ -152,11 +159,15 @@ const SidebarSearchResults = ({
         }, 50)
       }}
       handlesRef={listHandleRef}
+      showSubitemToggles={false}
       {...others}
     >
-      <FindInPageSearchItem findInPage={findInPage} onPress={() => {
-        inputRef.current.focus()
-      }} />
+      <FindInPageSearchItem
+        findInPage={findInPage}
+        onPress={() => {
+          inputRef.current.focus()
+        }}
+      />
       <FulltextSearchItem
         onPress={() => {
           onSearch()

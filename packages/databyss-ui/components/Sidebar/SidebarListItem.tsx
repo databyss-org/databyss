@@ -97,6 +97,11 @@ export const SidebarListRow = ({
         variant="uiTextSmall"
         color={isActive ? 'text.1' : 'text.3'}
         userSelect="none"
+        overflow="hidden"
+        css={{
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+        }}
       >
         {text}
       </Text>

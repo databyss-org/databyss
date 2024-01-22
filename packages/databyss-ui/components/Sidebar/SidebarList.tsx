@@ -46,6 +46,7 @@ export interface SidebarListProps
   heading?: string
   prependItems?: SidebarListItemData<any>[]
   handlesRef?: Ref<ListHandle>
+  showSubitemToggles?: boolean
 }
 
 const menuSvgs: { [key: string]: ReactNode } = {
@@ -74,6 +75,7 @@ const SidebarList = ({
   heading,
   prependItems,
   handlesRef,
+  showSubitemToggles,
   ...others
 }: PropsWithChildren<SidebarListProps>) => {
   const {
@@ -96,7 +98,7 @@ const SidebarList = ({
     const _hrefRoute = unorm(getHref(item))
     const _hrefCurrent = unorm(
       `${decodeURI(location.pathname)}${
-        location.search ? `?${location.search}` : ''
+        location.search ? `${location.search}` : ''
       }`
     )
     // ignore differences in nice url by excluding last segment
@@ -255,7 +257,7 @@ const SidebarList = ({
           }
           let _icon = item.icon ? item.icon : menuSvgs[item.type]
           if (item.depth) {
-            _icon = (<View p={pxUnits(1)}>{_icon}</View>)
+            _icon = <View p={pxUnits(1)}>{_icon}</View>
           }
           return (
             <SidebarListItem
@@ -268,7 +270,7 @@ const SidebarList = ({
               draggable={getDraggable(item)}
               icon={_icon}
               iconColor={item.iconColor}
-              expandable={item.type === 'group'}
+              expandable={showSubitemToggles && item.type === 'group'}
               onExpand={(evt) => onExpandItem(evt, item.data._id)}
               expanded={item.subItems && expandedGroups.includes(item.data._id)}
               contextMenu={item.contextMenu}
@@ -284,6 +286,7 @@ const SidebarList = ({
 
 SidebarList.defaultProps = {
   height: '100%',
+  showSubitemToggles: true,
 }
 
 export default SidebarList

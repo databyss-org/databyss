@@ -2,19 +2,26 @@ import { AuthorName, BibliographyItem, Source } from '../../interfaces'
 import { isCurrentAuthor } from './isCurrentAuthor'
 
 export function sortBibliography(items: BibliographyItem[]) {
-  const getSortablePart = (source: Source) =>
+  const getSortableAuthor = (source: Source) =>
     // if author(s) exist, sort by last name (or first if no last)
     source.detail?.authors?.length
       ? source.detail.authors[0].lastName?.textValue ??
         source.detail.authors[0].firstName?.textValue
-      : // otherwise sort by textValue
-        source.text.textValue
+      : ''
+
+  const getSortableTitle = (source: Source) =>
+    source.detail?.title?.textValue ?? ''
+  const getSortableName = (source: Source) => source.name?.textValue ?? ''
+
+  const getSortableValue = (source: Source) =>
+    `${getSortableAuthor(source)} ${getSortableTitle(source)} ${getSortableName(
+      source
+    )} ${source.text.textValue}`
+      .trim()
+      .toLowerCase()
 
   return items.sort((a, b) =>
-    getSortablePart(a.source).toLowerCase() >
-    getSortablePart(b.source).toLowerCase()
-      ? 1
-      : -1
+    getSortableValue(a.source) > getSortableValue(b.source) ? 1 : -1
   )
 }
 
