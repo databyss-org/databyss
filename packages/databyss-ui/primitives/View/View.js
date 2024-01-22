@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, forwardRef } from 'react'
+import React, { useRef, useCallback, forwardRef, useMemo } from 'react'
 import {
   space,
   layout,
@@ -197,35 +197,36 @@ const DropzoneChild = forwardRef(({ children, dropzone, ...others }, ref) => {
 })
 
 const View = forwardRef(
-  ({ children, onLayout, dropzone, theme, css, ...others }, ref) => {
-    const viewRef = useRef(null)
+  ({ children, dropzone, theme, css, ...others }, ref) => {
     const ChildContainer = dropzone ? DropzoneChild : Styled
 
-    // fixes white space in scroll bar when using external mouse
-    const view = (_theme) => (
-      <ChildContainer
-        ref={forkRef(viewRef, ref)}
-        {...defaultProps}
-        css={[
-          !IS_NATIVE && desktopResetCss,
-          !IS_NATIVE && applyTheme(desktopCss(others))(_theme),
-          css,
-        ]}
-        theme={_theme}
-        {...others}
-        dropzone={dropzone}
-      >
-        {children}
-      </ChildContainer>
-    )
+    return useMemo(() => {
+      // fixes white space in scroll bar when using external mouse
+      const view = (_theme) => (
+        <ChildContainer
+          ref={ref}
+          {...defaultProps}
+          css={[
+            !IS_NATIVE && desktopResetCss,
+            !IS_NATIVE && applyTheme(desktopCss(others))(_theme),
+            css,
+          ]}
+          theme={_theme}
+          {...others}
+          dropzone={dropzone}
+        >
+          {children}
+        </ChildContainer>
+      )
 
-    if (theme) {
-      return <ThemeProvider theme={theme}>{view(theme)}</ThemeProvider>
-    }
+      if (theme) {
+        return <ThemeProvider theme={theme}>{view(theme)}</ThemeProvider>
+      }
 
-    return (
-      <ThemeContext.Consumer>{(_theme) => view(_theme)}</ThemeContext.Consumer>
-    )
+      return (
+        <ThemeContext.Consumer>{(_theme) => view(_theme)}</ThemeContext.Consumer>
+      )
+    }, [children, css, others])
   }
 )
 

@@ -155,7 +155,7 @@ const Control = forwardRef(
       others.focusActive, 
       others.css
     ])
-    return (
+    return useMemo(() => (
       <StyledComponent
         ref={forkRef(ref, _childRef)}
         tabIndex={0}
@@ -179,7 +179,7 @@ const Control = forwardRef(
       >
         {children}
       </StyledComponent>
-    )
+    ), [_computedCss, filteredOthers, children])
   }
 )
 

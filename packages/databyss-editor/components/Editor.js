@@ -7,6 +7,7 @@ import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
 import { validURL } from '@databyss-org/services/lib/util'
 import { useScrollMemory } from '@databyss-org/ui'
 import { useEditorContext } from '../state/EditorProvider'
+import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { TitleElement } from './TitleElement'
 import { Leaf } from './Leaf'
 import Element from './Element'
@@ -31,8 +32,11 @@ const Editor = ({
     (c) => c && c.normalizedStemmedTerms
   )
   const searchTerm = useSearchContext((c) => c && c.searchTerm)
-
-  const { copy, paste, cut, embedPaste, state } = useEditorContext()
+  const editorContext = useEditorContext()
+  const setLastBlockRendered = useEditorPageContext(
+    (c) => c && c.setLastBlockRendered
+  )
+  const { copy, paste, cut, embedPaste, state } = editorContext
 
   // check if paste is an embed or regular paste
   const pasteEventHandler = (e) => {
@@ -60,8 +64,22 @@ const Editor = ({
     if (firstBlockIsTitle && element.isTitle) {
       return <TitleElement {...props} />
     }
-    return <Element readOnly={readOnly} {...props} />
-  }, [])
+    const blockIndex = ReactEditor.findPath(editor, element)[0]
+    const block = state.blocks[blockIndex]
+    return (
+      <Element 
+        key={`${blockIndex}-${block._id}`}
+        readOnly={readOnly} 
+        block={block}
+        blockIndex={blockIndex}
+        editorContext={editorContext}
+        editor={editor}
+        searchTerm={searchTerm}
+        setLastBlockRendered={setLastBlockRendered}
+        {...props} 
+      />
+    )
+  }, [searchTerm, editor, editorContext, readOnly])
 
   const renderLeaf = useCallback(
     (props) => (

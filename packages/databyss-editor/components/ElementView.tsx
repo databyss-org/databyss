@@ -1,7 +1,6 @@
 import React, { PropsWithChildren, useEffect, useRef } from 'react'
 import { View } from '@databyss-org/ui'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
-import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { Block } from '../interfaces'
 import { isAtomicClosure } from './AtomicHeader'
 
@@ -11,7 +10,8 @@ interface ElementViewProps extends PropsWithChildren<{}> {
   isBlock?: boolean
   readOnly: boolean
   index: number
-  last: boolean
+  last: boolean,
+  setLastBlockRendered: () => void
 }
 
 export const ElementView = ({
@@ -22,12 +22,10 @@ export const ElementView = ({
   readOnly,
   index,
   last,
+  setLastBlockRendered,
   ...others
 }: ElementViewProps) => {
-  const setLastBlockRendered = useEditorPageContext(
-    (c) => c && c.setLastBlockRendered
-  )
-  // const { anchor } = getTokensFromPath()
+  // // const { anchor } = getTokensFromPath()
   const viewRef = useRef(null)
 
   useEffect(() => {

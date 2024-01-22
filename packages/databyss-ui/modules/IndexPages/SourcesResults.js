@@ -67,7 +67,7 @@ export const SourcesResults = ({ entries }) => {
 
           return (
             <BaseControl
-              key={index}
+              key={entry.source._id}
               mb="small"
               data-test-element="source-results"
               href={`/${getAccountFromLocation(true)}/sources/${
@@ -78,13 +78,8 @@ export const SourcesResults = ({ entries }) => {
               py="tiny"
               userSelect="text"
             >
-              <View>
-                <Text variant="uiTextSmall" userSelect="none">
-                  <RawHtml color="text.3" html={textToHtml(_nameText)} />
-                </Text>
-              </View>
-              {/* {renderStyledCitation(entry.citation)} */}
-              <RawHtml html={_citationHtml} color="text.0" />
+              <RawHtml key={`${entry.source._id}-shortname`} variant="uiTextSmall" color="text.3" html={textToHtml(_nameText)} userSelect="none" />
+              <RawHtml key={`${entry.source._id}-citation`} html={_citationHtml} color="text.0" />
             </BaseControl>
           )
         }
