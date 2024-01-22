@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useMemo } from 'react'
 import {
   variant,
   color,
@@ -20,28 +20,25 @@ export const variants = variant({
 
 export const styleProps = compose(variants, color, typography, space, layout)
 
-const Styled = styled(
-  {
-    ios: 'Text',
-    android: 'Text',
-    default: 'div',
-  },
-  styleProps
-)
+const Styled = styled('div', styleProps)
 
 const Text = forwardRef(
-  ({ children, color, userSelect, css, ...others }, ref) => (
-    // TODO: capture css `white-space` and translate to `numberOfLines` for native
-    <Styled
-      ref={ref}
-      variant="bodyNormal"
-      color={color}
-      css={{ userSelect, ...css }}
-      {...others}
-    >
-      {children}
-    </Styled>
-  )
+  ({ children, color, userSelect, css, ...others }, ref) =>
+    useMemo(
+      () => (
+        // TODO: capture css `white-space` and translate to `numberOfLines` for native
+        <Styled
+          ref={ref}
+          variant="bodyNormal"
+          color={color}
+          css={{ userSelect, ...css }}
+          {...others}
+        >
+          {children}
+        </Styled>
+      ),
+      [children, others]
+    )
 )
 
 Text.defaultProps = {

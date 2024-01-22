@@ -2568,10 +2568,10 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
-"@databyss-org/slate-react@0.57.2-b8":
-  version "0.57.2-b8"
-  resolved "https://registry.yarnpkg.com/@databyss-org/slate-react/-/slate-react-0.57.2-b8.tgz#75e8250e109ed5bb6b0d3ab40bba164f04c450bf"
-  integrity sha512-PHXE1ILSh5k7gAuzB5WDZQVKC8SfC1Ii17dVVzL95+MNOFwifhqlLCMACXT5yHQFMpnmOzwrbuOci95oPwL9iQ==
+"@databyss-org/slate-react@0.57.2-b10":
+  version "0.57.2-b10"
+  resolved "https://registry.yarnpkg.com/@databyss-org/slate-react/-/slate-react-0.57.2-b10.tgz#8e56cfa5a3f3a07893dc021b7551e249d00ce7b2"
+  integrity sha512-BegvVJMax6hKgyi3CH5SUR2nnd5aCk+SSdP8b75wCIZeLVlPxUnbEJ/PFJAa8A5g4PIEWmhS0nKMX3BVe/Cm9w==
   dependencies:
     "@types/is-hotkey" "^0.1.1"
     "@types/lodash" "^4.14.149"
