@@ -36,6 +36,7 @@ export const StickyPath = ({ path }: { path: string[] }) => (
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
           }}
+          title={part}
         />
         {idx < path.length - 1 ? (
           <Text color="text.1" variant="uiTextSmall" px="tiny">
