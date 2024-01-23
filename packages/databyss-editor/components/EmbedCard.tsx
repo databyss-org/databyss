@@ -47,7 +47,7 @@ export const EmbedCard = React.memo(
     }
     return (
       <View
-        backgroundColor="gray.6"
+        backgroundColor="background.2"
         p="small"
         {...others}
         // opacity={process.env.NODE_ENV === 'production' ? 1 : 0.5}
@@ -55,14 +55,14 @@ export const EmbedCard = React.memo(
         {mediaType !== MediaTypes.IMAGE && (
           <>
             {mediaType !== MediaTypes.INSTAGRAM && title ? (
-              <Text variant="uiTextSmall" color="gray.3" userSelect="none">
+              <Text variant="uiTextSmall" color="text.2" userSelect="none">
                 {siteName ?? formatHostname(_src)}
               </Text>
             ) : (
               <Button
                 variant="uiLink"
                 textVariant="uiTextSmall"
-                textColor="blue.0"
+                textColor="blue.2"
                 href={_src}
                 target="_blank"
               >
@@ -72,7 +72,7 @@ export const EmbedCard = React.memo(
             {mediaType !== MediaTypes.INSTAGRAM && (
               <Button
                 variant="uiLink"
-                textColor="blue.0"
+                textColor="blue.2"
                 href={_src}
                 target="_blank"
                 mb="small"
@@ -97,7 +97,7 @@ export const EmbedCard = React.memo(
                 : '250px'
             }
             title={title}
-            backgroundColor="gray.0"
+            backgroundColor="background.3"
             justifyContent="center"
             alignItems="center"
             style={

@@ -63,6 +63,7 @@ _c = {
 
 // dark mode
 const _darkUi = {
+  ..._c,
   // [lightest...darkest]
   text: [_c.white, ..._c.gray.slice().reverse().slice(1)],
   // [darkest...lightest]
@@ -81,8 +82,10 @@ const _darkUi = {
 }
 const _darkContent = {
   ..._darkUi,
-  background: ['#1E1E1E', '#1E1E1E', '#3C3C3C'],
-  text: _darkUi.text.slice(1),
+  background: ['#1f1f1f', '#292929', _c.gray[2], _c.gray[3], _c.gray[4]],
+  text: [_c.gray[6], _c.gray[6], _c.gray[5], _c.gray[4]],
+  inlineSource: '#ff9100',
+  inlineTopic: Color(_c.inlineTopic).lighten(0.8).hex()
 }
 _c = {
   ..._c,
@@ -90,6 +93,8 @@ _c = {
     dark: _darkUi,
     darkContent: _darkContent,
   },
+
+
 }
 
 const colors = _c

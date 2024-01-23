@@ -2,6 +2,7 @@ import { BrowserWindow, Menu, app, MenuItem } from 'electron'
 import { createWindow } from './'
 import { CommandArgs, CommandName } from './eapi/cmd-api'
 import { closeDatabyss, onImportDatabyss } from './eapi/handlers/file-handlers'
+import { appState } from './eapi/handlers/state-handlers'
 
 const fwc = () => BrowserWindow.getFocusedWindow()?.webContents
 
@@ -162,6 +163,17 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
   {
     label: 'View',
     submenu: [
+      {
+        label: 'Dark mode',
+        type: 'checkbox',
+        checked: appState.get('darkMode'),
+        click(item) {
+          appState.set('darkMode', item.checked)
+        }
+      },
+      {
+        type: 'separator',
+      },
       {
         label: 'Reload',
         accelerator: 'CmdOrCtrl+R',

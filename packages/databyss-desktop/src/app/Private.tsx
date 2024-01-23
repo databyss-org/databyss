@@ -36,7 +36,7 @@ import { EditorPageProvider } from '@databyss-org/services'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
-import { darkTheme } from '@databyss-org/ui/theming/theme'
+import theme, { darkContentTheme, darkTheme } from '@databyss-org/ui/theming/theme'
 import SidebarSvg from '@databyss-org/ui/assets/sidebar.svg'
 import ChevronSvg from '@databyss-org/ui/assets/chevron-right.svg'
 import DatabyssImg from '@databyss-org/ui/assets/logo-thick.png'
@@ -44,6 +44,7 @@ import { DatabyssMenu } from '@databyss-org/ui/components/Menu/DatabyssMenu'
 import { setGroup } from '@databyss-org/data/pouchdb/groups'
 import { debounce } from 'lodash'
 import { TitleBar } from '../components/TitleBar'
+import { useAppState } from '../hooks'
 
 const GroupNameInput = ({
   groupName,
@@ -111,6 +112,7 @@ const AppView = ({
     setMenuOpen(!isMenuOpen)
   }
   const [sidebarWidth, setSidebarWidth] = useState(null)
+  const isDarkModeRes = useAppState('darkMode')
 
   useEffect(() => {
     eapi.state.get('sidebarWidth').then((width) => {
@@ -206,7 +208,7 @@ const AppView = ({
         data-test-element="body"
         flexGrow={1}
         flexShrink={1}
-        // theme={darkContentTheme}
+        theme={isDarkModeRes.data ? darkContentTheme : theme}
         bg="background.0"
         minWidth={0}
       >

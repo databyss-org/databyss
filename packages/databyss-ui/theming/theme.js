@@ -61,3 +61,5 @@ export const darkContentTheme = {
     ...theme.colors.modes.darkContent,
   },
 }
+
+console.log('[Theme] darkContent', darkContentTheme)

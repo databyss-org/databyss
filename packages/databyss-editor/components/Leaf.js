@@ -7,6 +7,7 @@ import { highlightManager } from '@databyss-org/ui/hooks/search/useFindInPage'
 import { EditorEmbedMedia, EmbedMedia } from './EmbedMedia'
 import { Link } from './Link'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
+import { withTheme } from 'emotion-theming'
 
 // check for email addresses
 const _emailRegEx = new RegExp(
@@ -14,16 +15,17 @@ const _emailRegEx = new RegExp(
   'gi'
 )
 
-export const Leaf = ({
+export const Leaf = withTheme(({
   attributes,
   children,
   leaf,
   readOnly,
   onInlineClick,
   textOnly,
+  theme
 }) => {
   const highlightRef = useRef(null)
-  const { blue, gray, orange, inlineTopic, inlineSource } = colors
+  const { blue, gray, orange, inlineTopic, inlineSource, background } = theme.colors
 
   useEffect(() => {
     if (!highlightRef.current) {
@@ -41,7 +43,7 @@ export const Leaf = ({
         style={{
           minWidth: '150px',
           display: 'inline-block',
-          backgroundColor: gray[6],
+          backgroundColor: background[2],
           borderRadius: '3px',
           //    padding: '3px',
         }}
@@ -84,7 +86,7 @@ export const Leaf = ({
         id="inline-embed-input"
         style={{
           display: 'block',
-          backgroundColor: gray[6],
+          backgroundColor: background[2],
           borderRadius: '3px',
           //    padding: '3px',
         }}
@@ -162,7 +164,7 @@ export const Leaf = ({
         style={{
           minWidth: '150px',
           display: 'inline-block',
-          backgroundColor: gray[6],
+          backgroundColor: background[2],
           borderRadius: '3px',
           //    padding: '3px',
         }}
@@ -181,7 +183,7 @@ export const Leaf = ({
   }
 
   if (leaf.location) {
-    _children = <span style={{ color: gray[4] }}>{_children}</span>
+    _children = <span style={{ color: background[4] }}>{_children}</span>
   }
 
   if (leaf.url) {
@@ -237,6 +239,4 @@ export const Leaf = ({
       {_children}
     </span>
   )
-}
-
-export default Leaf
+})

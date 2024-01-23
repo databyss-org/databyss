@@ -21,6 +21,8 @@ export interface StateData {
   sidebarVisible: boolean
   dataPath: string
   lastWindowSize: [number, number]
+  expandedGroups: string[]
+  darkMode: boolean
 }
 
 const defaultData: Partial<StateData> = {
