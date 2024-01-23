@@ -15031,15 +15031,15 @@ immer@1.10.0:
   resolved "https://registry.yarnpkg.com/immer/-/immer-1.10.0.tgz#bad67605ba9c810275d91e1c2a47d4582e98286d"
   integrity sha512-O3sR1/opvCDGLEVcvrGTMtLac8GJ5IwZC4puPrLuRj3l7ICKvkmA0vGuU9OW8mV9WIBRnaxp5GJh9IEAaNOoYg==
 
+immer@10.0.3:
+  version "10.0.3"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-10.0.3.tgz#a8de42065e964aa3edf6afc282dfc7f7f34ae3c9"
+  integrity sha512-pwupu3eWfouuaowscykeckFmVTpqbzW+rXFCX8rQLkZzM9ftBmU/++Ra+o+L27mz03zJTlyV4UUr+fdKNffo4A==
+
 immer@^5.0.0:
   version "5.3.6"
   resolved "https://registry.yarnpkg.com/immer/-/immer-5.3.6.tgz#51eab8cbbeb13075fe2244250f221598818cac04"
   integrity sha512-pqWQ6ozVfNOUDjrLfm4Pt7q4Q12cGw2HUZgry4Q5+Myxu9nmHRkWBpI0J4+MK0AxbdFtdMTwEGVl7Vd+vEiK+A==
-
-immer@^6.0.5:
-  version "6.0.9"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-6.0.9.tgz#b9dd69b8e69b3a12391e87db1e3ff535d1b26485"
-  integrity sha512-SyCYnAuiRf67Lvk0VkwFvwtDoEiCMjeamnHvRfnVDyc7re1/rQrNxuL+jJ7lA3WvdC4uznrvbmm+clJ9+XXatg==
 
 immutable@^4.0.0-rc.12:
   version "4.0.0-rc.12"
@@ -19062,11 +19062,6 @@ multiparty@~4.2.1:
     http-errors "~1.8.0"
     safe-buffer "5.2.1"
     uid-safe "2.1.5"
-
-mutative@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/mutative/-/mutative-1.0.2.tgz#acba4a17bace5029bb2efdb5cbfd2fc56fa150b6"
-  integrity sha512-fNndMP48ydJOLi7xWLX6RDr5kl7kQNuffALHqeIMn9e+TTj4zPzI3nPCQWtNUspmgdrjrgOJBx3n9gffQr1BXw==
 
 mute-stream@0.0.7:
   version "0.0.7"
