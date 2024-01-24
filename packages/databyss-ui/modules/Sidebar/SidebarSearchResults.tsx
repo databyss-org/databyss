@@ -5,7 +5,6 @@ import {
 } from '@databyss-org/services/entries/util'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
-import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
 import { Text, View } from '@databyss-org/ui/primitives'
 import {
   useBlocksInPages,
@@ -24,7 +23,6 @@ import { Icon, ListHandle } from '../..'
 import FindInPageSvg from '../../assets/find-in-page.svg'
 import FindInPagesSvg from '../../assets/find-in-pages.svg'
 import { groupsToListItemData } from './lists/GroupList'
-import { withTheme } from 'emotion-theming'
 import { useAppState } from '@databyss-org/desktop/src/hooks'
 import theme, { darkContentTheme } from '../../theming/theme'
 

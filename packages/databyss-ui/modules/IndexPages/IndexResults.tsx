@@ -128,7 +128,6 @@ export const IndexResults = withTheme(
     ])
 
     return useMemo(() => {
-      // console.log('[indexResults] blockRelations', blockRelation)
       const _relations = addPagesToBlockRelation({
         blockRelation,
         pages,
@@ -211,6 +210,7 @@ export const IndexResults = withTheme(
             icon={<PageSvg />}
             text={pages[r].name}
             dataTestElement="atomic-results"
+            theme={theme}
           />
 
           {_renderBlocks(
@@ -225,6 +225,7 @@ export const IndexResults = withTheme(
     }, [
       relatedBlockId,
       theme,
+      normalizedStemmedTerms,
       // blockRelationRes.data,
       // blockRelationRes.data?.pages.length,
       // Object.keys(blocks ?? {}).length,

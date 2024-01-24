@@ -1,5 +1,5 @@
 import 'core-js/features/string/replace-all'
-import colors from '@databyss-org/ui/theming/colors'
+import defaultColors from '@databyss-org/ui/theming/colors'
 import { Document, DocumentDict, Embed, Page, Text } from '../interfaces'
 import { RangeType, InlineTypes } from '../interfaces/Range'
 import { validUriRegex } from '../lib/util'
@@ -10,35 +10,39 @@ export interface StringTransformFn {
 }
 
 export interface TagMapFnType {
-  (mark: string[], linkedDocs: DocumentDict<Document>): (
+  ({ mark, linkedDocs, colors }: { 
+    mark: string[]
+    linkedDocs: DocumentDict<Document> 
+    colors?: any
+  }): (
     | string
     | StringTransformFn
   )[]
 }
 
-const markToHtml: TagMapFnType = (mark) =>
+const markToHtml: TagMapFnType = ({ mark, colors }) =>
   ({
     [RangeType.Bold]: ['<strong>', '</strong>'],
     [RangeType.Italic]: ['<i>', '</i>'],
     [RangeType.Highlight]: [
-      `<span style="background-color: ${colors.orange[3]}" data-find-highlight="true">`,
+      `<span style="background-color: ${(colors ?? defaultColors).highlight[0]}" data-find-highlight="true">`,
       '</span>',
     ],
     [RangeType.Location]: [
-      `<span style="color: ${colors.gray[4]}">`,
+      `<span style="color: ${(colors ?? defaultColors).gray[4]}">`,
       '</span>',
     ],
     [InlineTypes.InlineTopic]: [
-      `<span style="color: ${colors.inlineTopic}">`,
+      `<span style="color: ${(colors ?? defaultColors).inlineTopic}">`,
       '</span>',
     ],
     [InlineTypes.InlineSource]: [
-      `<span style="color: ${colors.inlineSource}">`,
+      `<span style="color: ${(colors ?? defaultColors).inlineSource}">`,
       '</span>',
     ],
   }[mark[0]] ?? ['', ''])
 
-const markToMarkdown: TagMapFnType = (mark, linkedDocs) => {
+const markToMarkdown: TagMapFnType = ({ mark, linkedDocs }) => {
   const _c = cleanFilename
   switch (mark[0]) {
     case RangeType.Bold:
@@ -97,10 +101,11 @@ const markToMarkdown: TagMapFnType = (mark, linkedDocs) => {
 /**
  * Renders Text as HTML
  */
-export function textToHtml(text: Text): string {
+export function textToHtml(text: Text, theme?: any): string {
   return renderText({
     text,
     tagMapFn: markToHtml,
+    theme,
   }).replaceAll('\n', '<br />')
 }
 
@@ -135,11 +140,13 @@ export function renderText({
   tagMapFn,
   linkedDocs,
   escapeFn = (_s: string) => _s,
+  theme
 }: {
   text: Text
   tagMapFn: TagMapFnType
   linkedDocs?: DocumentDict<Document>
   escapeFn?: (_s: string) => string
+  theme?: any
 }): string {
   let _html = text.textValue
 
@@ -178,10 +185,11 @@ export function renderText({
       _range.marks.forEach((_mark) => {
         // mark can be a tuple or string; coerce to tuple
         const __mark: string[] = Array.isArray(_mark) ? _mark : [_mark]
-        const [__open, __close, __transform] = tagMapFn(
-          __mark,
-          linkedDocs ?? {}
-        )
+        const [__open, __close, __transform] = tagMapFn({
+          mark: __mark,
+          linkedDocs: linkedDocs ?? {},
+          colors: theme?.colors
+        })
         _openTags += typeof __open === 'function' ? __open(_segment) : __open
         _closeTags = `${
           typeof __close === 'function' ? __close(_segment) : __close

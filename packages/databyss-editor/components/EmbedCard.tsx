@@ -82,11 +82,14 @@ export const EmbedCard = React.memo(
             )}
           </>
         )}
-        {description && (
+        {/* TODO: if we want description, render as styled textarea 
+                  to avoid the cursor jumping problem */}
+        {/* {description && (
           <View mb="small">
-            <Text variant="uiTextMultiline">{description}</Text>
+              <Text variant="uiTextMultiline">{description}</Text> 
+              <textarea readOnly>{description}</textarea> 
           </View>
-        )}
+        )} */}
         {_imageSrc && (
           <View
             height={
