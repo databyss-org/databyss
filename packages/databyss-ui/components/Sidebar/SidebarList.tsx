@@ -3,6 +3,8 @@ import React, {
   ReactNode,
   Ref,
   useCallback,
+  useMemo,
+  useRef,
   useState,
 } from 'react'
 import {
@@ -47,6 +49,8 @@ export interface SidebarListProps
   prependItems?: SidebarListItemData<any>[]
   handlesRef?: Ref<ListHandle>
   showSubitemToggles?: boolean
+  onItemPressed?: (item: SidebarListItemData, index: number) => void
+  showRecentAllToggle?: boolean
 }
 
 const menuSvgs: { [key: string]: ReactNode } = {
@@ -76,6 +80,8 @@ const SidebarList = ({
   prependItems,
   handlesRef,
   showSubitemToggles,
+  onItemPressed,
+  showRecentAllToggle,
   ...others
 }: PropsWithChildren<SidebarListProps>) => {
   const {
@@ -85,9 +91,9 @@ const SidebarList = ({
   } = useNavigationContext()
   const location = useLocation()
   const account = getAccountFromLocation(true)
-  const [showAll, setShowAll] = useState<boolean>(false)
+  const [showAll, setShowAll] = useState<boolean>(!showRecentAllToggle)
   const [expandedGroups, setExpandedGroups] = useState<string[]>([])
-
+  const scrollViewRef = useRef<any | null>(null)
   const getHref = (item: SidebarListItemData) => `/${account}${item.route}`
 
   const getActiveItem = (item: SidebarListItemData) => {
@@ -130,10 +136,28 @@ const SidebarList = ({
    *
    * @param item if valid accountID is not provided, use navigate instead of href for BaseControl
    */
-  const _pressSelector = (item) => ({
+  const _pressItem = (item: SidebarListItemData, index: number, event: Event) => {
+    if (onItemPressed) {
+      onItemPressed(item, index)
+    }
+    if (!showAll && scrollViewRef.current && item.type !== 'author') {
+      scrollViewRef.current.scrollTop = 0
+      // sorry for this jquery hack!
+      setTimeout(() => event.target.closest('a').blur(), 50)
+    }
+  }
+  const _pressSelector = (item: SidebarListItemData, index: number) => ({
     ...(account
-      ? { href: getHref(item) }
-      : { onPress: () => navigate(item.route) }),
+      ? { 
+        href: getHref(item),
+        onPress: (event) => _pressItem(item, index, event)
+      }
+      : { 
+        onPress: (event) => {
+          _pressItem(item, index, event)
+          navigate(item.route) 
+        }
+    })
   })
 
   let _menuItems = [...menuItems]
@@ -156,22 +180,24 @@ const SidebarList = ({
       {
         text: heading,
         type: 'heading',
-        ...(showAll || _menuItems.length < menuItems.length
-          ? {
-              links: [
-                {
-                  label: 'recent',
-                  active: !showAll,
-                  onPress: () => setShowAll(false),
-                },
-                {
-                  label: 'all',
-                  active: showAll,
-                  onPress: () => setShowAll(true),
-                },
-              ],
-            }
-          : {}),
+        ...(showRecentAllToggle &&
+          (showAll || _menuItems.length < menuItems.length)
+            ? {
+                links: [
+                  {
+                    label: 'recent',
+                    active: !showAll,
+                    onPress: () => setShowAll(false),
+                  },
+                  {
+                    label: 'all',
+                    active: showAll,
+                    onPress: () => setShowAll(true),
+                  },
+                ],
+              }
+            : {}
+        ),
       },
       ..._menuItems,
     ]
@@ -206,6 +232,7 @@ const SidebarList = ({
       flexGrow={1}
       {...others}
       my={0}
+      ref={scrollViewRef}
       // shadowOnScroll
     >
       <List
@@ -221,7 +248,7 @@ const SidebarList = ({
         handlesRef={handlesRef}
       >
         {children}
-        {_expandedMenuItems.map((item, index) => {
+        {useMemo(() => _expandedMenuItems.map((item, index) => {
           if (!item.text) {
             return null
           }
@@ -275,11 +302,11 @@ const SidebarList = ({
               expanded={item.subItems && expandedGroups.includes(item.data._id)}
               contextMenu={item.contextMenu}
               dropzone={item.isDropzone ? item.dropzoneProps : undefined}
-              {..._pressSelector(item)}
+              {..._pressSelector(item, index)}
             />
           )
-        })}
-      </List>
+        }), [_expandedMenuItems])}
+      </List> 
     </ScrollView>
   )
 }
@@ -287,6 +314,7 @@ const SidebarList = ({
 SidebarList.defaultProps = {
   height: '100%',
   showSubitemToggles: true,
+  showRecentAllToggle: true,
 }
 
 export default SidebarList

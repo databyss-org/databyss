@@ -23,7 +23,7 @@ const Search = (others) => {
 
   const [value, setValue] = useState(searchTerm)
   const [hasFocus, setHasFocus] = useState(false)
-
+  const blurTimerRef = useRef<any | null>(null)
   const inputRef = useRef<HTMLElement | null>(null)
 
   // wait until user stopped typing for 500ms before setting the value
@@ -94,24 +94,29 @@ const Search = (others) => {
     }
   }, [])
 
-  const onSearchClick = () => {
+  const onSearchClick = useCallback(() => {
     // if not currently in search page, navigate to search page
     if (encodedSearchTerm.current && params !== encodedSearchTerm.current) {
       navigate(`/search/${encodedSearchTerm.current}`)
     }
     navigateSidebar('/search')
-  }
+  }, [navigate, navigateSidebar])
 
-  const onInputFocus = () => {
+  const onInputFocus = useCallback(() => {
     if (getSidebarPath() !== 'search') {
       navigateSidebar('/search')
     }
     setHasFocus(true)
-  }
+  }, [setHasFocus, getSidebarPath, navigateSidebar])
 
-  const onInputBlur = () => {
+  const onInputBlur = useCallback(() => {
+    blurTimerRef.current = setTimeout(() => setHasFocus(false), 1000)
+  }, [setHasFocus, blurTimerRef])
+
+  const onItemPressed = useCallback(() => {
+    clearTimeout(blurTimerRef.current)
     setHasFocus(false)
-  }
+  }, [blurTimerRef])
 
   return (
     <>
@@ -130,6 +135,7 @@ const Search = (others) => {
       />
       {searchTerm && menuItem === 'search' ? (
         <SidebarSearchResults
+          key={searchTerm}
           borderTopWidth={1}
           borderTopColor="gray.3"
           filterQuery={searchTerm}
@@ -137,6 +143,7 @@ const Search = (others) => {
           height="100%"
           inputRef={inputRef}
           searchHasFocus={hasFocus}
+          onItemPressed={onItemPressed}
           {...others}
         />
       ) : (
