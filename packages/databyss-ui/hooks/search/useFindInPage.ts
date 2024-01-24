@@ -61,6 +61,7 @@ export interface FindInPage {
 export interface UseFindInPageOptions {
   onMatchesUpdated?: (matches: FindInPageMatch[]) => void
   paused?: boolean
+  theme?: any
 }
 
 export const useFindInPage = (options?: UseFindInPageOptions): FindInPage => {
@@ -72,19 +73,19 @@ export const useFindInPage = (options?: UseFindInPageOptions): FindInPage => {
     if (index < 0 || index > matches.length - 1) {
       return
     }
-    const { orange } = colors
+    const { highlight } = options?.theme?.colors ?? colors
     const _matchElement = matches[index].element
-    _matchElement.setAttribute('style', `background-color: ${orange[3]};`)
+    _matchElement.setAttribute('style', `background-color: ${highlight[0]};`)
   }
 
   const activateMatch = (index: number) => {
     if (index < 0 || index > matches.length - 1) {
       return
     }
-    const { orange } = colors
+    const { highlight } = options?.theme?.colors ?? colors
     const _matchElement = matches[index].element
     _matchElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    _matchElement.setAttribute('style', `background-color: ${orange[2]};`)
+    _matchElement.setAttribute('style', `background-color: ${highlight[1]};`)
   }
 
   const queryHighlights = () => {
@@ -102,7 +103,7 @@ export const useFindInPage = (options?: UseFindInPageOptions): FindInPage => {
   }
 
   const findNext = () => {
-    //special case: 1 match, already highlighted
+    // special case: 1 match, already highlighted
     if (currentIndex === 0 && matches.length === 1) {
       return
     }

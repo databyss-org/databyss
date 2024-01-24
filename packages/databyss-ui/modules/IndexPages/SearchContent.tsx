@@ -15,12 +15,13 @@ import { Block, BlockType } from '@databyss-org/editor/interfaces'
 import { SearchEntriesResultPage } from '@databyss-org/data/pouchdb/entries/lib/searchEntries'
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import BlockSvg from '@databyss-org/ui/assets/arrowRight.svg'
+import { withTheme } from 'emotion-theming'
 import { IndexPageView } from './IndexPageContent'
 import { IndexResultTags } from './IndexResults'
 import { useSearchContext } from '../../hooks'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 
-export const SearchContent = () => {
+export const SearchContent = withTheme(({ theme }) => {
   const { getAccountFromLocation, navigate } = useNavigationContext()
   const searchQuery = decodeURIComponent(useParams().query!)
   const searchRes = useSearchEntries(searchQuery)
@@ -97,6 +98,7 @@ export const SearchContent = () => {
                   icon={<BlockSvg />}
                   tags={<IndexResultTags tags={_extraTags} />}
                   textVariant={_variant}
+                  theme={theme}
                 />
               )
             })}
@@ -134,5 +136,11 @@ export const SearchContent = () => {
         )}
       </IndexPageView>
     )
-  }, [searchQuery, normalizedStemmedTerms, scrollViewRef, searchRes.data])
-}
+  }, [
+    searchQuery,
+    normalizedStemmedTerms,
+    scrollViewRef,
+    searchRes.data,
+    theme,
+  ])
+})

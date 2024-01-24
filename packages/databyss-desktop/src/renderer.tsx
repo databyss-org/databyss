@@ -9,15 +9,12 @@ import { App } from './app/App'
 import { connect } from '@databyss-org/data/vouchdb/vouchdb'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { appCommands } from '@databyss-org/ui/lib/appCommands'
-import { ContextMenuProvider } from '@databyss-org/ui/components/Menu/ContextMenuProvider'
 
 ReactDOM.render(
   <ThemeProvider>
     <HashRouter>
       <NavigationProvider>
-        <ContextMenuProvider>
-          <App />
-        </ContextMenuProvider>
+        <App />
       </NavigationProvider>
     </HashRouter>
   </ThemeProvider>,

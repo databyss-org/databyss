@@ -7,12 +7,15 @@ import {
   BaseControlProps,
   RawHtml,
 } from '@databyss-org/ui/primitives'
-import theme, { pxUnits } from '@databyss-org/ui/theming/theme'
+import { pxUnits } from '@databyss-org/ui/theming/theme'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { Block } from '@databyss-org/services/interfaces'
 import { renderText, renderTextToComponents } from '../PageContent/FlatPageBody'
 import { SearchTerm } from '@databyss-org/data/couchdb/couchdb'
-import { createHighlightRanges, InlineAtomicDef } from '@databyss-org/editor/lib/util'
+import {
+  createHighlightRanges,
+  InlineAtomicDef,
+} from '@databyss-org/editor/lib/util'
 import { useSearchContext } from '../../hooks'
 import { textToHtml } from '@databyss-org/services/blocks'
 
@@ -23,13 +26,8 @@ export const IndexResultsContainer = ({ children }) => (
 )
 
 export const IndexResultTitle = ({ href, text, icon, dataTestElement }) => {
-  const searchTerms = useSearchContext(
-    (c) => c && c.normalizedStemmedTerms
-  )
-  const _highlightRanges = createHighlightRanges(
-    text,
-    searchTerms
-  )
+  const searchTerms = useSearchContext((c) => c && c.normalizedStemmedTerms)
+  const _highlightRanges = createHighlightRanges(text, searchTerms)
   return (
     <BaseControl
       data-test-element={dataTestElement}
@@ -47,14 +45,16 @@ export const IndexResultTitle = ({ href, text, icon, dataTestElement }) => {
         {icon}
       </Icon>
       <Text color="text.2" variant="uiTextNormalSemibold">
-        <RawHtml html={textToHtml({
-          textValue: text,
-          ranges: _highlightRanges
-        })} />
+        <RawHtml
+          html={textToHtml({
+            textValue: text,
+            ranges: _highlightRanges,
+          })}
+        />
       </Text>
     </BaseControl>
   )
-  }
+}
 
 export interface IndexResultDetailsProps extends BaseControlProps {
   dataTestElement: string
@@ -66,6 +66,7 @@ export interface IndexResultDetailsProps extends BaseControlProps {
   textVariant: string
   textOnly: boolean
   bindAtomicId?: string
+  theme: any
 }
 
 export const IndexResultDetails = ({
@@ -78,6 +79,7 @@ export const IndexResultDetails = ({
   textVariant,
   textOnly = false,
   bindAtomicId,
+  theme,
   ...others
 }: IndexResultDetailsProps) => {
   const res = useDocument<Block>(block._id)
@@ -129,6 +131,7 @@ export const IndexResultDetails = ({
           onInlineClick,
           textOnly,
           bindAtomicId,
+          theme,
         })}
       </Text>
       {tags}

@@ -10,6 +10,7 @@ import icons from './icons'
 import zIndex from './zindex'
 
 const theme = {
+  name: 'defaultTheme',
   /* space */
   space,
 
@@ -48,6 +49,7 @@ export { borderRadius, pxUnits, timing }
 
 export const darkTheme = {
   ...theme,
+  name: 'darkTheme',
   colors: {
     ...theme.colors,
     ...theme.colors.modes.dark,
@@ -56,10 +58,9 @@ export const darkTheme = {
 
 export const darkContentTheme = {
   ...theme,
+  name: 'darkContentTheme',
   colors: {
     ...theme.colors,
     ...theme.colors.modes.darkContent,
   },
 }
-
-console.log('[Theme] darkContent', darkContentTheme)

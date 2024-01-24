@@ -24,6 +24,9 @@ import { Icon, ListHandle } from '../..'
 import FindInPageSvg from '../../assets/find-in-page.svg'
 import FindInPagesSvg from '../../assets/find-in-pages.svg'
 import { groupsToListItemData } from './lists/GroupList'
+import { withTheme } from 'emotion-theming'
+import { useAppState } from '@databyss-org/desktop/src/hooks'
+import theme, { darkContentTheme } from '../../theming/theme'
 
 const FulltextSearchItem = (props) => (
   <SidebarListItem
@@ -97,7 +100,9 @@ const SidebarSearchResults = ({
   const groupsRes = useGroups()
   const pagesRes = usePages()
   const listHandleRef = useRef<ListHandle>(null)
+  const isDarkModeRes = useAppState('darkMode')
   const findInPage = useFindInPage({
+    theme: isDarkModeRes.data ? darkContentTheme : theme,
     paused: !searchHasFocus,
     onMatchesUpdated: (matches) => {
       if (!listHandleRef.current) {

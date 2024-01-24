@@ -6,7 +6,7 @@ import { EM } from '@databyss-org/data/pouchdb/utils'
 
 const { blue, purple } = colors
 
-export const Link = ({ _children, atomicId, readOnly, text }) => {
+export const Link = ({ _children, atomicId, readOnly, text, theme }) => {
   const { navigate } = useNavigationContext()
   const location = window.location
   // compose external url
@@ -46,7 +46,9 @@ export const Link = ({ _children, atomicId, readOnly, text }) => {
         }
       }}
       style={{
-        color: isAtomicIdUrl ? blue[2] : purple[1],
+        color: isAtomicIdUrl
+          ? theme?.colors.blue[2] ?? blue[2]
+          : theme?.colors.purple[1] ?? purple[1],
         cursor: 'pointer',
       }}
       href={url}

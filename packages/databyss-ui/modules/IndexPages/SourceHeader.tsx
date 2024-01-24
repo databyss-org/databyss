@@ -190,7 +190,7 @@ export const SourceHeader = ({
       <SourceTitleAndCitationView source={source} />
       <Button
         onPress={onPressDetails}
-        variant="uiTextButtonShaded"
+        variant="uiTextButtonOutlined"
         alignSelf="flex-start"
         childViewProps={{
           flexDirection: 'row',
@@ -200,13 +200,13 @@ export const SourceHeader = ({
       >
         <Icon
           data-test-button="open-source-modal"
-          color="gray.3"
+          color="text.2"
           sizeVariant="tiny"
           pr="tiny"
         >
           <EditSvg />
         </Icon>
-        <Text variant="uiTextSmall" color="gray.3">
+        <Text variant="uiTextSmall" color="text.2">
           View/Edit Citation
         </Text>
       </Button>

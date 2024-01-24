@@ -85,10 +85,11 @@ export const EmbedMedia = ({
             position="absolute"
             top="em"
             right="em"
-            backgroundColor="gray.6"
+            backgroundColor="transparent"
           >
             <Button
               variant="editSource"
+              hoverColor="background.2"
               onPress={() =>
                 onInlineClick({ atomicType: 'EMBED', id: _element.atomicId })
               }

@@ -1,13 +1,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useEffect, useRef } from 'react'
-import colors from '@databyss-org/ui/theming/colors'
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import { highlightManager } from '@databyss-org/ui/hooks/search/useFindInPage'
 import { EditorEmbedMedia, EmbedMedia } from './EmbedMedia'
 import { Link } from './Link'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
-import { withTheme } from 'emotion-theming'
 
 // check for email addresses
 const _emailRegEx = new RegExp(
@@ -15,17 +13,23 @@ const _emailRegEx = new RegExp(
   'gi'
 )
 
-export const Leaf = withTheme(({
+export const Leaf = ({
   attributes,
   children,
   leaf,
   readOnly,
   onInlineClick,
   textOnly,
-  theme
+  theme,
 }) => {
   const highlightRef = useRef(null)
-  const { blue, gray, orange, inlineTopic, inlineSource, background } = theme.colors
+  const {
+    blue,
+    highlight,
+    inlineTopic,
+    inlineSource,
+    background,
+  } = theme.colors
 
   useEffect(() => {
     if (!highlightRef.current) {
@@ -129,6 +133,7 @@ export const Leaf = withTheme(({
         atomicId={leaf.atomicId}
         readOnly={readOnly}
         text={leaf.text}
+        theme={theme}
       />
     )
   }
@@ -228,7 +233,7 @@ export const Leaf = withTheme(({
       {...(leaf.highlight
         ? {
             style: {
-              backgroundColor: orange[3],
+              backgroundColor: highlight[0],
             },
             'data-find-highlight': true,
             ref: highlightRef,
@@ -239,4 +244,4 @@ export const Leaf = withTheme(({
       {_children}
     </span>
   )
-})
+}

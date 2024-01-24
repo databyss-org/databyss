@@ -3,11 +3,12 @@ import { Slate, Editable, ReactEditor } from '@databyss-org/slate-react'
 import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import styledCss from '@styled-system/css'
+import { withTheme } from 'emotion-theming'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
 import { validURL } from '@databyss-org/services/lib/util'
 import { useScrollMemory } from '@databyss-org/ui'
-import { useEditorContext } from '../state/EditorProvider'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
+import { useEditorContext } from '../state/EditorProvider'
 import { TitleElement } from './TitleElement'
 import { Leaf } from './Leaf'
 import Element from './Element'
@@ -26,6 +27,7 @@ const Editor = ({
   firstBlockIsTitle,
   selection,
   editorRef,
+  theme,
   ...others
 }) => {
   const normalizedStemmedTerms = useSearchContext(
@@ -59,27 +61,30 @@ const Editor = ({
   }
 
   const readOnly = !others.onChange || readonly
-  const renderElement = useCallback((props) => {
-    const { element } = props
-    if (firstBlockIsTitle && element.isTitle) {
-      return <TitleElement {...props} />
-    }
-    const blockIndex = ReactEditor.findPath(editor, element)[0]
-    const block = state.blocks[blockIndex]
-    return (
-      <Element 
-        key={`${blockIndex}-${block._id}`}
-        readOnly={readOnly} 
-        block={block}
-        blockIndex={blockIndex}
-        editorContext={editorContext}
-        editor={editor}
-        searchTerm={searchTerm}
-        setLastBlockRendered={setLastBlockRendered}
-        {...props} 
-      />
-    )
-  }, [searchTerm, editor, editorContext, readOnly])
+  const renderElement = useCallback(
+    (props) => {
+      const { element } = props
+      if (firstBlockIsTitle && element.isTitle) {
+        return <TitleElement {...props} />
+      }
+      const blockIndex = ReactEditor.findPath(editor, element)[0]
+      const block = state.blocks[blockIndex]
+      return (
+        <Element
+          key={`${blockIndex}-${block._id}`}
+          readOnly={readOnly}
+          block={block}
+          blockIndex={blockIndex}
+          editorContext={editorContext}
+          editor={editor}
+          searchTerm={searchTerm}
+          setLastBlockRendered={setLastBlockRendered}
+          {...props}
+        />
+      )
+    },
+    [searchTerm, editor, editorContext, readOnly]
+  )
 
   const renderLeaf = useCallback(
     (props) => (
@@ -87,9 +92,10 @@ const Editor = ({
         {...props}
         readOnly={readOnly}
         onInlineClick={onInlineAtomicClick}
+        theme={theme}
       />
     ),
-    [searchTerm]
+    [searchTerm, theme]
   )
 
   const { onKeyDown, ...slateProps } = others
@@ -172,6 +178,7 @@ const Editor = ({
         {children}
         {!readonly && <FormatMenu />}
         <Editable
+          key={theme.name}
           onCopy={(e) => {
             e.preventDefault()
             copy(e)
@@ -208,8 +215,8 @@ const Editor = ({
         />
       </Slate>
     ),
-    [editor, selection, searchTerm, readOnly]
+    [editor, selection, searchTerm, readOnly, theme]
   )
 }
 
-export default Editor
+export default withTheme(Editor)

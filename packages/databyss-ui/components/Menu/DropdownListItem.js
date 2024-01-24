@@ -48,8 +48,8 @@ const DropdownListItem = ({
       childViewProps={{ width: '100%' }}
       px="small"
       py="extraSmall"
-      hoverColor="background.1"
-      activeColor="background.1"
+      hoverColor="background.2"
+      activeColor="background.2"
       active={activeNavigationItem || isActive}
       ref={navigationItemRef}
       focusVisible

@@ -74,11 +74,14 @@ const Search = (others) => {
     }
   }, [appCommands, focusInput])
 
-  const onKeyDown = useCallback((event) => {
-    if (event.key === 'Escape') {
-      clear(false)
-    }
-  }, [clear])
+  const onKeyDown = useCallback(
+    (event) => {
+      if (event.key === 'Escape') {
+        clear(false)
+      }
+    },
+    [clear]
+  )
 
   useEffect(() => {
     if (menuItem === 'search') {

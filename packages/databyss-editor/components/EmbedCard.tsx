@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { BaseControl, View, Text, Button, Icon } from '@databyss-org/ui'
 import PlaySvg from '@databyss-org/ui/assets/play.svg'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
-import { isHttpInsecure } from './EmbedMedia'
 import { LoadingFallback } from '@databyss-org/ui/components'
+import { isHttpInsecure } from './EmbedMedia'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../databyss-desktop/src/eapi').default

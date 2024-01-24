@@ -1,18 +1,13 @@
 import Color from 'color'
 
-export const shadow = (offsetLeft, offsetTop, blur, color, opacity) => {
+export const shadow = (offsetLeft, offsetTop, blur, color) => {
   const web = {
-    boxShadow: `${offsetLeft}px ${offsetTop + 0.2}px ${blur * 2}px ${Color(
-      color
-    )
-      .alpha(opacity)
-      .rgb()
-      .string()}`,
+    boxShadow: `${offsetLeft}px ${offsetTop + 0.2}px ${blur * 2}px ${color}`,
   }
   return web
 }
 
-const shadowColor = 'black'
+const shadowColor = 'background.4'
 
 /* shadows by elevation */
 /* https://ethercreative.github.io/react-native-shadow-generator/ */

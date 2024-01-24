@@ -20,6 +20,8 @@ import { DropdownContainer, ListProps } from '../..'
 import ClickAwayListener from '../Util/ClickAwayListener'
 import { pxUnits } from '../../theming/views'
 import { theme } from '../../theming'
+import { useAppState } from '@databyss-org/desktop/src/hooks'
+import { darkContentTheme } from '../../theming/theme'
 
 export interface ContextMenuOptions extends ListProps {
   menuItems: MenuItem[]
@@ -37,6 +39,7 @@ export interface ContextMenuContextType {
 export const ContextMenuContext = createContext<ContextMenuContextType>(null!)
 
 export const ContextMenuProvider = ({ children }) => {
+  const isDarkModeRes = useAppState('darkMode')
   const { refs, floatingStyles, context } = useFloating({
     placement: 'right-start',
     middleware: [
@@ -103,7 +106,9 @@ export const ContextMenuProvider = ({ children }) => {
             borderColor="border.2"
             borderWidth={pxUnits(1)}
             borderStyle="solid"
+            backgroundColor="background.1"
             zIndex={theme.zIndex.modal + 1}
+            theme={isDarkModeRes.data ? darkContentTheme : theme}
             {...getFloatingProps()}
             {...dropdownContainerProps}
           >

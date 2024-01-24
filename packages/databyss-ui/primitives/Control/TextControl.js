@@ -107,7 +107,7 @@ const TextControl = ({
           window.requestAnimationFrame(() => setActive(true))
         }
       }}
-      hoverColor="gray.6"
+      hoverColor="background.2"
       css={[
         {
           borderWidth: 0,

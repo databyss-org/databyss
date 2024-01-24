@@ -17,7 +17,11 @@ import {
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Helmet } from 'react-helmet'
-import { useBlocks, useDocuments, usePages } from '@databyss-org/data/pouchdb/hooks'
+import {
+  useBlocks,
+  useDocuments,
+  usePages,
+} from '@databyss-org/data/pouchdb/hooks'
 import {
   Block,
   BlockRelation,
@@ -280,7 +284,7 @@ export const IndexPageView = ({
           flex="1"
           pb="extraLarge"
           ref={scrollViewRef}
-          bg="background.0"
+          bg="background.1"
           {...others}
         >
           <Helmet>
@@ -385,11 +389,10 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
     })
   }
 
-  const blocksRes = useDocuments<Block>(
-    blockIds, 
-    { enabled: !!blockIds.length }
-  )
-  
+  const blocksRes = useDocuments<Block>(blockIds, {
+    enabled: !!blockIds.length,
+  })
+
   // const pageBlockCount = Object.values(pagesRes.data ?? {}).reduce(
   //   (sum, page) => sum + page.blocks.length,
   //   0

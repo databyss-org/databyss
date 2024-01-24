@@ -54,6 +54,7 @@ import {
   PageDoc,
 } from '@databyss-org/data/pouchdb/interfaces'
 import { inlineTypeToSymbol } from '@databyss-org/services/text/inlineUtils'
+import { withTheme } from 'emotion-theming'
 
 export const FlatBlock = ({
   index,
@@ -62,6 +63,7 @@ export const FlatBlock = ({
   previousBlock,
   previousType,
   last,
+  theme,
 }: {
   index: number
   previousId: string | null
@@ -69,6 +71,7 @@ export const FlatBlock = ({
   block: Block
   previousBlock?: Block
   last: boolean
+  theme: any
 }) => {
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
@@ -123,6 +126,7 @@ export const FlatBlock = ({
       escapeFn: renderText,
       searchTerms: normalizedStemmedTerms,
       onInlineClick: (d) => navigate(getInlineAtomicHref(d)),
+      theme,
     })
 
   return index ? (
@@ -151,9 +155,11 @@ export const FlatBlock = ({
 export const FlatBlocks = ({
   page,
   onLast,
+  theme,
 }: {
   page: Page
   onLast: () => void
+  theme: any
 }) => {
   const _blockIdDict: { [id: string]: number } = {}
   return (
@@ -181,6 +187,7 @@ export const FlatBlocks = ({
             previousBlock={
               _previousBlockId ? page.blocks[_previousBlockId] : null
             }
+            theme={theme}
           />
         )
       })}
@@ -188,14 +195,15 @@ export const FlatBlocks = ({
   )
 }
 
-export const FlatPageBody: RefForwardingFC<{ page: Page }> = forwardRef(
-  ({ page }, ref) => {
+export const FlatPageBody = withTheme(
+  forwardRef(({ page, theme }: { page: Page; theme: any }, ref) => {
     const _pageRes = useDocument<Page>(page._id, { initialData: page })
     const _viewRef = useRef<HTMLElement | null>(null)
     const _restoreScroll = useScrollMemory(_viewRef)
     if (!_pageRes.data) {
       return null
     }
+    console.log('[FlatPageBody] theme', theme)
     return (
       <View
         ref={forkRef(ref, _viewRef)}
@@ -214,10 +222,14 @@ export const FlatPageBody: RefForwardingFC<{ page: Page }> = forwardRef(
           }) as InterpolationWithTheme<any>
         }
       >
-        <FlatBlocks page={_pageRes.data} onLast={_restoreScroll} />
+        <FlatBlocks
+          theme={theme}
+          page={_pageRes.data}
+          onLast={_restoreScroll}
+        />
       </View>
     )
-  }
+  })
 )
 
 export function renderText(html: string, key?: string) {
@@ -349,6 +361,7 @@ export function renderTextToComponents({
   escapeFn = (_s: string) => _s,
   textOnly,
   bindAtomicId,
+  theme,
 }: {
   key: string
   text: Text
@@ -357,6 +370,7 @@ export function renderTextToComponents({
   escapeFn?: (_s: string, _key?: string) => ReactNode
   textOnly?: boolean
   bindAtomicId?: string
+  theme: any
 }): ReactNode {
   if (!text) {
     return null
@@ -418,6 +432,7 @@ export function renderTextToComponents({
             escapeFn={escapeFn}
             searchTerms={searchTerms}
             childKey={_lastRangeEnd === _text.length ? `END_${key}` : undefined}
+            theme={theme}
           >
             {escapeFn(
               _segment,
