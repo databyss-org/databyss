@@ -187,11 +187,11 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
         </Text>
       ),
     })
-    const biblioDict = (await biblioRes.refetch()).data
+    const biblio = (await biblioRes.refetch()).data
     _zip.file(
       's/@bibliography.md',
       bibliographyToMarkdown({
-        bibliography: Object.values(biblioDict!),
+        bibliography: biblio!,
         citationStyle: getCitationStyle(getPreferredCitationStyle()),
       })
     )
@@ -262,11 +262,11 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   }) => {
     let author = options?.author
     let source = options?.source
-    const biblioDict = (await biblioRes.refetch()).data
+    const biblio = (await biblioRes.refetch()).data
     if (!source) {
       // bibliography (full or filtered by author)
       await downloadBibliography({
-        items: Object.values(biblioDict!),
+        items: biblio!,
         author,
         styleId: getPreferredCitationStyle(),
       })
