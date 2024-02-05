@@ -4,6 +4,7 @@ import {
   CitationFormatOptions,
   Source,
   BibliographyDict,
+  BibliographyItem,
 } from '@databyss-org/services/interfaces'
 import { toCitation } from '@databyss-org/services/citations'
 import {
@@ -15,10 +16,12 @@ import { useBlocksInPages } from '.'
 import { useDocuments } from './useDocuments'
 import { UseDocumentOptions } from './useDocument'
 import { selectors } from '../selectors'
+import { filterBibliographyByAuthor, sortBibliography } from '@databyss-org/services/sources/lib'
 
 interface UseBibliographyOptions extends UseDocumentOptions {
   formatOptions: CitationFormatOptions
   sourceIds?: string[]
+  filterByAuthor?: [string, string]
 }
 
 export const useBibliography = ({
@@ -43,10 +46,10 @@ export const useBibliography = ({
       : blocksInPagesRes.data
 
   const queryKey = ['bibliography', formatOptions, sourceIds]
-  const query = useQuery<BibliographyDict>({
+  const query = useQuery<BibliographyItem[]>({
     queryFn: () => bibliographyFromSources(sources!, formatOptions),
     enabled: sourceIds ? blocksByIdRes.isSuccess : blocksInPagesRes.isSuccess,
-    ...(otherOptions as UseQueryOptions<BibliographyDict>),
+    ...(otherOptions as UseQueryOptions<BibliographyItem[]>),
     queryKey,
   })
 
@@ -54,9 +57,9 @@ export const useBibliography = ({
     if (!sources) {
       return
     }
-    const _bibDict = await bibliographyFromSources(sources!, formatOptions)
-    if (_bibDict) {
-      queryClient.setQueryData<BibliographyDict>(queryKey, _bibDict)
+    const _bib = await bibliographyFromSources(sources!, formatOptions)
+    if (_bib) {
+      queryClient.setQueryData<BibliographyItem[]>(queryKey, _bib)
     }
   }
 
@@ -69,17 +72,18 @@ export const useBibliography = ({
 
 async function bibliographyFromSources(
   sources: Source[],
-  formatOptions: CitationFormatOptions
-): Promise<BibliographyDict> {
+  formatOptions: CitationFormatOptions,
+): Promise<BibliographyItem[]> {
   if (!sources) {
-    return {}
+    return []
   }
-  const dict: BibliographyDict = {}
+  let items: BibliographyItem[] = []
   for (const source of sources!) {
     const citation = source.detail
       ? await toCitation(source.detail, formatOptions)
       : null
-    dict[source._id] = { citation, source }
+    items.push({ citation, source })
   }
-  return dict
+  items = sortBibliography(items)
+  return items
 }

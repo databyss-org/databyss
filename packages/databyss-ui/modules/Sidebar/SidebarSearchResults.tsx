@@ -5,7 +5,6 @@ import {
 } from '@databyss-org/services/entries/util'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
-import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
 import { Text, View } from '@databyss-org/ui/primitives'
 import {
   useBlocksInPages,
@@ -24,7 +23,6 @@ import { Icon, ListHandle } from '../..'
 import FindInPageSvg from '../../assets/find-in-page.svg'
 import FindInPagesSvg from '../../assets/find-in-pages.svg'
 import { groupsToListItemData } from './lists/GroupList'
-import { withTheme } from 'emotion-theming'
 import { useAppState } from '@databyss-org/desktop/src/hooks'
 import theme, { darkContentTheme } from '../../theming/theme'
 
@@ -93,6 +91,7 @@ const SidebarSearchResults = ({
   onSearch,
   inputRef,
   searchHasFocus,
+  onItemPressed,
   ...others
 }) => {
   const sourcesRes = useBlocksInPages<Source>(BlockType.Source)
@@ -108,6 +107,7 @@ const SidebarSearchResults = ({
       if (!listHandleRef.current) {
         return
       }
+      // console.log('[SidebarSearchResults] activeIndex', listHandleRef.current.getActiveIndex())
       const _nextSelectedItem = matches.length === 0 ? 1 : 0
       if (listHandleRef.current.getActiveIndex() <= 1) {
         listHandleRef.current.setActiveIndex(_nextSelectedItem)
@@ -127,28 +127,34 @@ const SidebarSearchResults = ({
     return <LoadingFallback queryObserver={queryRes} />
   }
 
-  const mappedSources = blocksToListItemData(sourcesRes.data!)
-  const mappedTopics = blocksToListItemData(topicsRes.data!)
+  let _menuItems = []
 
-  const mappedAuthors = authorsToListItemData(Object.values(sourcesRes.data!))
-  const mappedGroups = groupsToListItemData(Object.values(groupsRes.data!))
-  const mappedPages = pagesToListItemData(Object.values(pagesRes.data!))
+  if (filterQuery?.trim().length > 1) {
+    const mappedSources = blocksToListItemData(sourcesRes.data!)
+    const mappedTopics = blocksToListItemData(topicsRes.data!)
 
-  const allResults = [
-    ...mappedSources,
-    ...mappedPages,
-    ...mappedAuthors,
-    ...mappedTopics,
-    ...mappedGroups,
-  ]
+    const mappedAuthors = authorsToListItemData(Object.values(sourcesRes.data!))
+    const mappedGroups = groupsToListItemData(Object.values(groupsRes.data!))
+    const mappedPages = pagesToListItemData(Object.values(pagesRes.data!))
+      .filter((pageItem) => !pageItem.data?.archive)
 
-  const sorted = sortEntriesAtoZ(allResults, 'text')
-  const filtered = filterEntries(sorted, filterQuery)
+    const allResults = [
+      ...mappedSources,
+      ...mappedPages,
+      ...mappedAuthors,
+      ...mappedTopics,
+      ...mappedGroups,
+    ]
 
-  const _menuItems = filterQuery === '' ? sorted : filtered
+    const sorted = sortEntriesAtoZ(allResults, 'text')
+    const filtered = filterEntries(sorted, filterQuery)
+
+    _menuItems = filterQuery === '' ? sorted : filtered
+  }
   return (
     <SidebarList
-      // key={filterQuery}
+      key={filterQuery}
+      showRecentAllToggle={false}
       data-test-element="search-results"
       heading={_menuItems.length ? 'Quick Matches' : ''}
       menuItems={_menuItems}
@@ -162,6 +168,14 @@ const SidebarSearchResults = ({
         setTimeout(() => {
           inputRef.current.focus()
         }, 50)
+      }}
+      onItemPressed={(item, index) => {
+        if (listHandleRef.current) {
+          listHandleRef.current.setActiveIndex(index + 1)
+        }
+        if (onItemPressed) {
+          onItemPressed(item, index)
+        }
       }}
       handlesRef={listHandleRef}
       showSubitemToggles={false}

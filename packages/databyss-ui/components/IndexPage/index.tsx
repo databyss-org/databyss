@@ -25,7 +25,7 @@ export const IndexResultsContainer = ({ children }) => (
   </View>
 )
 
-export const IndexResultTitle = ({ href, text, icon, dataTestElement }) => {
+export const IndexResultTitle = ({ href, text, icon, dataTestElement, theme }) => {
   const searchTerms = useSearchContext((c) => c && c.normalizedStemmedTerms)
   const _highlightRanges = createHighlightRanges(text, searchTerms)
   return (
@@ -49,7 +49,7 @@ export const IndexResultTitle = ({ href, text, icon, dataTestElement }) => {
           html={textToHtml({
             textValue: text,
             ranges: _highlightRanges,
-          })}
+          }, theme)}
         />
       </Text>
     </BaseControl>

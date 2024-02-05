@@ -1,4 +1,3 @@
-// import React, { useMemo } from 'react'
 import React, { useEffect, useMemo, useRef } from 'react'
 import { BaseControl, Text, View } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -111,7 +110,7 @@ export const IndexResults = withTheme(
       // }
       Object.values(relatedBlocksRef.current).forEach((block) => {
         const _updatedBlock = updateInlinesInBlock({
-          block,
+          block: queryClient.getQueryData([`useDocument_${block._id}`]) ?? block,
           inlineType: blockTypeToInlineType(blockRelation.blockType)!,
           text: inlineTextFromBlock(relatedBlockRes.data!),
           inlineId: relatedBlockId,
@@ -128,7 +127,6 @@ export const IndexResults = withTheme(
     ])
 
     return useMemo(() => {
-      // console.log('[indexResults] blockRelations', blockRelation)
       const _relations = addPagesToBlockRelation({
         blockRelation,
         pages,
@@ -182,7 +180,7 @@ export const IndexResults = withTheme(
           }
           return (
             <IndexResultDetails
-              key={`${eidx}`}
+              key={`${pageId}-${e._id}`}
               href={`/${getAccountFromLocation(
                 true
               )}/pages/${pageId}/${urlSafeName(pages[pageId].name)}#${_anchor}`}
@@ -211,6 +209,7 @@ export const IndexResults = withTheme(
             icon={<PageSvg />}
             text={pages[r].name}
             dataTestElement="atomic-results"
+            theme={theme}
           />
 
           {_renderBlocks(
@@ -225,6 +224,7 @@ export const IndexResults = withTheme(
     }, [
       relatedBlockId,
       theme,
+      normalizedStemmedTerms,
       // blockRelationRes.data,
       // blockRelationRes.data?.pages.length,
       // Object.keys(blocks ?? {}).length,

@@ -462,7 +462,7 @@ export function createHighlightRanges(
   searchTerms: SearchTerm[],
   options?: HighlightRangeIgnoreOptions
 ) {
-  const _ranges: Range[] = []
+  const _rangesDict: { [key: string]: Range } = {}
 
   // normalize diacritics
   const _normalizedText = unorm(text)
@@ -477,12 +477,6 @@ export function createHighlightRanges(
 
     for (const match of matches) {
       if (!stemMatch(term, match, text)) {
-        // console.log(
-        //   '[CRH] skipping',
-        //   match[0],
-        //   stemmer(match[0]),
-        //   stemmer(term.original)
-        // )
         continue
       }
       // skip highlighting ranges that coincide with specified inline atomic id
@@ -499,14 +493,16 @@ export function createHighlightRanges(
       ) {
         continue
       }
-      _ranges.push({
-        offset: match.index!,
-        length: match[0].length,
+      const offset = match.index!
+      const length = match[0].length
+      _rangesDict[`${offset}:${length}`] = {
+        offset,
+        length,
         marks: [RangeType.Highlight],
-      })
+      }
     }
   })
-  return _ranges
+  return Object.values(_rangesDict)
 }
 
 export interface InlineAtomicDef {

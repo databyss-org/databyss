@@ -25,14 +25,14 @@ export const SourceCitationView = ({
   }
 
   if (
-    !bibliographyRes.data[sourceId] ||
-    !bibliographyRes.data[sourceId].citation?.length
+    !bibliographyRes.data[0] ||
+    !bibliographyRes.data[0].citation?.length
   ) {
     return <View {...others}>{noCitationFallback}</View>
   }
   return (
     <CitationView
-      citation={bibliographyRes.data[sourceId].citation}
+      citation={bibliographyRes.data[0].citation}
       formatOptions={formatOptions}
       {...others}
     />

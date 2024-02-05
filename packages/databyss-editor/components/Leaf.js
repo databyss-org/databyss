@@ -116,7 +116,7 @@ export const Leaf = ({
         }}
         style={{
           color: inlineTopic,
-          caretColor: 'black',
+          caretColor: theme.colors.text[0],
           cursor: 'pointer',
           textDecoration: 'none',
         }}
@@ -152,7 +152,7 @@ export const Leaf = ({
         }}
         style={{
           color: inlineSource,
-          caretColor: 'black',
+          caretColor: theme.colors.text[0],
           cursor: 'pointer',
           textDecoration: 'none',
         }}

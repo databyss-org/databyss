@@ -88,5 +88,12 @@ export const GroupList = (others) => {
     })
   )
 
-  return <SidebarList heading="Collections" menuItems={items} {...others} />
+  return (
+    <SidebarList 
+      heading="Collections" 
+      menuItems={items} 
+      showRecentAllToggle={false}
+      {...others} 
+    />
+  )
 }

@@ -203,7 +203,6 @@ export const FlatPageBody = withTheme(
     if (!_pageRes.data) {
       return null
     }
-    console.log('[FlatPageBody] theme', theme)
     return (
       <View
         ref={forkRef(ref, _viewRef)}
@@ -298,6 +297,7 @@ export function BoundLeafComponent({
   escapeFn,
   childKey,
   searchTerms,
+  theme,
   ...others
 }: {
   leaf: Leaf
@@ -305,6 +305,7 @@ export function BoundLeafComponent({
   escapeFn: (_s: string, _key?: string) => ReactNode
   childKey: string | undefined
   searchTerms?: SearchTerm[]
+  theme?: any
 }) {
   const _docRes = useDocument<DbDocument>(leaf.atomicId!, {
     enabled: !!leaf.atomicId,
@@ -332,7 +333,7 @@ export function BoundLeafComponent({
       _text = textToHtml({
         textValue: _text,
         ranges: _highlightRanges,
-      })
+      }, theme)
       // console.log('[FlatPageBody] highlightRanges', _highlightRanges)
     }
     _leaf = {
@@ -343,7 +344,7 @@ export function BoundLeafComponent({
     _children = escapeFn(_text, childKey)
   }
   return (
-    <LeafComponent leaf={_leaf} {...others}>
+    <LeafComponent leaf={_leaf} theme={theme} {...others}>
       {_children}
     </LeafComponent>
   )
@@ -380,6 +381,13 @@ export function renderTextToComponents({
 
   // add link ranges
   _ranges = _ranges.concat(createLinkRangesForUrls(_text))
+
+  // collapse embed ranges
+  _ranges.filter((_range) => 
+    _range.marks.find((m) => m[0] === 'embed')
+  ).forEach((_embedRange) => {
+    _embedRange.length = 0
+  })
 
   if (searchTerms?.length && searchTerms[0].text?.length) {
     _ranges = _ranges.concat(
