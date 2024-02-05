@@ -1,9 +1,11 @@
 import { ReactNode } from 'react'
+import { MenuItem } from './Menu/DropdownList'
+import { ViewProps } from '../'
 
 export { LoadingFallback } from './Notify/LoadingFallback'
 export { default as SidebarList } from './Sidebar/SidebarList'
 export { default as DropdownListItem } from './Menu/DropdownListItem'
-export { DropdownList } from './PageContent/PageMenu'
+export { DropdownList } from './Menu/DropdownList'
 export {
   default as SidebarListItem,
   SidebarListRow,
@@ -31,7 +33,7 @@ export interface SidebarListItemLink {
   onPress: () => void
 }
 
-export interface SidebarListItemData<T> {
+export interface SidebarListItemData<T = any, S = never> {
   text: string
   type: string
   route?: string
@@ -40,4 +42,9 @@ export interface SidebarListItemData<T> {
   iconColor?: string | null
   name?: string
   links?: SidebarListItemLink[]
+  subItems?: SidebarListItemData<S>[]
+  contextMenu?: MenuItem[]
+  depth?: number
+  isDropzone?: boolean
+  dropzoneProps?: ViewProps['dropzone']
 }

@@ -8,6 +8,7 @@ const MakeLoader = ({
   children,
   onUnload,
   onLoad,
+  onError,
   errorFallback,
   loadingFallbackOptions,
 }) => {
@@ -39,6 +40,9 @@ const MakeLoader = ({
 
   if (errors) {
     // console.log('[MakeLoader] errors', errors)
+    if (onError) {
+      onError(errors)
+    }
     return (
       errorFallback ?? (
         <ErrorFallback

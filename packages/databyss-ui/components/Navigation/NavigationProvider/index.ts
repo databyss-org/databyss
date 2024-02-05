@@ -1,5 +1,7 @@
 export {
   BrowserRouter,
+  HashRouter,
+  MemoryRouter,
   Routes,
   Route,
   useNavigate,

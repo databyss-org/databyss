@@ -1,7 +1,7 @@
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { Topic } from '@databyss-org/services/interfaces'
 import { DocumentType } from '../../interfaces'
-import { findAll } from '../../utils'
+import { findAll } from '../../crudUtils'
 
 const getTopicHeaders = async () => {
   const _topics: Topic[] = await findAll({

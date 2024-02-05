@@ -10,9 +10,9 @@ import {
 } from '@databyss-org/slate'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
 import { stripText } from '@databyss-org/services/catalog/util'
+import { splitTextAtOffset } from '@databyss-org/services/text/splitTextAtOffset'
 import { slateRangesToStateRanges, stateBlockToSlateBlock } from '../slateUtils'
 import { uid } from '../../../databyss-data/lib/uid'
-import splitTextAtOffset from './splitTextAtOffset'
 
 /**
  *

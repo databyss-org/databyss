@@ -17,12 +17,17 @@ import {
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Helmet } from 'react-helmet'
-import { useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
+import {
+  useBlocks,
+  useDocuments,
+  usePages,
+} from '@databyss-org/data/pouchdb/hooks'
 import {
   Block,
   BlockRelation,
   BlockType,
   Embed,
+  ResourceNotFoundError,
   Source,
 } from '@databyss-org/services/interfaces'
 import {
@@ -42,13 +47,11 @@ import {
   Icon,
   Grid,
   ViewProps,
-  Button,
 } from '@databyss-org/ui/primitives'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
-import EditSvg from '@databyss-org/ui/assets/edit.svg'
 import MediaSvg from '@databyss-org/ui/assets/play.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { urlSafeName } from '@databyss-org/services/lib/util'
@@ -56,11 +59,16 @@ import { updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
 import { setEmbed } from '@databyss-org/services/embeds'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { ResolveEmbed } from '@databyss-org/editor/components/ResolveEmbed'
+import { useQueryClient } from '@tanstack/react-query'
+import { blockTypeToSelector } from '@databyss-org/data/pouchdb/selectors'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 // import { useUserPreferencesContext } from '../../hooks'
 import IndexPageMenu from '../../components/IndexPage/IndexPageMenu'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
+import { darkTheme } from '../../theming/theme'
+import ErrorFallback from '../../components/Notify/ErrorFallback'
+import { SourceHeader } from './SourceHeader'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -77,11 +85,23 @@ export interface IndexPageTitleInputHandles {
 const getTitleFromBlock = (block: Block | undefined, path: string[]) =>
   block
     ? {
-        [BlockType.Source]: block.text.textValue,
+        [BlockType.Source]: (block as Source).name?.textValue,
         [BlockType.Topic]: block.text.textValue,
         [BlockType.Embed]: block.text.textValue,
       }[block.type]
     : path[path.length - 1]
+
+const setTitleOnBlock = (block: Block, title: string) => ({
+  ...block,
+  ...(block.type === BlockType.Source
+    ? { name: { textValue: title, ranges: [] } }
+    : {
+        text: {
+          ...block.text,
+          textValue: title,
+        },
+      }),
+})
 
 export const IndexPageTitleInput = ({
   path,
@@ -91,9 +111,10 @@ export const IndexPageTitleInput = ({
 }: IndexPageViewProps) => {
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const [title, setTitle] = useState(getTitleFromBlock(block, path))
+  const queryClient = useQueryClient()
   const { navigate } = useNavigationContext()
-  const blocksRes = useBlocks(BlockType._ANY)
-  const pagesRes = usePages()
+  // const blocksRes = useBlocks(BlockType._ANY)
+  // const pagesRes = usePages()
   const isSearch = path[0] === 'Search'
 
   useImperativeHandle(handlesRef, () => ({
@@ -111,28 +132,20 @@ export const IndexPageTitleInput = ({
       if (!block) {
         return
       }
-      const _block: Block = {
-        ...block,
-        text: {
-          ...block.text,
-          textValue: value,
-        },
-      }
+      const _block = setTitleOnBlock(block, value)
+      queryClient.setQueryData([`useDocument_${_block._id}`], _block)
       switch (block!.type) {
         case BlockType.Topic:
-          setTopic(_block, { pages: pagesRes.data, blocks: blocksRes.data })
+          setTopic(_block)
           break
         case BlockType.Embed:
           setEmbed(_block as Embed)
           break
         case BlockType.Source:
-          setSource(_block as Source, {
-            pages: pagesRes.data,
-            blocks: blocksRes.data,
-          })
+          setSource(_block as Source)
           break
       }
-    }, 3000),
+    }, 750),
     [block]
   )
 
@@ -146,7 +159,6 @@ export const IndexPageTitleInput = ({
 
   const onKeyDown = (evt: KeyboardEvent) => {
     if (evt.key === 'Enter') {
-      evt.preventDefault()
       if (isSearch) {
         navigate(`/${getAccountFromLocation(true)}/search/${title}`)
       }
@@ -195,8 +207,6 @@ const EmbedHeader = ({ block, ...others }: EmbedHeaderProps) => (
   <ResolveEmbed data={block} position="relative" {...others} />
 )
 
-const SourceTitleAndCitationView = () => null
-
 export const IndexPageView = ({
   path,
   block,
@@ -214,6 +224,7 @@ export const IndexPageView = ({
   const titleInputHandlesRef = useRef<IndexPageTitleInputHandles>(null)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const queryClient = useQueryClient()
 
   const onUpdateBlock = (block: Block) => {
     titleInputHandlesRef.current?.updateTitle(block)
@@ -236,7 +247,11 @@ export const IndexPageView = ({
   useEffect(() => {
     if (block) {
       if (block && !isPublicAccount()) {
-        updateAccessedAt(block!._id)
+        updateAccessedAt(
+          block!._id,
+          queryClient,
+          blockTypeToSelector(block.type)
+        )
       }
       const path = getTokensFromPath()
       const niceName = urlSafeName(blockName!)
@@ -263,11 +278,13 @@ export const IndexPageView = ({
           contextMenu={<IndexPageMenu block={block} />}
         />
         <ScrollView
+          pt="medium"
           pr="em"
-          pl="large"
+          pl="medium"
           flex="1"
           pb="extraLarge"
           ref={scrollViewRef}
+          bg="background.1"
           {...others}
         >
           <Helmet>
@@ -298,51 +315,13 @@ export const IndexPageView = ({
                 handlesRef={titleInputHandlesRef}
               />
             )}
-            {block?.type === BlockType.Source &&
-              (isReadOnly ? (
-                // <SourceTitleAndCitationView block={block} mb="small" />
-                <SourceTitleAndCitationView />
-              ) : (
-                <View position="relative" mt="em" mb="small">
-                  {/* <SourceTitleAndCitationView
-                  block={block}
-                  opacity={0}
-                  zIndex={-1}
-                />
-                 */}
-                  <SourceTitleAndCitationView />
-                  <Button
-                    onPress={onPressDetails}
-                    variant="uiTextButtonShaded"
-                    alignSelf="flex-start"
-                    childViewProps={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                    }}
-                    mt="small"
-                  >
-                    <Icon
-                      data-test-button="open-source-modal"
-                      color="gray.3"
-                      sizeVariant="tiny"
-                      pr="tiny"
-                    >
-                      <EditSvg />
-                    </Icon>
-                    <Text variant="uiTextSmall" color="gray.3">
-                      View/Edit Citation
-                    </Text>
-                  </Button>
-                  {/* <SourceTitleAndCitationView
-                  block={block}
-                  position="absolute"
-                  zIndex={1}
-                  left={0}
-                  top={0}
-                /> */}
-                  <SourceTitleAndCitationView />
-                </View>
-              ))}
+            {block?.type === BlockType.Source && (
+              <SourceHeader
+                source={block as Source}
+                onPressDetails={onPressDetails}
+                readOnly={isReadOnly}
+              />
+            )}
             {block?.type === BlockType.Embed && (
               <>
                 <EmbedHeader block={block as Embed} mt="medium" mb="large" />
@@ -367,11 +346,18 @@ interface IndexPageContentProps {
 }
 
 export const getPathFromBlock = (block: Block) => {
-  const path = [block.text.textValue]
+  let _text = block.text.textValue
+  if (
+    block.type === BlockType.Source &&
+    (block as Source).name?.textValue !== null
+  ) {
+    _text = (block as Source).name?.textValue!
+  }
+  const path = [_text]
   const indexName = {
     [BlockType.Source]: 'Sources',
     [BlockType.Topic]: 'Topics',
-    [BlockType.Embed]: 'Embeds',
+    [BlockType.Embed]: 'Media',
   }[block.type]
   if (indexName) {
     path.push(indexName)
@@ -381,11 +367,31 @@ export const getPathFromBlock = (block: Block) => {
 
 export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const { blockId } = useParams()
-  const blocksRes = useBlocks(BlockType._ANY)
+  // const blocksRes = useBlocks(BlockType._ANY)
+  const blockRes = useDocument<Block>(blockId!)
   const pagesRes = usePages()
   const scrollViewRef = useRef<HTMLElement | null>(null)
   const restoreScroll = useScrollMemory(scrollViewRef)
   const blockRelationRes = useDocument<BlockRelation>(`r_${blockId}`)
+
+  const blockIds: string[] = []
+
+  if (blockRelationRes.isSuccess && pagesRes.isSuccess) {
+    // gather the pages to fetch
+    blockRelationRes.data!.pages.forEach((page) => {
+      if (!pagesRes.data[page]) {
+        console.warn('[IndexPageContent] page missing', page)
+        return
+      }
+      pagesRes.data[page].blocks.forEach((block) => {
+        blockIds.push(block._id)
+      })
+    })
+  }
+
+  const blocksRes = useDocuments<Block>(blockIds, {
+    enabled: !!blockIds.length,
+  })
 
   // const pageBlockCount = Object.values(pagesRes.data ?? {}).reduce(
   //   (sum, page) => sum + page.blocks.length,
@@ -393,23 +399,30 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   // )
 
   // return useMemo(() => {
-  // console.log('[IndexPageContent] render')
+  // console.log('[IndexPageContent] blockIds', blockIds)
   const queryRes = [blockRelationRes, blocksRes, pagesRes]
   if (queryRes.some((q) => !q.isSuccess)) {
     return <LoadingFallback queryObserver={queryRes} />
   }
-  if (
-    !blocksRes.data?.[blockId!] ||
-    blocksRes.data[blockId!].type !== blockType
-  ) {
-    return <LoadingFallback queryObserver={[blocksRes, pagesRes]} />
+  if (!blockRes.data || blockRes.data.type !== blockType) {
+    return <LoadingFallback queryObserver={[blockRes, pagesRes]} />
   }
+  if (blockRelationRes.isSuccess && !blockRelationRes.data) {
+    return (
+      <ErrorFallback
+        error={new ResourceNotFoundError()}
+        message="Resource not found"
+      />
+    )
+  }
+
   return (
     <IndexPageView
-      path={getPathFromBlock(blocksRes.data![blockId!])}
-      block={blocksRes.data![blockId!]}
+      path={getPathFromBlock(blockRes.data)}
+      block={blockRes.data}
       key={blockId}
       scrollViewRef={scrollViewRef}
+      theme={darkTheme}
     >
       <IndexResults
         relatedBlockId={blockId!}

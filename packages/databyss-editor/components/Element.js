@@ -21,58 +21,65 @@ import { AtomicHeader } from './AtomicHeader'
 // browser still takes some time to process the spellcheck
 const SPELLCHECK_DEBOUNCE_TIME = 300
 
-const Element = ({ attributes, children, element, readOnly }) => {
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  const _isPublic = isPublicAccount ? isPublicAccount() : null
-
-  const _searchTerm = useSearchContext((c) => c && c.searchTerm)
-
-  let searchTerm = ''
-
-  if (_searchTerm) {
-    searchTerm = _searchTerm
-  }
-  const editor = useEditor()
-
-  const editorContext = useEditorContext()
-
-  const blockIndex = ReactEditor.findPath(editor, element)[0]
-  const block = editorContext ? editorContext.state.blocks[blockIndex] : {}
-  const previousBlock = editorContext
-    ? editorContext.state.blocks[blockIndex - 1]
-    : {}
+const Element = ({
+  attributes,
+  children,
+  element,
+  readOnly,
+  block,
+  blockIndex,
+  editor,
+  editorContext,
+  searchTerm,
+  setLastBlockRendered,
+}) =>
+  // const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  // const _isPublic = isPublicAccount ? isPublicAccount() : null
+  // const _searchTerm = useSearchContext((c) => c && c.searchTerm)
+  // let searchTerm = ''
+  // if (_searchTerm) {
+  //   searchTerm = _searchTerm
+  // }
+  // const editor = useEditor()
+  // const editorContext = useEditorContext()
 
   // spellcheck is debounced on element change
   // state is used to trigger a re-render
-  const [spellCheck, setSpellCheck] = useState(true)
+  // const [spellCheck, setSpellCheck] = useState(true)
   // ref is used to keep current in `setTimeout`
-  const spellCheckRef = useRef(true)
-  const spellCheckTimeoutRef = useRef()
+  // const spellCheckRef = useRef(true)
+  // const spellCheckTimeoutRef = useRef()
 
-  const onSuggestions = (blocks) => {
-    if (!editorContext) {
-      return
-    }
-    editorContext.cacheEntitySuggestions(blocks)
-  }
+  // useEffect(() => {
+  //   if (spellCheckTimeoutRef.current) {
+  //     spellCheckRef.current = false
+  //     setSpellCheck(false)
+  //     clearTimeout(spellCheckTimeoutRef.current)
+  //   }
 
-  useEffect(() => {
-    if (spellCheckTimeoutRef.current) {
-      spellCheckRef.current = false
-      setSpellCheck(false)
-      clearTimeout(spellCheckTimeoutRef.current)
-    }
+  //   spellCheckTimeoutRef.current = setTimeout(() => {
+  //     if (!spellCheckRef.current) {
+  //       spellCheckRef.current = true
+  //       setSpellCheck(true)
+  //     }
+  //   }, SPELLCHECK_DEBOUNCE_TIME)
+  // }, [element])
 
-    spellCheckTimeoutRef.current = setTimeout(() => {
-      if (!spellCheckRef.current) {
-        spellCheckRef.current = true
-        setSpellCheck(true)
-      }
-    }, SPELLCHECK_DEBOUNCE_TIME)
-  }, [element])
-
-  return useMemo(
+  useMemo(
     () => {
+      // const blockIndex = ReactEditor.findPath(editor, element)[0]
+      // const block = editorContext ? editorContext.state.blocks[blockIndex] : {}
+      const previousBlock = editorContext
+        ? editorContext.state.blocks[blockIndex - 1]
+        : {}
+
+      const onSuggestions = (blocks) => {
+        if (!editorContext) {
+          return
+        }
+        editorContext.cacheEntitySuggestions(blocks)
+      }
+
       if (!block) {
         return null
       }
@@ -94,15 +101,16 @@ const Element = ({ attributes, children, element, readOnly }) => {
       return (
         <ElementView
           index={blockIndex}
-          spellCheck={spellCheck}
+          spellCheck
           data-test-editor-element="true"
           readOnly={readOnly}
           block={block}
           previousBlock={previousBlock}
           isBlock={element.isBlock}
           last={blockIndex === editorContext.state.blocks.length - 1}
+          setLastBlockRendered={setLastBlockRendered}
         >
-          {block.__showNewBlockMenu && !readOnly && !_isPublic && (
+          {block.__showNewBlockMenu && !readOnly && (
             <View
               position="absolute"
               contentEditable="false"
@@ -203,8 +211,15 @@ const Element = ({ attributes, children, element, readOnly }) => {
       )
     },
     // search term updates element for highlight
-    [block, element, searchTerm, spellCheck, previousBlock?.type]
+    [
+      block,
+      // element,
+      searchTerm,
+      // spellCheck,
+      // previousBlock?.type,
+      // ReactEditor,
+      // editorContext
+    ]
   )
-}
 
 export default Element

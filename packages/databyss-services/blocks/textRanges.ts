@@ -18,8 +18,12 @@ export function mergeRanges(
   const _rangeKey = (range: Range) => `[${range.offset}, ${range.length}]`
   ranges.forEach((range) => {
     if (_rangeDict[_rangeKey(range)]) {
-      // merge the marks
-      _rangeDict[_rangeKey(range)].marks.push(...range.marks)
+      // merge the marks (ignoring duplicates)
+      range.marks.forEach((mark) => {
+        if (!_rangeDict[_rangeKey(range)].marks.includes(mark)) {
+          _rangeDict[_rangeKey(range)].marks.push(mark)
+        }
+      })
       return
     }
     _rangeDict[_rangeKey(range)] = cloneDeep(range)
@@ -65,11 +69,17 @@ export function splitOverlappingRanges(ranges: Range[]) {
     return
   }
   sortRanges(ranges, SortOptions.Ascending)
+  const _ranges: Range[] = []
   const _overlapRanges: Range[] = []
   ranges.forEach((_range, _idx) => {
     const _nextRange = _idx < ranges.length - 1 ? ranges[_idx + 1] : null
     const _nextOffset = _nextRange?.offset!
     if (_nextRange && _range.offset + _range.length > _nextOffset) {
+      // edge case: never split an embed
+      //   instead, reject the overlapping range and move on
+      if (_range.marks.find((m) => m[0] === 'embed')) {
+        return
+      }
       // create new range for overlap
       const _overlapRange: Range = {
         offset: _nextOffset,
@@ -107,6 +117,7 @@ export function splitOverlappingRanges(ranges: Range[]) {
       // truncate current range at start of next offset
       _range.length = _nextOffset - _range.offset
     }
+    _ranges.push(_range)
   })
   ranges.push(..._overlapRanges)
   sortRanges(ranges, SortOptions.Ascending)

@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React from 'react'
-import colors from '@databyss-org/ui/theming/colors'
+import React, { useEffect, useRef } from 'react'
 import { urlSafeName } from '@databyss-org/services/lib/util'
+import { highlightManager } from '@databyss-org/ui/hooks/search/useFindInPage'
 import { EditorEmbedMedia, EmbedMedia } from './EmbedMedia'
 import { Link } from './Link'
 import { getAccountFromLocation } from '../../databyss-services/session/utils'
@@ -20,8 +20,23 @@ export const Leaf = ({
   readOnly,
   onInlineClick,
   textOnly,
+  theme,
 }) => {
-  const { blue, gray, orange, inlineTopic, inlineSource } = colors
+  const highlightRef = useRef(null)
+  const {
+    blue,
+    highlight,
+    inlineTopic,
+    inlineSource,
+    background,
+  } = theme.colors
+
+  useEffect(() => {
+    if (!highlightRef.current) {
+      return
+    }
+    highlightManager.addHighlightElement(highlightRef.current)
+  }, [highlightRef.current])
 
   let _children = children
 
@@ -32,7 +47,7 @@ export const Leaf = ({
         style={{
           minWidth: '150px',
           display: 'inline-block',
-          backgroundColor: gray[6],
+          backgroundColor: background[2],
           borderRadius: '3px',
           //    padding: '3px',
         }}
@@ -75,7 +90,7 @@ export const Leaf = ({
         id="inline-embed-input"
         style={{
           display: 'block',
-          backgroundColor: gray[6],
+          backgroundColor: background[2],
           borderRadius: '3px',
           //    padding: '3px',
         }}
@@ -101,7 +116,7 @@ export const Leaf = ({
         }}
         style={{
           color: inlineTopic,
-          caretColor: 'black',
+          caretColor: theme.colors.text[0],
           cursor: 'pointer',
           textDecoration: 'none',
         }}
@@ -118,6 +133,7 @@ export const Leaf = ({
         atomicId={leaf.atomicId}
         readOnly={readOnly}
         text={leaf.text}
+        theme={theme}
       />
     )
   }
@@ -136,7 +152,7 @@ export const Leaf = ({
         }}
         style={{
           color: inlineSource,
-          caretColor: 'black',
+          caretColor: theme.colors.text[0],
           cursor: 'pointer',
           textDecoration: 'none',
         }}
@@ -153,7 +169,7 @@ export const Leaf = ({
         style={{
           minWidth: '150px',
           display: 'inline-block',
-          backgroundColor: gray[6],
+          backgroundColor: background[2],
           borderRadius: '3px',
           //    padding: '3px',
         }}
@@ -172,7 +188,7 @@ export const Leaf = ({
   }
 
   if (leaf.location) {
-    _children = <span style={{ color: gray[4] }}>{_children}</span>
+    _children = <span style={{ color: background[4] }}>{_children}</span>
   }
 
   if (leaf.url) {
@@ -214,12 +230,18 @@ export const Leaf = ({
 
   return (
     <span
+      {...(leaf.highlight
+        ? {
+            style: {
+              backgroundColor: highlight[0],
+            },
+            'data-find-highlight': true,
+            ref: highlightRef,
+          }
+        : {})}
       {...attributes}
-      style={{ backgroundColor: leaf.highlight && orange[3] }}
     >
       {_children}
     </span>
   )
 }
-
-export default Leaf

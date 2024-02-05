@@ -7,13 +7,14 @@ import {
   Source,
   Topic,
 } from '@databyss-org/services/interfaces/Block'
+import { mergeText } from '@databyss-org/services/text/mergeText'
+import { atomicTypeToSymbol } from '@databyss-org/services/text/inlineUtils'
 import { EditorState } from '../../interfaces/EditorState'
 import {
   getTextOffsetWithRange,
   atomicTypeToInlineRangeType,
-  atomicTypeToSymbol,
 } from '../../state/util'
-import { mergeText, splitTextAtOffset } from '../clipboardUtils/index'
+import { splitTextAtOffset } from '../clipboardUtils/index'
 
 export const onBakeInlineAtomic = ({
   editor,

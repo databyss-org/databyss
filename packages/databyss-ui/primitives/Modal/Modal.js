@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import ReactModal from 'react-modal'
-import { position, color, compose } from 'styled-system'
+import { position, color, compose, shadow } from 'styled-system'
 import css from '@styled-system/css'
 import { zIndex } from '@databyss-org/ui/theming/system'
 import { shadowVariant, widthVariant } from '../View/View'
@@ -9,7 +9,7 @@ import theme, { borderRadius } from '../../theming/theme'
 
 const StyledReactModal = styled(
   ReactModal,
-  compose(position, color, shadowVariant, widthVariant, zIndex)
+  compose(shadow, position, color, widthVariant, zIndex)
 )
 
 const _css = {
@@ -47,7 +47,8 @@ const Modal = ({
       appElement={document.getElementById('root')}
       onAfterOpen={onOpen}
       onRequestClose={canDismiss ? onDismiss : () => {}}
-      shadowVariant="modal"
+      boxShadow="0 0px 6px"
+      color="modalShadow"
       backgroundColor="background.0"
       css={overrideCss || [_css].concat(concatCss)}
       overlayRef={onOverlayRef}

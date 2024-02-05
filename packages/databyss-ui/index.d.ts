@@ -9,6 +9,7 @@ import React, {
   ReactNode,
   KeyboardEvent,
   MouseEvent,
+  Ref,
 } from 'react'
 import {
   SpaceProps,
@@ -65,10 +66,13 @@ export interface ViewProps
   shadowVariant?: string
   widthVariant?: string
   wrapVariant?: string
+  hoverColor?: string
   dropzone?: boolean | DropzoneProps
 }
 
 declare const View: RefForwardingFC<PropsWithChildren<ViewProps>>
+
+declare const Viewport: RefForwardingFC<PropsWithChildren<ViewProps>>
 
 export interface ScrollViewProps extends ViewProps {
   /**
@@ -143,6 +147,11 @@ declare const KeyboardNavigationProvider: FC<PropsWithChildren<
   KeyboardNavigationProps
 >>
 
+export interface ListHandle {
+  getActiveIndex: () => number
+  setActiveIndex: (index: number) => void
+}
+
 export interface ListProps extends ViewProps, KeyboardNavigationProps {
   horizontalItemPadding?: ReactText
   horizontalItemMargin?: ReactText
@@ -150,6 +159,7 @@ export interface ListProps extends ViewProps, KeyboardNavigationProps {
   verticalItemMargin?: ReactText
   removeBorderRadius?: boolean
   keyboardNavigation?: boolean
+  handlesRef?: Ref<ListHandle>
 }
 
 declare const List: FC<PropsWithChildren<ListProps>>
@@ -182,11 +192,14 @@ export interface BaseControlProps extends ViewProps {
   onPress?: (e: MouseEvent | KeyboardEvent) => void
   href?: string
   target?: string
-  handle?: MutableRefObject<ControlHandle>
+  handle?: MutableRefObject<ControlHandle | null>
   noFeedback?: boolean
   childViewProps?: ViewProps
   onKeyDown?: (e: KeyboardEvent) => void
   draggable?: boolean | Partial<DraggableItem>
+  renderAsView?: boolean
+  focusVisible?: boolean
+  focusActive?: boolean
 }
 
 declare const BaseControl: RefForwardingFC<PropsWithChildren<BaseControlProps>>
@@ -227,6 +240,7 @@ declare const Button: RefForwardingFC<PropsWithChildren<ButtonProps>>
 export interface TextInputProps extends TextProps {
   value?: Partial<TextInterface>
   onChange?: (value: TextInterface) => void
+  onKeyDown?: (event: KeyboardEvent) => void
   multiline?: boolean
   active?: boolean
   concatCss?: CSSObject
@@ -234,6 +248,7 @@ export interface TextInputProps extends TextProps {
   autoFocus?: boolean
   placeholder?: string
   maxRows?: number
+  autoSize?: boolean
 }
 
 declare const TextInput: RefForwardingFC<TextInputProps>
@@ -253,6 +268,9 @@ export interface TextControlProps extends BaseControlProps, ControlLabelProps {
   focusOnMount?: boolean
   css?: InterpolationWithTheme<any>
   dataTestId?: string
+  value: TextInterface
+  onChange?: (value: TextInterface) => void
+  inputProps?: TextInputProps
 }
 
 declare const TextControl: FC<TextControlProps>

@@ -10,6 +10,7 @@ export async function toCitation(
     const citation = await formatCitation(csl, options)
     return citation
   } catch (err) {
+    console.error('[Citation] error formatting citation', err)
     return '[citation unavailable]'
   }
 }

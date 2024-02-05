@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, forwardRef } from 'react'
+import React, { useRef, useCallback, forwardRef, useMemo } from 'react'
 import {
   space,
   layout,
@@ -156,14 +156,7 @@ const desktopCss = (props) => ({
     : {}),
 })
 
-const Styled = styled(
-  {
-    ios: 'View',
-    android: 'View',
-    default: 'div',
-  },
-  styleProps
-)
+const Styled = styled('div', styleProps)
 
 const ActiveDropzoneOverlay = () => (
   <Styled
@@ -204,56 +197,36 @@ const DropzoneChild = forwardRef(({ children, dropzone, ...others }, ref) => {
 })
 
 const View = forwardRef(
-  ({ children, onLayout, dropzone, theme, css, ...others }, ref) => {
-    const viewRef = useRef(null)
-    const clientRect = {}
-    const _onLayout = useCallback(
-      (_clientRect) => {
-        if (onLayout && !fastCompare(_clientRect, clientRect)) {
-          onLayout(clientRect)
-        }
-        Object.assign(clientRect, _clientRect)
-      },
-      [clientRect]
-    )
-    const nativeProps = {
-      onLayout: () =>
-        onLayout &&
-        viewRef &&
-        viewRef.current &&
-        viewRef.current.measure((x, y, width, height) =>
-          _onLayout({ x, y, width, height })
-        ),
-    }
-
+  ({ children, dropzone, theme, css, ...others }, ref) => {
     const ChildContainer = dropzone ? DropzoneChild : Styled
 
-    // fixes white space in scroll bar when using external mouse
-    const view = (_theme) => (
-      <ChildContainer
-        ref={forkRef(viewRef, ref)}
-        {...defaultProps}
-        {...(IS_NATIVE ? nativeProps : {})}
-        css={[
-          !IS_NATIVE && desktopResetCss,
-          !IS_NATIVE && applyTheme(desktopCss(others))(_theme),
-          css,
-        ]}
-        theme={_theme}
-        {...others}
-        dropzone={dropzone}
-      >
-        {children}
-      </ChildContainer>
-    )
+    return useMemo(() => {
+      // fixes white space in scroll bar when using external mouse
+      const view = (_theme) => (
+        <ChildContainer
+          ref={ref}
+          {...defaultProps}
+          css={[
+            !IS_NATIVE && desktopResetCss,
+            !IS_NATIVE && applyTheme(desktopCss(others))(_theme),
+            css,
+          ]}
+          theme={_theme}
+          {...others}
+          dropzone={dropzone}
+        >
+          {children}
+        </ChildContainer>
+      )
 
-    if (theme) {
-      return <ThemeProvider theme={theme}>{view(theme)}</ThemeProvider>
-    }
+      if (theme) {
+        return <ThemeProvider theme={theme}>{view(theme)}</ThemeProvider>
+      }
 
-    return (
-      <ThemeContext.Consumer>{(_theme) => view(_theme)}</ThemeContext.Consumer>
-    )
+      return (
+        <ThemeContext.Consumer>{(_theme) => view(_theme)}</ThemeContext.Consumer>
+      )
+    }, [children, css, others])
   }
 )
 

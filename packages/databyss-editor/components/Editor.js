@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { Slate, Editable, ReactEditor } from '@databyss-org/slate-react'
-import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { Text, Node, Editor as SlateEditor } from '@databyss-org/slate'
 import { useSearchContext } from '@databyss-org/ui/hooks'
 import styledCss from '@styled-system/css'
+import { withTheme } from 'emotion-theming'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
 import { validURL } from '@databyss-org/services/lib/util'
 import { useScrollMemory } from '@databyss-org/ui'
+import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import { TitleElement } from './TitleElement'
 import { Leaf } from './Leaf'
@@ -15,7 +16,6 @@ import FormatMenu from './FormatMenu'
 import { isSelectionCollapsed } from '../lib/clipboardUtils'
 import { convertSelectionToLink } from '../lib/inlineUtils/setPageLink'
 import { createHighlightRanges, createLinkRangesForUrls } from '../lib/util'
-import { BlockType } from '../interfaces'
 
 const Editor = ({
   children,
@@ -27,21 +27,18 @@ const Editor = ({
   firstBlockIsTitle,
   selection,
   editorRef,
+  theme,
   ...others
 }) => {
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
   )
   const searchTerm = useSearchContext((c) => c && c.searchTerm)
-
-  // preloads source and topic cache to be used by the suggest menu
-  // TODO: consolidate to 1 subscription
-  useBlocksInPages(BlockType.Embed)
-  useBlocksInPages(BlockType.Source)
-  useBlocksInPages(BlockType.Topic)
-  useBlocksInPages(BlockType._ANY)
-
-  const { copy, paste, cut, embedPaste, state } = useEditorContext()
+  const editorContext = useEditorContext()
+  const setLastBlockRendered = useEditorPageContext(
+    (c) => c && c.setLastBlockRendered
+  )
+  const { copy, paste, cut, embedPaste, state } = editorContext
 
   // check if paste is an embed or regular paste
   const pasteEventHandler = (e) => {
@@ -64,13 +61,30 @@ const Editor = ({
   }
 
   const readOnly = !others.onChange || readonly
-  const renderElement = useCallback((props) => {
-    const { element } = props
-    if (firstBlockIsTitle && element.isTitle) {
-      return <TitleElement {...props} />
-    }
-    return <Element readOnly={readOnly} {...props} />
-  }, [])
+  const renderElement = useCallback(
+    (props) => {
+      const { element } = props
+      if (firstBlockIsTitle && element.isTitle) {
+        return <TitleElement {...props} />
+      }
+      const blockIndex = ReactEditor.findPath(editor, element)[0]
+      const block = state.blocks[blockIndex]
+      return (
+        <Element
+          key={`${blockIndex}-${block._id}`}
+          readOnly={readOnly}
+          block={block}
+          blockIndex={blockIndex}
+          editorContext={editorContext}
+          editor={editor}
+          searchTerm={searchTerm}
+          setLastBlockRendered={setLastBlockRendered}
+          {...props}
+        />
+      )
+    },
+    [searchTerm, editor, editorContext, readOnly]
+  )
 
   const renderLeaf = useCallback(
     (props) => (
@@ -78,9 +92,10 @@ const Editor = ({
         {...props}
         readOnly={readOnly}
         onInlineClick={onInlineAtomicClick}
+        theme={theme}
       />
     ),
-    [searchTerm]
+    [searchTerm, theme]
   )
 
   const { onKeyDown, ...slateProps } = others
@@ -92,7 +107,7 @@ const Editor = ({
       if (
         node?.inlineEmbedInput ||
         node?.embed ||
-        node?.link ||
+        // node?.link ||
         node?.inlineLinkInput
       ) {
         return ranges
@@ -163,6 +178,7 @@ const Editor = ({
         {children}
         {!readonly && <FormatMenu />}
         <Editable
+          key={theme.name}
           onCopy={(e) => {
             e.preventDefault()
             copy(e)
@@ -199,8 +215,8 @@ const Editor = ({
         />
       </Slate>
     ),
-    [editor, selection, searchTerm, readOnly]
+    [editor, selection, searchTerm, readOnly, theme]
   )
 }
 
-export default Editor
+export default withTheme(Editor)

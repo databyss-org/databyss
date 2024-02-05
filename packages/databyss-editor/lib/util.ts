@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _, { isArray } from 'lodash'
 import cloneDeep from 'clone-deep'
 import {
   Block,
@@ -7,6 +7,9 @@ import {
   IndexPageResult,
   Range,
   BlockReference,
+  Page,
+  Document,
+  Text,
 } from '@databyss-org/services/interfaces'
 import { urlSafeName, validUriRegex } from '@databyss-org/services/lib/util'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
@@ -42,6 +45,24 @@ const getInlineAtomicFromBlock = (
   )
   return _inlineRanges
 }
+
+export const blockTypeToInlineType = (
+  blockType: BlockType
+): InlineTypes | null =>
+  ({
+    [BlockType.Embed]: InlineTypes.Embed,
+    [BlockType.Link]: InlineTypes.Link,
+    [BlockType.Source]: InlineTypes.InlineSource,
+    [BlockType.Topic]: InlineTypes.InlineTopic,
+  }[blockType] ?? null)
+
+export const inlineTextFromBlock = (doc: Document): Text =>
+  ({
+    [BlockType.Embed]: (doc as Block).text,
+    [BlockType.Link]: { textValue: (doc as Page).name, ranges: [] },
+    [BlockType.Source]: (doc as Source).name,
+    [BlockType.Topic]: (doc as Block).text,
+  }[(doc as Block).type])
 
 export const getInlineAtomicType = (
   type: InlineTypes | string
@@ -228,9 +249,8 @@ export const getPagePath = (page: EditorState): PagePath => {
 
   _currentAtomics.reverse().forEach((_block) => {
     if (!_block.closed) {
-      _path.push(
-        `${getBlockPrefix(_block.type)} ${stateBlockToHtmlHeader(_block)}`
-      )
+      const _text = (_block as Source).name?.textValue ?? _block.text.textValue
+      _path.push(`${getBlockPrefix(_block.type)} ${_text}`)
     }
   })
 
@@ -433,8 +453,16 @@ export function stemMatch(
   )
 }
 
-export function createHighlightRanges(text: string, searchTerms: SearchTerm[]) {
-  const _ranges: Range[] = []
+export interface HighlightRangeIgnoreOptions {
+  currentRanges: Range[]
+  ignoreInlineId: string
+}
+export function createHighlightRanges(
+  text: string,
+  searchTerms: SearchTerm[],
+  options?: HighlightRangeIgnoreOptions
+) {
+  const _rangesDict: { [key: string]: Range } = {}
 
   // normalize diacritics
   const _normalizedText = unorm(text)
@@ -449,22 +477,32 @@ export function createHighlightRanges(text: string, searchTerms: SearchTerm[]) {
 
     for (const match of matches) {
       if (!stemMatch(term, match, text)) {
-        // console.log(
-        //   '[CRH] skipping',
-        //   match[0],
-        //   stemmer(match[0]),
-        //   stemmer(term.original)
-        // )
         continue
       }
-      _ranges.push({
-        offset: match.index!,
-        length: match[0].length,
+      // skip highlighting ranges that coincide with specified inline atomic id
+      if (
+        options &&
+        options.currentRanges.find(
+          (r) =>
+            // r.offset === match.index! - 1 &&
+            match.index! > r.offset &&
+            match.index! < r.offset + r.length &&
+            isArray(r.marks[0]) &&
+            r.marks[0][1] === options.ignoreInlineId
+        )
+      ) {
+        continue
+      }
+      const offset = match.index!
+      const length = match[0].length
+      _rangesDict[`${offset}:${length}`] = {
+        offset,
+        length,
         marks: [RangeType.Highlight],
-      })
+      }
     }
   })
-  return _ranges
+  return Object.values(_rangesDict)
 }
 
 export interface InlineAtomicDef {

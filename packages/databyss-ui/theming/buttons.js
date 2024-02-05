@@ -57,9 +57,15 @@ const buttonVariants = {
     borderRadius,
     backgroundColor: 'gray.6',
   },
+  uiTextButtonOutlined: {
+    py: 'tiny',
+    px: 'small',
+    borderRadius,
+    ...border(1, 'text.3'),
+  },
   uiLink: {
     padding: space.none,
-    color: 'secondary.3',
+    color: 'blue.2',
     textDecoration: 'underline',
   },
   formatButton: {
@@ -103,6 +109,10 @@ const buttonThemes = {
   uiTextButtonShaded: {
     hoverColor: 'gray.5',
     pressedColor: 'gray.4',
+  },
+  uiTextButtonOutlined: {
+    hoverColor: 'background.1',
+    pressedColor: 'background.2',
   },
   externalLink: {},
   formatButton: {

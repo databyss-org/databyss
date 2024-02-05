@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/data",
-  "version": "2.9.0",
+  "version": "3.1.3",
   "description": "Library for working with persistent storage and replication of databyss entities",
   "main": "index.js",
   "repository": {
@@ -15,10 +15,11 @@
   "private": false,
   "peerDependencies": {
     "@cloudant/cloudant": "^4.3.0",
-    "@databyss-org/data": "2.9.0",
-    "@databyss-org/editor": "2.9.0",
-    "@databyss-org/services": "2.9.0",
-    "@databyss-org/ui": "2.9.0",
+    "@databyss-org/data": "3.1.3",
+    "@databyss-org/desktop": "3.1.3",
+    "@databyss-org/editor": "3.1.3",
+    "@databyss-org/services": "3.1.3",
+    "@databyss-org/ui": "3.1.3",
     "cloudant-upsert": "^0.11.1",
     "es-event-emitter": "^1.3.9",
     "immer": "^6.0.5",
@@ -28,11 +29,12 @@
     "pouchdb-find": "7.3.0",
     "pouchdb-quick-search": "^1.3.0",
     "pouchdb-upsert": "^2.2.0",
-    "react": "16.9.0",
+    "react": "18.2.0",
     "transform-pouch": "^1.1.5",
     "tv4": "^1.3.0"
   },
   "dependencies": {
+    "@tanstack/react-query": "5.17.19",
     "@types/content-disposition": "^0.5.5",
     "@types/pouchdb": "^6.4.0",
     "axios": "^1.2.3",
@@ -46,7 +48,6 @@
     "p-cancelable": "^2.1.0",
     "pouchdb": "7.3.0",
     "pouchdb-find": "7.3.0",
-    "@tanstack/react-query": "^4.29.11",
     "stemmer": "^2.0.0"
   }
 }

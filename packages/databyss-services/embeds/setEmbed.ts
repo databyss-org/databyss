@@ -1,22 +1,20 @@
-import equal from 'fast-deep-equal'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
-import {
-  getDocument,
-  upsert,
-  upsertImmediate,
-} from '@databyss-org/data/pouchdb/utils'
-import { updateInlines } from '@databyss-org/editor/lib/inlineUtils/updateInlines'
-import { InlineTypes } from '../interfaces/Range'
+import { upsertImmediate } from '@databyss-org/data/pouchdb/utils'
 import { Embed, BlockType } from '../interfaces/Block'
+import { InlineTypes } from '../interfaces/Range'
+import { selectors } from '@databyss-org/data/pouchdb/selectors'
+import { queryClient } from '../lib/queryClient'
 
-export const setEmbed = async (data: Embed, immediate?: boolean) => {
-  const { text, detail, _id, sharedWithGroups } = data as any
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
+
+export const setEmbed = async (data: Embed) => {
+  const { text, detail, _id } = data as any
 
   const blockFields = {
     _id,
     text,
     detail,
-    sharedWithGroups,
     doctype: DocumentType.Block,
     type: BlockType.Embed,
   }
@@ -27,24 +25,22 @@ export const setEmbed = async (data: Embed, immediate?: boolean) => {
     doc: blockFields,
   }
 
-  console.log('[setEmbed]', _id, sharedWithGroups)
+  // console.log('[setEmbed]', blockFields)
 
-  const _prevEmbed: Embed | null = await getDocument(_id)
-
-  if (immediate) {
-    await upsertImmediate(upsertData)
-  } else {
-    await upsert(upsertData)
-  }
-
-  if (
-    _prevEmbed &&
-    (_prevEmbed.text?.textValue !== text?.textValue ||
-      !equal(_prevEmbed.detail, detail))
+  // update caches
+  ;[selectors.EMBEDS, selectors.BLOCKS].forEach((selector) =>
+    queryClient.setQueryData([selector], (oldData: any) => ({
+      ...(oldData ?? {}),
+      [_id]: blockFields,
+    }))
   )
-    await updateInlines({
-      inlineType: InlineTypes.Embed,
-      text,
-      _id,
-    })
+  queryClient.setQueryData([`useDocument_${_id}`], blockFields)
+
+  await upsertImmediate(upsertData)
+
+  eapi.db.updateInlines({
+    inlineType: InlineTypes.Embed,
+    text,
+    _id,
+  })
 }

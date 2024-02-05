@@ -1,10 +1,10 @@
 import cloneDeep from 'clone-deep'
+import { mergeText } from '@databyss-org/services/text/mergeText'
 import { EditorState, Point, Block } from '../../interfaces'
 import {
   isSelectionCollapsed,
   sortSelection,
   splitTextAtOffset,
-  mergeText,
   makeEmptyBlock,
 } from './'
 import { isAtomicInlineType } from '../util'

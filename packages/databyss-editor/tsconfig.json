@@ -4,10 +4,12 @@
     "./**/*",
     "../databyss-services/interfaces/range.ts",
     "../databyss-services/interfaces/text.ts",
+    "../databyss-services/text/splitTextAtOffset.ts"
   ],
   "compilerOptions": {
     "composite": true,
+    "rootDir": "../"
   },
   "references": [],
-  "outDir": "dist",
+  "outDir": "dist"
 }

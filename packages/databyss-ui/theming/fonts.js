@@ -1,44 +1,19 @@
-import { Platform } from 'react-native'
+export const serif = 'PT Serif, serif'
 
-export const serif = Platform.select({
-  ios: 'Baskerville',
-  android: 'serif',
-  default: 'PT Serif, serif',
-})
+export const sans = 'Source Sans Pro, sans-serif'
 
-export const sans = Platform.select({
-  ios: 'System',
-  android: 'sans-serif',
-  default: 'Source Sans Pro, sans-serif',
-})
+export const mono =
+  'SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace'
 
-export const mono = Platform.select({
-  ios: '"American Typewriter"',
-  android: 'monospace',
-  default: 'SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace',
-})
+export const pxUnits = (v) => `${v}px`
 
-export const pxUnits = Platform.select({
-  ios: (v) => v,
-  android: (v) => v,
-  default: (v) => `${v}px`,
-})
+export const weightUnits = (v) => v
 
-export const weightUnits = Platform.select({
-  ios: (v) => `${v}`,
-  android: (v) => `${v}`,
-  default: (v) => v,
-})
-
-export const underline = Platform.select({
-  ios: { textDecorationLine: 'underline' },
-  android: { textDecorationLine: 'underline' },
-  default: {
-    textDecoration: 'underline',
-    textDecorationSkipInk: 'none',
-    textDecorationSkip: 'none',
-  },
-})
+export const underline = {
+  textDecoration: 'underline',
+  textDecorationSkipInk: 'none',
+  textDecorationSkip: 'none',
+}
 
 const fonts = {
   sans,
@@ -76,6 +51,7 @@ const headingVariants = {
 }
 
 const uiTextVariants = {
+  uiTextExtraLarge: uiText(28),
   uiTextLarge: uiText(22),
   uiTextMedium: uiText(18),
   uiTextNormal: uiText(16),

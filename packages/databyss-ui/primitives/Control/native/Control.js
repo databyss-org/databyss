@@ -1,8 +1,7 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react'
+import React, { forwardRef, useImperativeHandle, useMemo, useRef } from 'react'
 import css from '@styled-system/css'
-import { ThemeContext } from '@emotion/core'
 import forkRef from '@databyss-org/ui/lib/forkRef'
-import Color from 'color'
+import { withTheme } from 'emotion-theming'
 import View, {
   styleProps,
   defaultProps,
@@ -10,7 +9,7 @@ import View, {
 } from '../../View/View'
 import styled from '../../styled'
 import { isMobileOs } from '../../../lib/mediaQuery'
-import { borderRadius, timing } from '../../../theming/theme'
+import  { borderRadius, timing } from '../../../theming/theme'
 
 const resetProps = {
   padding: 0,
@@ -31,32 +30,46 @@ const viewProps = {
   ...defaultProps,
 }
 
-const controlCssDesktop = (props, theme) => ({
+const controlCssDesktop = (props) => ({
   cursor: 'pointer',
   transition: `background-color ${timing.flash}ms ${timing.ease}`,
   ...(props.active
     ? {
         backgroundColor: props.activeColor,
       }
-    : {
+    : {}),
+  ...(!props.focusVisible
+    ? {
         '&[data-focusvisible-polyfill]': {
-          borderStyle: 'solid',
-          borderColor: 'primary.0',
-          borderRadius,
-          boxShadow: `0 0 0 5px ${Color(
-            css({ color: 'primary.0' })(theme).color
-          )
-            .alpha(0.6)
-            .rgb()
-            .string()}`,
+          outlineStyle: 'solid',
+          outlineWidth: '1.5px',
+          outlineColor: 'primary.0',
+          outlineOffset: '-3px',
+          // borderRadius,
         },
-        '&:hover': {
-          backgroundColor: props.hoverColor,
-        },
-        '&:active': {
-          backgroundColor: props.pressedColor,
+      }
+    : {
+        '&:focus': {
+          outlineStyle: 'solid',
+          outlineWidth: '1.5px',
+          outlineColor: 'primary.0',
+          outlineOffset: '-3px',
+          // borderRadius,
         },
       }),
+  ...(props.focusActive
+    ? {
+        '&:focus': {
+          backgroundColor: props.activeColor,
+        },
+      }
+    : {}),
+  '&:hover:not(:focus)': {
+    backgroundColor: props.hoverColor,
+  },
+  '&:active': {
+    backgroundColor: props.pressedColor,
+  },
 })
 
 const controlCssMobile = () => ({
@@ -69,7 +82,8 @@ const controlCssMobile = () => ({
 const controlCss = (props) => ({
   position: props.position ?? 'relative',
   userSelect: props.userSelect,
-  borderWidth: '1px',
+  // borderWidth: props.borderWidth ?? 0,
+  // marginRight: props.marginRight ?? '1px',
   textDecoration: 'none',
   '&:active': {
     backgroundColor: props.pressedColor,
@@ -104,6 +118,7 @@ const Control = forwardRef(
       href,
       handle,
       draggable,
+      theme,
       ...others
     },
     ref
@@ -120,47 +135,51 @@ const Control = forwardRef(
     const StyledComponent = renderAsView ? View : StyledControl
     /* eslint-disable-next-line */
     const { css: _, ...filteredOthers } = others
-    return (
-      <ThemeContext.Consumer>
-        {(theme) => (
-          <StyledComponent
-            ref={forkRef(ref, _childRef)}
-            tabIndex={0}
-            onClick={(e) => {
-              if (disabled) {
-                return
-              }
-              if (e.getModifierState && e.getModifierState('Meta')) {
-                return
-              }
-              if (onPress) {
-                onPress(e)
-              }
-            }}
-            {...(draggable ? {} : { onDragStart: (e) => e.preventDefault() })}
-            {...(renderAsView ? {} : viewProps)}
-            css={[
-              !renderAsView && resetCss,
-              css(controlCss(others))(theme),
-              _mobile && css(controlCssMobile(others))(theme),
-              !_mobile && desktopResetCss,
-              !_mobile && css(controlCssDesktop(others, theme))(theme),
-              draggable && {
-                // note this is necessary to remove extra junk around the edges of the
-                // drag preview. see: https://github.com/react-dnd/react-dnd/issues/788#issuecomment-393620979
-                transform: 'translate(0, 0)',
-                cursor: 'grab',
-              },
-            ]}
-            href={href}
-            disabled={disabled}
-            {...filteredOthers}
-          >
-            {children}
-          </StyledComponent>
-        )}
-      </ThemeContext.Consumer>
-    )
+    const _computedCss = useMemo(() => ([
+      !renderAsView && resetCss,
+      css(controlCss(others))(theme),
+      _mobile && css(controlCssMobile(others))(theme),
+      !_mobile && desktopResetCss,
+      !_mobile && css(controlCssDesktop(others, theme))(theme),
+      draggable && {
+        // note this is necessary to remove extra junk around the edges of the
+        // drag preview. see: https://github.com/react-dnd/react-dnd/issues/788#issuecomment-393620979
+        transform: 'translate(0, 0)',
+        cursor: 'grab',
+      },
+    ]), [
+      theme,
+      renderAsView,
+      others.active, 
+      others.focusVisible, 
+      others.focusActive, 
+      others.css
+    ])
+    return useMemo(() => (
+      <StyledComponent
+        ref={forkRef(ref, _childRef)}
+        tabIndex={0}
+        onClick={(e) => {
+          if (disabled) {
+            return
+          }
+          if (e.getModifierState && e.getModifierState('Meta')) {
+            return
+          }
+          if (onPress) {
+            onPress(e)
+          }
+        }}
+        {...(draggable ? {} : { onDragStart: (e) => e.preventDefault() })}
+        {...(renderAsView ? {} : viewProps)}
+        css={_computedCss}
+        href={href}
+        disabled={disabled}
+        {...filteredOthers}
+      >
+        {children}
+      </StyledComponent>
+    ), [_computedCss, filteredOthers, children])
   }
 )
 
@@ -172,4 +191,4 @@ Control.defaultProps = {
   userSelect: 'none',
 }
 
-export default Control
+export default withTheme(Control)

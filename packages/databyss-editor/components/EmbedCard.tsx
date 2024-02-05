@@ -2,7 +2,11 @@ import React, { useState } from 'react'
 import { BaseControl, View, Text, Button, Icon } from '@databyss-org/ui'
 import PlaySvg from '@databyss-org/ui/assets/play.svg'
 import { MediaTypes } from '@databyss-org/services/interfaces/Block'
+import { LoadingFallback } from '@databyss-org/ui/components'
 import { isHttpInsecure } from './EmbedMedia'
+
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
 
 export interface EmbedCardProps {
   src: string
@@ -26,9 +30,24 @@ export const EmbedCard = React.memo(
     ...others
   }: EmbedCardProps) => {
     const [mediaActive, setMediaActive] = useState(false)
+    if (!src) {
+      return <LoadingFallback />
+    }
+    let _src = src
+    if (eapi && src.includes('media/proxy')) {
+      _src = decodeURIComponent(src.split('url=')[1])
+    }
+    let _mediaSrc = mediaSrc
+    if (eapi && mediaSrc?.includes('media/proxy')) {
+      _mediaSrc = decodeURIComponent(mediaSrc.split('url=')[1])
+    }
+    let _imageSrc = imageSrc
+    if (eapi && imageSrc?.includes('media/proxy')) {
+      _imageSrc = decodeURIComponent(imageSrc.split('url=')[1])
+    }
     return (
       <View
-        backgroundColor="gray.6"
+        backgroundColor="background.2"
         p="small"
         {...others}
         // opacity={process.env.NODE_ENV === 'production' ? 1 : 0.5}
@@ -36,25 +55,25 @@ export const EmbedCard = React.memo(
         {mediaType !== MediaTypes.IMAGE && (
           <>
             {mediaType !== MediaTypes.INSTAGRAM && title ? (
-              <Text variant="uiTextSmall" color="gray.3" userSelect="none">
-                {siteName ?? formatHostname(src)}
+              <Text variant="uiTextSmall" color="text.2" userSelect="none">
+                {siteName ?? formatHostname(_src)}
               </Text>
             ) : (
               <Button
                 variant="uiLink"
                 textVariant="uiTextSmall"
-                textColor="blue.0"
-                href={src}
+                textColor="blue.2"
+                href={_src}
                 target="_blank"
               >
-                {siteName ?? formatHostname(src)}
+                {siteName ?? formatHostname(_src)}
               </Button>
             )}
             {mediaType !== MediaTypes.INSTAGRAM && (
               <Button
                 variant="uiLink"
-                textColor="blue.0"
-                href={src}
+                textColor="blue.2"
+                href={_src}
                 target="_blank"
                 mb="small"
               >
@@ -63,12 +82,15 @@ export const EmbedCard = React.memo(
             )}
           </>
         )}
-        {description && (
+        {/* TODO: if we want description, render as styled textarea 
+                  to avoid the cursor jumping problem */}
+        {/* {description && (
           <View mb="small">
-            <Text variant="uiTextMultiline">{description}</Text>
+              <Text variant="uiTextMultiline">{description}</Text> 
+              <textarea readOnly>{description}</textarea> 
           </View>
-        )}
-        {imageSrc && (
+        )} */}
+        {_imageSrc && (
           <View
             height={
               mediaType === MediaTypes.IMAGE ||
@@ -78,14 +100,14 @@ export const EmbedCard = React.memo(
                 : '250px'
             }
             title={title}
-            backgroundColor="gray.0"
+            backgroundColor="background.3"
             justifyContent="center"
             alignItems="center"
             style={
               mediaActive
                 ? {}
                 : {
-                    backgroundImage: `url(${imageSrc})`,
+                    backgroundImage: `url(${encodeURI(_imageSrc)})`,
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'contain',
                     backgroundPosition: 'center center',
@@ -95,9 +117,9 @@ export const EmbedCard = React.memo(
             {mediaActive ? (
               <iframe
                 seamless
-                id={mediaSrc}
-                title={mediaSrc}
-                src={`${mediaSrc}?autoplay=1`}
+                id={_mediaSrc}
+                title={_mediaSrc}
+                src={`${_mediaSrc}?autoplay=1`}
                 allow="autoplay"
                 frameBorder="0px"
                 width="100%"
@@ -106,7 +128,7 @@ export const EmbedCard = React.memo(
               />
             ) : (
               <>
-                {mediaSrc && (
+                {_mediaSrc && (
                   <View
                     backgroundColor="#00000055"
                     position="absolute"
@@ -121,7 +143,7 @@ export const EmbedCard = React.memo(
                   </View>
                 )}
                 <img
-                  src={imageSrc}
+                  src={_imageSrc}
                   alt={title}
                   style={{
                     opacity: 0,
@@ -139,7 +161,7 @@ export const EmbedCard = React.memo(
             )}
           </View>
         )}
-        {mediaType === MediaTypes.WEBSITE && !imageSrc && (
+        {mediaType === MediaTypes.WEBSITE && !_imageSrc && (
           <iframe
             src={proxySrc(src)}
             height="350px"
@@ -159,7 +181,7 @@ function formatHostname(src: string) {
 }
 
 function proxySrc(src: string) {
-  if (isHttpInsecure(src)) {
+  if (!eapi && isHttpInsecure(src)) {
     return `${process.env.API_URL}/media/proxy?url=${encodeURIComponent(src!)}`
   }
   return src

@@ -1,58 +1,70 @@
-export class NetworkUnavailableError extends Error {
-  constructor(message = 'Network Unavailable') {
+type DatabyssErrorName =
+  | 'NetworkUnavailableError'
+  | 'UnexpectedServerError'
+  | 'NotAuthorizedError'
+  | 'ResourceNotFoundError'
+  | 'InvalidRequestError'
+  | 'InsufficientPermissionError'
+  | 'VersionConflictError'
+  | 'UnauthorizedDatabaseReplication'
+
+export class DatabyssError extends Error {
+  name: DatabyssErrorName
+
+  constructor(message: string, name: DatabyssErrorName) {
     super()
     this.message = message
+    this.name = name
   }
 }
 
-export class UnexpectedServerError extends Error {
+export class NetworkUnavailableError extends DatabyssError {
+  constructor(message = 'Network Unavailable') {
+    super(message, 'NetworkUnavailableError')
+  }
+}
+
+export class UnexpectedServerError extends DatabyssError {
   info: any
 
   constructor(message = 'Unexpected Server Error', response: any) {
-    super()
-    this.message = message
+    super(message, 'UnexpectedServerError')
     this.info = response
   }
 }
 
-export class NotAuthorizedError extends Error {
+export class NotAuthorizedError extends DatabyssError {
   constructor(message = 'Not Authorized') {
-    super()
-    this.message = message
+    super(message, 'NotAuthorizedError')
   }
 }
 
-export class ResourceNotFoundError extends Error {
+export class ResourceNotFoundError extends DatabyssError {
   constructor(message = 'Resource Not Found') {
-    super()
-    this.message = message
+    super(message, 'ResourceNotFoundError')
   }
 }
 
-export class InvalidRequestError extends Error {
+export class InvalidRequestError extends DatabyssError {
   constructor(message = 'InvalidRequest') {
-    super()
-    this.message = message
+    super(message, 'InvalidRequestError')
   }
 }
 
-export class InsufficientPermissionError extends Error {
+export class InsufficientPermissionError extends DatabyssError {
   constructor(message = 'Not Authorized') {
-    super()
-    this.message = message
+    super(message, 'InsufficientPermissionError')
   }
 }
 
-export class VersionConflictError extends Error {
+export class VersionConflictError extends DatabyssError {
   constructor(message = 'Version Conflict') {
-    super()
-    this.message = message
+    super(message, 'VersionConflictError')
   }
 }
 
-export class UnauthorizedDatabaseReplication extends Error {
+export class UnauthorizedDatabaseReplication extends DatabyssError {
   constructor(message = '[Error]') {
-    super()
-    this.message = `${message} Unauthorized Database Replication`
+    super(message, 'UnauthorizedDatabaseReplication')
   }
 }

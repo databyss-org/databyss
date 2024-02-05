@@ -18,12 +18,13 @@ import {
 import Bugsnag, { BrowserConfig } from '@bugsnag/js'
 import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
-import { checkNetwork } from '@databyss-org/services/lib/request'
+// import { checkNetwork } from '@databyss-org/services/lib/request'
 import { cleanupGroupFromUrl } from '@databyss-org/services/session/clientStorage'
 import { pauseSync, startSync } from '@databyss-org/data/drivedb/sync'
 import IS_NATIVE from '../../lib/isNative'
 import StickyMessage from './StickyMessage'
 import { UnauthorizedDatabaseReplication } from '../../../databyss-services/interfaces/Errors'
+import { appCommands } from '../../lib/appCommands'
 
 declare module '@bugsnag/plugin-react' {
   export const formatComponentStack: (str: string) => string
@@ -146,12 +147,14 @@ class NotifyProvider extends React.Component {
     window.addEventListener('unhandledrejection', this.onUnhandledError)
 
     // poll for online status
-    this.checkOnlineStatusTimer = window.setInterval(
-      this.checkOnlineStatus,
-      parseInt(process.env.FETCH_TIMEOUT!, 10) || 5000
-    )
-    this.checkOnlineStatus()
+    // this.checkOnlineStatusTimer = window.setInterval(
+    //   this.checkOnlineStatus,
+    //   parseInt(process.env.FETCH_TIMEOUT!, 10) || 5000
+    // )
+    // this.checkOnlineStatus()
     // }
+    appCommands.addListener('notify', this.notify)
+    appCommands.addListener('hideNotify', this.hideDialog)
   }
   state: NotifyProviderState = {
     dialog: initialDialogState,
@@ -166,10 +169,10 @@ class NotifyProvider extends React.Component {
     return { hasError: true }
   }
 
-  componentDidMount() {
-    // check for service worker cache updates
-    this.checkForUpdates()
-  }
+  // componentDidMount() {
+  //   // check for service worker cache updates
+  //   this.checkForUpdates()
+  // }
 
   componentDidCatch(error, info) {
     this.onUnhandledError(error, info)
@@ -181,9 +184,11 @@ class NotifyProvider extends React.Component {
       window.removeEventListener('online', this.setOnlineStatus)
       window.removeEventListener('error', this.onUnhandledError)
       window.removeEventListener('unhandledrejection', this.onUnhandledError)
+      appCommands.removeListener('notify', this.notify)
+      appCommands.removeListener('hideNotify', this.hideDialog)
       // window.removeEventListener('focus', this.onWindowFocus)
 
-      window.clearInterval(this.checkOnlineStatusTimer)
+      // window.clearInterval(this.checkOnlineStatusTimer)
     }
   }
 
@@ -267,7 +272,7 @@ class NotifyProvider extends React.Component {
     })
   }
 
-  checkOnlineStatusTimer: number
+  // checkOnlineStatusTimer: number
 
   notifyUpdateAvailable = () => {
     this.notifySticky({
@@ -296,25 +301,25 @@ class NotifyProvider extends React.Component {
     })
   }
 
-  checkForUpdates = () => {
-    if (
-      process.env.NODE_ENV !== 'production' ||
-      !('serviceWorker' in navigator)
-    ) {
-      return
-    }
-    navigator.serviceWorker.ready.then((reg) => {
-      reg.addEventListener('updatefound', this.notifyUpdateAvailable)
+  // checkForUpdates = () => {
+  //   if (
+  //     process.env.NODE_ENV !== 'production' ||
+  //     !('serviceWorker' in navigator)
+  //   ) {
+  //     return
+  //   }
+  //   navigator.serviceWorker.ready.then((reg) => {
+  //     reg.addEventListener('updatefound', this.notifyUpdateAvailable)
 
-      window.setInterval(
-        () =>
-          reg.update().catch((err) => {
-            console.log('reg.update error', err)
-          }),
-        parseInt(process.env.VERSION_POLL_INTERVAL!, 10) || 300000
-      )
-    })
-  }
+  //     window.setInterval(
+  //       () =>
+  //         reg.update().catch((err) => {
+  //           console.log('reg.update error', err)
+  //         }),
+  //       parseInt(process.env.VERSION_POLL_INTERVAL!, 10) || 300000
+  //     )
+  //   })
+  // }
 
   showUnhandledErrorDialog = () => {
     this.notify({
@@ -323,11 +328,11 @@ class NotifyProvider extends React.Component {
     })
   }
 
-  checkOnlineStatus = () => {
-    checkNetwork().then((isOnline) => {
-      this.setOnlineStatus(isOnline)
-    })
-  }
+  // checkOnlineStatus = () => {
+  //   checkNetwork().then((isOnline) => {
+  //     this.setOnlineStatus(isOnline)
+  //   })
+  // }
 
   notify = (options: DialogOptions) => {
     this.setState({
@@ -441,7 +446,10 @@ class NotifyProvider extends React.Component {
     if (process.env.NODE_ENV === 'test' || process.env.STORYBOOK) {
       return
     }
-    ;(window as any).stopdatabyss()
+    const win = window as any
+    if (typeof win.stopdatabyss === 'function') {
+      win.stopdatabyss()
+    }
     this.setState({
       hideApplication: false,
     })

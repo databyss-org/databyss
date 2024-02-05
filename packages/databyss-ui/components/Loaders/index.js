@@ -9,6 +9,9 @@ import { useQueryClient } from '@tanstack/react-query'
 export const EditorPageLoader = ({ children, pageId, firstBlockIsTitle }) => {
   const { getPage, removePageFromCache } = useEditorPageContext()
   const queryClient = useQueryClient()
+  const navigateToDefaultPage = useSessionContext(
+    (c) => c && c.navigateToDefaultPage
+  )
 
   const onLoad = (page) => {
     queryClient.setQueryData([`useDocument_${page._id}`], page)
@@ -19,6 +22,7 @@ export const EditorPageLoader = ({ children, pageId, firstBlockIsTitle }) => {
       children={children}
       onUnload={() => removePageFromCache(pageId)}
       onLoad={onLoad}
+      onError={navigateToDefaultPage}
     />
   )
 }

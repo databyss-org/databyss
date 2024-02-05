@@ -7,15 +7,13 @@ import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import ReferencesSvg from '@databyss-org/ui/assets/references.svg'
-import GroupsImg from '@databyss-org/ui/assets/logo-thick.png'
+import FolderSvg from '@databyss-org/ui/assets/folder-open.svg'
 import MediaSvg from '@databyss-org/ui/assets/play.svg'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { usePageReferences } from '@databyss-org/data/pouchdb/hooks'
 import { darkTheme } from '../../theming/theme'
-import { sidebar } from '../../theming/components'
 
 const SidebarCollapsed = () => {
   const {
@@ -29,6 +27,7 @@ const SidebarCollapsed = () => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const activeItem = getSidebarPath()
   const pageReferencesRes = usePageReferences(pageId)
+  // const [showDatabyssMenu, setShowDatabyssMenu] = useState(false)
 
   const onItemClick = (item) => {
     if (!isMenuOpen) {
@@ -42,19 +41,19 @@ const SidebarCollapsed = () => {
   const isIconButtonActive = (item) => activeItem === item.name && isMenuOpen
 
   const sideBarCollapsedItems = [
-    {
-      name: 'groups',
-      title: 'Collections',
-      icon: <img src={GroupsImg} />,
-      sizeVariant: 'large',
-      onClick: () => (!isPublicAccount() ? onItemClick('groups') : () => null),
-      ...(isPublicAccount()
-        ? {
-            href: 'https://www.databyss.org',
-            target: '_blank',
-          }
-        : {}),
-    },
+    // {
+    //   name: 'databyss',
+    //   title: 'Databyss',
+    //   icon: <img src={DatabyssImg} />,
+    //   sizeVariant: 'large',
+    //   height: pxUnits(58),
+    //   bg: 'gray.1',
+    //   onClick: () => {
+    //     setShowDatabyssMenu(!showDatabyssMenu)
+    //   },
+    //   hamburger: true,
+    //   pt: pxUnits(12),
+    // },
     {
       name: 'search',
       title: 'Search',
@@ -66,6 +65,13 @@ const SidebarCollapsed = () => {
       title: 'Pages',
       icon: <PagesSvg />,
       onClick: () => onItemClick('pages'),
+    },
+    {
+      name: 'groups',
+      title: 'Collections',
+      icon: <FolderSvg />,
+      sizeVariant: 'large',
+      onClick: () => onItemClick('groups'),
     },
     {
       name: 'sources',
@@ -109,39 +115,28 @@ const SidebarCollapsed = () => {
   }
 
   return (
-    <View
-      theme={darkTheme}
-      bg="background.1"
-      borderRightColor="border.1"
-      borderRightWidth={pxUnits(1)}
-      width={sidebar.collapsedWidth}
-    >
-      <List
-        mt={pxUnits(2)}
-        verticalItemPadding={2}
-        horizontalItemPadding={1}
-        py="none"
-        flexGrow={1}
-      >
-        {sideBarCollapsedItems.map((item, i) => (
-          <SidebarIconButton
-            name={item.name}
-            key={item.name}
-            title={item.title}
-            icon={item.icon}
-            badgeText={item.badgeText}
-            isActive={isIconButtonActive(item)}
-            onClick={item.onClick}
-            seperatorTop={
-              sideBarCollapsedItems.length === i + 1 && !isPublicAccount()
-            }
-            href={item.href}
-            target={item.target}
-          />
-        ))}
-      </List>
-      <Footer collapsed />
-    </View>
+    <>
+      <View theme={darkTheme} bg="background.1">
+        <List
+          verticalItemPadding={2}
+          horizontalItemPadding={1}
+          py="none"
+          flexGrow={1}
+        >
+          {sideBarCollapsedItems.map((item, i) => (
+            <SidebarIconButton
+              key={item.name}
+              isActive={isIconButtonActive(item)}
+              seperatorTop={
+                sideBarCollapsedItems.length === i + 1 && !isPublicAccount()
+              }
+              {...item}
+            />
+          ))}
+        </List>
+        <Footer collapsed />
+      </View>
+    </>
   )
 }
 

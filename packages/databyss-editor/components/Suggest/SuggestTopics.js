@@ -57,6 +57,7 @@ const SuggestTopics = ({
       .map(weightedSearch(query))
       .filter(prefixSearchAll(query))
       .sort((a, b) => (a.weight < b.weight ? 1 : -1))
+      .slice(0, 20)
   }
 
   const updateSuggestions = () => {
@@ -102,6 +103,7 @@ const SuggestTopics = ({
   }
   if (!suggestions) {
     setSuggestions(Object.values(topicsRes.data))
+    return <LoadingFallback />
   }
 
   return (

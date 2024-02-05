@@ -1,9 +1,9 @@
-import React, { forwardRef } from 'react'
-import { Platform } from 'react-native'
+import React, { forwardRef, useCallback, useMemo } from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import Control, { ControlNoFeedback } from './native/Control'
+import Control from './native/Control'
 import DraggableControl from './native/DraggableControl'
 import { View } from '../'
+import { useNavigate } from 'react-router-dom'
 
 /**
  * Base Control component that handles disabled state
@@ -14,7 +14,7 @@ const BaseControl = forwardRef(
       onPress,
       children,
       disabled,
-      noFeedback,
+      // noFeedback,
       childViewProps,
       href,
       target,
@@ -25,22 +25,19 @@ const BaseControl = forwardRef(
     ref
   ) => {
     // may not exist
-    const navigationContext = useNavigationContext()
+    // const navigate = useNavigationContext((c) => c && c.navigate)
+    const navigate = useNavigate()
 
-    // may not exist
+    const Styled = draggable ? DraggableControl : Control
 
-    const Styled = Platform.select({
-      ios: disabled || noFeedback ? ControlNoFeedback : Control,
-      android: disabled || noFeedback ? ControlNoFeedback : Control,
-      default: draggable ? DraggableControl : Control,
-    })
+    const _children = disabled 
+      ? React.Children.map(
+        children,
+        (child) => child && React.cloneElement(child, { disabled })
+      ) 
+      : children
 
-    const _children = React.Children.map(
-      children,
-      (child) => child && React.cloneElement(child, { disabled })
-    )
-
-    const _onPress = (event) => {
+    const _onPress = useCallback((event) => {
       if (!disabled && typeof onPress === 'function') {
         onPress(event)
       }
@@ -50,16 +47,16 @@ const BaseControl = forwardRef(
         !target &&
         !href.match(/^http/) &&
         !event.defaultPrevented &&
-        navigationContext
+        navigate
       ) {
         event.preventDefault()
         if (!disabled) {
-          navigationContext.navigate(href)
+          navigate(href)
         }
       }
-    }
+    }, [onPress, disabled, href, target, navigate])
 
-    return (
+    return useMemo(() => (
       <Styled
         onPress={disabled ? null : _onPress}
         onKeyDown={onKeyDown}
@@ -75,7 +72,7 @@ const BaseControl = forwardRef(
           {_children}
         </View>
       </Styled>
-    )
+    ), [_children])
   }
 )
 

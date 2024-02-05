@@ -1,6 +1,14 @@
+import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
+
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
+
 export const getAccountFromLocation = (
   withName: boolean = false
 ): string | boolean => {
+  if (eapi) {
+    return dbRef.groupId ?? false
+  }
   if (process.env.STORYBOOK) {
     return 'STORYBOOK'
   }

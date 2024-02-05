@@ -6,7 +6,7 @@ import {
   Author,
 } from '@databyss-org/services/interfaces'
 import { DocumentType } from '../../interfaces'
-import { findAll } from '../../utils'
+import { findAll } from '../../crudUtils'
 
 const getAuthors = async (): Promise<Author[] | ResourceNotFoundError> => {
   const _sources: SourceCitationHeader[] = await findAll({

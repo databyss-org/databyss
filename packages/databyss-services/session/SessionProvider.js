@@ -15,7 +15,7 @@ import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvi
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { UNTITLED_NAME } from '@databyss-org/services/groups'
-import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
+import { isMobile, isMobileOs } from '@databyss-org/ui/lib/mediaQuery'
 import StickyMessage from '@databyss-org/ui/components/Notify/StickyMessage'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
@@ -31,7 +31,7 @@ import { hasUnathenticatedAccess } from './actions'
 import { NetworkUnavailableError } from '../interfaces'
 import { sleep, urlSafeName } from '../lib/util'
 import { getAccountFromLocation } from './utils'
-import { useDatabaseContext } from '../lib/DatabaseProvder'
+import { useDatabaseContext } from '../lib/DatabaseProvider'
 import { sortEntriesByRecent } from '../entries/util'
 
 const useReducer = createReducer()
@@ -52,6 +52,7 @@ const SessionProvider = ({
   code,
   email,
   unauthorizedChildren,
+  isLocalSession,
 }) => {
   const [state, dispatch, stateRef] = useReducer(reducer, initialState, {
     name: 'SessionProvider',
@@ -59,11 +60,25 @@ const SessionProvider = ({
   const { notify } = useNotifyContext()
   const location = useNavigationContext((c) => c && c.location)
   const navigate = useNavigationContext((c) => c && c.navigate)
-  const { updateCouchMode, setCouchMode } = useDatabaseContext()
+  const getSidebarPath = useNavigationContext((c) => c && c.getSidebarPath)
+  const navigateSidebar = useNavigationContext((c) => c && c.navigateSidebar)
+  const { updateDatabaseStatus, setCouchMode } = useDatabaseContext()
   const groupRes = useGroups({
     enabled: !!dbRef.current && !!state.session?.publicAccount,
   })
   const queryClient = useQueryClient()
+
+  const localSession = {
+    user: {
+      email: 'local@user.com',
+    },
+    account: {
+      _id: dbRef.groupId,
+    },
+    defaultGroupId: dbRef.groupId.startsWith('g_')
+      ? dbRef.groupId
+      : `g_${dbRef.groupId}`,
+  }
 
   const isPublicAccount = useCallback(() => {
     if (state.session.publicAccount?._id) {
@@ -73,6 +88,9 @@ const SessionProvider = ({
   }, [state.session?.publicAccount])
 
   const getUserAccount = useCallback(() => {
+    if (isLocalSession) {
+      return localSession.user
+    }
     if (state.userInfo) {
       return state.userInfo
     }
@@ -81,6 +99,9 @@ const SessionProvider = ({
   }, [state.userInfo])
 
   const getCurrentAccount = useCallback(() => {
+    if (isLocalSession) {
+      return localSession.account._id
+    }
     if (state.session.publicAccount?._id) {
       return state.session.publicAccount._id
     }
@@ -93,6 +114,9 @@ const SessionProvider = ({
   // - `googleToken` if we're logging in with Google oAuth
   const getSession = useCallback(
     ({ retry, ...credentials } = {}) => {
+      if (isLocalSession) {
+        return localSession
+      }
       if (state.session && !retry) {
         return state.session
       }
@@ -106,7 +130,12 @@ const SessionProvider = ({
     [state.session]
   )
 
-  const endSession = () => dispatch(actions.endSession())
+  const endSession = () => {
+    if (isLocalSession) {
+      return
+    }
+    dispatch(actions.endSession())
+  }
 
   useEffect(() => {
     if (state.session instanceof NetworkUnavailableError) {
@@ -133,7 +162,7 @@ const SessionProvider = ({
           groupId,
           queryClient,
           onReplicationComplete: (_res) => {
-            updateCouchMode()
+            updateDatabaseStatus()
             if (_res) {
               // set up live sync
               syncPouchDb({
@@ -163,7 +192,7 @@ const SessionProvider = ({
           queryClient,
           groupId: _publicSession.belongsToGroup,
           isPublicGroup: true,
-          onReplicationComplete: () => updateCouchMode(),
+          onReplicationComplete: () => updateDatabaseStatus(),
         })
       } else {
         // try to get public access
@@ -180,7 +209,7 @@ const SessionProvider = ({
             queryClient,
             groupId: unauthenticatedGroupId,
             isPublicGroup: true,
-            onReplicationComplete: () => updateCouchMode(),
+            onReplicationComplete: () => updateDatabaseStatus(),
           })
           _publicSession = await localStorageHasPublicSession(3)
         }
@@ -222,7 +251,13 @@ const SessionProvider = ({
       }
     }
 
-    if (!state.sesson) {
+    if (isLocalSession) {
+      console.log('[SessionProvider] local session')
+      state.session = localSession
+      // dbRef.current = vouchDbRef.current
+    }
+
+    if (state.sesson === null) {
       _init()
     }
   }, [state.sessionIsStored])
@@ -261,6 +296,9 @@ const SessionProvider = ({
     }
   }
   useEffect(() => {
+    if (isLocalSession) {
+      return
+    }
     if (isPublicAccount()) {
       _updatePublicGroupInUrl()
     } else {
@@ -301,6 +339,10 @@ const SessionProvider = ({
   }
 
   const logout = useCallback(() => {
+    if (isLocalSession) {
+      console.warn('[Session] not implemented in local session: logout')
+      return
+    }
     dispatch(actions.logout())
   }, [actions.logout])
 
@@ -308,6 +350,9 @@ const SessionProvider = ({
    * checks on window focus if user should be forced logged out
    */
   const shouldForceLogout = () => {
+    if (localSession) {
+      return
+    }
     if (
       !(state.session instanceof ResourcePending) &&
       !document.hidden &&
@@ -322,13 +367,17 @@ const SessionProvider = ({
   window.addEventListener('focus', shouldForceLogout)
 
   const setDefaultPage = useCallback((id) => {
+    if (isLocalSession) {
+      console.warn('[Session] not implemented in local session: setDefaultPage')
+      return
+    }
     dispatch(actions.onSetDefaultPage(id))
   }, [])
 
   const getDefaultPage = useCallback(
     (pages) => {
       const _pinning = stateRef.current.session?.publicAccount
-      console.log('[getDefaultPage]', _pinning)
+      // console.log('[getDefaultPage]', _pinning)
       return sortEntriesByRecent(Object.values(pages), null, _pinning).filter(
         (p) => !p.archive
       )[0]
@@ -336,25 +385,42 @@ const SessionProvider = ({
     [stateRef.current]
   )
 
-  const getDefaultPageUrl = useCallback(
-    ({ pages, defaultGroupName, defaultGroupId }) => {
-      let _groupName = ''
-      if (defaultGroupName) {
-        _groupName = `${urlSafeName(defaultGroupName)}-`
-      }
-      const defaultPage = getDefaultPage(pages)
-      const pageUrl = `${defaultPage._id}/${urlSafeName(defaultPage.name)}`
-      return `/${_groupName}${defaultGroupId.substring(2)}/pages/${pageUrl}`
-    },
-    []
-  )
+  const getDefaultPageUrl = useCallback(({ pages, defaultGroupId }) => {
+    // let _groupName = ''
+    // if (defaultGroupName) {
+    //   _groupName = `${urlSafeName(defaultGroupName)}-`
+    // }
+    const defaultPage = getDefaultPage(pages)
+    const pageUrl = `${defaultPage._id}/${urlSafeName(defaultPage.name)}`
+    // return `/${_groupName}${defaultGroupId.substring(2)}/pages/${pageUrl}`
+    return `/${defaultGroupId}/pages/${pageUrl}`
+  }, [])
 
   const navigateToDefaultPage = useCallback(
     async (replace = true) => {
+      const _lastRoute = await eapi.state.get('lastRoute')
+      // console.log(
+      //   '[SessionProvider] lastRoute',
+      //   _lastRoute,
+      //   state.session.defaultGroupId
+      // )
+      if (
+        _lastRoute?.includes(state.session.defaultGroupId) &&
+        _lastRoute !== location.pathname
+      ) {
+        navigate(_lastRoute)
+        navigateSidebar(getSidebarPath(true))
+        return
+      }
+
       while (!state.session.defaultGroupId) {
         await sleep(100)
       }
-      const { defaultGroupName, defaultGroupId } = state.session
+      // console.log(
+      //   '[SessionProvider] defaultGroupId',
+      //   state.session.defaultGroupId
+      // )
+      const { defaultGroupId } = state.session
 
       // return most recently accessed page
       let pages = null
@@ -363,12 +429,12 @@ const SessionProvider = ({
         pages = queryClient.getQueryData([selectors.PAGES])
       } while (!pages)
 
-      navigate(getDefaultPageUrl({ pages, defaultGroupName, defaultGroupId }), {
+      navigate(getDefaultPageUrl({ pages, defaultGroupId }), {
         hasAccount: true,
         replace,
       })
     },
-    [getDefaultPage, state.session]
+    [getDefaultPage, state.session, location]
   )
 
   useEffect(() => {
@@ -376,7 +442,7 @@ const SessionProvider = ({
       actions.setReadOnly(
         dbRef.readOnly ||
           isPublicAccount() ||
-          !!isMobile() ||
+          !!isMobileOs() ||
           window.location.search.includes('__readonly')
       )
     )

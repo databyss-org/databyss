@@ -10,13 +10,8 @@ import {
 import { sleep } from '@databyss-org/services/lib/util'
 import { Document } from '@databyss-org/services/interfaces'
 import { DocumentType, PageDoc } from '../interfaces'
-import {
-  upsertImmediate,
-  findOne,
-  findAll,
-  getDocument,
-  getDocuments,
-} from '../utils'
+import { upsertImmediate, getDocuments } from '../utils'
+import { findOne, findAll, getDocument } from '../crudUtils'
 import {
   Block,
   BlockRelation,
@@ -29,6 +24,7 @@ import {
   dbRef,
   MakePouchReplicationErrorHandler,
   REMOTE_CLOUDANT_URL,
+  selectors,
 } from '../db'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import {
@@ -42,6 +38,7 @@ import {
   createDatabaseCredentials,
   validateGroupCredentials,
 } from '../../../databyss-services/editorPage/index'
+import { queryClient } from '@databyss-org/services/lib/queryClient'
 
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
@@ -375,20 +372,29 @@ export const replicateGroup = async ({
   })
 }
 
-export const setGroup = async (group: Group, pageId?: string) => {
+export const setGroup = async (group: Group) => {
   // if pageId is passed, crawl pageId and append group id to all documents associated with the page
-  if (pageId) {
-    addPageToGroup({ pageId, groupId: group._id })
-  }
+  // if (pageId) {
+  //   addPageToGroup({ pageId, groupId: group._id })
+  // }
 
   // prevent duplicates
-  group.pages = removeDuplicatesFromArray(group.pages)
+  if (group.pages) {
+    group.pages = removeDuplicatesFromArray(group.pages)
+  }
 
   // append property in order for replicated group to get group metadata
   await addGroupToDocument([group._id], {
     ...group,
     doctype: DocumentType.Group,
   })
+
+  // update caches
+  queryClient.setQueryData([selectors.GROUPS], (oldData: any) => ({
+    ...(oldData ?? {}),
+    [group._id]: group,
+  }))
+  queryClient.setQueryData([`useDocument_${group._id}`], group)
 
   await upsertImmediate({
     doctype: DocumentType.Group,

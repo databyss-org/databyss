@@ -1,5 +1,6 @@
 import React, {
   forwardRef,
+  KeyboardEvent,
   ReactElement,
   useCallback,
   useEffect,
@@ -23,10 +24,19 @@ interface TitleInputProps {
   placeholder?: string
   readonly?: boolean
   icon?: ReactElement
+  onKeyDown?: (evt: KeyboardEvent) => void
 }
 
 export const TitleInput = forwardRef<HTMLElement, TitleInputProps>(
-  ({ placeholder, autoFocus, value, onChange, icon, ...others }, ref) => {
+  ({ 
+    placeholder, 
+    autoFocus, 
+    value, 
+    onChange, 
+    icon, 
+    onKeyDown, 
+    ...others 
+  }, ref) => {
     const inputRef = useRef<HTMLElement>(null)
     useEffect(() => {
       if (!autoFocus || !inputRef) {
@@ -43,6 +53,17 @@ export const TitleInput = forwardRef<HTMLElement, TitleInputProps>(
       (value: Text) =>
         onChange!(value.textValue === '' ? placeholder! : value.textValue),
       [onChange]
+    )
+
+    const onTextInputKeyDown = useCallback(
+      (event: KeyboardEvent) => {
+        if (event.key === 'Enter') {
+          event.preventDefault()
+        }
+        if (onKeyDown) {
+          onKeyDown(event)
+        }
+      }, [onKeyDown]
     )
 
     let _value = value
@@ -69,6 +90,7 @@ export const TitleInput = forwardRef<HTMLElement, TitleInputProps>(
           ref={forkRef(inputRef, ref)}
           value={{ textValue: _value }}
           onChange={onTextInputChange}
+          onKeyDown={onTextInputKeyDown}
           placeholder={placeholder}
           variant="bodyHeading1"
           color="text.3"

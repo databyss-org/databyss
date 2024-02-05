@@ -1,4 +1,10 @@
-import React, { useMemo, useRef, useEffect, useImperativeHandle } from 'react'
+import React, {
+  useMemo,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+  useCallback,
+} from 'react'
 import {
   createEditor,
   Node,
@@ -10,10 +16,14 @@ import { EM, updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { setSource } from '@databyss-org/services/sources'
 import { setEmbed } from '@databyss-org/services/embeds'
-import { setBlockRelations } from '@databyss-org/services/entries'
 import { setTopic } from '@databyss-org/data/pouchdb/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { copyToClipboard } from '@databyss-org/ui/components/PageContent/PageMenu'
+import { useQueryClient } from '@tanstack/react-query'
+import { blockTypeToSelector } from '@databyss-org/data/pouchdb/selectors'
+import { setBlockRelations } from '@databyss-org/data/pouchdb/entries'
+import { appCommands } from '@databyss-org/ui/lib/appCommands'
+
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -68,7 +78,7 @@ const ContentEditable = ({
   const editorContext = useEditorContext()
   const editorRef = useRef(null)
   const { navigate } = useNavigationContext()
-
+  const queryClient = useQueryClient()
   const historyContext = useHistoryContext()
 
   const {
@@ -88,6 +98,18 @@ const ContentEditable = ({
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
+  const safelyResetSelection = () => {
+    const _selection = {
+      anchor: { index: 0, offset: 0 },
+      focus: { index: 0, offset: 0 },
+    }
+    const _slateSelection = stateSelectionToSlateSelection(
+      editor.children,
+      _selection
+    )
+    Transforms.select(editor, _slateSelection)
+  }
+
   try {
     if (!valueRef.current || state.operations.reloadAll) {
       let _scroll = null
@@ -95,17 +117,24 @@ const ContentEditable = ({
         _scroll = editorRef.current?.scrollTop
       }
       editor.children = stateToSlate(state)
+      Transforms.select(editor, { path: [0, 0], offset: 0 })
       // load selection from DB
       if (state.selection) {
         const selection = stateSelectionToSlateSelection(
           editor.children,
           state.selection
         )
-
-        Transforms.select(editor, selection)
-
         if (!state.operations.reloadAll) {
+          Transforms.select(editor, selection)
           setSelection(state.selection)
+        } else if (!Range.isCollapsed(selection)) {
+          Transforms.move(editor, { distance: 1 })
+          Transforms.move(editor, { distance: 0 })
+          requestAnimationFrame(() => {
+            Transforms.select(editor, selection)
+          })
+        } else {
+          Transforms.select(editor, selection)
         }
       }
       if (_scroll) {
@@ -129,7 +158,7 @@ const ContentEditable = ({
         _id: e._id,
         page: state.pageHeader?._id,
       }
-      setBlockRelations(_payload)
+      setBlockRelations(_payload, queryClient)
     })
   }, [state.removedEntities])
 
@@ -166,25 +195,21 @@ const ContentEditable = ({
           })
         }
 
-        const _types = {
-          SOURCE: () => {
-            if (_data) {
+        if (_data) {
+          const _types = {
+            SOURCE: () => {
               window.requestAnimationFrame(() => setSource(_data))
-            }
-          },
-          TOPIC: () => {
-            if (_data) {
+            },
+            TOPIC: () => {
               window.requestAnimationFrame(() => setTopic(_data))
-            }
-          },
-          EMBED: () => {
-            if (_data) {
+            },
+            EMBED: () => {
               window.requestAnimationFrame(() => setEmbed(_data))
-            }
-          },
-          LINK: () => null,
+            },
+            LINK: () => null,
+          }
+          _types[entity.type.toUpperCase()]()
         }
-        _types[entity.type.toUpperCase()]()
 
         // set BlockRelation property
         const _payload = {
@@ -194,9 +219,13 @@ const ContentEditable = ({
           page: state.pageHeader?._id,
         }
 
-        updateAccessedAt(entity._id)
+        updateAccessedAt(
+          entity._id,
+          queryClient,
+          blockTypeToSelector(entity.type)
+        )
 
-        setBlockRelations(_payload)
+        setBlockRelations(_payload, queryClient)
         removeEntityFromQueue(entity._id)
       })
     }
@@ -267,6 +296,27 @@ const ContentEditable = ({
   const onInlineAtomicClick = (inlineData) => {
     navigate(getInlineAtomicHref(inlineData))
   }
+
+  const undo = useCallback(() => {
+    if (historyContext) {
+      historyContext.undo()
+    }
+  }, [historyContext])
+
+  const redo = useCallback(() => {
+    if (historyContext) {
+      historyContext.redo()
+    }
+  }, [historyContext])
+
+  useEffect(() => {
+    appCommands.addListener('undo', undo)
+    appCommands.addListener('redo', redo)
+    return () => {
+      appCommands.removeListener('undo', undo)
+      appCommands.removeListener('redo', redo)
+    }
+  }, [appCommands])
 
   return useMemo(() => {
     const onChange = (value) => {
@@ -901,16 +951,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
     const onFocus = () => {
       setTimeout(() => {
         if (!editor.selection) {
-          const _selection = {
-            anchor: { index: 0, offset: 0 },
-            focus: { index: 0, offset: 0 },
-          }
-          const _slateSelection = stateSelectionToSlateSelection(
-            editor.children,
-            _selection
-          )
-
-          Transforms.select(editor, _slateSelection)
+          safelyResetSelection()
           ReactEditor.focus(editor)
         }
       }, 5)

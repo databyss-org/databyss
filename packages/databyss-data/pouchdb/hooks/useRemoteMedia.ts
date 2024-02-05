@@ -8,16 +8,14 @@ export const useRemoteMedia = (
 ) => {
   const queryKey = [`media-${url}`]
 
-  const query = useQuery(
+  const query = useQuery({
     queryKey,
-    async () => {
+    queryFn: async () => {
       const _res = await httpPost('/media/remote', { url })
       return _res
     },
-    {
-      enabled: options.enabled,
-    }
-  )
+    enabled: options.enabled,
+  })
 
   return query
 }

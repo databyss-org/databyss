@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren, useEffect } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import { useNavigate, useLocation } from 'react-router-dom'
 import createReducer from '@databyss-org/services/lib/createReducer'
@@ -13,6 +13,9 @@ import {
   NavigationState,
   PathTokens,
 } from './interfaces'
+
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('../../../../databyss-desktop/src/eapi').default
 
 interface ContextType extends NavigationState {
   location: Location
@@ -34,6 +37,7 @@ export const NavigationContext = createContext<ContextType>(null!)
 
 const sidebarItemAliases = {
   collections: 'groups',
+  embeds: 'media',
 }
 
 interface PropsType {
@@ -48,12 +52,29 @@ export const NavigationProvider = ({
     name: 'NavigationProvider',
   })
 
+  useEffect(() => {
+    eapi.state.get('sidebarVisible').then((visible) => {
+      dispatch(actions.menuOpen(visible))
+    })
+  }, [])
+
   const location = useLocation()
+
+  if (eapi) {
+    const _path = location.pathname.split('/')
+    if (_path.length > 3) {
+      // console.log('[NavigationProvider] set lastRoute', location.pathname)
+      eapi.state.set('lastRoute', location.pathname)
+    }
+  }
 
   const navigateRouter = useNavigate()
 
   const showModal = (options) => dispatch(actions.showModal(options))
-  const setMenuOpen = (bool) => dispatch(actions.menuOpen(bool))
+  const setMenuOpen = (bool) => {
+    eapi.state.set('sidebarVisible', bool)
+    dispatch(actions.menuOpen(bool))
+  }
 
   const hideModal = () => dispatch(actions.hideModal())
   const navigate = (url, options) => {
@@ -73,8 +94,12 @@ export const NavigationProvider = ({
     navigateRouter(_url, { replace })
   }
 
-  const navigateSidebar = (options) =>
+  const navigateSidebar = (options) => {
+    if (eapi) {
+      eapi.state.set('lastSidebarRoute', options)
+    }
     dispatch(actions.navigateSidebar(options))
+  }
 
   const getQueryParams = () => location.search
 
@@ -110,11 +135,13 @@ export const NavigationProvider = ({
     return { type, params, anchor, author, nice }
   }
 
-  const getSidebarPath = () => {
-    const _path = state.sidebarPath.split('/')
-    const type = _path[1]
-    if (type) {
-      return type
+  const getSidebarPath = (derive?: boolean) => {
+    if (!derive) {
+      const _path = state.sidebarPath.split('/')
+      const type = _path[1]
+      if (type) {
+        return type
+      }
     }
 
     // determine path from location

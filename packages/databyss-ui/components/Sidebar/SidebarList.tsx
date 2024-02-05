@@ -1,4 +1,12 @@
-import React, { PropsWithChildren, ReactNode, useState } from 'react'
+import React, {
+  PropsWithChildren,
+  ReactNode,
+  Ref,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import {
   SidebarListItemData,
   useNavigationContext,
@@ -16,7 +24,7 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import MediaSvg from '@databyss-org/ui/assets/play.svg'
-import GroupSvg from '@databyss-org/ui/assets/logo-thick.svg'
+import GroupSvg from '@databyss-org/ui/assets/folder-closed.svg'
 import {
   ScrollView,
   List,
@@ -30,6 +38,7 @@ import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { unorm } from '@databyss-org/data/couchdb/couchdb'
 import { SidebarHeaderButton } from './SidebarHeaderButton'
+import { ListHandle } from '../..'
 
 export interface SidebarListProps
   extends ScrollViewProps,
@@ -38,6 +47,10 @@ export interface SidebarListProps
   keyboardNavigation?: boolean
   heading?: string
   prependItems?: SidebarListItemData<any>[]
+  handlesRef?: Ref<ListHandle>
+  showSubitemToggles?: boolean
+  onItemPressed?: (item: SidebarListItemData, index: number) => void
+  showRecentAllToggle?: boolean
 }
 
 const menuSvgs: { [key: string]: ReactNode } = {
@@ -65,16 +78,25 @@ const SidebarList = ({
   onItemSelected,
   heading,
   prependItems,
+  handlesRef,
+  showSubitemToggles,
+  onItemPressed,
+  showRecentAllToggle,
   ...others
 }: PropsWithChildren<SidebarListProps>) => {
-  const { getAccountFromLocation, navigate } = useNavigationContext()
+  const {
+    getAccountFromLocation,
+    navigate,
+    getSidebarPath,
+  } = useNavigationContext()
   const location = useLocation()
   const account = getAccountFromLocation(true)
-  const [showAll, setShowAll] = useState<boolean>(false)
+  const [showAll, setShowAll] = useState<boolean>(!showRecentAllToggle)
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([])
+  const scrollViewRef = useRef<any | null>(null)
+  const getHref = (item: SidebarListItemData) => `/${account}${item.route}`
 
-  const getHref = (item: SidebarListItemData<any>) => `/${account}${item.route}`
-
-  const getActiveItem = (item: SidebarListItemData<any>) => {
+  const getActiveItem = (item: SidebarListItemData) => {
     // if we're using keyboard navigation, that takes precedence
     if (keyboardNavigation && keyboardEventsActive) {
       return false
@@ -82,15 +104,25 @@ const SidebarList = ({
     const _hrefRoute = unorm(getHref(item))
     const _hrefCurrent = unorm(
       `${decodeURI(location.pathname)}${
-        location.search ? `?${location.search}` : ''
+        location.search ? `${location.search}` : ''
       }`
     )
-    // console.log('[SidebarList]', _hrefCurrent, _hrefRoute)
-    return _hrefRoute === _hrefCurrent
+    // ignore differences in nice url by excluding last segment
+    const denicePath = (path: string) => {
+      const parts = path.split('/')
+      return parts.length > 4 ? parts.slice(0, -1).join('/') : path
+    }
+    // console.log(
+    //   '[SidebarList]',
+    //   denicePath(_hrefRoute),
+    //   denicePath(_hrefCurrent)
+    // )
+    return denicePath(_hrefRoute) === denicePath(_hrefCurrent)
   }
 
   const getDraggable = (item: SidebarListItemData<any>) => {
-    if (item.type !== 'page' || !location.pathname.match(/\/collections\//)) {
+    const sidebarPath = getSidebarPath()
+    if (!(sidebarPath === 'group' && item.type === 'page')) {
       return false
     }
     return {
@@ -104,10 +136,28 @@ const SidebarList = ({
    *
    * @param item if valid accountID is not provided, use navigate instead of href for BaseControl
    */
-  const _pressSelector = (item) => ({
+  const _pressItem = (item: SidebarListItemData, index: number, event: Event) => {
+    if (onItemPressed) {
+      onItemPressed(item, index)
+    }
+    if (!showAll && scrollViewRef.current && item.type !== 'author') {
+      scrollViewRef.current.scrollTop = 0
+      // sorry for this jquery hack!
+      setTimeout(() => event.target.closest('a').blur(), 50)
+    }
+  }
+  const _pressSelector = (item: SidebarListItemData, index: number) => ({
     ...(account
-      ? { href: getHref(item) }
-      : { onPress: () => navigate(item.route) }),
+      ? { 
+        href: getHref(item),
+        onPress: (event) => _pressItem(item, index, event)
+      }
+      : { 
+        onPress: (event) => {
+          _pressItem(item, index, event)
+          navigate(item.route) 
+        }
+    })
   })
 
   let _menuItems = [...menuItems]
@@ -130,26 +180,50 @@ const SidebarList = ({
       {
         text: heading,
         type: 'heading',
-        ...(showAll || _menuItems.length < menuItems.length
-          ? {
-              links: [
-                {
-                  label: 'recent',
-                  active: !showAll,
-                  onPress: () => setShowAll(false),
-                },
-                {
-                  label: 'all',
-                  active: showAll,
-                  onPress: () => setShowAll(true),
-                },
-              ],
-            }
-          : {}),
+        ...(showRecentAllToggle &&
+          (showAll || _menuItems.length < menuItems.length)
+            ? {
+                links: [
+                  {
+                    label: 'recent',
+                    active: !showAll,
+                    onPress: () => setShowAll(false),
+                  },
+                  {
+                    label: 'all',
+                    active: showAll,
+                    onPress: () => setShowAll(true),
+                  },
+                ],
+              }
+            : {}
+        ),
       },
       ..._menuItems,
     ]
   }
+
+  const onExpandItem = useCallback(
+    (evt: Event, id: string) => {
+      evt.preventDefault()
+      if (!expandedGroups.includes(id)) {
+        setExpandedGroups(expandedGroups.concat(id))
+      } else {
+        setExpandedGroups(expandedGroups.filter((g) => g !== id))
+      }
+    },
+    [expandedGroups]
+  )
+
+  const _expandedMenuItems: SidebarListItemData[] = []
+  _menuItems.forEach((_item) => {
+    _expandedMenuItems.push({ ..._item, depth: 0 })
+    if (_item.subItems && expandedGroups.includes(_item.data._id)) {
+      _item.subItems.forEach((_subItem, _subIndex) => {
+        _expandedMenuItems.push({ ..._subItem, depth: 1 })
+      })
+    }
+  })
 
   return (
     <ScrollView
@@ -158,7 +232,8 @@ const SidebarList = ({
       flexGrow={1}
       {...others}
       my={0}
-      shadowOnScroll
+      ref={scrollViewRef}
+      // shadowOnScroll
     >
       <List
         orderKey={orderKey}
@@ -170,9 +245,10 @@ const SidebarList = ({
         verticalItemMargin="tiny"
         onItemSelected={onItemSelected}
         py={0}
+        handlesRef={handlesRef}
       >
         {children}
-        {_menuItems.map((item, index) => {
+        {useMemo(() => _expandedMenuItems.map((item, index) => {
           if (!item.text) {
             return null
           }
@@ -206,26 +282,39 @@ const SidebarList = ({
               </View>
             )
           }
+          let _icon = item.icon ? item.icon : menuSvgs[item.type]
+          if (item.depth) {
+            _icon = <View p={pxUnits(1)}>{_icon}</View>
+          }
           return (
             <SidebarListItem
+              depth={item.depth}
               isActive={getActiveItem(item)}
+              data={item.data}
               text={item.text}
-              // href={getHref(item)}
+              href={getHref(item)}
               key={`${item.type}-${index}`}
               draggable={getDraggable(item)}
-              icon={item.icon ? item.icon : menuSvgs[item.type]}
+              icon={_icon}
               iconColor={item.iconColor}
-              {..._pressSelector(item)}
+              expandable={showSubitemToggles && item.type === 'group'}
+              onExpand={(evt) => onExpandItem(evt, item.data._id)}
+              expanded={item.subItems && expandedGroups.includes(item.data._id)}
+              contextMenu={item.contextMenu}
+              dropzone={item.isDropzone ? item.dropzoneProps : undefined}
+              {..._pressSelector(item, index)}
             />
           )
-        })}
-      </List>
+        }), [_expandedMenuItems])}
+      </List> 
     </ScrollView>
   )
 }
 
 SidebarList.defaultProps = {
   height: '100%',
+  showSubitemToggles: true,
+  showRecentAllToggle: true,
 }
 
 export default SidebarList

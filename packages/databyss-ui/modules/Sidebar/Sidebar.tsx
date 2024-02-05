@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+// import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { View, List } from '@databyss-org/ui/primitives'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
-import { Header } from '@databyss-org/ui/components/Sidebar'
+// import { Header } from '@databyss-org/ui/components/Sidebar'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { darkTheme, pxUnits } from '@databyss-org/ui/theming/theme'
 import { sidebar } from '@databyss-org/ui/theming/components'
@@ -12,11 +12,35 @@ import { BlockList, PageList, GroupList } from './lists'
 import { authorsToListItemData } from './transforms'
 import Search from './Search'
 import { ReferencesList } from './lists/ReferencesList'
+import { ResizableColumnView } from '../../primitives/View/ResizableColumnView'
+import { appCommands } from '../../lib/appCommands'
 
-export const Sidebar = () => {
-  const { getSidebarPath, isMenuOpen } = useNavigationContext()
-  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+export const Sidebar = ({
+  onResized,
+  width,
+}: {
+  onResized?: (width: number) => void
+  width: number
+}) => {
+  const {
+    getSidebarPath,
+    isMenuOpen,
+    setMenuOpen,
+    navigateSidebar,
+  } = useNavigationContext()
   const menuItem = getSidebarPath()
+
+  const openMenu = useCallback(() => {
+    navigateSidebar('/search')
+    setMenuOpen(true)
+  }, [setMenuOpen, navigateSidebar])
+
+  useEffect(() => {
+    appCommands.addListener('find', openMenu)
+    return () => {
+      appCommands.removeListener('find', openMenu)
+    }
+  }, [appCommands, openMenu])
 
   /*
   if item active in menuItem, SidebarContent will compose a list to pass to SidebarList
@@ -25,11 +49,13 @@ export const Sidebar = () => {
   return isMenuOpen ? (
     <>
       <SidebarCollapsed />
-      <View
+      <ResizableColumnView
         position="relative"
-        width={sidebar.width}
+        width={width}
         key={`sidebar-key-${menuItem}`}
         overflow="hidden"
+        onResized={onResized}
+        minWidth={sidebar.width}
       >
         <View
           theme={darkTheme}
@@ -38,20 +64,22 @@ export const Sidebar = () => {
           flexShrink={1}
           overflow="hidden"
           css={{ transform: 'translate(0,0)' }}
+          borderLeftColor="border.2"
+          borderLeftWidth={pxUnits(1)}
         >
           <List
-            verticalItemPadding={0}
-            verticalItemMargin={pxUnits(10)}
+            verticalItemPadding={pxUnits(11)}
+            verticalItemMargin={0}
             horizontalItemPadding={0}
             height="100%"
             flexGrow={1}
             flexShrink={1}
-            mt={pxUnits(5)}
+            // mt={pxUnits(5)}
+            py={0}
             overflow="hidden"
           >
-            {/* TODO: on public collections, change name and link it to defaultPage */}
-            {isPublicAccount() && <Header />}
-            <Search />
+            {/* <Header /> */}
+            <Search bg="gray.1" />
             {(menuItem === 'pages' || !menuItem) && <PageList />}
             {menuItem === 'references' && <ReferencesList />}
             {menuItem === 'sources' && (
@@ -79,7 +107,7 @@ export const Sidebar = () => {
             <Footer collapsed={false} />
           </List>
         </View>
-      </View>
+      </ResizableColumnView>
     </>
   ) : (
     <SidebarCollapsed />

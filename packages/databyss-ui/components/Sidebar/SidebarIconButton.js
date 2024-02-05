@@ -7,6 +7,7 @@ import {
   BaseControl,
   Text,
 } from '@databyss-org/ui/primitives'
+import HamburgerSvg from '@databyss-org/ui/assets/hamburger.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { timing } from '@databyss-org/ui/theming/theme'
 
@@ -69,15 +70,16 @@ const SidebarIconButton = ({
   seperatorTop,
   sizeVariant,
   badgeText,
+  hamburger,
   ...others
 }) => (
   <>
     <BaseControl
       data-test-sidebar-element={name}
-      borderTopColor={seperatorTop && 'border.1'}
+      borderTopColor={seperatorTop && 'border.2'}
       alignItems="center"
       onClick={onClick}
-      width="100%"
+      // width="100%"
       position="relative"
       {...others}
     >
@@ -114,6 +116,18 @@ const SidebarIconButton = ({
             {badgeText}
           </Text>
         </View>
+      )}
+      {hamburger && (
+        <Icon
+          position="absolute"
+          zIndex="0"
+          bottom={pxUnits(4)}
+          right={pxUnits(4)}
+          sizeVariant="tiny"
+          color="gray.4"
+        >
+          <HamburgerSvg />
+        </Icon>
       )}
     </BaseControl>
   </>

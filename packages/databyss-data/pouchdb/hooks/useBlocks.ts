@@ -1,7 +1,7 @@
 import { Block, BlockType } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 import { QueryOptions } from '@tanstack/react-query'
-import { selectors } from '../selectors'
+import { blockTypeToSelector, selectors } from '../selectors'
 import { useDocuments } from './useDocuments'
 
 interface UseBlocksOptions extends QueryOptions {
@@ -13,12 +13,7 @@ export const useBlocks = (blockType: BlockType, options?: UseBlocksOptions) => {
   if (options && options.includeIds) {
     _selectorOrIds = [options.includeIds]
   } else {
-    _selectorOrIds = {
-      [BlockType.Embed]: selectors.EMBEDS,
-      [BlockType.Topic]: selectors.TOPICS,
-      [BlockType.Source]: selectors.SOURCES,
-      [BlockType._ANY]: selectors.BLOCKS,
-    }[blockType]
+    _selectorOrIds = blockTypeToSelector(blockType)
   }
   const query = useDocuments<Block>(_selectorOrIds, options)
   return query

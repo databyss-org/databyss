@@ -5,7 +5,7 @@ import { BlockType } from '@databyss-org/editor/interfaces'
 import { SourceCitationHeader } from '@databyss-org/services/interfaces/Block'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { DocumentType } from '../../interfaces'
-import { findAll } from '../../utils'
+import { findAll } from '../../crudUtils'
 
 export type CitationResponse = Partial<SourceCitationHeader> & {
   citation?: string

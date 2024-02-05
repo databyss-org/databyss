@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { CitationStyleOptions } from '@databyss-org/services/citations/constants'
 import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -6,16 +6,11 @@ import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvi
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { DropDownControl } from '@databyss-org/ui/primitives'
-import {
-  filterBibliographyByAuthor,
-  sortBibliography,
-} from '@databyss-org/services/sources/lib'
-
 import { IndexPageView } from './IndexPageContent'
 import { SourcesResults } from './SourcesResults'
 import { pxUnits } from '../../theming/views'
 import styled from '../../primitives/styled'
-import { composeAuthorName } from '../../../databyss-services/sources/lib'
+import { composeAuthorName, filterBibliographyByAuthor } from '../../../databyss-services/sources/lib'
 import { useUserPreferencesContext } from '../../hooks'
 
 // styled components
@@ -34,6 +29,11 @@ export const SourcesContent = () => {
   const [citationStyleOption, setCitationStyleOption] = useState(
     getCitationStyleOption(preferredCitationStyle)
   )
+  const _path = getTokensFromPath()
+  let filterByAuthor
+  if (_path.author) {
+    filterByAuthor = [_path.author.firstName, _path.author.lastName]
+  }
   const sourcesRes = useBibliography({
     formatOptions: {
       styleId: citationStyleOption.id,
@@ -49,25 +49,15 @@ export const SourcesContent = () => {
     return <LoadingFallback queryObserver={sourcesRes} />
   }
 
-  // if author is provided in the url `.../sources?firstName=''&lastName='' render authors
-  let _authorFirstName = null
-  let _authorLastName = null
+  let _bibItems = sourcesRes.data
   let _authorFullName = null
-  const _path = getTokensFromPath()
-  if (_path.author) {
-    _authorFirstName = _path.author.firstName
-    _authorLastName = _path.author.lastName
-    _authorFullName = composeAuthorName(_authorFirstName, _authorLastName)
+  if (filterByAuthor) {
+    _authorFullName = composeAuthorName(filterByAuthor[0], filterByAuthor[1])
+    _bibItems = filterBibliographyByAuthor({
+      items: _bibItems,
+      author: { firstName: filterByAuthor[0], lastName: filterByAuthor[1] },
+    })
   }
-
-  const sortedSources = sortBibliography(Object.values(sourcesRes.data))
-
-  const filteredSources = _authorFullName
-    ? filterBibliographyByAuthor({
-        items: sortedSources,
-        author: { firstName: _authorFirstName, lastName: _authorLastName },
-      })
-    : sortedSources
 
   let _citationStyleOptions = CitationStyleOptions
   // if we're offline, only show the current option and a message to go online
@@ -94,7 +84,8 @@ export const SourcesContent = () => {
         />
       }
     >
-      <SourcesResults entries={filteredSources} />
+      <SourcesResults entries={_bibItems} />
     </IndexPageView>
   )
+  // }, [JSON.stringify(_path), sourcesRes.data])
 }

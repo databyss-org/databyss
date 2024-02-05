@@ -5,16 +5,16 @@ import {
   BaseControl,
   Icon,
   View,
-  Separator,
+  // Separator,
   // Text,
 } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
-import { getAccountFromLocation } from '@databyss-org/services/session/utils'
+// import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
-import LinkSvg from '@databyss-org/ui/assets/link.svg'
+// import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
-import CheckSvg from '@databyss-org/ui/assets/check.svg'
+// import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import HelpSvg from '@databyss-org/ui/assets/help.svg'
 import SaveSvg from '@databyss-org/ui/assets/save.svg'
@@ -23,14 +23,15 @@ import DownloadSvg from '@databyss-org/ui/assets/download.svg'
 // import { saveGroup } from '@databyss-org/services/groups'
 // import { Group } from '@databyss-org/services/interfaces'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
-import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
+// import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { useExportContext } from '@databyss-org/services/export'
-import { urlSafeName } from '@databyss-org/services/lib/util'
+// import { urlSafeName } from '@databyss-org/services/lib/util'
 import LoadingFallback from '../Notify/LoadingFallback'
-import { pxUnits } from '../../theming/views'
+// import { pxUnits } from '../../theming/views'
+import { DropdownList } from '../Menu/DropdownList'
 
 export const exportMenuItems = (exportContext, markdownItems) => [
   {
@@ -81,24 +82,6 @@ export const addMenuFooterItems = (menuItems) => {
   })
 }
 
-export const DropdownList = ({ menuItems }) =>
-  menuItems.map(({ separator, ...menuItem }, idx) =>
-    separator ? (
-      <Separator {...menuItem} key={idx} lineWidth={idx > 0 ? 1 : 0} />
-    ) : (
-      <DropdownListItem
-        {...menuItem}
-        action={menuItem.actionType}
-        onPress={() => {
-          if (menuItem.action) {
-            menuItem.action()
-          }
-        }}
-        key={menuItem.label}
-      />
-    )
-  )
-
 export function copyToClipboard(text) {
   const dummy = document.createElement('textarea')
   // to avoid breaking orgain page when copying more words
@@ -115,27 +98,28 @@ export function copyToClipboard(text) {
 const PageMenu = React.memo(() => {
   const pagesRes = usePages()
   const groupsRes = useGroups()
+  const exportContext = useExportContext()
 
   const pages = pagesRes.data
   const groups = groupsRes.data
 
-  const getSession = useSessionContext((c) => c && c.getSession)
+  // const getSession = useSessionContext((c) => c && c.getSession)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const navigateToDefaultPage = useSessionContext(
     (c) => c && c.navigateToDefaultPage
   )
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
-  const { defaultPageId } = getSession()
+  // const { defaultPageId } = getSession()
   const [showMenu, setShowMenu] = useState(false)
-  const [isPagePublic, setIsPagePublic] = useState(false)
+  // const [isPagePublic, setIsPagePublic] = useState(false)
   // const [pageInGroups, setPageInGroups] = useState([])
   const [, setPageInGroups] = useState([])
   const [showCopiedCheck, setShowCopiedCheck] = useState(false)
 
   const {
     getTokensFromPath,
-    navigate,
+    // navigate,
     navigateSidebar,
   } = useNavigationContext()
 
@@ -143,9 +127,20 @@ const PageMenu = React.memo(() => {
 
   const archivePage = useEditorPageContext((c) => c.archivePage)
   const deletePage = useEditorPageContext((c) => c.deletePage)
-  const exportContext = useExportContext()
+  const {
+    // exportSinglePage,
+    // exportAllPages,
+    setCurrentPageId,
+  } = useExportContext()
 
-  const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
+  useEffect(() => {
+    setCurrentPageId(params)
+    return () => {
+      setCurrentPageId(null)
+    }
+  }, [])
+
+  // const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
 
   const canBeArchived =
     Object.values(pages).filter((p) => !p.archive).length > 1
@@ -155,8 +150,8 @@ const PageMenu = React.memo(() => {
     if (groupsRes.isSuccess) {
       if (groups[`p_${params}`]) {
         // get public status of page
-        const _pageGroup = groups[`p_${params}`]
-        setIsPagePublic(_pageGroup.public)
+        // const _pageGroup = groups[`p_${params}`]
+        // setIsPagePublic(_pageGroup.public)
       }
 
       // get all groups page appears in
@@ -185,22 +180,22 @@ const PageMenu = React.memo(() => {
 
   const _page = pages?.[params]
 
-  const onCopyLink = () => {
-    // getAccountFromLocation()
-    // generate url and copy to clipboard
-    const getUrl = window.location
-    const baseUrl = `${getUrl.protocol}//${
-      getUrl.host
-    }/${getAccountFromLocation(true)}/pages/${params}/${urlSafeName(
-      _page.name
-    )}`
-    copyToClipboard(baseUrl)
-    setShowCopiedCheck(true)
-  }
+  // const onCopyLink = () => {
+  //   // getAccountFromLocation()
+  //   // generate url and copy to clipboard
+  //   const getUrl = window.location
+  //   const baseUrl = `${getUrl.protocol}//${
+  //     getUrl.host
+  //   }/${getAccountFromLocation(true)}/pages/${params}/${urlSafeName(
+  //     _page.name
+  //   )}`
+  //   copyToClipboard(baseUrl)
+  //   setShowCopiedCheck(true)
+  // }
 
   const onPageDelete = () => {
     deletePage(params)
-    navigate(`/pages/${defaultPageId}`)
+    navigateToDefaultPage()
     navigateSidebar('/pages')
 
     // delete page
@@ -259,10 +254,10 @@ const PageMenu = React.memo(() => {
 
   addMenuFooterItems(menuItems)
 
-  const togglePublicPage = () => {
-    setPagePublic(params, !isPagePublic)
-    setIsPagePublic(!isPagePublic)
-  }
+  // const togglePublicPage = () => {
+  //   setPagePublic(params, !isPagePublic)
+  //   setIsPagePublic(!isPagePublic)
+  // }
 
   useEffect(() => {
     if (showCopiedCheck && !showMenu) {
@@ -270,22 +265,22 @@ const PageMenu = React.memo(() => {
     }
   }, [showMenu])
 
-  const publicLinkItem = showCopiedCheck ? (
-    <DropdownListItem
-      icon={<CheckSvg />}
-      iconColor="green.0"
-      action="none"
-      label="Link copied to clipboard"
-      onPress={() => null}
-    />
-  ) : (
-    <DropdownListItem
-      icon={<LinkSvg />}
-      action="copy-link"
-      label="Copy link"
-      onPress={onCopyLink}
-    />
-  )
+  // const publicLinkItem = showCopiedCheck ? (
+  //   <DropdownListItem
+  //     icon={<CheckSvg />}
+  //     iconColor="green.0"
+  //     action="none"
+  //     label="Link copied to clipboard"
+  //     onPress={() => null}
+  //   />
+  // ) : (
+  //   <DropdownListItem
+  //     icon={<LinkSvg />}
+  //     action="copy-link"
+  //     label="Copy link"
+  //     onPress={onCopyLink}
+  //   />
+  // )
 
   if (!pagesRes.isSuccess) {
     return <LoadingFallback size="extraTiny" queryObserver={pagesRes} />
@@ -389,13 +384,17 @@ const PageMenu = React.memo(() => {
     >
       <BaseControl
         onPress={() => setShowMenu(!showMenu)}
+        // draggable={{
+        //   payload: _page,
+        //   type: 'PAGE',
+        // }}
         onKeyDown={handleEscKey}
-        hoverColor="background.2"
+        hoverColor="background.1"
         p="tiny"
         data-test-element="archive-dropdown"
         label="Archive Page"
       >
-        <Icon sizeVariant="medium" color="text.1">
+        <Icon sizeVariant="medium" color="text.2">
           <MenuSvg />
         </Icon>
       </BaseControl>
@@ -409,7 +408,7 @@ const PageMenu = React.memo(() => {
               right: 0,
             }}
           >
-            {!isPublicAccount() && !_page.archive ? (
+            {/* {!isPublicAccount() && !_page.archive ? (
               <>
                 <DropdownListItem
                   height={pxUnits(34)}
@@ -429,7 +428,7 @@ const PageMenu = React.memo(() => {
                 ) : null}
                 <Separator />
               </>
-            ) : null}
+            ) : null} */}
 
             <DropdownList menuItems={menuItems} />
             {/* {Object.values(groups).length ? <Separator /> : null}

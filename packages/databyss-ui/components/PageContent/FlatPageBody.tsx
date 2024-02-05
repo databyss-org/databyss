@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode, useRef } from 'react'
+import React, { forwardRef, ReactChildren, ReactNode, useRef } from 'react'
 import styledCss from '@styled-system/css'
 import {
   createHighlightRanges,
@@ -13,6 +13,7 @@ import {
   RangeType,
   Block,
   BlockType,
+  Source,
 } from '@databyss-org/services/interfaces'
 import cloneDeep from 'clone-deep'
 import {
@@ -24,7 +25,11 @@ import {
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
 import { ElementView } from '@databyss-org/editor/components/ElementView'
 import { InterpolationWithTheme } from '@emotion/core'
-import { mergeRanges, SortOptions } from '@databyss-org/services/blocks'
+import {
+  mergeRanges,
+  SortOptions,
+  textToHtml,
+} from '@databyss-org/services/blocks'
 import { InlineTypes, Mark } from '@databyss-org/services/interfaces/Range'
 import { Leaf as LeafComponent } from '@databyss-org/editor/components/Leaf'
 import { TitleElement } from '@databyss-org/editor/components/TitleElement'
@@ -35,11 +40,21 @@ import {
   isAtomicClosure,
 } from '@databyss-org/editor/components/AtomicHeader'
 import { splitOverlappingRanges } from '@databyss-org/services/blocks/textRanges'
-import { atomicClosureText } from '@databyss-org/editor/state/util'
+import {
+  atomicClosureText,
+  atomicTypeToInlineRangeType,
+} from '@databyss-org/editor/state/util'
 import { useSearchContext } from '../../hooks'
 import { useNavigationContext } from '../Navigation'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 import forkRef from '../../lib/forkRef'
+import {
+  DbDocument,
+  DocumentType,
+  PageDoc,
+} from '@databyss-org/data/pouchdb/interfaces'
+import { inlineTypeToSymbol } from '@databyss-org/services/text/inlineUtils'
+import { withTheme } from 'emotion-theming'
 
 export const FlatBlock = ({
   index,
@@ -48,6 +63,7 @@ export const FlatBlock = ({
   previousBlock,
   previousType,
   last,
+  theme,
 }: {
   index: number
   previousId: string | null
@@ -55,6 +71,7 @@ export const FlatBlock = ({
   block: Block
   previousBlock?: Block
   last: boolean
+  theme: any
 }) => {
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
@@ -109,6 +126,7 @@ export const FlatBlock = ({
       escapeFn: renderText,
       searchTerms: normalizedStemmedTerms,
       onInlineClick: (d) => navigate(getInlineAtomicHref(d)),
+      theme,
     })
 
   return index ? (
@@ -137,9 +155,11 @@ export const FlatBlock = ({
 export const FlatBlocks = ({
   page,
   onLast,
+  theme,
 }: {
   page: Page
   onLast: () => void
+  theme: any
 }) => {
   const _blockIdDict: { [id: string]: number } = {}
   return (
@@ -167,6 +187,7 @@ export const FlatBlocks = ({
             previousBlock={
               _previousBlockId ? page.blocks[_previousBlockId] : null
             }
+            theme={theme}
           />
         )
       })}
@@ -174,8 +195,8 @@ export const FlatBlocks = ({
   )
 }
 
-export const FlatPageBody: RefForwardingFC<{ page: Page }> = forwardRef(
-  ({ page }, ref) => {
+export const FlatPageBody = withTheme(
+  forwardRef(({ page, theme }: { page: Page; theme: any }, ref) => {
     const _pageRes = useDocument<Page>(page._id, { initialData: page })
     const _viewRef = useRef<HTMLElement | null>(null)
     const _restoreScroll = useScrollMemory(_viewRef)
@@ -200,10 +221,14 @@ export const FlatPageBody: RefForwardingFC<{ page: Page }> = forwardRef(
           }) as InterpolationWithTheme<any>
         }
       >
-        <FlatBlocks page={_pageRes.data} onLast={_restoreScroll} />
+        <FlatBlocks
+          theme={theme}
+          page={_pageRes.data}
+          onLast={_restoreScroll}
+        />
       </View>
     )
-  }
+  })
 )
 
 export function renderText(html: string, key?: string) {
@@ -266,6 +291,65 @@ export function rangeToLeaf(marks: Mark[], text: string) {
   return _leaf
 }
 
+export function BoundLeafComponent({
+  children,
+  leaf,
+  escapeFn,
+  childKey,
+  searchTerms,
+  theme,
+  ...others
+}: {
+  leaf: Leaf
+  children: ReactNode
+  escapeFn: (_s: string, _key?: string) => ReactNode
+  childKey: string | undefined
+  searchTerms?: SearchTerm[]
+  theme?: any
+}) {
+  const _docRes = useDocument<DbDocument>(leaf.atomicId!, {
+    enabled: !!leaf.atomicId,
+  })
+  let _symbol = ''
+  let _text = leaf.text
+  let _leaf = leaf
+  let _children = children
+  if (_docRes.isSuccess && _docRes.data) {
+    if (_docRes.data.doctype === DocumentType.Page) {
+      _text = ((_docRes.data as unknown) as PageDoc).name
+    } else {
+      const _block: Block = (_docRes.data as unknown) as Block
+      _symbol = inlineTypeToSymbol(atomicTypeToInlineRangeType(_block?.type))
+      _text = `${_symbol}${_block?.text?.textValue}`
+      if (_block.type === BlockType.Source) {
+        _text = (_block as Source).name?.textValue ?? _text
+      }
+    }
+    if (searchTerms) {
+      // console.log('[FlatPageBody] highlightRanges', _text)
+      let _highlightRanges = createHighlightRanges(_text, searchTerms)
+      _highlightRanges = mergeRanges(_highlightRanges, SortOptions.Ascending)
+      splitOverlappingRanges(_highlightRanges)
+      _text = textToHtml({
+        textValue: _text,
+        ranges: _highlightRanges,
+      }, theme)
+      // console.log('[FlatPageBody] highlightRanges', _highlightRanges)
+    }
+    _leaf = {
+      ...leaf,
+      text: _text,
+      children: renderText(_text),
+    }
+    _children = escapeFn(_text, childKey)
+  }
+  return (
+    <LeafComponent leaf={_leaf} theme={theme} {...others}>
+      {_children}
+    </LeafComponent>
+  )
+}
+
 /**
  * Renders Text using Editor Components
  * NB this assumes that ranges do not overlap
@@ -277,6 +361,8 @@ export function renderTextToComponents({
   onInlineClick,
   escapeFn = (_s: string) => _s,
   textOnly,
+  bindAtomicId,
+  theme,
 }: {
   key: string
   text: Text
@@ -284,6 +370,8 @@ export function renderTextToComponents({
   onInlineClick: (d: InlineAtomicDef) => void
   escapeFn?: (_s: string, _key?: string) => ReactNode
   textOnly?: boolean
+  bindAtomicId?: string
+  theme: any
 }): ReactNode {
   if (!text) {
     return null
@@ -294,8 +382,26 @@ export function renderTextToComponents({
   // add link ranges
   _ranges = _ranges.concat(createLinkRangesForUrls(_text))
 
-  if (searchTerms) {
-    _ranges = _ranges.concat(createHighlightRanges(_text, searchTerms))
+  // collapse embed ranges
+  _ranges.filter((_range) => 
+    _range.marks.find((m) => m[0] === 'embed')
+  ).forEach((_embedRange) => {
+    _embedRange.length = 0
+  })
+
+  if (searchTerms?.length && searchTerms[0].text?.length) {
+    _ranges = _ranges.concat(
+      createHighlightRanges(
+        _text,
+        searchTerms,
+        bindAtomicId
+          ? {
+              currentRanges: _ranges,
+              ignoreInlineId: bindAtomicId,
+            }
+          : undefined
+      )
+    )
   }
 
   if (!_ranges.length) {
@@ -317,21 +423,30 @@ export function renderTextToComponents({
           _range.offset + _range.length
         )
         _lastRangeEnd = _range.offset + _range.length
+        const _leaf = rangeToLeaf(_range.marks, _segment)
+        const LEAF_COMPONENT =
+          bindAtomicId && _leaf.atomicId === bindAtomicId
+            ? BoundLeafComponent
+            : LeafComponent
         return _components.concat([
           _before.length ? escapeFn(_before, `${key}.${_idx}b`) : null,
-          <LeafComponent
+          <LEAF_COMPONENT
             key={`${key}.${_idx}`}
             readOnly
             textOnly={textOnly}
             attributes={{}}
-            leaf={rangeToLeaf(_range.marks, _segment)}
+            leaf={_leaf}
             onInlineClick={onInlineClick}
+            escapeFn={escapeFn}
+            searchTerms={searchTerms}
+            childKey={_lastRangeEnd === _text.length ? `END_${key}` : undefined}
+            theme={theme}
           >
             {escapeFn(
               _segment,
               _lastRangeEnd === _text.length - 1 ? `END_${key}` : undefined
             )}
-          </LeafComponent>,
+          </LEAF_COMPONENT>,
         ])
       }, [])}
       {_lastRangeEnd < _text.length - 1

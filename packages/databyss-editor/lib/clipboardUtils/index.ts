@@ -1,11 +1,11 @@
 import { uid } from '@databyss-org/data/lib/uid'
 import { BlockType } from '@databyss-org/services/interfaces'
-import { Text, Range, Selection, Block } from '../../interfaces'
+import { Selection, Block } from '../../interfaces'
 import { isAtomicInlineType } from '../util'
 import { stateToHTMLString } from '../slateUtils'
 import { htmlToDatabyssFrag } from './databyssFragToHtmlString'
 
-export { default as splitTextAtOffset } from './splitTextAtOffset'
+export { splitTextAtOffset } from '@databyss-org/services/text/splitTextAtOffset'
 export { default as getFragmentAtSelection } from './getFragmentAtSelection'
 export { default as insertText } from './insertText'
 export { default as deleteBlocksAtSelection } from './deleteBlocksAtSelection'
@@ -53,25 +53,6 @@ export const sortSelection = (selection: Selection): Selection => {
     }
   }
   return { anchor, focus, _id }
-}
-
-export const mergeText = (a: Text, b: Text): Text => {
-  const mergedTextValue = (a?.textValue ?? '') + (b?.textValue ?? '')
-
-  const mergedRanges = [
-    ...(a?.ranges || []),
-    ...(b?.ranges || []).map((r: Range) => ({
-      ...r,
-      offset: r.offset + (a?.textValue?.length ?? 0),
-    })),
-  ].filter((r) => r.length > 0)
-
-  const mergedText = {
-    textValue: mergedTextValue,
-    ranges: mergedRanges,
-  }
-
-  return mergedText
 }
 
 export const databyssFragToPlainText = (fragment: Block[]): string =>

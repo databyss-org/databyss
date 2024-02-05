@@ -30,6 +30,8 @@ export const EmbedMedia = ({
   const textRef = useRef<any>()
   const _isSelected = useSelected()
 
+  // console.log('[EmbedMedia] blockRes.data', blockRes.data)
+
   // only compute if current block is focused
   const _isFocused = useFocused()
   // check if embed should have anoutline
@@ -83,10 +85,11 @@ export const EmbedMedia = ({
             position="absolute"
             top="em"
             right="em"
-            backgroundColor="gray.6"
+            backgroundColor="transparent"
           >
             <Button
               variant="editSource"
+              hoverColor="background.2"
               onPress={() =>
                 onInlineClick({ atomicType: 'EMBED', id: _element.atomicId })
               }

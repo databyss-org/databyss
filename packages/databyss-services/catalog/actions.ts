@@ -1,30 +1,20 @@
-import { makeText } from '../blocks/makeText'
 import {
-  BlockType,
   CatalogResult,
   CatalogService,
   CatalogType,
   GroupedCatalogResults,
-  NetworkUnavailableError,
-  Source,
 } from '../interfaces'
 
-import {
-  buildDatabyssName,
-  buildFullTitle,
-  buildOnlyTitle,
-  splitName,
-  getCatalogSearchType,
-} from './util'
 import { SEARCH_CATALOG, CACHE_SEARCH_RESULTS } from './constants'
 import crossref from './crossref'
 import googleBooks from './googleBooks'
 import openLibrary from './openLibrary'
-
-interface CatalogParsingParams {
-  service: CatalogService
-  result: any
-}
+import { DatabyssError } from '../interfaces/Errors'
+import {
+  buildFullTitle,
+  getCatalogSearchType,
+  sourceFromCatalogResult,
+} from './util'
 
 const serviceMap: { [type: string]: CatalogService } = {
   [CatalogType.GoogleBooks]: googleBooks,
@@ -62,7 +52,7 @@ export function searchCatalog({
       })
     } catch (error) {
       // if offline
-      if (error instanceof NetworkUnavailableError) {
+      if ((error as DatabyssError).name !== 'NetworkUnavailableError') {
         dispatch({
           type: CACHE_SEARCH_RESULTS,
           payload: {
@@ -144,7 +134,7 @@ function composeResults({
     const _authorsString = service.getAuthors(_apiResult).join(', ')
     const _result: CatalogResult = {
       title: buildFullTitle({ service, result: _apiResult }),
-      source: sourceFromResult({ service, result: _apiResult }),
+      source: sourceFromCatalogResult({ service, result: _apiResult }),
       apiResult: _apiResult,
     }
 
@@ -158,58 +148,4 @@ function composeResults({
   })
 
   return _groupedResults
-}
-
-/**
- * composes Source from api result
- */
-function sourceFromResult(options: CatalogParsingParams): Source {
-  const { service, result } = options
-
-  const _authors = service.getAuthors(result)
-
-  const publicationType = service.getPublicationType(result)
-
-  return {
-    _id: '', // will be generated if imported
-    type: BlockType.Source,
-    text: buildDatabyssName(options),
-    detail: {
-      authors: _authors.length
-        ? _authors.map((_a: string) => {
-            const _n = splitName(_a)
-            return {
-              firstName: makeText(_n[0]),
-              lastName: makeText(_n[1]),
-            }
-          })
-        : [],
-      editors: [],
-      translators: [],
-      citations: [],
-      title: buildOnlyTitle(options),
-
-      // publication details (common)
-      publicationType,
-      publisherName: makeText(service.getPublisher(result)),
-      publisherPlace: makeText(service.getPublisherPlace(result)),
-      year: makeText(service.getPublishedYear(result)),
-      month:
-        publicationType && service.getPublishedMonth(result, publicationType),
-
-      // publication details (articles)
-      journalTitle:
-        publicationType &&
-        makeText(service.getJournalTitle(result, publicationType)),
-      volume: makeText(service.getVolume(result)),
-      issue: makeText(service.getIssue(result)),
-
-      // catalog identifiers (book)
-      isbn: makeText(service.getISBN(result)),
-
-      // catalog identifiers (articles)
-      doi: makeText(service.getDOI(result)),
-      issn: makeText(service.getISSN(result)),
-    },
-  }
 }

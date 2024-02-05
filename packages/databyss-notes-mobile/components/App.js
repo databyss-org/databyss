@@ -1,7 +1,7 @@
 import React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useNavigationContext } from '@databyss-org/ui'
-import { DatabaseProvider } from '@databyss-org/services/lib/DatabaseProvder'
+import { DatabaseProvider } from '@databyss-org/services/lib/DatabaseProvider'
 import SessionProvider from '@databyss-org/services/session/SessionProvider'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 import Public from '@databyss-org/notes/app/Public'

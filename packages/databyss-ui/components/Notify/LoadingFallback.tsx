@@ -9,7 +9,7 @@ interface LoadingFallbackProps extends ViewProps {
   /**
    * Size of the loading icon.
    */
-  size?: string
+  size?: number
   /**
    * The react-query queryObserver this loader is waiting on
    */

@@ -10,11 +10,15 @@ import {
   Grid,
   ViewProps,
   ScrollView,
+  Icon,
 } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { urlSafeName } from '@databyss-org/services/lib/util'
+import { useQueryClient } from '@tanstack/react-query'
+import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
+import GroupSvg from '@databyss-org/ui/assets/folder-open.svg'
 import { debounce } from 'lodash'
 import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
@@ -54,6 +58,7 @@ export const GroupFields = ({
 }) => {
   const [values, setValues] = useState(group)
   const groupValue = useRef(group)
+  const queryClient = useQueryClient()
 
   const saveChanges = useCallback(
     debounce((_values: Group) => saveGroup(_values), 500),
@@ -96,6 +101,8 @@ export const GroupFields = ({
 
       // update internal state
       setValues(_values)
+      // update query cache
+      queryClient.setQueryData([`useDocument_${group._id}`], _values)
       // update database
       saveChanges(_values)
       // update ref values
@@ -111,23 +118,15 @@ export const GroupFields = ({
 
   return (
     <ValueListProvider onChange={onChange} values={_values}>
-      <View pl="em" pr="medium" pt="none" flexGrow={1}>
+      <View pl="medium" pr="medium" pt="none" flexGrow={1}>
         <ValueListItem path="name">
-          <TitleInput readonly={readOnly} placeholder={UNTITLED_NAME} />
+          <TitleInput 
+            readonly={readOnly} 
+            placeholder={UNTITLED_NAME} 
+            icon={<Icon><GroupSvg /></Icon>} 
+          />
         </ValueListItem>
         <Grid columnGap="large" widthVariant="content" flexGrow={1}>
-          <GroupSection title="Pages" flexGrow={1} flexBasis={1}>
-            <View theme={darkTheme} flexGrow={1}>
-              <ValueListItem path="pages" pages={pages} group={group}>
-                <PageDropzone
-                  pages={pages}
-                  group={group}
-                  bg="background.2"
-                  height="100%"
-                />
-              </ValueListItem>
-            </View>
-          </GroupSection>
           <View flexGrow={1} flexBasis={1}>
             <GroupSection title="Share with Everyone">
               <ValueListItem path="public">
@@ -143,16 +142,16 @@ export const GroupFields = ({
 
 export const GroupDetail = () => {
   const { id } = useParams()
-  const groupsRes = useGroups()
+  const groupRes = useDocument<Group>(id!)
   const pagesRes = usePages()
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
 
   const pages = pagesRes?.data
 
-  const group = groupsRes.data?.[id!]
+  const group = groupRes.data
 
-  if (!groupsRes.isSuccess || !group) {
-    return <LoadingFallback queryObserver={groupsRes} />
+  if (!groupRes.isSuccess || !group) {
+    return <LoadingFallback queryObserver={groupRes} />
   }
 
   return (
@@ -164,7 +163,7 @@ export const GroupDetail = () => {
 
       <ScrollView
         p="medium"
-        pt="small"
+        pt="large"
         flexGrow={1}
         flexShrink={1}
         shadowOnScroll

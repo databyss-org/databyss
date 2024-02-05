@@ -10,8 +10,8 @@ export const SidebarHeaderButton = ({ label, active, onPress, ...others }) => {
     px: 'small',
     borderRadius: 'default',
     borderVariant: 'thinDark',
-    bg: active ? 'border.1' : 'transparent',
-    borderColor: 'border.1',
+    bg: active ? 'border.2' : 'transparent',
+    borderColor: 'border.2',
     ...(!active
       ? {
           onPress,

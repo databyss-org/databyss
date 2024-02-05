@@ -81,5 +81,7 @@ config.json
 # obsidian
 .obsidian/
 
-# webpack
-.webpack
+# electron
+.webpack/
+out/
+

@@ -73,7 +73,7 @@ export const AtomicHeader = ({
     >
       <Text
         variant={getAtomicStyle(block.type)}
-        color={`${isAtomicClosure(block.type) ? 'gray.4' : ''}`}
+        color={`${isAtomicClosure(block.type) ? 'text.3' : 'text.0'}`}
         display="inline"
       >
         {children}

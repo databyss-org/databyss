@@ -27,6 +27,10 @@ _c = {
   ..._c,
   pink: _c.purple[1],
   yellow: _c.orange[3],
+  highlight: [
+    Color(_c.orange[1]).desaturate(0.3).alpha(0.4).rgb().string(),
+    Color(_c.orange[3]).alpha(0.8).rgb().string(),
+  ],
 }
 
 // system colors
@@ -52,6 +56,7 @@ _c = {
   scrollShadow: '#bbb',
   inlineSource: '#cc6633',
   inlineTopic: '#B82F00',
+  modalShadow: '#000000',
 }
 
 // legacy (deprecated)
@@ -62,26 +67,44 @@ _c = {
 }
 
 // dark mode
+const _darkUi = {
+  ..._c,
+  // [lightest...darkest]
+  text: [_c.white, ..._c.gray.slice().reverse().slice(1)],
+  // [darkest...lightest]
+  background: _c.gray.slice(1),
+  // borders [darkest...lightest]
+  border: [_c.gray[7], _c.gray[5], _c.gray[3], _c.gray[3]],
+  // control colors [enabled, hover, active, label]
+  secondary: [_c.blue[1], _c.gray[2], _c.gray[0], _c.blue[2]],
+  activeTextInputBackground: _c.black,
+  pageBackground: 'transparent',
+  // BaseControl colors [enabled, hover, pressed]
+  control: [_c.transparent].concat(
+    [_c.gray[4], _c.gray[3]].map((c) => Color(c).alpha(0.4).rgb().string())
+  ),
+  scrollShadow: '#222',
+  modalShadow: '#999',
+  highlight: [
+    Color(_c.blue[3]).lightness(80).alpha(0.4).rgb().string(),
+    Color(_c.orange[2]).lightness(60).saturate(1).alpha(0.4).rgb().string(),
+  ],
+}
+const _darkContent = {
+  ..._darkUi,
+  background: ['#1f1f1f', '#292929', _c.gray[2], _c.gray[3], _c.gray[4]],
+  text: [_c.gray[6], _c.gray[6], _c.gray[5], _c.gray[4]],
+  inlineSource: '#ff9100',
+  inlineTopic: Color(_c.inlineTopic).lighten(0.8).hex(),
+  purple: _c.purple.map((c) => Color(c).lighten(0.9).hex()),
+  blue: _c.blue.map((c) => Color(c).saturate(0.5).lighten(0.2).hex()),
+  // orange: _c.orange.map((c) => Color(c).darken(0.8).blacken(0.8).hex()),
+}
 _c = {
   ..._c,
   modes: {
-    dark: {
-      // [lightest...darkest]
-      text: [_c.white, ..._c.gray.slice().reverse().slice(1)],
-      // [darkest...lightest]
-      background: _c.gray.slice(1),
-      // borders [darkest...lightest]
-      border: [_c.gray[7], _c.gray[3], _c.gray[1]],
-      // control colors [enabled, hover, active, label]
-      secondary: [_c.blue[1], _c.gray[2], _c.gray[0], _c.blue[2]],
-      activeTextInputBackground: _c.black,
-      pageBackground: 'transparent',
-      // BaseControl colors [enabled, hover, pressed]
-      control: [_c.transparent].concat(
-        [_c.gray[4], _c.gray[3]].map((c) => Color(c).alpha(0.4).rgb().string())
-      ),
-      scrollShadow: '#222',
-    },
+    dark: _darkUi,
+    darkContent: _darkContent,
   },
 }
 

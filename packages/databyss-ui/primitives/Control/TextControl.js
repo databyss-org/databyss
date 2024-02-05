@@ -29,6 +29,7 @@ const TextControl = ({
   css,
   dataTestId,
   placeholder,
+  inputProps,
   ...others
 }) => {
   const [active, setActive] = useState(false)
@@ -88,6 +89,7 @@ const TextControl = ({
         variant={inputVariant}
         placeholder={placeholder}
         data-test-id={dataTestId}
+        {...inputProps}
       />
     </TextInputView>
   )
@@ -105,13 +107,14 @@ const TextControl = ({
           window.requestAnimationFrame(() => setActive(true))
         }
       }}
+      hoverColor="background.2"
       css={[
         {
           borderWidth: 0,
           position: active ? 'relative' : 'static',
-          '&:hover': {
-            backgroundColor: colors.gray[6],
-          },
+          // '&:hover': {
+          //   backgroundColor: colors.gray[6],
+          // },
         },
         css,
       ]}
