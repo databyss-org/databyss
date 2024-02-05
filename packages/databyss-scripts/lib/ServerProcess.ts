@@ -72,24 +72,31 @@ class ServerProcess extends EventEmitter {
         (resolve) => this.outputLogFs?.end(resolve) ?? resolve()
       ),
     ])
+  _logRaw = (msg: string, oraPersistOptions?: ora.PersistOptions) => {
+    if (this.spinner) {
+      this.spinner
+        .stopAndPersist(
+          oraPersistOptions ?? {
+            text: msg,
+          }
+        )
+        .start()
+    } else {
+      this.stdout(`${msg}\n`)
+    }
+    return msg
+  }
   _log = (...msgs: any) => {
     const _text = msgs.slice(1).join(' ')
     const _symbol = msgs[0]
     const _prefixText = `[${shortTimeString()}|${this.name}]`
     const _msg = `${_prefixText} ${_symbol} ${_text}`
 
-    if (this.spinner) {
-      this.spinner
-        .stopAndPersist({
-          prefixText: _prefixText,
-          symbol: _symbol,
-          text: _text,
-        })
-        .start()
-    } else {
-      this.stdout(`${_msg}\n`)
-    }
-    return _msg
+    return this._logRaw(_msg, {
+      prefixText: _prefixText,
+      symbol: _symbol,
+      text: _text,
+    })
   }
   _format = (msgs: any[], symbol: string) => {
     let _symbol = symbol
@@ -100,6 +107,7 @@ class ServerProcess extends EventEmitter {
     }
     return [_symbol, ..._msgs]
   }
+  logRaw = (msg: string) => this._logRaw(msg)
   log = (...msgs: any) => {
     this.logInfo(...this._format(msgs, '⬜️'))
   }

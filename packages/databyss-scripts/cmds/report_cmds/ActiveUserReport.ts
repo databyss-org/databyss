@@ -28,12 +28,35 @@ export class ActiveUserReport extends ServerProcess {
         continue
       }
       let mostRecent = 0
+      let sourceCount = 0
+      let topicCount = 0
+      let pageCount = 0
+      let embedCount = 0
+      let sharedGroupCount = 0
       docs.rows.forEach((doc) => {
-        const block = doc.doc as any
-        if ((block.modifiedAt ?? block.createdAt) > mostRecent) {
-          mostRecent = block.modifiedAt ?? block.createdAt
+        const _doc = doc.doc as any
+        if ((_doc.modifiedAt ?? _doc.createdAt) > mostRecent) {
+          mostRecent = _doc.modifiedAt ?? _doc.createdAt
+        }
+        if (_doc.doctype === 'GROUP' && _doc.public) {
+          sharedGroupCount += 1
+        }
+        if (_doc.doctype === 'PAGE') {
+          pageCount += 1
+        }
+        if (_doc.doctype === 'BLOCK') {
+          if (_doc.type === 'SOURCE') {
+            sourceCount += 1
+          }
+          if (_doc.type === 'TOPIC') {
+            topicCount += 1
+          }
+          if (_doc.type === 'EMBED') {
+            embedCount += 1
+          }
         }
       })
+      const delim = ','
       const meetsActiveCriteria =
         !this.args.days ||
         (this.args.days &&
@@ -42,10 +65,16 @@ export class ActiveUserReport extends ServerProcess {
         (!this.args.inverse && meetsActiveCriteria) ||
         (this.args.inverse && !meetsActiveCriteria)
       ) {
-        this.logInfo(
-          user.doc?.email,
-          '[m]',
-          new Date(mostRecent).toDateString()
+        this.logRaw(
+          [
+            user.doc?.email,
+            new Date(mostRecent).toDateString(),
+            pageCount,
+            sharedGroupCount,
+            sourceCount,
+            topicCount,
+            embedCount,
+          ].join(delim)
         )
       }
     }
