@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
 import { View, BaseControl, Icon } from '@databyss-org/ui/primitives'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
-import HelpSvg from '@databyss-org/ui/assets/help.svg'
 import SaveSvg from '@databyss-org/ui/assets/save.svg'
-import ExportAllSvg from '@databyss-org/ui/assets/export-all.svg'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import { DropdownList } from '@databyss-org/ui/components'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
@@ -25,7 +23,6 @@ const IndexPageMenu = ({ block }) => {
   }
 
   const menuItems = []
-  
   menuItems.push(
     ...exportMenuItems(
       exportContext,

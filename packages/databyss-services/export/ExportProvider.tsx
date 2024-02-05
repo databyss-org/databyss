@@ -7,7 +7,7 @@ import { getDocuments } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { useBibliography, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { backupDbToJson, makeBackupFilename } from '@databyss-org/data/pouchdb/backup'
- import { dbRef } from '@databyss-org/data/pouchdb/db'
+import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { useUserPreferencesContext } from '@databyss-org/ui/hooks'
 import { appCommands } from '@databyss-org/ui/lib/appCommands'
 import {
