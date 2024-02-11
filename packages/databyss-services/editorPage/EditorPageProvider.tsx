@@ -128,7 +128,6 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   )
 
   const setPageHeader = useCallback((page: Page) => {
-    console.log('[EditorPageProvider] update cache', page._id)
     queryClient.setQueryData([selectors.PAGES], (oldData) =>
       oldData
         ? {
@@ -136,6 +135,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
             [page._id]: {
               ...page,
               accessedAt: Date.now(),
+              modifiedAt: Date.now(),
             },
           }
         : oldData

@@ -49,21 +49,35 @@ export const PageBody = ({
       }
     })
 
-    // handle changes to page title block
-    if (value?.patches?.length) {
-      const _patch = value.patches.find(
-        (_patch) => _patch.path?.[0] === 'blocks' && _patch.path?.[1] === 0
-      )
+    // update timestamp and handle changes to page title block
+    const _patchTextChange = (pquery) => {
+      const _patch = value.patches.find(pquery)
       const _patchValue =
         _patch?.path?.[2] === 'text'
           ? _patch?.value?.textValue
           : _patch?.value?.text?.textValue
-      if (_patchValue !== null && _patchValue !== undefined) {
+      return _patchValue !== null && 
+        _patchValue !== undefined && 
+        _patchValue
+    }
+    if (value?.patches?.length) {
+      const _patchValue = _patchTextChange(
+        (_patch) => _patch.path?.[0] === 'blocks' && _patch.path?.[1] === 0
+      )
+      if (_patchValue) {
         const _pageData = {
           name: _patchValue.trim() || UNTITLED_PAGE_NAME,
           _id: page._id,
         }
         debouncedSetPageHeader(_pageData)
+      } else {
+        const _patchValue = _patchTextChange(
+          (_patch) => _patch.path?.[0] === 'blocks'
+        )
+        if (_patchValue) {
+          // just update timestamp
+          debouncedSetPageHeader({ name: page.name, _id: page._id })
+        }
       }
     }
 
