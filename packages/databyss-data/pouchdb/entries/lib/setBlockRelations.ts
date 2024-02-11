@@ -30,7 +30,7 @@ const setBlockRelations = async (
     _updatedRelation = await eapi.db.removeRelation(_payload)
   }
 
-  console.log('[setBlockRelations]', _updatedRelation)
+  // console.log('[setBlockRelations]', _updatedRelation)
   queryClient.setQueryData(
     [blockTypeToRelationSelector(type)],
     (oldData: any) => ({
@@ -42,6 +42,9 @@ const setBlockRelations = async (
     [`useDocument_${_updatedRelation._id}`],
     _updatedRelation
   )
+  // if (type === BlockType.Source) {
+  //   queryClient.resetQueries({ queryKey: ['bibliography', undefined], exact: true })
+  // }
 }
 
 export default setBlockRelations

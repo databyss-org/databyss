@@ -103,9 +103,6 @@ export const ContextMenuProvider = ({ children }) => {
             open
             ref={refs.setFloating}
             style={floatingStyles}
-            borderColor="border.2"
-            borderWidth={pxUnits(1)}
-            borderStyle="solid"
             backgroundColor="background.1"
             zIndex={theme.zIndex.modal + 1}
             theme={isDarkModeRes.data ? darkContentTheme : theme}

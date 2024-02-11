@@ -5,7 +5,7 @@ import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvi
 import { Text } from '@databyss-org/ui/primitives'
 import { getDocuments } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
-import { useBibliography, usePages } from '@databyss-org/data/pouchdb/hooks'
+import { useBibliography, useBlocksInPages, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { backupDbToJson, makeBackupFilename } from '@databyss-org/data/pouchdb/backup'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { useUserPreferencesContext } from '@databyss-org/ui/hooks'
@@ -33,6 +33,7 @@ import { validUriRegex } from '../lib/util'
 import { loadPage } from '../editorPage'
 import { getAccountFromLocation } from '../session/utils'
 import { useParams } from '@databyss-org/ui/components/Navigation'
+import { bibliographyFromSources } from '@databyss-org/data/pouchdb/hooks/useBibliography'
 
 interface ContextType {
   exportSinglePage: (id: string) => void
@@ -53,16 +54,17 @@ export const ExportContext = createContext<ContextType>(null!)
 export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const { notifySticky, hideSticky } = useNotifyContext()
   const { getPreferredCitationStyle } = useUserPreferencesContext()
+  const sourcesInPagesRes = useBlocksInPages<Source>(BlockType.Source)
   
   const pageIdRef = useRef<string | null>(null)
 
   const pagesRes = usePages({ subscribe: false })
-  const biblioRes = useBibliography({
-    subscribe: false,
-    formatOptions: {
-      styleId: getPreferredCitationStyle(),
-    },
-  })
+  // const biblioRes = useBibliography({
+  //   subscribe: false,
+  //   formatOptions: {
+  //     styleId: getPreferredCitationStyle(),
+  //   },
+  // })
 
   const setCurrentPageId = (pageId: string) => {
     pageIdRef.current = pageId
@@ -187,7 +189,10 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
         </Text>
       ),
     })
-    const biblio = (await biblioRes.refetch()).data
+    const biblio = await bibliographyFromSources(
+      sourcesInPagesRes.data!,
+      { styleId: getPreferredCitationStyle() },
+    )
     _zip.file(
       's/@bibliography.md',
       bibliographyToMarkdown({
@@ -262,7 +267,10 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   }) => {
     let author = options?.author
     let source = options?.source
-    const biblio = (await biblioRes.refetch()).data
+    const biblio = await bibliographyFromSources(
+      sourcesInPagesRes.data!,
+      { styleId: getPreferredCitationStyle() },
+    )
     if (!source) {
       // bibliography (full or filtered by author)
       await downloadBibliography({

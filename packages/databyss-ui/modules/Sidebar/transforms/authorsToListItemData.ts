@@ -2,9 +2,9 @@ import { Author, Source } from '@databyss-org/services/interfaces'
 import { SidebarListItemData } from '@databyss-org/ui/components'
 
 export interface AuthorWithStats extends Author {
-  modifiedAt: number
-  createdAt: number
-  accessedAt: number
+  modifiedAt: number | undefined
+  createdAt: number | undefined
+  accessedAt: number | undefined
 }
 
 export const mapAuthorData = (
@@ -37,6 +37,13 @@ export const mapAuthorData = (
     }
   })
 
+const maxOrUndefined = (a: number | undefined, b: number | undefined) => {
+  if (typeof a === 'undefined' && typeof b === 'undefined') {
+    return undefined
+  }
+  return Math.max(a ?? 0, b ?? 0)
+}
+
 export const authorsToListItemData = (blocks: Source[]) =>
   mapAuthorData(
     Object.values(
@@ -57,17 +64,17 @@ export const authorsToListItemData = (blocks: Source[]) =>
             const _authorWithStats = dict[_authorKey]
             dict[_authorKey] = {
               ...author,
-              createdAt: Math.max(
-                _authorWithStats.createdAt ?? 0,
-                (block as any).createdAt ?? 0
+              createdAt: maxOrUndefined(
+                _authorWithStats.createdAt,
+                (block as any).createdAt
               ),
-              modifiedAt: Math.max(
-                _authorWithStats.modifiedAt ?? 0,
-                (block as any).modifiedAt ?? 0
+              modifiedAt: maxOrUndefined(
+                _authorWithStats.modifiedAt,
+                (block as any).modifiedAt
               ),
-              accessedAt: Math.max(
-                _authorWithStats.accessedAt ?? 0,
-                (block as any).accessedAt ?? 0
+              accessedAt: maxOrUndefined(
+                _authorWithStats.accessedAt,
+                (block as any).accessedAt
               ),
             }
           })

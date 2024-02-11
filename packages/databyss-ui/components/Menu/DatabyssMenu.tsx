@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 import { Group } from '@databyss-org/services/interfaces'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
+import theme, { darkContentTheme } from '@databyss-org/ui/theming/theme'
 import { useAppState } from '../../../databyss-desktop/src/hooks'
 import ClickAwayListener from '../Util/ClickAwayListener'
 import { DropdownContainer, View, Icon } from '../..'
@@ -13,7 +14,6 @@ import DiskSvg from '../../assets/save.svg'
 import CheckSvg from '../../assets/check.svg'
 import ArchiveSvg from '../../assets/archive.svg'
 import LoadingFallback from '../Notify/LoadingFallback'
-import { theme } from '../../theming'
 import MenuSvg from '../../assets/menu_horizontal.svg'
 import { useNotifyContext } from '../Notify/NotifyProvider'
 import { pxUnits } from '../../theming/views'
@@ -29,6 +29,7 @@ export function DatabyssMenu({
   allowContextMenus?: boolean
 }) {
   const [isLoading, setIsLoading] = useState(false)
+  const isDarkModeRes = useAppState('darkMode')
   return (
     <>
       {isLoading && (
@@ -61,6 +62,7 @@ export function DatabyssMenu({
             top: 35,
             right: 25,
           }}
+          theme={isDarkModeRes.data ? darkContentTheme : theme}
         >
           <DatabyssMenuItems
             allowContextMenus={allowContextMenus}

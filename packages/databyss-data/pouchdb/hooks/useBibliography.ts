@@ -40,37 +40,30 @@ export const useBibliography = ({
     subscribe,
   })
 
-  const sources: Source[] | undefined =
+  const sources = () =>
     blocksByIdRes.isSuccess && sourceIds
       ? Object.values(blocksByIdRes.data!)
       : blocksInPagesRes.data
 
-  const queryKey = ['bibliography', formatOptions, sourceIds]
+  const queryKey = [
+    'bibliography', 
+    sourceIds, 
+    sourceIds ? blocksByIdRes.dataUpdatedAt : blocksInPagesRes.dataUpdatedAt
+  ]
   const query = useQuery<BibliographyItem[]>({
-    queryFn: () => bibliographyFromSources(sources!, formatOptions),
+    queryFn: () => {
+      console.log('[useBibliogaphy] query', queryKey)
+      return bibliographyFromSources(sources()!, formatOptions)
+    },
     enabled: sourceIds ? blocksByIdRes.isSuccess : blocksInPagesRes.isSuccess,
     ...(otherOptions as UseQueryOptions<BibliographyItem[]>),
     queryKey,
   })
 
-  const updateBibliography = async () => {
-    if (!sources) {
-      return
-    }
-    const _bib = await bibliographyFromSources(sources!, formatOptions)
-    if (_bib) {
-      queryClient.setQueryData<BibliographyItem[]>(queryKey, _bib)
-    }
-  }
-
-  useEffect(() => {
-    updateBibliography()
-  }, [blocksByIdRes.dataUpdatedAt])
-
   return query
 }
 
-async function bibliographyFromSources(
+export async function bibliographyFromSources(
   sources: Source[],
   formatOptions: CitationFormatOptions,
 ): Promise<BibliographyItem[]> {

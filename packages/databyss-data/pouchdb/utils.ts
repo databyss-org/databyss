@@ -232,6 +232,25 @@ export const updateAccessedAt = (
     accessedAt: Date.now(),
   }
   upsertPouch(_id, fds)
+  // queryClient.setQueryData([selector], (oldData: any) =>
+  //   oldData
+  //     ? {
+  //         ...oldData,
+  //         [_id]: { ...oldData[_id], ...fds },
+  //       }
+  //     : oldData
+  // )
+}
+
+export const updateModifiedAt = (
+  _id: string,
+  queryClient: QueryClient,
+  selector: ValueOf<typeof selectors>
+) => {
+  const fds = {
+    modifiedAt: Date.now(),
+  }
+  upsertPouch(_id, fds)
   queryClient.setQueryData([selector], (oldData: any) =>
     oldData
       ? {

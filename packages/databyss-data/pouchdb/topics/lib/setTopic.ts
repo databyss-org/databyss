@@ -5,16 +5,17 @@ import { queryClient } from '@databyss-org/services/lib/queryClient'
 import { DocumentType } from '../../interfaces'
 import { upsertImmediate } from '../../utils'
 import { selectors } from '../../selectors'
+import { addTimeStamp } from '../../docUtils'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../../../databyss-desktop/src/eapi').default
 
 const setTopic = async (data: Topic) => {
   const { text, _id } = data
-  const doc = {
+  const doc = addTimeStamp({
     ...data,
     type: BlockType.Topic,
-  }
+  })
 
   // update caches
   ;[selectors.TOPICS, selectors.BLOCKS].forEach((selector) =>

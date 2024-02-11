@@ -23,6 +23,7 @@ import {
   Icon,
   BaseControl,
   TextControl,
+  Text,
 } from '@databyss-org/ui'
 
 import { GestureProvider, View } from '@databyss-org/ui/primitives'
@@ -42,6 +43,7 @@ import ChevronSvg from '@databyss-org/ui/assets/chevron-right.svg'
 import DatabyssImg from '@databyss-org/ui/assets/logo-thick.png'
 import { DatabyssMenu } from '@databyss-org/ui/components/Menu/DatabyssMenu'
 import { setGroup } from '@databyss-org/data/pouchdb/groups'
+import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import { debounce } from 'lodash'
 import { TitleBar } from '../components/TitleBar'
 import { useAppState } from '../hooks'
@@ -209,9 +211,29 @@ const AppView = ({
         flexGrow={1}
         flexShrink={1}
         theme={isDarkModeRes.data ? darkContentTheme : theme}
-        bg="background.0"
+        bg="background.1"
         minWidth={0}
+        position="relative"
       >
+        <View
+          justifyContent="space-between"
+          alignItems="center"
+          flexDirection="row"
+          bg="background.2"
+          minHeight={pxUnits(58)}
+          width="100%"
+          position="absolute"
+          zIndex={0}
+          pr="medium"
+          pl={pxUnits(18)}
+        >
+          <View flexGrow={1}>
+            <Text color="text.3" variant="uiTextSmall">Loading...</Text>
+          </View>
+          <Icon sizeVariant="medium" color="text.3" flexShrink={1}>
+            <MenuSvg />
+          </Icon>
+        </View>
         {children}
       </View>
     </View>

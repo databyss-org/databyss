@@ -133,6 +133,7 @@ export const IndexPageTitleInput = ({
         return
       }
       const _block = setTitleOnBlock(block, value)
+      console.log('[IndexPageTitleInput]', _block)
       queryClient.setQueryData([`useDocument_${_block._id}`], _block)
       switch (block!.type) {
         case BlockType.Topic:

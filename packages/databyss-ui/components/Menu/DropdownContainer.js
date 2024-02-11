@@ -36,7 +36,9 @@ const DropdownContainer = forwardRef(
       maxWidth={maxWidth}
       widthVariant={widthVariant}
       minHeight={minHeight}
-      shadowVariant="modal"
+      borderWidth={pxUnits(1)}
+      borderColor="border.2"
+      borderStyle="solid"
       bg="background.0"
       css={styledCss(
         _css(

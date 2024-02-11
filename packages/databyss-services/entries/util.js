@@ -51,8 +51,8 @@ export const sortEntriesByRecent = (entries, sortBy, pinning = true) =>
       return -1
     }
     return (
-      (_b.accessedAt ?? _b.modifiedAt ?? _b.createdAt) -
-      (_a.accessedAt ?? _a.modifiedAt ?? _a.createdAt)
+      (_b.modifiedAt ?? _b.createdAt) -
+      (_a.modifiedAt ?? _a.createdAt)
     )
   })
 

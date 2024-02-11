@@ -4,27 +4,27 @@ import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 import { DocumentType } from '../../interfaces'
 import { upsertImmediate } from '../../utils'
 import { selectors } from '../../selectors'
+import { addTimeStamp } from '../../docUtils'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../../../databyss-desktop/src/eapi').default
 
 export const setSource = async (data: Source) => {
-  const { text, detail, _id, sharedWithGroups, media } = data
+  const { _id, text, ...fields } = data
 
   let { name } = data as any
   if (!name?.textValue?.length) {
     name = text
   }
-  const blockFields = {
+  const blockFields = addTimeStamp({
     _id,
     text,
     name,
+    ...fields,
     type: BlockType.Source,
     doctype: DocumentType.Block,
-    detail,
-    sharedWithGroups,
-    media,
-  }
+  })
+
 
   // update caches
   ;[selectors.SOURCES, selectors.BLOCKS].forEach((selector) =>

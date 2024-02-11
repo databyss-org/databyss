@@ -1,85 +1,69 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-// import { checkNetwork } from '@databyss-org/services/lib/request'
-// import PouchDB from 'pouchdb'
-// import { dbRef, waitForPouchDb } from '../db'
+import { useQuery } from '@tanstack/react-query'
 import { searchEntries } from '../entries'
-import { SearchEntriesResultPage } from '../entries/lib/searchEntries'
-// import { DocumentType } from '../interfaces'
+import { PouchDbSearchRow, SearchEntriesResultPage } from '../entries/lib/searchEntries'
 import { usePages } from './'
 import { useDocuments } from './useDocuments'
 import { Block } from '../../../databyss-services/interfaces'
-// import { CouchDb } from '../../couchdb/couchdb'
-import { selectors } from '../selectors'
+import { searchText } from '../utils'
+import { couchDbRef } from '../../couchdb/couchdb'
 
-// const changesRef: { current: PouchDB.Core.Changes<any> | undefined } = {
-//   current: undefined,
-// }
+const useSearchText = (searchQuery: string, localSearch: boolean = true) => {
+  const _searchQuery = decodeURIComponent(searchQuery)
+  const queryKey = ['searchText', searchQuery]
 
-// let firstSearchInProgress: boolean = false
-// let firstSearchComplete: boolean = false
+  const query = useQuery<PouchDbSearchRow[]>({
+    queryKey,
+    queryFn: async () => {
+      if (localSearch) {
+        const _res = await searchText({
+          query: _searchQuery,
+        })
+        return _res.rows as PouchDbSearchRow[]
+      } else {
+        return couchDbRef.current?.search({ query: _searchQuery })!
+      }
+    },
+    staleTime: 5000
+  })
+  
+  return query
+}
 
 export const useSearchEntries = (searchQuery: string) => {
   const pagesRes = usePages()
-  const blocksRes = useDocuments<Block>(selectors.BLOCKS)
-  // const queryClient = useQueryClient()
-  const queryKey = ['searchEntries', searchQuery]
+  const searchTextRes = useSearchText(searchQuery)
 
-  // watch for changes in pouch and reset cache when necessary
-  // const subscribeOnce = () => {
-  //   if (dbRef.current instanceof CouchDb) {
-  //     return
-  //   }
-  //   if (changesRef.current) {
-  //     // already subscribed
-  //     return
-  //   }
+  let docIds: string[] = []
+  if (searchTextRes.isSuccess) {
+    docIds = searchTextRes.data.map((row) => row.id)
+  }
 
-  //   changesRef.current = dbRef
-  //     .current!.changes({
-  //       since: 'now',
-  //       live: true,
-  //       include_docs: true,
-  //     })
-  //     .on('change', (change) => {
-  //       if (
-  //         ((change.doc?.doctype === DocumentType.Block ||
-  //           change.doc?.doctype === DocumentType.Page) &&
-  //           change.doc?.modifiedAt &&
-  //           !change.doc?.accessedAt) ||
-  //         change.doc?.modifiedAt > change.doc?.accessedAt
-  //       ) {
-  //         // reset after a delay so cloud index has time to reset
-  //         setTimeout(() => {
-  //           queryClient.resetQueries(['searchEntries'])
-  //         }, 3000)
-  //         changesRef.current?.cancel()
-  //         changesRef.current = undefined
-  //       }
-  //     })
-  // }
+  const blocksRes = useDocuments<Block>(docIds, { 
+    enabled: searchTextRes.isSuccess 
+  })
+
+  const queryKey = [
+    'searchEntries', 
+    searchQuery, 
+    searchTextRes.dataUpdatedAt,
+    pagesRes.dataUpdatedAt,
+    blocksRes.dataUpdatedAt
+  ]
 
   const query = useQuery<SearchEntriesResultPage[]>({
     queryKey,
     queryFn: async () => {
-      // const isOnline = await checkNetwork()
-      // subscribeOnce()
-      // if (!isOnline && !(await waitForPouchDb())) {
-      //   return []
-      // }
       const results = await searchEntries({
         encodedQuery: searchQuery,
+        results: searchTextRes.data!,
         pages: Object.values(pagesRes.data!),
         blocks: blocksRes.data!,
-        // onUpdated: (_results) => {
-        //   queryClient.setQueryData(queryKey, _results)
-        // },
-        // allowStale: firstSearchComplete,
         localSearch: true,
       })
-      // firstSearchComplete = true
       return results
     },
-    enabled: pagesRes.isSuccess && blocksRes.isSuccess,
+    enabled: 
+      pagesRes.isSuccess && blocksRes.isSuccess && searchTextRes.isSuccess,
     // gcTime: 5000,
   })
 

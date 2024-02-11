@@ -77,6 +77,7 @@ export const StickyHeader = ({
         pr="medium"
         pl={pxUnits(18)}
         bg="background.2"
+        zIndex={1}
       >
         <Helmet>
           <meta charSet="utf-8" />

@@ -16,8 +16,6 @@ const SourceModal = ({ refId, visible, onUpdate, id, untitledPlaceholder }) => {
   const pagesRes = usePages()
   const queryClient = useQueryClient()
 
-  const source = blockRes.isSuccess && blockRes.data
-
   const saveSource = useCallback(
     (values) => {
       if (!values?.text?.textValue.length) {
@@ -48,17 +46,18 @@ const SourceModal = ({ refId, visible, onUpdate, id, untitledPlaceholder }) => {
   )
 
   useEffect(() => {
-    if (!source) {
+    if (!blockRes.isSuccess) {
       // still loading...
       return
     }
+    const _values = { ...blockRes.data }
     // check if detail has been provided
-    if (!source.detail) {
-      source.detail = buildSourceDetail()
+    if (!_values.detail) {
+      _values.detail = buildSourceDetail()
     }
 
-    setValues(source)
-  }, [source])
+    setValues(_values)
+  }, [blockRes.isSuccess])
 
   if (values?.text.textValue === untitledPlaceholder) {
     values.text.textValue = ''

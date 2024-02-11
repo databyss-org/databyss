@@ -12,7 +12,7 @@ import {
   Point,
   Range,
 } from '@databyss-org/slate'
-import { EM, updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
+import { EM, updateAccessedAt, updateModifiedAt } from '@databyss-org/data/pouchdb/utils'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { setSource } from '@databyss-org/services/sources'
 import { setEmbed } from '@databyss-org/services/embeds'
@@ -219,7 +219,7 @@ const ContentEditable = ({
           page: state.pageHeader?._id,
         }
 
-        updateAccessedAt(
+        updateModifiedAt(
           entity._id,
           queryClient,
           blockTypeToSelector(entity.type)
