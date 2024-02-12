@@ -21,7 +21,12 @@ export const SearchProvider = ({ children }) => {
   }
 
   const normalizedStemmedTerms = useMemo(
-    () => splitSearchTerms(searchTerm, { normalized: true, stemmed: true }),
+    () =>
+      splitSearchTerms(searchTerm, {
+        normalized: true,
+        stemmed: true,
+        alwaysExactForMultiple: true,
+      }),
     [searchTerm]
   )
 

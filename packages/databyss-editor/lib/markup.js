@@ -36,6 +36,18 @@ export const applyRange = (editor, range) => {
   return editor
 }
 
+export const flatOffsetToPoint = (children, offset) => {
+  const _editor = createEditor()
+  Transforms.insertNodes(_editor, { children })
+  moveToStart(_editor)
+  Transforms.move(_editor, {
+    distance: offset,
+    edge: 'focus',
+    unit: 'character',
+  })
+  return _editor.selection.focus
+}
+
 export const statePointToSlatePoint = (children, point) => {
   const { index, offset: flatOffset } = point
 

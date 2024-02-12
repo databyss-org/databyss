@@ -16,6 +16,7 @@ import FormatMenu from './FormatMenu'
 import { isSelectionCollapsed } from '../lib/clipboardUtils'
 import { convertSelectionToLink } from '../lib/inlineUtils/setPageLink'
 import { createHighlightRanges, createLinkRangesForUrls } from '../lib/util'
+import { flatOffsetToPoint } from '../lib/markup'
 
 const Editor = ({
   children,
@@ -128,21 +129,32 @@ const Editor = ({
       if (!normalizedStemmedTerms.length) {
         return ranges
       }
-      // search each word individually
-      if (Text.isText(node) && !node.inlineAtomicMenu) {
-        const _highlightRanges = createHighlightRanges(
-          node.text,
-          normalizedStemmedTerms
-        )
-        // if (_highlightRanges.length) {
-        //   console.log('[Editor] highlightRanges', _highlightRanges)
-        // }
+      // split the terms
+
+      const _terms = normalizedStemmedTerms
+
+      // search in parent (not leaf) nodes for highlights
+      if (node.children) {
+        const _text = node.children.map((c) => c.text).join('')
+        const _highlightRanges = createHighlightRanges(_text, _terms)
         _highlightRanges.forEach((_highlightRange) => {
+          // calc path of child node
+          const anchor = flatOffsetToPoint(
+            node.children,
+            _highlightRange.offset + 1
+          )
+          const focus = flatOffsetToPoint(
+            node.children,
+            _highlightRange.offset + _highlightRange.length
+          )
           ranges.push({
-            anchor: { path, offset: _highlightRange.offset },
+            anchor: {
+              path: [path[0], anchor.path[1]],
+              offset: anchor.offset - 1,
+            },
             focus: {
-              path,
-              offset: _highlightRange.offset + _highlightRange.length,
+              path: [path[0], focus.path[1]],
+              offset: focus.offset,
             },
             highlight: true,
           })

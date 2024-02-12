@@ -19,6 +19,7 @@ export interface SearchTerm {
 interface SplitSearchTermOptions {
   normalized: boolean
   stemmed: boolean
+  alwaysExactForMultiple?: boolean
 }
 
 export function unorm(text: string) {
@@ -37,7 +38,7 @@ export function stemmer(word: string) {
 
 export function splitSearchTerms(
   query: string,
-  { stemmed, normalized }: SplitSearchTermOptions
+  { stemmed, normalized, alwaysExactForMultiple }: SplitSearchTermOptions
 ) {
   const _words = query.split(' ')
   const _terms: SearchTerm[] = []
@@ -45,8 +46,9 @@ export function splitSearchTerms(
   let _tidx = 0
   let _inphrase = false
   while (_widx < _words.length) {
-    if (_inphrase) {
+    if (_inphrase || (_widx > 0 && alwaysExactForMultiple)) {
       _terms[_tidx].text += ` ${_words[_widx]}`
+      _terms[_tidx].exact = true
       if (_words[_widx].endsWith('"')) {
         _tidx += 1
         _inphrase = false
@@ -57,14 +59,13 @@ export function splitSearchTerms(
         original: _words[_widx].replaceAll('"', ''),
       }
       if (_words[_widx].startsWith('"')) {
-        _terms[_tidx].exact = true
         _terms[_tidx].text = _terms[_tidx].text.substring(1)
         if (!_words[_widx].endsWith('"')) {
           _inphrase = true
         } else {
           _tidx += 1
         }
-      } else {
+      } else if (!alwaysExactForMultiple) {
         _tidx += 1
       }
     }
@@ -80,6 +81,7 @@ export function splitSearchTerms(
   const _additional: SearchTerm[] = []
   const _processed = _terms.map((term) => {
     if (term.exact) {
+      term.original = term.text
       return term
     }
     if (normalized) {
@@ -214,6 +216,7 @@ export class CouchDb {
     const _terms = splitSearchTerms(query, {
       stemmed: false,
       normalized: true,
+      alwaysExactForMultiple: true,
     })
     const body = {
       selector: {

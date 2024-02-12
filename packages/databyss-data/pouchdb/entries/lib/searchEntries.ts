@@ -93,6 +93,7 @@ const searchEntries = async ({
   const _terms = splitSearchTerms(encodedQuery, {
     stemmed: true,
     normalized: true,
+    alwaysExactForMultiple: true,
   })
   const _expandedQueryResponse: PouchDB.SearchRow<SearchRow>[] = []
   for (const _result of _queryResponse) {

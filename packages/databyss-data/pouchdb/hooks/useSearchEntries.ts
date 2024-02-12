@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { searchEntries } from '../entries'
-import { PouchDbSearchRow, SearchEntriesResultPage } from '../entries/lib/searchEntries'
+import {
+  PouchDbSearchRow,
+  SearchEntriesResultPage,
+} from '../entries/lib/searchEntries'
 import { usePages } from './'
 import { useDocuments } from './useDocuments'
 import { Block } from '../../../databyss-services/interfaces'
@@ -19,13 +22,12 @@ const useSearchText = (searchQuery: string, localSearch: boolean = true) => {
           query: _searchQuery,
         })
         return _res.rows as PouchDbSearchRow[]
-      } else {
-        return couchDbRef.current?.search({ query: _searchQuery })!
       }
+      return couchDbRef.current?.search({ query: _searchQuery })!
     },
-    staleTime: 5000
+    staleTime: 5000,
   })
-  
+
   return query
 }
 
@@ -38,16 +40,16 @@ export const useSearchEntries = (searchQuery: string) => {
     docIds = searchTextRes.data.map((row) => row.id)
   }
 
-  const blocksRes = useDocuments<Block>(docIds, { 
-    enabled: searchTextRes.isSuccess 
+  const blocksRes = useDocuments<Block>(docIds, {
+    enabled: searchTextRes.isSuccess,
   })
 
   const queryKey = [
-    'searchEntries', 
-    searchQuery, 
+    'searchEntries',
+    searchQuery,
     searchTextRes.dataUpdatedAt,
     pagesRes.dataUpdatedAt,
-    blocksRes.dataUpdatedAt
+    blocksRes.dataUpdatedAt,
   ]
 
   const query = useQuery<SearchEntriesResultPage[]>({
@@ -62,7 +64,7 @@ export const useSearchEntries = (searchQuery: string) => {
       })
       return results
     },
-    enabled: 
+    enabled:
       pagesRes.isSuccess && blocksRes.isSuccess && searchTextRes.isSuccess,
     // gcTime: 5000,
   })
