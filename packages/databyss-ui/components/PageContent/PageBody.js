@@ -36,6 +36,7 @@ export const PageBody = ({
   const setPatches = useEditorPageContext((c) => c.setPatches)
   const pageState = useRef(null)
   const editorStateRef = useRef()
+  const pageNameRef = useRef(page.name)
 
   const debouncedSetPageHeader = _.debounce(setPageHeader, 1000)
 
@@ -56,9 +57,7 @@ export const PageBody = ({
         _patch?.path?.[2] === 'text'
           ? _patch?.value?.textValue
           : _patch?.value?.text?.textValue
-      return _patchValue !== null && 
-        _patchValue !== undefined && 
-        _patchValue
+      return _patchValue !== null && _patchValue !== undefined && _patchValue
     }
     if (value?.patches?.length) {
       const _patchValue = _patchTextChange(
@@ -69,6 +68,7 @@ export const PageBody = ({
           name: _patchValue.trim() || UNTITLED_PAGE_NAME,
           _id: page._id,
         }
+        pageNameRef.current = _pageData.name
         debouncedSetPageHeader(_pageData)
       } else {
         const _patchValue = _patchTextChange(
@@ -76,7 +76,7 @@ export const PageBody = ({
         )
         if (_patchValue) {
           // just update timestamp
-          debouncedSetPageHeader({ name: page.name, _id: page._id })
+          debouncedSetPageHeader({ name: pageNameRef.current, _id: page._id })
         }
       }
     }
