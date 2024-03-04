@@ -122,11 +122,11 @@ export function registerFileHandlers() {
     )
     return _safeFilename
   })
-  ipcMain.on('file-openNative', (_, path: string) => {
-    const _path = decodeURIComponent(
-      path.replace('dbdrive://', `${mediaPath()}/`)
+  ipcMain.on('file-openNative', (_, filePath: string) => {
+    const _decodedPath = decodeURIComponent(
+      filePath.replace('dbdrive://', `${mediaPath()}/`)
     )
-    shell.openPath(_path)
+    shell.openPath(path.join(..._decodedPath.split(/[\/\\]/)))
   })
   ipcMain.handle('file-deleteMedia', (evt, fileId: string) => {
     const windowId = evt.sender.id
