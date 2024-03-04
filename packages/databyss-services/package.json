@@ -15,7 +15,6 @@
     "@bugsnag/browser": "^6.3.2",
     "@bugsnag/js": "^6.3.2",
     "@bugsnag/node": "^6.3.2",
-    "@cloudant/cloudant": "^4.3.0",
     "@databyss-org/data": "3.1.7",
     "@databyss-org/editor": "3.1.7",
     "@databyss-org/services": "3.1.7",

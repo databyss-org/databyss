@@ -5,7 +5,6 @@
   "author": "databyss-org",
   "license": "MIT",
   "dependencies": {
-    "@cloudant/couchbackup": "2.9.2",
     "@databyss-org/find-remove": "^3.1.0-b1",
     "@types/tmp": "^0.2.0",
     "@types/yargs": "^16.0.1",
