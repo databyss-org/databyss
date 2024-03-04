@@ -286,8 +286,9 @@ function registerWindowEvents(win: BrowserWindow, menu: Menu) {
         })
       )
     }
-  
-    menu.popup()
+    if (menu.items.length) {
+      menu.popup()
+    }
   })
 }
 
