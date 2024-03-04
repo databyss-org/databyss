@@ -73,7 +73,7 @@ export const DatabaseProvider = ({ children, noGroupHeader }) => {
     if (eapi) {
       eapi.db.getGroupId().then((groupId) => {
         // console.log('[DatabaseProvider] preload groupId', groupId)
-        if (groupId !== null) {
+        if (groupId) {
           connect(groupId)
           updateDatabaseStatus()
         }

@@ -253,11 +253,13 @@ export const Private = () => {
     (c) => c && c.navigateToDefaultPage
   )
   const { provisionClientDatabase } = getSession()
-  const groupRes = useDocument<Group>(dbRef.groupId ?? '', {
+  const groupRes = useDocument<Group>(dbRef.groupId, {
     enabled: dbRef.groupId !== null,
   })
 
-  const groupName = groupRes.isSuccess ? groupRes.data.name : 'Databyss'
+  console.log('[Private] groupRes.data', dbRef.groupId, groupRes.data)
+
+  const groupName = groupRes.data?.name ?? 'Databyss'
 
   const onGroupNameChanged = useCallback(
     async (name: string) => {

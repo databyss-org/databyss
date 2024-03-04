@@ -41,6 +41,8 @@ export async function upsertRelation(windowId: number, {
 export function registerDbHandlers() {
   ipcMain.handle('db-info', async (evt) => 
     await nodeDbRefs[evt.sender.id]?.current?.info())
+  ipcMain.handle('db-groupId', async (evt) => 
+    await nodeDbRefs[evt.sender.id]?.groupId)
   ipcMain.on('db-loadGroup', async (evt, groupId: string) => {
     console.log('[DB] loadGroup', groupId)
     const _windowId = getWindowIdForGroup(groupId)
