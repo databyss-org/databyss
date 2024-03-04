@@ -133,6 +133,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         ? {
             ...oldData,
             [page._id]: {
+              ...oldData[page._id],
               ...page,
               accessedAt: Date.now(),
               modifiedAt: Date.now(),
