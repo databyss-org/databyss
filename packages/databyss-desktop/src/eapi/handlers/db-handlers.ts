@@ -1,12 +1,20 @@
 import { BrowserWindow, ipcMain } from 'electron'
-import { getWindowIdForGroup, initNodeDb, NodeDbRef, nodeDbRefs, setGroupLoaded } from '../../nodeDb'
+import {
+  getWindowIdForGroup,
+  initNodeDb,
+  NodeDbRef,
+  nodeDbRefs,
+  setGroupLoaded,
+} from '../../nodeDb'
 import { sleep } from '@databyss-org/services/lib/util'
 import { updateInlines } from '@databyss-org/data/nodedb/updateInlines'
 import { BlockRelation, BlockType } from '@databyss-org/services/interfaces'
 import { addTimeStamp } from '@databyss-org/data/pouchdb/docUtils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 
-export async function upsertRelation(windowId: number, {
+export async function upsertRelation(
+  windowId: number,
+  {
     blockId,
     blockType,
     pageId,
@@ -39,10 +47,14 @@ export async function upsertRelation(windowId: number, {
 }
 
 export function registerDbHandlers() {
-  ipcMain.handle('db-info', async (evt) => 
-    await nodeDbRefs[evt.sender.id]?.current?.info())
-  ipcMain.handle('db-groupId', async (evt) => 
-    await nodeDbRefs[evt.sender.id]?.groupId)
+  ipcMain.handle(
+    'db-info',
+    async (evt) => await nodeDbRefs[evt.sender.id]?.current?.info()
+  )
+  ipcMain.handle(
+    'db-groupId',
+    async (evt) => await nodeDbRefs[evt.sender.id]?.groupId
+  )
   ipcMain.on('db-loadGroup', async (evt, groupId: string) => {
     console.log('[DB] loadGroup', groupId)
     const _windowId = getWindowIdForGroup(groupId)
@@ -83,8 +95,8 @@ export function registerDbHandlers() {
     }
   )
   ipcMain.handle(
-    'db-allDocs', 
-    async (evt, options: PouchDB.Core.AllDocsOptions) => 
+    'db-allDocs',
+    async (evt, options: PouchDB.Core.AllDocsOptions) =>
       await nodeDbRefs[evt.sender.id]?.current?.allDocs(options)
   )
   ipcMain.handle(
@@ -101,8 +113,43 @@ export function registerDbHandlers() {
   )
   ipcMain.handle(
     'db-bulkDocs',
-    async (evt, ...args: Parameters<PouchDB.Database['bulkDocs']>) =>
-      await nodeDbRefs[evt.sender.id]?.current?.bulkDocs(...args)
+    async (evt, ...args: Parameters<PouchDB.Database['bulkDocs']>) => {
+      // compose bulk get request
+      const _bulkGetQuery = { docs: args[0].map((d) => ({ id: d._id })) }
+      if (!_bulkGetQuery.docs.length) {
+        return
+      }
+      const _res = await nodeDbRefs[evt.sender.id]?.current?.bulkGet(
+        _bulkGetQuery
+      )
+      // build old document index
+      const _oldDocs: any = {}
+      if (_res.results?.length) {
+        _res.results.forEach((oldDocRes) => {
+          const _docResponse = oldDocRes.docs?.[0] as any
+          if (_docResponse?.ok) {
+            const _oldDoc = _docResponse.ok
+            _oldDocs[_oldDoc._id] = _oldDoc
+          }
+        })
+      }
+      // compose updated documents to bulk upsert
+      const _docs: any = []
+      for (const _doc of args[0]) {
+        const { _id, ...docFields } = _doc
+        const _oldDoc = _oldDocs[_id]
+        if (_oldDoc) {
+          _docs.push({
+            ..._oldDoc,
+            ...docFields,
+            ...(_oldDoc._rev ? { _rev: _oldDoc._rev } : {}),
+          })
+        } else {
+          _docs.push(_doc)
+        }
+      }
+      await nodeDbRefs[evt.sender.id]?.current?.bulkDocs(_docs, args[1])
+    }
   )
   ipcMain.handle(
     'db-find',
@@ -112,9 +159,7 @@ export function registerDbHandlers() {
   ipcMain.handle(
     'db-search',
     async (evt, ...args: Parameters<PouchDB.Database['search']>) => {
-      console.log('[DB] search', args)
       const res = await nodeDbRefs[evt.sender.id]?.current?.search(...args)
-      console.log('[DB] search results', res)
       return res
     }
   )
