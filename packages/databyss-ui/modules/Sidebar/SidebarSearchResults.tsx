@@ -25,6 +25,7 @@ import FindInPagesSvg from '../../assets/find-in-pages.svg'
 import { groupsToListItemData } from './lists/GroupList'
 import { useAppState } from '@databyss-org/desktop/src/hooks'
 import theme, { darkContentTheme } from '../../theming/theme'
+import { UseQueryResult } from '@tanstack/react-query'
 
 const FulltextSearchItem = (props) => (
   <SidebarListItem
@@ -94,11 +95,12 @@ const SidebarSearchResults = ({
   onItemPressed,
   ...others
 }) => {
-  const sourcesRes = useBlocksInPages<Source>(BlockType.Source)
-  const topicsRes = useBlocksInPages<Topic>(BlockType.Topic)
-  const groupsRes = useGroups()
-  const pagesRes = usePages()
+  let sourcesRes = useBlocksInPages<Source>(BlockType.Source)
+  let topicsRes = useBlocksInPages<Topic>(BlockType.Topic)
+  let groupsRes = useGroups()
+  let pagesRes = usePages()
   const listHandleRef = useRef<ListHandle>(null)
+  const previousRes = useRef<UseQueryResult[] | null>(null)
   const isDarkModeRes = useAppState('darkMode')
   const findInPage = useFindInPage({
     theme: isDarkModeRes.data ? darkContentTheme : theme,
@@ -119,12 +121,19 @@ const SidebarSearchResults = ({
     if (filterQuery?.trim().length) {
       findInPage.runQuery()
     }
+    previousRes.current = null
   }, [filterQuery])
 
   const queryRes = [sourcesRes, topicsRes, pagesRes, groupsRes]
 
-  if (queryRes.some((q) => !q.isSuccess)) {
-    return <LoadingFallback queryObserver={queryRes} />
+  if (queryRes.some((q) => !q.data)) {
+    if (previousRes.current) {
+      ;[sourcesRes, topicsRes, pagesRes, groupsRes] = previousRes.current
+    } else {
+      return <LoadingFallback queryObserver={queryRes} />
+    }
+  } else {
+    previousRes.current = queryRes
   }
 
   let _menuItems = []
@@ -135,8 +144,9 @@ const SidebarSearchResults = ({
 
     const mappedAuthors = authorsToListItemData(Object.values(sourcesRes.data!))
     const mappedGroups = groupsToListItemData(Object.values(groupsRes.data!))
-    const mappedPages = pagesToListItemData(Object.values(pagesRes.data!))
-      .filter((pageItem) => !pageItem.data?.archive)
+    const mappedPages = pagesToListItemData(
+      Object.values(pagesRes.data!)
+    ).filter((pageItem) => !pageItem.data?.archive)
 
     const allResults = [
       ...mappedSources,
