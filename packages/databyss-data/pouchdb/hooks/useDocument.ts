@@ -15,6 +15,8 @@ export interface UseDocumentOptions {
   initialData?: any
   subscribe?: boolean
   forceRefetch?: boolean
+  previousIfNull?: boolean
+  previousDeps?: any[]
 }
 
 export function applyDefaultUseDocumentOptions(options: UseDocumentOptions) {

@@ -46,7 +46,9 @@ const SuggestSources = ({
 }) => {
   const editor = useEditor()
 
-  const sourcesRes = useBlocksInPages(BlockType.Source)
+  const sourcesRes = useBlocksInPages(BlockType.Source, {
+    previousIfNull: true,
+  })
   const { replace, state, setContent } = useEditorContext()
 
   const pendingSetContent = useRef(false)
@@ -210,7 +212,6 @@ const SuggestSources = ({
   if (!sourcesRes.isSuccess) {
     return <LoadingFallback queryObserver={sourcesRes} />
   }
-
   if (!suggestions) {
     onSuggestionsChanged(Object.values(sourcesRes.data))
     setSuggestsions(Object.values(sourcesRes.data))

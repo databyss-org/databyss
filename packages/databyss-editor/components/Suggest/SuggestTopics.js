@@ -23,7 +23,9 @@ const SuggestTopics = ({
   inlineAtomic,
 }) => {
   const editor = useEditor()
-  const topicsRes = useBlocksInPages(BlockType.Topic)
+  const topicsRes = useBlocksInPages(BlockType.Topic, {
+    previousIfNull: true,
+  })
 
   const { replace, state, setContent } = useEditorContext()
 

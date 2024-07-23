@@ -35,7 +35,7 @@ const SuggestEmbeds = ({
   dismiss,
 }) => {
   const editor = useEditor() as ReactEditor & Editor
-  const embedRes = useBlocksInPages(BlockType.Embed)
+  const embedRes = useBlocksInPages(BlockType.Embed, { previousIfNull: true })
   const { state, setContent } = useEditorContext()
 
   const pendingSetContent = useRef(false)

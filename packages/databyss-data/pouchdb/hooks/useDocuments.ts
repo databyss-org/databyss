@@ -4,6 +4,7 @@ import {
   useQuery,
   // useQueryClient,
   UseQueryOptions,
+  UseQueryResult,
 } from '@tanstack/react-query'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
@@ -18,6 +19,7 @@ import {
   // applyDefaultUseDocumentOptions,
   UseDocumentOptions,
 } from './useDocument'
+import { useEffect, useRef } from 'react'
 // import { uid } from '../../lib/uid'
 // import { docsEqual } from '../compare'
 
@@ -36,6 +38,7 @@ export const useDocuments = <T extends Document>(
   // const { isCouchMode } = useDatabaseContext()
   // const _options = applyDefaultUseDocumentOptions(options)
 
+  const prevQuery = useRef<UseQueryResult | null>(null)
   let docIds: string[]
   let queryKey: QueryKey
   let selector: PouchDB.Find.Selector | undefined
@@ -84,7 +87,7 @@ export const useDocuments = <T extends Document>(
             .catch((err) => reject(err))
         }
       }),
-    ...options as UseQueryOptions<DocumentDict<T>>,
+    ...(options as UseQueryOptions<DocumentDict<T>>),
     queryKey,
   })
 
@@ -167,6 +170,16 @@ export const useDocuments = <T extends Document>(
   //   subscribe()
   //   return unsubscribe
   // }, [options?.enabled, isCouchMode])
+
+  useEffect(() => {
+    prevQuery.current = null
+  }, [options?.previousDeps])
+
+  if (!query.data && options.previousIfNull && prevQuery.current) {
+    return prevQuery.current
+  }
+
+  prevQuery.current = query
 
   return query
 }

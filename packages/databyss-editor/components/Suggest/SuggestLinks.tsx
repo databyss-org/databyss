@@ -31,7 +31,7 @@ const SuggestLinks = ({ query, onSuggestionsChanged, menuHeight, dismiss }) => {
   const { setContent } = useEditorContext()
   const editor = useEditor() as ReactEditor & Editor
   // const embedRes = useBlocksInPages(BlockType.Embed)
-  const pagesRes = usePages()
+  const pagesRes = usePages({ previousIfNull: true })
   const [isUrl, setIsUrl] = useState(false)
   const [title, setTitle] = useState<null | string>(null)
   const pendingSetContent = useRef(false)

@@ -25,7 +25,6 @@ import FindInPagesSvg from '../../assets/find-in-pages.svg'
 import { groupsToListItemData } from './lists/GroupList'
 import { useAppState } from '@databyss-org/desktop/src/hooks'
 import theme, { darkContentTheme } from '../../theming/theme'
-import { UseQueryResult } from '@tanstack/react-query'
 
 const FulltextSearchItem = (props) => (
   <SidebarListItem
@@ -95,12 +94,15 @@ const SidebarSearchResults = ({
   onItemPressed,
   ...others
 }) => {
-  let sourcesRes = useBlocksInPages<Source>(BlockType.Source)
-  let topicsRes = useBlocksInPages<Topic>(BlockType.Topic)
-  let groupsRes = useGroups()
-  let pagesRes = usePages()
+  const sourcesRes = useBlocksInPages<Source>(BlockType.Source, {
+    previousIfNull: true,
+  })
+  const topicsRes = useBlocksInPages<Topic>(BlockType.Topic, {
+    previousIfNull: true,
+  })
+  const groupsRes = useGroups({ previousIfNull: true })
+  const pagesRes = usePages({ previousIfNull: true })
   const listHandleRef = useRef<ListHandle>(null)
-  const previousRes = useRef<UseQueryResult[] | null>(null)
   const isDarkModeRes = useAppState('darkMode')
   const findInPage = useFindInPage({
     theme: isDarkModeRes.data ? darkContentTheme : theme,
@@ -121,19 +123,12 @@ const SidebarSearchResults = ({
     if (filterQuery?.trim().length) {
       findInPage.runQuery()
     }
-    previousRes.current = null
   }, [filterQuery])
 
   const queryRes = [sourcesRes, topicsRes, pagesRes, groupsRes]
 
-  if (queryRes.some((q) => !q.data)) {
-    if (previousRes.current) {
-      ;[sourcesRes, topicsRes, pagesRes, groupsRes] = previousRes.current
-    } else {
-      return <LoadingFallback queryObserver={queryRes} />
-    }
-  } else {
-    previousRes.current = queryRes
+  if (queryRes.some((q) => !q.isSuccess)) {
+    return <LoadingFallback queryObserver={queryRes} />
   }
 
   let _menuItems = []
