@@ -15,6 +15,7 @@ export default {
     },
   },
   newEntities: [], // renamed from `newAtomics`
+  changedEntities: [],
   entityCache: {
     '5e3f829ce5447c0018baebed': {
       type: 'ENTRY',

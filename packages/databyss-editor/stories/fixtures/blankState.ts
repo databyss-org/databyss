@@ -16,6 +16,7 @@ const initialState: EditorState = {
     },
   },
   newEntities: [],
+  changedEntities: [],
   removedEntities: [],
   entitySuggestionCache: {},
   blocks: [

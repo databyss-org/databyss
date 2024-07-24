@@ -19,6 +19,7 @@ export default (pageId) => ({
     },
   },
   newEntities: [],
+  changedEntities: [],
   blocks: [
     {
       type: 'ENTRY',

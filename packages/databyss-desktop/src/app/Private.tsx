@@ -37,7 +37,10 @@ import { EditorPageProvider } from '@databyss-org/services'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
-import theme, { darkContentTheme, darkTheme } from '@databyss-org/ui/theming/theme'
+import theme, {
+  darkContentTheme,
+  darkTheme,
+} from '@databyss-org/ui/theming/theme'
 import SidebarSvg from '@databyss-org/ui/assets/sidebar.svg'
 import ChevronSvg from '@databyss-org/ui/assets/chevron-right.svg'
 import DatabyssImg from '@databyss-org/ui/assets/logo-thick.png'
@@ -228,7 +231,9 @@ const AppView = ({
           pl={pxUnits(18)}
         >
           <View flexGrow={1}>
-            <Text color="text.3" variant="uiTextSmall">Loading...</Text>
+            <Text color="text.3" variant="uiTextSmall">
+              Loading...
+            </Text>
           </View>
           <Icon sizeVariant="medium" color="text.3" flexShrink={1}>
             <MenuSvg />
@@ -257,7 +262,7 @@ export const Private = () => {
     enabled: dbRef.groupId !== null,
   })
 
-  console.log('[Private] groupRes.data', dbRef.groupId, groupRes.data)
+  // console.log('[Private] groupRes.data', dbRef.groupId, groupRes.data)
 
   const groupName = groupRes.data?.name ?? 'Databyss'
 

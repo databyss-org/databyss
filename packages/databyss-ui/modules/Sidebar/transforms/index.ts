@@ -18,6 +18,7 @@ export const blockTypeToListItemType = (blockType: BlockType): string => {
     case BlockType.Embed:
       return 'embed'
     default:
-      throw new Error(`Invalid block type: ${blockType}`)
+      console.warn(`[blockTypeToListItemType] Invalid block type: ${blockType}`)
+      return null
   }
 }

@@ -18,6 +18,7 @@ import {
   REMOVE,
   CLEAR,
   DEQUEUE_NEW_ENTITY,
+  DEQUEUE_CHANGED_ENTITY,
   COPY,
   CUT,
   PASTE,
@@ -267,6 +268,12 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
       payload: { id },
     })
 
+  const removeEntityFromChangeQueue = (id: string) =>
+    dispatch({
+      type: DEQUEUE_CHANGED_ENTITY,
+      payload: { id },
+    })
+
   const removeAtomicFromQueue = (id: string) =>
     dispatch({
       type: DEQUEUE_REMOVED_ENTITY,
@@ -368,6 +375,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
           removeAtSelection,
           clear,
           removeEntityFromQueue,
+          removeEntityFromChangeQueue,
           cacheEntitySuggestions,
           removeAtomicFromQueue,
           // setInlineBlockRelations,

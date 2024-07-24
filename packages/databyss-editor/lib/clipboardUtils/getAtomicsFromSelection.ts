@@ -6,7 +6,10 @@ import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
 import { isAtomicInlineType, getInlineAtomicType } from '../util'
 
-export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
+export const getAtomicsFromFrag = (
+  frag: Block[],
+  includeDuplicates?: boolean
+): BlockReference[] => {
   const atomics: BlockReference[] = []
   frag.forEach((b) => {
     if (!isAtomicInlineType(b.type)) {
@@ -22,7 +25,7 @@ export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
                   i[0] === InlineTypes.Embed)
             )
             .forEach((i) => {
-              if (!atomics.some((a) => a._id === i[1])) {
+              if (includeDuplicates || !atomics.some((a) => a._id === i[1])) {
                 // inline page link
                 if (i[0] === InlineTypes.Link && !validURL(i[1])) {
                   atomics.push({ type: BlockType.Link, _id: i[1] })
@@ -40,7 +43,7 @@ export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
         }
       })
     } else if (
-      !atomics.some((a) => a._id === b._id) &&
+      (includeDuplicates || !atomics.some((a) => a._id === b._id)) &&
       b.text?.textValue.charAt(0) !== '/'
     ) {
       const _atomic = { type: b.type, _id: b._id }
@@ -50,10 +53,20 @@ export const getAtomicsFromFrag = (frag: Block[]): BlockReference[] => {
   return atomics
 }
 
-export const getAtomicsFromSelection = ({ state }: { state: EditorState }) => {
+export const getAtomicsFromSelection = ({
+  state,
+  includeDuplicates,
+}: {
+  state: EditorState
+  includeDuplicates?: boolean
+}) => {
   const _frag = getFragmentAtSelection(state)
 
-  const _atomicsInSelection = getAtomicsFromFrag(_frag)
+  const _atomicsInSelection = getAtomicsFromFrag(_frag, includeDuplicates)
+  // console.log(
+  //   '[getAtomicsFromSelection] _atomicsInSelection',
+  //   _atomicsInSelection
+  // )
   return _atomicsInSelection
 }
 
@@ -69,28 +82,51 @@ export const getAtomicDifference = ({
 }): {
   atomicsRemoved: BlockReference[]
   atomicsAdded: Block[] | BlockReference[]
+  atomicsChanged: BlockReference[]
 } => {
   // returns array of atomics within selection
   const _atomicsBefore = getAtomicsFromSelection({
     state: stateBefore,
+    includeDuplicates: true,
   })
 
-  const _atomicsAfter = getAtomicsFromSelection({ state: stateAfter })
+  const _atomicsAfter = getAtomicsFromSelection({
+    state: stateAfter,
+    includeDuplicates: true,
+  })
 
+  // get added and removed elements (does not count changes in freq)
   const _listOfAtomicsToRemove: BlockReference[] = _.differenceWith(
     _atomicsBefore,
     _atomicsAfter,
     _.isEqual
   )
-
   const _listOFAtomicsToAdd: BlockReference[] = _.differenceWith(
     _atomicsAfter,
     _atomicsBefore,
     _.isEqual
   )
 
+  const _listOFAtomicsChanged = _.union(
+    _listOFAtomicsToAdd,
+    _listOfAtomicsToRemove
+  )
+
+  // get changes in freq
+  const _gBefore = _.groupBy(_atomicsBefore, (b) => b._id)
+  const _gAfter = _.groupBy(_atomicsAfter, (b) => b._id)
+  Object.keys(_gBefore).forEach((_id) => {
+    if (_gAfter[_id] && _gAfter[_id].length !== _gBefore[_id].length) {
+      _listOFAtomicsChanged.push(_gBefore[_id][0])
+    }
+  })
+
+  // console.log('[getAtomicDifference]', _atomicsBefore, _atomicsAfter)
+  // console.log('[getAtomicDifference]', _listOFAtomicsChanged)
+
   return {
     atomicsRemoved: _listOfAtomicsToRemove,
     atomicsAdded: _listOFAtomicsToAdd,
+    atomicsChanged: _listOFAtomicsChanged,
   }
 }

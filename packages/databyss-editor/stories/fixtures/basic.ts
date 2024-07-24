@@ -27,6 +27,7 @@ const basicFixture: EditorState = {
     },
   },
   newEntities: [],
+  changedEntities: [],
   entitySuggestionCache: {},
   removedEntities: [],
   blocks: [

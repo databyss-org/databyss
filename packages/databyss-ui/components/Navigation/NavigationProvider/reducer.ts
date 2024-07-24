@@ -1,4 +1,4 @@
-import produce, { Draft } from 'immer'
+import { produce, Draft } from 'immer'
 import { FSA } from '@databyss-org/services/interfaces'
 import { NavigationState } from './interfaces'
 import {

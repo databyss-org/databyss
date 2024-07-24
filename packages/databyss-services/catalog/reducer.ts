@@ -1,4 +1,4 @@
-import produce, { Draft } from 'immer'
+import { produce, Draft } from 'immer'
 import { SEARCH_CATALOG, CACHE_SEARCH_RESULTS } from './constants'
 import { FSA, CatalogState } from '../interfaces'
 import { ResourcePending } from '../interfaces/ResourcePending'

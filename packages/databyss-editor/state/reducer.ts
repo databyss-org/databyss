@@ -19,6 +19,7 @@ import {
   SET_SELECTION,
   DEQUEUE_NEW_ENTITY,
   DEQUEUE_REMOVED_ENTITY,
+  DEQUEUE_CHANGED_ENTITY,
   PASTE,
   CUT,
   UNDO,
@@ -889,6 +890,12 @@ export default (
         }
         case DEQUEUE_NEW_ENTITY: {
           draft.newEntities = state.newEntities.filter(
+            (q) => q._id !== payload.id
+          )
+          break
+        }
+        case DEQUEUE_CHANGED_ENTITY: {
+          draft.changedEntities = state.changedEntities.filter(
             (q) => q._id !== payload.id
           )
           break

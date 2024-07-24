@@ -14,9 +14,9 @@ export interface UseDocumentOptions {
   enabled?: boolean
   initialData?: any
   subscribe?: boolean
-  forceRefetch?: boolean
   previousIfNull?: boolean
   previousDeps?: any[]
+  queryKey?: string[]
 }
 
 export function applyDefaultUseDocumentOptions(options: UseDocumentOptions) {
@@ -24,7 +24,6 @@ export function applyDefaultUseDocumentOptions(options: UseDocumentOptions) {
     enabled: options.enabled ?? true,
     initialData: options.initialData ?? null,
     subscribe: options.subscribe ?? true,
-    forceRefetch: options.forceRefetch ?? false,
   }
 }
 

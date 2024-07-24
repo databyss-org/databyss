@@ -27,6 +27,7 @@ import {
   RangeType,
   InlineTypes,
 } from '../../databyss-services/interfaces/Range'
+import { queryClient } from '@databyss-org/services/lib/queryClient'
 
 /*
 takes a text object and a range type and returns the length of the range, the location of the offset and the text contained within the range, this fuction works when text block has of of that range type
@@ -932,7 +933,7 @@ export const pushAtomicChangeUpstream = ({
 
   // return a list of atomics which were found in the second selection and not the first, this is used to see if atomics were removed from the page
 
-  const { atomicsRemoved, atomicsAdded } = getAtomicDifference({
+  const { atomicsRemoved, atomicsAdded, atomicsChanged } = getAtomicDifference({
     stateBefore: { ...state, selection: _selectionFromState },
     stateAfter: { ...draft, selection: _selectionFromDraft },
   })
@@ -950,4 +951,6 @@ export const pushAtomicChangeUpstream = ({
       draft.newEntities.push(a)
     })
   }
+
+  draft.changedEntities.push.apply(draft.changedEntities, atomicsChanged)
 }

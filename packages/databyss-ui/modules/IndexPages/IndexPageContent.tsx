@@ -69,6 +69,7 @@ import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 import { darkTheme } from '../../theming/theme'
 import ErrorFallback from '../../components/Notify/ErrorFallback'
 import { SourceHeader } from './SourceHeader'
+import { queryClient } from '@databyss-org/services/lib/queryClient'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -270,9 +271,9 @@ export const IndexPageView = ({
       }
     }
   }, [blockName])
-  return useMemo(
-    () => (
-      // console.log('[IndexPageContent] render children')
+  return useMemo(() => {
+    console.log('[IndexPageContent] render children')
+    return (
       <>
         <StickyHeader
           path={path}
@@ -337,9 +338,8 @@ export const IndexPageView = ({
           </View>
         </ScrollView>
       </>
-    ),
-    [path, block]
-  )
+    )
+  }, [path, block])
 }
 
 interface IndexPageContentProps {
@@ -368,6 +368,10 @@ export const getPathFromBlock = (block: Block) => {
 
 export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const { blockId } = useParams()
+  // console.log(
+  //   `[IndexPageContent] useDocument_r_${blockId}`,
+  //   queryClient.getQueryData([`useDocument_r_${blockId}`])
+  // )
   // const blocksRes = useBlocks(BlockType._ANY)
   const blockRes = useDocument<Block>(blockId!)
   const pagesRes = usePages()
@@ -390,58 +394,65 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
     })
   }
 
+  // console.log(
+  //   `[IndexPageContent] related_${blockId}`,
+  //   queryClient.getQueryData([`related_${blockId}`])
+  // )
+
   const blocksRes = useDocuments<Block>(blockIds, {
     enabled: !!blockIds.length,
+    queryKey: [`related_${blockId}`],
   })
+
+  // console.log('[IndexPageContent] blocksRes', blockId, blocksRes.dataUpdatedAt)
+  // console.log(
+  //   '[IndexPageContent] blockRelationRes',
+  //   blockId,
+  //   blockRelationRes.dataUpdatedAt
+  // )
 
   // const pageBlockCount = Object.values(pagesRes.data ?? {}).reduce(
   //   (sum, page) => sum + page.blocks.length,
   //   0
   // )
 
-  // return useMemo(() => {
-  // console.log('[IndexPageContent] blockIds', blockIds)
-  const queryRes = [blockRelationRes, blocksRes, pagesRes]
-  if (queryRes.some((q) => !q.isSuccess)) {
-    return <LoadingFallback queryObserver={queryRes} />
-  }
-  if (!blockRes.data || blockRes.data.type !== blockType) {
-    return <LoadingFallback queryObserver={[blockRes, pagesRes]} />
-  }
-  if (blockRelationRes.isSuccess && !blockRelationRes.data) {
-    return (
-      <ErrorFallback
-        error={new ResourceNotFoundError()}
-        message="Resource not found"
-      />
-    )
-  }
+  return useMemo(() => {
+    console.log('[IndexPageContent] render')
+    const queryRes = [blockRelationRes, blocksRes, pagesRes]
+    if (queryRes.some((q) => !q.isSuccess)) {
+      return <LoadingFallback queryObserver={queryRes} />
+    }
+    if (!blockRes.data || blockRes.data.type !== blockType) {
+      return <LoadingFallback queryObserver={[blockRes, pagesRes]} />
+    }
+    if (blockRelationRes.isSuccess && !blockRelationRes.data) {
+      return (
+        <ErrorFallback
+          error={new ResourceNotFoundError()}
+          message="Resource not found"
+        />
+      )
+    }
 
-  return (
-    <IndexPageView
-      path={getPathFromBlock(blockRes.data)}
-      block={blockRes.data}
-      key={blockId}
-      scrollViewRef={scrollViewRef}
-      theme={darkTheme}
-    >
-      <IndexResults
-        relatedBlockId={blockId!}
-        key={`${blockType}_${blockId}`}
-        blocks={blocksRes.data!}
-        pages={pagesRes.data!}
-        onLast={restoreScroll}
-        textOnly={blockType === BlockType.Embed}
-        // pageBlockCount={pageBlockCount}
-        blockRelation={blockRelationRes.data!}
-      />
-    </IndexPageView>
-  )
-  // }, [
-  //   blockId,
-  //   blocksRes.data?.[blockId!],
-  //   Object.keys(blocksRes.data ?? {}).length,
-  //   pageBlockCount,
-  //   blockRelationRes.data?.pages.length,
-  // ])
+    return (
+      <IndexPageView
+        path={getPathFromBlock(blockRes.data)}
+        block={blockRes.data}
+        key={blockId}
+        scrollViewRef={scrollViewRef}
+        theme={darkTheme}
+      >
+        <IndexResults
+          relatedBlockId={blockId!}
+          key={`${blockType}_${blockId}_${blocksRes.dataUpdatedAt}`}
+          blocks={blocksRes.data!}
+          pages={pagesRes.data!}
+          onLast={restoreScroll}
+          textOnly={blockType === BlockType.Embed}
+          // pageBlockCount={pageBlockCount}
+          blockRelation={blockRelationRes.data!}
+        />
+      </IndexPageView>
+    )
+  }, [blockRelationRes.dataUpdatedAt, blocksRes.dataUpdatedAt])
 }

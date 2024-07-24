@@ -49,6 +49,10 @@ export const useDocuments = <T extends Document>(
     queryKey = [selectorOrIdList]
     selector = selectorOrIdList
   }
+  if (options.queryKey) {
+    // console.log('[useDocuments] override queryKey', options.queryKey)
+    queryKey = options.queryKey
+  }
   // const queryKeyJson = JSON.stringify(queryKey)
 
   // console.log('useDocuments.selector', selector)

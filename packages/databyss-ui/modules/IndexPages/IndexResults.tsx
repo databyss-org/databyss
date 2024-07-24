@@ -108,9 +108,11 @@ export const IndexResults = withTheme(
       //   lastRelatedTextRef.current = relatedBlockRes.data!.text!.textValue
       //   return
       // }
+      // console.log('[IndexResults] update blocks')
       Object.values(relatedBlocksRef.current).forEach((block) => {
         const _updatedBlock = updateInlinesInBlock({
-          block: queryClient.getQueryData([`useDocument_${block._id}`]) ?? block,
+          block:
+            queryClient.getQueryData([`useDocument_${block._id}`]) ?? block,
           inlineType: blockTypeToInlineType(blockRelation.blockType)!,
           text: inlineTextFromBlock(relatedBlockRes.data!),
           inlineId: relatedBlockId,
@@ -132,7 +134,7 @@ export const IndexResults = withTheme(
         pages,
         blocks,
       }).filter((r) => r.relatedBlock === relatedBlockId)
-      // console.log('[indexResults]', _relations)
+      console.log('[indexResults] render')
 
       const groupedRelations = groupBlockRelationsByPage(_relations)
 

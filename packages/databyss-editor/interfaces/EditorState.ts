@@ -38,6 +38,7 @@ export interface EditorState {
   selection: Selection
   newEntities: Array<BlockReference | Block>
   removedEntities: BlockReference[]
+  changedEntities: BlockReference[]
   blocks: Block[]
   pageHeader?: PageHeader
   firstBlockIsTitle?: boolean

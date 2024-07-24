@@ -12,7 +12,11 @@ import {
   Point,
   Range,
 } from '@databyss-org/slate'
-import { EM, updateAccessedAt, updateModifiedAt } from '@databyss-org/data/pouchdb/utils'
+import {
+  EM,
+  updateAccessedAt,
+  updateModifiedAt,
+} from '@databyss-org/data/pouchdb/utils'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { setSource } from '@databyss-org/services/sources'
 import { setEmbed } from '@databyss-org/services/embeds'
@@ -91,6 +95,7 @@ const ContentEditable = ({
     remove,
     removeAtSelection,
     removeEntityFromQueue,
+    removeEntityFromChangeQueue,
     removeAtomicFromQueue,
   } = editorContext
 
@@ -233,6 +238,22 @@ const ContentEditable = ({
       _process()
     }
   }, [state.newEntities.length])
+
+  useEffect(() => {
+    // clear relation cache for changed atomcis
+    state.changedEntities.forEach((_b) => {
+      console.log(
+        `[ContentEditable] clear relation cache: useDocument_r_${_b._id}`
+      )
+      queryClient.removeQueries({
+        queryKey: [`useDocument_r_${_b._id}`],
+      })
+      queryClient.removeQueries({
+        queryKey: [`related_${_b._id}`],
+      })
+      removeEntityFromChangeQueue(_b._id)
+    })
+  }, [state.changedEntities.length])
 
   useImperativeHandle(editableRef, () => ({
     focus: () => {

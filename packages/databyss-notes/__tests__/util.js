@@ -32,6 +32,7 @@ const initialState = {
   preventDefault: false,
   operations: [],
   newEntities: [],
+  changedEntities: [],
   removedEntities: [],
   selection: {
     // _id: new ObjectID().toHexString(),
