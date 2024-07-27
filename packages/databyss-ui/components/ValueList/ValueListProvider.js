@@ -67,7 +67,12 @@ export const useValueListContext = () => useContext(ValueListContext)
  * onChange of its child
  */
 
-export const ValueListItem = ({ children, path, ...others }) => {
+export const ValueListItem = ({
+  children,
+  path,
+  dependencies = [],
+  ...others
+}) => {
   const { onItemChange, valuesRef } = useValueListContext()
 
   const value = _.get(valuesRef.current, path, defaultText)
@@ -85,11 +90,7 @@ export const ValueListItem = ({ children, path, ...others }) => {
         'data-test-path': path,
         ...others,
       }),
-    [
-      JSON.stringify(value),
-      //  TODO: an extra prop must be passed in order to cause a rerender in the item
-      ...Object.values(others),
-    ]
+    [JSON.stringify(value), ...dependencies, ...Object.values(others)]
   )
 }
 

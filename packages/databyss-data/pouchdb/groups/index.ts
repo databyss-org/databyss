@@ -9,6 +9,8 @@ import {
 } from '@databyss-org/services/session/clientStorage'
 import { sleep } from '@databyss-org/services/lib/util'
 import { Document } from '@databyss-org/services/interfaces'
+import { queryClient } from '@databyss-org/services/lib/queryClient'
+import { getAtomicsFromFrag } from '@databyss-org/services/blocks/related'
 import { DocumentType, PageDoc } from '../interfaces'
 import { upsertImmediate, getDocuments } from '../utils'
 import { findOne, findAll, getDocument } from '../crudUtils'
@@ -17,7 +19,6 @@ import {
   BlockRelation,
   BlockType,
 } from '../../../databyss-services/interfaces/Block'
-import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/getAtomicsFromSelection'
 import {
   BATCHES_LIMIT,
   BATCH_SIZE,
@@ -38,7 +39,6 @@ import {
   createDatabaseCredentials,
   validateGroupCredentials,
 } from '../../../databyss-services/editorPage/index'
-import { queryClient } from '@databyss-org/services/lib/queryClient'
 
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
@@ -414,15 +414,18 @@ export const setGroup = async (group: Group) => {
  */
 export async function docIdsRelatedToPage(
   page: PageDoc,
-  groupId: string | null
+  groupId: string | null,
+  blocks?: Block[]
 ) {
   // console.log('[docIdsRelatedToPage]', page, groupId)
   const _pageBlockIds = page.blocks
     .filter((_pb) => !_pb.type?.match(/^END_/))
     .map((_pb) => _pb._id)
-  const _blocks = Object.values(
-    await getDocuments<Block>(_pageBlockIds)
-  ).filter((_b) => !!_b) as Block[]
+  const _blocks =
+    blocks ??
+    (Object.values(await getDocuments<Block>(_pageBlockIds)).filter(
+      (_b) => !!_b
+    ) as Block[])
   const _blockIds = _blocks.map((_b) => _b._id)
   const _entryBlocks = _blocks.filter(
     (_block) => _block.type === BlockType.Entry

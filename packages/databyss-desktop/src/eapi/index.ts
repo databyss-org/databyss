@@ -4,6 +4,7 @@ import * as stateApi from './state-api'
 import * as cmdApi from './cmd-api'
 import * as pdfApi from './pdf-api'
 import platformApi from './platform-api'
+import * as publishApi from './publish-api'
 
 export default {
   isDesktop: true,
@@ -14,4 +15,5 @@ export default {
   cmd: cmdApi,
   platform: platformApi,
   pdf: pdfApi,
+  publish: publishApi,
 }

@@ -12,7 +12,7 @@ import { queryClient } from '@databyss-org/services/lib/queryClient'
 const RETRY_DELAY = 1500
 const MAX_RETRIES = 5
 
-export default (_id: string) =>
+export default (_id: string, ignoreCache = false) =>
   new PCancelable<Page | ResourceNotFoundError>((resolve, reject, onCancel) => {
     let _timer: number
 
@@ -60,12 +60,14 @@ export default (_id: string) =>
           if (curr?.type?.match(/^END_/)) {
             return accum
           }
-          const _cachedBlock = queryClient.getQueryData<Block>([
-            `useDocument_${curr._id}`,
-          ])
-          if (_cachedBlock) {
-            _blocksDict[curr._id] = _cachedBlock
-            return accum
+          if (!ignoreCache) {
+            const _cachedBlock = queryClient.getQueryData<Block>([
+              `useDocument_${curr._id}`,
+            ])
+            if (_cachedBlock) {
+              _blocksDict[curr._id] = _cachedBlock
+              return accum
+            }
           }
           accum[curr._id] = curr
           return accum
@@ -92,7 +94,12 @@ export default (_id: string) =>
           .map((_pageBlock) => {
             const _block = _blocksDict[_pageBlock._id]
             // cache the block
-            queryClient.setQueryData([`useDocument_${_pageBlock._id}`], _block)
+            if (!ignoreCache) {
+              queryClient.setQueryData(
+                [`useDocument_${_pageBlock._id}`],
+                _block
+              )
+            }
             if (_pageBlock.type?.match(/^END_/)) {
               if (!_block) {
                 console.warn(

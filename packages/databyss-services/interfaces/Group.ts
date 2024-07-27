@@ -10,6 +10,9 @@ export class Group {
   defaultPageId?: string
   notifications?: Partial<Notification>[]
   localGroup?: boolean
+  lastPublishedAt: string | null
+  isPublishing: boolean
+  lastPublishResult: string | null
 
   constructor(name: string) {
     this._id = `g_${uidlc()}`
@@ -17,5 +20,8 @@ export class Group {
     this.pages = []
     this.public = false
     this.localGroup = false
+    this.lastPublishedAt = null
+    this.lastPublishResult = null
+    this.isPublishing = false
   }
 }

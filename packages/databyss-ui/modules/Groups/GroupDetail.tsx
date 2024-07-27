@@ -80,13 +80,6 @@ export const GroupFields = ({
 
   const onChange = useCallback(
     (_values: Group) => {
-      // if change occured in group public status
-      if (groupValue.current.public !== _values.public) {
-        setGroupAction(
-          group._id,
-          _values.public ? GroupAction.SHARED : GroupAction.UNSHARED
-        )
-      }
       // if defaultPageId was set for this group, set it now
       if (!groupValue.current.defaultPageId) {
         _values.defaultPageId = _values.pages[0]
@@ -120,17 +113,32 @@ export const GroupFields = ({
     <ValueListProvider onChange={onChange} values={_values}>
       <View pl="medium" pr="medium" pt="none" flexGrow={1}>
         <ValueListItem path="name">
-          <TitleInput 
-            readonly={readOnly} 
-            placeholder={UNTITLED_NAME} 
-            icon={<Icon><GroupSvg /></Icon>} 
+          <TitleInput
+            readonly={readOnly}
+            placeholder={UNTITLED_NAME}
+            icon={
+              <Icon>
+                <GroupSvg />
+              </Icon>
+            }
           />
         </ValueListItem>
-        <Grid columnGap="large" widthVariant="content" flexGrow={1}>
+        <Grid columnGap="large" widthVariant="form" flexGrow={1}>
           <View flexGrow={1} flexBasis={1}>
-            <GroupSection title="Share with Everyone">
-              <ValueListItem path="public">
-                <PublicSharingSettings readOnly={readOnly} onClick={copyLink} />
+            <GroupSection title="Publishing">
+              <ValueListItem
+                path="public"
+                dependencies={[
+                  group.lastPublishedAt,
+                  group.lastPublishResult,
+                  group.isPublishing,
+                ]}
+              >
+                <PublicSharingSettings
+                  readOnly={readOnly}
+                  onClick={copyLink}
+                  group={group}
+                />
               </ValueListItem>
             </GroupSection>
           </View>

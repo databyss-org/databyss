@@ -15,7 +15,7 @@ import { urlSafeName, validUriRegex } from '@databyss-org/services/lib/util'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { SearchTerm, stemmer, unorm } from '@databyss-org/data/couchdb/couchdb'
 import matchAll from 'string.prototype.matchall'
-import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
+import { stateBlockToHtml } from './slateUtils'
 import { EditorState, PagePath } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
 import {
@@ -27,6 +27,11 @@ import {
   InlineTypes,
   InlineRangeType,
 } from '../../databyss-services/interfaces/Range'
+
+export {
+  isAtomicInlineType,
+  getInlineAtomicType,
+} from '@databyss-org/services/blocks/related'
 
 export const splice = (src: any, idx: number, rem: number, str: any) =>
   src.slice(0, idx) + str + src.slice(idx + Math.abs(rem))
@@ -63,21 +68,6 @@ export const inlineTextFromBlock = (doc: Document): Text =>
     [BlockType.Source]: (doc as Source).name,
     [BlockType.Topic]: (doc as Block).text,
   }[(doc as Block).type])
-
-export const getInlineAtomicType = (
-  type: InlineTypes | string
-): BlockType | null => {
-  switch (type) {
-    case InlineTypes.InlineTopic:
-      return BlockType.Topic
-    case InlineTypes.InlineSource:
-      return BlockType.Source
-    case InlineTypes.Embed:
-      return BlockType.Embed
-    default:
-      return null
-  }
-}
 
 const composeBlockRelation = (
   currentBlock: Block,
@@ -132,23 +122,6 @@ const getInlineBlockRelations = (
     })
   }
   return _blockRelations
-}
-
-export const isAtomicInlineType = (type: BlockType) => {
-  switch (type) {
-    case BlockType.Source:
-      return true
-    case BlockType.Topic:
-      return true
-    case BlockType.EndTopic:
-      return true
-    case BlockType.EndSource:
-      return true
-    case BlockType.Embed:
-      return true
-    default:
-      return false
-  }
 }
 
 export const isAtomic = (block: Block) => isAtomicInlineType(block.type)
