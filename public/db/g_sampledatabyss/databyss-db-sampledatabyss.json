@@ -1,0 +1,290 @@
+[
+  {
+    "type": "ENTRY",
+    "text": {
+      "textValue": "",
+      "ranges": []
+    },
+    "sharedWithGroups": [],
+    "doctype": "BLOCK",
+    "createdAt": 1722011687522,
+    "accessedAt": 1722011687522,
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "_id": "1Hk1avxGitgK",
+    "_rev": "1-573021cb74a443c1ccff6e1c58ca1e5c"
+  },
+  {
+    "type": "ENTRY",
+    "text": {
+      "textValue": "",
+      "ranges": []
+    },
+    "sharedWithGroups": [],
+    "doctype": "BLOCK",
+    "createdAt": 1722011860438,
+    "accessedAt": 1722011860438,
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "_id": "4LO8SSNbP73E",
+    "_rev": "1-7e4ab74bfd9234ff0b689a02bd98cb34"
+  },
+  {
+    "doctype": "SELECTION",
+    "createdAt": 1722011908086,
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "anchor": {
+      "index": 0,
+      "offset": 12
+    },
+    "focus": {
+      "index": 0,
+      "offset": 12
+    },
+    "accessedAt": 1722011908086,
+    "_id": "BOMaoFlknJy0",
+    "_rev": "43-29688827eab6c4cc844c037be9af1e2f"
+  },
+  {
+    "doctype": "BLOCK",
+    "createdAt": 1722011908086,
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "type": "ENTRY",
+    "text": {
+      "textValue": "Introduction",
+      "ranges": []
+    },
+    "sharedWithGroups": [],
+    "accessedAt": 1722011908086,
+    "_id": "CS5MFRW5XGfV",
+    "_rev": "10-e269712030c653315e67d347304990a1"
+  },
+  {
+    "type": "TOPIC",
+    "text": {
+      "textValue": "Flumboria",
+      "ranges": []
+    },
+    "sharedWithGroups": [],
+    "doctype": "BLOCK",
+    "createdAt": 1722011825171,
+    "accessedAt": 1722011827810,
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "modifiedAt": 1722011825174,
+    "_id": "Fd9KfCnMGOat",
+    "_rev": "13-c9ef95cfbfd2e94cc9abcd71eba9c6aa"
+  },
+  {
+    "text": {
+      "textValue": "image.png",
+      "ranges": []
+    },
+    "detail": {
+      "fileDetail": {
+        "contentLength": 2058933,
+        "contentType": "image/png",
+        "filename": "image.png",
+        "storageKey": "HBNE71z59Pb6"
+      },
+      "mediaType": "image",
+      "src": "dbdrive://g_togr1ikw496o8b/HBNE71z59Pb6/image.png"
+    },
+    "doctype": "BLOCK",
+    "type": "EMBED",
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "createdAt": 1722011864631,
+    "accessedAt": 1722011864631,
+    "modifiedAt": 1722011864657,
+    "_id": "HBNE71z59Pb6",
+    "_rev": "2-6865952ce0dadd3f8cbfd49fa09f5c44"
+  },
+  {
+    "type": "ENTRY",
+    "text": {
+      "textValue": "Meanwhile, the babbling brooks of #Flumboria were home to the elusive and enigmatic glubbersnouts. These aquatic creatures, with their kaleidoscopic scales and mesmerizing eyes, were highly sought after by the inhabitants for their uncanny ability to grant wishes. Legend has it that a single glubbersnout could provide the key to unlocking one's deepest desires. In this land of endless enchantment, the creatures of Flumboria lived in harmony, their lives woven together in an intricate tapestry of magic, wonder, and the power of friendship.",
+      "ranges": [
+        {
+          "offset": 34,
+          "length": 10,
+          "marks": [
+            [
+              "inlineTopic",
+              "Fd9KfCnMGOat"
+            ]
+          ]
+        }
+      ]
+    },
+    "sharedWithGroups": [],
+    "doctype": "BLOCK",
+    "createdAt": 1722011860438,
+    "accessedAt": 1722011860438,
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "modifiedAt": 1722011825185,
+    "_id": "ITcCECKmlhkD",
+    "_rev": "6-88fd7229d080b90c008c7e152b9a2486"
+  },
+  {
+    "createdAt": 1722011908658,
+    "doctype": "PAGE",
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "blocks": [
+      {
+        "_id": "CS5MFRW5XGfV",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "Fd9KfCnMGOat",
+        "type": "TOPIC"
+      },
+      {
+        "_id": "Sju29OMnhPB3",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "ITcCECKmlhkD",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "kycceaJMULio",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "XiEp8nXi9zVj",
+        "type": "ENTRY"
+      },
+      {
+        "_id": "gDGBxzsaVXi2",
+        "type": "ENTRY"
+      }
+    ],
+    "selection": "BOMaoFlknJy0",
+    "name": "Introduction",
+    "archive": false,
+    "accessedAt": 1722011908658,
+    "_id": "P3SbGjah2Djp",
+    "_rev": "22-bf8ba7639a3f41625ea6832b9b97da3f"
+  },
+  {
+    "type": "ENTRY",
+    "text": {
+      "textValue": "In the whimsical land of Flumboria, a vibrant menagerie of creatures bustled about their daily lives. The blithergarbs, known for their iridescent plumage and mellifluous songs, perched atop the branches of loomtrees, which were notorious for their peculiar habit of swaying in unison. As the day progressed, the snicklefritz bats flitted from cavern to cavern, their wings sparkling like the night sky. Far below, the ground teemed with jubilant grommits, their bushy tails wagging like metronomes as they scurried to and fro, gathering the choicest tidbits for their families.",
+      "ranges": []
+    },
+    "sharedWithGroups": [],
+    "doctype": "BLOCK",
+    "createdAt": 1722011803440,
+    "accessedAt": 1722011803440,
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "_id": "Sju29OMnhPB3",
+    "_rev": "1-b34230b96afd00b2bbc7b41d6ae33ac3"
+  },
+  {
+    "type": "ENTRY",
+    "text": {
+      "textValue": "Credit: https://www.reddit.com/r/ChatGPT/comments/11tgkf0/i_asked_gpt4_to_create_two_paragraphs_of_dummy/",
+      "ranges": []
+    },
+    "sharedWithGroups": [],
+    "doctype": "BLOCK",
+    "createdAt": 1722011860438,
+    "accessedAt": 1722011860438,
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "_id": "XiEp8nXi9zVj",
+    "_rev": "5-bedac9ec63ebdbeff9ec77a1c2d4500a"
+  },
+  {
+    "doctype": "BLOCK",
+    "createdAt": 1722011860438,
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "type": "ENTRY",
+    "text": {
+      "textValue": "",
+      "ranges": []
+    },
+    "sharedWithGroups": [],
+    "accessedAt": 1722011860438,
+    "_id": "gDGBxzsaVXi2",
+    "_rev": "6-77c702bcd1145b76824870b8268e223a"
+  },
+  {
+    "name": "Sample Databyss",
+    "pages": [],
+    "localGroup": true,
+    "createdAt": 1722011672707,
+    "accessedAt": 1722011916339,
+    "doctype": "GROUP",
+    "sharedWithGroups": [
+      "g_togr1ikw496o8b"
+    ],
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "modifiedAt": 1722011916339,
+    "_id": "g_togr1ikw496o8b",
+    "_rev": "31-ffb4ca2ece3d46c61373ef2487a4e23e"
+  },
+  {
+    "type": "ENTRY",
+    "text": {
+      "textValue": "image.png",
+      "ranges": [
+        {
+          "length": 9,
+          "offset": 0,
+          "marks": [
+            [
+              "embed",
+              "HBNE71z59Pb6"
+            ]
+          ]
+        }
+      ]
+    },
+    "sharedWithGroups": [],
+    "doctype": "BLOCK",
+    "createdAt": 1722011864647,
+    "accessedAt": 1722011864647,
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "_id": "kycceaJMULio",
+    "_rev": "1-222fc7194cdd5b161260d7921ab55b5b"
+  },
+  {
+    "blockId": "Fd9KfCnMGOat",
+    "blockType": "TOPIC",
+    "pages": [
+      "P3SbGjah2Djp"
+    ],
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "doctype": "BLOCK_RELATION",
+    "createdAt": 1722011687569,
+    "accessedAt": 1722011825170,
+    "modifiedAt": 1722011825170,
+    "_id": "r_Fd9KfCnMGOat",
+    "_rev": "2-e8dd0fbf0f5077c0305a60bbf7e0936c"
+  },
+  {
+    "blockId": "HBNE71z59Pb6",
+    "blockType": "EMBED",
+    "pages": [
+      "P3SbGjah2Djp"
+    ],
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "doctype": "BLOCK_RELATION",
+    "createdAt": 1722011864658,
+    "accessedAt": 1722011864658,
+    "_id": "r_HBNE71z59Pb6",
+    "_rev": "1-3ae64b04819cc884778c5d1e61895fbd"
+  },
+  {
+    "userId": "local",
+    "belongsToGroup": "g_togr1ikw496o8b",
+    "createdAt": 1722011672706,
+    "groups": [
+      {
+        "groupId": "g_togr1ikw496o8b",
+        "defaultPageId": "P3SbGjah2Djp",
+        "role": "GROUP_ADMIN"
+      }
+    ],
+    "doctype": "USER_PREFERENCES",
+    "_id": "user_preference",
+    "_rev": "1-7097c6750af58329bf080a7ee2b7dbe4"
+  }
+]

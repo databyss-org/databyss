@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import PouchDB from 'pouchdb'
 import { CouchDb } from '@databyss-org/data/couchdb/couchdb'
-import { dbRef } from '@databyss-org/data/pouchdb/db'
+import { dbRef, initDbFromJson } from '@databyss-org/data/pouchdb/db'
 import { useContextSelector, createContext } from 'use-context-selector'
 import { VouchDb, connect } from '@databyss-org/data/vouchdb/vouchdb'
 import { Viewport, Text, View } from '@databyss-org/ui'
@@ -13,6 +14,7 @@ import { DatabyssMenuItems } from '@databyss-org/ui/components/Menu/DatabyssMenu
 import DatabyssLogo from '@databyss-org/ui/assets/logo-thick.png'
 import { darkTheme, pxUnits } from '@databyss-org/ui/theming/theme'
 import { version } from '../version'
+import { getAccountFromLocation, getRemoteDbFile } from '../session/utils'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
@@ -61,6 +63,26 @@ export const DatabaseProvider = ({ children, noGroupHeader }) => {
     [databaseStatus]
   )
 
+  const initDb = async () => {
+    // check for group loaded by electron
+    if (eapi.isDesktop) {
+      const _groupId = await eapi.db.getGroupId()
+      // console.log('[DatabaseProvider] preload groupId', _groupId)
+      if (_groupId) {
+        connect(_groupId)
+        updateDatabaseStatus()
+      }
+    } else {
+      const _groupId = getAccountFromLocation()
+      console.log('[DatabyssProvider] groupId from url', _groupId)
+      if (_groupId) {
+        const _dbJson = await getRemoteDbFile(_groupId)
+        await initDbFromJson(_groupId as string, _dbJson)
+        updateDatabaseStatus()
+      }
+    }
+  }
+
   useEffect(() => {
     dbRef.on('groupIdUpdated', () => {
       queryClient.clear()
@@ -69,16 +91,7 @@ export const DatabaseProvider = ({ children, noGroupHeader }) => {
       navigate('/')
     })
 
-    // check for group loaded by electron
-    if (eapi) {
-      eapi.db.getGroupId().then((groupId) => {
-        // console.log('[DatabaseProvider] preload groupId', groupId)
-        if (groupId) {
-          connect(groupId)
-          updateDatabaseStatus()
-        }
-      })
-    }
+    initDb()
 
     return () => {
       dbRef.off('groupIdUpdated', updateDatabaseStatus)

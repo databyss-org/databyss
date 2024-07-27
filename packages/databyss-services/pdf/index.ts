@@ -3,7 +3,7 @@ import { sourceFromCatalogResult } from '../catalog/util'
 import crossref from '../catalog/crossref'
 import request from '../lib/request'
 
-export { processPDF } from './processPdf'
+export { processPDF } from './processPDF'
 
 const PDF_API_URL = `${process.env.PDF_API_URL}/pdf/parse`
 const CROSSREF_BASE_URL = 'https://api.crossref.org/works'
@@ -28,8 +28,7 @@ export const fetchMetadata = (data: Metadata): Promise<any> => {
 
   if (extractedDOI) {
     url += `/${extractedDOI.trim()}`
-  }
-  else {
+  } else {
     const queries: string[] = []
     if (extractedTitle) {
       const t = extractedTitle.trim().replace(/ /g, '+')
@@ -56,9 +55,12 @@ export const findMatchesInCrossref = (crossref, metadata: Metadata) => {
   if (metadata.extractedDOI) {
     return [crossref.message]
   }
-  const _title = (
-    metadata.extractedTitle ?? metadata.title?.text ?? metadata.title?.src
-  )?.trim() ?? ''
+  const _title =
+    (
+      metadata.extractedTitle ??
+      metadata.title?.text ??
+      metadata.title?.src
+    )?.trim() ?? ''
   const matches: any[] = []
   crossref.message.items.forEach((element) => {
     if (element.title && Array.isArray(element.title)) {
@@ -66,10 +68,7 @@ export const findMatchesInCrossref = (crossref, metadata: Metadata) => {
       // if (elementTitle.toLowerCase().startsWith(_title.toLowerCase())) {
       //   matches.push(element)
       // }
-      const lcsResults = lcs(
-        elementTitle.toLowerCase(),
-        _title.toLowerCase()
-      )
+      const lcsResults = lcs(elementTitle.toLowerCase(), _title.toLowerCase())
       if (lcsResults.length > 20) {
         matches.push(element)
       }

@@ -3,10 +3,20 @@ import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
 
+export const getRemoteDbFile = async (groupId: string) => {
+  const _gid = groupId.replace('g_', '')
+  const _url = `${process.env.DBFILE_URL}${groupId}/databyss-db-${_gid}.json`
+  console.log('[getRemoteDbFile] url', _url)
+  const _res = await fetch(_url)
+  const _json = await _res.json()
+  console.log('[getRemoteDbFile] response', _json)
+  return _json
+}
+
 export const getAccountFromLocation = (
   withName: boolean = false
 ): string | boolean => {
-  if (eapi) {
+  if (eapi.isDesktop) {
     return dbRef.groupId ?? false
   }
   if (process.env.STORYBOOK) {

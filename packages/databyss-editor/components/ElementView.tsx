@@ -10,8 +10,8 @@ interface ElementViewProps extends PropsWithChildren<{}> {
   isBlock?: boolean
   readOnly: boolean
   index: number
-  last: boolean,
-  setLastBlockRendered: () => void
+  last: boolean
+  setLastBlockRendered?: () => void
 }
 
 export const ElementView = ({
@@ -29,7 +29,7 @@ export const ElementView = ({
   const viewRef = useRef(null)
 
   useEffect(() => {
-    if (viewRef.current && last) {
+    if (viewRef.current && last && setLastBlockRendered) {
       setLastBlockRendered()
     }
   }, [viewRef.current])

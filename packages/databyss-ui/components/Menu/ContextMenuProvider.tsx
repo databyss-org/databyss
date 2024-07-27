@@ -15,12 +15,11 @@ import {
   shift,
   flip,
 } from '@floating-ui/react'
+import { useAppState } from '@databyss-org/desktop/src/hooks'
 import { DropdownList, MenuItem } from '../Menu/DropdownList'
 import { DropdownContainer, ListProps } from '../..'
 import ClickAwayListener from '../Util/ClickAwayListener'
-import { pxUnits } from '../../theming/views'
 import { theme } from '../../theming'
-import { useAppState } from '@databyss-org/desktop/src/hooks'
 import { darkContentTheme } from '../../theming/theme'
 
 export interface ContextMenuOptions extends ListProps {

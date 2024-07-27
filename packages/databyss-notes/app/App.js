@@ -8,6 +8,7 @@ import { Viewport, useNavigationContext } from '@databyss-org/ui'
 import FirefoxWarning from '@databyss-org/ui/components/Notify/FirefoxWarning'
 import Public from './Public'
 import Private from './Private'
+import { ContextMenuProvider } from '@databyss-org/ui/components/Menu/ContextMenuProvider'
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,16 +41,13 @@ const App = () => {
           <Public />
         ) : (
           <QueryClientProvider client={queryClient}>
-            <DatabaseProvider>
-              <SessionProvider
-                signUp={location.pathname === '/signup'}
-                unauthorizedChildren={<Public />}
-                email={email}
-                code={code}
-              >
-                <Private />
-              </SessionProvider>
-            </DatabaseProvider>
+            <ContextMenuProvider>
+              <DatabaseProvider>
+                <SessionProvider isLocalSession>
+                  <Private />
+                </SessionProvider>
+              </DatabaseProvider>
+            </ContextMenuProvider>
           </QueryClientProvider>
         )}
       </NotifyProvider>

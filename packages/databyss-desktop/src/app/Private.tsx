@@ -47,6 +47,7 @@ import DatabyssImg from '@databyss-org/ui/assets/logo-thick.png'
 import { DatabyssMenu } from '@databyss-org/ui/components/Menu/DatabyssMenu'
 import { setGroup } from '@databyss-org/data/pouchdb/groups'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
+import { sidebar } from '@databyss-org/ui/theming/components'
 import { debounce } from 'lodash'
 import { TitleBar } from '../components/TitleBar'
 import { useAppState } from '../hooks'
@@ -121,7 +122,7 @@ const AppView = ({
 
   useEffect(() => {
     eapi.state.get('sidebarWidth').then((width) => {
-      setSidebarWidth(width)
+      setSidebarWidth(width ?? sidebar.width)
     })
   }, [])
 
@@ -206,7 +207,7 @@ const AppView = ({
           onDismiss={() => setShowDatabyssMenu(false)}
         />
       )}
-      {sidebarWidth && (
+      {sidebarWidth !== null && (
         <Sidebar onResized={onSidebarResized} width={sidebarWidth} />
       )}
       <View

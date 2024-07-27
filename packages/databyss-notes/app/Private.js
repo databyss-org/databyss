@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Routes,
   Route,
@@ -23,22 +23,51 @@ import {
   SearchContent,
 } from '@databyss-org/ui/modules'
 import { EditorPageProvider } from '@databyss-org/services'
+import { useAppState } from '@databyss-org/desktop/src/hooks'
+import theme, { darkContentTheme } from '@databyss-org/ui/theming/theme'
+import { sidebar } from '@databyss-org/ui/theming/components'
 
-const AppView = ({ children }) => (
-  <View
-    flexDirection="row"
-    display="flex"
-    width="100%"
-    overflow="hidden"
-    flexShrink={1}
-    flexGrow={1}
-  >
-    <Sidebar />
-    <View data-test-element="body" flexGrow={1} flexShrink={1}>
-      {children}
+const AppView = ({ children }) => {
+  const [sidebarWidth, setSidebarWidth] = useState(null)
+  console.log('[AppView] sidebarWidth', sidebarWidth)
+  const isDarkModeRes = useAppState('darkMode')
+
+  useEffect(() => {
+    window.eapi.state.get('sidebarWidth').then((width) => {
+      setSidebarWidth(width ?? sidebar.width)
+    })
+  }, [])
+
+  const onSidebarResized = useCallback(
+    (width) => {
+      setSidebarWidth(width)
+      window.eapi.state.set('sidebarWidth', width)
+    },
+    [window.eapi]
+  )
+  return (
+    <View
+      flexDirection="row"
+      display="flex"
+      width="100%"
+      overflow="hidden"
+      flexShrink={1}
+      flexGrow={1}
+    >
+      {sidebarWidth !== null && (
+        <Sidebar onResized={onSidebarResized} width={sidebarWidth} />
+      )}
+      <View
+        theme={isDarkModeRes.data ? darkContentTheme : theme}
+        data-test-element="body"
+        flexGrow={1}
+        flexShrink={1}
+      >
+        {children}
+      </View>
     </View>
-  </View>
-)
+  )
+}
 
 const Providers = ({ children }) => (
   <UserPreferencesProvider>
@@ -56,7 +85,9 @@ const Private = () => {
   const navigateToDefaultPage = useSessionContext(
     (c) => c && c.navigateToDefaultPage
   )
+  console.log('[Private]')
   const { provisionClientDatabase } = getSession()
+  console.log('[Private] provisionClientDatabase', provisionClientDatabase)
 
   // Navigate to default page if nothing in path
   useEffect(() => {
