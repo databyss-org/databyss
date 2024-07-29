@@ -31,6 +31,7 @@ const DropdownListItem = ({
   navigationItemHandle,
   light,
   children,
+  nowrap,
   ...others
 }) => {
   useImperativeHandle(navigationItemHandle, () => ({
@@ -62,7 +63,12 @@ const DropdownListItem = ({
         alignItems="flex-start"
         position="relative"
       >
-        <View flexDirection="row" alignItems="flex-start" flexShrink={1}>
+        <View
+          flexDirection="row"
+          alignItems="flex-start"
+          flexShrink={1}
+          width="100%"
+        >
           {textSymbol && (
             <Text
               variant="uiTextSmall"
@@ -83,14 +89,23 @@ const DropdownListItem = ({
               {icon}
             </Icon>
           )}
-          <View pt={pxUnits(1)} flexShrink={1}>
+          <View pt={pxUnits(1)} flexShrink={1} width="100%">
             {labelHtml ? (
               <RawHtml html={labelHtml} css={{ userSelect: 'none' }} />
             ) : (
               <Text
                 variant="uiTextSmall"
                 color={light ? 'text.3' : textColor}
-                css={{ userSelect: 'none' }}
+                css={{
+                  userSelect: 'none',
+                  ...(nowrap
+                    ? {
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                      }
+                    : {}),
+                }}
               >
                 {label}
               </Text>

@@ -14,6 +14,7 @@ export interface ContextMenuProps extends ListProps {
   dropdownContainerProps?: any
   data: any
   parentRef?: MutableRefObject<HTMLElement>
+  ellipsis?: boolean
 }
 
 export const ContextMenu = ({

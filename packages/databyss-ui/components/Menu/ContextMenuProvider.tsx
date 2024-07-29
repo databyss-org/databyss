@@ -14,13 +14,14 @@ import {
   offset,
   shift,
   flip,
+  autoUpdate,
 } from '@floating-ui/react'
 import { useAppState } from '@databyss-org/desktop/src/hooks'
 import { DropdownList, MenuItem } from '../Menu/DropdownList'
 import { DropdownContainer, ListProps } from '../..'
 import ClickAwayListener from '../Util/ClickAwayListener'
 import { theme } from '../../theming'
-import { darkContentTheme } from '../../theming/theme'
+import { darkContentTheme, pxUnits } from '../../theming/theme'
 
 export interface ContextMenuOptions extends ListProps {
   menuItems: MenuItem[]
@@ -30,6 +31,8 @@ export interface ContextMenuOptions extends ListProps {
   clientPointOffsetX?: number
   clientPointOffsetY?: number
   onChange?: (value: any) => void
+  showFilter?: boolean
+  ellipsis?: boolean
 }
 
 export interface ContextMenuContextType {
@@ -43,6 +46,7 @@ export const ContextMenuContext = createContext<ContextMenuContextType>(null!)
 export const ContextMenuProvider = ({ children }) => {
   const isDarkModeRes = useAppState('darkMode')
   const { refs, floatingStyles, context } = useFloating({
+    whileElementsMounted: autoUpdate,
     placement: 'left-start',
     middleware: [
       offset({
@@ -61,6 +65,7 @@ export const ContextMenuProvider = ({ children }) => {
   const [menuOptions, setMenuOptions] = useState<ContextMenuOptions | null>(
     null
   )
+  const [orderKey, setOrderKey] = useState<number>(0)
 
   const clientPoint = useClientPoint(context, {
     // axis: 'x',
@@ -84,6 +89,10 @@ export const ContextMenuProvider = ({ children }) => {
     },
     [menuClientPoint]
   )
+
+  const onQueryChange = useCallback(() => {
+    setOrderKey(orderKey + 1)
+  }, [setOrderKey, orderKey])
 
   let _menuView: ReactNode | null = null
   if (menuVisible && menuOptions) {
@@ -111,6 +120,8 @@ export const ContextMenuProvider = ({ children }) => {
             maxHeight="85vh"
             overflowY="auto"
             theme={isDarkModeRes.data ? darkContentTheme : theme}
+            maxWidth={pxUnits(350)}
+            orderKey={orderKey}
             {..._floatingProps}
             {...dropdownContainerProps}
             css={{
@@ -121,13 +132,16 @@ export const ContextMenuProvider = ({ children }) => {
             <DropdownList
               data={data}
               onChange={menuOptions.onChange}
+              onQueryChange={onQueryChange}
               menuItems={menuItems}
+              showFilterQuery={menuOptions.showFilter}
               dismiss={() => {
                 setMenuVisible(false)
                 if (menuOptions.onDismiss) {
                   menuOptions.onDismiss()
                 }
               }}
+              nowrap={menuOptions.ellipsis}
             />
           </DropdownContainer>
         </ClickAwayListener>

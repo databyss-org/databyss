@@ -5,12 +5,14 @@ import { useContextMenu } from './ContextMenuProvider'
 import { theme } from '../../theming'
 import Text from '../../primitives/Text/Text'
 import { ContextMenuProps } from './ContextMenu'
+import { pxUnits } from '../../theming/views'
 
 export interface DropdownMenuProps extends ContextMenuProps {
   label?: string
   onChange?: (value: any) => void
   renderLabel?: (value: any) => string
   value?: any
+  showFilter?: boolean
 }
 
 export const DropdownMenu = ({
@@ -27,6 +29,8 @@ export const DropdownMenu = ({
   onChange,
   renderLabel,
   value,
+  showFilter,
+  ellipsis,
   ...other
 }: DropdownMenuProps) => {
   const { showMenu, setClientPoint } = useContextMenu()
@@ -42,17 +46,25 @@ export const DropdownMenu = ({
         evt.preventDefault()
         let _cx = evt.clientX
         let _cy = evt.clientY
+        let _cw = 200
         if (menuButtonRef.current) {
           const _rect = menuButtonRef.current.getBoundingClientRect()
           _cx = _rect.right
           _cy = _rect.bottom
+          _cw = _rect.width
         }
         setClientPoint(_cx, _cy)
         showMenu({
           data,
           menuItems,
-          dropdownContainerProps,
+          dropdownContainerProps: {
+            ...dropdownContainerProps,
+            maxWidth: pxUnits(350),
+            minWidth: pxUnits(Math.max(_cw, 200)),
+          },
           onChange,
+          showFilter,
+          ellipsis,
         })
       }}
       ref={menuButtonRef}

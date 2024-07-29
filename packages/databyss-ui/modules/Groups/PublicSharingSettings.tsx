@@ -18,7 +18,6 @@ import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvider'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { MenuItem } from '../../components/Menu/DropdownList'
 import { DropdownMenu } from '../../components/Menu/DropdownMenu'
-import { setGroup } from '@databyss-org/data/pouchdb/groups'
 import { ValueListItem } from '../../components/ValueList/ValueListProvider'
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import { copyToClipboard } from '../../components/PageContent/PageMenu'
@@ -133,6 +132,8 @@ export const PublicSharingSettings = ({
                 menuItems={_defaultPageMenuItems}
                 width="100%"
                 menuViewProps={{ justifyContent: 'right' }}
+                showFilter
+                ellipsis
               />
             </ValueListItem>
           </View>
