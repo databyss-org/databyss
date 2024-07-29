@@ -401,11 +401,6 @@ export const setGroup = async (group: Group) => {
     _id: group._id,
     doc: group,
   })
-
-  // if group settings were changed, propegate changes to remote db
-  if (group.public) {
-    setGroupAction(group._id, GroupAction.SHARED)
-  }
 }
 
 /**

@@ -17,18 +17,21 @@ export interface MenuItem {
   subMenuProps?: ContextMenuProps
   hoverColor?: string
   activeColor?: string
+  value?: any
 }
 
 export interface DropdownListOptions {
   menuItems: MenuItem[]
   dismiss?: () => void
   data?: any
+  onChange?: (value: any) => void
 }
 
 export const DropdownList = ({
   menuItems,
   dismiss,
   data,
+  onChange,
 }: DropdownListOptions) => (
   <>
     {menuItems.map(({ separator, ...menuItem }, idx) => {
@@ -41,7 +44,14 @@ export const DropdownList = ({
           {...menuItem}
           action={menuItem.actionType}
           onPress={async () => {
-            if (menuItem.action && (await menuItem.action(data)) && dismiss) {
+            const _success = !menuItem.action || (await menuItem.action(data))
+            if (!_success) {
+              return
+            }
+            if (onChange) {
+              onChange(menuItem.value)
+            }
+            if (dismiss) {
               dismiss()
             }
           }}

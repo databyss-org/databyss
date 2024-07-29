@@ -32,13 +32,13 @@ import { useEffect, useRef } from 'react'
 export const useDocuments = <T extends Document>(
   selectorOrIdList: PouchDB.Find.Selector | string[],
   options: UseDocumentOptions = {}
-) => {
+): UseQueryResult<DocumentDict<T>, Error> => {
   // const listenerIdRef = useRef<string>(uid())
   // const queryClient = useQueryClient()
   // const { isCouchMode } = useDatabaseContext()
   // const _options = applyDefaultUseDocumentOptions(options)
 
-  const prevQuery = useRef<UseQueryResult | null>(null)
+  const prevQuery = useRef<UseQueryResult<DocumentDict<T>, Error> | null>(null)
   let docIds: string[]
   let queryKey: QueryKey
   let selector: PouchDB.Find.Selector | undefined

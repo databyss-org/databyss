@@ -27,6 +27,7 @@ import {
   InlineTypes,
   InlineRangeType,
 } from '../../databyss-services/interfaces/Range'
+import { isAtomicInlineType, getInlineAtomicType } from './util'
 
 export {
   isAtomicInlineType,

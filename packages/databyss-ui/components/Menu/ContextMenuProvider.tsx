@@ -27,6 +27,9 @@ export interface ContextMenuOptions extends ListProps {
   dropdownContainerProps?: any
   data: any
   onDismiss?: () => void
+  clientPointOffsetX?: number
+  clientPointOffsetY?: number
+  onChange?: (value: any) => void
 }
 
 export interface ContextMenuContextType {
@@ -40,11 +43,11 @@ export const ContextMenuContext = createContext<ContextMenuContextType>(null!)
 export const ContextMenuProvider = ({ children }) => {
   const isDarkModeRes = useAppState('darkMode')
   const { refs, floatingStyles, context } = useFloating({
-    placement: 'right-start',
+    placement: 'left-start',
     middleware: [
       offset({
-        mainAxis: 10,
-        crossAxis: 10,
+        mainAxis: 0,
+        crossAxis: 0,
       }),
       shift(),
       flip({
@@ -61,8 +64,8 @@ export const ContextMenuProvider = ({ children }) => {
 
   const clientPoint = useClientPoint(context, {
     // axis: 'x',
-    x: menuClientPoint.current.x,
-    y: menuClientPoint.current.y,
+    x: menuClientPoint.current.x + (menuOptions?.clientPointOffsetX ?? 0),
+    y: menuClientPoint.current.y + (menuOptions?.clientPointOffsetY ?? 0),
   })
 
   const { getFloatingProps } = useInteractions([clientPoint])
@@ -86,6 +89,8 @@ export const ContextMenuProvider = ({ children }) => {
   if (menuVisible && menuOptions) {
     const { dropdownContainerProps, data, menuItems } = menuOptions
 
+    const _floatingProps = getFloatingProps()
+
     _menuView = (
       <FloatingPortal>
         <ClickAwayListener
@@ -103,13 +108,19 @@ export const ContextMenuProvider = ({ children }) => {
             ref={refs.setFloating}
             style={floatingStyles}
             backgroundColor="background.1"
-            zIndex={theme.zIndex.modal + 1}
+            maxHeight="85vh"
+            overflowY="auto"
             theme={isDarkModeRes.data ? darkContentTheme : theme}
-            {...getFloatingProps()}
+            {..._floatingProps}
             {...dropdownContainerProps}
+            css={{
+              ...(_floatingProps.css ?? {}),
+              zIndex: theme.zIndex.modal + 2,
+            }}
           >
             <DropdownList
               data={data}
+              onChange={menuOptions.onChange}
               menuItems={menuItems}
               dismiss={() => {
                 setMenuVisible(false)

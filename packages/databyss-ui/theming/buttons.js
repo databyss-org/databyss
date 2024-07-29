@@ -127,6 +127,14 @@ const buttonThemes = {
   },
 }
 
+buttonVariants.uiLinkPadded = {
+  ...buttonVariants.uiLink,
+  padding: 'tiny',
+  borderRadius,
+}
+
+buttonThemes.uiLinkPadded = buttonThemes.uiLink
+
 // on mobile it will show plus topic and location instead of plus
 //
 

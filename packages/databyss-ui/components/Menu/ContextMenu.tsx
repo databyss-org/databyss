@@ -53,6 +53,8 @@ export const ContextMenu = ({
           onDismiss: () => {
             setHoverVisible(false)
           },
+          clientPointOffsetX: 10,
+          clientPointOffsetY: 10,
         })
       }}
       position="absolute"
@@ -94,6 +96,8 @@ export const ContextMenu = ({
                   setHoverVisible(false)
                 }, 50)
               },
+              clientPointOffsetX: 10,
+              clientPointOffsetY: 10,
             })
             if (parentRef?.current) {
               parentRef.current.focus()

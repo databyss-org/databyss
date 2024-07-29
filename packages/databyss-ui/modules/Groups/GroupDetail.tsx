@@ -7,29 +7,20 @@ import { Group, DocumentDict, Page } from '@databyss-org/services/interfaces'
 import {
   View,
   Text,
-  Grid,
   ViewProps,
   ScrollView,
   Icon,
 } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
-import { useGroups, usePages } from '@databyss-org/data/pouchdb/hooks'
-import { urlSafeName } from '@databyss-org/services/lib/util'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { useQueryClient } from '@tanstack/react-query'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import GroupSvg from '@databyss-org/ui/assets/folder-open.svg'
 import { debounce } from 'lodash'
 import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
-import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
-import { darkTheme } from '../../theming/theme'
-import { copyToClipboard } from '../../components/PageContent/PageMenu'
 import GroupMenu from './GroupMenu'
-import {
-  setGroupAction,
-  GroupAction,
-} from '../../../databyss-data/pouchdb/groups/utils'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -65,19 +56,6 @@ export const GroupFields = ({
     [saveGroup]
   )
 
-  const copyLink = () => {
-    // TODO: collection should only be linkable if page exist
-
-    // compose public link
-    const getUrl = window.location
-    const _groupName = group.name ? `${urlSafeName(group.name)}-` : ''
-    const baseUrl = `${getUrl.protocol}//${
-      getUrl.host
-    }/${_groupName}${group._id.substring(2)}`
-
-    copyToClipboard(baseUrl)
-  }
-
   const onChange = useCallback(
     (_values: Group) => {
       // if defaultPageId was set for this group, set it now
@@ -111,7 +89,7 @@ export const GroupFields = ({
 
   return (
     <ValueListProvider onChange={onChange} values={_values}>
-      <View pl="medium" pr="medium" pt="none" flexGrow={1}>
+      <View pl="medium" pr="medium" pt="none" flexGrow={1} width="100%">
         <ValueListItem path="name">
           <TitleInput
             readonly={readOnly}
@@ -123,26 +101,11 @@ export const GroupFields = ({
             }
           />
         </ValueListItem>
-        <Grid columnGap="large" widthVariant="form" flexGrow={1}>
-          <View flexGrow={1} flexBasis={1}>
-            <GroupSection title="Publishing">
-              <ValueListItem
-                path="public"
-                dependencies={[
-                  group.lastPublishedAt,
-                  group.lastPublishResult,
-                  group.isPublishing,
-                ]}
-              >
-                <PublicSharingSettings
-                  readOnly={readOnly}
-                  onClick={copyLink}
-                  group={group}
-                />
-              </ValueListItem>
-            </GroupSection>
-          </View>
-        </Grid>
+        <View flexGrow={1} flexBasis={1} widthVariant="form">
+          <GroupSection title="Publishing">
+            <PublicSharingSettings readOnly={readOnly} group={group} />
+          </GroupSection>
+        </View>
       </View>
     </ValueListProvider>
   )
@@ -153,9 +116,7 @@ export const GroupDetail = () => {
   const groupRes = useDocument<Group>(id!)
   const pagesRes = usePages()
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
-
   const pages = pagesRes?.data
-
   const group = groupRes.data
 
   if (!groupRes.isSuccess || !group) {

@@ -1,9 +1,10 @@
 import { ipcMain } from 'electron'
 import { nodeDbRefs } from '../../nodeDb'
-import { Block, BlockType } from '@databyss-org/services/interfaces'
-import { PageDoc } from '@databyss-org/data/pouchdb/interfaces'
+import { Block, BlockType, Group } from '@databyss-org/services/interfaces'
+import { PageDoc, UserPreference } from '@databyss-org/data/pouchdb/interfaces'
 import { getAtomicsFromFrag } from '@databyss-org/services/blocks/related'
 import { getR2Client, upload } from '@databyss-org/services/lib/r2'
+import { Role } from '@databyss-org/data/interfaces/sysUser'
 
 async function docIdsRelatedToPage(page: PageDoc, blocks: Block[]) {
   // console.log('[docIdsRelatedToPage]', page, groupId)
@@ -35,9 +36,15 @@ async function docIdsRelatedToPage(page: PageDoc, blocks: Block[]) {
 
 async function publishGroup(windowId: number, groupId: string) {
   const _db = nodeDbRefs[windowId].current!
-  const _group = await _db.get(groupId)
+  const _group: Group = await _db.get(groupId)
   const _relatedDocIds: string[] = []
+  let _defaultPageId: string | null = null
+
   for (const _pageId of _group.pages) {
+    // init default page
+    if (!_defaultPageId) {
+      _defaultPageId = _pageId
+    }
     // get page
     const _page: PageDoc = await _db.get(_pageId)
     // include page in docIds
@@ -64,7 +71,23 @@ async function publishGroup(windowId: number, groupId: string) {
   const _dataToWrite = _docsToWrite!.results
     .map((_d) => (_d.docs[0] as any).ok)
     .filter(Boolean)
-    .concat(_group)
+
+  _dataToWrite.push(_group)
+  // user preference doc
+  const _userPreferences: UserPreference = {
+    _id: 'user_preference',
+    userId: 'local',
+    belongsToGroup: groupId,
+    createdAt: Date.now(),
+    groups: [
+      {
+        groupId,
+        defaultPageId: _group.defaultPageId ?? _defaultPageId,
+        role: Role.ReadOnly,
+      },
+    ],
+  }
+  _dataToWrite.push(_userPreferences)
 
   const _dbJson = JSON.stringify(_dataToWrite, null, 2)
   // console.log('[publishGroup] _dbJson', _dbJson)
@@ -83,7 +106,7 @@ async function publishGroup(windowId: number, groupId: string) {
   // // Check if the bucket exists
   // console.log('[publishGroup] bucket', await _bucket.exists())
 
-  const _filename = `databyss-db-${groupId.replace('g_', '')}.json`
+  const _filename = `${groupId}/databyss-db-${groupId.replace('g_', '')}.json`
 
   //upload the dbJson
   const _uploadRes = await upload({

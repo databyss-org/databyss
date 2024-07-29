@@ -104,7 +104,7 @@ export const DatabaseProvider = ({ children, noGroupHeader }) => {
       group.lastPublishResult = 'success'
 
       // update query cache
-      queryClient.removeQueries({ queryKey: [`useDocument_${group._id}`] })
+      // queryClient.removeQueries({ queryKey: [`useDocument_${group._id}`] })
       // queryClient.setQueryData([`useDocument_${group._id}`], group)
       // update database
       setGroup(group)
