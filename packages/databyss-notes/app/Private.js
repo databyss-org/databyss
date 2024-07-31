@@ -62,6 +62,7 @@ const AppView = ({ children }) => {
         data-test-element="body"
         flexGrow={1}
         flexShrink={1}
+        overflow="hidden"
       >
         {children}
       </View>

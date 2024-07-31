@@ -81,6 +81,9 @@ const SessionProvider = ({
   }
 
   const isPublicAccount = useCallback(() => {
+    if (isLocalSession && eapi.isWeb) {
+      return true
+    }
     if (state.session.publicAccount?._id) {
       return true
     }

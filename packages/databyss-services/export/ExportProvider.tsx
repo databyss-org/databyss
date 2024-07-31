@@ -1,15 +1,27 @@
-import React, { createContext, FC, PropsWithChildren, useContext, useEffect, useRef } from 'react'
+import React, {
+  FC,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react'
 import fileDownload from 'js-file-download'
 import JSZip from 'jszip'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { Text } from '@databyss-org/ui/primitives'
 import { getDocuments } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
-import { useBibliography, useBlocksInPages, usePages } from '@databyss-org/data/pouchdb/hooks'
-import { backupDbToJson, makeBackupFilename } from '@databyss-org/data/pouchdb/backup'
+import { useBlocksInPages, usePages } from '@databyss-org/data/pouchdb/hooks'
+import {
+  backupDbToJson,
+  makeBackupFilename,
+} from '@databyss-org/data/pouchdb/backup'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { useUserPreferencesContext } from '@databyss-org/ui/hooks'
 import { appCommands } from '@databyss-org/ui/lib/appCommands'
+import { bibliographyFromSources } from '@databyss-org/data/pouchdb/hooks/useBibliography'
+import { setGroup } from '@databyss-org/data/pouchdb/groups'
+import { useContextSelector, createContext } from 'use-context-selector'
 import {
   bibliographyToMarkdown,
   blockToMarkdown,
@@ -26,14 +38,19 @@ import {
   DocumentDict,
   Block,
   BlockType,
+  Group,
 } from '../interfaces'
 import { getCitationStyle } from '../citations/lib'
 import { CitationStyle } from '../citations/constants'
 import { validUriRegex } from '../lib/util'
 import { loadPage } from '../editorPage'
 import { getAccountFromLocation } from '../session/utils'
-import { useParams } from '@databyss-org/ui/components/Navigation'
-import { bibliographyFromSources } from '@databyss-org/data/pouchdb/hooks/useBibliography'
+import { uid } from '@databyss-org/data/lib/uid'
+
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
+
+type PublishDatabaseResult = 'success' | string
 
 interface ContextType {
   exportSinglePage: (id: string) => void
@@ -47,6 +64,8 @@ interface ContextType {
   }) => void
   exportDatabase: () => void
   setCurrentPageId: (pageId: string) => void
+  publishGroupDatabase: (group: Group) => Promise<PublishDatabaseResult>
+  cancelPublishGroupDatabase: (group: Group) => Promise<void>
 }
 
 export const ExportContext = createContext<ContextType>(null!)
@@ -55,7 +74,7 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const { notifySticky, hideSticky } = useNotifyContext()
   const { getPreferredCitationStyle } = useUserPreferencesContext()
   const sourcesInPagesRes = useBlocksInPages<Source>(BlockType.Source)
-  
+
   const pageIdRef = useRef<string | null>(null)
 
   const pagesRes = usePages({ subscribe: false })
@@ -158,7 +177,7 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   }
 
   const exportSinglePage = async (id?: string) => {
-    let _id = id ?? pageIdRef.current!
+    const _id = id ?? pageIdRef.current!
     console.log('[ExportProvider] single page', _id)
     const _c = cleanFilename
     const _page = (await loadPage(_id)) as Page
@@ -189,10 +208,9 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
         </Text>
       ),
     })
-    const biblio = await bibliographyFromSources(
-      sourcesInPagesRes.data!,
-      { styleId: getPreferredCitationStyle() },
-    )
+    const biblio = await bibliographyFromSources(sourcesInPagesRes.data!, {
+      styleId: getPreferredCitationStyle(),
+    })
     _zip.file(
       's/@bibliography.md',
       bibliographyToMarkdown({
@@ -265,12 +283,11 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     author: AuthorName
     source: Source
   }) => {
-    let author = options?.author
-    let source = options?.source
-    const biblio = await bibliographyFromSources(
-      sourcesInPagesRes.data!,
-      { styleId: getPreferredCitationStyle() },
-    )
+    const author = options?.author
+    const source = options?.source
+    const biblio = await bibliographyFromSources(sourcesInPagesRes.data!, {
+      styleId: getPreferredCitationStyle(),
+    })
     if (!source) {
       // bibliography (full or filtered by author)
       await downloadBibliography({
@@ -306,6 +323,40 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     hideSticky()
     fileDownload(dbJson, `${name}.json`)
   }
+
+  const cancelPublishGroupDatabase = useCallback(
+    async (group: Group) => {
+      if (!group.publishingStatusId) {
+        return
+      }
+      await eapi.publish.cancelPublishGroup(group.publishingStatusId)
+      group.isPublishing = false
+      await setGroup(group)
+    },
+    [setGroup, eapi.publish.cancelPublishGroup]
+  )
+
+  const publishGroupDatabase = useCallback(
+    async (group: Group) => {
+      group.isPublishing = true
+      group.publishingStatusId = uid()
+      await setGroup(group)
+      console.log('[publishGroupDatabase]', group)
+      const _publishRes = await eapi.publish.publishGroup(
+        group._id,
+        group.publishingStatusId
+      )
+      console.log('[publishGroupDatabase] result', _publishRes)
+
+      group.lastPublishedAt = new Date().toUTCString()
+      group.isPublishing = false
+      // group.lastPublishResult = 'success'
+
+      await setGroup(group)
+    },
+    [setGroup]
+  )
+
   useEffect(() => {
     appCommands.addListener('exportAllAsMarkdown', exportAllPages)
     appCommands.addListener('exportBibliography', exportBibliography)
@@ -326,7 +377,9 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
         exportAllPages,
         exportBibliography,
         exportDatabase,
-        setCurrentPageId
+        setCurrentPageId,
+        publishGroupDatabase,
+        cancelPublishGroupDatabase,
       }}
     >
       {children}
@@ -334,4 +387,5 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   )
 }
 
-export const useExportContext = () => useContext(ExportContext)
+export const useExportContext = (selector = (x) => x) =>
+  useContextSelector(ExportContext, selector)

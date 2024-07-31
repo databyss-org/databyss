@@ -411,7 +411,7 @@ export const initDb = ({
 export const initDbFromJson = async (groupId: string, dbJson: any[]) => {
   const _pouchDb = getPouchDb(groupId)
 
-  // TODO: delete existing group db if it exists
+  // TODO: delete existing group db if it exists?
 
   await _pouchDb.bulkDocs(dbJson, { new_edits: false })
   dbRef.groupId = groupId

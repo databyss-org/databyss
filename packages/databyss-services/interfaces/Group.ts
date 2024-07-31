@@ -12,7 +12,7 @@ export class Group {
   localGroup?: boolean
   lastPublishedAt: string | null
   isPublishing: boolean
-  lastPublishResult: string | null
+  publishingStatusId: string | null
 
   constructor(name: string) {
     this._id = `g_${uidlc()}`
@@ -23,5 +23,6 @@ export class Group {
     this.lastPublishedAt = null
     this.lastPublishResult = null
     this.isPublishing = false
+    this.publishingStatusId = null
   }
 }

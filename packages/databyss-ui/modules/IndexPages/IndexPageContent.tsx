@@ -17,16 +17,13 @@ import {
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Helmet } from 'react-helmet'
-import {
-  useBlocks,
-  useDocuments,
-  usePages,
-} from '@databyss-org/data/pouchdb/hooks'
+import { useDocuments, usePages } from '@databyss-org/data/pouchdb/hooks'
 import {
   Block,
   BlockRelation,
   BlockType,
   Embed,
+  Group,
   ResourceNotFoundError,
   Source,
 } from '@databyss-org/services/interfaces'
@@ -70,6 +67,7 @@ import { darkTheme } from '../../theming/theme'
 import ErrorFallback from '../../components/Notify/ErrorFallback'
 import { SourceHeader } from './SourceHeader'
 import { queryClient } from '@databyss-org/services/lib/queryClient'
+import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -227,6 +225,9 @@ export const IndexPageView = ({
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const queryClient = useQueryClient()
+  const groupRes = useDocument<Group>(dbRef.groupId!, {
+    enabled: isPublicAccount(),
+  })
 
   const onUpdateBlock = (block: Block) => {
     titleInputHandlesRef.current?.updateTitle(block)
@@ -271,12 +272,13 @@ export const IndexPageView = ({
       }
     }
   }, [blockName])
-  return useMemo(() => {
-    console.log('[IndexPageContent] render children')
-    return (
+  const _path = isPublicAccount() ? [groupRes.data?.name, ...path] : path
+
+  return useMemo(
+    () => (
       <>
         <StickyHeader
-          path={path}
+          path={_path}
           contextMenu={<IndexPageMenu block={block} />}
         />
         <ScrollView
@@ -338,8 +340,9 @@ export const IndexPageView = ({
           </View>
         </ScrollView>
       </>
-    )
-  }, [path, block])
+    ),
+    [_path, block]
+  )
 }
 
 interface IndexPageContentProps {
@@ -417,7 +420,6 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   // )
 
   return useMemo(() => {
-    console.log('[IndexPageContent] render')
     const queryRes = [blockRelationRes, blocksRes, pagesRes]
     if (queryRes.some((q) => !q.isSuccess)) {
       return <LoadingFallback queryObserver={queryRes} />

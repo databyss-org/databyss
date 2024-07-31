@@ -134,7 +134,7 @@ export const IndexResults = withTheme(
         pages,
         blocks,
       }).filter((r) => r.relatedBlock === relatedBlockId)
-      console.log('[indexResults] render')
+      // console.log('[indexResults] render')
 
       const groupedRelations = groupBlockRelationsByPage(_relations)
 

@@ -42,7 +42,7 @@ const App = () => {
         ) : (
           <QueryClientProvider client={queryClient}>
             <ContextMenuProvider>
-              <DatabaseProvider>
+              <DatabaseProvider isPublished>
                 <SessionProvider isLocalSession>
                   <Private />
                 </SessionProvider>

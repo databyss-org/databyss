@@ -66,7 +66,7 @@ const SidebarCollapsed = () => {
       icon: <PagesSvg />,
       onClick: () => onItemClick('pages'),
     },
-    {
+    !isPublicAccount() && {
       name: 'groups',
       title: 'Collections',
       icon: <FolderSvg />,
@@ -101,7 +101,7 @@ const SidebarCollapsed = () => {
       icon: <MediaSvg />,
       onClick: () => onItemClick('media'),
     },
-  ]
+  ].filter(Boolean)
 
   if (!isPublicAccount()) {
     sideBarCollapsedItems.push({

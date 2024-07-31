@@ -32,9 +32,15 @@ export const StickyPath = ({ path }: { path: string[] }) => (
           variant="uiTextSmall"
           html={part}
           css={{
-            overflow: 'hidden',
             whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
+            ...(path.length === 1 ||
+            idx === path.length - 1 ||
+            (part && part.length > 20)
+              ? {
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }
+              : {}),
           }}
           title={part}
         />
@@ -186,7 +192,7 @@ export const StickyHeader = ({
           {/* <Status /> */}
           {/* <AccountMenu /> */}
 
-          {contextMenu && <View ml="em">{contextMenu}</View>}
+          {contextMenu && <View ml="extraLarge">{contextMenu}</View>}
         </View>
       </View>
     )

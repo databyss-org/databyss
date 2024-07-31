@@ -1,4 +1,5 @@
 import PCancelable from 'p-cancelable'
+import { queryClient } from '@databyss-org/services/lib/queryClient'
 import { Page } from '@databyss-org/services/interfaces/Page'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { Block } from '@databyss-org/editor/interfaces'
@@ -7,7 +8,6 @@ import { PageDoc } from '../../interfaces'
 import { Selection } from '../../../../databyss-services/interfaces/Selection'
 import { getDocuments } from '../../utils'
 import { getDocument } from '../../crudUtils'
-import { queryClient } from '@databyss-org/services/lib/queryClient'
 
 const RETRY_DELAY = 1500
 const MAX_RETRIES = 5

@@ -14,13 +14,15 @@ import {
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import { Group, Page } from '@databyss-org/services/interfaces'
-import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvider'
+import { usePublishingStatus } from '@databyss-org/desktop/src/hooks/usePublishingStatus'
+import { urlSafeName } from '@databyss-org/services/lib/util'
+import { useExportContext } from '@databyss-org/services/export'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { MenuItem } from '../../components/Menu/DropdownList'
 import { DropdownMenu } from '../../components/Menu/DropdownMenu'
 import { ValueListItem } from '../../components/ValueList/ValueListProvider'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 import { copyToClipboard } from '../../components/PageContent/PageMenu'
+import { pxUnits } from '../../theming/views'
 
 interface IconControlProps extends BaseControlProps {
   icon: ReactNode
@@ -64,17 +66,26 @@ export const PublicSharingSettings = ({
   ...others
 }: PublicSharingSettingsProps) => {
   const [linkCopied, setLinkCopied] = useState(false)
-  const publishGroupDatabase = useDatabaseContext(
+  const [showPublishLog, setShowPublishLog] = useState(group.isPublishing)
+  const publishGroupDatabase = useExportContext(
     (c) => c && c.publishGroupDatabase
   )
+  const cancelPublishGroupDatabase = useExportContext(
+    (c) => c && c.cancelPublishGroupDatabase
+  )
   const pagesRes = usePages()
+  const publishingStatusRes = usePublishingStatus(group.publishingStatusId!, {
+    enabled: group.publishingStatusId !== null,
+  })
 
   let _lastPublishedText = 'never'
-  if (group.isPublishing) {
-    _lastPublishedText = 'publishing'
-  } else if (group.lastPublishedAt) {
+  if (group.lastPublishedAt) {
     const _date = new Date(group.lastPublishedAt)
     _lastPublishedText = `${_date.toDateString()} ${_date.getHours()}:${_date.getMinutes()}:${_date.getSeconds()}`
+  }
+  let _publishLog: string[] | null = null
+  if (publishingStatusRes.data) {
+    _publishLog = publishingStatusRes.data.messageLog
   }
 
   let _defaultPage: Page | null = null
@@ -147,12 +158,12 @@ export const PublicSharingSettings = ({
       <View px="em">
         <Separator spacing="none" color="text.3" />
       </View>
-      <Grid>
-        <View>
+      <View flexDirection="row" alignItems="baseline">
+        <View flexDirection="row" alignItems="center" pt={pxUnits(1)}>
           <Text variant="uiTextNormal" color="text.2">
-            Last published:
+            Published:
           </Text>
-          <Text variant="uiTextNormal" color="text.2">
+          <Text variant="uiTextNormal" color="text.3" ml="small">
             {_lastPublishedText}
           </Text>
         </View>
@@ -161,13 +172,27 @@ export const PublicSharingSettings = ({
             variant="uiLinkPadded"
             alignSelf="flex-end"
             onPress={() => {
-              publishGroupDatabase(group)
+              if (group.isPublishing) {
+                cancelPublishGroupDatabase(group)
+              } else {
+                setShowPublishLog(true)
+                publishGroupDatabase(group)
+              }
             }}
           >
             {group.isPublishing ? 'Cancel' : 'Publish now'}
           </Button>
         </View>
-      </Grid>
+      </View>
+      {showPublishLog && _publishLog && (
+        <View bg="background.1" ml="em" mr="em" p="tiny">
+          {_publishLog.map((_msg) => (
+            <Text variant="uiTextSmall" color="text.1">
+              {_msg}
+            </Text>
+          ))}
+        </View>
+      )}
     </>
   )
 

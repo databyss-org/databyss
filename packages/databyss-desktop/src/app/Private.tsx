@@ -218,6 +218,7 @@ const AppView = ({
         bg="background.1"
         minWidth={0}
         position="relative"
+        overflow="hidden"
       >
         <View
           justifyContent="space-between"

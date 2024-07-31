@@ -4,8 +4,14 @@ import { StickyHeader } from '@databyss-org/ui/components'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import PageMenu from './PageMenu'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 
 const PageSticky = ({ pagePath, pageId }) => {
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const groupRes = useDocument(dbRef.groupId, {
+    enabled: isPublicAccount(),
+  })
   const pagesRes = usePages()
   const pageRes = useDocument(pageId)
 
@@ -24,6 +30,11 @@ const PageSticky = ({ pagePath, pageId }) => {
     currentPath.push(...pagePath.path)
   }
 
+  // add group name if public
+  if (isPublicAccount() && groupRes.data) {
+    currentPath.unshift(groupRes.data.name)
+  }
+
   return React.useMemo(() => {
     // console.log('[PageSticky]', pagePath)
     if (!pagesRes.isSuccess || !pageRes.isSuccess) {
@@ -35,6 +46,7 @@ const PageSticky = ({ pagePath, pageId }) => {
         path={currentPath}
         contextMenu={<PageMenu pages={pages} />}
         draggable={
+          !isPublicAccount() &&
           !page.archive && {
             payload: page,
             type: 'PAGE',

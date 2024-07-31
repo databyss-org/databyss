@@ -1,10 +1,34 @@
-import { ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { nodeDbRefs } from '../../nodeDb'
 import { Block, BlockType, Group } from '@databyss-org/services/interfaces'
 import { PageDoc, UserPreference } from '@databyss-org/data/pouchdb/interfaces'
 import { getAtomicsFromFrag } from '@databyss-org/services/blocks/related'
 import { getR2Client, upload } from '@databyss-org/services/lib/r2'
 import { Role } from '@databyss-org/data/interfaces/sysUser'
+
+export class PublishingStatus {
+  isCancelled: boolean
+  isComplete: boolean
+  isSuccess: boolean
+  isError: boolean
+  messageLog: string[]
+  lastMessage: string
+
+  constructor() {
+    this.isCancelled = false
+    this.isComplete = false
+    this.isSuccess = false
+    this.isError = false
+    this.lastMessage = 'Initializing'
+    this.messageLog = ['Initializing']
+  }
+}
+
+const publishingStatusDict: { [statusId: string]: PublishingStatus } = {}
+
+function getStatus(statusId: string) {
+  return publishingStatusDict[statusId]
+}
 
 async function docIdsRelatedToPage(page: PageDoc, blocks: Block[]) {
   // console.log('[docIdsRelatedToPage]', page, groupId)
@@ -34,13 +58,69 @@ async function docIdsRelatedToPage(page: PageDoc, blocks: Block[]) {
   )
 }
 
-async function publishGroup(windowId: number, groupId: string) {
+interface UpdateStatusMessageOptions {
+  statusId: string
+  message: string
+  replaceLastLogEntry?: boolean
+  notify?: boolean
+}
+function updateStatusMessage({
+  statusId,
+  message,
+  replaceLastLogEntry = false,
+  notify = true,
+}: UpdateStatusMessageOptions) {
+  const _status = publishingStatusDict[statusId]
+  if (!_status) {
+    return
+  }
+  _status.lastMessage = message
+  if (replaceLastLogEntry) {
+    _status.messageLog[_status.messageLog.length - 1] = message
+  } else {
+    _status.messageLog.push(message)
+  }
+  if (notify) {
+    notifyStatusUpdated(statusId)
+  }
+}
+
+function notifyStatusUpdated(statusId: string) {
+  const _win = BrowserWindow.getFocusedWindow()
+  if (_win) {
+    _win.webContents.send(
+      'publish-statusUpdated',
+      statusId,
+      publishingStatusDict[statusId]
+    )
+  }
+}
+
+async function publishGroup(
+  windowId: number,
+  groupId: string,
+  statusId: string
+) {
+  const _status = new PublishingStatus()
+  publishingStatusDict[statusId] = _status
+  notifyStatusUpdated(statusId)
+
   const _db = nodeDbRefs[windowId].current!
   const _group: Group = await _db.get(groupId)
   const _relatedDocIds: string[] = []
   let _defaultPageId: string | null = null
 
-  for (const _pageId of _group.pages) {
+  for (let i = 0; i < _group.pages.length; i++) {
+    if (_status.isCancelled) {
+      return
+    }
+    const _pageId = _group.pages[i]
+    updateStatusMessage({
+      statusId,
+      message: `Processing page ${i + 1}/${_group.pages.length}`,
+      replaceLastLogEntry: true,
+    })
+
     // init default page
     if (!_defaultPageId) {
       _defaultPageId = _pageId
@@ -64,33 +144,45 @@ async function publishGroup(windowId: number, groupId: string) {
 
   const _uniqueDocIds = Array.from(new Set(_relatedDocIds))
 
+  if (_status.isCancelled) {
+    return
+  }
+  updateStatusMessage({ statusId, message: `Fetching data to publish...` })
+
   const _docsToWrite = await _db.bulkGet({
     docs: _uniqueDocIds.map((d) => ({ id: d })),
   })
 
+  if (_status.isCancelled) {
+    return
+  }
+  updateStatusMessage({ statusId, message: `Generating data to publish...` })
   const _dataToWrite = _docsToWrite!.results
     .map((_d) => (_d.docs[0] as any).ok)
     .filter(Boolean)
 
   _dataToWrite.push(_group)
   // user preference doc
-  const _userPreferences: UserPreference = {
-    _id: 'user_preference',
-    userId: 'local',
-    belongsToGroup: groupId,
-    createdAt: Date.now(),
-    groups: [
-      {
-        groupId,
-        defaultPageId: _group.defaultPageId ?? _defaultPageId,
-        role: Role.ReadOnly,
-      },
-    ],
-  }
+  const _userPreferences = await _db.get<UserPreference>('user_preference')
+  _userPreferences.userId = 'local'
+  _userPreferences.belongsToGroup = groupId
+  _userPreferences.createdAt = Date.now()
+  _userPreferences.groups = [
+    {
+      groupId,
+      defaultPageId: _group.defaultPageId ?? _defaultPageId,
+      role: Role.ReadOnly,
+    },
+  ]
   _dataToWrite.push(_userPreferences)
 
   const _dbJson = JSON.stringify(_dataToWrite, null, 2)
   // console.log('[publishGroup] _dbJson', _dbJson)
+
+  if (_status.isCancelled) {
+    return
+  }
+  updateStatusMessage({ statusId, message: `Uploading data...` })
 
   // Initialize R2
   const _r2creds = {
@@ -100,11 +192,6 @@ async function publishGroup(windowId: number, groupId: string) {
   }
   console.log('[publishGroup] r2creds', _r2creds)
   const r2 = getR2Client(_r2creds)
-
-  // // Initialize bucket instance
-  // const _bucket = r2.bucket('databyss-public')
-  // // Check if the bucket exists
-  // console.log('[publishGroup] bucket', await _bucket.exists())
 
   const _filename = `${groupId}/databyss-db-${groupId.replace('g_', '')}.json`
 
@@ -116,14 +203,30 @@ async function publishGroup(windowId: number, groupId: string) {
     destination: _filename,
     mimeType: 'application/json',
   })
-  console.log('[publishGroup] upload response', _uploadRes)
 
-  // fileDownload(_dbJson, `databyss-db-${group._id}.json`)
+  if (_status.isCancelled) {
+    return
+  }
+  console.log('[publishGroup] upload response', _uploadRes)
+  updateStatusMessage({ statusId, message: `Publish successful` })
   return 'success'
 }
 
+async function cancelPublishGroup(statusId: string) {
+  const _status = publishingStatusDict[statusId]
+  if (!_status) {
+    return
+  }
+  _status.isCancelled = true
+  updateStatusMessage({ statusId, message: 'Publishing cancelled by user' })
+}
+
 export function registerPublishHandlers() {
-  ipcMain.handle('publish-group', (evt, groupId) =>
-    publishGroup(evt.sender.id, groupId)
+  ipcMain.handle('publish-group', (evt, groupId, statusId) =>
+    publishGroup(evt.sender.id, groupId, statusId)
+  )
+  ipcMain.handle('publish-getStatus', (evt, statusId) => getStatus(statusId))
+  ipcMain.handle('publish-cancel', (evt, statusId) =>
+    cancelPublishGroup(statusId)
   )
 }
