@@ -1,6 +1,5 @@
 /* eslint-disable no-nested-ternary, prefer-template */
 const fs = require('fs')
-const isWsl = require('is-wsl')
 const path = require('path')
 const hasha = require('hasha')
 const webpack = require('webpack')
@@ -11,7 +10,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-// const ManifestPlugin = require('webpack-manifest-plugin')
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
 // const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
 // const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
@@ -470,26 +469,30 @@ module.exports = (webpackEnv) => {
           filename: 'static/css/[name].[contenthash:8].css',
           chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
         }),
-      // Generate an asset-manifest.json file which contains a mapping of all asset filenames
-      // to their corresponding output file so that tools can pick it up without
-      // having to parse `index.html`.
-      // [UNUSED]
-      // new ManifestPlugin({
-      //   fileName: 'asset-manifest.json',
-      //   publicPath,
-      //   generate: (seed, files) => {
-      //     const manifestFiles = files.reduce((manifest, file) => {
-      //       manifest[file.name] = file.path
-      //       return manifest
-      //     }, seed)
+      // Generate an asset manifest file with the following content:
+      // - "files" key: Mapping of all asset filenames to their corresponding
+      //   output file so that tools can pick it up without having to parse
+      //   `index.html`
+      // - "entrypoints" key: Array of files which are included in `index.html`,
+      //   can be used to reconstruct the HTML if necessary
+      new WebpackManifestPlugin({
+        fileName: 'asset-manifest.json',
+        publicPath,
+        generate: (seed, files, entrypoints) => {
+          const manifestFiles = files.reduce((manifest, file) => {
+            manifest[file.name] = file.path
+            return manifest
+          }, seed)
+          const entrypointFiles = entrypoints.main.filter(
+            (fileName) => !fileName.endsWith('.map')
+          )
 
-      //     return {
-      //       files: {
-      //         ...manifestFiles,
-      //       },
-      //     }
-      //   },
-      // }),
+          return {
+            files: manifestFiles,
+            entrypoints: entrypointFiles,
+          }
+        },
+      }),
       // Generate the manifest.json file
       !isEnvTest &&
         !process.env.REACT_APP_STORYBOOK &&
@@ -517,10 +520,6 @@ module.exports = (webpackEnv) => {
                 path.resolve(paths.appPublic, 'favicon.ico'),
                 { algorithm: 'md5' }
               ),
-            },
-            {
-              url: 'gsap.min.js',
-              revision: '3.6.1',
             },
           ],
           swSrc: path.resolve(__dirname, './service-worker.js'),
