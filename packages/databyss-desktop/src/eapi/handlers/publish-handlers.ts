@@ -1,10 +1,17 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
-import { nodeDbRefs } from '../../nodeDb'
+import {
+  buildSearchIndexDb,
+  createNodeDb,
+  findSearchIndexDb,
+  getDbDirPath,
+  nodeDbRefs,
+} from '../../nodeDb'
 import { Block, BlockType, Group } from '@databyss-org/services/interfaces'
 import { PageDoc, UserPreference } from '@databyss-org/data/pouchdb/interfaces'
 import { getAtomicsFromFrag } from '@databyss-org/services/blocks/related'
 import { getR2Client, upload } from '@databyss-org/services/lib/r2'
 import { Role } from '@databyss-org/data/interfaces/sysUser'
+import { RemoteDbInfo } from '@databyss-org/services/session/utils'
 
 export class PublishingStatus {
   isCancelled: boolean
@@ -182,6 +189,34 @@ async function publishGroup(
   if (_status.isCancelled) {
     return
   }
+  updateStatusMessage({
+    statusId,
+    message: `Exporting search index for ${groupId}`,
+  })
+  // group db must be imported temporarily to create the search intdex
+  console.log('[publishGroup] write temp db')
+  const _groupDb = createNodeDb(getDbDirPath(groupId))
+  const res = await _groupDb.bulkDocs(
+    _dataToWrite,
+    { new_edits: false } // not change revision
+  )
+
+  // build search index
+  await buildSearchIndexDb(_groupDb)
+  const _searchIndexDbPath = await findSearchIndexDb(groupId)
+  console.log('[publishGroup] search index db path', _searchIndexDbPath)
+  const _searchDb = createNodeDb(_searchIndexDbPath)
+  const _searchDbAllDocs = await _searchDb.allDocs({ include_docs: true })
+  const _searchDbData = _searchDbAllDocs.rows.map((row) => row.doc)
+  const _searchDbJson = JSON.stringify(_searchDbData, null, 2)
+
+  // remove temp dbs
+  await _searchDb.destroy()
+  await _groupDb.destroy()
+
+  if (_status.isCancelled) {
+    return
+  }
   updateStatusMessage({ statusId, message: `Uploading data...` })
 
   // Initialize R2
@@ -193,21 +228,45 @@ async function publishGroup(
   console.log('[publishGroup] r2creds', _r2creds)
   const r2 = getR2Client(_r2creds)
 
-  const _filename = `${groupId}/databyss-db-${groupId.replace('g_', '')}.json`
-
   //upload the dbJson
-  const _uploadRes = await upload({
+  const _uploadPathBase = `${groupId}/databyss-db-${groupId.replace('g_', '')}`
+  let _uploadRes = await upload({
     client: r2,
     bucketName: 'databyss-public',
     contents: _dbJson,
-    destination: _filename,
+    destination: `${_uploadPathBase}.json`,
     mimeType: 'application/json',
   })
 
   if (_status.isCancelled) {
     return
   }
-  console.log('[publishGroup] upload response', _uploadRes)
+  updateStatusMessage({ statusId, message: `Uploading search index...` })
+  _uploadRes = await upload({
+    client: r2,
+    bucketName: 'databyss-public',
+    contents: _searchDbJson,
+    destination: `${_uploadPathBase}-search.json`,
+    mimeType: 'application/json',
+  })
+
+  // generate and upload info obj
+  const _dbInfo: RemoteDbInfo = {
+    searchMd5: _searchIndexDbPath.split('-').slice(-1)[0],
+  }
+  console.log('[publishGroup] db info', _dbInfo)
+  _uploadRes = await upload({
+    client: r2,
+    bucketName: 'databyss-public',
+    contents: JSON.stringify(_dbInfo),
+    destination: `${_uploadPathBase}-info.json`,
+    mimeType: 'application/json',
+  })
+
+  if (_status.isCancelled) {
+    return
+  }
+  // console.log('[publishGroup] upload response', _uploadRes)
   updateStatusMessage({ statusId, message: `Publish successful` })
   return 'success'
 }

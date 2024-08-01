@@ -12,7 +12,6 @@ import {
   useNavigationContext,
   ModalManager,
   PageContent,
-  GroupDetail,
 } from '@databyss-org/ui'
 
 import { GestureProvider, View } from '@databyss-org/ui/primitives'
@@ -111,7 +110,6 @@ const Private = () => {
               }
             />
             <Route path="search/:query" element={<SearchContent />} />
-            <Route path="collections/:id" element={<GroupDetail />} />
             <Route
               path="sources/:blockId/*"
               element={<IndexPageContent blockType={BlockType.Source} />}

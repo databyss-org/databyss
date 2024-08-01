@@ -18,7 +18,11 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import GroupSvg from '@databyss-org/ui/assets/folder-open.svg'
 import { debounce } from 'lodash'
-import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
+import {
+  LoadingFallback,
+  StickyHeader,
+  TitleInput,
+} from '@databyss-org/ui/components'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import GroupMenu from './GroupMenu'
 

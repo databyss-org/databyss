@@ -19,7 +19,6 @@ import {
   useNavigationContext,
   ModalManager,
   PageContent,
-  GroupDetail,
   Icon,
   BaseControl,
   TextControl,
@@ -51,6 +50,7 @@ import { sidebar } from '@databyss-org/ui/theming/components'
 import { debounce } from 'lodash'
 import { TitleBar } from '../components/TitleBar'
 import { useAppState } from '../hooks'
+import { GroupDetail } from '../modules/Groups/GroupDetail'
 
 const GroupNameInput = ({
   groupName,

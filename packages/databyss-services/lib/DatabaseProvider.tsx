@@ -13,7 +13,7 @@ import { DatabyssMenuItems } from '@databyss-org/ui/components/Menu/DatabyssMenu
 import DatabyssLogo from '@databyss-org/ui/assets/logo-thick.png'
 import { darkTheme, pxUnits } from '@databyss-org/ui/theming/theme'
 import { version } from '../version'
-import { getAccountFromLocation, getRemoteDbFile } from '../session/utils'
+import { getAccountFromLocation, getRemoteDbData } from '../session/utils'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
@@ -82,8 +82,8 @@ export const DatabaseProvider = ({
       const _groupId = getAccountFromLocation()
       console.log('[DatabyssProvider] groupId from url', _groupId)
       if (_groupId) {
-        const _dbJson = await getRemoteDbFile(_groupId as string)
-        await initDbFromJson(_groupId as string, _dbJson)
+        const _remoteData = await getRemoteDbData(_groupId as string)
+        await initDbFromJson(_groupId as string, _remoteData)
         updateDatabaseStatus()
       }
     }

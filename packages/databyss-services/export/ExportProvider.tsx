@@ -333,7 +333,7 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
       group.isPublishing = false
       await setGroup(group)
     },
-    [setGroup, eapi.publish.cancelPublishGroup]
+    [setGroup, eapi.publish?.cancelPublishGroup]
   )
 
   const publishGroupDatabase = useCallback(

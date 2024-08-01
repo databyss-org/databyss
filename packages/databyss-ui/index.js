@@ -26,7 +26,6 @@ export { default as ThemedViewport } from './components/Viewport/ThemedViewport'
 export { default as Viewport } from './components/Viewport/Viewport'
 export { Sidebar } from './modules/Sidebar/Sidebar'
 export { default as PageContent } from './components/PageContent/PageContent'
-export { GroupDetail } from './modules/Groups/GroupDetail'
 export { SearchContent } from './modules/IndexPages/SearchContent'
 
 /* primitives */

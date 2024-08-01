@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/services",
-  "version": "3.1.9",
+  "version": "3.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/databyss-org/databyss.git"
@@ -15,10 +15,10 @@
     "@bugsnag/browser": "^6.3.2",
     "@bugsnag/js": "^6.3.2",
     "@bugsnag/node": "^6.3.2",
-    "@databyss-org/data": "3.1.9",
-    "@databyss-org/editor": "3.1.9",
-    "@databyss-org/services": "3.1.9",
-    "@databyss-org/ui": "3.1.9",
+    "@databyss-org/data": "3.2.0",
+    "@databyss-org/editor": "3.2.0",
+    "@databyss-org/services": "3.2.0",
+    "@databyss-org/ui": "3.2.0",
     "@tanstack/react-query": "5.51.11",
     "cloudant-upsert": "^0.11.1",
     "fast-deep-equal": "^3.1.3",

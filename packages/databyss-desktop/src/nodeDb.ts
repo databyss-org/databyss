@@ -2,7 +2,7 @@ import PouchDB from 'pouchdb-node'
 import PouchDBFind from 'pouchdb-find'
 import PouchDBUpsert from 'pouchdb-upsert'
 import PouchDbQuickSearch from 'pouchdb-quick-search'
-import { BrowserWindow, app, ipcMain, ipcRenderer } from 'electron'
+import { BrowserWindow } from 'electron'
 import path from 'path'
 import fs from 'fs-extra'
 import { Group } from '@databyss-org/services/interfaces'
@@ -13,7 +13,10 @@ import {
 import { appState } from './eapi/handlers/state-handlers'
 import { addTimeStamp } from '@databyss-org/data/pouchdb/docUtils'
 import { sendCommandToBrowser } from './menus'
-import { backupDbToJson, makeBackupFilename } from '@databyss-org/data/pouchdb/backup'
+import {
+  backupDbToJson,
+  makeBackupFilename,
+} from '@databyss-org/data/pouchdb/backup'
 
 PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
@@ -48,11 +51,11 @@ export async function handleImport(filePath: string) {
   const groupId = prefsDoc.belongsToGroup
   console.log('[DB] found groupid', groupId)
   const groups = (appState.get('localGroups') ?? []) as Group[]
-  const _existingGroup = groups.find(group => group._id === groupId)
+  const _existingGroup = groups.find((group) => group._id === groupId)
   if (_existingGroup) {
     sendCommandToBrowser('notify', {
       message: `Cannot import Databyss because it already exists as "${_existingGroup.name}". If you are sure this is correct, you must remove the existing Databyss named "${_existingGroup.name}" before importing the selected file.`,
-      error: true
+      error: true,
     })
     return false
   }
@@ -103,7 +106,8 @@ export async function reconstructLocalGroups(dataPath: string) {
   let _localGroups = appState.get('localGroups') ?? []
   if (_localGroups.length > 0) {
     sendCommandToBrowser('notify', {
-      message: 'Warning: Collections already exist in current data directory. These will not be available in the Databyss menu unless you change back to the current data directory.' 
+      message:
+        'Warning: Collections already exist in current data directory. These will not be available in the Databyss menu unless you change back to the current data directory.',
     })
     _localGroups = []
   }
@@ -129,31 +133,32 @@ export async function reconstructLocalGroups(dataPath: string) {
 export async function setDataPath(dataPath: string) {
   // if dir is not empty, see if it's an existing Databyss data dir
   // console.log('[DB] setDataPath ls', _ls)
-  
+
   // reconstruct localGroups
   if (await reconstructLocalGroups(dataPath)) {
     appState.set('dataPath', dataPath)
     return
   }
   if (await reconstructLocalGroups(path.join(dataPath, 'Databyss'))) {
-    appState.set('dataPath', (path.join(dataPath, 'Databyss')))
+    appState.set('dataPath', path.join(dataPath, 'Databyss'))
     return
   }
-    
+
   // otherwise move existing data
-  sendCommandToBrowser('notify', { 
-    message: 'Moving data directory…', 
-    showConfirmButtons: false 
+  sendCommandToBrowser('notify', {
+    message: 'Moving data directory…',
+    showConfirmButtons: false,
   })
   // if dir is not empty, create a subdir called 'Databyss'
   let _nextDataPath = dataPath
   let _ls = fs.readdirSync(_nextDataPath).filter((name) => name !== '.DS_Store')
   if (_ls.length > 0) {
     _nextDataPath = path.join(_nextDataPath, 'Databyss')
-    if (fs.existsSync(_nextDataPath)){
-      sendCommandToBrowser('notify', { 
-        message: 'Cannot move data because selected directory is not empty or an existing Databyss directory', 
-        error: true
+    if (fs.existsSync(_nextDataPath)) {
+      sendCommandToBrowser('notify', {
+        message:
+          'Cannot move data because selected directory is not empty or an existing Databyss directory',
+        error: true,
       })
       return
     }
@@ -224,12 +229,44 @@ export async function archiveDatabyss(groupId: string) {
 
 export function getWindowIdForGroup(groupId: string) {
   const _windowId = Object.entries(nodeDbRefs).find(
-    ([windowId, dbRef]) => (dbRef.groupId === groupId)
+    ([windowId, dbRef]) => dbRef.groupId === groupId
   )?.[0]
   if (!_windowId) {
     return null
   }
   return parseInt(_windowId, 10)
+}
+
+export async function findSearchIndexDb(groupId: string) {
+  const _dbDirPath = getDbDirPath()
+  const _dirInfo = await fs.readdir(_dbDirPath)
+  const _searchDbPathPrefix = `${groupId}-search`
+  console.log('[findSearchIndexDb] db prefix', _searchDbPathPrefix)
+  const _searchDbName = _dirInfo.find((_path) => {
+    return _path.startsWith(_searchDbPathPrefix)
+  })
+  const _searchDbPath = _searchDbName
+    ? path.join(_dbDirPath, _searchDbName)
+    : null
+  // console.log('[findSearchIndexDb] search db path', _searchDbPath)
+  return _searchDbPath
+}
+
+export async function buildSearchIndexDb(db: PouchDB.Database<any>) {
+  await db.search({
+    fields: ['text.textValue'],
+    build: true,
+  })
+  console.log('[buildSearchIndexDb] indexing done')
+}
+
+export function getDbDirPath(groupId?: string) {
+  const _dbDirPath = path.join(appState.get('dataPath'), 'pouchdb')
+  return groupId ? path.join(_dbDirPath, groupId) : _dbDirPath
+}
+
+export function createNodeDb(dbPath: string) {
+  return new PouchDB(dbPath)
 }
 
 export async function initNodeDb(windowId: number, groupId: string) {
@@ -241,18 +278,26 @@ export async function initNodeDb(windowId: number, groupId: string) {
   if (nodeDbRefs[windowId]?.current) {
     await nodeDbRefs[windowId].current.close()
   }
-  const _dbDirPath = path.join(appState.get('dataPath'), 'pouchdb')
+  const _dbDirPath = getDbDirPath()
   if (!fs.existsSync(_dbDirPath)) {
     fs.mkdirSync(_dbDirPath)
   }
   nodeDbRefs[windowId] = {
     dbPath: path.join(_dbDirPath, groupId),
     groupId: groupId,
-    current: null
+    current: null,
   }
   console.log('[DB] db path', nodeDbRefs[windowId].dbPath)
   nodeDbRefs[windowId].current = new PouchDB(nodeDbRefs[windowId].dbPath)
   appState.set('lastActiveGroupId', groupId)
+
+  const _searchIndexDbPath = await findSearchIndexDb(groupId)
+  if (!_searchIndexDbPath) {
+    console.log(
+      '[initNodeDb] search index db not found, building in background'
+    )
+    buildSearchIndexDb(nodeDbRefs[windowId].current)
+  }
 }
 
 export function setGroupLoaded(windowId: number) {

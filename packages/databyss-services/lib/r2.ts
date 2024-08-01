@@ -64,7 +64,7 @@ export async function upload({
     })
   )
 
-  console.log('[R2] upload res', result)
+  // console.log('[R2] upload res', result)
 
   return {
     objectKey: destination,

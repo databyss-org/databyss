@@ -3,14 +3,32 @@ import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
 
-export const getRemoteDbFile = async (groupId: string) => {
+export interface RemoteDbInfo {
+  searchMd5: string
+}
+
+export interface RemoteDbData {
+  info: RemoteDbInfo
+  dbRows: any[]
+  searchDbRows: any[]
+}
+
+export const getRemoteDbData = async (groupId: string) => {
   const _gid = groupId.replace('g_', '')
-  const _url = `${process.env.DBFILE_URL}${groupId}/databyss-db-${_gid}.json`
-  console.log('[getRemoteDbFile] url', _url)
-  const _res = await fetch(_url)
-  const _json = await _res.json()
-  console.log('[getRemoteDbFile] response', _json)
-  return _json
+  const _urlBase = `${process.env.DBFILE_URL}${groupId}/databyss-db-${_gid}`
+  // console.log('[getRemoteDbFile] url base', _urlBase)
+  let _res = await fetch(`${_urlBase}.json`)
+  const dbRows: any[] = await _res.json()
+  _res = await fetch(`${_urlBase}-info.json`)
+  const info: RemoteDbInfo = await _res.json()
+  _res = await fetch(`${_urlBase}-search.json`)
+  const searchDbRows: any[] = await _res.json()
+
+  return {
+    info,
+    dbRows,
+    searchDbRows,
+  } as RemoteDbData
 }
 
 export const getAccountFromLocation = (

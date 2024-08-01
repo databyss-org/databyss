@@ -2,7 +2,6 @@ import { BrowserWindow, ipcMain } from 'electron'
 import {
   getWindowIdForGroup,
   initNodeDb,
-  NodeDbRef,
   nodeDbRefs,
   setGroupLoaded,
 } from '../../nodeDb'

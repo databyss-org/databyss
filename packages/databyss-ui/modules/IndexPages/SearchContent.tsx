@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
@@ -20,16 +20,31 @@ import { IndexPageView } from './IndexPageContent'
 import { IndexResultTags } from './IndexResults'
 import { useSearchContext } from '../../hooks'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
+import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 
 export const SearchContent = withTheme(({ theme }) => {
   const { getAccountFromLocation, navigate } = useNavigationContext()
   const searchQuery = decodeURIComponent(useParams().query!)
-  const searchRes = useSearchEntries(searchQuery)
+  const searchRes = useSearchEntries(searchQuery, {
+    enabled: dbRef.searchIndexProgress === 1,
+  })
   const scrollViewRef = useRef<HTMLElement | null>(null)
   const restoreScroll = useScrollMemory(scrollViewRef)
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
   )
+  const [searchIndexProgress, setSearchIndexProgress] = useState<number>(
+    dbRef.searchIndexProgress
+  )
+  const searchIndexProgressTimerRef = useRef<any | null>(null)
+
+  if (dbRef.searchIndexProgress < 1) {
+    searchIndexProgressTimerRef.current = setInterval(() => {
+      setSearchIndexProgress(dbRef.searchIndexProgress)
+    }, 100)
+  } else {
+    clearInterval(searchIndexProgressTimerRef.current)
+  }
 
   return useMemo(() => {
     const composeResults = (results: SearchEntriesResultPage[]) => {
@@ -132,11 +147,19 @@ export const SearchContent = withTheme(({ theme }) => {
             //   html: true,
             //   showConfirmButtons: true,
             // }}
-          />
+          >
+            {searchIndexProgress < 1 && (
+              <Text variant="uiTextNormal" color="text.2" mt="medium">
+                Building full-text search index:{' '}
+                {Math.ceil(searchIndexProgress * 100)}%
+              </Text>
+            )}
+          </LoadingFallback>
         )}
       </IndexPageView>
     )
   }, [
+    searchIndexProgress,
     searchQuery,
     normalizedStemmedTerms,
     scrollViewRef,

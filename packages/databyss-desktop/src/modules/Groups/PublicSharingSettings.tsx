@@ -8,21 +8,20 @@ import {
   BaseControl,
   BaseControlProps,
   Icon,
-  Grid,
   Button,
 } from '@databyss-org/ui/primitives'
-import LinkSvg from '@databyss-org/ui/assets/link.svg'
+import LinkSvg from '@databyss-org/ui/assets/copy.svg'
 import CheckSvg from '@databyss-org/ui/assets/check.svg'
+import LoadingSvg from '@databyss-org/ui/assets/loading.svg'
 import { Group, Page } from '@databyss-org/services/interfaces'
 import { usePublishingStatus } from '@databyss-org/desktop/src/hooks/usePublishingStatus'
-import { urlSafeName } from '@databyss-org/services/lib/util'
 import { useExportContext } from '@databyss-org/services/export'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
-import { MenuItem } from '../../components/Menu/DropdownList'
-import { DropdownMenu } from '../../components/Menu/DropdownMenu'
-import { ValueListItem } from '../../components/ValueList/ValueListProvider'
-import { copyToClipboard } from '../../components/PageContent/PageMenu'
-import { pxUnits } from '../../theming/views'
+import { MenuItem } from '@databyss-org/ui/components/Menu/DropdownList'
+import { DropdownMenu } from '@databyss-org/ui/components/Menu/DropdownMenu'
+import { ValueListItem } from '@databyss-org/ui/components/ValueList/ValueListProvider'
+import { copyToClipboard } from '@databyss-org/ui/components/PageContent/PageMenu'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 
 interface IconControlProps extends BaseControlProps {
   icon: ReactNode
@@ -42,11 +41,9 @@ export const IconControl = ({
     childViewProps={{ flexDirection: 'row', alignItems: 'center' }}
     {...others}
   >
-    <View flexGrow={1}>
-      <Text variant="uiTextNormal" color={color}>
-        {label}
-      </Text>
-    </View>
+    <Text variant="uiTextNormal" color={color} mr="small">
+      {label}
+    </Text>
     <Icon sizeVariant="small" mr="small" color={iconColor ?? color}>
       {icon}
     </Icon>
@@ -78,6 +75,7 @@ export const PublicSharingSettings = ({
     enabled: group.publishingStatusId !== null,
   })
 
+  // setup publishing log ui
   let _lastPublishedText = 'never'
   if (group.lastPublishedAt) {
     const _date = new Date(group.lastPublishedAt)
@@ -88,6 +86,7 @@ export const PublicSharingSettings = ({
     _publishLog = publishingStatusRes.data.messageLog
   }
 
+  // setup default page ui
   let _defaultPage: Page | null = null
   let _defaultPageMenuItems: MenuItem[] = []
   if (pagesRes.data) {
@@ -103,17 +102,14 @@ export const PublicSharingSettings = ({
     })
   }
 
+  // setup public link
+  let _publicUrl: string | null = null
+  if (group.lastPublishedAt) {
+    _publicUrl = `${process.env.PUBLISHED_URL}/${group._id.substring(2)}`
+  }
+
   const copyLink = () => {
-    // TODO: collection should only be linkable if page exist
-
-    // compose public link
-    const getUrl = window.location
-    const _groupName = group.name ? `${urlSafeName(group.name)}-` : ''
-    const baseUrl = `${getUrl.protocol}//${
-      getUrl.host
-    }/${_groupName}${group._id.substring(2)}`
-
-    copyToClipboard(baseUrl)
+    copyToClipboard(_publicUrl)
   }
 
   const _defaultPageView = _defaultPage && (
@@ -158,7 +154,11 @@ export const PublicSharingSettings = ({
       <View px="em">
         <Separator spacing="none" color="text.3" />
       </View>
-      <View flexDirection="row" alignItems="baseline">
+      <View
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="space-between"
+      >
         <View flexDirection="row" alignItems="center" pt={pxUnits(1)}>
           <Text variant="uiTextNormal" color="text.2">
             Published:
@@ -167,10 +167,10 @@ export const PublicSharingSettings = ({
             {_lastPublishedText}
           </Text>
         </View>
-        <View flexGrow={1}>
+        <View flexDirection="row" alignItems="center">
+          {group.isPublishing && <LoadingSvg width={25} height={25} />}
           <Button
             variant="uiLinkPadded"
-            alignSelf="flex-end"
             onPress={() => {
               if (group.isPublishing) {
                 cancelPublishGroupDatabase(group)
@@ -201,17 +201,48 @@ export const PublicSharingSettings = ({
       <View px="em">
         <Separator spacing="none" color="text.3" />
       </View>
-      <IconControl
-        data-test-element="copy-link"
-        onClick={() => {
-          copyLink()
-          setLinkCopied(true)
-        }}
-        icon={linkCopied ? <CheckSvg /> : <LinkSvg />}
-        iconColor={linkCopied ? 'green.0' : 'text.2'}
-        color="text.2"
-        label={linkCopied ? 'Link copied' : 'Copy link'}
-      />
+      <View
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <View flexDirection="row" alignItems="center">
+          <Text variant="uiTextNormal" color="text.2" pr="small">
+            URL:
+          </Text>
+          <BaseControl href={_publicUrl!} target="_blank">
+            <Text
+              variant="uiTextNormal"
+              color="text.3"
+              css={{ textDecoration: 'underline' }}
+            >
+              {_publicUrl}
+            </Text>
+          </BaseControl>
+        </View>
+        <IconControl
+          data-test-element="copy-link"
+          onClick={() => {
+            copyLink()
+            setLinkCopied(true)
+          }}
+          icon={linkCopied ? <CheckSvg /> : <LinkSvg />}
+          iconColor={linkCopied ? 'green.0' : 'text.2'}
+          color="text.2"
+          label={linkCopied ? 'Link copied' : 'Copy link'}
+        />
+        {/* <BaseControl
+          justifySelf="flex-end"
+          onClick={() => {
+            copyLink()
+            setLinkCopied(true)
+          }}
+        >
+          <Icon color={linkCopied ? 'green.0' : 'text.2'} sizeVariant="small">
+            {linkCopied ? <CheckSvg /> : <LinkSvg />}
+          </Icon>
+        </BaseControl> */}
+      </View>
     </>
   )
 
@@ -243,7 +274,7 @@ export const PublicSharingSettings = ({
         <>
           {_defaultPageView}
           {_lastPublishedView}
-          {_copyLinkView}
+          {_publicUrl && _copyLinkView}
         </>
       )}
     </List>

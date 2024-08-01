@@ -39,6 +39,7 @@ export const LoadingFallback = ({
   showLongWaitMessage,
   longWaitDialogOptions,
   splashOnLongWait,
+  children,
   ...others
 }: LoadingFallbackProps) => {
   const { notify, hideDialog, hideApplication, showApplication } =
@@ -94,7 +95,10 @@ export const LoadingFallback = ({
       {_queryObservers?.some((_obs) => _obs.isError) ? (
         _queryObservers.map((_obs) => <ErrorText error={_obs.error as Error} />)
       ) : (
-        <LoadingIcon width={size} height={size} />
+        <>
+          <LoadingIcon width={size} height={size} />
+          {children}
+        </>
       )}
     </View>
   )

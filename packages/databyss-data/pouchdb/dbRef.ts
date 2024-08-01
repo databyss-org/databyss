@@ -8,6 +8,7 @@ export class DbRef extends EventEmitter {
   initialSyncComplete: boolean = false
   // seq of last upsertReplication
   lastReplicationSeq: string | number = 'now'
+  searchIndexProgress: number = 0 // 0 to 1
   private _groupId: string | null = null
 
   get groupId() {

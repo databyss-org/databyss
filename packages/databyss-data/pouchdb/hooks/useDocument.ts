@@ -14,7 +14,9 @@ export interface UseDocumentOptions {
   queryKey?: string[]
 }
 
-export function applyDefaultUseDocumentOptions(options: UseDocumentOptions) {
+export function applyDefaultUseDocumentOptions(
+  options: UseDocumentOptions = {}
+) {
   return {
     enabled: options.enabled ?? true,
     initialData: options.initialData ?? null,

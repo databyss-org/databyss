@@ -9,8 +9,17 @@ import { useDocuments } from './useDocuments'
 import { Block } from '../../../databyss-services/interfaces'
 import { searchText } from '../utils'
 import { couchDbRef } from '../../couchdb/couchdb'
+import {
+  applyDefaultUseDocumentOptions,
+  UseDocumentOptions,
+} from './useDocument'
 
-const useSearchText = (searchQuery: string, localSearch: boolean = true) => {
+const useSearchText = (
+  searchQuery: string,
+  localSearch: boolean = true,
+  options?: UseDocumentOptions
+) => {
+  const _options = applyDefaultUseDocumentOptions(options)
   const _searchQuery = decodeURIComponent(searchQuery)
   const queryKey = ['searchText', searchQuery]
 
@@ -25,15 +34,20 @@ const useSearchText = (searchQuery: string, localSearch: boolean = true) => {
       }
       return couchDbRef.current?.search({ query: _searchQuery })!
     },
+    enabled: _options.enabled,
     staleTime: 5000,
   })
 
   return query
 }
 
-export const useSearchEntries = (searchQuery: string) => {
+export const useSearchEntries = (
+  searchQuery: string,
+  options?: UseDocumentOptions
+) => {
+  const _options = applyDefaultUseDocumentOptions(options)
   const pagesRes = usePages()
-  const searchTextRes = useSearchText(searchQuery)
+  const searchTextRes = useSearchText(searchQuery, true, options)
 
   let docIds: string[] = []
   if (searchTextRes.isSuccess) {
@@ -41,7 +55,7 @@ export const useSearchEntries = (searchQuery: string) => {
   }
 
   const blocksRes = useDocuments<Block>(docIds, {
-    enabled: searchTextRes.isSuccess,
+    enabled: _options.enabled && searchTextRes.isSuccess,
   })
 
   const queryKey = [
@@ -65,7 +79,10 @@ export const useSearchEntries = (searchQuery: string) => {
       return results
     },
     enabled:
-      pagesRes.isSuccess && blocksRes.isSuccess && searchTextRes.isSuccess,
+      _options.enabled &&
+      pagesRes.isSuccess &&
+      blocksRes.isSuccess &&
+      searchTextRes.isSuccess,
     // gcTime: 5000,
   })
 
