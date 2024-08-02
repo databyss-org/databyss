@@ -154,7 +154,7 @@ module.exports = (webpackEnv) => {
             },
             compress: {
               ecma: 5,
-              drop_console: !process.env.SHOW_CONSOLE,
+              // drop_console: !process.env.SHOW_CONSOLE,
               warnings: false,
               // Disabled because of an issue with Uglify breaking seemingly valid code:
               // https://github.com/facebook/create-react-app/issues/2376
