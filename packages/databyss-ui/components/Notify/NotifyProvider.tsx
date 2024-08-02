@@ -169,10 +169,10 @@ class NotifyProvider extends React.Component {
     return { hasError: true }
   }
 
-  // componentDidMount() {
-  //   // check for service worker cache updates
-  //   this.checkForUpdates()
-  // }
+  componentDidMount() {
+    // check for service worker cache updates
+    this.checkForUpdates()
+  }
 
   componentDidCatch(error, info) {
     this.onUnhandledError(error, info)

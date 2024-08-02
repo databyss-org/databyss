@@ -15,18 +15,21 @@ import { Block, BlockType } from '@databyss-org/editor/interfaces'
 import { SearchEntriesResultPage } from '@databyss-org/data/pouchdb/entries/lib/searchEntries'
 import { urlSafeName } from '@databyss-org/services/lib/util'
 import BlockSvg from '@databyss-org/ui/assets/arrowRight.svg'
+import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 import { withTheme } from 'emotion-theming'
 import { IndexPageView } from './IndexPageContent'
 import { IndexResultTags } from './IndexResults'
 import { useSearchContext } from '../../hooks'
 import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
-import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
+
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
 
 export const SearchContent = withTheme(({ theme }) => {
   const { getAccountFromLocation, navigate } = useNavigationContext()
   const searchQuery = decodeURIComponent(useParams().query!)
   const searchRes = useSearchEntries(searchQuery, {
-    enabled: dbRef.searchIndexProgress === 1,
+    enabled: eapi.isDesktop || dbRef.searchIndexProgress === 1,
   })
   const scrollViewRef = useRef<HTMLElement | null>(null)
   const restoreScroll = useScrollMemory(scrollViewRef)
@@ -148,7 +151,7 @@ export const SearchContent = withTheme(({ theme }) => {
             //   showConfirmButtons: true,
             // }}
           >
-            {searchIndexProgress < 1 && (
+            {eapi.isWeb && searchIndexProgress < 1 && (
               <Text variant="uiTextNormal" color="text.2" mt="medium">
                 Building full-text search index:{' '}
                 {Math.ceil(searchIndexProgress * 100)}%
