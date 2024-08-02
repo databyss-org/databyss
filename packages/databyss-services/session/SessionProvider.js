@@ -388,12 +388,21 @@ const SessionProvider = ({
     [stateRef.current]
   )
 
-  const getDefaultPageUrl = useCallback(({ pages, defaultGroupId }) => {
+  const getDefaultPageUrl = useCallback(async ({ pages, defaultGroupId }) => {
     // let _groupName = ''
     // if (defaultGroupName) {
     //   _groupName = `${urlSafeName(defaultGroupName)}-`
     // }
-    const defaultPage = getDefaultPage(pages)
+
+    let defaultPage = null
+
+    // return default page from user prefs, if possible
+    const _userPreference = await dbRef.current.get('user_preference')
+    const _group = _userPreference?.groups?.[0]
+    defaultPage = pages[_group?.defaultPageId]
+    if (!defaultPage) {
+      defaultPage = getDefaultPage(pages)
+    }
     const pageUrl = `${defaultPage._id}/${urlSafeName(defaultPage.name)}`
     // return `/${_groupName}${defaultGroupId.substring(2)}/pages/${pageUrl}`
     return `/${defaultGroupId}/pages/${pageUrl}`
@@ -425,14 +434,15 @@ const SessionProvider = ({
       // )
       const { defaultGroupId } = state.session
 
-      // return most recently accessed page
       let pages = null
       do {
         await sleep(100)
         pages = queryClient.getQueryData([selectors.PAGES])
       } while (!pages)
 
-      navigate(getDefaultPageUrl({ pages, defaultGroupId }), {
+      const pageUrl = await getDefaultPageUrl({ pages, defaultGroupId })
+
+      navigate(pageUrl, {
         hasAccount: true,
         replace,
       })
