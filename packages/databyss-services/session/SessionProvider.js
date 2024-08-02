@@ -389,23 +389,25 @@ const SessionProvider = ({
   )
 
   const getDefaultPageUrl = useCallback(async ({ pages, defaultGroupId }) => {
-    // let _groupName = ''
-    // if (defaultGroupName) {
-    //   _groupName = `${urlSafeName(defaultGroupName)}-`
-    // }
-
+    let _groupName = ''
     let defaultPage = null
 
     // return default page from user prefs, if possible
     const _userPreference = await dbRef.current.get('user_preference')
     const _group = _userPreference?.groups?.[0]
+    if (_group) {
+      const _groupDoc = await dbRef.current.get(_group.groupId)
+      console.log('[getDefaultPageUrl] groupDoc', _groupDoc)
+      if (_groupDoc) {
+        _groupName = urlSafeName(_groupDoc.name)
+      }
+    }
     defaultPage = pages[_group?.defaultPageId]
     if (!defaultPage) {
       defaultPage = getDefaultPage(pages)
     }
     const pageUrl = `${defaultPage._id}/${urlSafeName(defaultPage.name)}`
-    // return `/${_groupName}${defaultGroupId.substring(2)}/pages/${pageUrl}`
-    return `/${defaultGroupId}/pages/${pageUrl}`
+    return `/${_groupName}-${defaultGroupId.substring(2)}/pages/${pageUrl}`
   }, [])
 
   const navigateToDefaultPage = useCallback(

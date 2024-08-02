@@ -522,7 +522,7 @@ module.exports = (webpackEnv) => {
           swSrc: path.resolve(__dirname, './service-worker.js'),
           swDest: path.resolve(paths.appBuild, 'service-worker.js'),
           // include: [/\.(?:html|png|jpg|jpeg|svg|mp4|js|ico)$/],
-          dontCacheBustURLsMatching: /\.[0-9a-f]{8}\./,
+          // dontCacheBustURLsMatching: /\.[0-9a-f]{8}\./,
           exclude: [/\.map$/, /asset-manifest\.json$/, /LICENSE/],
           // Bump up the default maximum size (2mb) that's precached,
           // to make lazy-loading failure scenarios less likely.
