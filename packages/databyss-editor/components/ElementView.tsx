@@ -25,7 +25,6 @@ export const ElementView = ({
   setLastBlockRendered,
   ...others
 }: ElementViewProps) => {
-  // // const { anchor } = getTokensFromPath()
   const viewRef = useRef(null)
 
   useEffect(() => {

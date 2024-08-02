@@ -16,12 +16,7 @@ import {
   Source,
 } from '@databyss-org/services/interfaces'
 import cloneDeep from 'clone-deep'
-import {
-  RawHtml,
-  View,
-  Text as TextComponent,
-  RefForwardingFC,
-} from '@databyss-org/ui'
+import { RawHtml, View, Text as TextComponent } from '@databyss-org/ui'
 import { scrollbarResetCss } from '@databyss-org/ui/primitives/View/View'
 import { ElementView } from '@databyss-org/editor/components/ElementView'
 import { InterpolationWithTheme } from '@emotion/core'
@@ -55,6 +50,7 @@ import {
 } from '@databyss-org/data/pouchdb/interfaces'
 import { inlineTypeToSymbol } from '@databyss-org/services/text/inlineUtils'
 import { withTheme } from 'emotion-theming'
+import { useEditorPageContext } from '@databyss-org/services'
 
 export const FlatBlock = ({
   index,
@@ -75,6 +71,9 @@ export const FlatBlock = ({
 }) => {
   const normalizedStemmedTerms = useSearchContext(
     (c) => c && c.normalizedStemmedTerms
+  )
+  const setLastBlockRendered = useEditorPageContext(
+    (c) => c && c.setLastBlockRendered
   )
   const navigate = useNavigationContext((c) => c && c.navigate)
   const _blockRes = useDocument<Block>(
@@ -136,6 +135,7 @@ export const FlatBlock = ({
       index={index}
       last={last}
       readOnly
+      setLastBlockRendered={setLastBlockRendered}
     >
       {isAtomicInlineType(_block.type) ? (
         <AtomicHeader block={_block} readOnly>
@@ -330,10 +330,13 @@ export function BoundLeafComponent({
       let _highlightRanges = createHighlightRanges(_text, searchTerms)
       _highlightRanges = mergeRanges(_highlightRanges, SortOptions.Ascending)
       splitOverlappingRanges(_highlightRanges)
-      _text = textToHtml({
-        textValue: _text,
-        ranges: _highlightRanges,
-      }, theme)
+      _text = textToHtml(
+        {
+          textValue: _text,
+          ranges: _highlightRanges,
+        },
+        theme
+      )
       // console.log('[FlatPageBody] highlightRanges', _highlightRanges)
     }
     _leaf = {
@@ -383,11 +386,11 @@ export function renderTextToComponents({
   _ranges = _ranges.concat(createLinkRangesForUrls(_text))
 
   // collapse embed ranges
-  _ranges.filter((_range) => 
-    _range.marks.find((m) => m[0] === 'embed')
-  ).forEach((_embedRange) => {
-    _embedRange.length = 0
-  })
+  _ranges
+    .filter((_range) => _range.marks.find((m) => m[0] === 'embed'))
+    .forEach((_embedRange) => {
+      _embedRange.length = 0
+    })
 
   if (searchTerms?.length && searchTerms[0].text?.length) {
     _ranges = _ranges.concat(
