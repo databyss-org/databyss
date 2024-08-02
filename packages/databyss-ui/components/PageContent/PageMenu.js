@@ -29,6 +29,7 @@ import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { useExportContext } from '@databyss-org/services/export'
 // import { urlSafeName } from '@databyss-org/services/lib/util'
+import { version } from '@databyss-org/services'
 import LoadingFallback from '../Notify/LoadingFallback'
 // import { pxUnits } from '../../theming/views'
 import { DropdownList } from '../Menu/DropdownList'
@@ -77,6 +78,7 @@ export const addMenuFooterItems = (menuItems) => {
     target: '_blank',
     actionType: 'help',
     light: true,
+    shortcut: `v${version}`,
     // TODO: detect platform and render correct modifier key
     // shortcut: 'Ctrl + Del',
   })

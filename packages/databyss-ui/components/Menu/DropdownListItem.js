@@ -123,7 +123,11 @@ const DropdownListItem = ({
         </View>
         {switchControl && <Switch value={value} />}
         {shortcut && (
-          <Text variant="uiTextSmall" color="text.3">
+          <Text
+            variant="uiTextSmall"
+            color="text.3"
+            css={{ whiteSpace: 'nowrap' }}
+          >
             {shortcut}
           </Text>
         )}

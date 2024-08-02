@@ -301,25 +301,25 @@ class NotifyProvider extends React.Component {
     })
   }
 
-  // checkForUpdates = () => {
-  //   if (
-  //     process.env.NODE_ENV !== 'production' ||
-  //     !('serviceWorker' in navigator)
-  //   ) {
-  //     return
-  //   }
-  //   navigator.serviceWorker.ready.then((reg) => {
-  //     reg.addEventListener('updatefound', this.notifyUpdateAvailable)
+  checkForUpdates = () => {
+    if (
+      process.env.NODE_ENV !== 'production' ||
+      !('serviceWorker' in navigator)
+    ) {
+      return
+    }
+    navigator.serviceWorker.ready.then((reg) => {
+      reg.addEventListener('updatefound', this.notifyUpdateAvailable)
 
-  //     window.setInterval(
-  //       () =>
-  //         reg.update().catch((err) => {
-  //           console.log('reg.update error', err)
-  //         }),
-  //       parseInt(process.env.VERSION_POLL_INTERVAL!, 10) || 300000
-  //     )
-  //   })
-  // }
+      window.setInterval(
+        () =>
+          reg.update().catch((err) => {
+            console.log('reg.update error', err)
+          }),
+        parseInt(process.env.VERSION_POLL_INTERVAL!, 10) || 300000
+      )
+    })
+  }
 
   showUnhandledErrorDialog = () => {
     this.notify({
