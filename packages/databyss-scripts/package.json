@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/scripts",
-  "version": "3.2.6",
+  "version": "3.3.0",
   "description": "databyss scripts",
   "author": "databyss-org",
   "license": "MIT",
@@ -19,9 +19,9 @@
     "yargs": "^16.2.0"
   },
   "peerDependencies": {
-    "@databyss-org/api": "3.2.6",
-    "@databyss-org/data": "3.2.6",
-    "@databyss-org/scripts": "3.2.6",
-    "@databyss-org/services": "3.2.6"
+    "@databyss-org/api": "3.3.0",
+    "@databyss-org/data": "3.3.0",
+    "@databyss-org/scripts": "3.3.0",
+    "@databyss-org/services": "3.3.0"
   }
 }
