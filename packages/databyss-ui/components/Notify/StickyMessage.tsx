@@ -56,6 +56,7 @@ const StickyMessage = ({
       borderWidth={pxUnits(1)}
       borderColor="gray.3"
       borderStyle="solid"
+      zIndex="sticky"
     >
       <Grid singleRow columnGap="large" flexWrap="nowrap" alignItems="center">
         <View flexGrow={1} flexShrink={1} overflow="hidden">

@@ -21,6 +21,7 @@ import {
   ShadowProps,
   Theme,
   TypographyProps,
+  ZIndexProps,
 } from 'styled-system'
 import * as ReactModal from 'react-modal'
 import * as ReactDnd from 'react-dnd'
@@ -68,6 +69,7 @@ export interface ViewProps
   wrapVariant?: string
   hoverColor?: string
   dropzone?: boolean | DropzoneProps
+  zIndex?: string | number
 }
 
 declare const View: RefForwardingFC<PropsWithChildren<ViewProps>>

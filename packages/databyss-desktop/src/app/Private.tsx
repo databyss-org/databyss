@@ -228,7 +228,6 @@ const AppView = ({
           minHeight={pxUnits(58)}
           width="100%"
           position="absolute"
-          zIndex={0}
           pr="medium"
           pl={pxUnits(18)}
         >
@@ -241,7 +240,9 @@ const AppView = ({
             <MenuSvg />
           </Icon>
         </View>
-        {children}
+        <View flex="1" height="100%" position="relative">
+          {children}
+        </View>
       </View>
     </View>
   )

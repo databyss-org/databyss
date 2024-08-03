@@ -1,18 +1,26 @@
 import React, { useCallback, useEffect } from 'react'
 
+// https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/getModifierState
+export type ModifierKey = 'Ctrl' | 'Meta' | 'Alt' | 'Shift'
+
 export const Hotkey = ({
   keyName,
   onPress,
-  eventType = 'keypress',
+  eventType = 'keydown',
+  modifiers = [],
 }: {
   keyName: KeyboardEvent['key']
   onPress: (event: KeyboardEvent) => void
   eventType?: 'keydown' | 'keyup' | 'keypress'
+  modifiers?: ModifierKey[]
 }) => {
   const handleKeydown = useCallback(
-    (evt) => {
-      // console.log('[Hotkey]', evt.key, key)
-      if (evt.key === keyName) {
+    (evt: KeyboardEvent) => {
+      if (
+        evt.key === keyName &&
+        modifiers.reduce((p, m) => p && evt.getModifierState(m), true)
+      ) {
+        console.log('[Hotkey]', evt.key, modifiers)
         onPress(evt)
       }
     },

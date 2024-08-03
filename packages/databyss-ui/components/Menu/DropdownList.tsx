@@ -99,7 +99,6 @@ export const DropdownList = ({
       ) : null}
       <Hotkey
         keyName="Escape"
-        eventType="keydown"
         onPress={() => {
           setQueryValue('')
         }}

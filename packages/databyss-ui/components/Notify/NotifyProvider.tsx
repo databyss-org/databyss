@@ -278,18 +278,9 @@ class NotifyProvider extends React.Component {
     this.notifySticky({
       children: (
         <>
-          <Text variant="uiTextNormal">There is a new version available!</Text>
+          <Text variant="uiTextNormal">There is a new version available.</Text>
           <Button
-            ml="small"
-            variant="uiLink"
-            textVariant="uiTextNormal"
-            href="/g_7v9n4vjx2h7511/pages/iku2iiu2d16y33"
-            target="_blank"
-          >
-            See what&apos;s new
-          </Button>
-          <Button
-            ml="small"
+            mt="tiny"
             variant="uiLink"
             textVariant="uiTextNormal"
             onPress={() => window.location.reload()}
@@ -493,13 +484,11 @@ class NotifyProvider extends React.Component {
             ) : null
           }
         >
-          <View flexDirection="row" alignItems="center">
-            {sticky.message ? (
-              <Text variant="uiTextNormal">{sticky.message}</Text>
-            ) : (
-              sticky.children
-            )}
-          </View>
+          {sticky.message ? (
+            <Text variant="uiTextNormal">{sticky.message}</Text>
+          ) : (
+            sticky.children
+          )}
         </StickyMessage>
         <View
           width="100%"
