@@ -44,7 +44,7 @@ import { getCitationStyle } from '../citations/lib'
 import { CitationStyle } from '../citations/constants'
 import { validUriRegex } from '../lib/util'
 import { loadPage } from '../editorPage'
-import { getAccountFromLocation } from '../session/utils'
+import { getAccountFromLocation, RemoteDbInfo } from '../session/utils'
 import { uid } from '@databyss-org/data/lib/uid'
 
 // eslint-disable-next-line no-undef
@@ -342,13 +342,13 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
       group.publishingStatusId = uid()
       await setGroup(group)
       console.log('[publishGroupDatabase]', group)
-      const _publishRes = await eapi.publish.publishGroup(
+      const _publishRes: RemoteDbInfo = await eapi.publish.publishGroup(
         group._id,
         group.publishingStatusId
       )
       console.log('[publishGroupDatabase] result', _publishRes)
 
-      group.lastPublishedAt = new Date().toUTCString()
+      group.lastPublishedAt = _publishRes.publishedAt
       group.isPublishing = false
       // group.lastPublishResult = 'success'
 

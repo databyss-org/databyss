@@ -1,5 +1,6 @@
 import { ipcRenderer } from 'electron'
 import { PublishingStatus } from './handlers/publish-handlers'
+import { RemoteDbInfo } from '@databyss-org/services/session/utils'
 
 export const publishGroup = (groupId: string, statusId: string) =>
   ipcRenderer.invoke('publish-group', groupId, statusId)

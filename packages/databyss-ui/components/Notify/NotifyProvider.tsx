@@ -25,6 +25,7 @@ import IS_NATIVE from '../../lib/isNative'
 import StickyMessage from './StickyMessage'
 import { UnauthorizedDatabaseReplication } from '../../../databyss-services/interfaces/Errors'
 import { appCommands } from '../../lib/appCommands'
+import { remoteDbHasUpdate } from '@databyss-org/services/session/utils'
 
 declare module '@bugsnag/plugin-react' {
   export const formatComponentStack: (str: string) => string
@@ -299,13 +300,25 @@ class NotifyProvider extends React.Component {
     ) {
       return
     }
+    console.log('[NotifyProvider] init JSON data update handling')
+    window.setInterval(
+      () =>
+        remoteDbHasUpdate().then((hasUpdate) => {
+          if (hasUpdate) {
+            this.notifyUpdateAvailable()
+          }
+        }),
+      parseInt(process.env.DATA_POLL_INTERVAL!, 10) || 300000
+    )
+
     navigator.serviceWorker.ready.then((reg) => {
+      console.log('[NotifyProvider] init service worker update handling')
       reg.addEventListener('updatefound', this.notifyUpdateAvailable)
 
       window.setInterval(
         () =>
           reg.update().catch((err) => {
-            console.log('reg.update error', err)
+            console.log('[NotifyProvider] reg.update error', err)
           }),
         parseInt(process.env.VERSION_POLL_INTERVAL!, 10) || 300000
       )

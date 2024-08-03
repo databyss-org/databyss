@@ -79,7 +79,7 @@ export const PublicSharingSettings = ({
   let _lastPublishedText = 'never'
   if (group.lastPublishedAt) {
     const _date = new Date(group.lastPublishedAt)
-    _lastPublishedText = `${_date.toDateString()} ${_date.getHours()}:${_date.getMinutes()}:${_date.getSeconds()}`
+    _lastPublishedText = _date.toLocaleString()
   }
   let _publishLog: string[] | null = null
   if (publishingStatusRes.data) {

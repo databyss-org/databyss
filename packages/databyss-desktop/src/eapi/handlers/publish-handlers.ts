@@ -107,7 +107,7 @@ async function publishGroup(
   windowId: number,
   groupId: string,
   statusId: string
-) {
+): Promise<RemoteDbInfo | false> {
   const _status = new PublishingStatus()
   publishingStatusDict[statusId] = _status
   notifyStatusUpdated(statusId)
@@ -119,7 +119,7 @@ async function publishGroup(
 
   for (let i = 0; i < _group.pages.length; i++) {
     if (_status.isCancelled) {
-      return
+      return false
     }
     const _pageId = _group.pages[i]
     updateStatusMessage({
@@ -161,7 +161,7 @@ async function publishGroup(
   })
 
   if (_status.isCancelled) {
-    return
+    return false
   }
   updateStatusMessage({ statusId, message: `Generating data to publish...` })
   const _dataToWrite = _docsToWrite!.results
@@ -187,7 +187,7 @@ async function publishGroup(
   // console.log('[publishGroup] _dbJson', _dbJson)
 
   if (_status.isCancelled) {
-    return
+    return false
   }
   updateStatusMessage({
     statusId,
@@ -215,7 +215,7 @@ async function publishGroup(
   await _groupDb.destroy()
 
   if (_status.isCancelled) {
-    return
+    return false
   }
   updateStatusMessage({ statusId, message: `Uploading data...` })
 
@@ -239,7 +239,7 @@ async function publishGroup(
   })
 
   if (_status.isCancelled) {
-    return
+    return false
   }
   updateStatusMessage({ statusId, message: `Uploading search index...` })
   _uploadRes = await upload({
@@ -253,6 +253,7 @@ async function publishGroup(
   // generate and upload info obj
   const _dbInfo: RemoteDbInfo = {
     searchMd5: _searchIndexDbPath.split('-').slice(-1)[0],
+    publishedAt: new Date().toJSON(),
   }
   console.log('[publishGroup] db info', _dbInfo)
   _uploadRes = await upload({
@@ -264,11 +265,11 @@ async function publishGroup(
   })
 
   if (_status.isCancelled) {
-    return
+    return false
   }
   // console.log('[publishGroup] upload response', _uploadRes)
   updateStatusMessage({ statusId, message: `Publish successful` })
-  return 'success'
+  return _dbInfo
 }
 
 async function cancelPublishGroup(statusId: string) {

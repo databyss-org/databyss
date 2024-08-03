@@ -1,16 +1,34 @@
 import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
+import { Group } from '../interfaces'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
 
 export interface RemoteDbInfo {
   searchMd5: string
+  publishedAt: string
 }
 
 export interface RemoteDbData {
   info: RemoteDbInfo
   dbRows: any[]
   searchDbRows: any[]
+}
+
+export const remoteDbHasUpdate = async () => {
+  const _groupId = dbRef.groupId!
+  const _gid = _groupId.replace('g_', '')
+
+  // get remote info
+  const _urlBase = `${process.env.DBFILE_URL}${_groupId}/databyss-db-${_gid}`
+  const _res = await fetch(`${_urlBase}-info.json`)
+  const _remoteDbInfo: RemoteDbInfo = await _res.json()
+
+  // get local group
+  const _group: Group = await dbRef.current?.get(_groupId)
+
+  // compare dates
+  return new Date(_remoteDbInfo.publishedAt) > new Date(_group.lastPublishedAt!)
 }
 
 export const getRemoteDbData = async (groupId: string) => {

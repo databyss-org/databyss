@@ -28,7 +28,6 @@ import { sidebar } from '@databyss-org/ui/theming/components'
 
 const AppView = ({ children }) => {
   const [sidebarWidth, setSidebarWidth] = useState(null)
-  console.log('[AppView] sidebarWidth', sidebarWidth)
   const isDarkModeRes = useAppState('darkMode')
 
   useEffect(() => {
@@ -85,9 +84,7 @@ const Private = () => {
   const navigateToDefaultPage = useSessionContext(
     (c) => c && c.navigateToDefaultPage
   )
-  console.log('[Private]')
   const { provisionClientDatabase } = getSession()
-  console.log('[Private] provisionClientDatabase', provisionClientDatabase)
 
   // Navigate to default page if nothing in path
   useEffect(() => {
