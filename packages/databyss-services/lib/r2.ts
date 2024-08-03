@@ -1,6 +1,10 @@
 // from: https://github.com/f2face/cloudflare-r2
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
-import { ReadStream, createReadStream, PathLike } from 'fs'
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3'
+import { ReadStream } from 'fs'
 import type { Readable } from 'stream'
 
 export type CloudflareR2Config = {
@@ -26,6 +30,29 @@ export function getR2Client(config: CloudflareR2Config) {
     },
     region: 'auto',
   })
+}
+
+export async function remove({
+  client,
+  bucketName,
+  destination,
+}: {
+  client: S3Client
+  bucketName: string
+  destination: string
+}) {
+  const _destination = destination.startsWith('/')
+    ? destination.replace(/^\/+/, '')
+    : destination
+
+  const _res = await client.send(
+    new DeleteObjectCommand({
+      Bucket: bucketName,
+      Key: _destination,
+    })
+  )
+
+  return _res.$metadata.httpStatusCode === 200
 }
 
 /**

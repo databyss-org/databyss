@@ -9,7 +9,7 @@ import {
 import { Block, BlockType, Group } from '@databyss-org/services/interfaces'
 import { PageDoc, UserPreference } from '@databyss-org/data/pouchdb/interfaces'
 import { getAtomicsFromFrag } from '@databyss-org/services/blocks/related'
-import { getR2Client, upload } from '@databyss-org/services/lib/r2'
+import { getR2Client, upload, remove } from '@databyss-org/services/lib/r2'
 import { Role } from '@databyss-org/data/interfaces/sysUser'
 import { RemoteDbInfo } from '@databyss-org/services/session/utils'
 
@@ -101,6 +101,33 @@ function notifyStatusUpdated(statusId: string) {
       publishingStatusDict[statusId]
     )
   }
+}
+
+async function unpublishGroup(windowId: number, groupId: string) {
+  // Initialize R2
+  const _r2creds = {
+    accountId: process.env.R2_ACCOUNT_ID,
+    accessKeyId: process.env.R2_ACCESS_KEY,
+    secretAccessKey: process.env.R2_SECRET_KEY,
+  }
+  const r2 = getR2Client(_r2creds)
+
+  const _remotePathBase = `${groupId}/databyss-db-${groupId.replace('g_', '')}`
+  await remove({
+    client: r2,
+    destination: `${_remotePathBase}.json`,
+    bucketName: process.env.PUBLISH_BUCKET,
+  })
+  await remove({
+    client: r2,
+    destination: `${_remotePathBase}-search.json`,
+    bucketName: process.env.PUBLISH_BUCKET,
+  })
+  await remove({
+    client: r2,
+    destination: `${_remotePathBase}-info.json`,
+    bucketName: process.env.PUBLISH_BUCKET,
+  })
 }
 
 async function publishGroup(
@@ -286,6 +313,9 @@ async function cancelPublishGroup(statusId: string) {
 export function registerPublishHandlers() {
   ipcMain.handle('publish-group', (evt, groupId, statusId) =>
     publishGroup(evt.sender.id, groupId, statusId)
+  )
+  ipcMain.handle('publish-removeGroup', (evt, groupId) =>
+    unpublishGroup(evt.sender.id, groupId)
   )
   ipcMain.handle('publish-getStatus', (evt, statusId) => getStatus(statusId))
   ipcMain.handle('publish-cancel', (evt, statusId) =>

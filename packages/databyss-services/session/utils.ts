@@ -16,33 +16,37 @@ export interface RemoteDbData {
 }
 
 export const remoteDbHasUpdate = async () => {
-  const _groupId = dbRef.groupId!
-  const _gid = _groupId.replace('g_', '')
+  try {
+    const _groupId = dbRef.groupId!
+    const _gid = _groupId.replace('g_', '')
 
-  // get local group
-  const _group: Group | null = await getDocument(_groupId)
+    // get local group
+    const _group: Group | null = await getDocument(_groupId)
 
-  // if local group doesn't exist, assume we need an update
-  if (!_group) {
-    console.log('[remoteDbHasUpdate] no local group')
-    return true
+    // if local group doesn't exist, assume we need an update
+    if (!_group) {
+      console.log('[remoteDbHasUpdate] no local group')
+      return true
+    }
+
+    // get remote info
+    const _urlBase = `${process.env.DBFILE_URL}${_groupId}/databyss-db-${_gid}`
+    const _res = await fetch(`${_urlBase}-info.json`)
+    const _remoteDbInfo: RemoteDbInfo = await _res.json()
+
+    // compare dates
+    const _hasUpdate =
+      new Date(_remoteDbInfo.publishedAt) > new Date(_group.lastPublishedAt!)
+    console.log(
+      '[remoteDbHasUpdate]',
+      _hasUpdate,
+      _remoteDbInfo.publishedAt,
+      _group.lastPublishedAt
+    )
+    return _hasUpdate
+  } catch (err) {
+    return false
   }
-
-  // get remote info
-  const _urlBase = `${process.env.DBFILE_URL}${_groupId}/databyss-db-${_gid}`
-  const _res = await fetch(`${_urlBase}-info.json`)
-  const _remoteDbInfo: RemoteDbInfo = await _res.json()
-
-  // compare dates
-  const _hasUpdate =
-    new Date(_remoteDbInfo.publishedAt) > new Date(_group.lastPublishedAt!)
-  console.log(
-    '[remoteDbHasUpdate]',
-    _hasUpdate,
-    _remoteDbInfo.publishedAt,
-    _group.lastPublishedAt
-  )
-  return _hasUpdate
 }
 
 const getRemoteUrlBase = (groupId: string) => {

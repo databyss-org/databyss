@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useCallback, useState } from 'react'
 import {
   View,
   List,
@@ -70,6 +70,9 @@ export const PublicSharingSettings = ({
   const cancelPublishGroupDatabase = useExportContext(
     (c) => c && c.cancelPublishGroupDatabase
   )
+  const unpublishGroupDatabase = useExportContext(
+    (c) => c && c.unpublishGroupDatabase
+  )
   const pagesRes = usePages()
   const publishingStatusRes = usePublishingStatus(group.publishingStatusId!, {
     enabled: group.publishingStatusId !== null,
@@ -111,6 +114,16 @@ export const PublicSharingSettings = ({
   const copyLink = () => {
     copyToClipboard(_publicUrl)
   }
+
+  const onPublicChange = useCallback(
+    (_value) => {
+      if (!_value) {
+        console.log('[PublicSharingSettings] unpublish group', group._id)
+        unpublishGroupDatabase(group)
+      }
+    },
+    [group]
+  )
 
   const _defaultPageView = _defaultPage && (
     <>
@@ -247,7 +260,7 @@ export const PublicSharingSettings = ({
   )
 
   const _publicSwitchView = (
-    <ValueListItem path="public">
+    <ValueListItem path="public" onChange={onPublicChange}>
       <SwitchControl
         label="Publish collection as website"
         data-test-element="group-public"

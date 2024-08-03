@@ -65,6 +65,7 @@ interface ContextType {
   exportDatabase: () => void
   setCurrentPageId: (pageId: string) => void
   publishGroupDatabase: (group: Group) => Promise<PublishDatabaseResult>
+  unpublishGroupDatabase: (group: Group) => Promise<void>
   cancelPublishGroupDatabase: (group: Group) => Promise<void>
 }
 
@@ -336,6 +337,10 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     [setGroup, eapi.publish?.cancelPublishGroup]
   )
 
+  const unpublishGroupDatabase = useCallback((group: Group) =>
+    eapi.publish.unpublishGroup(group._id)
+  )
+
   const publishGroupDatabase = useCallback(
     async (group: Group) => {
       group.isPublishing = true
@@ -379,6 +384,7 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
         exportDatabase,
         setCurrentPageId,
         publishGroupDatabase,
+        unpublishGroupDatabase,
         cancelPublishGroupDatabase,
       }}
     >

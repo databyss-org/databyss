@@ -71,9 +71,17 @@ export const ValueListItem = ({
   children,
   path,
   dependencies = [],
+  onChange = null,
   ...others
 }) => {
   const { onItemChange, valuesRef } = useValueListContext()
+
+  const _onChange = (_value) => {
+    onItemChange(path, _value)
+    if (onChange) {
+      onChange(_value)
+    }
+  }
 
   const value = _.get(valuesRef.current, path, defaultText)
 
@@ -86,7 +94,7 @@ export const ValueListItem = ({
     () =>
       React.cloneElement(React.Children.only(children), {
         value,
-        onChange: (_value) => onItemChange(path, _value),
+        onChange: _onChange,
         'data-test-path': path,
         ...others,
       }),
