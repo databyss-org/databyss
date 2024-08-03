@@ -27,7 +27,9 @@ import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import {
   getAccountFromLocation,
+  getRemoteDbData,
   RemoteDbData,
+  remoteDbHasUpdate,
 } from '@databyss-org/services/session/utils'
 import { waitForNetwork } from '@databyss-org/services/lib/request'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
@@ -412,39 +414,50 @@ export const initDb = ({
     )
   })
 
-export const initDbFromJson = async (
-  groupId: string,
-  remoteDbData: RemoteDbData
-) => {
-  // import data db
-  const _dataDb = getPouchDb(groupId)
-  // TODO: delete existing group db if it exists?
-  // TODO: only update if changed (store lastModified in remoteDbData.info)?
-  await _dataDb.bulkDocs(remoteDbData.dbRows, { new_edits: false })
+export const initDbFromJson = async (groupId: string) => {
+  // init dbRef
   dbRef.groupId = groupId
-  dbRef.current = _dataDb
   dbRef.readOnly = true
-  dbRef.initialSyncComplete = true
+
+  // import data db
+  let _dataDb = getPouchDb(groupId)
+  dbRef.current = _dataDb
+
+  // check for remote updates (will return true if db hasn't been downloaded yet)
+  if (!(await remoteDbHasUpdate())) {
+    dbRef.initialSyncComplete = true
+    return
+  }
+
+  // delete and re-make group db because we have updates
+  await _dataDb.destroy()
+  _dataDb = getPouchDb(groupId)
+  dbRef.current = _dataDb
+
+  // get remote data
+  const _remoteDbData = await getRemoteDbData(groupId)
+
+  await _dataDb.bulkDocs(_remoteDbData.dbRows, { new_edits: false })
 
   // import search db
   dbRef.searchIndexProgress = 0
   const _startTime = Date.now()
   const _searchDb = new PouchDB(
-    `${groupId}-search-${remoteDbData.info.searchMd5}`
+    `${groupId}-search-${_remoteDbData.info.searchMd5}`
   )
-  let _docsRemaining = remoteDbData.searchDbRows.length
+  let _docsRemaining = _remoteDbData.searchDbRows.length
   let _currPage = 0
   const _pageSize = 5000
   while (_docsRemaining > 0) {
     const _startDocIdx = _currPage * _pageSize
     const _endDocIdx = _startDocIdx + Math.min(_pageSize, _docsRemaining)
-    const _rowsToImport = remoteDbData.searchDbRows.slice(
+    const _rowsToImport = _remoteDbData.searchDbRows.slice(
       _startDocIdx,
       _endDocIdx
     )
     await _searchDb.bulkDocs(_rowsToImport, { new_edits: false })
     dbRef.searchIndexProgress =
-      1 - _docsRemaining / remoteDbData.searchDbRows.length
+      1 - _docsRemaining / _remoteDbData.searchDbRows.length
 
     // yield processor
     await sleep(50)
@@ -456,9 +469,11 @@ export const initDbFromJson = async (
   const _elapsed = _endTime - _startTime
   console.log(
     `[DB] imported ${
-      remoteDbData.searchDbRows.length
+      _remoteDbData.searchDbRows.length
     } search index records in ${_elapsed / 1000}s`
   )
+
+  dbRef.initialSyncComplete = true
 }
 
 export const waitForPouchDb = (timeout: number = 1200000) =>

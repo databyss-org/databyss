@@ -42,6 +42,7 @@ export async function upload({
   destination,
   customMetadata,
   mimeType,
+  cacheControl = 'public, max-age=0, must-revalidate',
 }: {
   client: S3Client
   bucketName: string
@@ -49,6 +50,7 @@ export async function upload({
   destination: string
   customMetadata?: Record<string, string>
   mimeType?: string
+  cacheControl?: string
 }): Promise<UploadFileResponse> {
   const _destination = destination.startsWith('/')
     ? destination.replace(/^\/+/, '')
@@ -61,6 +63,7 @@ export async function upload({
       Body: contents,
       ContentType: mimeType || 'application/octet-stream',
       Metadata: customMetadata,
+      CacheControl: cacheControl,
     })
   )
 

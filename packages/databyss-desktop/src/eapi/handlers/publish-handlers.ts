@@ -116,6 +116,7 @@ async function publishGroup(
   const _group: Group = await _db.get(groupId)
   const _relatedDocIds: string[] = []
   let _defaultPageId: string | null = null
+  const _publishedAt = new Date().toJSON()
 
   for (let i = 0; i < _group.pages.length; i++) {
     if (_status.isCancelled) {
@@ -168,6 +169,7 @@ async function publishGroup(
     .map((_d) => (_d.docs[0] as any).ok)
     .filter(Boolean)
 
+  _group.lastPublishedAt = _publishedAt
   _dataToWrite.push(_group)
   // user preference doc
   const _userPreferences = await _db.get<UserPreference>('user_preference')
@@ -253,7 +255,7 @@ async function publishGroup(
   // generate and upload info obj
   const _dbInfo: RemoteDbInfo = {
     searchMd5: _searchIndexDbPath.split('-').slice(-1)[0],
-    publishedAt: new Date().toJSON(),
+    publishedAt: _publishedAt,
   }
   console.log('[publishGroup] db info', _dbInfo)
   _uploadRes = await upload({

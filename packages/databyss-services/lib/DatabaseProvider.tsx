@@ -82,8 +82,7 @@ export const DatabaseProvider = ({
       const _groupId = getAccountFromLocation()
       console.log('[DatabyssProvider] groupId from url', _groupId)
       if (_groupId) {
-        const _remoteData = await getRemoteDbData(_groupId as string)
-        await initDbFromJson(_groupId as string, _remoteData)
+        await initDbFromJson(_groupId as string)
         updateDatabaseStatus()
       }
     }
@@ -117,7 +116,7 @@ export const DatabaseProvider = ({
       }}
       key={databaseStatus.groupId ?? 'nogroup'}
     >
-      {databaseStatus.groupId !== null ? (
+      {databaseStatus.groupId !== null && dbRef.initialSyncComplete ? (
         children
       ) : (
         <Viewport justifyContent="center" theme={darkTheme} bg="background.1">

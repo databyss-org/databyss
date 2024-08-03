@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react'
 
 // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/getModifierState
-export type ModifierKey = 'Ctrl' | 'Meta' | 'Alt' | 'Shift'
+export type ModifierKey = 'Control' | 'Meta' | 'Alt' | 'Shift'
 
 export const Hotkey = ({
   keyName,
@@ -16,11 +16,11 @@ export const Hotkey = ({
 }) => {
   const handleKeydown = useCallback(
     (evt: KeyboardEvent) => {
+      const _key = evt.key.toLowerCase()
       if (
-        evt.key === keyName &&
+        _key === keyName.toLowerCase() &&
         modifiers.reduce((p, m) => p && evt.getModifierState(m), true)
       ) {
-        console.log('[Hotkey]', evt.key, modifiers)
         onPress(evt)
       }
     },

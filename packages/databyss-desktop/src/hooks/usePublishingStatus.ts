@@ -17,6 +17,7 @@ export const usePublishingStatus = (
     queryKey: [`publishingStatus_${statusId}`],
     queryFn: () => eapi.publish.getPublishingStatus(statusId),
     enabled,
+    refetchOnWindowFocus: 'always',
   })
 }
 

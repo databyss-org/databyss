@@ -480,7 +480,7 @@ const SessionProvider = ({
         dispatch,
       }}
     >
-      <StickyMessage
+      {/* <StickyMessage
         canDismiss={false}
         visible={
           state.session &&
@@ -499,8 +499,8 @@ const SessionProvider = ({
             sync finishes.
           </Text>
         </View>
-      </StickyMessage>
-      {_children}
+      </StickyMessage> */}
+      {dbRef.initialSyncComplete && _children}
     </SessionContext.Provider>
   )
 }

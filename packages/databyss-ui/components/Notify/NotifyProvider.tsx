@@ -26,6 +26,7 @@ import StickyMessage from './StickyMessage'
 import { UnauthorizedDatabaseReplication } from '../../../databyss-services/interfaces/Errors'
 import { appCommands } from '../../lib/appCommands'
 import { remoteDbHasUpdate } from '@databyss-org/services/session/utils'
+import { Hotkey } from '../Util/Hotkey'
 
 declare module '@bugsnag/plugin-react' {
   export const formatComponentStack: (str: string) => string
@@ -272,7 +273,7 @@ class NotifyProvider extends React.Component {
       isOnline,
     })
   }
-
+  serviceWorkerRegistration: ServiceWorkerRegistration | null = null
   // checkOnlineStatusTimer: number
 
   notifyUpdateAvailable = () => {
@@ -293,36 +294,36 @@ class NotifyProvider extends React.Component {
     })
   }
 
-  checkForUpdates = () => {
+  checkForRemoteUpdates = async () => {
+    console.log('[NotifyProvider] check for remote updates')
     if (
-      process.env.NODE_ENV !== 'production' ||
-      !('serviceWorker' in navigator)
+      process.env.NODE_ENV === 'production' &&
+      'serviceWorker' in navigator &&
+      this.serviceWorkerRegistration
     ) {
-      return
+      this.serviceWorkerRegistration.update().catch((err) => {
+        console.log('[NotifyProvider] reg.update error', err)
+      })
     }
-    console.log('[NotifyProvider] init JSON data update handling')
+    if (await remoteDbHasUpdate()) {
+      this.notifyUpdateAvailable()
+    }
+  }
+
+  checkForUpdates = () => {
+    console.log('[NotifyProvider] init data and version update handling')
+    if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((reg) => {
+        this.serviceWorkerRegistration = reg
+        console.log('[NotifyProvider] init service worker update handling')
+        reg.addEventListener('updatefound', this.notifyUpdateAvailable)
+      })
+    }
+
     window.setInterval(
-      () =>
-        remoteDbHasUpdate().then((hasUpdate) => {
-          if (hasUpdate) {
-            this.notifyUpdateAvailable()
-          }
-        }),
-      parseInt(process.env.DATA_POLL_INTERVAL!, 10) || 300000
+      this.checkForRemoteUpdates,
+      parseInt(process.env.DATA_POLL_INTERVAL!, 10) || 60000
     )
-
-    navigator.serviceWorker.ready.then((reg) => {
-      console.log('[NotifyProvider] init service worker update handling')
-      reg.addEventListener('updatefound', this.notifyUpdateAvailable)
-
-      window.setInterval(
-        () =>
-          reg.update().catch((err) => {
-            console.log('[NotifyProvider] reg.update error', err)
-          }),
-        parseInt(process.env.VERSION_POLL_INTERVAL!, 10) || 300000
-      )
-    })
   }
 
   showUnhandledErrorDialog = () => {
@@ -488,6 +489,11 @@ class NotifyProvider extends React.Component {
           isOnline,
         }}
       >
+        <Hotkey
+          keyName="u"
+          modifiers={['Control', 'Shift']}
+          onPress={this.checkForRemoteUpdates}
+        />
         <StickyMessage
           visible={sticky.visible}
           canDismiss={!sticky.backgroundTask}
