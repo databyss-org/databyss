@@ -1,5 +1,6 @@
 import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 import { Group } from '../interfaces'
+import { getDocument } from '@databyss-org/data/pouchdb/crudUtils'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
@@ -12,7 +13,6 @@ export interface RemoteDbInfo {
 export interface RemoteDbData {
   info: RemoteDbInfo
   dbRows: any[]
-  searchDbRows: any[]
 }
 
 export const remoteDbHasUpdate = async () => {
@@ -20,7 +20,7 @@ export const remoteDbHasUpdate = async () => {
   const _gid = _groupId.replace('g_', '')
 
   // get local group
-  const _group: Group = await dbRef.current?.get(_groupId)
+  const _group: Group | null = await getDocument(_groupId)
 
   // if local group doesn't exist, assume we need an update
   if (!_group) {
@@ -45,21 +45,28 @@ export const remoteDbHasUpdate = async () => {
   return _hasUpdate
 }
 
-export const getRemoteDbData = async (groupId: string) => {
+const getRemoteUrlBase = (groupId: string) => {
   const _gid = groupId.replace('g_', '')
-  const _urlBase = `${process.env.DBFILE_URL}${groupId}/databyss-db-${_gid}`
+  return `${process.env.DBFILE_URL}${groupId}/databyss-db-${_gid}`
+}
+
+export const getRemoteSearchData = async (groupId: string) => {
+  const _urlBase = getRemoteUrlBase(groupId)
+  const _res = await fetch(`${_urlBase}-search.json`)
+  return _res.json()
+}
+
+export const getRemoteDbData = async (groupId: string) => {
+  const _urlBase = getRemoteUrlBase(groupId)
   // console.log('[getRemoteDbFile] url base', _urlBase)
   let _res = await fetch(`${_urlBase}.json`)
   const dbRows: any[] = await _res.json()
   _res = await fetch(`${_urlBase}-info.json`)
   const info: RemoteDbInfo = await _res.json()
-  _res = await fetch(`${_urlBase}-search.json`)
-  const searchDbRows: any[] = await _res.json()
 
   return {
     info,
     dbRows,
-    searchDbRows,
   } as RemoteDbData
 }
 

@@ -28,6 +28,9 @@ import { appCommands } from '../../lib/appCommands'
 import { remoteDbHasUpdate } from '@databyss-org/services/session/utils'
 import { Hotkey } from '../Util/Hotkey'
 
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
+
 declare module '@bugsnag/plugin-react' {
   export const formatComponentStack: (str: string) => string
 }
@@ -295,6 +298,9 @@ class NotifyProvider extends React.Component {
   }
 
   checkForRemoteUpdates = async () => {
+    if (eapi.isDesktop) {
+      return
+    }
     console.log('[NotifyProvider] check for remote updates')
     if (
       process.env.NODE_ENV === 'production' &&
@@ -311,6 +317,9 @@ class NotifyProvider extends React.Component {
   }
 
   checkForUpdates = () => {
+    if (eapi.isDesktop) {
+      return
+    }
     console.log('[NotifyProvider] init data and version update handling')
     if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
       navigator.serviceWorker.ready.then((reg) => {

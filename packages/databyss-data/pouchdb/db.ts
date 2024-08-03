@@ -4,47 +4,29 @@ import PouchDBUpsert from 'pouchdb-upsert'
 import PouchDbQuickSearch from 'pouchdb-quick-search'
 import PouchDBTransform from 'transform-pouch'
 import {
-  sourceSchema,
-  blockRelationSchema,
-  selectionSchema,
-  pageSchema,
-  groupSchema,
-  textSchema,
-  entrySchema,
-  topicSchema,
-  pouchDocSchema,
-  blockSchema,
-  userPreferenceSchema,
-  notificationSchema,
-  pointSchema,
-} from '@databyss-org/data/schemas'
-import {
   getPouchSecret,
   getDbCredentialsFromLocal,
   getDefaultGroup,
 } from '@databyss-org/services/session/clientStorage'
-import { BlockType } from '@databyss-org/services/interfaces/Block'
-import tv4 from 'tv4'
 import {
   getAccountFromLocation,
   getRemoteDbData,
-  RemoteDbData,
+  getRemoteSearchData,
   remoteDbHasUpdate,
 } from '@databyss-org/services/session/utils'
 import { waitForNetwork } from '@databyss-org/services/lib/request'
 import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import { QueryClient } from '@tanstack/react-query'
-import { DocumentType } from './interfaces'
+import { sleep } from '@databyss-org/services/lib/util'
 import { setDbBusy } from './utils'
 import { processGroupActionQ } from './groups/utils'
 import { connect, CouchDb, couchDbRef } from '../couchdb/couchdb'
-import embedSchema from '../schemas/embedSchema'
+
 import { UnauthorizedDatabaseReplication } from '../../databyss-services/interfaces/Errors'
 import { initialCaches, warmupCaches } from './warmup'
 import { initChangeResponder } from '../couchdb/changeResponder'
 import { initDriveDb } from '../drivedb/ddb'
 import { dbRef } from './dbRef'
-import { sleep } from '@databyss-org/services/lib/util'
 
 export { dbRef } from './dbRef'
 
@@ -224,69 +206,6 @@ export const syncPouchDb = ({ groupId }: { groupId: string }) => {
     })
 }
 
-export const pouchDataValidation = (data) => {
-  // remove undefined properties
-  Object.keys(data).forEach((key) => {
-    if (key === '_id' && data[key] === undefined) {
-      console.error('invalid data', data)
-      throw new Error(`_id is undefined`)
-    }
-
-    return data[key] === undefined ? delete data[key] : {}
-  })
-
-  // pouchDB validator
-  const schemaMap = {
-    [BlockType.Source]: sourceSchema,
-    [BlockType.Entry]: entrySchema,
-    [BlockType.Topic]: topicSchema,
-    [BlockType.Embed]: embedSchema,
-    [DocumentType.Group]: groupSchema,
-    [DocumentType.Page]: pageSchema,
-    [DocumentType.Selection]: selectionSchema,
-    [DocumentType.BlockRelation]: blockRelationSchema,
-    [DocumentType.UserPreferences]: userPreferenceSchema,
-  }
-
-  // add $ref schemas, these schemas are reused
-  tv4.addSchema('text', textSchema)
-  tv4.addSchema('point', pointSchema)
-  tv4.addSchema('pouchDb', pouchDocSchema)
-  tv4.addSchema('blockSchema', blockSchema)
-  tv4.addSchema('notification', notificationSchema)
-
-  if (data?._id?.includes('design/')) {
-    return
-  }
-  let schema
-  // user database determines the schema by the .type field
-
-  if (data.doctype === DocumentType.Block) {
-    schema = schemaMap[data.type]
-  } else {
-    schema = schemaMap[data.doctype]
-  }
-
-  // `this.schema &&` this will be removed when all schemas are implemented
-  if (schema && !tv4.validate(data, schema, false, true)) {
-    console.log('[pouchDataValidation]', data)
-    console.error(
-      `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
-    )
-    // throw new Error(
-    //   `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
-    // )
-  }
-
-  if (!schema) {
-    console.log('NOT FOUND', data)
-    console.error(`no schema found`)
-    // throw new Error(
-    //   `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
-    // )
-  }
-}
-
 let _lastSeqMemo: string | number | undefined
 let _lastSeqMemoRequestedAt: number | undefined
 export const getLastSequence = () =>
@@ -436,28 +355,33 @@ export const initDbFromJson = async (groupId: string) => {
 
   // get remote data
   const _remoteDbData = await getRemoteDbData(groupId)
-
   await _dataDb.bulkDocs(_remoteDbData.dbRows, { new_edits: false })
+  dbRef.searchMd5 = _remoteDbData.info.searchMd5
+  dbRef.initialSyncComplete = true
+}
 
+export const initSearchDbFromJson = async (
+  groupId: string,
+  searchMd5: string
+) => {
   // import search db
+  const _searchDbRows = await getRemoteSearchData(groupId)
+  if (!_searchDbRows) {
+    console.log('[initDbFromJson] no remote search data found')
+    return
+  }
   dbRef.searchIndexProgress = 0
   const _startTime = Date.now()
-  const _searchDb = new PouchDB(
-    `${groupId}-search-${_remoteDbData.info.searchMd5}`
-  )
-  let _docsRemaining = _remoteDbData.searchDbRows.length
+  const _searchDb = new PouchDB(`${groupId}-search-${searchMd5}`)
+  let _docsRemaining = _searchDbRows.length
   let _currPage = 0
   const _pageSize = 5000
   while (_docsRemaining > 0) {
     const _startDocIdx = _currPage * _pageSize
     const _endDocIdx = _startDocIdx + Math.min(_pageSize, _docsRemaining)
-    const _rowsToImport = _remoteDbData.searchDbRows.slice(
-      _startDocIdx,
-      _endDocIdx
-    )
+    const _rowsToImport = _searchDbRows.slice(_startDocIdx, _endDocIdx)
     await _searchDb.bulkDocs(_rowsToImport, { new_edits: false })
-    dbRef.searchIndexProgress =
-      1 - _docsRemaining / _remoteDbData.searchDbRows.length
+    dbRef.searchIndexProgress = 1 - _docsRemaining / _searchDbRows.length
 
     // yield processor
     await sleep(50)
@@ -468,12 +392,10 @@ export const initDbFromJson = async (groupId: string) => {
   const _endTime = Date.now()
   const _elapsed = _endTime - _startTime
   console.log(
-    `[DB] imported ${
-      _remoteDbData.searchDbRows.length
-    } search index records in ${_elapsed / 1000}s`
+    `[DB] imported ${_searchDbRows.length} search index records in ${
+      _elapsed / 1000
+    }s`
   )
-
-  dbRef.initialSyncComplete = true
 }
 
 export const waitForPouchDb = (timeout: number = 1200000) =>

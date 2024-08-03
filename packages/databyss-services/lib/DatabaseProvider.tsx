@@ -1,6 +1,10 @@
 import React, { ReactNode, useCallback, useEffect, useState } from 'react'
 import { CouchDb } from '@databyss-org/data/couchdb/couchdb'
-import { dbRef, initDbFromJson } from '@databyss-org/data/pouchdb/db'
+import {
+  dbRef,
+  initDbFromJson,
+  initSearchDbFromJson,
+} from '@databyss-org/data/pouchdb/db'
 import { useContextSelector, createContext } from 'use-context-selector'
 import { VouchDb, connect } from '@databyss-org/data/vouchdb/vouchdb'
 import { Viewport, Text, View } from '@databyss-org/ui'
@@ -84,6 +88,11 @@ export const DatabaseProvider = ({
       if (_groupId) {
         await initDbFromJson(_groupId as string)
         updateDatabaseStatus()
+        if (dbRef.searchMd5) {
+          await initSearchDbFromJson(_groupId as string, dbRef.searchMd5)
+        } else {
+          console.log('[DatabaseProvider] missing dbRef.searchMd5')
+        }
       }
     }
   }

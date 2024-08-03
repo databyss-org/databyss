@@ -9,6 +9,7 @@ export class DbRef extends EventEmitter {
   // seq of last upsertReplication
   lastReplicationSeq: string | number = 'now'
   searchIndexProgress: number = 0 // 0 to 1
+  searchMd5: string | null = null
   private _groupId: string | null = null
 
   get groupId() {

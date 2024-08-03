@@ -1,8 +1,87 @@
 import { BlockType, Document } from '@databyss-org/services/interfaces'
-import { pouchDataValidation } from './db'
+import tv4 from 'tv4'
+import {
+  sourceSchema,
+  blockRelationSchema,
+  selectionSchema,
+  pageSchema,
+  groupSchema,
+  textSchema,
+  entrySchema,
+  topicSchema,
+  pouchDocSchema,
+  blockSchema,
+  userPreferenceSchema,
+  notificationSchema,
+  pointSchema,
+} from '@databyss-org/data/schemas'
+import embedSchema from '../schemas/embedSchema'
 import { dbRef } from './dbRef'
 import { addTimeStamp } from './docUtils'
 import { DocumentType } from './interfaces'
+
+export const pouchDataValidation = (data) => {
+  // remove undefined properties
+  Object.keys(data).forEach((key) => {
+    if (key === '_id' && data[key] === undefined) {
+      console.error('invalid data', data)
+      throw new Error(`_id is undefined`)
+    }
+
+    return data[key] === undefined ? delete data[key] : {}
+  })
+
+  // pouchDB validator
+  const schemaMap = {
+    [BlockType.Source]: sourceSchema,
+    [BlockType.Entry]: entrySchema,
+    [BlockType.Topic]: topicSchema,
+    [BlockType.Embed]: embedSchema,
+    [DocumentType.Group]: groupSchema,
+    [DocumentType.Page]: pageSchema,
+    [DocumentType.Selection]: selectionSchema,
+    [DocumentType.BlockRelation]: blockRelationSchema,
+    [DocumentType.UserPreferences]: userPreferenceSchema,
+  }
+
+  // add $ref schemas, these schemas are reused
+  tv4.addSchema('text', textSchema)
+  tv4.addSchema('point', pointSchema)
+  tv4.addSchema('pouchDb', pouchDocSchema)
+  tv4.addSchema('blockSchema', blockSchema)
+  tv4.addSchema('notification', notificationSchema)
+
+  if (data?._id?.includes('design/')) {
+    return
+  }
+  let schema
+  // user database determines the schema by the .type field
+
+  if (data.doctype === DocumentType.Block) {
+    schema = schemaMap[data.type]
+  } else {
+    schema = schemaMap[data.doctype]
+  }
+
+  // `this.schema &&` this will be removed when all schemas are implemented
+  if (schema && !tv4.validate(data, schema, false, true)) {
+    console.log('[pouchDataValidation]', data)
+    console.error(
+      `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+    )
+    // throw new Error(
+    //   `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+    // )
+  }
+
+  if (!schema) {
+    console.log('NOT FOUND', data)
+    console.error(`no schema found`)
+    // throw new Error(
+    //   `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+    // )
+  }
+}
 
 // todo: use document type interface
 export const bulkUpsert = async (upQdict: any) => {
