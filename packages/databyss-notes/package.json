@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/notes",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "private": true,
   "dependencies": {
     "an-array-of-english-words": "^2.0.0",
@@ -14,8 +14,8 @@
     "workbox-window": "^6.1.2"
   },
   "peerDependencies": {
-    "@databyss-org/services": "3.3.1",
-    "@databyss-org/ui": "3.3.1",
+    "@databyss-org/services": "3.3.2",
+    "@databyss-org/ui": "3.3.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "@tanstack/react-query": "5.51.11",
