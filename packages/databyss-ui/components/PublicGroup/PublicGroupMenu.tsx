@@ -6,33 +6,48 @@ import SaveSvg from '@databyss-org/ui/assets/save.svg'
 import { useExportContext } from '@databyss-org/services/export'
 import { DropdownMenu } from '../Menu/DropdownMenu'
 import { MenuItem } from '../Menu/DropdownList'
-import { addMenuFooterItems, exportMenuItems } from '../../lib/menuItems'
+import {
+  addMenuFooterItems,
+  exportMenuItems,
+  sourceExportMenuItems,
+} from '../../lib/menuItems'
+import { PathTokens } from '../Navigation/NavigationProvider/interfaces'
 
 export const PublicGroupMenu = ({ ...others }) => {
   const exportContext = useExportContext()
-
   const { getTokensFromPath } = useNavigationContext()
-
-  const { params } = getTokensFromPath()
-
   const { setCurrentPageId } = useExportContext()
+  const path: PathTokens = getTokensFromPath()
 
   useEffect(() => {
-    setCurrentPageId(params)
+    if (path.type === 'pages') {
+      setCurrentPageId(path.params)
+    } else {
+      setCurrentPageId(null)
+    }
     return () => {
       setCurrentPageId(null)
     }
-  }, [params])
+  }, [path.params])
 
-  const menuItems: MenuItem[] = exportMenuItems(exportContext, [
-    {
+  const _additionalMenuItems: MenuItem[] = []
+  if (path.type === 'pages') {
+    _additionalMenuItems.push({
       icon: <SaveSvg />,
       label: 'Export page',
       subLabel: 'Including references',
-      action: () => exportContext.exportSinglePage(params),
+      action: () => exportContext.exportSinglePage(path.params),
       actionType: 'exportPage',
-    },
-  ])
+    })
+  }
+  if (path.type === 'sources') {
+    _additionalMenuItems.push(...sourceExportMenuItems(exportContext, path))
+  }
+
+  const menuItems: MenuItem[] = exportMenuItems(
+    exportContext,
+    _additionalMenuItems
+  )
 
   addMenuFooterItems(menuItems)
 

@@ -1,16 +1,19 @@
 import React, { useState } from 'react'
 import { View, BaseControl, Icon } from '@databyss-org/ui/primitives'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
-import SaveSvg from '@databyss-org/ui/assets/save.svg'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import { DropdownList } from '@databyss-org/ui/components'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { useExportContext } from '@databyss-org/services/export'
 import { useNavigationContext } from '../Navigation/NavigationProvider'
-import { addMenuFooterItems, exportMenuItems } from '../../lib/menuItems'
+import {
+  addMenuFooterItems,
+  exportMenuItems,
+  sourceExportMenuItems,
+} from '../../lib/menuItems'
 
-const IndexPageMenu = ({ block }) => {
+const IndexPageMenu = () => {
   const { getTokensFromPath } = useNavigationContext()
   const [showMenu, setShowMenu] = useState(false)
   const path = getTokensFromPath()
@@ -26,20 +29,7 @@ const IndexPageMenu = ({ block }) => {
   menuItems.push(
     ...exportMenuItems(
       exportContext,
-      path.type === 'sources'
-        ? [
-            {
-              icon: <SaveSvg />,
-              label: path.params ? 'Export Citation' : 'Export Bibliography',
-              action: () =>
-                exportContext.exportBibliography({
-                  source: block,
-                  author: path.author,
-                }),
-              actionType: 'exportBiblio',
-            },
-          ]
-        : []
+      path.type === 'sources' ? sourceExportMenuItems(exportContext, path) : []
     )
   )
 

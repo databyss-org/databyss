@@ -4,7 +4,9 @@ import ExportAllSvg from '@databyss-org/ui/assets/export-all.svg'
 import DownloadSvg from '@databyss-org/ui/assets/download.svg'
 import { version } from '@databyss-org/services'
 import HelpSvg from '@databyss-org/ui/assets/help.svg'
+import SaveSvg from '@databyss-org/ui/assets/save.svg'
 import { MenuItem } from '../components/Menu/DropdownList'
+import { PathTokens } from '../components/Navigation/NavigationProvider/interfaces'
 
 export const addMenuFooterItems = (menuItems) => {
   if (menuItems.length > 0) {
@@ -23,6 +25,22 @@ export const addMenuFooterItems = (menuItems) => {
     // shortcut: 'Ctrl + Del',
   })
 }
+
+export const sourceExportMenuItems = (
+  exportContext: ExportContextType,
+  path: PathTokens
+): MenuItem[] => [
+  {
+    icon: <SaveSvg />,
+    label: path.params ? 'Export Citation' : 'Export Bibliography',
+    action: () =>
+      exportContext.exportBibliography({
+        sourceId: path.params,
+        author: path.author,
+      }),
+    actionType: 'exportBiblio',
+  },
+]
 
 export const exportMenuItems = (
   exportContext: ExportContextType,

@@ -1,3 +1,4 @@
+import { AuthorName } from '@databyss-org/services/interfaces'
 import { ReactNode } from 'react'
 
 export interface PropsDict {
@@ -28,4 +29,5 @@ export interface PathTokens {
   type: string
   params: string
   anchor?: string
+  author?: AuthorName
 }

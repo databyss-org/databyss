@@ -8,7 +8,6 @@ export const useAppState = <K extends keyof StateData>(key: K) => {
   if (!queryClient) {
     queryClient = _qc
     appState.on('valueChanged', (key) => {
-      console.log('[useAppState] valueChanged', key, appState.get(key))
       queryClient!.setQueryData([`appState_${key}`], appState.get(key))
     })
   }

@@ -9,7 +9,7 @@ import fileDownload from 'js-file-download'
 import JSZip from 'jszip'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { Text } from '@databyss-org/ui/primitives'
-import { getDocuments } from '@databyss-org/data/pouchdb/utils'
+import { getDocument, getDocuments } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { useBlocksInPages, usePages } from '@databyss-org/data/pouchdb/hooks'
 import {
@@ -52,15 +52,15 @@ declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
 
 type PublishDatabaseResult = 'success' | string
 
-interface ContextType {
+export interface ExportContextType {
   exportSinglePage: (id: string) => void
   exportAllPages: () => void
   exportBibliography: ({
-    source,
+    sourceId,
     author,
   }: {
-    source: Source
-    author: AuthorName
+    sourceId?: string | null
+    author?: AuthorName | null
   }) => void
   exportDatabase: () => void
   setCurrentPageId: (pageId: string) => void
@@ -69,7 +69,7 @@ interface ContextType {
   cancelPublishGroupDatabase: (group: Group) => Promise<void>
 }
 
-export const ExportContext = createContext<ContextType>(null!)
+export const ExportContext = createContext<ExportContextType>(null!)
 
 export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const { notifySticky, hideSticky } = useNotifyContext()
@@ -179,7 +179,7 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   const exportSinglePage = async (id?: string) => {
     const _id = id ?? pageIdRef.current!
-    console.log('[ExportProvider] single page', _id)
+    // console.log('[ExportProvider] single page', _id)
     const _c = cleanFilename
     const _page = (await loadPage(_id)) as Page
     const _zip = new JSZip().folder(_c(_page.name))!
@@ -250,7 +250,7 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     author?: AuthorName
     styleId?: string
   }) => {
-    console.log('[ExportProvider] downloadBibliography', items, author, styleId)
+    // console.log('[ExportProvider] downloadBibliography', items, author, styleId)
     fileDownload(
       bibliographyToMarkdown({
         bibliography: items,
@@ -266,30 +266,31 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   }
 
   const downloadSourceMarkdown = async ({
-    source,
+    sourceId,
     styleId,
   }: {
-    source: Source
+    sourceId: string
     styleId: string
   }) => {
+    const _source = await getDocument<Source>(sourceId)
     const _sourcemd = await sourceToMarkdown({
-      source,
+      source: _source!,
       citationStyle: getCitationStyle(styleId) as CitationStyle,
     })
-    const _filename = cleanFilename(source.text.textValue)
+    const _filename = cleanFilename(_source!.text.textValue)
     fileDownload(_sourcemd, `${_filename}.md`)
   }
 
   const exportBibliography = async (options?: {
     author: AuthorName
-    source: Source
+    sourceId: string
   }) => {
     const author = options?.author
-    const source = options?.source
+    const sourceId = options?.sourceId
     const biblio = await bibliographyFromSources(sourcesInPagesRes.data!, {
       styleId: getPreferredCitationStyle(),
     })
-    if (!source) {
+    if (!sourceId) {
       // bibliography (full or filtered by author)
       await downloadBibliography({
         items: biblio!,
@@ -299,7 +300,7 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     } else {
       // export single source
       await downloadSourceMarkdown({
-        source,
+        sourceId,
         styleId: getPreferredCitationStyle(),
       })
     }

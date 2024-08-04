@@ -58,6 +58,7 @@ import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { ResolveEmbed } from '@databyss-org/editor/components/ResolveEmbed'
 import { useQueryClient } from '@tanstack/react-query'
 import { blockTypeToSelector } from '@databyss-org/data/pouchdb/selectors'
+import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 import { IndexResults } from './IndexResults'
 import { getAccountFromLocation } from '../../../databyss-services/session/utils'
 // import { useUserPreferencesContext } from '../../hooks'
@@ -66,8 +67,6 @@ import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 import { darkTheme } from '../../theming/theme'
 import ErrorFallback from '../../components/Notify/ErrorFallback'
 import { SourceHeader } from './SourceHeader'
-import { queryClient } from '@databyss-org/services/lib/queryClient'
-import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -277,10 +276,7 @@ export const IndexPageView = ({
   return useMemo(
     () => (
       <>
-        <StickyHeader
-          path={_path}
-          contextMenu={<IndexPageMenu block={block} />}
-        />
+        <StickyHeader path={_path} contextMenu={<IndexPageMenu />} />
         <ScrollView
           pt="medium"
           pr="em"
