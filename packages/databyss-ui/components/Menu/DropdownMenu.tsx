@@ -1,16 +1,15 @@
-import React, { useRef } from 'react'
-import { BaseControl, Icon, View } from '../..'
+import React, { ReactNode, useRef } from 'react'
+import { BaseControl, Icon, View, Text } from '../..'
 import MenuSvg from '../../assets/chevron-right.svg'
 import { useContextMenu } from './ContextMenuProvider'
 import { theme } from '../../theming'
-import Text from '../../primitives/Text/Text'
 import { ContextMenuProps } from './ContextMenu'
 import { pxUnits } from '../../theming/views'
 
 export interface DropdownMenuProps extends ContextMenuProps {
   label?: string
   onChange?: (value: any) => void
-  renderLabel?: (value: any) => string
+  renderLabel?: (value: any) => string | ReactNode
   value?: any
   showFilter?: boolean
 }
@@ -71,7 +70,7 @@ export const DropdownMenu = ({
       {...other}
     >
       <View flexDirection="row" alignItems="center" p="tiny" {...menuViewProps}>
-        {_label && (
+        {typeof _label === 'string' ? (
           <Text
             variant="uiTextNormal"
             color="text.2"
@@ -84,6 +83,8 @@ export const DropdownMenu = ({
           >
             {_label}
           </Text>
+        ) : (
+          _label ?? null
         )}
         {menuIcon}
       </View>

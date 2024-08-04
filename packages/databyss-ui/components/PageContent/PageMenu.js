@@ -16,10 +16,7 @@ import PageSvg from '@databyss-org/ui/assets/page.svg'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 // import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
-import HelpSvg from '@databyss-org/ui/assets/help.svg'
 import SaveSvg from '@databyss-org/ui/assets/save.svg'
-import ExportAllSvg from '@databyss-org/ui/assets/export-all.svg'
-import DownloadSvg from '@databyss-org/ui/assets/download.svg'
 // import { saveGroup } from '@databyss-org/services/groups'
 // import { Group } from '@databyss-org/services/interfaces'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
@@ -29,60 +26,10 @@ import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { useExportContext } from '@databyss-org/services/export'
 // import { urlSafeName } from '@databyss-org/services/lib/util'
-import { version } from '@databyss-org/services'
 import LoadingFallback from '../Notify/LoadingFallback'
 // import { pxUnits } from '../../theming/views'
 import { DropdownList } from '../Menu/DropdownList'
-
-export const exportMenuItems = (exportContext, markdownItems) => [
-  {
-    separator: true,
-    label: 'Export Markdown',
-  },
-  ...markdownItems,
-  {
-    icon: <ExportAllSvg />,
-    label: 'Export everything',
-    subLabel: 'Download the whole collection',
-    action: () => {
-      // setShowMenu(false)
-      exportContext.exportAllPages()
-    },
-    actionType: 'exportAll',
-  },
-  {
-    separator: true,
-    label: 'Manage Database',
-  },
-  {
-    icon: <DownloadSvg />,
-    label: 'Export database',
-    subLabel: 'Download a backup of the whole database',
-    action: () => {
-      // setShowMenu(false)
-      exportContext.exportDatabase()
-    },
-    actionType: 'exportDb',
-  },
-]
-
-export const addMenuFooterItems = (menuItems) => {
-  if (menuItems.length > 0) {
-    menuItems.push({ separator: true })
-  }
-
-  menuItems.push({
-    icon: <HelpSvg />,
-    label: 'Help...',
-    href: '/g_7v9n4vjx2h7511',
-    target: '_blank',
-    actionType: 'help',
-    light: true,
-    shortcut: `v${version}`,
-    // TODO: detect platform and render correct modifier key
-    // shortcut: 'Ctrl + Del',
-  })
-}
+import { addMenuFooterItems, exportMenuItems } from '../../lib/menuItems'
 
 export function copyToClipboard(text) {
   const dummy = document.createElement('textarea')

@@ -17,6 +17,9 @@ import { theme } from '../../theming'
 import { pxUnits } from '../../theming/views'
 // import { pxUnits } from '../../theming/views'
 
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
+
 interface StickyHeaderProps {
   path: string[]
   contextMenu?: ReactNode
@@ -186,12 +189,16 @@ export const StickyHeader = ({
         >
           {!dragHandlePressed && <StickyPath path={path} />}
         </View>
-        <View alignItems="center" justifyContent="flex-end" flexDirection="row">
+        <View
+          alignItems="center"
+          justifyContent="flex-end"
+          flexDirection="row"
+          height={pxUnits(26)}
+        >
           {children}
-          {/* <Status /> */}
-          {/* <AccountMenu /> */}
-
-          {contextMenu && <View ml="extraLarge">{contextMenu}</View>}
+          {eapi.isDesktop && contextMenu && (
+            <View ml="extraLarge">{contextMenu}</View>
+          )}
         </View>
       </View>
     )

@@ -8,7 +8,7 @@ import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListene
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { useExportContext } from '@databyss-org/services/export'
 import { useNavigationContext } from '../Navigation/NavigationProvider'
-import { addMenuFooterItems, exportMenuItems } from '../PageContent/PageMenu'
+import { addMenuFooterItems, exportMenuItems } from '../../lib/menuItems'
 
 const IndexPageMenu = ({ block }) => {
   const { getTokensFromPath } = useNavigationContext()

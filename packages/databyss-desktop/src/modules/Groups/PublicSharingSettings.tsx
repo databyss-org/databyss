@@ -122,7 +122,7 @@ export const PublicSharingSettings = ({
         unpublishGroupDatabase(group)
       }
     },
-    [group]
+    [group, unpublishGroupDatabase]
   )
 
   const _defaultPageView = _defaultPage && (

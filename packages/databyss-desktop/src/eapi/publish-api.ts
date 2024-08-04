@@ -5,6 +5,9 @@ import { RemoteDbInfo } from '@databyss-org/services/session/utils'
 export const publishGroup = (groupId: string, statusId: string) =>
   ipcRenderer.invoke('publish-group', groupId, statusId)
 
+export const unpublishGroup = (groupId: string) =>
+  ipcRenderer.invoke('publish-removeGroup', groupId)
+
 export const cancelPublishGroup = (statusId: string) =>
   ipcRenderer.invoke('publish-cancel', statusId)
 

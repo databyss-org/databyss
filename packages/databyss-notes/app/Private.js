@@ -25,10 +25,16 @@ import { EditorPageProvider } from '@databyss-org/services'
 import { useAppState } from '@databyss-org/desktop/src/hooks'
 import theme, { darkContentTheme } from '@databyss-org/ui/theming/theme'
 import { sidebar } from '@databyss-org/ui/theming/components'
+import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
+import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
+import { PublicGroupHeader } from '@databyss-org/ui/components'
 
 const AppView = ({ children }) => {
   const [sidebarWidth, setSidebarWidth] = useState(null)
   const isDarkModeRes = useAppState('darkMode')
+  const groupRes = useDocument(dbRef.groupId, {
+    enabled: !!dbRef.groupId,
+  })
 
   useEffect(() => {
     window.eapi.state.get('sidebarWidth').then((width) => {
@@ -44,27 +50,36 @@ const AppView = ({ children }) => {
     [window.eapi]
   )
   return (
-    <View
-      flexDirection="row"
-      display="flex"
-      width="100%"
-      overflow="hidden"
-      flexShrink={1}
-      flexGrow={1}
-    >
-      {sidebarWidth !== null && (
-        <Sidebar onResized={onSidebarResized} width={sidebarWidth} />
+    <>
+      {groupRes.isSuccess && (
+        <PublicGroupHeader
+          group={groupRes.data}
+          darkMode={isDarkModeRes.data}
+          setDarkMode={(value) => window.eapi.state.set('darkMode', value)}
+        />
       )}
       <View
-        theme={isDarkModeRes.data ? darkContentTheme : theme}
-        data-test-element="body"
-        flexGrow={1}
-        flexShrink={1}
+        flexDirection="row"
+        display="flex"
+        width="100%"
         overflow="hidden"
+        flexShrink={1}
+        flexGrow={1}
       >
-        {children}
+        {sidebarWidth !== null && (
+          <Sidebar onResized={onSidebarResized} width={sidebarWidth} />
+        )}
+        <View
+          theme={isDarkModeRes.data ? darkContentTheme : theme}
+          data-test-element="body"
+          flexGrow={1}
+          flexShrink={1}
+          overflow="hidden"
+        >
+          {children}
+        </View>
       </View>
-    </View>
+    </>
   )
 }
 
