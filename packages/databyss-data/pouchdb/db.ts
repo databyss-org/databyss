@@ -11,6 +11,7 @@ import {
 import {
   getAccountFromLocation,
   getRemoteDbData,
+  getRemoteDbInfo,
   getRemoteSearchData,
   remoteDbHasUpdate,
 } from '@databyss-org/services/session/utils'
@@ -343,7 +344,9 @@ export const initDbFromJson = async (groupId: string) => {
   dbRef.current = _dataDb
 
   // check for remote updates (will return true if db hasn't been downloaded yet)
-  if (!(await remoteDbHasUpdate())) {
+  const _remoteDbInfo = await getRemoteDbInfo(groupId)
+  dbRef.searchMd5 = _remoteDbInfo.searchMd5
+  if (!(await remoteDbHasUpdate(_remoteDbInfo))) {
     dbRef.initialSyncComplete = true
     return
   }

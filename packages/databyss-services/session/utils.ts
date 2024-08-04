@@ -15,10 +15,17 @@ export interface RemoteDbData {
   dbRows: any[]
 }
 
-export const remoteDbHasUpdate = async () => {
+export const getRemoteDbInfo = async (groupId: string) => {
+  const _gid = groupId.replace('g_', '')
+  const _urlBase = `${process.env.DBFILE_URL}${groupId}/databyss-db-${_gid}`
+  const _res = await fetch(`${_urlBase}-info.json`)
+  const _remoteDbInfo: RemoteDbInfo = await _res.json()
+  return _remoteDbInfo
+}
+
+export const remoteDbHasUpdate = async (remoteDbInfo?: RemoteDbInfo) => {
   try {
     const _groupId = dbRef.groupId!
-    const _gid = _groupId.replace('g_', '')
 
     // get local group
     const _group: Group | null = await getDocument(_groupId)
@@ -30,9 +37,10 @@ export const remoteDbHasUpdate = async () => {
     }
 
     // get remote info
-    const _urlBase = `${process.env.DBFILE_URL}${_groupId}/databyss-db-${_gid}`
-    const _res = await fetch(`${_urlBase}-info.json`)
-    const _remoteDbInfo: RemoteDbInfo = await _res.json()
+    let _remoteDbInfo = remoteDbInfo
+    if (!_remoteDbInfo) {
+      _remoteDbInfo = await getRemoteDbInfo(_groupId)
+    }
 
     // compare dates
     const _hasUpdate =
