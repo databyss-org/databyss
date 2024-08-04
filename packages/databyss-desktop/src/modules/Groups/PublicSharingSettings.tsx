@@ -22,6 +22,7 @@ import { DropdownMenu } from '@databyss-org/ui/components/Menu/DropdownMenu'
 import { ValueListItem } from '@databyss-org/ui/components/ValueList/ValueListProvider'
 import { copyToClipboard } from '@databyss-org/ui/components/PageContent/PageMenu'
 import { pxUnits } from '@databyss-org/ui/theming/views'
+import { urlSafeName } from '@databyss-org/services/lib/util'
 
 interface IconControlProps extends BaseControlProps {
   icon: ReactNode
@@ -108,7 +109,9 @@ export const PublicSharingSettings = ({
   // setup public link
   let _publicUrl: string | null = null
   if (group.lastPublishedAt) {
-    _publicUrl = `${process.env.PUBLISHED_URL}/${group._id.substring(2)}`
+    _publicUrl = `${process.env.PUBLISHED_URL}/${urlSafeName(
+      group.name
+    )}-${group._id.substring(2)}`
   }
 
   const copyLink = () => {
@@ -219,15 +222,37 @@ export const PublicSharingSettings = ({
         alignItems="center"
         justifyContent="space-between"
       >
-        <View flexDirection="row" alignItems="center">
-          <Text variant="uiTextNormal" color="text.2" pr="small">
+        <View
+          flexDirection="row"
+          alignItems="center"
+          flexShrink={1}
+          overflow="hidden"
+          pr="small"
+        >
+          <Text
+            variant="uiTextNormal"
+            color="text.2"
+            pr="small"
+            css={{ whiteSpace: 'nowrap' }}
+          >
             URL:
           </Text>
-          <BaseControl href={_publicUrl!} target="_blank">
+          <BaseControl
+            href={_publicUrl!}
+            target="_blank"
+            flexShrink={1}
+            overflow="hidden"
+            title={_publicUrl}
+          >
             <Text
               variant="uiTextNormal"
               color="text.3"
-              css={{ textDecoration: 'underline' }}
+              css={{
+                textDecoration: 'underline',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+              overflow="hidden"
             >
               {_publicUrl}
             </Text>
