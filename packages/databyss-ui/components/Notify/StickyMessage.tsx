@@ -41,7 +41,7 @@ const StickyMessage = ({
   return (
     <View
       position="absolute"
-      bottom="tiny"
+      bottom="large"
       right="small"
       width={pxUnits(360)}
       bg="background.0"

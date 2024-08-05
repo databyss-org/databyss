@@ -130,7 +130,6 @@ export const StickyHeader = ({
               }, 50)
             }}
             draggable={draggable}
-            pressedColor="gray.6"
             css={{
               opacity: showDragHandle ? 1 : 0,
               ...(showDragHandle
