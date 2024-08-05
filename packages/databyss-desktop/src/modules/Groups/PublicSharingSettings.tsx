@@ -186,7 +186,9 @@ export const PublicSharingSettings = ({
         <View flexDirection="row" alignItems="center">
           {group.isPublishing && <LoadingSvg width={25} height={25} />}
           <Button
-            variant="uiLinkPadded"
+            variant="uiLink"
+            p="tiny"
+            borderRadius="default"
             onPress={() => {
               if (group.isPublishing) {
                 cancelPublishGroupDatabase(group)

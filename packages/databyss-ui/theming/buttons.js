@@ -64,8 +64,8 @@ const buttonVariants = {
     ...border(1, 'text.3'),
   },
   uiLink: {
-    padding: space.none,
-    textDecoration: 'underline',
+    p: space.none,
+    color: 'blue.2',
   },
   formatButton: {
     paddingBottom: pxUnits(6),
@@ -101,7 +101,7 @@ const buttonThemes = {
     hoverColor: 'background.1',
     activeColor: 'background.2',
     textProps: {
-      color: 'blue.2',
+      css: { textDecoration: 'underline' },
     },
   },
   uiTextButton: {
@@ -128,14 +128,6 @@ const buttonThemes = {
     activeColor: 'background.4',
   },
 }
-
-buttonVariants.uiLinkPadded = {
-  ...buttonVariants.uiLink,
-  padding: 'tiny',
-  borderRadius,
-}
-
-buttonThemes.uiLinkPadded = buttonThemes.uiLink
 
 // on mobile it will show plus topic and location instead of plus
 //

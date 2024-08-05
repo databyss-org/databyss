@@ -44,7 +44,7 @@ const Button = forwardRef(
           {...(buttonThemes[variant].textProps
             ? buttonThemes[variant].textProps
             : {})}
-          color={textColor ?? buttonVariants[variant].color}
+          color={textColor ?? buttonVariants[variant]?.color}
         >
           {children}
         </Text>
@@ -57,7 +57,7 @@ const Button = forwardRef(
 
     return (
       <StyledControl
-        variant={variant}
+        {...buttonVariants[variant]}
         onPress={onPress}
         hoverColor={buttonThemes[variant].hoverColor}
         activeColor={buttonThemes[variant].activeColor}
