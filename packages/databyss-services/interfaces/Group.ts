@@ -1,5 +1,6 @@
 import { uidlc } from '@databyss-org/data/lib/uid'
 import { Notification } from '@databyss-org/data/pouchdb/interfaces'
+import { Text } from './Text'
 
 export class Group {
   _id: string
@@ -13,6 +14,7 @@ export class Group {
   lastPublishedAt: string | null
   isPublishing: boolean
   publishingStatusId: string | null
+  subtitle: Text
 
   constructor(name: string) {
     this._id = `g_${uidlc()}`
@@ -24,5 +26,6 @@ export class Group {
     this.lastPublishResult = null
     this.isPublishing = false
     this.publishingStatusId = null
+    this.subtitle = { textValue: '', ranges: [] }
   }
 }

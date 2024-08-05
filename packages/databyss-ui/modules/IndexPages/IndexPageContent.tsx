@@ -376,7 +376,9 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   const pagesRes = usePages()
   const scrollViewRef = useRef<HTMLElement | null>(null)
   const restoreScroll = useScrollMemory(scrollViewRef)
-  const blockRelationRes = useDocument<BlockRelation>(`r_${blockId}`)
+  const blockRelationRes = useDocument<BlockRelation>(`r_${blockId}`, {
+    previousIfNull: true,
+  })
 
   const blockIds: string[] = []
 
@@ -393,6 +395,7 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
     })
   }
 
+  // console.log('[IndexPageContent] blockIds', blockIds.length)
   // console.log(
   //   `[IndexPageContent] related_${blockId}`,
   //   queryClient.getQueryData([`related_${blockId}`])
@@ -400,10 +403,13 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
 
   const blocksRes = useDocuments<Block>(blockIds, {
     enabled: !!blockIds.length,
-    queryKey: [`related_${blockId}`],
+    previousIfNull: true,
   })
 
-  // console.log('[IndexPageContent] blocksRes', blockId, blocksRes.dataUpdatedAt)
+  // console.log(
+  //   '[IndexPageContent] blocksRes',
+  //   blocksRes.data && Object.keys(blocksRes.data).length
+  // )
   // console.log(
   //   '[IndexPageContent] blockRelationRes',
   //   blockId,

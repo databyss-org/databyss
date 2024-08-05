@@ -33,11 +33,18 @@ export const PublicGroupHeader = ({
       justifyContent="space-between"
       pr="em"
     >
-      <View flexDirection="row" alignItems="center" py="small">
-        <img src={DatabyssImg} width={pxUnits(42)} />
-        <Text variant="uiTextExtraLarge" ml="small" pt={pxUnits(1)}>
-          {group.name}
-        </Text>
+      <View flexDirection="row" alignItems="center" py="tiny" pl="small">
+        <img src={DatabyssImg} width={pxUnits(48)} />
+        <View ml="em">
+          <Text variant="bodyHeading1" color="text.2">
+            {group.name}
+          </Text>
+          {group.subtitle?.textValue?.length && (
+            <Text variant="uiTextSmall" color="text.2">
+              {group.subtitle.textValue}
+            </Text>
+          )}
+        </View>
       </View>
       <View flexDirection="row" alignItems="center">
         <BaseControl

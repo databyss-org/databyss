@@ -12,6 +12,7 @@ import {
   useNavigationContext,
   ModalManager,
   PageContent,
+  Text,
 } from '@databyss-org/ui'
 
 import { GestureProvider, View } from '@databyss-org/ui/primitives'
@@ -23,7 +24,10 @@ import {
 } from '@databyss-org/ui/modules'
 import { EditorPageProvider } from '@databyss-org/services'
 import { useAppState } from '@databyss-org/desktop/src/hooks'
-import theme, { darkContentTheme } from '@databyss-org/ui/theming/theme'
+import theme, {
+  darkContentTheme,
+  pxUnits,
+} from '@databyss-org/ui/theming/theme'
 import { sidebar } from '@databyss-org/ui/theming/components'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
@@ -65,18 +69,38 @@ const AppView = ({ children }) => {
         overflow="hidden"
         flexShrink={1}
         flexGrow={1}
+        bg="background.1"
+        theme={isDarkModeRes.data ? darkContentTheme : theme}
       >
         {sidebarWidth !== null && (
           <Sidebar onResized={onSidebarResized} width={sidebarWidth} />
         )}
         <View
-          theme={isDarkModeRes.data ? darkContentTheme : theme}
           data-test-element="body"
           flexGrow={1}
           flexShrink={1}
           overflow="hidden"
         >
-          {children}
+          <View
+            justifyContent="space-between"
+            alignItems="center"
+            flexDirection="row"
+            bg="background.2"
+            minHeight={pxUnits(58)}
+            width="100%"
+            position="absolute"
+            pr="medium"
+            pl={pxUnits(18)}
+          >
+            <View flexGrow={1}>
+              <Text color="text.3" variant="uiTextSmall">
+                Loading...
+              </Text>
+            </View>
+          </View>
+          <View flex="1" height="100%" position="relative">
+            {children}
+          </View>
         </View>
       </View>
     </>

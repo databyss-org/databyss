@@ -115,9 +115,9 @@ const PageContent = (others) => {
 
   return useMemo(
     () => (
-      <View flex="1" height="100%" backgroundColor="background.1">
+      <View flex="1" height="100%">
         {id && (
-          <EditorPageLoader pageId={id} key={id} firstBlockIsTitle>
+          <EditorPageLoader pageId={id} firstBlockIsTitle>
             {(page) => (
               <PageContainer
                 id={id}

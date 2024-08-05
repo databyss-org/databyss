@@ -10,6 +10,7 @@ import {
   ViewProps,
   ScrollView,
   Icon,
+  TextInput,
 } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
@@ -25,6 +26,7 @@ import {
 } from '@databyss-org/ui/components'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import GroupMenu from './GroupMenu'
+import { GroupMetadata } from './GroupMetadata'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -90,6 +92,9 @@ export const GroupFields = ({
   if (_values.name === UNTITLED_NAME) {
     _values.name = ''
   }
+  if (!_values.subtitle) {
+    _values.subtitle = { textValue: '', ranges: [] }
+  }
 
   return (
     <ValueListProvider onChange={onChange} values={_values}>
@@ -105,7 +110,19 @@ export const GroupFields = ({
             }
           />
         </ValueListItem>
+        <View borderVariant="thinLight" widthVariant="form" p="tiny" mt="tiny">
+          <ValueListItem path="subtitle">
+            <TextInput
+              variant="uiTextNormal"
+              placeholder="Collection subtitle (optional)"
+              readonly={readOnly}
+            />
+          </ValueListItem>
+        </View>
         <View flexGrow={1} flexBasis={1} widthVariant="form">
+          {/* <GroupSection title="Metadata">
+            <GroupMetadata readOnly={readOnly} group={group} />
+          </GroupSection> */}
           <GroupSection title="Publishing">
             <PublicSharingSettings readOnly={readOnly} group={group} />
           </GroupSection>

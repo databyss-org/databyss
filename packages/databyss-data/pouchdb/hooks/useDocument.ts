@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useEffect, useRef } from 'react'
+import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { Document } from '@databyss-org/services/interfaces'
 import { EM } from '@databyss-org/data/pouchdb/utils'
 
@@ -30,6 +30,7 @@ export const useDocument = <T extends Document>(
 ) => {
   const queryKey = [`useDocument_${_id}`]
   const _options = applyDefaultUseDocumentOptions(options)
+  const prevQuery = useRef<UseQueryResult<T, Error> | null>(null)
 
   useEffect(() => {
     EM.process()
@@ -54,6 +55,16 @@ export const useDocument = <T extends Document>(
     enabled: _options.enabled,
     initialData: options?.initialData,
   })
+
+  useEffect(() => {
+    prevQuery.current = null
+  }, [options?.previousDeps])
+
+  if (!query.data && options.previousIfNull && prevQuery.current) {
+    return prevQuery.current
+  }
+
+  prevQuery.current = query
 
   return query
 }
