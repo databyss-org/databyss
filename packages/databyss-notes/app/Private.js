@@ -76,7 +76,7 @@ const AppView = ({ children }) => {
         overflow="hidden"
         flexShrink={1}
         flexGrow={1}
-        bg="background.0"
+        bg="background.1"
         theme={isDarkModeRes.data ? darkContentTheme : lightContentTheme}
       >
         {sidebarWidth !== null && (

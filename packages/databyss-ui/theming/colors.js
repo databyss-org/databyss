@@ -57,6 +57,8 @@ _c = {
   inlineSource: '#cc6633',
   inlineTopic: '#B82F00',
   modalShadow: '#000000',
+  searchBackground: '#F0F0F0',
+  sidebarSearchBorder: _c.gray[6],
 }
 
 // legacy (deprecated)
@@ -96,11 +98,13 @@ const _darkUi = {
     Color(_c.blue[3]).lightness(80).alpha(0.4).rgb().string(),
     Color(_c.orange[2]).lightness(60).saturate(1).alpha(0.4).rgb().string(),
   ],
+  searchBackground: '#1f1f1f',
+  sidebarSearchBorder: 'transparent',
 }
 const _darkContent = {
   ..._darkUi,
   background: ['#1f1f1f', '#292929', _c.gray[2], _c.gray[3], _c.gray[4]],
-  text: [_c.gray[6], _c.gray[6], _c.gray[5], _c.gray[4]],
+  text: [_c.gray[7], _c.gray[6], _c.gray[5], _c.gray[4]],
   inlineSource: '#ff9100',
   inlineTopic: Color(_c.inlineTopic).lighten(0.8).hex(),
   purple: _c.purple.map((c) => Color(c).lighten(0.9).hex()),

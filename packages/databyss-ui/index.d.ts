@@ -84,6 +84,7 @@ export interface ScrollViewProps extends ViewProps {
    * element for correct positioning and sizing.
    */
   shadowOnScroll?: boolean | string
+  scrollbarColor?: string
 }
 
 declare const ScrollView: RefForwardingFC<PropsWithChildren<ScrollViewProps>>

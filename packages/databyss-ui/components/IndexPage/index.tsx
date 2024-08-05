@@ -25,7 +25,13 @@ export const IndexResultsContainer = ({ children }) => (
   </View>
 )
 
-export const IndexResultTitle = ({ href, text, icon, dataTestElement, theme }) => {
+export const IndexResultTitle = ({
+  href,
+  text,
+  icon,
+  dataTestElement,
+  theme,
+}) => {
   const searchTerms = useSearchContext((c) => c && c.normalizedStemmedTerms)
   const _highlightRanges = createHighlightRanges(text, searchTerms)
   return (
@@ -44,12 +50,15 @@ export const IndexResultTitle = ({ href, text, icon, dataTestElement, theme }) =
       >
         {icon}
       </Icon>
-      <Text color="text.2" variant="uiTextNormalSemibold">
+      <Text color="text.1" variant="uiTextNormalSemibold">
         <RawHtml
-          html={textToHtml({
-            textValue: text,
-            ranges: _highlightRanges,
-          }, theme)}
+          html={textToHtml(
+            {
+              textValue: text,
+              ranges: _highlightRanges,
+            },
+            theme
+          )}
         />
       </Text>
     </BaseControl>
@@ -122,6 +131,7 @@ export const IndexResultDetails = ({
         pt="small"
         pb="tiny"
         css={{ lineHeight: pxUnits(22), zIndex: theme.zIndex.base }}
+        color="text.0"
       >
         {renderTextToComponents({
           key: block._id,

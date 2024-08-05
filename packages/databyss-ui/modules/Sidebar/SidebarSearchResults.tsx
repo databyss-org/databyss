@@ -183,7 +183,7 @@ const SidebarSearchResults = ({
         }
       }}
       borderRightStyle="solid"
-      borderRightColor="border.2"
+      borderRightColor="sidebarSearchBorder"
       borderRightWidth={1}
       handlesRef={listHandleRef}
       showSubitemToggles={false}

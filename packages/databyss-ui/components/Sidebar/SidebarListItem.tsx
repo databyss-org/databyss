@@ -96,7 +96,7 @@ export const SidebarListRow = ({
       </Icon>
       <Text
         variant="uiTextSmall"
-        color="text.2"
+        color="text.1"
         userSelect="none"
         overflow="hidden"
         css={{

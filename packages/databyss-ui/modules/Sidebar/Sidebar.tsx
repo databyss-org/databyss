@@ -72,7 +72,7 @@ export const Sidebar = ({
           {...others}
         >
           <List
-            verticalItemPadding={pxUnits(11)}
+            // verticalItemPadding={pxUnits(11)}
             verticalItemMargin={0}
             horizontalItemPadding={0}
             height="100%"
@@ -83,7 +83,7 @@ export const Sidebar = ({
             overflow="hidden"
           >
             {/* <Header /> */}
-            <Search bg="background.0" />
+            <Search bg="background.1" />
             {(menuItem === 'pages' || !menuItem) && <PageList />}
             {menuItem === 'references' && <ReferencesList />}
             {menuItem === 'sources' && (

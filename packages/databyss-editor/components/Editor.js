@@ -223,6 +223,9 @@ const Editor = ({
             paddingRight: 'medium',
             paddingBottom: 'extraLarge',
             ...scrollbarResetCss,
+            '::-webkit-scrollbar-thumb': {
+              background: '#66666666',
+            },
           })}
         />
       </Slate>

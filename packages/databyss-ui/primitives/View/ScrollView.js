@@ -10,7 +10,7 @@ import IS_NATIVE from '../../lib/isNative'
 const Styled = View
 
 const ScrollView = forwardRef(
-  ({ children, shadowOnScroll, theme, ...others }, ref) => {
+  ({ children, shadowOnScroll, theme, scrollbarColor, ...others }, ref) => {
     const viewRef = useRef()
     const [scrollTop, setScrollTop] = useState(0)
     const webProps = {
@@ -19,6 +19,9 @@ const ScrollView = forwardRef(
       css: {
         overscrollBehavior: 'contain',
         WebkitOverflowScrolling: 'touch',
+        '::-webkit-scrollbar-thumb': {
+          background: scrollbarColor,
+        },
       },
     }
     const nativeProps = {}

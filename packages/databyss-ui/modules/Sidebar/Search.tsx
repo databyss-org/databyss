@@ -138,8 +138,6 @@ const Search = (others) => {
       {searchTerm && menuItem === 'search' ? (
         <SidebarSearchResults
           key={searchTerm}
-          borderTopWidth={1}
-          borderTopColor="border.2"
           filterQuery={searchTerm}
           onSearch={onSearchClick}
           height="100%"

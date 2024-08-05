@@ -10,6 +10,7 @@ import SearchIcon from '@databyss-org/ui/assets/search.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { theme } from '@databyss-org/ui/theming'
 import styledCss from '@styled-system/css'
+import { pxUnits } from '../../theming/views'
 
 const SearchInputContainer = React.forwardRef(
   (
@@ -29,16 +30,29 @@ const SearchInputContainer = React.forwardRef(
     },
     ref
   ) => (
-    <View width="100%" {...others} onClick={onClick} px="small">
+    <View
+      width="100%"
+      {...others}
+      onClick={onClick}
+      px="small"
+      bg="background.1"
+      borderColor="sidebarSearchBorder"
+      borderStyle="solid"
+      borderRightWidth={value ? 1 : 0}
+      py={pxUnits(11)}
+    >
       <View
-        backgroundColor="background.0"
+        backgroundColor="searchBackground"
+        borderStyle="solid"
+        borderColor="border.2"
+        // borderWidth={value ? 1 : 0}
         height="100%"
         justifyContent="center"
         position="relative"
         flex={1}
         px="small"
         py="extraSmall"
-        borderRadius="none"
+        borderRadius="default"
       >
         <Grid singleRow alignItems="center" columnGap="none" flexWrap="nowrap">
           <Icon sizeVariant="medium" color="text.3" pr="small">

@@ -138,7 +138,7 @@ export const scrollbarResetCss = {
     background: '#00000033',
   },
   // firefox scrollbars
-  'scrollbar-color': '#00000033 transparent !important',
+  'scrollbar-color': '#00000033 transparent',
 }
 
 export const desktopResetCss = {
@@ -224,7 +224,9 @@ const View = forwardRef(
       }
 
       return (
-        <ThemeContext.Consumer>{(_theme) => view(_theme)}</ThemeContext.Consumer>
+        <ThemeContext.Consumer>
+          {(_theme) => view(_theme)}
+        </ThemeContext.Consumer>
       )
     }, [children, css, others])
   }

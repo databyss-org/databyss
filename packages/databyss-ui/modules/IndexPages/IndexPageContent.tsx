@@ -285,6 +285,7 @@ export const IndexPageView = ({
           pb="extraLarge"
           ref={scrollViewRef}
           bg="background.1"
+          scrollbarColor="#66666666"
           {...others}
         >
           <Helmet>
@@ -403,6 +404,7 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
 
   const blocksRes = useDocuments<Block>(blockIds, {
     enabled: !!blockIds.length,
+    queryKeyPrefix: `related_${blockId}`,
     previousIfNull: true,
   })
 

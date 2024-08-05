@@ -206,6 +206,7 @@ export const FlatPageBody = withTheme(
     return (
       <View
         ref={forkRef(ref, _viewRef)}
+        bg="background.1"
         css={
           styledCss({
             overflowY: 'auto',
@@ -217,7 +218,8 @@ export const FlatPageBody = withTheme(
             paddingLeft: 'em',
             paddingRight: 'medium',
             paddingBottom: 'extraLarge',
-            ...scrollbarResetCss,
+            // ...scrollbarResetCss,
+            scrollbarColor: '#99999966 transparent',
           }) as InterpolationWithTheme<any>
         }
       >
