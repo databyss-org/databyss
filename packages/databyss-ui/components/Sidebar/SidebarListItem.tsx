@@ -126,6 +126,7 @@ export interface SidebarListItemProps {
   depth: number
   contextMenu?: MenuItem[]
   dropzone?: ViewProps['dropzone']
+  keyboardEventsActive?: boolean
 }
 
 const SidebarListItem = ({
@@ -142,6 +143,7 @@ const SidebarListItem = ({
   draggable,
   depth = 0,
   contextMenu,
+  keyboardEventsActive,
   ...others
 }: SidebarListItemProps) => {
   const docRes = useDocument(data?._id, {
@@ -170,7 +172,7 @@ const SidebarListItem = ({
       data-test-element="page-sidebar-item"
       href={href}
       onPress={onPress}
-      active={isActive || activeNavigationItem}
+      active={activeNavigationItem || (!keyboardEventsActive && isActive)}
       ref={navigationItemRef}
       handle={_controlHandle}
       draggable={draggable}

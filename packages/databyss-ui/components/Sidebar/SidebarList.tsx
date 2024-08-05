@@ -136,7 +136,11 @@ const SidebarList = ({
    *
    * @param item if valid accountID is not provided, use navigate instead of href for BaseControl
    */
-  const _pressItem = (item: SidebarListItemData, index: number, event: Event) => {
+  const _pressItem = (
+    item: SidebarListItemData,
+    index: number,
+    event: Event
+  ) => {
     if (onItemPressed) {
       onItemPressed(item, index)
     }
@@ -148,16 +152,16 @@ const SidebarList = ({
   }
   const _pressSelector = (item: SidebarListItemData, index: number) => ({
     ...(account
-      ? { 
-        href: getHref(item),
-        onPress: (event) => _pressItem(item, index, event)
-      }
-      : { 
-        onPress: (event) => {
-          _pressItem(item, index, event)
-          navigate(item.route) 
+      ? {
+          href: getHref(item),
+          onPress: (event) => _pressItem(item, index, event),
         }
-    })
+      : {
+          onPress: (event) => {
+            _pressItem(item, index, event)
+            navigate(item.route)
+          },
+        }),
   })
 
   let _menuItems = [...menuItems]
@@ -181,23 +185,22 @@ const SidebarList = ({
         text: heading,
         type: 'heading',
         ...(showRecentAllToggle &&
-          (showAll || _menuItems.length < menuItems.length)
-            ? {
-                links: [
-                  {
-                    label: 'recent',
-                    active: !showAll,
-                    onPress: () => setShowAll(false),
-                  },
-                  {
-                    label: 'all',
-                    active: showAll,
-                    onPress: () => setShowAll(true),
-                  },
-                ],
-              }
-            : {}
-        ),
+        (showAll || _menuItems.length < menuItems.length)
+          ? {
+              links: [
+                {
+                  label: 'recent',
+                  active: !showAll,
+                  onPress: () => setShowAll(false),
+                },
+                {
+                  label: 'all',
+                  active: showAll,
+                  onPress: () => setShowAll(true),
+                },
+              ],
+            }
+          : {}),
       },
       ..._menuItems,
     ]
@@ -248,65 +251,76 @@ const SidebarList = ({
         handlesRef={handlesRef}
       >
         {children}
-        {useMemo(() => _expandedMenuItems.map((item, index) => {
-          if (!item.text) {
-            return null
-          }
-          if (item.type === 'heading') {
-            return (
-              <View
-                flexDirection="row"
-                justifyContent="space-between"
-                alignItems="center"
-                pl="em"
-                pr="small"
-                pt={index ? 'em' : 'small'}
-                pb="small"
-                key={item.text}
-              >
-                <Text variant="uiTextHeading" color="text.2" userSelect="none">
-                  {item.text}
-                </Text>
-                <View flexDirection="row" minHeight={pxUnits(20)}>
-                  {item.links &&
-                    item.links.map((link) => (
-                      <SidebarHeaderButton
-                        key={`shb-${link.label}`}
-                        label={link.label}
-                        ml="tiny"
-                        active={link.active}
-                        onPress={link.onPress}
-                      />
-                    ))}
-                </View>
-              </View>
-            )
-          }
-          let _icon = item.icon ? item.icon : menuSvgs[item.type]
-          if (item.depth) {
-            _icon = <View p={pxUnits(1)}>{_icon}</View>
-          }
-          return (
-            <SidebarListItem
-              depth={item.depth}
-              isActive={getActiveItem(item)}
-              data={item.data}
-              text={item.text}
-              href={getHref(item)}
-              key={`${item.type}-${index}`}
-              draggable={getDraggable(item)}
-              icon={_icon}
-              iconColor={item.iconColor}
-              expandable={showSubitemToggles && item.type === 'group'}
-              onExpand={(evt) => onExpandItem(evt, item.data._id)}
-              expanded={item.subItems && expandedGroups.includes(item.data._id)}
-              contextMenu={item.contextMenu}
-              dropzone={item.isDropzone ? item.dropzoneProps : undefined}
-              {..._pressSelector(item, index)}
-            />
-          )
-        }), [_expandedMenuItems])}
-      </List> 
+        {useMemo(
+          () =>
+            _expandedMenuItems.map((item, index) => {
+              if (!item.text) {
+                return null
+              }
+              if (item.type === 'heading') {
+                return (
+                  <View
+                    flexDirection="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    pl="em"
+                    pr="small"
+                    pt={index ? 'em' : 'small'}
+                    pb="small"
+                    key={item.text}
+                  >
+                    <Text
+                      variant="uiTextHeading"
+                      color="text.2"
+                      userSelect="none"
+                    >
+                      {item.text}
+                    </Text>
+                    <View flexDirection="row" minHeight={pxUnits(20)}>
+                      {item.links &&
+                        item.links.map((link) => (
+                          <SidebarHeaderButton
+                            key={`shb-${link.label}`}
+                            label={link.label}
+                            ml="tiny"
+                            active={link.active}
+                            onPress={link.onPress}
+                          />
+                        ))}
+                    </View>
+                  </View>
+                )
+              }
+              let _icon = item.icon ? item.icon : menuSvgs[item.type]
+              if (item.depth) {
+                _icon = <View p={pxUnits(1)}>{_icon}</View>
+              }
+              return (
+                <SidebarListItem
+                  depth={item.depth}
+                  isActive={getActiveItem(item)}
+                  data={item.data}
+                  text={item.text}
+                  href={getHref(item)}
+                  key={`${item.type}-${index}`}
+                  draggable={getDraggable(item)}
+                  icon={_icon}
+                  iconColor={item.iconColor}
+                  expandable={showSubitemToggles && item.type === 'group'}
+                  onExpand={(evt) => onExpandItem(evt, item.data._id)}
+                  expanded={
+                    item.subItems && expandedGroups.includes(item.data._id)
+                  }
+                  contextMenu={item.contextMenu}
+                  dropzone={item.isDropzone ? item.dropzoneProps : undefined}
+                  keyboardEventsActive={keyboardEventsActive}
+                  {..._pressSelector(item, index)}
+                />
+              )
+            }),
+          [_expandedMenuItems]
+        )}
+      </List>
     </ScrollView>
   )
 }

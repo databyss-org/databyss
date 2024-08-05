@@ -31,6 +31,7 @@ const Search = (others) => {
     debounce((val) => {
       // only allow alphanumeric, hyphen and space
       setQuery(val.replace(/[^a-zA-Z0-9À-ž-'" ]/gi, ''))
+      setHasFocus(true)
     }, 500),
     [setQuery]
   )
@@ -106,6 +107,7 @@ const Search = (others) => {
     if (getSidebarPath() !== 'search') {
       navigateSidebar('/search')
     }
+    clearTimeout(blurTimerRef.current)
     setHasFocus(true)
   }, [setHasFocus, getSidebarPath, navigateSidebar])
 

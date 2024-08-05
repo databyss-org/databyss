@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   sortEntriesAtoZ,
   filterEntries,
@@ -118,11 +118,12 @@ const SidebarSearchResults = ({
       }
     },
   })
-
+  const [orderKey, setOrderKey] = useState<number>(0)
   useEffect(() => {
     if (filterQuery?.trim().length) {
       findInPage.runQuery()
     }
+    setOrderKey(orderKey + 1)
   }, [filterQuery])
 
   const queryRes = [sourcesRes, topicsRes, pagesRes, groupsRes]
@@ -158,22 +159,21 @@ const SidebarSearchResults = ({
   }
   return (
     <SidebarList
-      key={filterQuery}
       showRecentAllToggle={false}
       data-test-element="search-results"
       heading={_menuItems.length ? 'Quick Matches' : ''}
       menuItems={_menuItems}
       height={height}
       keyboardNavigation
-      keyboardEventsActive={searchHasFocus}
-      orderKey={filterQuery}
+      keyboardEventsActive={document.activeElement === inputRef.current}
+      orderKey={orderKey}
       initialActiveIndex={findInPage.matches.length === 0 ? 1 : 0}
-      onItemSelected={() => {
-        // HACK: replace with an "onLoadersComplete" event
-        setTimeout(() => {
-          inputRef.current.focus()
-        }, 50)
-      }}
+      // onItemSelected={() => {
+      //   // HACK: replace with an "onLoadersComplete" event
+      //   setTimeout(() => {
+      //     inputRef.current.focus()
+      //   }, 50)
+      // }}
       onItemPressed={(item, index) => {
         if (listHandleRef.current) {
           listHandleRef.current.setActiveIndex(index + 1)
@@ -182,6 +182,9 @@ const SidebarSearchResults = ({
           onItemPressed(item, index)
         }
       }}
+      borderRightStyle="solid"
+      borderRightColor="border.2"
+      borderRightWidth={1}
       handlesRef={listHandleRef}
       showSubitemToggles={false}
       {...others}
