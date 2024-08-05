@@ -145,7 +145,7 @@ const SidebarList = ({
       onItemPressed(item, index)
     }
     if (!showAll && scrollViewRef.current && item.type !== 'author') {
-      scrollViewRef.current.scrollTop = 0
+      // scrollViewRef.current.scrollTop = 0
       // sorry for this jquery hack!
       setTimeout(() => event.target.closest('a').blur(), 50)
     }
