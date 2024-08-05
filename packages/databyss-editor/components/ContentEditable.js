@@ -250,6 +250,7 @@ const ContentEditable = ({
       })
       queryClient.removeQueries({
         queryKey: [`related_${_b._id}`],
+        exact: false,
       })
       removeEntityFromChangeQueue(_b._id)
     })

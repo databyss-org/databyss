@@ -12,6 +12,7 @@ export interface UseDocumentOptions {
   previousIfNull?: boolean
   previousDeps?: any[]
   queryKey?: string[]
+  queryKeyPrefix?: string
 }
 
 export function applyDefaultUseDocumentOptions(

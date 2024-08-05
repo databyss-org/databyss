@@ -40,7 +40,7 @@ export const useDocuments = <T extends Document>(
 
   const prevQuery = useRef<UseQueryResult<DocumentDict<T>, Error> | null>(null)
   let docIds: string[]
-  let queryKey: QueryKey
+  let queryKey: any[]
   let selector: PouchDB.Find.Selector | undefined
   if (Array.isArray(selectorOrIdList)) {
     queryKey = selectorOrIdList
@@ -52,6 +52,9 @@ export const useDocuments = <T extends Document>(
   if (options.queryKey) {
     // console.log('[useDocuments] override queryKey', options.queryKey)
     queryKey = options.queryKey
+  }
+  if (options.queryKeyPrefix) {
+    queryKey.unshift(options.queryKeyPrefix)
   }
   // const queryKeyJson = JSON.stringify(queryKey)
 

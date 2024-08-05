@@ -458,6 +458,7 @@ export default (
                 draft.newEntities.push(_baked)
               }
             })
+            pushAtomicChangeUpstream({ state, draft })
 
             draft.operations.reloadAll = true
 
@@ -859,12 +860,14 @@ export default (
               // reset block relations
               clearBlockRelations = true
               bakeAtomicBlock({ draft, index: op.index })
+              pushAtomicChangeUpstream({ state, draft })
             } else if (op.convertInlineToAtomic) {
               convertInlineToAtomicBlocks({
                 block: _block,
                 index: op.index,
                 draft,
               })
+              pushAtomicChangeUpstream({ state, draft })
             } else if (op.convertInlineToEmbed) {
               convertInlineToEmbed({
                 block: _block,
@@ -1029,6 +1032,7 @@ export default (
         })
         if (_baked && isAtomicInlineType(_baked.type)) {
           draft.newEntities.push(_baked)
+          pushAtomicChangeUpstream({ state, draft })
         }
 
         // trim leading and trailing linebreaks
