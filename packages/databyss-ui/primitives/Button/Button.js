@@ -41,10 +41,10 @@ const Button = forwardRef(
       _children = (
         <Text
           variant={textVariant}
-          color={textColor ?? buttonVariants[variant].color}
           {...(buttonThemes[variant].textProps
             ? buttonThemes[variant].textProps
             : {})}
+          color={textColor ?? buttonVariants[variant].color}
         >
           {children}
         </Text>

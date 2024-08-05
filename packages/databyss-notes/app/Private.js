@@ -114,7 +114,10 @@ const AppView = ({ children }) => {
           </View>
         </View>
       </View>
-      <PublicGroupFooter theme={isDarkModeRes.data ? darkTheme : lightTheme} />
+      <PublicGroupFooter
+        group={groupRes.data}
+        theme={isDarkModeRes.data ? darkTheme : lightTheme}
+      />
     </>
   )
 }

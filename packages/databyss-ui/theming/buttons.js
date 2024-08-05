@@ -65,7 +65,6 @@ const buttonVariants = {
   },
   uiLink: {
     padding: space.none,
-    color: 'blue.2',
     textDecoration: 'underline',
   },
   formatButton: {
@@ -101,6 +100,9 @@ const buttonThemes = {
   uiLink: {
     hoverColor: 'background.1',
     activeColor: 'background.2',
+    textProps: {
+      color: 'blue.2',
+    },
   },
   uiTextButton: {
     hoverColor: 'background.1',
