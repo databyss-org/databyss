@@ -19,6 +19,8 @@ export const SourcesResults = ({ entries }) => {
   const preferredCitationStyle = getPreferredCitationStyle()
   const { getAccountFromLocation } = useNavigationContext()
 
+  // console.log('[SourcesResults] citationStyle', preferredCitationStyle, entries)
+
   const render = useMemo(
     () =>
       entries?.map((entry, index) => {

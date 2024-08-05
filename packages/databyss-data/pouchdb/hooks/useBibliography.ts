@@ -16,7 +16,10 @@ import { useBlocksInPages } from '.'
 import { useDocuments } from './useDocuments'
 import { UseDocumentOptions } from './useDocument'
 import { selectors } from '../selectors'
-import { filterBibliographyByAuthor, sortBibliography } from '@databyss-org/services/sources/lib'
+import {
+  filterBibliographyByAuthor,
+  sortBibliography,
+} from '@databyss-org/services/sources/lib'
 
 interface UseBibliographyOptions extends UseDocumentOptions {
   formatOptions: CitationFormatOptions
@@ -30,7 +33,7 @@ export const useBibliography = ({
   subscribe,
   ...otherOptions
 }: UseBibliographyOptions) => {
-  const queryClient = useQueryClient()
+  // console.log('[useBibliography] formatOptions', formatOptions)
   const blocksInPagesRes = useBlocksInPages<Source>(BlockType.Source, {
     enabled: !sourceIds,
     subscribe,
@@ -46,15 +49,15 @@ export const useBibliography = ({
       : blocksInPagesRes.data
 
   const queryKey = [
-    'bibliography', 
-    sourceIds, 
-    sourceIds ? blocksByIdRes.dataUpdatedAt : blocksInPagesRes.dataUpdatedAt
+    'bibliography',
+    sourceIds,
+    sourceIds ? blocksByIdRes.dataUpdatedAt : blocksInPagesRes.dataUpdatedAt,
+    formatOptions.styleId,
   ]
   const query = useQuery<BibliographyItem[]>({
-    queryFn: () => {
-      console.log('[useBibliogaphy] query', queryKey)
-      return bibliographyFromSources(sources()!, formatOptions)
-    },
+    queryFn: () =>
+      // console.log('[useBibliogaphy] query', queryKey)
+      bibliographyFromSources(sources()!, formatOptions),
     enabled: sourceIds ? blocksByIdRes.isSuccess : blocksInPagesRes.isSuccess,
     ...(otherOptions as UseQueryOptions<BibliographyItem[]>),
     queryKey,
@@ -65,7 +68,7 @@ export const useBibliography = ({
 
 export async function bibliographyFromSources(
   sources: Source[],
-  formatOptions: CitationFormatOptions,
+  formatOptions: CitationFormatOptions
 ): Promise<BibliographyItem[]> {
   if (!sources) {
     return []
@@ -75,7 +78,7 @@ export async function bibliographyFromSources(
     const citation = source.detail
       ? await toCitation(source.detail, formatOptions)
       : null
-    items.push({ citation, source })
+    items.push({ citation, source, citationStyle: formatOptions.styleId })
   }
   items = sortBibliography(items)
   return items
