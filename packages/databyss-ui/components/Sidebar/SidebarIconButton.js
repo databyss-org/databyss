@@ -31,7 +31,7 @@ const getDotStyles = (isActive, isBottomNav) => {
     bottom: pxUnits(8),
     left: 0,
     top: pxUnits(8),
-    width: pxUnits(2),
+    width: pxUnits(3),
   })
 }
 
@@ -81,9 +81,10 @@ const SidebarIconButton = ({
       onClick={onClick}
       // width="100%"
       position="relative"
+      hoverColor="background.2"
       {...others}
     >
-      <View bg="purple.2" css={getDotStyles(isActive, isBottomNav)} />
+      <View bg="purple.1" css={getDotStyles(isActive, isBottomNav)} />
       <Grid
         singleRow
         css={getGridStyles(isBottomNav)}
@@ -112,7 +113,7 @@ const SidebarIconButton = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Text variant="uiTextTiny" color="gray.4">
+          <Text variant="uiTextTiny" color="white">
             {badgeText}
           </Text>
         </View>

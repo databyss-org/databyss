@@ -56,11 +56,29 @@ export const darkTheme = {
   },
 }
 
+export const lightTheme = {
+  ...theme,
+  name: 'lightTheme',
+  colors: {
+    ...theme.colors,
+    ...theme.colors.modes.light,
+  },
+}
+
 export const darkContentTheme = {
   ...theme,
   name: 'darkContentTheme',
   colors: {
     ...theme.colors,
     ...theme.colors.modes.darkContent,
+  },
+}
+
+export const lightContentTheme = {
+  ...theme,
+  name: 'lightContentTheme',
+  colors: {
+    ...theme.colors,
+    ...theme.colors.modes.lightContent,
   },
 }

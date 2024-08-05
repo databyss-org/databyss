@@ -94,6 +94,7 @@ const Footer = ({ collapsed }) => {
         alignItems="center"
         childViewProps={{ width: '100%' }}
         disabled={isReadOnly}
+        hoverColor="background.2"
       >
         <Grid singleRow alignItems="center" columnGap="small">
           {collapsed ? (

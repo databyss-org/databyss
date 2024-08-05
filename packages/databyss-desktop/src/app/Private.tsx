@@ -36,9 +36,11 @@ import { EditorPageProvider } from '@databyss-org/services'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
-import theme, {
+import {
   darkContentTheme,
   darkTheme,
+  lightTheme,
+  lightContentTheme,
 } from '@databyss-org/ui/theming/theme'
 import SidebarSvg from '@databyss-org/ui/assets/sidebar.svg'
 import ChevronSvg from '@databyss-org/ui/assets/chevron-right.svg'
@@ -143,6 +145,7 @@ const AppView = ({
       flexShrink={1}
       flexGrow={1}
       mt={pxUnits(38)}
+      theme={isDarkModeRes.data ? darkContentTheme : lightContentTheme}
     >
       <TitleBar>
         <View
@@ -208,13 +211,16 @@ const AppView = ({
         />
       )}
       {sidebarWidth !== null && (
-        <Sidebar onResized={onSidebarResized} width={sidebarWidth} />
+        <Sidebar
+          onResized={onSidebarResized}
+          width={sidebarWidth}
+          theme={isDarkModeRes.data ? darkTheme : lightTheme}
+        />
       )}
       <View
         data-test-element="body"
         flexGrow={1}
         flexShrink={1}
-        theme={isDarkModeRes.data ? darkContentTheme : theme}
         bg="background.1"
         minWidth={0}
         position="relative"

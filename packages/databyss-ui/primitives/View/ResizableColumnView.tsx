@@ -70,7 +70,7 @@ export const ResizableColumnView = forwardRef<
             </View>
             {!isMenuVisible && (
               <View
-                width="6px"
+                width="4px"
                 position="absolute"
                 top={0}
                 bottom={0}
@@ -79,7 +79,7 @@ export const ResizableColumnView = forwardRef<
                 css={{
                   cursor: 'col-resize',
                   '&:hover': {
-                    background: css({ color: 'purple.3' })(theme).color,
+                    background: css({ color: 'purple.1' })(theme).color,
                   },
                   userSelect: 'none',
                 }}

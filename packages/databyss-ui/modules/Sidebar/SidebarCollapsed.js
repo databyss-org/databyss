@@ -15,7 +15,7 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { usePageReferences } from '@databyss-org/data/pouchdb/hooks'
 import { darkTheme } from '../../theming/theme'
 
-const SidebarCollapsed = () => {
+const SidebarCollapsed = ({ ...others }) => {
   const {
     navigateSidebar,
     getSidebarPath,
@@ -116,7 +116,7 @@ const SidebarCollapsed = () => {
 
   return (
     <>
-      <View theme={darkTheme} bg="background.1">
+      <View bg="background.1" {...others}>
         <List
           verticalItemPadding={2}
           horizontalItemPadding={1}

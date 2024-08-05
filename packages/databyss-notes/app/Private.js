@@ -24,14 +24,20 @@ import {
 } from '@databyss-org/ui/modules'
 import { EditorPageProvider } from '@databyss-org/services'
 import { useAppState } from '@databyss-org/desktop/src/hooks'
-import theme, {
+import {
+  lightTheme,
+  lightContentTheme,
+  darkTheme,
   darkContentTheme,
   pxUnits,
 } from '@databyss-org/ui/theming/theme'
 import { sidebar } from '@databyss-org/ui/theming/components'
 import { useDocument } from '@databyss-org/data/pouchdb/hooks/useDocument'
 import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
-import { PublicGroupHeader } from '@databyss-org/ui/components'
+import {
+  PublicGroupHeader,
+  PublicGroupFooter,
+} from '@databyss-org/ui/components'
 
 const AppView = ({ children }) => {
   const [sidebarWidth, setSidebarWidth] = useState(null)
@@ -59,6 +65,7 @@ const AppView = ({ children }) => {
         <PublicGroupHeader
           group={groupRes.data}
           darkMode={isDarkModeRes.data}
+          theme={isDarkModeRes.data ? darkTheme : lightContentTheme}
           setDarkMode={(value) => window.eapi.state.set('darkMode', value)}
         />
       )}
@@ -69,11 +76,15 @@ const AppView = ({ children }) => {
         overflow="hidden"
         flexShrink={1}
         flexGrow={1}
-        bg="background.1"
-        theme={isDarkModeRes.data ? darkContentTheme : theme}
+        bg="background.0"
+        theme={isDarkModeRes.data ? darkContentTheme : lightContentTheme}
       >
         {sidebarWidth !== null && (
-          <Sidebar onResized={onSidebarResized} width={sidebarWidth} />
+          <Sidebar
+            onResized={onSidebarResized}
+            width={sidebarWidth}
+            theme={isDarkModeRes.data ? darkTheme : lightTheme}
+          />
         )}
         <View
           data-test-element="body"
@@ -103,6 +114,7 @@ const AppView = ({ children }) => {
           </View>
         </View>
       </View>
+      <PublicGroupFooter theme={isDarkModeRes.data ? darkTheme : lightTheme} />
     </>
   )
 }

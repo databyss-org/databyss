@@ -31,7 +31,7 @@ const SearchInputContainer = React.forwardRef(
   ) => (
     <View width="100%" {...others} onClick={onClick} px="small">
       <View
-        backgroundColor="gray.1"
+        backgroundColor="background.0"
         height="100%"
         justifyContent="center"
         position="relative"

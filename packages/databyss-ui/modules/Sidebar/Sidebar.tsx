@@ -5,7 +5,7 @@ import { View, List } from '@databyss-org/ui/primitives'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
 // import { Header } from '@databyss-org/ui/components/Sidebar'
 import { BlockType } from '@databyss-org/services/interfaces'
-import { darkTheme, pxUnits } from '@databyss-org/ui/theming/theme'
+import { pxUnits } from '@databyss-org/ui/theming/theme'
 import { sidebar } from '@databyss-org/ui/theming/components'
 import SidebarCollapsed from './SidebarCollapsed'
 import { BlockList, PageList, GroupList } from './lists'
@@ -18,6 +18,7 @@ import { appCommands } from '../../lib/appCommands'
 export const Sidebar = ({
   onResized,
   width,
+  ...others
 }: {
   onResized?: (width: number) => void
   width: number
@@ -46,9 +47,11 @@ export const Sidebar = ({
   if item active in menuItem, SidebarContent will compose a list to pass to SidebarList
   */
 
+  const { theme } = others
+
   return isMenuOpen ? (
     <>
-      <SidebarCollapsed />
+      <SidebarCollapsed theme={theme} />
       <ResizableColumnView
         position="relative"
         width={width}
@@ -58,7 +61,7 @@ export const Sidebar = ({
         minWidth={sidebar.width}
       >
         <View
-          theme={darkTheme}
+          // theme={darkTheme}
           bg="background.1"
           flexGrow={1}
           flexShrink={1}
@@ -66,6 +69,7 @@ export const Sidebar = ({
           css={{ transform: 'translate(0,0)' }}
           borderLeftColor="border.2"
           borderLeftWidth={pxUnits(1)}
+          {...others}
         >
           <List
             verticalItemPadding={pxUnits(11)}
@@ -79,7 +83,7 @@ export const Sidebar = ({
             overflow="hidden"
           >
             {/* <Header /> */}
-            <Search bg="gray.1" />
+            <Search bg="background.0" />
             {(menuItem === 'pages' || !menuItem) && <PageList />}
             {menuItem === 'references' && <ReferencesList />}
             {menuItem === 'sources' && (
@@ -110,6 +114,6 @@ export const Sidebar = ({
       </ResizableColumnView>
     </>
   ) : (
-    <SidebarCollapsed />
+    <SidebarCollapsed theme={theme} />
   )
 }

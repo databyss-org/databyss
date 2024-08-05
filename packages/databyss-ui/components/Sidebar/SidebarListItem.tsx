@@ -87,7 +87,7 @@ export const SidebarListRow = ({
       )}
       <Icon
         sizeVariant="tiny"
-        color={iconColor ?? (isActive ? 'text.1' : 'text.3')}
+        color="text.2"
         mr="small"
         ml={depth > 0 ? pxUnits(13) : 'none'}
         mt={pxUnits(1)}
@@ -96,7 +96,7 @@ export const SidebarListRow = ({
       </Icon>
       <Text
         variant="uiTextSmall"
-        color={isActive ? 'text.1' : 'text.3'}
+        color="text.2"
         userSelect="none"
         overflow="hidden"
         css={{
@@ -176,6 +176,8 @@ const SidebarListItem = ({
       draggable={draggable}
       position="relative"
       focusVisible
+      hoverColor="background.2"
+      activeColor="background.2"
       {...(depth > 0
         ? {
             borderWidth: 0,

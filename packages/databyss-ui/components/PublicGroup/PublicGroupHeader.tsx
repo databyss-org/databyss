@@ -12,6 +12,7 @@ export const PublicGroupHeader = ({
   group,
   darkMode,
   setDarkMode,
+  ...others
 }: {
   group: Group
   darkMode: boolean
@@ -23,7 +24,7 @@ export const PublicGroupHeader = ({
   return (
     <View
       flexDirection="row"
-      bg="background.1"
+      bg="background.0"
       theme={darkTheme}
       p="small"
       borderBottomColor="border.2"
@@ -32,6 +33,7 @@ export const PublicGroupHeader = ({
       alignItems="center"
       justifyContent="space-between"
       pr="em"
+      {...others}
     >
       <View flexDirection="row" alignItems="center" py="tiny" pl="small">
         <img src={DatabyssImg} width={pxUnits(48)} />

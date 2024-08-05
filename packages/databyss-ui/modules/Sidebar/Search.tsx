@@ -137,7 +137,7 @@ const Search = (others) => {
         <SidebarSearchResults
           key={searchTerm}
           borderTopWidth={1}
-          borderTopColor="gray.3"
+          borderTopColor="border.2"
           filterQuery={searchTerm}
           onSearch={onSearchClick}
           height="100%"

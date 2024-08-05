@@ -39,7 +39,7 @@ _c = {
   // [darkest...lightest]
   text: [_c.black, ..._c.gray.slice(2)],
   // [lightest...darkest]
-  background: [_c.white, ..._c.gray.slice().reverse()],
+  background: [_c.gray[7], ..._c.gray.slice().reverse()],
   // control colors [enabled, hover, active, label]
   primary: [_c.blue[1], _c.blue[2], _c.blue[0], _c.white],
   secondary: [_c.blue[1], _c.gray[6], _c.gray[5], _c.blue[1]],
@@ -64,6 +64,13 @@ _c = {
   ..._c,
   focusOutlineColor: _c.pink,
   entrySourceColor: _c.purple[0],
+}
+
+// light ui mode
+const _lightUi = {
+  ..._c,
+  background: [..._c.gray.slice().reverse()],
+  text: [_c.black, ..._c.gray.slice(2)],
 }
 
 // dark mode
@@ -105,6 +112,8 @@ _c = {
   modes: {
     dark: _darkUi,
     darkContent: _darkContent,
+    light: _lightUi,
+    lightContent: _c,
   },
 }
 

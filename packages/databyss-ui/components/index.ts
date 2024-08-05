@@ -27,6 +27,7 @@ export { SourceCitationView } from './Citation/SourceCitationView'
 export { default as EditSourceForm } from './SourceForm/EditSourceForm'
 export { DropdownContainer } from '../'
 export { PublicGroupHeader } from './PublicGroup/PublicGroupHeader'
+export { PublicGroupFooter } from './PublicGroup/PublicGroupFooter'
 
 export interface SidebarListItemLink {
   label: string
