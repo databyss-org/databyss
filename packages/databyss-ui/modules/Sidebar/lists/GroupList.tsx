@@ -41,6 +41,10 @@ export const GroupList = (others) => {
             ...group,
             pages: group.pages.filter((_id) => _id !== page._id),
           }
+          // if defaultPage is no longer in group, reset to first page
+          if (_group.defaultPageId === page._id) {
+            _group.defaultPageId = group.pages[0]
+          }
           await setGroup(_group)
           return true
         },
@@ -89,11 +93,11 @@ export const GroupList = (others) => {
   )
 
   return (
-    <SidebarList 
-      heading="Collections" 
-      menuItems={items} 
+    <SidebarList
+      heading="Collections"
+      menuItems={items}
       showRecentAllToggle={false}
-      {...others} 
+      {...others}
     />
   )
 }

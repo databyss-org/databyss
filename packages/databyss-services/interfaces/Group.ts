@@ -15,6 +15,7 @@ export class Group {
   isPublishing: boolean
   publishingStatusId: string | null
   subtitle: Text
+  publishSourceMedia?: boolean
 
   constructor(name: string) {
     this._id = `g_${uidlc()}`
@@ -23,9 +24,9 @@ export class Group {
     this.public = false
     this.localGroup = false
     this.lastPublishedAt = null
-    this.lastPublishResult = null
     this.isPublishing = false
     this.publishingStatusId = null
     this.subtitle = { textValue: '', ranges: [] }
+    this.publishSourceMedia = false
   }
 }

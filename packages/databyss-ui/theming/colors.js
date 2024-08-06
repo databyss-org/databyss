@@ -68,6 +68,12 @@ _c = {
   entrySourceColor: _c.purple[0],
 }
 
+const _lightContent = {
+  ..._c,
+  blue: _c.blue.map((c) => Color(c).darken(0.2).hex()),
+  text: _c.text.map((c) => Color(c).darken(0.3).hex()),
+}
+
 // light ui mode
 const _lightUi = {
   ..._c,
@@ -117,7 +123,7 @@ _c = {
     dark: _darkUi,
     darkContent: _darkContent,
     light: _lightUi,
-    lightContent: _c,
+    lightContent: _lightContent,
   },
 }
 

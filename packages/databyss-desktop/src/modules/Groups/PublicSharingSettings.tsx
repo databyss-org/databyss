@@ -79,6 +79,8 @@ export const PublicSharingSettings = ({
     enabled: group.publishingStatusId !== null,
   })
 
+  console.log('[PublicSharingSettings] group', group)
+
   // setup publishing log ui
   let _lastPublishedText = 'never'
   if (group.lastPublishedAt) {
@@ -94,7 +96,7 @@ export const PublicSharingSettings = ({
   let _defaultPage: Page | null = null
   let _defaultPageMenuItems: MenuItem[] = []
   if (pagesRes.data) {
-    _defaultPage = pagesRes.data[group.defaultPageId ?? group.pages[0]]
+    _defaultPage = pagesRes.data[group.defaultPageId]
 
     _defaultPageMenuItems = group.pages.map((pid) => {
       const _page = pagesRes.data[pid]
@@ -126,6 +128,20 @@ export const PublicSharingSettings = ({
       }
     },
     [group, unpublishGroupDatabase]
+  )
+
+  const _includeSourceMediaView = (
+    <ValueListItem path="publishSourceMedia" defaultValue={false}>
+      <SwitchControl
+        label="Include source media"
+        alignLabel="left"
+        textVariant="uiTextNormal"
+        labelTextProps={{
+          color: 'text.2',
+        }}
+        disabled={readOnly}
+      />
+    </ValueListItem>
   )
 
   const _defaultPageView = _defaultPage && (
@@ -189,7 +205,6 @@ export const PublicSharingSettings = ({
             variant="uiLink"
             p="tiny"
             borderRadius="default"
-            // color="text.2"
             onPress={() => {
               if (group.isPublishing) {
                 cancelPublishGroupDatabase(group)
@@ -217,9 +232,6 @@ export const PublicSharingSettings = ({
 
   const _copyLinkView = group.lastPublishedAt && (
     <>
-      <View px="em">
-        <Separator spacing="none" color="text.3" />
-      </View>
       <View
         flexDirection="row"
         alignItems="center"
@@ -270,7 +282,7 @@ export const PublicSharingSettings = ({
           icon={linkCopied ? <CheckSvg /> : <LinkSvg />}
           iconColor={linkCopied ? 'green.0' : 'text.2'}
           color="text.2"
-          label={linkCopied ? 'Link copied' : 'Copy link'}
+          label={linkCopied ? 'Copied' : 'Copy'}
         />
         {/* <BaseControl
           justifySelf="flex-end"
@@ -314,6 +326,7 @@ export const PublicSharingSettings = ({
       {group.public && (
         <>
           {_defaultPageView}
+          {_includeSourceMediaView}
           {_lastPublishedView}
           {_publicUrl && _copyLinkView}
         </>

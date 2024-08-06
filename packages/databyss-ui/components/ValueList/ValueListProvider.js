@@ -72,6 +72,7 @@ export const ValueListItem = ({
   path,
   dependencies = [],
   onChange = null,
+  defaultValue = null,
   ...others
 }) => {
   const { onItemChange, valuesRef } = useValueListContext()
@@ -83,7 +84,7 @@ export const ValueListItem = ({
     }
   }
 
-  const value = _.get(valuesRef.current, path, defaultText)
+  const value = _.get(valuesRef.current, path, defaultValue ?? defaultText)
 
   // lodash.get:
   // Gets the value at path of object.

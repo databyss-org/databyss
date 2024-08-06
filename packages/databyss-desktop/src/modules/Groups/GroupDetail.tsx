@@ -1,4 +1,10 @@
-import React, { useCallback, PropsWithChildren, useState, useRef } from 'react'
+import React, {
+  useCallback,
+  PropsWithChildren,
+  useState,
+  useRef,
+  useEffect,
+} from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import ValueListProvider, {
   ValueListItem,
@@ -64,6 +70,7 @@ export const GroupFields = ({
 
   const onChange = useCallback(
     (_values: Group) => {
+      console.log('[GroupDetail] onChange')
       // if defaultPageId was set for this group, set it now
       if (!groupValue.current.defaultPageId) {
         _values.defaultPageId = _values.pages[0]
@@ -87,6 +94,10 @@ export const GroupFields = ({
     },
     [setValues, values]
   )
+
+  useEffect(() => {
+    onChange(group)
+  }, [group])
 
   const _values = { ...values }
   if (_values.name === UNTITLED_NAME) {
