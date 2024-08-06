@@ -189,6 +189,7 @@ export const PublicSharingSettings = ({
             variant="uiLink"
             p="tiny"
             borderRadius="default"
+            // color="text.2"
             onPress={() => {
               if (group.isPublishing) {
                 cancelPublishGroupDatabase(group)

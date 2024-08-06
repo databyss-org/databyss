@@ -11,7 +11,10 @@ import {
 import { appState } from './state-handlers'
 import { createDatabyss } from '../../lib/createDatabyss'
 import { opengraph } from '@databyss-org/services/embeds/remoteMedia'
-import { backupDbToJson, makeBackupFilename } from '@databyss-org/data/pouchdb/backup'
+import {
+  backupDbToJson,
+  makeBackupFilename,
+} from '@databyss-org/data/pouchdb/backup'
 import PouchDb from 'pouchdb-node'
 
 export interface IpcFile {
@@ -39,7 +42,6 @@ export async function onImportDatabyss() {
 export async function onChooseDataPath() {
   const dialogRes = await dialog.showOpenDialog({
     properties: ['openDirectory', 'createDirectory'],
-    
   })
   // console.log('[FILE] onChooseDataPath', dialogRes)
   if (dialogRes.canceled) {
@@ -58,16 +60,20 @@ export async function closeDatabyss() {
 }
 
 async function archiveAndRemoveDatabyss(groupId: string) {
-  // backup databyss to json 
+  // backup databyss to json
   const _archivePath = await archiveDatabyss(groupId)
   if (!_archivePath) {
     return false
   }
   // remove from groups
   const _groups = appState.get('localGroups')
-  appState.set('localGroups', _groups.filter((group) => group._id !== groupId))
+  appState.set(
+    'localGroups',
+    _groups.filter((group) => group._id !== groupId)
+  )
   // delete db files
-  const _ls = fs.readdirSync(path.join(appState.get('dataPath'), 'pouchdb'))
+  const _ls = fs
+    .readdirSync(path.join(appState.get('dataPath'), 'pouchdb'))
     .filter((dir) => dir.startsWith(groupId))
     .forEach((dir) => {
       fs.removeSync(path.join(appState.get('dataPath'), 'pouchdb', dir))
@@ -87,11 +93,17 @@ export function registerFileHandlers() {
   ipcMain.handle('file-chooseDataPath', onChooseDataPath)
   ipcMain.handle('file-importDatabyss', onImportDatabyss)
   ipcMain.handle('file-newDatabyss', (evt) => createDatabyss(evt.sender.id))
-  ipcMain.handle('file-archiveDatabyss', (_, groupId: string) => archiveAndRemoveDatabyss(groupId))
+  ipcMain.handle('file-archiveDatabyss', (_, groupId: string) =>
+    archiveAndRemoveDatabyss(groupId)
+  )
   ipcMain.handle('file-importMedia', (evt, file: IpcFile, fileId: string) => {
     console.log('[IPC] importMedia', file.name)
     const windowId = evt.sender.id
-    const _mediaItemDir = path.join(mediaPath(), nodeDbRefs[windowId].groupId, fileId)
+    const _mediaItemDir = path.join(
+      mediaPath(),
+      nodeDbRefs[windowId].groupId,
+      fileId
+    )
     const { buffer, ...meta } = file
     fs.mkdirSync(_mediaItemDir, { recursive: true })
     // write the buffer
@@ -102,35 +114,49 @@ export function registerFileHandlers() {
       JSON.stringify(meta)
     )
   })
-  ipcMain.handle('file-renameMedia', (evt, fileId: string, renameTo: string) => {
-    console.log('[IPC] renameMedia', fileId, renameTo)
-    const windowId = evt.sender.id
-    const _mediaItemDir = path.join(mediaPath(), nodeDbRefs[windowId].groupId, fileId)
-    const _meta = JSON.parse(
-      fs.readFileSync(path.join(_mediaItemDir, 'meta.json')).toString()
-    ) as IpcFile
-    const _safeFilename = renameTo
-      .replace(/[/\\?%*:|"<>]/g, '')
-      .substring(0, 254)
-    fs.renameSync(
-      path.join(_mediaItemDir, _meta.name), 
-      path.join(_mediaItemDir, _safeFilename))
-    _meta.name = _safeFilename
-    fs.writeFileSync(
-      path.join(_mediaItemDir, 'meta.json'),
-      JSON.stringify(_meta)
-    )
-    return _safeFilename
-  })
+  ipcMain.handle(
+    'file-renameMedia',
+    (evt, fileId: string, renameTo: string) => {
+      console.log('[IPC] renameMedia', fileId, renameTo)
+      const windowId = evt.sender.id
+      const _mediaItemDir = path.join(
+        mediaPath(),
+        nodeDbRefs[windowId].groupId,
+        fileId
+      )
+      const _meta = JSON.parse(
+        fs.readFileSync(path.join(_mediaItemDir, 'meta.json')).toString()
+      ) as IpcFile
+      const _safeFilename = renameTo
+        .replace(/[/\\?%*:|"<>]/g, '')
+        .substring(0, 128)
+      fs.renameSync(
+        path.join(_mediaItemDir, _meta.name),
+        path.join(_mediaItemDir, _safeFilename)
+      )
+      _meta.name = _safeFilename
+      fs.writeFileSync(
+        path.join(_mediaItemDir, 'meta.json'),
+        JSON.stringify(_meta)
+      )
+      return _safeFilename
+    }
+  )
   ipcMain.on('file-openNative', (_, filePath: string) => {
     const _decodedPath = decodeURIComponent(
       filePath.replace('dbdrive://', `${mediaPath()}/`)
     )
-    shell.openPath(path.join(..._decodedPath.split(/[\/\\]/)))
+    const _fixedPath = path.join('/', ..._decodedPath.split(/[\/\\]/))
+    // console.log('[file] openNative', _fixedPath)
+    shell.openPath(_fixedPath)
   })
   ipcMain.handle('file-deleteMedia', (evt, fileId: string) => {
     const windowId = evt.sender.id
-    const _mediaItemDir = path.join(mediaPath(), nodeDbRefs[windowId].groupId, fileId)
+    const _mediaItemDir = path.join(
+      mediaPath(),
+      nodeDbRefs[windowId].groupId,
+      fileId
+    )
     fs.removeSync(_mediaItemDir)
   })
   ipcMain.handle('file-getEmbedDetail', async (_, urlOrHtml: string) => {

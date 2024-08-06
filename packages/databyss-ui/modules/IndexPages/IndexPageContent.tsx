@@ -460,5 +460,9 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
         />
       </IndexPageView>
     )
-  }, [blockRelationRes.dataUpdatedAt, blocksRes.dataUpdatedAt])
+  }, [
+    blockRelationRes.dataUpdatedAt,
+    blocksRes.dataUpdatedAt,
+    blockRes.dataUpdatedAt,
+  ])
 }
