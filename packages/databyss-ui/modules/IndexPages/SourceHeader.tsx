@@ -212,10 +212,14 @@ export const SourceHeader = ({
   return readOnly ? (
     <View my="em">
       <SourceTitleAndCitationView source={source} />
-      <Text variant="uiTextHeading" mb="small" mt="em">
-        Media
-      </Text>
-      {source.media?.length && <ReadOnlyMediaLinks source={source} />}
+      {source.media?.length && (
+        <>
+          <Text variant="uiTextHeading" mb="small" mt="em">
+            Media
+          </Text>
+          <ReadOnlyMediaLinks source={source} />
+        </>
+      )}
     </View>
   ) : (
     <View mt="em">
