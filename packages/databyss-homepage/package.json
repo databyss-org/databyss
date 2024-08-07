@@ -1,10 +1,10 @@
 {
   "name": "@databyss-org/homepage",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "private": true,
   "peerDependencies": {
-    "@databyss-org/services": "3.3.4",
-    "@databyss-org/ui": "3.3.4",
+    "@databyss-org/services": "3.3.5",
+    "@databyss-org/ui": "3.3.5",
     "lodash": "^4.17.15",
     "react": "18.2.0",
     "react-dom": "18.2.0",
