@@ -23,7 +23,7 @@ import { ValueListItem } from '@databyss-org/ui/components/ValueList/ValueListPr
 import { copyToClipboard } from '@databyss-org/ui/components/PageContent/PageMenu'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { urlSafeName } from '@databyss-org/services/lib/util'
-import { darkTheme } from '@databyss-org/ui/theming/theme'
+import { darkContentTheme, darkTheme } from '@databyss-org/ui/theming/theme'
 
 interface IconControlProps extends BaseControlProps {
   icon: ReactNode
@@ -218,7 +218,13 @@ export const PublicSharingSettings = ({
         </View>
       </View>
       {showPublishLog && _publishLog && (
-        <View bg="background.1" ml="em" mr="em" p="tiny" theme={darkTheme}>
+        <View
+          bg="background.1"
+          ml="em"
+          mr="em"
+          p="tiny"
+          theme={darkContentTheme}
+        >
           {_publishLog.map((_msg) => (
             <Text variant="uiTextSmall" color="text.1">
               {_msg}

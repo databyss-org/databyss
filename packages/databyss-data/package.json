@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/data",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "description": "Library for working with persistent storage and replication of databyss entities",
   "main": "index.js",
   "repository": {
@@ -14,11 +14,11 @@
   "license": "MIT",
   "private": false,
   "peerDependencies": {
-    "@databyss-org/data": "3.3.5",
-    "@databyss-org/desktop": "3.3.5",
-    "@databyss-org/editor": "3.3.5",
-    "@databyss-org/services": "3.3.5",
-    "@databyss-org/ui": "3.3.5",
+    "@databyss-org/data": "3.3.6",
+    "@databyss-org/desktop": "3.3.6",
+    "@databyss-org/editor": "3.3.6",
+    "@databyss-org/services": "3.3.6",
+    "@databyss-org/ui": "3.3.6",
     "es-event-emitter": "^1.3.9",
     "immer": "10.1.1",
     "json-schema": "^0.2.5",

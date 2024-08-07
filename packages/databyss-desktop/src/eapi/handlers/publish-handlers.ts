@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import {
   buildSearchIndexDb,
   createNodeDb,
@@ -23,6 +23,7 @@ import { getR2Client, upload, remove } from '@databyss-org/services/lib/r2'
 import { Role } from '@databyss-org/data/interfaces/sysUser'
 import { RemoteDbInfo } from '@databyss-org/services/session/utils'
 import { createReadStream } from 'fs'
+import path from 'path'
 import { mediaPath } from './file-handlers'
 
 export class PublishingStatus {
@@ -238,15 +239,17 @@ async function publishGroup(
   // rewrite embed src urls
   const _embedSrcUrlBase = `${process.env.DBFILE_URL}${groupId}/media`
   _dataToWrite = _dataToWrite.concat(
-    _embedsToWrite.map((_embed) => ({
-      ..._embed,
-      detail: {
-        ..._embed.detail,
-        src: `${_embedSrcUrlBase}/${_embed._id}/${encodeURIComponent(
-          _embed.detail.fileDetail.filename
-        )}`,
-      },
-    })) as any[]
+    _embedsToWrite.map((_embed) =>
+      _embed.detail?.fileDetail
+        ? {
+            ..._embed,
+            detail: {
+              ..._embed.detail,
+              src: `${_embedSrcUrlBase}/${_embed._id}/${_embed.detail.fileDetail.filename}`,
+            },
+          }
+        : _embed
+    ) as any[]
   )
 
   _group.lastPublishedAt = _publishedAt
@@ -352,9 +355,20 @@ async function publishGroup(
   updateStatusMessage({ statusId, message: `Uploading media...` })
   const _mediaPathBase = `${groupId}/media`
   for (const _embed of _embedsToWrite) {
-    const _localPath = _embed.detail.src.replace(
-      'dbdrive://',
-      `${mediaPath()}/`
+    if (!_embed.detail?.fileDetail) {
+      continue
+    }
+    console.log(
+      mediaPath(),
+      nodeDbRefs[windowId].groupId,
+      _embed._id,
+      _embed.detail.fileDetail.filename
+    )
+    const _localPath = path.join(
+      mediaPath(),
+      nodeDbRefs[windowId].groupId,
+      _embed._id,
+      _embed.detail.fileDetail.filename
     )
     console.log('[publishGroup] upload', _localPath)
     const _fileStream = createReadStream(_localPath)

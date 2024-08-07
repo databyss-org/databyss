@@ -143,7 +143,7 @@ export const EmbedCard = React.memo(
                   </View>
                 )}
                 <img
-                  src={_imageSrc}
+                  src={encodeURI(_imageSrc)}
                   alt={title}
                   style={{
                     opacity: 0,
