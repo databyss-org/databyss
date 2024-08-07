@@ -6,12 +6,24 @@ import {
   getDbDirPath,
   nodeDbRefs,
 } from '../../nodeDb'
-import { Block, BlockType, Group } from '@databyss-org/services/interfaces'
-import { PageDoc, UserPreference } from '@databyss-org/data/pouchdb/interfaces'
+import {
+  Block,
+  BlockType,
+  Embed,
+  Group,
+  Source,
+} from '@databyss-org/services/interfaces'
+import {
+  DbDocument,
+  PageDoc,
+  UserPreference,
+} from '@databyss-org/data/pouchdb/interfaces'
 import { getAtomicsFromFrag } from '@databyss-org/services/blocks/related'
 import { getR2Client, upload, remove } from '@databyss-org/services/lib/r2'
 import { Role } from '@databyss-org/data/interfaces/sysUser'
 import { RemoteDbInfo } from '@databyss-org/services/session/utils'
+import { createReadStream } from 'fs'
+import { mediaPath } from './file-handlers'
 
 export class PublishingStatus {
   isCancelled: boolean
@@ -177,24 +189,65 @@ async function publishGroup(
   }
   // console.log('[publishGroup] _relatedDocIds', _relatedDocIds)
 
-  const _uniqueDocIds = Array.from(new Set(_relatedDocIds))
-
   if (_status.isCancelled) {
     return
   }
   updateStatusMessage({ statusId, message: `Fetching data to publish...` })
 
   const _docsToWrite = await _db.bulkGet({
-    docs: _uniqueDocIds.map((d) => ({ id: d })),
+    docs: _relatedDocIds.map((d) => ({ id: d })),
   })
 
   if (_status.isCancelled) {
     return false
   }
   updateStatusMessage({ statusId, message: `Generating data to publish...` })
-  const _dataToWrite = _docsToWrite!.results
+
+  let _dataToWrite: DbDocument[] = []
+  let _embedsToWrite: Embed[] = []
+  const _sourceMediaIds: string[] = []
+  _docsToWrite!.results
     .map((_d) => (_d.docs[0] as any).ok)
     .filter(Boolean)
+    .forEach((_d: DbDocument) => {
+      if (_d.type === BlockType.Source) {
+        _sourceMediaIds.push(...((_d as Source).media ?? []))
+        // remove the media field if we're not publishing it
+        if (!_group.publishSourceMedia) {
+          delete _d.media
+        }
+      }
+      if (_d.type === BlockType.Embed) {
+        _embedsToWrite.push(_d)
+      } else {
+        _dataToWrite.push(_d)
+      }
+    })
+  // get source media embeds (if necessary)
+  if (_group.publishSourceMedia) {
+    const _uniqueSourceMediaIds = Array.from(new Set(_sourceMediaIds))
+    const _sourceMediaDocs = await _db.bulkGet({
+      docs: _uniqueSourceMediaIds.map((d) => ({ id: d })),
+    })
+    _embedsToWrite = _embedsToWrite.concat(
+      _sourceMediaDocs!.results
+        .map((_d) => (_d.docs[0] as any).ok)
+        .filter(Boolean)
+    )
+  }
+  // rewrite embed src urls
+  const _embedSrcUrlBase = `${process.env.DBFILE_URL}${groupId}/media`
+  _dataToWrite = _dataToWrite.concat(
+    _embedsToWrite.map((_embed) => ({
+      ..._embed,
+      detail: {
+        ..._embed.detail,
+        src: `${_embedSrcUrlBase}/${_embed._id}/${encodeURIComponent(
+          _embed.detail.fileDetail.filename
+        )}`,
+      },
+    })) as any[]
+  )
 
   _group.lastPublishedAt = _publishedAt
   _dataToWrite.push(_group)
@@ -296,6 +349,28 @@ async function publishGroup(
   if (_status.isCancelled) {
     return false
   }
+  updateStatusMessage({ statusId, message: `Uploading media...` })
+  const _mediaPathBase = `${groupId}/media`
+  for (const _embed of _embedsToWrite) {
+    const _localPath = _embed.detail.src.replace(
+      'dbdrive://',
+      `${mediaPath()}/`
+    )
+    console.log('[publishGroup] upload', _localPath)
+    const _fileStream = createReadStream(_localPath)
+    _uploadRes = await upload({
+      client: r2,
+      bucketName: 'databyss-public',
+      contents: _fileStream,
+      destination: `${_mediaPathBase}/${_embed._id}/${_embed.detail.fileDetail.filename}`,
+      mimeType: _embed.detail.fileDetail.contentType,
+    })
+  }
+
+  if (_status.isCancelled) {
+    return false
+  }
+
   // console.log('[publishGroup] upload response', _uploadRes)
   updateStatusMessage({ statusId, message: `Publish successful` })
   return _dbInfo

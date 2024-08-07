@@ -23,6 +23,7 @@ import { ValueListItem } from '@databyss-org/ui/components/ValueList/ValueListPr
 import { copyToClipboard } from '@databyss-org/ui/components/PageContent/PageMenu'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { urlSafeName } from '@databyss-org/services/lib/util'
+import { darkTheme } from '@databyss-org/ui/theming/theme'
 
 interface IconControlProps extends BaseControlProps {
   icon: ReactNode
@@ -78,8 +79,6 @@ export const PublicSharingSettings = ({
   const publishingStatusRes = usePublishingStatus(group.publishingStatusId!, {
     enabled: group.publishingStatusId !== null,
   })
-
-  console.log('[PublicSharingSettings] group', group)
 
   // setup publishing log ui
   let _lastPublishedText = 'never'
@@ -219,7 +218,7 @@ export const PublicSharingSettings = ({
         </View>
       </View>
       {showPublishLog && _publishLog && (
-        <View bg="background.1" ml="em" mr="em" p="tiny">
+        <View bg="background.1" ml="em" mr="em" p="tiny" theme={darkTheme}>
           {_publishLog.map((_msg) => (
             <Text variant="uiTextSmall" color="text.1">
               {_msg}

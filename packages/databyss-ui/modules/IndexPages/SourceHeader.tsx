@@ -90,6 +90,33 @@ export const MediaLinkItem = ({ menuItems, embed }) => {
   )
 }
 
+export const ReadOnlyMediaLinks = ({ source }: { source: Source }) => {
+  const blocksRes = useBlocks(BlockType.Embed)
+  if (!blocksRes.isSuccess) {
+    return <LoadingFallback queryObserver={blocksRes} />
+  }
+  return (
+    <>
+      {source.media!.map((id) => {
+        const _embed = blocksRes.data[id] as Embed
+        if (!_embed) {
+          return null
+        }
+        return (
+          <Button
+            variant="uiLink"
+            href={_embed.detail.src}
+            target="_blank"
+            textVariant="uiTextSmall"
+          >
+            {_embed.detail.fileDetail?.filename}
+          </Button>
+        )
+      })}
+    </>
+  )
+}
+
 export const MediaLinks = ({ source }: { source: Source }) => {
   const sourceRef = useRef(source)
   useEffect(() => {
@@ -183,7 +210,13 @@ export const SourceHeader = ({
     setIsBusy(false)
   }
   return readOnly ? (
-    <SourceTitleAndCitationView source={source} />
+    <View my="em">
+      <SourceTitleAndCitationView source={source} />
+      <Text variant="uiTextHeading" mb="small" mt="em">
+        Media
+      </Text>
+      {source.media?.length && <ReadOnlyMediaLinks source={source} />}
+    </View>
   ) : (
     <View mt="em">
       <FileDropZone onFile={onFileDropped} isBusy={isBusy} />
