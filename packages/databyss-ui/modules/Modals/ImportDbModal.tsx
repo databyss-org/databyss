@@ -52,7 +52,10 @@ export const ImportDbModal = ({ visible }) => {
   }
 
   const onSubmit = async () => {
-    await eapi.file.importDatabyss(values.files![0]!.path)
+    await eapi.file.importDatabyss(
+      values.files![0]!.path,
+      values.mergeIntoGroup?._id
+    )
     hideModal()
   }
 

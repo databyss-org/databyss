@@ -4,6 +4,7 @@ import path from 'path'
 import {
   archiveDatabyss,
   handleImport,
+  handleMergeImport,
   nodeDbRefs,
   setDataPath,
   setGroupLoaded,
@@ -86,8 +87,15 @@ export function registerFileHandlers() {
     async (_, args) => await dialog.showOpenDialog({ properties: ['openFile'] })
   )
   ipcMain.handle('file-chooseDataPath', onChooseDataPath)
-  ipcMain.handle('file-importDatabyss', (_, dataFilePath, importIntoGroupId) =>
-    handleImport(dataFilePath, importIntoGroupId)
+  ipcMain.handle(
+    'file-importDatabyss',
+    (_, dataFilePath, importIntoGroupId) => {
+      if (importIntoGroupId) {
+        handleMergeImport(dataFilePath, importIntoGroupId)
+      } else {
+        handleImport(dataFilePath)
+      }
+    }
   )
   ipcMain.handle('file-newDatabyss', (evt) => createDatabyss(evt.sender.id))
   ipcMain.handle('file-archiveDatabyss', (_, groupId: string) =>

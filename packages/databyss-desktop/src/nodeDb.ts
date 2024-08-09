@@ -5,8 +5,16 @@ import PouchDbQuickSearch from 'pouchdb-quick-search'
 import { BrowserWindow } from 'electron'
 import path from 'path'
 import fs from 'fs-extra'
-import { Group } from '@databyss-org/services/interfaces'
 import {
+  Block,
+  BlockRelation,
+  BlockType,
+  Embed,
+  Group,
+  Page,
+} from '@databyss-org/services/interfaces'
+import {
+  DbDocument,
   DocumentType,
   UserPreference,
 } from '@databyss-org/data/pouchdb/interfaces'
@@ -28,19 +36,102 @@ export interface NodeDbRef {
   groupId: string | null
 }
 
-// const initialDbRef = (): NodeDbRef => ({
-//   current: null,
-//   dbPath: null,
-//   groupId: null,
-// })
+export class DbTables {
+  userPreference: UserPreference | null
+  entries: Block[]
+  topics: Block[]
+  sources: Block[]
+  pages: Page[]
+  groups: Group[]
+  relations: BlockRelation[]
+  embeds: Embed[]
+
+  dump() {
+    for (const [key, value] of Object.entries(this)) {
+      if (Array.isArray(value)) {
+        console.log(key, value.length)
+      } else {
+        console.log(key, 1)
+      }
+    }
+  }
+
+  constructor() {
+    this.userPreference = null
+    this.entries = []
+    this.topics = []
+    this.sources = []
+    this.pages = []
+    this.groups = []
+    this.relations = []
+    this.embeds = []
+  }
+}
 
 export const nodeDbRefs: { [windowId: number]: NodeDbRef } = {}
 
-export async function handleImport(
+export function groupDbIntoTables(dbRows: DbDocument[]) {
+  const _tables = new DbTables()
+
+  dbRows.forEach((_row) => {
+    if (_row.doctype === DocumentType.Block) {
+      switch (_row.type) {
+        case BlockType.Embed: {
+          _tables.embeds.push(_row as any)
+          break
+        }
+        case BlockType.Entry: {
+          _tables.entries.push(_row as any)
+          break
+        }
+        case BlockType.Source: {
+          _tables.sources.push(_row as any)
+          break
+        }
+        case BlockType.Topic: {
+          _tables.topics.push(_row as any)
+          break
+        }
+      }
+      return
+    }
+
+    switch (_row.doctype) {
+      case DocumentType.Page: {
+        _tables.pages.push(_row as any)
+        break
+      }
+      case DocumentType.Group: {
+        _tables.groups.push(_row as any)
+        break
+      }
+      case DocumentType.BlockRelation: {
+        _tables.relations.push(_row as any)
+        break
+      }
+      case DocumentType.UserPreferences: {
+        _tables.userPreference = _row as any
+        break
+      }
+    }
+  })
+
+  return _tables
+}
+
+export async function handleMergeImport(
   filePath: string,
   importIntoGroupId: string | null
 ) {
-  console.log('[DB] import', filePath, importIntoGroupId)
+  console.log('[DB] merge import', filePath, importIntoGroupId)
+  const _buf = fs.readFileSync(filePath)
+  const _dbJson = JSON.parse(_buf.toString()) as any[]
+  const _tables = groupDbIntoTables(_dbJson)
+  _tables.dump()
+}
+
+export async function handleImport(filePath: string) {
+  console.log('[DB] import', filePath)
   const buf = fs.readFileSync(filePath)
   const dbJson = JSON.parse(buf.toString()) as any[]
   // get groupid from user_preference
