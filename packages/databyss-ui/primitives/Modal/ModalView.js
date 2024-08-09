@@ -16,6 +16,7 @@ const ModalView = ({
   <View
     bg="background.0"
     {...(isMobileOs() ? { height: '100%' } : { flexShrink: 1, flexGrow: 1 })}
+    width="100%"
   >
     <View
       borderBottomWidth={1}

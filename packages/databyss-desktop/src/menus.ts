@@ -6,7 +6,10 @@ import { appState } from './eapi/handlers/state-handlers'
 
 const fwc = () => BrowserWindow.getFocusedWindow()?.webContents
 
-export function sendCommandToBrowser<K extends keyof CommandArgs>(command: K, ...args: CommandArgs[K]) {
+export function sendCommandToBrowser<K extends keyof CommandArgs>(
+  command: K,
+  ...args: CommandArgs[K]
+) {
   fwc().send('cmd-command', command, ...args)
 }
 
@@ -32,20 +35,14 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         label: 'New page',
         accelerator: 'CmdOrCtrl+N',
         click: () => {
-          fwc().send(
-            'cmd-command',
-            'newPage'
-          )
+          fwc().send('cmd-command', 'newPage')
         },
       },
       {
         label: 'New collection',
         accelerator: 'CmdOrCtrl+G',
         click: () => {
-          fwc().send(
-            'cmd-command',
-            'newGroup'
-          )
+          fwc().send('cmd-command', 'newGroup')
         },
       },
       {
@@ -53,55 +50,45 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         accelerator: 'Shift+CmdOrCtrl+N',
         click: () => {
           createWindow()
-        }
+        },
       },
       { type: 'separator' },
-      { 
+      {
         label: 'Export',
         submenu: [
           {
             id: 'export-page-as-markdown',
             label: 'Page (Markdown)…',
             click: () => {
-              fwc().send(
-                'cmd-command',
-                'exportPageAsMarkdown'
-              )
+              fwc().send('cmd-command', 'exportPageAsMarkdown')
             },
-            enabled: fwc()?.getURL().includes('/pages/')
+            enabled: fwc()?.getURL().includes('/pages/'),
           },
           {
             label: 'Bibliography (Markdown)…',
             click: () => {
-              fwc().send(
-                'cmd-command',
-                'exportBibliography'
-              )
+              fwc().send('cmd-command', 'exportBibliography')
             },
           },
           {
             label: 'Everything (Markdown)…',
             click: () => {
-              fwc().send(
-                'cmd-command',
-                'exportAllAsMarkdown'
-              )
+              fwc().send('cmd-command', 'exportAllAsMarkdown')
             },
           },
           {
             label: 'Database…',
             click: () => {
-              fwc().send(
-                'cmd-command',
-                'exportDatabase'
-              )
+              fwc().send('cmd-command', 'exportDatabase')
             },
           },
-        ]
+        ],
       },
       {
         label: 'Import Databyss…',
-        click: onImportDatabyss,
+        click: () => {
+          fwc().send('cmd-command', 'importDatabase')
+        },
       },
       {
         label: 'Close Databyss',
@@ -119,10 +106,7 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         // role: 'undo',
         click: () => {
           fwc().undo()
-          fwc().send(
-            'cmd-command',
-            'undo'
-          )
+          fwc().send('cmd-command', 'undo')
         },
       },
       {
@@ -131,10 +115,7 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         // role: 'redo',
         click: () => {
           fwc().redo()
-          fwc().send(
-            'cmd-command',
-            'redo'
-          )
+          fwc().send('cmd-command', 'redo')
         },
       },
       { type: 'separator' },
@@ -151,10 +132,7 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         label: 'Find',
         accelerator: 'CmdOrCtrl+F',
         click: () => {
-          fwc().send(
-            'cmd-command',
-            'find'
-          )
+          fwc().send('cmd-command', 'find')
         },
       },
     ],
@@ -169,7 +147,7 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
         checked: appState.get('darkMode'),
         click(item) {
           appState.set('darkMode', item.checked)
-        }
+        },
       },
       {
         type: 'separator',
@@ -214,13 +192,13 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
     role: 'window',
     submenu: [
       {
-        role: 'minimize'
+        role: 'minimize',
       },
       {
-        role: 'close'
-      }
-    ]
-  }
+        role: 'close',
+      },
+    ],
+  },
 ]
 
 if (process.platform === 'darwin') {
@@ -263,26 +241,32 @@ if (process.platform === 'darwin') {
 function registerWindowEvents(win: BrowserWindow, menu: Menu) {
   win.webContents.addListener('did-navigate-in-page', (event, url) => {
     // console.log('[Main] did-navigate-in-page', url)
-    menu.getMenuItemById('export-page-as-markdown').enabled = 
-      url.includes('/pages/')
+    menu.getMenuItemById('export-page-as-markdown').enabled = url.includes(
+      '/pages/'
+    )
   })
   win.webContents.on('context-menu', (event, params) => {
     const menu = new Menu()
-  
+
     // Add each spelling suggestion
     for (const suggestion of params.dictionarySuggestions) {
-      menu.append(new MenuItem({
-        label: suggestion,
-        click: () => win.webContents.replaceMisspelling(suggestion)
-      }))
+      menu.append(
+        new MenuItem({
+          label: suggestion,
+          click: () => win.webContents.replaceMisspelling(suggestion),
+        })
+      )
     }
-  
+
     // Allow users to add the misspelled word to the dictionary
     if (params.misspelledWord) {
       menu.append(
         new MenuItem({
           label: 'Add to dictionary',
-          click: () => win.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
+          click: () =>
+            win.webContents.session.addWordToSpellCheckerDictionary(
+              params.misspelledWord
+            ),
         })
       )
     }

@@ -4,17 +4,18 @@ import { ipcRenderer } from 'electron'
 export type CommandName = keyof CommandArgs
 
 export interface CommandArgs {
-  notify: [options: DialogOptions],
-  hideNotify: [],
-  undo: [],
-  redo: [],
-  find: [],
-  newPage: [],
-  newGroup: [],
-  exportPageAsMarkdown: [],
-  exportBibliography: [],
-  exportAllAsMarkdown: [],
-  exportDatabase: [],
+  notify: [options: DialogOptions]
+  hideNotify: []
+  undo: []
+  redo: []
+  find: []
+  newPage: []
+  newGroup: []
+  exportPageAsMarkdown: []
+  exportBibliography: []
+  exportAllAsMarkdown: []
+  exportDatabase: []
+  importDatabase: []
 }
 
 export const onCommand = (

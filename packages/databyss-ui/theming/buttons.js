@@ -78,6 +78,21 @@ const buttonVariants = {
   },
 }
 
+buttonVariants.primaryUiSmall = {
+  ...buttonVariants.primaryUi,
+  paddingLeft: 'small',
+  paddingRight: 'small',
+  paddingTop: 'tiny',
+  paddingBottom: 'tiny',
+}
+buttonVariants.secondaryUiSmall = {
+  ...buttonVariants.secondaryUi,
+  paddingLeft: 'small',
+  paddingRight: 'small',
+  paddingTop: 'tiny',
+  paddingBottom: 'tiny',
+}
+
 const buttonThemes = {
   primaryUi: {
     hoverColor: 'primary.1',
@@ -128,6 +143,8 @@ const buttonThemes = {
     activeColor: 'background.4',
   },
 }
+buttonThemes.secondaryUiSmall = buttonThemes.secondaryUi
+buttonThemes.primaryUiSmall = buttonThemes.primaryUi
 
 // on mobile it will show plus topic and location instead of plus
 //

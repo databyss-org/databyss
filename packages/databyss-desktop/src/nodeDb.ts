@@ -36,8 +36,11 @@ export interface NodeDbRef {
 
 export const nodeDbRefs: { [windowId: number]: NodeDbRef } = {}
 
-export async function handleImport(filePath: string) {
-  console.log('[DB] import', filePath)
+export async function handleImport(
+  filePath: string,
+  importIntoGroupId: string | null
+) {
+  console.log('[DB] import', filePath, importIntoGroupId)
   const buf = fs.readFileSync(filePath)
   const dbJson = JSON.parse(buf.toString()) as any[]
   // get groupid from user_preference

@@ -11,11 +11,6 @@ import {
 import { appState } from './state-handlers'
 import { createDatabyss } from '../../lib/createDatabyss'
 import { opengraph } from '@databyss-org/services/embeds/remoteMedia'
-import {
-  backupDbToJson,
-  makeBackupFilename,
-} from '@databyss-org/data/pouchdb/backup'
-import PouchDb from 'pouchdb-node'
 
 export interface IpcFile {
   buffer: ArrayBuffer
@@ -91,7 +86,9 @@ export function registerFileHandlers() {
     async (_, args) => await dialog.showOpenDialog({ properties: ['openFile'] })
   )
   ipcMain.handle('file-chooseDataPath', onChooseDataPath)
-  ipcMain.handle('file-importDatabyss', onImportDatabyss)
+  ipcMain.handle('file-importDatabyss', (_, dataFilePath, importIntoGroupId) =>
+    handleImport(dataFilePath, importIntoGroupId)
+  )
   ipcMain.handle('file-newDatabyss', (evt) => createDatabyss(evt.sender.id))
   ipcMain.handle('file-archiveDatabyss', (_, groupId: string) =>
     archiveAndRemoveDatabyss(groupId)

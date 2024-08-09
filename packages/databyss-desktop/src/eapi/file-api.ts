@@ -3,8 +3,15 @@ import { ipcRenderer } from 'electron'
 import { IpcFile } from './handlers/file-handlers'
 
 export const open = () => ipcRenderer.invoke('file-open')
-export const importDatabyss = () =>
-  ipcRenderer.invoke('file-importDatabyss') as Promise<boolean>
+export const importDatabyss = (
+  dataFilePath: string,
+  importIntoGroupId: string | null = null
+) =>
+  ipcRenderer.invoke(
+    'file-importDatabyss',
+    dataFilePath,
+    importIntoGroupId
+  ) as Promise<boolean>
 export const newDatabyss = () =>
   ipcRenderer.invoke('file-newDatabyss') as Promise<boolean>
 export const archiveDatabyss = (groupId: string) =>
@@ -24,12 +31,14 @@ export const importMedia = async (
   }
   await ipcRenderer.invoke('file-importMedia', ipcFile, fileId)
 }
-export const renameMedia = async (fileId: string, renameTo: string): Promise<string> =>
-  ipcRenderer.invoke('file-renameMedia', fileId, renameTo)
+export const renameMedia = async (
+  fileId: string,
+  renameTo: string
+): Promise<string> => ipcRenderer.invoke('file-renameMedia', fileId, renameTo)
 export const openNative = (path: string) =>
   ipcRenderer.send('file-openNative', path)
 export const deleteMedia = (fileId: string) =>
   ipcRenderer.invoke('file-deleteMedia', fileId)
 export const chooseDataPath = () => ipcRenderer.invoke('file-chooseDataPath')
-export const getEmbedDetail = (urlOrHtml: string) => 
+export const getEmbedDetail = (urlOrHtml: string) =>
   ipcRenderer.invoke('file-getEmbedDetail', urlOrHtml) as Promise<EmbedDetail>

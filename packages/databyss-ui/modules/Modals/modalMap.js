@@ -3,6 +3,7 @@ import MetadataModal from './MetadataModal'
 import SourceModal from './SourceModal'
 import TopicModal from './TopicModal'
 import EmbedModal from './EmbedModal'
+import { ImportDbModal } from './ImportDbModal'
 
 export default {
   INFO: InfoModal,
@@ -10,4 +11,5 @@ export default {
   SOURCE: SourceModal,
   TOPIC: TopicModal,
   EMBED: EmbedModal,
+  IMPORTDB: ImportDbModal,
 }
