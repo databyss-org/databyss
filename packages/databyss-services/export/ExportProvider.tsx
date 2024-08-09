@@ -46,7 +46,6 @@ import { validUriRegex } from '../lib/util'
 import { loadPage } from '../editorPage'
 import { getAccountFromLocation, RemoteDbInfo } from '../session/utils'
 import { uid } from '@databyss-org/data/lib/uid'
-import { useNavigationContext } from '@databyss-org/ui/components'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
@@ -76,7 +75,6 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const { notifySticky, hideSticky } = useNotifyContext()
   const { getPreferredCitationStyle } = useUserPreferencesContext()
   const sourcesInPagesRes = useBlocksInPages<Source>(BlockType.Source)
-  const { showModal } = useNavigationContext()
 
   const pageIdRef = useRef<string | null>(null)
 
@@ -198,15 +196,6 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
     const _zipContent = await _zip.generateAsync({ type: 'arraybuffer' })
     fileDownload(_zipContent, `${_c(_page.name)}.zip`)
-  }
-
-  const importDatabase = () => {
-    console.log('[ExportProvider] importDatabase')
-    showModal({
-      component: 'IMPORTDB',
-      props: {},
-      visible: true,
-    })
   }
 
   const exportAllPages = async () => {
@@ -375,13 +364,11 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   )
 
   useEffect(() => {
-    appCommands.addListener('importDatabase', importDatabase)
     appCommands.addListener('exportAllAsMarkdown', exportAllPages)
     appCommands.addListener('exportBibliography', exportBibliography)
     appCommands.addListener('exportDatabase', exportDatabase)
     appCommands.addListener('exportPageAsMarkdown', exportSinglePage)
     return () => {
-      appCommands.removeListener('exportDatabase', importDatabase)
       appCommands.removeListener('exportAllAsMarkdown', exportAllPages)
       appCommands.removeListener('exportBibliography', exportBibliography)
       appCommands.removeListener('exportDatabase', exportDatabase)

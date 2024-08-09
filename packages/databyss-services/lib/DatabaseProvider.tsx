@@ -7,7 +7,7 @@ import {
 } from '@databyss-org/data/pouchdb/db'
 import { useContextSelector, createContext } from 'use-context-selector'
 import { VouchDb, connect } from '@databyss-org/data/vouchdb/vouchdb'
-import { Viewport, Text, View } from '@databyss-org/ui'
+import { Viewport, Text, View, ModalManager } from '@databyss-org/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import {
   LoadingFallback,
@@ -16,8 +16,9 @@ import {
 import { DatabyssMenuItems } from '@databyss-org/ui/components/Menu/DatabyssMenu'
 import DatabyssLogo from '@databyss-org/ui/assets/logo-thick.png'
 import { darkTheme, pxUnits } from '@databyss-org/ui/theming/theme'
+import { appCommands } from '@databyss-org/ui/lib/appCommands'
 import { version } from '../version'
-import { getAccountFromLocation, getRemoteDbData } from '../session/utils'
+import { getAccountFromLocation } from '../session/utils'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
@@ -48,6 +49,7 @@ export const DatabaseProvider = ({
 }) => {
   const queryClient = useQueryClient()
   const navigate = useNavigationContext((c) => c && c.navigate)
+  const showModal = useNavigationContext((c) => c && c.showModal)
   const [databaseStatus, setDatabaseStatus] = useState<DatabaseStatus>({
     isCouchMode: false,
     isDesktopMode: false,
@@ -97,7 +99,18 @@ export const DatabaseProvider = ({
     }
   }
 
+  const importDatabase = () => {
+    console.log('[DatabaseProvider] importDatabase')
+    showModal({
+      component: 'IMPORTDB',
+      props: {},
+      visible: true,
+    })
+  }
+
   useEffect(() => {
+    appCommands.addListener('importDatabase', importDatabase)
+
     dbRef.on('groupIdUpdated', () => {
       queryClient.clear()
       updateDatabaseStatus()
@@ -108,6 +121,7 @@ export const DatabaseProvider = ({
     initDb()
 
     return () => {
+      appCommands.removeListener('exportDatabase', importDatabase)
       dbRef.off('groupIdUpdated', updateDatabaseStatus)
     }
   }, [])
@@ -155,6 +169,7 @@ export const DatabaseProvider = ({
               )}
             </View>
           )}
+          <ModalManager />
         </Viewport>
       )}
     </DatabaseContext.Provider>

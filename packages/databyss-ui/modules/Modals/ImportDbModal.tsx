@@ -58,7 +58,7 @@ export const ImportDbModal = ({ visible }) => {
 
   let _localGroupMenuItems: MenuItem[] = [
     {
-      label: 'New Databyss',
+      label: '[New Databyss]',
       value: null,
     },
   ]
