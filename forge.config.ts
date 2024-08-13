@@ -5,12 +5,31 @@ import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerRpm } from '@electron-forge/maker-rpm'
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives'
 import { WebpackPlugin } from '@electron-forge/plugin-webpack'
+import path from 'path'
 
 import { mainConfig } from './packages/databyss-desktop/webpack.main.config'
 import { rendererConfig } from './packages/databyss-desktop/webpack.renderer.config'
 
+// load env from .env.production.local
+require('dotenv').config({
+  path: path.resolve('./.env.production.local'),
+})
+
+const appleApiKey = path.resolve('./private_keys/appleApiKey.p8')
+const appleApiKeyId = process.env.APPLE_API_KEY_ID!
+const appleApiIssuer = process.env.APPLE_API_ISSUER!
+console.log('[forge.config] appleApiKey', appleApiKey)
+console.log('[forge.config] appleApiKeyId', appleApiKeyId)
+console.log('[forge.config] appleApiIssuer', appleApiIssuer)
+
 const config: ForgeConfig = {
   packagerConfig: {
+    osxNotarize: {
+      appleApiKey,
+      appleApiKeyId,
+      appleApiIssuer,
+    },
+    osxSign: {},
     asar: {
       unpack: '*.{node,dll}',
     },

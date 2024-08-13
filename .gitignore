@@ -85,3 +85,5 @@ config.json
 .webpack/
 out/
 
+# apple auth
+private_keys/
