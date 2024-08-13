@@ -259,9 +259,9 @@ export const initDb = ({
           dbRef.lastSeq = await warmupCaches(_pouchDb, queryClient)
         }
         dbRef.current = _pouchDb
+        dbRef.initialSyncComplete = true
         dbRef.groupId = groupId
         dbRef.readOnly = isPublicGroup
-        dbRef.initialSyncComplete = true
 
         await initDriveDb({ groupId })
       }

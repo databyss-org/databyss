@@ -89,9 +89,9 @@ export function registerFileHandlers() {
   ipcMain.handle('file-chooseDataPath', onChooseDataPath)
   ipcMain.handle(
     'file-importDatabyss',
-    (_, dataFilePath, importIntoGroupId) => {
+    (evt, dataFilePath, importIntoGroupId) => {
       if (importIntoGroupId) {
-        handleMergeImport(dataFilePath, importIntoGroupId)
+        handleMergeImport(dataFilePath, importIntoGroupId, evt.sender.id)
       } else {
         handleImport(dataFilePath)
       }

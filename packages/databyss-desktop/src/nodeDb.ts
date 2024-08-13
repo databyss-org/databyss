@@ -9,6 +9,8 @@ import {
   Block,
   BlockRelation,
   BlockType,
+  Document,
+  DocumentDict,
   Embed,
   Group,
   Page,
@@ -36,83 +38,84 @@ export interface NodeDbRef {
   groupId: string | null
 }
 
-export class DbTables {
-  userPreference: UserPreference | null
-  entries: Block[]
-  topics: Block[]
-  sources: Block[]
-  pages: Page[]
-  groups: Group[]
-  relations: BlockRelation[]
-  embeds: Embed[]
+export type DocumentIndex<T> = { [key: string]: T }
 
-  dump() {
-    for (const [key, value] of Object.entries(this)) {
-      if (Array.isArray(value)) {
-        console.log(key, value.length)
-      } else {
-        console.log(key, 1)
-      }
-    }
-  }
+export class DbTables {
+  userPreferences: DocumentIndex<UserPreference>
+  blocks: DocumentIndex<Block>
+  entries: DocumentIndex<Block>
+  topics: DocumentIndex<Block>
+  sources: DocumentIndex<Block>
+  pages: DocumentIndex<Page>
+  groups: DocumentIndex<Group>
+  relations: DocumentIndex<BlockRelation>
+  embeds: DocumentIndex<Embed>
 
   constructor() {
-    this.userPreference = null
-    this.entries = []
-    this.topics = []
-    this.sources = []
-    this.pages = []
-    this.groups = []
-    this.relations = []
-    this.embeds = []
+    this.userPreferences = {}
+    this.blocks = {}
+    this.entries = {}
+    this.topics = {}
+    this.sources = {}
+    this.pages = {}
+    this.groups = {}
+    this.relations = {}
+    this.embeds = {}
   }
 }
 
+export function dumpTables(tables: DbTables) {
+  for (const [key, value] of Object.entries(tables)) {
+    const _keys = Object.keys(value)
+    console.log(key, _keys.length)
+    if (_keys.length) {
+      const _firstKey = Object.keys(value)[0]
+      console.log(_firstKey, value[_firstKey])
+    }
+  }
+}
+
+const blockTypeToTableKey = {
+  [BlockType.Embed]: 'embeds',
+  [BlockType.Entry]: 'entries',
+  [BlockType.Source]: 'sources',
+  [BlockType.Topic]: 'topics',
+  [BlockType.EndSource]: '',
+  [BlockType.EndTopic]: '',
+  [BlockType.Link]: '',
+  [BlockType._ANY]: '',
+}
+
+const documentTypeToTableKey = {
+  [DocumentType.Block]: '',
+  [DocumentType.BlockRelation]: 'relations',
+  [DocumentType.Group]: 'groups',
+  [DocumentType.Page]: 'pages',
+  [DocumentType.Selection]: '',
+  [DocumentType.UserPreferences]: 'userPreferences',
+}
+
+export type FieldSelector<T extends Document> = (doc: T) => string
+
 export const nodeDbRefs: { [windowId: number]: NodeDbRef } = {}
 
-export function groupDbIntoTables(dbRows: DbDocument[]) {
+export function groupDbIntoTables(
+  dbRows: DbDocument[],
+  idSelector: FieldSelector<DbDocument> = (doc) => doc._id
+) {
   const _tables = new DbTables()
 
   dbRows.forEach((_row) => {
+    let _tableKey: keyof DbTables
     if (_row.doctype === DocumentType.Block) {
-      switch (_row.type) {
-        case BlockType.Embed: {
-          _tables.embeds.push(_row as any)
-          break
-        }
-        case BlockType.Entry: {
-          _tables.entries.push(_row as any)
-          break
-        }
-        case BlockType.Source: {
-          _tables.sources.push(_row as any)
-          break
-        }
-        case BlockType.Topic: {
-          _tables.topics.push(_row as any)
-          break
-        }
-      }
-      return
+      _tableKey = blockTypeToTableKey[_row.type] as keyof DbTables
+      _tables.blocks[idSelector(_row)] = _row as any
+    } else {
+      _tableKey = documentTypeToTableKey[_row.doctype] as keyof DbTables
     }
-
-    switch (_row.doctype) {
-      case DocumentType.Page: {
-        _tables.pages.push(_row as any)
-        break
-      }
-      case DocumentType.Group: {
-        _tables.groups.push(_row as any)
-        break
-      }
-      case DocumentType.BlockRelation: {
-        _tables.relations.push(_row as any)
-        break
-      }
-      case DocumentType.UserPreferences: {
-        _tables.userPreference = _row as any
-        break
-      }
+    const _table = _tables[_tableKey]
+    if (_table) {
+      _table[idSelector(_row)] = _row as any
     }
   })
 
@@ -121,13 +124,66 @@ export function groupDbIntoTables(dbRows: DbDocument[]) {
 
 export async function handleMergeImport(
   filePath: string,
-  importIntoGroupId: string | null
+  importIntoGroupId: string | null,
+  windowId: number
 ) {
   console.log('[DB] merge import', filePath, importIntoGroupId)
   const _buf = fs.readFileSync(filePath)
   const _dbJson = JSON.parse(_buf.toString()) as any[]
-  const _tables = groupDbIntoTables(_dbJson)
-  _tables.dump()
+  const _sourceTables = groupDbIntoTables(_dbJson)
+
+  console.log('[DB] tables to import')
+  dumpTables(_sourceTables)
+
+  // open group db if it is not already open
+  const _dbRef = await initNodeDb(windowId, importIntoGroupId, false)
+
+  // get all target db records except entries
+  const _findRes = await _dbRef.current!.find({
+    selector: {
+      $or: [
+        { type: BlockType.Source },
+        { type: BlockType.Topic },
+        { doctype: DocumentType.BlockRelation },
+      ],
+    },
+  })
+  console.log('[DB] target tables')
+  const _targetTables = groupDbIntoTables(_findRes.docs, (doc) => {
+    // for blockRelation records, use the id as index
+    if (doc.doctype === DocumentType.BlockRelation) {
+      return doc._id
+    }
+    // otherwise use the name as index
+    return ((doc as unknown) as Block).text.textValue.toLowerCase()
+  })
+  dumpTables(_targetTables)
+
+  // iterate over the topics and sources
+}
+
+// returns docs to write
+export async function mergeBlocksIntoDb(
+  srcDbTables: DbTables,
+  destDbTables: DbTables
+) {
+  const _mergedDocs: Document[] = []
+
+  for (const _srcBlock of Object.values(srcDbTables.blocks)) {
+    // find block in dest tables
+    const _destBlock = destDbTables.blocks[_srcBlock.text?.textValue]
+    if (_destBlock) {
+      // get the relation records for the block
+      const _srcRelation = srcDbTables.relations[`r_${_srcBlock._id}`]
+      const _destRelation = destDbTables.relations[`r_${_destBlock._id}`]
+      // add pages from source relation to dest relation
+      _destRelation.pages = _destRelation.pages.concat(_srcRelation.pages)
+      // add relation to the mergedBlocks return array
+      _mergedDocs.push(_destRelation)
+      // update block and inline references on src pages
+      _srcRelation.pages.forEach((_pageId) => {})
+    }
+  }
 }
 
 export async function handleImport(filePath: string) {
@@ -363,10 +419,16 @@ export function createNodeDb(dbPath: string) {
   return new PouchDB(dbPath)
 }
 
-export async function initNodeDb(windowId: number, groupId: string) {
-  // bail if group is already loaded
-  if (getWindowIdForGroup(groupId)) {
+export async function initNodeDb(
+  windowId: number,
+  groupId: string,
+  buildSearchIndex: boolean = true
+) {
+  // if group is already loaded, return dbRef
+  const _existingWindow = getWindowIdForGroup(groupId)
+  if (_existingWindow) {
     console.warn('[DB] group already loaded', groupId)
+    return nodeDbRefs[_existingWindow]
   }
   // close existing db if necessary
   if (nodeDbRefs[windowId]?.current) {
@@ -385,13 +447,17 @@ export async function initNodeDb(windowId: number, groupId: string) {
   nodeDbRefs[windowId].current = new PouchDB(nodeDbRefs[windowId].dbPath)
   appState.set('lastActiveGroupId', groupId)
 
-  const _searchIndexDbPath = await findSearchIndexDb(groupId)
-  if (!_searchIndexDbPath) {
-    console.log(
-      '[initNodeDb] search index db not found, building in background'
-    )
-    buildSearchIndexDb(nodeDbRefs[windowId].current)
+  if (buildSearchIndex) {
+    const _searchIndexDbPath = await findSearchIndexDb(groupId)
+    if (!_searchIndexDbPath) {
+      console.log(
+        '[initNodeDb] search index db not found, building in background'
+      )
+      buildSearchIndexDb(nodeDbRefs[windowId].current)
+    }
   }
+
+  return nodeDbRefs[windowId]
 }
 
 export function setGroupLoaded(windowId: number) {

@@ -49,7 +49,7 @@ export class VouchDb {
 
 export const connect = (groupId) => {
   dbRef.current = new VouchDb() as PouchDB.Database<any>
-  dbRef.groupId = groupId
   dbRef.initialSyncComplete = true
+  dbRef.groupId = groupId
   warmupCaches(dbRef.current, queryClient)
 }

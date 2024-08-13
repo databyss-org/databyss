@@ -17,6 +17,7 @@ export class DbRef extends EventEmitter {
   }
   set groupId(groupId: string | null) {
     this._groupId = groupId
+    console.log('[db] emit:groupIdUpdated')
     this.emit('groupIdUpdated')
   }
 }
