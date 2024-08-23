@@ -41,7 +41,7 @@ export const PublicGroupHeader = ({
           <Text variant="bodyHeading1" color="text.2">
             {group.name}
           </Text>
-          {group.subtitle?.textValue?.length && (
+          {!!group.subtitle?.textValue?.length && (
             <Text variant="uiTextSmall" color="text.2">
               {group.subtitle.textValue}
             </Text>

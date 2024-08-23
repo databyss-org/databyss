@@ -33,11 +33,13 @@ export const replaceInlineText = ({
   refId,
   newText,
   type,
+  newRefId,
 }: {
   text: Text
   refId: string
   newText: Text
   type: InlineTypes
+  newRefId?: string
 }): Text | null => {
   if (!newText?.textValue || !newText?.ranges) {
     return null
@@ -46,6 +48,7 @@ export const replaceInlineText = ({
   const _symbol = inlineTypeToSymbol(type)
 
   const _isEmbed = type === InlineTypes.Embed
+  const _newRefId = newRefId ?? refId
 
   let _textToInsert: null | Text = null
   if (!_isEmbed) {
@@ -55,7 +58,7 @@ export const replaceInlineText = ({
         {
           length: newText.textValue.length + 1,
           offset: 0,
-          marks: [[type, refId]],
+          marks: [[type, _newRefId]],
         },
       ],
     } as Text
@@ -67,7 +70,7 @@ export const replaceInlineText = ({
         {
           length: newText.textValue.length + 2,
           offset: 0,
-          marks: [[type, refId]],
+          marks: [[type, _newRefId]],
         },
       ],
     } as Text
@@ -117,11 +120,13 @@ export const updateInlinesInBlock = ({
   inlineType,
   text,
   inlineId,
+  changeInlineIdTo,
 }: {
   block: Block
   inlineType: InlineTypes
   text: Text
   inlineId: string
+  changeInlineIdTo?: string
 }) => {
   // console.log('[updateInlinesInBlock]', block, inlineType, text, inlineId)
   // get all inline ranges from block
@@ -141,6 +146,7 @@ export const updateInlinesInBlock = ({
           refId: inlineId,
           newText: text,
           type: inlineType,
+          newRefId: changeInlineIdTo,
         })
         // console.log('[updateInlines] new Text', _newText)
         return Object.assign({}, block!, { text: _newText })

@@ -17,6 +17,7 @@ import LoadingFallback from '../Notify/LoadingFallback'
 import MenuSvg from '../../assets/menu_horizontal.svg'
 import { useNotifyContext } from '../Notify/NotifyProvider'
 import { pxUnits } from '../../theming/views'
+import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvider'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../../databyss-desktop/src/eapi').default
@@ -30,6 +31,7 @@ export function DatabyssMenu({
 }) {
   const [isLoading, setIsLoading] = useState(false)
   const isDarkModeRes = useAppState('darkMode')
+
   return (
     <>
       {isLoading && (
@@ -91,6 +93,7 @@ export function DatabyssMenuItems({
   const groupsRes = useGroups()
   const notifyConfirm = useNotifyContext((c) => c && c.notifyConfirm)
   const notify = useNotifyContext((c) => c && c.notify)
+  const importDatabase = useDatabaseContext((c) => c.importDatabase)
 
   const groups: Group[] = localGroupsRes.isSuccess
     ? localGroupsRes.data.map(
@@ -168,18 +171,18 @@ export function DatabyssMenuItems({
       hoverColor: 'background.2',
       activeColor: 'pink',
       action: async () => {
-        if (onLoading) {
-          // console.log('[DatabyssMenu] onLoading')
-          onLoading(true)
-        }
-        const _importing = await eapi.file.importDatabyss()
-        if (!_importing) {
-          if (onLoading) {
-            onLoading(false)
-          }
-          return false
-        }
-        return true
+        // if (onLoading) {
+        //   // console.log('[DatabyssMenu] onLoading')
+        //   onLoading(true)
+        // }
+        const _imported = await importDatabase()
+        // if (!_importing) {
+        //   if (onLoading) {
+        //     onLoading(false)
+        //   }
+        //   return false
+        // }
+        return _imported
       },
     },
     {

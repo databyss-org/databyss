@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
+import RemoveSvg from '@databyss-org/ui/assets/trash.svg'
+import HomeSvg from '@databyss-org/ui/assets/home.svg'
 import {
   DraggableItem,
   Text,
@@ -22,23 +24,33 @@ import {
   LoadingFallback,
   SidebarListRow,
   DropdownContainer,
+  SidebarListItem,
+  useNavigationContext,
 } from '@databyss-org/ui/components'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
-import { addPageDocumentToGroup } from '@databyss-org/data/pouchdb/groups'
+import {
+  addPageDocumentToGroup,
+  setGroup,
+} from '@databyss-org/data/pouchdb/groups'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import {
   setGroupPageAction,
   PageAction,
 } from '@databyss-org/data/pouchdb/groups/utils'
+import { urlSafeName } from '@databyss-org/services/lib/util'
+import { maxWidth } from 'styled-system'
+import { pxUnits } from '@databyss-org/ui/theming/views'
+import { MenuItem } from '@databyss-org/ui/components/Menu/DropdownList'
 
 interface PageDropzoneProps extends ScrollViewProps {
   value?: string[]
   pages: DocumentDict<Page> | undefined
   onChange?: (value: string[]) => void
   group: Group
+  defaultPageId: string
 }
 
 export const PageDropzone = ({
@@ -46,11 +58,13 @@ export const PageDropzone = ({
   pages,
   group,
   onChange,
+  defaultPageId,
   ...others
 }: PageDropzoneProps) => {
   const _inTestEnv = process.env.NODE_ENV === 'test'
   const [showMenu, setShowMenu] = useState(false)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
+  const navigate = useNavigationContext((c) => c.navigate)
 
   let _pagesList
 
@@ -119,6 +133,10 @@ export const PageDropzone = ({
       const _pageHeader = item.payload as PageHeader
       _id = _pageHeader._id
     }
+    // do not allow duplicates
+    if (value.includes(_id)) {
+      return
+    }
     onChange!(value!.concat(_id))
     addPageDocumentToGroup({ pageId: _id, group })
   }
@@ -135,88 +153,96 @@ export const PageDropzone = ({
     onChange!(_nextValue)
   }
 
+  const onSetDefaultPage = async (_id: string) => {
+    if (!group) {
+      return
+    }
+    const _nextGroup = { ...group }
+    _nextGroup.defaultPageId = _id
+    await setGroup(_nextGroup)
+    onChange!(value)
+  }
+
   if (!pages || !group) {
     return <LoadingFallback />
   }
 
   const _pageHeaders = value!.map((pageId) => pages![pageId])
 
-  const _sortedItems: PageHeader[] = sortEntriesAtoZ(_pageHeaders, 'name')
+  const _sortedItems: PageHeader[] = sortEntriesAtoZ(
+    _pageHeaders,
+    'name',
+    (entry: Page) => entry._id === defaultPageId
+  )
+
+  const pageMenuItems = (page: PageHeader) => {
+    const _menuItems: MenuItem[] = [
+      {
+        label: 'Set as default',
+        icon: <HomeSvg />,
+        action: () => {
+          onSetDefaultPage(page._id)
+          return true
+        },
+      },
+      {
+        label: 'Remove from collection',
+        icon: <RemoveSvg />,
+        action: () => {
+          onRemove(page._id)
+          return true
+        },
+      },
+    ]
+    return _menuItems
+  }
 
   return (
-    <ScrollView shadowOnScroll borderRadius="default" {...others}>
-      <List
-        height="100%"
-        dropzone={{
-          accepts: 'PAGE',
-          onDrop,
-        }}
-        horizontalItemPadding="em"
-        verticalItemPadding="small"
-        py="small"
-      >
-        {_inTestEnv ? _pagesList : null}
+    <List
+      dropzone={{
+        accepts: 'PAGE',
+        onDrop,
+      }}
+      horizontalItemPadding="none"
+      px="none"
+      verticalItemPadding="small"
+      py="none"
+      {...others}
+    >
+      {_inTestEnv ? _pagesList : null}
 
-        {value!.length ? (
-          <>
-            {_sortedItems.map((page: PageHeader) => (
-              <SidebarListRow
-                key={page._id}
-                text={page.name}
-                isActive
-                icon={<PageSvg />}
-                hoverColor="control.1"
-                // p="em"
-              >
-                {!isReadOnly && (
-                  <BaseControl
-                    onPress={() => onRemove(page._id)}
-                    data-test-element="remove-page"
-                  >
-                    <Icon sizeVariant="tiny">
-                      <CloseSvg />
-                    </Icon>
-                  </BaseControl>
-                )}
-              </SidebarListRow>
-            ))}
-            {value!.length === 1 && (
-              <>
-                <View px="em" pt="none">
-                  <Separator spacing="small" color="text.3" />
-                  <View mr="small">
-                    <Text
-                      variant="uiTextSmall"
-                      mb="em"
-                      mt="small"
-                      color="text.2"
-                    >
-                      To remove a page from this collection, click the ‘X’.
-                    </Text>
-                    <Text variant="uiTextSmall" color="text.2">
-                      This will not remove it from its original collection.
-                    </Text>
-                  </View>
-                </View>
-              </>
-            )}
-          </>
-        ) : (
-          <View pl="em" pr="medium" py="small">
-            <Text variant="uiTextSmall" mb="em" color="text.2">
-              Drag pages here from the sidebar to add them to this collection.
-            </Text>
-            <Text
-              data-test-element="drop-zone"
-              variant="uiTextSmall"
-              color="text.2"
-            >
-              Note that this does not remove them from their original
-              collections.
-            </Text>
-          </View>
-        )}
-      </List>
-    </ScrollView>
+      {value!.length ? (
+        <>
+          {_sortedItems.map((page: PageHeader, idx) => (
+            <SidebarListItem
+              contextMenu={pageMenuItems(page)}
+              key={page._id}
+              text={page.name}
+              // isActive
+              icon={<PageSvg />}
+              // hoverColor="control.1"
+              pl="tiny"
+              pr="small"
+              borderBottomColor="border.2"
+              borderBottomWidth={1}
+              borderBottomStyle="solid"
+              onPress={() => {
+                navigate(`/pages/${page._id}/${urlSafeName(page.name)}`)
+              }}
+              textProps={{
+                maxWidth: pxUnits(350),
+                ...(defaultPageId === page._id ? { color: 'purple.1' } : {}),
+              }}
+            />
+          ))}
+        </>
+      ) : (
+        <View pr="medium" py="em" flexShrink={1}>
+          <Text variant="uiTextNormal" color="text.3" flexShrink={1}>
+            Drag pages here from the sidebar to add them to this collection.
+          </Text>
+        </View>
+      )}
+    </List>
   )
 }

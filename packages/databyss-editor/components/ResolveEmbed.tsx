@@ -5,11 +5,6 @@ import {
   MediaTypes,
 } from '@databyss-org/services/interfaces/Block'
 import { ViewProps } from '@databyss-org/ui'
-import { getFileUrl } from '@databyss-org/data/drivedb/files'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { LoadingFallback } from '@databyss-org/ui/components'
-import { getAccountId } from '@databyss-org/services/session/clientStorage'
-import { waitForUrl } from '@databyss-org/services/lib/request'
 import { UnfetchedMedia } from './UnfetchedMedia'
 import { IframeComponent } from './Suggest/IframeComponent'
 
@@ -32,7 +27,7 @@ export const ResolveEmbed = ({
 
   useEffect(() => {
     if (
-      (!detail || detail.mediaType === MediaTypes.UNFETCHED) && 
+      (!detail || detail.mediaType === MediaTypes.UNFETCHED) &&
       data?.detail
     ) {
       setDetail(data.detail)

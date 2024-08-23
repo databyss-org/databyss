@@ -10,7 +10,7 @@ import { Block, Page, Source } from '@databyss-org/services/interfaces'
 import ChevronSvg from '@databyss-org/ui/assets/chevron-filled.svg'
 import { pxUnits } from '../../theming/views'
 import { withKeyboardNavigation } from '../../primitives/List/KeyboardNavigationItem'
-import { ControlHandle, ViewProps } from '../..'
+import { ControlHandle, TextProps, ViewProps } from '../..'
 import { MenuItem } from '../Menu/DropdownList'
 import { ContextMenu } from '../Menu/ContextMenu'
 
@@ -19,6 +19,7 @@ export const SidebarListRow = ({
   text,
   icon,
   isActive,
+  textProps,
   iconColor,
   depth = 0,
   expandable,
@@ -34,6 +35,7 @@ export const SidebarListRow = ({
   depth: number
   expandable?: boolean
   expanded?: boolean
+  textProps?: TextProps
   onExpand?: (
     evt: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>
   ) => void
@@ -103,6 +105,7 @@ export const SidebarListRow = ({
           whiteSpace: 'nowrap',
           textOverflow: 'ellipsis',
         }}
+        {...(textProps ?? {})}
       >
         {text}
       </Text>

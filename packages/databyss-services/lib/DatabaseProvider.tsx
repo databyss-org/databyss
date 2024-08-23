@@ -29,6 +29,7 @@ interface ContextType {
   groupId: string | null
   updateDatabaseStatus: () => void
   setCouchMode: (value: boolean) => void
+  importDatabase: () => void
 }
 
 export const DatabaseContext = createContext<ContextType>(null!)
@@ -101,10 +102,19 @@ export const DatabaseProvider = ({
 
   const importDatabase = () => {
     console.log('[DatabaseProvider] importDatabase')
-    showModal({
-      component: 'IMPORTDB',
-      props: {},
-      visible: true,
+    return new Promise<boolean>((resolve) => {
+      showModal({
+        component: 'IMPORTDB',
+        props: {
+          onImport: () => {
+            resolve(true)
+          },
+          onCancel: () => {
+            resolve(false)
+          },
+        },
+        visible: true,
+      })
     })
   }
 
@@ -136,6 +146,7 @@ export const DatabaseProvider = ({
         groupId,
         setCouchMode,
         updateDatabaseStatus,
+        importDatabase,
       }}
       key={databaseStatus.groupId ?? 'nogroup'}
     >

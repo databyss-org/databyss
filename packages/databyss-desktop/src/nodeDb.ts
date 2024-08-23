@@ -27,6 +27,8 @@ import {
   backupDbToJson,
   makeBackupFilename,
 } from '@databyss-org/data/pouchdb/backup'
+import { updateInlinesInBlock } from '@databyss-org/services/text/inlineUtils'
+import { InlineTypes } from '@databyss-org/services/interfaces/Range'
 
 PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
@@ -38,41 +40,53 @@ export interface NodeDbRef {
   groupId: string | null
 }
 
-export type DocumentIndex<T> = { [key: string]: T }
+export type DocumentMap<T> = Map<string, T>
 
 export class DbTables {
-  userPreferences: DocumentIndex<UserPreference>
-  blocks: DocumentIndex<Block>
-  entries: DocumentIndex<Block>
-  topics: DocumentIndex<Block>
-  sources: DocumentIndex<Block>
-  pages: DocumentIndex<Page>
-  groups: DocumentIndex<Group>
-  relations: DocumentIndex<BlockRelation>
-  embeds: DocumentIndex<Embed>
+  _docsById: DocumentMap<Document>
+  userPreferences: DocumentMap<UserPreference>
+  entries: DocumentMap<Block>
+  topics: DocumentMap<Block>
+  sources: DocumentMap<Block>
+  pages: DocumentMap<Page>
+  groups: DocumentMap<Group>
+  relations: DocumentMap<BlockRelation>
+  embeds: DocumentMap<Embed>
+  selections: DocumentMap<Selection>
 
   constructor() {
-    this.userPreferences = {}
-    this.blocks = {}
-    this.entries = {}
-    this.topics = {}
-    this.sources = {}
-    this.pages = {}
-    this.groups = {}
-    this.relations = {}
-    this.embeds = {}
+    this._docsById = new Map()
+    this.userPreferences = new Map()
+    this.entries = new Map()
+    this.topics = new Map()
+    this.sources = new Map()
+    this.pages = new Map()
+    this.groups = new Map()
+    this.relations = new Map()
+    this.embeds = new Map()
+    this.selections = new Map()
   }
 }
 
 export function dumpTables(tables: DbTables) {
   for (const [key, value] of Object.entries(tables)) {
-    const _keys = Object.keys(value)
-    console.log(key, _keys.length)
-    if (_keys.length) {
-      const _firstKey = Object.keys(value)[0]
-      console.log(_firstKey, value[_firstKey])
+    if (!(value instanceof Map)) {
+      continue
+    }
+    console.log(key, value.size)
+    if (value.size) {
+      console.log(value.keys().next().value, value.values().next().value)
     }
   }
+}
+
+type TableKeyToInlineType = {
+  [Property in keyof Partial<DbTables>]: InlineTypes
+}
+
+const tableKeyToInlineType: TableKeyToInlineType = {
+  topics: InlineTypes.InlineTopic,
+  sources: InlineTypes.InlineSource,
 }
 
 const blockTypeToTableKey = {
@@ -91,7 +105,7 @@ const documentTypeToTableKey = {
   [DocumentType.BlockRelation]: 'relations',
   [DocumentType.Group]: 'groups',
   [DocumentType.Page]: 'pages',
-  [DocumentType.Selection]: '',
+  [DocumentType.Selection]: 'selections',
   [DocumentType.UserPreferences]: 'userPreferences',
 }
 
@@ -106,16 +120,17 @@ export function groupDbIntoTables(
   const _tables = new DbTables()
 
   dbRows.forEach((_row) => {
+    // put row into special _docsById table for easy retrieval
+    _tables._docsById.set(_row._id, _row as any)
     let _tableKey: keyof DbTables
     if (_row.doctype === DocumentType.Block) {
       _tableKey = blockTypeToTableKey[_row.type] as keyof DbTables
-      _tables.blocks[idSelector(_row)] = _row as any
     } else {
       _tableKey = documentTypeToTableKey[_row.doctype] as keyof DbTables
     }
-    const _table = _tables[_tableKey]
+    const _table: DocumentMap<any> = _tables[_tableKey]
     if (_table) {
-      _table[idSelector(_row)] = _row as any
+      _table.set(idSelector(_row), _row)
     }
   })
 
@@ -132,8 +147,8 @@ export async function handleMergeImport(
   const _dbJson = JSON.parse(_buf.toString()) as any[]
   const _sourceTables = groupDbIntoTables(_dbJson)
 
-  console.log('[DB] tables to import')
-  dumpTables(_sourceTables)
+  // console.log('[DB] tables to import')
+  // dumpTables(_sourceTables)
 
   // open group db if it is not already open
   const _dbRef = await initNodeDb(windowId, importIntoGroupId, false)
@@ -157,33 +172,147 @@ export async function handleMergeImport(
     // otherwise use the name as index
     return ((doc as unknown) as Block).text.textValue.toLowerCase()
   })
-  dumpTables(_targetTables)
+  // dumpTables(_targetTables)
 
   // iterate over the topics and sources
+  const _mergedTopics = mergeRelations(_sourceTables, _targetTables, 'topics')
+  console.log(`[handleMergeImport] merged ${_mergedTopics.length} topics`)
+  const _mergedSources = mergeRelations(_sourceTables, _targetTables, 'sources')
+  console.log(`[handleMergeImport] merged ${_mergedSources.length} sources`)
+
+  // TODO: add importedFromGroup to pages
+
+  // bulk insert from source tables to dest db
+  console.log('[handleMergeImport] merging embeds')
+  await mergeFromTable(_dbRef, _sourceTables.embeds)
+  console.log('[handleMergeImport] merging entries')
+  await mergeFromTable(_dbRef, _sourceTables.entries)
+  console.log('[handleMergeImport] merging pages')
+  await mergeFromTable(_dbRef, _sourceTables.pages)
+  console.log('[handleMergeImport] merging relations')
+  await mergeFromTable(_dbRef, _sourceTables.relations)
+  console.log('[handleMergeImport] merging sources')
+  await mergeFromTable(_dbRef, _sourceTables.sources)
+  console.log('[handleMergeImport] merging topics')
+  await mergeFromTable(_dbRef, _sourceTables.topics)
+  console.log('[handleMergeImport] merging selections')
+  await mergeFromTable(_dbRef, _sourceTables.selections)
+
+  // TODO: merge media files
+
+  // load the target database
+  setGroupLoaded(windowId)
+  // rebuild the search index
+  buildSearchIndexDb(nodeDbRefs[windowId].current)
+}
+
+function mergeFromTable(dbRef: NodeDbRef, table: DocumentMap<any>) {
+  return dbRef.current.bulkDocs(
+    Array.from(table.values()),
+    { new_edits: false } // not change revision
+  )
 }
 
 // returns docs to write
-export async function mergeBlocksIntoDb(
+export function mergeRelations(
   srcDbTables: DbTables,
-  destDbTables: DbTables
+  destDbTables: DbTables,
+  tableToMerge: keyof DbTables
 ) {
   const _mergedDocs: Document[] = []
-
-  for (const _srcBlock of Object.values(srcDbTables.blocks)) {
-    // find block in dest tables
-    const _destBlock = destDbTables.blocks[_srcBlock.text?.textValue]
-    if (_destBlock) {
-      // get the relation records for the block
-      const _srcRelation = srcDbTables.relations[`r_${_srcBlock._id}`]
-      const _destRelation = destDbTables.relations[`r_${_destBlock._id}`]
-      // add pages from source relation to dest relation
-      _destRelation.pages = _destRelation.pages.concat(_srcRelation.pages)
-      // add relation to the mergedBlocks return array
-      _mergedDocs.push(_destRelation)
-      // update block and inline references on src pages
-      _srcRelation.pages.forEach((_pageId) => {})
+  const _srcTableToMerge = srcDbTables[tableToMerge] as DocumentMap<Block>
+  const _destTableToMerge = destDbTables[tableToMerge] as DocumentMap<Block>
+  for (const _srcBlock of _srcTableToMerge.values()) {
+    // find related block in dest tables
+    const _destBlock = _destTableToMerge.get(
+      _srcBlock.text?.textValue.toLowerCase()
+    ) as Block
+    if (!_destBlock) {
+      continue
     }
+    console.log(
+      `[mergeRelations] merging ${tableToMerge} ${_srcBlock.text.textValue}`
+    )
+    // get the relation records for the block
+    const _srcRelation = srcDbTables.relations.get(`r_${_srcBlock._id}`)
+    const _destRelation = destDbTables.relations.get(`r_${_destBlock._id}`)
+    // update block and inline references on src pages
+    mergeInlines({
+      srcRelation: _srcRelation,
+      srcDbTables,
+      srcBlock: _srcBlock,
+      destBlock: _destBlock,
+      tableToMerge,
+    })
+    // add pages from dest relation to source relation
+    _srcRelation.pages = _srcRelation.pages.concat(_destRelation.pages)
+    // rewrite source relation to match dest id
+    _srcRelation.blockId = _destBlock._id
+    _srcRelation._id = `r_${_destBlock._id}`
+    // add block to the mergedBlocks return array
+    _mergedDocs.push(_srcBlock)
+    // remove srcBlock from table so it doesn't overwrite destBlock during merge
+    srcDbTables[tableToMerge].delete(_srcBlock._id)
   }
+
+  return _mergedDocs
+}
+
+function mergeInlines({
+  srcRelation,
+  srcDbTables,
+  srcBlock,
+  destBlock,
+  tableToMerge,
+}: {
+  srcRelation: BlockRelation
+  srcDbTables: DbTables
+  srcBlock: Block
+  destBlock: Block
+  tableToMerge: keyof DbTables
+}) {
+  srcRelation.pages.forEach((_pageId) => {
+    const _page = srcDbTables.pages.get(_pageId)
+    if (!_page) {
+      console.warn('[mergeRelations] missing page', _pageId)
+      return
+    }
+    // console.log('[mergeRelations] process page', _page.name)
+    _page!.blocks.forEach((_blockRef) => {
+      // if blockRef matches srcBlock, it is a header for the source/topic we are merging,
+      // so rewrite its id to match destBlock
+      if (_blockRef._id === srcBlock._id) {
+        _blockRef._id = destBlock._id
+      }
+
+      // otherwise, check the entry for inline instances of srcBlock
+      else if (_blockRef.type === BlockType.Entry) {
+        const _srcEntry = srcDbTables.entries.get(_blockRef._id)
+        if (!_srcEntry) {
+          console.warn('[mergeRelations] block not found', _blockRef._id)
+          return
+        }
+        const _updatedEntry = updateInlinesInBlock({
+          block: _srcEntry,
+          inlineType: tableKeyToInlineType[tableToMerge],
+          text: destBlock.text,
+          inlineId: srcBlock._id,
+          changeInlineIdTo: destBlock._id,
+        })
+        if (_updatedEntry) {
+          srcDbTables.entries.set(_srcEntry._id, _updatedEntry)
+          //   console.log(
+          //     '[mergeRelations] before updateInlines',
+          //     JSON.stringify(_srcEntry, null, 2)
+          //   )
+          //   console.log(
+          //     '[mergeRelations] after updateInlines',
+          //     JSON.stringify(_updatedEntry, null, 2)
+          //   )
+        }
+      }
+    })
+  })
 }
 
 export async function handleImport(filePath: string) {

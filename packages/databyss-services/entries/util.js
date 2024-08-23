@@ -25,7 +25,7 @@ export const startsWithEmoji = (text) =>
     /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/
   )
 
-export const sortEntriesAtoZ = (entries, sortBy) =>
+export const sortEntriesAtoZ = (entries, sortBy, pinFn) =>
   [...entries]?.sort((a, b) => {
     const _a = a[sortBy] ?? ''
     const _b = b[sortBy] ?? ''
@@ -34,6 +34,14 @@ export const sortEntriesAtoZ = (entries, sortBy) =>
     }
     if (startsWithEmoji(_a) && !startsWithEmoji(_b)) {
       return -1
+    }
+    if (pinFn) {
+      if (pinFn(a) && !pinFn(b)) {
+        return -1
+      }
+      if (pinFn(b) && !pinFn(a)) {
+        return 1
+      }
     }
     return unorm(_a).toLowerCase() > unorm(_b).toLowerCase() ? 1 : -1
   })
@@ -50,10 +58,7 @@ export const sortEntriesByRecent = (entries, sortBy, pinning = true) =>
     if (pinning && startsWithEmoji(_txtA) && !startsWithEmoji(_txtB)) {
       return -1
     }
-    return (
-      (_b.modifiedAt ?? _b.createdAt) -
-      (_a.modifiedAt ?? _a.createdAt)
-    )
+    return (_b.modifiedAt ?? _b.createdAt) - (_a.modifiedAt ?? _a.createdAt)
   })
 
 export const filterEntries = (entries, filterQuery) => {

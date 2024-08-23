@@ -1,5 +1,5 @@
 import { useRef, useCallback, useState, useEffect } from 'react'
-import { createLogger } from 'redux-logger'
+// import { createLogger } from 'redux-logger'
 import thunk from 'redux-thunk'
 
 function composeMiddleware(chain) {
@@ -8,16 +8,16 @@ function composeMiddleware(chain) {
 }
 
 const createReducer = (...middlewares) => {
-  const logger = createLogger({
-    collapsed: true,
-  })
+  // const logger = createLogger({
+  //   collapsed: true,
+  // })
   const composedMiddleware = composeMiddleware([
     thunk,
     ...middlewares,
-    ...(process.env.NODE_ENV === 'development' ||
-    process.env.NODE_ENV === 'test'
-      ? [logger]
-      : []),
+    // ...(process.env.NODE_ENV === 'development' ||
+    // process.env.NODE_ENV === 'test'
+    //   ? [logger]
+    //   : []),
   ])
 
   return (reducer, initialState, options) => {

@@ -107,10 +107,17 @@ const SidebarList = ({
         location.search ? `${location.search}` : ''
       }`
     )
-    // ignore differences in nice url by excluding last segment
+    // ignore differences in nice url by excluding groupid and last segment
     const denicePath = (path: string) => {
-      const parts = path.split('/')
-      return parts.length > 4 ? parts.slice(0, -1).join('/') : path
+      let _path = path
+      if (_path.startsWith('/')) {
+        _path = _path.substring(1)
+      }
+      let _parts = _path.split('/').slice(1)
+      if (_parts.length > 2) {
+        _parts = _parts.slice(0, -1)
+      }
+      return _parts.join('/')
     }
     // console.log(
     //   '[SidebarList]',
@@ -121,8 +128,8 @@ const SidebarList = ({
   }
 
   const getDraggable = (item: SidebarListItemData<any>) => {
-    const sidebarPath = getSidebarPath()
-    if (!(sidebarPath === 'group' && item.type === 'page')) {
+    // const sidebarPath = getSidebarPath()
+    if (item.type !== 'page' || !location.pathname.match(/\/collections\//)) {
       return false
     }
     return {

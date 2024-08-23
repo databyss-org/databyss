@@ -388,11 +388,12 @@ export function renderTextToComponents({
   _ranges = _ranges.concat(createLinkRangesForUrls(_text))
 
   // collapse embed ranges
-  _ranges
-    .filter((_range) => _range.marks.find((m) => m[0] === 'embed'))
-    .forEach((_embedRange) => {
-      _embedRange.length = 0
-    })
+  // (this will cause text value of embed to be shown beneath the embed box)
+  // _ranges
+  //   .filter((_range) => _range.marks.find((m) => m[0] === 'embed'))
+  //   .forEach((_embedRange) => {
+  //     _embedRange.length = 0
+  //   })
 
   if (searchTerms?.length && searchTerms[0].text?.length) {
     _ranges = _ranges.concat(

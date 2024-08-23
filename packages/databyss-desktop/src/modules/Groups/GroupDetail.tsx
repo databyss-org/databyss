@@ -17,6 +17,8 @@ import {
   ScrollView,
   Icon,
   TextInput,
+  Grid,
+  Separator,
 } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
@@ -33,6 +35,8 @@ import {
 import { PublicSharingSettings } from './PublicSharingSettings'
 import GroupMenu from './GroupMenu'
 import { GroupMetadata } from './GroupMetadata'
+import { PageDropzone } from './PageDropzone'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -130,13 +134,55 @@ export const GroupFields = ({
             />
           </ValueListItem>
         </View>
-        <View flexGrow={1} flexBasis={1} widthVariant="form">
-          {/* <GroupSection title="Metadata">
-            <GroupMetadata readOnly={readOnly} group={group} />
-          </GroupSection> */}
-          <GroupSection title="Publishing">
-            <PublicSharingSettings readOnly={readOnly} group={group} />
-          </GroupSection>
+        <View
+          flexDirection="row"
+          flexGrow={1}
+          flexBasis="min-content"
+          flexWrap="wrap"
+        >
+          <View
+            widthVariant="form"
+            flexShrink={1}
+            flexGrow={1}
+            mr="large"
+            flexBasis="min-content"
+            mb="small"
+          >
+            <GroupSection title="Pages" flexGrow={1} flexBasis="min-content">
+              <Separator color="border.2" spacing="none" />
+              <View flexGrow={1} flexBasis="min-content">
+                <ValueListItem
+                  path="pages"
+                  pages={pages}
+                  group={group}
+                  dependencies={[groupValue.current.defaultPageId]}
+                >
+                  <PageDropzone
+                    pages={pages}
+                    group={group}
+                    flexGrow={1}
+                    defaultPageId={_values.defaultPageId}
+                  />
+                </ValueListItem>
+              </View>
+            </GroupSection>
+          </View>
+          <View
+            flexShrink={1}
+            flexGrow={1}
+            flexBasis={1}
+            overflow="hidden"
+            widthVariant="form"
+            minWidth={pxUnits(350)}
+            height="100%"
+          >
+            {/* <GroupSection title="Metadata">
+              <GroupMetadata readOnly={readOnly} group={group} />
+            </GroupSection> */}
+            <GroupSection title="Publishing">
+              <PublicSharingSettings readOnly={readOnly} group={group} />
+            </GroupSection>
+          </View>
         </View>
       </View>
     </ValueListProvider>
@@ -162,13 +208,7 @@ export const GroupDetail = () => {
         contextMenu={<GroupMenu groupId={group._id} />}
       />
 
-      <ScrollView
-        p="medium"
-        pt="large"
-        flexGrow={1}
-        flexShrink={1}
-        shadowOnScroll
-      >
+      <ScrollView p="medium" pt="large" flexGrow={1} flexShrink={1}>
         <GroupFields
           pages={pages}
           group={group}

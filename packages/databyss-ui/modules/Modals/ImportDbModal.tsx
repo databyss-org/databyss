@@ -30,7 +30,15 @@ export interface ImportDbOptions {
   files: FileList | null
 }
 
-export const ImportDbModal = ({ visible }) => {
+export const ImportDbModal = ({
+  visible,
+  onImport,
+  onCancel,
+}: {
+  visible: boolean
+  onImport?: () => void
+  onCancel?: () => void
+}) => {
   const [values, setValues] = useState<ImportDbOptions>({
     mergeIntoGroup: null,
     files: null,
@@ -41,6 +49,9 @@ export const ImportDbModal = ({ visible }) => {
   console.log('[ImportDbModal] values', values)
 
   const onDismiss = () => {
+    if (onCancel) {
+      onCancel()
+    }
     hideModal()
   }
 
@@ -56,6 +67,9 @@ export const ImportDbModal = ({ visible }) => {
       values.files![0]!.path,
       values.mergeIntoGroup?._id
     )
+    if (onImport) {
+      onImport()
+    }
     hideModal()
   }
 

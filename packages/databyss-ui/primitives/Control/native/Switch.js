@@ -15,6 +15,10 @@ const toggleCss = {
   flexShrink: 0,
 }
 
+const toggleCheckedCss = {
+  backgroundColor: colors.green[0],
+}
+
 const handleCss = {
   content: '""',
   boxSizing: 'border-box',
@@ -36,7 +40,10 @@ const handleCheckedCss = {
 }
 
 export default ({ value, disabled }) => (
-  <div css={toggleCss} style={{ opacity: disabled ? 0.5 : 1 }}>
+  <div
+    css={[toggleCss, value && toggleCheckedCss]}
+    style={{ opacity: disabled ? 0.5 : 1 }}
+  >
     <div css={[handleCss, value && handleCheckedCss]} />
   </div>
 )
