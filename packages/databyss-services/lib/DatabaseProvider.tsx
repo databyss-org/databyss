@@ -8,7 +8,12 @@ import {
 import { useContextSelector, createContext } from 'use-context-selector'
 import { VouchDb, connect } from '@databyss-org/data/vouchdb/vouchdb'
 import { Viewport, Text, View, ModalManager } from '@databyss-org/ui'
-import { useQueryClient } from '@tanstack/react-query'
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+  UseQueryResult,
+} from '@tanstack/react-query'
 import {
   LoadingFallback,
   useNavigationContext,
@@ -18,7 +23,7 @@ import DatabyssLogo from '@databyss-org/ui/assets/logo-thick.png'
 import { darkTheme, pxUnits } from '@databyss-org/ui/theming/theme'
 import { appCommands } from '@databyss-org/ui/lib/appCommands'
 import { version } from '../version'
-import { getAccountFromLocation } from '../session/utils'
+import { getAccountFromLocation, RemoteDbInfo } from '../session/utils'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
@@ -100,12 +105,13 @@ export const DatabaseProvider = ({
     }
   }
 
-  const importDatabase = () => {
-    console.log('[DatabaseProvider] importDatabase')
+  const importDatabase = (groupId?: string) => {
+    console.log('[DatabaseProvider] importDatabase', groupId)
     return new Promise<boolean>((resolve) => {
       showModal({
         component: 'IMPORTDB',
         props: {
+          groupId,
           onImport: () => {
             resolve(true)
           },
@@ -189,3 +195,18 @@ export const DatabaseProvider = ({
 
 export const useDatabaseContext = (selector = (x) => x) =>
   useContextSelector(DatabaseContext, selector)
+
+export const useRemoteDbInfo = (groupId?: string) => {
+  const _groupId = groupId ? groupId.substring(2) : 'nogroup'
+  const _res = useQuery<any>({
+    queryKey: [`remoteDbInfo_${_groupId}`],
+    queryFn: async () => {
+      const _res = await fetch(
+        `${process.env.DBFILE_URL}${groupId}/databyss-db-${_groupId}-info.json`
+      )
+      return _res.json()
+    },
+    enabled: !!groupId,
+  })
+  return _res as UseQueryResult<RemoteDbInfo>
+}

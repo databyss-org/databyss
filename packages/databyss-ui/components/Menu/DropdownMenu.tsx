@@ -12,6 +12,7 @@ export interface DropdownMenuProps extends ContextMenuProps {
   renderLabel?: (value: any) => string | ReactNode
   value?: any
   showFilter?: boolean
+  disabled?: boolean
 }
 
 export const DropdownMenu = ({
@@ -30,13 +31,21 @@ export const DropdownMenu = ({
   value,
   showFilter,
   ellipsis,
+  disabled,
   ...other
 }: DropdownMenuProps) => {
   const { showMenu, setClientPoint } = useContextMenu()
   const menuButtonRef = useRef<HTMLElement>()
-  const _label = label ?? (renderLabel && renderLabel(value))
+  let _label: string | ReactNode = label
+  if (renderLabel) {
+    _label = renderLabel(value)
+  }
+  if (!_label && typeof value !== 'undefined') {
+    _label = menuItems.find((_itm) => _itm.value === value)?.label
+  }
   const _menuButtonView = (
     <BaseControl
+      disabled={disabled}
       renderAsView
       borderRadius="default"
       zIndex={theme.zIndex.menu + 1}

@@ -5,6 +5,7 @@ import PouchDbQuickSearch from 'pouchdb-quick-search'
 import { BrowserWindow } from 'electron'
 import path from 'path'
 import fs from 'fs-extra'
+import JSZip from 'jszip'
 import {
   Block,
   BlockRelation,
@@ -29,12 +30,16 @@ import {
 } from '@databyss-org/data/pouchdb/backup'
 import { updateInlinesInBlock } from '@databyss-org/services/text/inlineUtils'
 import { InlineTypes } from '@databyss-org/services/interfaces/Range'
+import { exportDbToZip, mediaPath } from './eapi/handlers/file-handlers'
+import { DbRef } from '@databyss-org/data/pouchdb/dbRef'
+import { Role } from '@databyss-org/data/interfaces/sysUser'
+import { uidlc } from '@databyss-org/data/lib/uid'
 
 PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 PouchDB.plugin(PouchDbQuickSearch)
 
-export interface NodeDbRef {
+export interface NodeD_groupIdbRef {
   current: PouchDB.Database<any> | null
   dbPath: string | null
   groupId: string | null
@@ -66,6 +71,55 @@ export class DbTables {
     this.embeds = new Map()
     this.selections = new Map()
   }
+}
+
+export function getGroupIdFromTables(tables: DbTables, adminOnly?: boolean) {
+  // get groupid from user_preference
+  const _prefsDoc = tables.userPreferences.get('user_preference')
+  if (!_prefsDoc) {
+    console.warn('[DB] no prefs doc found')
+    return null
+  }
+  if (!adminOnly) {
+    return _prefsDoc.belongsToGroup
+  }
+  // find the group where id matches belongsToGroup and has admin rights
+  return _prefsDoc.groups.find(
+    (_group) =>
+      _group.groupId === _prefsDoc.belongsToGroup &&
+      _group.role === Role.GroupAdmin
+  )?.groupId
+}
+
+export function getOrCreateAdminGroup(tables: DbTables) {
+  let _groupId = getGroupIdFromTables(tables, true)
+  if (_groupId) {
+    return tables._docsById.get(_groupId)
+  }
+  // edge case: importing from a databyss with an exported collection
+  //   in this case, there will be no admin group and we should generate a new one
+  const _prefsDoc = tables.userPreferences.get('user_preference')
+  let _username = 'Imported Databyss'
+  if (_prefsDoc.userId.includes('@')) {
+    // edge case: importing from old cloud databyss export, use email as name
+    _username = _prefsDoc.email.split('@')[0]
+    if (_username.includes('.')) {
+      _username = _username.split('.')[0]
+    }
+    _username = _username[0].toUpperCase().concat(_username.substring(1))
+    _username = `${_username}'s Databyss`
+  } else {
+    // edge case: importing from Databyss collection export
+    //   in this case there should be one group with a name
+    const _groupName = (tables.groups.values().next().value as Group).name
+    if (_groupName) {
+      _username = _groupName
+    }
+  }
+  const _groupDoc = new Group(_username)
+  _groupDoc.localGroup = true
+
+  return _groupDoc
 }
 
 export function dumpTables(tables: DbTables) {
@@ -138,15 +192,11 @@ export function groupDbIntoTables(
 }
 
 export async function handleMergeImport(
-  filePath: string,
+  sourceTables: DbTables,
   importIntoGroupId: string | null,
   windowId: number
 ) {
-  console.log('[DB] merge import', filePath, importIntoGroupId)
-  const _buf = fs.readFileSync(filePath)
-  const _dbJson = JSON.parse(_buf.toString()) as any[]
-  const _sourceTables = groupDbIntoTables(_dbJson)
-
+  console.log('[DB] merge import', importIntoGroupId)
   // console.log('[DB] tables to import')
   // dumpTables(_sourceTables)
 
@@ -175,35 +225,35 @@ export async function handleMergeImport(
   // dumpTables(_targetTables)
 
   // iterate over the topics and sources
-  const _mergedTopics = mergeRelations(_sourceTables, _targetTables, 'topics')
+  const _mergedTopics = mergeRelations(sourceTables, _targetTables, 'topics')
   console.log(`[handleMergeImport] merged ${_mergedTopics.length} topics`)
-  const _mergedSources = mergeRelations(_sourceTables, _targetTables, 'sources')
+  const _mergedSources = mergeRelations(sourceTables, _targetTables, 'sources')
   console.log(`[handleMergeImport] merged ${_mergedSources.length} sources`)
 
   // TODO: add importedFromGroup to pages
 
   // bulk insert from source tables to dest db
   console.log('[handleMergeImport] merging embeds')
-  await mergeFromTable(_dbRef, _sourceTables.embeds)
+  await mergeFromTable(_dbRef, sourceTables.embeds)
   console.log('[handleMergeImport] merging entries')
-  await mergeFromTable(_dbRef, _sourceTables.entries)
+  await mergeFromTable(_dbRef, sourceTables.entries)
   console.log('[handleMergeImport] merging pages')
-  await mergeFromTable(_dbRef, _sourceTables.pages)
+  await mergeFromTable(_dbRef, sourceTables.pages)
   console.log('[handleMergeImport] merging relations')
-  await mergeFromTable(_dbRef, _sourceTables.relations)
+  await mergeFromTable(_dbRef, sourceTables.relations)
   console.log('[handleMergeImport] merging sources')
-  await mergeFromTable(_dbRef, _sourceTables.sources)
+  await mergeFromTable(_dbRef, sourceTables.sources)
   console.log('[handleMergeImport] merging topics')
-  await mergeFromTable(_dbRef, _sourceTables.topics)
+  await mergeFromTable(_dbRef, sourceTables.topics)
   console.log('[handleMergeImport] merging selections')
-  await mergeFromTable(_dbRef, _sourceTables.selections)
+  await mergeFromTable(_dbRef, sourceTables.selections)
 
-  // TODO: merge media files
-
-  // load the target database
-  setGroupLoaded(windowId)
-  // rebuild the search index
-  buildSearchIndexDb(nodeDbRefs[windowId].current)
+  // import group record for imported collection
+  const _groupId = getGroupIdFromTables(sourceTables)
+  const _groupDoc = sourceTables._docsById.get(_groupId) as Group
+  _groupDoc.isImportedGroup = true
+  console.log('[handleMergeImport] merging group doc')
+  await _dbRef.current.upsert(_groupId, () => _groupDoc)
 }
 
 function mergeFromTable(dbRef: NodeDbRef, table: DocumentMap<any>) {
@@ -315,22 +365,14 @@ function mergeInlines({
   })
 }
 
-export async function handleImport(filePath: string) {
-  console.log('[DB] import', filePath)
-  const buf = fs.readFileSync(filePath)
-  const dbJson = JSON.parse(buf.toString()) as any[]
+export async function handleImport(sourceTables: DbTables) {
+  console.log(`[DB] import as new Databyss`)
   // get groupid from user_preference
-  const prefsDoc = dbJson.find(
-    (doc) => doc._id === 'user_preference'
-  ) as UserPreference
-  if (!prefsDoc) {
-    console.warn('[DB] no prefs doc found')
-    return false
-  }
-  const groupId = prefsDoc.belongsToGroup
-  console.log('[DB] found groupid', groupId)
+  const _group = getOrCreateAdminGroup(sourceTables)
+  const _groupId = _group._id
+  console.log('[DB] found groupid', _groupId)
   const groups = (appState.get('localGroups') ?? []) as Group[]
-  const _existingGroup = groups.find((group) => group._id === groupId)
+  const _existingGroup = groups.find((group) => group._id === _groupId)
   if (_existingGroup) {
     sendCommandToBrowser('notify', {
       message: `Cannot import Databyss because it already exists as "${_existingGroup.name}". If you are sure this is correct, you must remove the existing Databyss named "${_existingGroup.name}" before importing the selected file.`,
@@ -340,41 +382,93 @@ export async function handleImport(filePath: string) {
   }
   // init pouchdb with groupid as path
   const windowId = BrowserWindow.getFocusedWindow().id
-  await initNodeDb(windowId, groupId)
+  await initNodeDb(windowId, _groupId)
+
   // import all the docs
   const res = await nodeDbRefs[windowId].current.bulkDocs(
-    dbJson,
+    Array.from(sourceTables._docsById.values()),
     { new_edits: false } // not change revision
   )
-  // if GROUP doc doesn't exist, create it
-  let groupDoc: Group = null
-  try {
-    groupDoc = await nodeDbRefs[windowId].current.get<Group>(groupId)
-  } catch (_) {}
-  if (groupDoc === null) {
-    let username = prefsDoc.email.split('@')[0]
-    if (username.includes('.')) {
-      username = username.split('.')[0]
+  // flag all group docs as imported if they don't belong to admin
+  for (const _group of sourceTables.groups.values()) {
+    if (((_group as unknown) as DbDocument).belongsToGroup === _groupId) {
+      continue
     }
-    username = username[0].toUpperCase().concat(username.substring(1))
-    groupDoc = {
-      name: `${username}'s Databyss`,
-      pages: [],
-      _id: groupId,
-      localGroup: true,
-    }
+    _group.isImportedGroup = true
+    await nodeDbRefs[windowId].current.upsert(_group._id, () => _group)
+    console.log('[handleImport] updated group', _group)
+  }
+
+  // add group doc to db if we had to create a new one
+  if (!sourceTables._docsById.get(_groupId)) {
     await nodeDbRefs[windowId].current.put(
       addTimeStamp({
         doctype: DocumentType.Group,
-        ...groupDoc,
+        ..._group,
       })
     )
   }
+
   // add GROUP doc to app state
-  appState.set('localGroups', [...groups, groupDoc])
-  console.log('[DB] import done', res)
-  setGroupLoaded(windowId)
+  appState.set('localGroups', [...groups, _group])
   return true
+}
+
+export async function handleImportMedia(
+  sourceTables: DbTables,
+  importFromPath?: string,
+  dbRef?: NodeDbRef
+) {
+  let _zip: JSZip | null = null
+  if (importFromPath?.endsWith('.zip')) {
+    const _zipData = fs.readFileSync(importFromPath)
+    _zip = await JSZip.loadAsync(_zipData)
+  }
+  const _groupId = getGroupIdFromTables(sourceTables)
+  // ensure local media path
+  const _groupMediaPath = path.join(mediaPath(), _groupId)
+  fs.ensureDirSync(_groupMediaPath)
+
+  // copy media for all embeds
+  for (const _embed of sourceTables.embeds.values()) {
+    if (!_embed.detail.fileDetail) {
+      continue
+    }
+    const _filename = _embed.detail.fileDetail.filename
+    const _copyToDir = path.join(_groupMediaPath, _embed._id)
+    fs.ensureDirSync(_copyToDir)
+    const _copyToPath = path.join(_copyToDir, _filename)
+    if (importFromPath) {
+      // media is local
+      const _copyFromDir = _zip ? 'media' : path.join(importFromPath, 'media')
+      const _copyFromPath = path.join(_copyFromDir, _embed._id, _filename)
+      if (_zip) {
+        const _mediaFile = _zip.file(_copyFromPath)
+        if (!_mediaFile) {
+          console.warn(
+            '[handleImportMedia] file not found in zip',
+            _copyFromPath
+          )
+          continue
+        }
+        const _mediaFileData = await _mediaFile.async('nodebuffer')
+        console.log('[handleImportMedia] extracting', _copyFromPath)
+        fs.writeFileSync(_copyToPath, _mediaFileData)
+      } else {
+        fs.copyFileSync(_copyFromPath, _copyToPath)
+      }
+    } else {
+      // fetch media from remote
+      const _url = `${process.env.DBFILE_URL}${_groupId}/media/${_embed._id}/${_filename}`
+      const _res = await fetch(_url)
+      const _buf = await _res.arrayBuffer()
+      fs.writeFileSync(_copyToPath, Buffer.from(_buf))
+
+      // rewrite src to indicate local media
+      _embed.detail.src = `dbdrive://${_groupId}/${_embed._id}/${_filename}`
+      await dbRef!.current!.upsert(_embed._id, () => _embed)
+    }
+  }
 }
 
 export async function reconstructLocalGroups(dataPath: string) {
@@ -494,16 +588,14 @@ export async function archiveDatabyss(groupId: string) {
     console.warn('[DB] cannot archive, database not found', groupId)
     return false
   }
-  const _db = new PouchDB(path.join(_dbDirPath, groupId))
-  const _dbJson = await backupDbToJson(_db)
-  const _archiveDir = path.join(appState.get('dataPath'), 'archive')
-  if (!fs.existsSync(_archiveDir)) {
-    fs.mkdirSync(_archiveDir)
+  const _dbPath = path.join(_dbDirPath, groupId)
+  const _db = new PouchDB(_dbPath)
+  const _dbRef: NodeDbRef = {
+    current: _db,
+    groupId,
+    dbPath: _dbPath,
   }
-  const _filename = `${makeBackupFilename(groupId)}.json`
-  const _archivePath = path.join(_archiveDir, _filename)
-  fs.writeFileSync(_archivePath, _dbJson)
-  return _archivePath
+  await exportDbToZip(_dbRef)
 }
 
 export function getWindowIdForGroup(groupId: string) {

@@ -1,10 +1,15 @@
 import { BrowserWindow, dialog, ipcMain, shell } from 'electron'
 import fs from 'fs-extra'
+import JSZip from 'jszip'
 import path from 'path'
 import {
   archiveDatabyss,
+  buildSearchIndexDb,
+  groupDbIntoTables,
   handleImport,
+  handleImportMedia,
   handleMergeImport,
+  NodeDbRef,
   nodeDbRefs,
   setDataPath,
   setGroupLoaded,
@@ -12,6 +17,10 @@ import {
 import { appState } from './state-handlers'
 import { createDatabyss } from '../../lib/createDatabyss'
 import { opengraph } from '@databyss-org/services/embeds/remoteMedia'
+import { DbRef } from '@databyss-org/data/pouchdb/dbRef'
+import { DbDocument } from '@databyss-org/data/pouchdb/interfaces'
+import { BlockType, Embed, Group } from '@databyss-org/services/interfaces'
+import { makeBackupFilename } from '@databyss-org/data/pouchdb/backup'
 
 export interface IpcFile {
   buffer: ArrayBuffer
@@ -23,17 +32,6 @@ export interface IpcFile {
 }
 
 export const mediaPath = () => path.join(appState.get('dataPath'), 'media')
-
-export async function onImportDatabyss() {
-  const dialogRes = await dialog.showOpenDialog({
-    properties: ['openFile'],
-    filters: [{ extensions: ['json'], name: 'Databyss collection' }],
-  })
-  if (dialogRes.canceled) {
-    return false
-  }
-  return handleImport(dialogRes.filePaths[0])
-}
 
 export async function onChooseDataPath() {
   const dialogRes = await dialog.showOpenDialog({
@@ -56,11 +54,8 @@ export async function closeDatabyss() {
 }
 
 async function archiveAndRemoveDatabyss(groupId: string) {
-  // backup databyss to json
-  const _archivePath = await archiveDatabyss(groupId)
-  if (!_archivePath) {
-    return false
-  }
+  // backup databyss to zip
+  await archiveDatabyss(groupId)
   // remove from groups
   const _groups = appState.get('localGroups')
   appState.set(
@@ -74,7 +69,9 @@ async function archiveAndRemoveDatabyss(groupId: string) {
     .forEach((dir) => {
       fs.removeSync(path.join(appState.get('dataPath'), 'pouchdb', dir))
     })
-  return _archivePath
+
+  // delete media dir
+  fs.removeSync(path.join(mediaPath(), groupId))
 }
 
 export function registerFileHandlers() {
@@ -89,12 +86,31 @@ export function registerFileHandlers() {
   ipcMain.handle('file-chooseDataPath', onChooseDataPath)
   ipcMain.handle(
     'file-importDatabyss',
-    (evt, dataFilePath, importIntoGroupId) => {
-      if (importIntoGroupId) {
-        handleMergeImport(dataFilePath, importIntoGroupId, evt.sender.id)
+    async (evt, zipFilePath, importIntoGroupId, remoteGroupId) => {
+      let dbJson: any[]
+      if (remoteGroupId) {
+        const _gid = remoteGroupId.substring(2)
+        const _url = `${process.env.DBFILE_URL}${remoteGroupId}/databyss-db-${_gid}.json`
+        const _res = await fetch(_url)
+        dbJson = await _res.json()
       } else {
-        handleImport(dataFilePath)
+        dbJson = await getDbJsonFromZip(zipFilePath)
       }
+      const sourceTables = groupDbIntoTables(dbJson)
+      if (importIntoGroupId) {
+        await handleMergeImport(sourceTables, importIntoGroupId, evt.sender.id)
+      } else {
+        await handleImport(sourceTables)
+      }
+      await handleImportMedia(
+        sourceTables,
+        zipFilePath,
+        nodeDbRefs[evt.sender.id]
+      )
+      console.log('[DB] import done')
+      setGroupLoaded(evt.sender.id)
+      // rebuild the search index
+      buildSearchIndexDb(nodeDbRefs[evt.sender.id].current)
     }
   )
   ipcMain.handle('file-newDatabyss', (evt) => createDatabyss(evt.sender.id))
@@ -168,4 +184,94 @@ export function registerFileHandlers() {
     const _detail = await opengraph(urlOrHtml)
     return _detail
   })
+}
+
+async function getDbJsonFromZip(zipFilePath: string) {
+  const _zipData = fs.readFileSync(zipFilePath)
+  const _zip = await JSZip.loadAsync(_zipData)
+  const _dbFile = _zip.file('db.json')
+  if (!_dbFile) {
+    console.error('[getDbJsonFromZip] no db.json found in zip')
+    return null
+  }
+  const _dbFileData = await _dbFile.async('string')
+  return JSON.parse(_dbFileData)
+}
+
+async function unzipDbFile(zipFilePath: string) {
+  console.log('[unzipDbFile] unzip', zipFilePath)
+  // create temp dir
+  const _tempDir = path.join(
+    appState.get('dataPath'),
+    'temp',
+    fs.mkdtempSync('import-')
+  )
+  fs.mkdirSync(_tempDir, { recursive: true })
+  // read zip file
+  const _zipData = fs.readFileSync(zipFilePath)
+  const _zip = await JSZip.loadAsync(_zipData)
+  const _files: [string, JSZip.JSZipObject][] = []
+  _zip.forEach((relativePath, file) => {
+    _files.push([relativePath, file])
+  })
+  for (const [_path, _file] of _files) {
+    if (_file.dir) {
+      continue
+    }
+    const _data = await _file.async('nodebuffer')
+    const _unzipPath = path.join(_tempDir, _path)
+    const _unzipDir = path.parse(_unzipPath).dir
+    fs.ensureDirSync(_unzipDir)
+    fs.writeFileSync(_unzipPath, _data)
+  }
+  return _tempDir
+}
+
+export async function exportDbToZip(dbRef: NodeDbRef) {
+  const _zip = new JSZip().folder(dbRef.groupId!)!
+  const { rows } = await dbRef.current!.allDocs({ include_docs: true })
+  // collect rows and add media to zip
+  const _docs: DbDocument[] = []
+  rows.forEach((_row) => {
+    const _d: DbDocument = _row.doc
+    _docs.push(_d)
+    if (_d.type === BlockType.Embed) {
+      const _embed = (_d as unknown) as Embed
+      if (!_embed.detail.fileDetail) {
+        return
+      }
+      const _mediaItemDir = path.join(mediaPath(), dbRef.groupId, _embed._id)
+      if (!fs.existsSync(_mediaItemDir)) {
+        return
+      }
+      const _filename = _embed.detail.fileDetail.filename
+      const _buf = fs.readFileSync(path.join(_mediaItemDir, _filename))
+      _zip.file(path.join('media', _embed._id, _filename), _buf, {
+        binary: true,
+      })
+    }
+  })
+  _zip.file('db.json', JSON.stringify(_docs, null, 2))
+  const _zipContent = await _zip.generateAsync({ type: 'nodebuffer' })
+  // get the group name
+  let _group: Group
+  try {
+    _group = (await dbRef.current.get(dbRef.groupId)) as Group
+  } catch (e) {
+    // data seems corrupted, skip writing
+    console.warn(
+      '[exportDbToZip] group not found, data seems corrupted, skipping writing'
+    )
+    return
+  }
+  // write the file
+  const _filename = makeBackupFilename(dbRef.groupId, _group.name)
+  const _dir = path.join(appState.get('dataPath'), 'exports')
+  if (!fs.existsSync(_dir)) {
+    fs.mkdirSync(_dir)
+  }
+  const _path = path.join(_dir, `${_filename}.zip`)
+  fs.writeFileSync(_path, _zipContent)
+  // open file location
+  shell.showItemInFolder(_path)
 }

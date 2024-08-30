@@ -16,6 +16,7 @@ export interface CommandArgs {
   exportAllAsMarkdown: []
   exportDatabase: []
   importDatabase: []
+  exportModal: []
 }
 
 export const onCommand = (

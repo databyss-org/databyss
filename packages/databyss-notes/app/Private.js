@@ -178,8 +178,8 @@ const Private = () => {
           </Route>
           <Route path="*" element={<NotFoundRedirect />} />
         </Routes>
+        <ModalManager />
       </AppView>
-      <ModalManager />
     </Providers>
   )
 }

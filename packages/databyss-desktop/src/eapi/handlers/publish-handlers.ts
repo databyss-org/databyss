@@ -339,6 +339,7 @@ async function publishGroup(
   const _dbInfo: RemoteDbInfo = {
     searchMd5: _searchIndexDbPath.split('-').slice(-1)[0],
     publishedAt: _publishedAt,
+    name: _group.name,
   }
   console.log('[publishGroup] db info', _dbInfo)
   _uploadRes = await upload({

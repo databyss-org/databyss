@@ -16,6 +16,7 @@ export class Group {
   publishingStatusId: string | null
   subtitle: Text
   publishSourceMedia?: boolean
+  isImportedGroup?: boolean
 
   constructor(name: string) {
     this._id = `g_${uidlc()}`
@@ -28,5 +29,6 @@ export class Group {
     this.publishingStatusId = null
     this.subtitle = { textValue: '', ranges: [] }
     this.publishSourceMedia = false
+    this.isImportedGroup = false
   }
 }

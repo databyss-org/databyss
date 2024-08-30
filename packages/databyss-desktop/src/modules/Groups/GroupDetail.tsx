@@ -19,6 +19,7 @@ import {
   TextInput,
   Grid,
   Separator,
+  Button,
 } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
@@ -32,7 +33,7 @@ import {
   StickyHeader,
   TitleInput,
 } from '@databyss-org/ui/components'
-import { PublicSharingSettings } from './PublicSharingSettings'
+import { makePublicUrl, PublicSharingSettings } from './PublicSharingSettings'
 import GroupMenu from './GroupMenu'
 import { GroupMetadata } from './GroupMetadata'
 import { PageDropzone } from './PageDropzone'
@@ -125,15 +126,39 @@ export const GroupFields = ({
             }
           />
         </ValueListItem>
-        <View borderVariant="thinLight" widthVariant="form" p="tiny" mt="tiny">
-          <ValueListItem path="subtitle">
-            <TextInput
-              variant="uiTextNormal"
-              placeholder="Collection subtitle (optional)"
-              readonly={readOnly}
-            />
-          </ValueListItem>
-        </View>
+        {(values.subtitle.textValue || !readOnly) && (
+          <View
+            borderVariant="thinLight"
+            widthVariant="form"
+            p="tiny"
+            mt="tiny"
+          >
+            <ValueListItem path="subtitle">
+              <TextInput
+                variant="uiTextNormal"
+                placeholder="Collection subtitle (optional)"
+                readonly={readOnly}
+              />
+            </ValueListItem>
+          </View>
+        )}
+        {values.isImportedGroup && (
+          <View flexDirection="row" alignItems="center" mt="small">
+            <Text variant="uiTextSmall" color="text.3">
+              Imported from:
+            </Text>
+            <Button
+              variant="uiLink"
+              textVariant="uiTextSmall"
+              textColor="text.3"
+              ml="tiny"
+              href={makePublicUrl(values)}
+              target="_blank"
+            >
+              {makePublicUrl(values)}
+            </Button>
+          </View>
+        )}
         <View
           flexDirection="row"
           flexGrow={1}
@@ -162,6 +187,7 @@ export const GroupFields = ({
                     group={group}
                     flexGrow={1}
                     defaultPageId={_values.defaultPageId}
+                    readOnly={readOnly}
                   />
                 </ValueListItem>
               </View>
@@ -176,12 +202,11 @@ export const GroupFields = ({
             minWidth={pxUnits(350)}
             height="100%"
           >
-            {/* <GroupSection title="Metadata">
-              <GroupMetadata readOnly={readOnly} group={group} />
-            </GroupSection> */}
-            <GroupSection title="Publishing">
-              <PublicSharingSettings readOnly={readOnly} group={group} />
-            </GroupSection>
+            {!readOnly && (
+              <GroupSection title="Publishing">
+                <PublicSharingSettings group={group} />
+              </GroupSection>
+            )}
           </View>
         </View>
       </View>
@@ -212,7 +237,7 @@ export const GroupDetail = () => {
         <GroupFields
           pages={pages}
           group={group}
-          readOnly={isReadOnly}
+          readOnly={isReadOnly || group.isImportedGroup}
           key={`${id}${isReadOnly}`}
         />
       </ScrollView>

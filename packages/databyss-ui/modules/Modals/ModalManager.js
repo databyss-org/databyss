@@ -10,10 +10,14 @@ import { useNavigationContext } from '../../components/Navigation/NavigationProv
  */
 const ModalManager = () => {
   const modals = useNavigationContext((c) => c.modals)
-  return modals.map((modal, i) => {
-    const ModalComponent = modalMap[modal.component]
-    return <ModalComponent visible={modal.visible} key={i} {...modal.props} />
-  })
+  return modals
+    .map((modal, i) => {
+      const ModalComponent = modalMap[modal.component]
+      return (
+        modal.visible && <ModalComponent visible key={i} {...modal.props} />
+      )
+    })
+    .filter((m) => m)
 }
 
 export default ModalManager

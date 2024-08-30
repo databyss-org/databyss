@@ -112,13 +112,10 @@ export function DatabyssMenuItems({
       icon: <ArchiveSvg />,
       action: (group: Group) => {
         notifyConfirm({
-          message: `Are you sure you want to archive and remove "${group.name}"? Data will be backed up to a JSON file and the Databyss will be removed from the list.`,
-          onOk: async () => {
+          message: `Are you sure you want to archive and remove "${group.name}"? Data and media will be exported to a zip file and the Databyss will be removed from the list.`,
+          onOk: () => {
             console.log('[DatabyssMenu] delete', group.name)
-            const _archivePath = await eapi.file.archiveDatabyss(group._id)
-            notify({
-              message: `Databyss archived to: ${_archivePath}`,
-            })
+            eapi.file.archiveDatabyss(group._id)
           },
         })
       },

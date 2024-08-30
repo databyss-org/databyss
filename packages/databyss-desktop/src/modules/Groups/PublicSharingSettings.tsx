@@ -110,9 +110,7 @@ export const PublicSharingSettings = ({
   // setup public link
   let _publicUrl: string | null = null
   if (group.lastPublishedAt) {
-    _publicUrl = `${process.env.PUBLISHED_URL}/${urlSafeName(
-      group.name
-    )}-${group._id.substring(2)}`
+    _publicUrl = makePublicUrl(group)
   }
 
   const copyLink = () => {
@@ -338,4 +336,10 @@ export const PublicSharingSettings = ({
       )}
     </List>
   )
+}
+
+export function makePublicUrl(group: Group) {
+  return `${process.env.PUBLISHED_URL}/${urlSafeName(
+    group.name
+  )}-${group._id.substring(2)}`
 }

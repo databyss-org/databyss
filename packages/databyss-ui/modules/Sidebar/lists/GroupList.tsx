@@ -12,6 +12,7 @@ import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { pagesToListItemData } from '../transforms'
 import { MenuItem } from '../../../components/Menu/DropdownList'
 import { DraggableItem } from '../../..'
+import { useNotifyContext } from '../../../components/Notify/NotifyProvider'
 
 export const groupsToListItemData = (groups: Group[]) =>
   groups
@@ -30,6 +31,7 @@ export const groupsToListItemData = (groups: Group[]) =>
 export const GroupList = (others) => {
   const groupsRes = useGroups()
   const pagesRes = usePages()
+  const notifyConfirm = useNotifyContext((c) => c.notifyConfirm)
 
   const pageMenuItems = (group: Group) => {
     const _menuItems: MenuItem[] = [
@@ -54,6 +56,13 @@ export const GroupList = (others) => {
   }
 
   const onPageDrop = (group: Group) => (item: DraggableItem) => {
+    if (group.isImportedGroup) {
+      notifyConfirm({
+        message: 'Cannot add pages to an imported collection',
+        showCancelButton: false,
+      })
+      return
+    }
     const _page = item.payload as Page
     console.log('[GroupList] dropped page', _page)
     if (group.pages.includes(_page._id)) {
@@ -82,7 +91,9 @@ export const GroupList = (others) => {
         'text'
       ).map((_subItem) => ({
         ..._subItem,
-        contextMenu: pageMenuItems(item.data!),
+        contextMenu: !item.data?.isImportedGroup
+          ? pageMenuItems(item.data!)
+          : undefined,
       })),
       isDropzone: true,
       dropzoneProps: {

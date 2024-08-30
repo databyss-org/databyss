@@ -2,11 +2,13 @@ import React, { useCallback } from 'react'
 import DatabyssImg from '@databyss-org/ui/assets/logo-thick.png'
 import MoonSvg from '@databyss-org/ui/assets/moon.svg'
 import MoonFilledSvg from '@databyss-org/ui/assets/moon-filled.svg'
+import ShareSvg from '@databyss-org/ui/assets/share.svg'
 import { Group } from '@databyss-org/services/interfaces'
 import { Text, View, Icon, BaseControl } from '../..'
 import { pxUnits } from '../../theming/views'
 import { darkTheme } from '../../theming/theme'
-import { PublicGroupMenu } from './PublicGroupMenu'
+// import { PublicGroupMenu } from './PublicGroupMenu'
+import { useNavigationContext } from '../Navigation'
 
 export const PublicGroupHeader = ({
   group,
@@ -18,9 +20,19 @@ export const PublicGroupHeader = ({
   darkMode: boolean
   setDarkMode: (value) => void
 }) => {
+  const showModal = useNavigationContext((c) => c && c.showModal)
+
   const toggleDarkMode = useCallback(() => {
     setDarkMode(!darkMode)
   }, [setDarkMode, darkMode])
+
+  const showExportModal = useCallback(() => {
+    showModal({
+      component: 'EXPORTDB',
+      visible: true,
+    })
+  }, [showModal])
+
   return (
     <View
       flexDirection="row"
@@ -50,17 +62,28 @@ export const PublicGroupHeader = ({
       </View>
       <View flexDirection="row" alignItems="center">
         <BaseControl
+          onPress={showExportModal}
+          hoverColor="background.2"
+          p="tiny"
+          borderRadius="default"
+          mr="small"
+        >
+          <Icon sizeVariant="small" color="text.2">
+            <ShareSvg />
+          </Icon>
+        </BaseControl>
+        <BaseControl
           onPress={toggleDarkMode}
           hoverColor="background.2"
           p="tiny"
           borderRadius="default"
           mr="small"
         >
-          <Icon sizeVariant="small">
+          <Icon sizeVariant="small" color="text.2">
             {darkMode ? <MoonFilledSvg /> : <MoonSvg />}
           </Icon>
         </BaseControl>
-        <PublicGroupMenu />
+        {/* <PublicGroupMenu /> */}
       </View>
     </View>
   )

@@ -4,13 +4,15 @@ import { IpcFile } from './handlers/file-handlers'
 
 export const open = () => ipcRenderer.invoke('file-open')
 export const importDatabyss = (
-  dataFilePath: string,
-  importIntoGroupId: string | null = null
+  zipFilePath: string | null = null,
+  importIntoGroupId: string | null = null,
+  remoteGroupId: string | null = null
 ) =>
   ipcRenderer.invoke(
     'file-importDatabyss',
-    dataFilePath,
-    importIntoGroupId
+    zipFilePath,
+    importIntoGroupId,
+    remoteGroupId
   ) as Promise<boolean>
 export const newDatabyss = () =>
   ipcRenderer.invoke('file-newDatabyss') as Promise<boolean>

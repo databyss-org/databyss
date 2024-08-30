@@ -18,37 +18,39 @@ const ModalView = ({
     {...(isMobileOs() ? { height: '100%' } : { flexShrink: 1, flexGrow: 1 })}
     width="100%"
   >
-    <View
-      borderBottomWidth={1}
-      borderBottomColor="border.2"
-      paddingBottom="small"
-      paddingTop="small"
-    >
-      <Grid singleRow columnGap="none" alignItems="center">
-        {secondaryChild ? (
-          <View flexBasis="25%" paddingLeft="small" alignItems="flex-start">
-            <Button variant="uiTextButton">{secondaryChild}</Button>
-          </View>
-        ) : null}
-        <View
-          flexGrow={1}
-          alignItems={secondaryChild ? 'center' : 'flex-start'}
-          paddingLeft={secondaryChild ? 'none' : 'em'}
-        >
-          <Text variant="uiTextNormal">{title}</Text>
-        </View>
-        <View flexBasis="25%" paddingRight="small" alignItems="flex-end">
-          <Button
-            data-test-dismiss-modal
-            variant="uiTextButton"
-            onPress={onDismiss}
-            disabled={!canDismiss}
+    {!!title && (
+      <View
+        borderBottomWidth={1}
+        borderBottomColor="border.2"
+        paddingBottom="small"
+        paddingTop="small"
+      >
+        <Grid singleRow columnGap="none" alignItems="center">
+          {secondaryChild ? (
+            <View flexBasis="25%" paddingLeft="small" alignItems="flex-start">
+              <Button variant="uiTextButton">{secondaryChild}</Button>
+            </View>
+          ) : null}
+          <View
+            flexGrow={1}
+            alignItems={secondaryChild ? 'center' : 'flex-start'}
+            paddingLeft={secondaryChild ? 'none' : 'em'}
           >
-            {dismissChild}
-          </Button>
-        </View>
-      </Grid>
-    </View>
+            <Text variant="uiTextNormal">{title}</Text>
+          </View>
+          <View flexBasis="25%" paddingRight="small" alignItems="flex-end">
+            <Button
+              data-test-dismiss-modal
+              variant="uiTextButton"
+              onPress={onDismiss}
+              disabled={!canDismiss}
+            >
+              {dismissChild}
+            </Button>
+          </View>
+        </Grid>
+      </View>
+    )}
     <ScrollView
       flexGrow={1}
       flexShrink={1}

@@ -1,35 +1,21 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useEditorPageContext } from '@databyss-org/services'
-import {
-  BaseControl,
-  Icon,
-  View,
-  // Separator,
-  // Text,
-} from '@databyss-org/ui/primitives'
+import { BaseControl, Icon, View } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
-// import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
-// import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
-// import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
-import SaveSvg from '@databyss-org/ui/assets/save.svg'
-// import { saveGroup } from '@databyss-org/services/groups'
-// import { Group } from '@databyss-org/services/interfaces'
+import ShareSvg from '@databyss-org/ui/assets/share.svg'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
-// import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
-import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { useExportContext } from '@databyss-org/services/export'
-// import { urlSafeName } from '@databyss-org/services/lib/util'
 import LoadingFallback from '../Notify/LoadingFallback'
-// import { pxUnits } from '../../theming/views'
 import { DropdownList } from '../Menu/DropdownList'
-import { addMenuFooterItems, exportMenuItems } from '../../lib/menuItems'
+import { addMenuFooterItems } from '../../lib/menuItems'
 
 export function copyToClipboard(text) {
   const dummy = document.createElement('textarea')
@@ -46,41 +32,24 @@ export function copyToClipboard(text) {
 
 const PageMenu = React.memo(() => {
   const pagesRes = usePages()
-  const groupsRes = useGroups()
-  const exportContext = useExportContext()
-
-  const pages = pagesRes.data
-  const groups = groupsRes.data
-
-  // const getSession = useSessionContext((c) => c && c.getSession)
+  const showModal = useNavigationContext((c) => c && c.showModal)
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const navigateToDefaultPage = useSessionContext(
     (c) => c && c.navigateToDefaultPage
   )
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
-  // const { defaultPageId } = getSession()
-  const [showMenu, setShowMenu] = useState(false)
-  // const [isPagePublic, setIsPagePublic] = useState(false)
-  // const [pageInGroups, setPageInGroups] = useState([])
-  const [, setPageInGroups] = useState([])
-  const [showCopiedCheck, setShowCopiedCheck] = useState(false)
+  const pages = pagesRes.data
 
-  const {
-    getTokensFromPath,
-    // navigate,
-    navigateSidebar,
-  } = useNavigationContext()
+  const [showMenu, setShowMenu] = useState(false)
+
+  const { getTokensFromPath, navigateSidebar } = useNavigationContext()
 
   const { params } = getTokensFromPath()
 
   const archivePage = useEditorPageContext((c) => c.archivePage)
   const deletePage = useEditorPageContext((c) => c.deletePage)
-  const {
-    // exportSinglePage,
-    // exportAllPages,
-    setCurrentPageId,
-  } = useExportContext()
+  const { setCurrentPageId } = useExportContext()
 
   useEffect(() => {
     setCurrentPageId(params)
@@ -89,66 +58,45 @@ const PageMenu = React.memo(() => {
     }
   }, [])
 
-  // const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
-
   const canBeArchived =
     Object.values(pages).filter((p) => !p.archive).length > 1
 
-  // if page is shared, toggle public page
-  useEffect(() => {
-    if (groupsRes.isSuccess) {
-      if (groups[`p_${params}`]) {
-        // get public status of page
-        // const _pageGroup = groups[`p_${params}`]
-        // setIsPagePublic(_pageGroup.public)
+  const onArchivePress = useCallback(
+    (bool) => {
+      archivePage(params, bool).then(() => {
+        if (bool) {
+          navigateToDefaultPage()
+        } else {
+          navigateSidebar('/pages')
+        }
+      })
+    },
+    [archivePage, navigateToDefaultPage, navigateSidebar]
+  )
+
+  const handleEscKey = useCallback(
+    (e) => {
+      if (e.key === 'Escape') {
+        setShowMenu(false)
       }
-
-      // get all groups page appears in
-      const pageGroups = Object.values(groupsRes.data).filter(
-        (group) => !!group.name && group.pages.includes(params)
-      )
-      setPageInGroups(pageGroups)
-    }
-  }, [groupsRes.isSuccess])
-
-  const onArchivePress = (bool) => {
-    archivePage(params, bool).then(() => {
-      if (bool) {
-        navigateToDefaultPage()
-      } else {
-        navigateSidebar('/pages')
-      }
-    })
-  }
-
-  const handleEscKey = (e) => {
-    if (e.key === 'Escape') {
-      setShowMenu(false)
-    }
-  }
+    },
+    [setShowMenu]
+  )
 
   const _page = pages?.[params]
 
-  // const onCopyLink = () => {
-  //   // getAccountFromLocation()
-  //   // generate url and copy to clipboard
-  //   const getUrl = window.location
-  //   const baseUrl = `${getUrl.protocol}//${
-  //     getUrl.host
-  //   }/${getAccountFromLocation(true)}/pages/${params}/${urlSafeName(
-  //     _page.name
-  //   )}`
-  //   copyToClipboard(baseUrl)
-  //   setShowCopiedCheck(true)
-  // }
-
-  const onPageDelete = () => {
+  const onPageDelete = useCallback(() => {
     deletePage(params)
     navigateToDefaultPage()
     navigateSidebar('/pages')
+  }, [deletePage, navigateToDefaultPage, navigateSidebar])
 
-    // delete page
-  }
+  const showExportModal = useCallback(() => {
+    showModal({
+      component: 'EXPORTDB',
+      visible: true,
+    })
+  }, [showModal])
 
   const menuItems = []
 
@@ -160,8 +108,6 @@ const PageMenu = React.memo(() => {
         action: () => onArchivePress(true),
         actionType: 'archive',
         disabled: isReadOnly,
-        // TODO: detect platform and render correct modifier key
-        // shortcut: 'Ctrl + Del',
       })
     }
 
@@ -173,8 +119,6 @@ const PageMenu = React.memo(() => {
         action: () => onArchivePress(false),
         actionType: 'restore',
         disabled: isReadOnly,
-        // TODO: detect platform and render correct modifier key
-        // shortcut: 'Ctrl + Del',
       })
       // add delete option
       menuItems.push({
@@ -183,53 +127,18 @@ const PageMenu = React.memo(() => {
         action: () => onPageDelete(),
         actionType: 'delete',
         disabled: isReadOnly,
-        // TODO: detect platform and render correct modifier key
-        // shortcut: 'Ctrl + Del',
       })
     }
   }
 
-  menuItems.push(
-    ...exportMenuItems(exportContext, [
-      {
-        icon: <SaveSvg />,
-        label: 'Export page',
-        subLabel: 'Including references',
-        action: () => exportContext.exportSinglePage(params),
-        actionType: 'exportPage',
-      },
-    ])
-  )
+  menuItems.push({
+    icon: <ShareSvg />,
+    label: 'Export…',
+    action: showExportModal,
+    actionType: 'export',
+  })
 
   addMenuFooterItems(menuItems)
-
-  // const togglePublicPage = () => {
-  //   setPagePublic(params, !isPagePublic)
-  //   setIsPagePublic(!isPagePublic)
-  // }
-
-  useEffect(() => {
-    if (showCopiedCheck && !showMenu) {
-      setShowCopiedCheck(false)
-    }
-  }, [showMenu])
-
-  // const publicLinkItem = showCopiedCheck ? (
-  //   <DropdownListItem
-  //     icon={<CheckSvg />}
-  //     iconColor="green.0"
-  //     action="none"
-  //     label="Link copied to clipboard"
-  //     onPress={() => null}
-  //   />
-  // ) : (
-  //   <DropdownListItem
-  //     icon={<LinkSvg />}
-  //     action="copy-link"
-  //     label="Copy link"
-  //     onPress={onCopyLink}
-  //   />
-  // )
 
   if (!pagesRes.isSuccess) {
     return <LoadingFallback size="extraTiny" queryObserver={pagesRes} />
@@ -269,56 +178,7 @@ const PageMenu = React.memo(() => {
               right: 0,
             }}
           >
-            {/* {!isPublicAccount() && !_page.archive ? (
-              <>
-                <DropdownListItem
-                  height={pxUnits(34)}
-                  justifyContent="center"
-                  label={isPagePublic ? 'Page is public' : 'Make page public '}
-                  value={isPagePublic}
-                  onPress={togglePublicPage}
-                  action="togglePublic"
-                  disabled={isReadOnly}
-                  switchControl
-                />
-                {isPagePublic ? (
-                  <>
-                    <Separator secondary />
-                    {publicLinkItem}
-                  </>
-                ) : null}
-                <Separator />
-              </>
-            ) : null} */}
-
             <DropdownList menuItems={menuItems} />
-            {/* {Object.values(groups).length ? <Separator /> : null}
-            {groupsRes.isSuccess && Object.values(groups).length ? (
-              collections()
-            ) : (
-              <>
-                <Separator />
-                <View
-                  ml="small"
-                  height={pxUnits(34)}
-                  justifyContent="center"
-                  key="is-in-groups"
-                >
-                  <Text color="text.3" variant="uiTextSmall">
-                    Add to Collection:
-                  </Text>
-                </View>
-                <DropdownListItem
-                  key="new-collection"
-                  mx="small"
-                  justifyContent="center"
-                  label="New collection..."
-                  // value={isPagePublic}
-                  onPress={() => addPageToNewCollection(params)}
-                  action="groups_click"
-                />
-              </>
-            )} */}
           </DropdownContainer>
         </ClickAwayListener>
       )}

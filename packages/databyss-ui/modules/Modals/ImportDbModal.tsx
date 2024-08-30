@@ -9,24 +9,25 @@ import {
   Icon,
   List,
   ModalWindow,
-  Separator,
   Text,
   View,
 } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useAppState } from '@databyss-org/desktop/src/hooks'
-import { Group } from '@databyss-org/services/interfaces'
+import { useRemoteDbInfo } from '@databyss-org/services/lib/DatabaseProvider'
+import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { DropdownMenu } from '../../components/Menu/DropdownMenu'
 import { MenuItem } from '../../components/Menu/DropdownList'
 import { FileInput } from '../../components/Form/FileInput'
+import { pxUnits } from '../../theming/views'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
 
 export interface ImportDbOptions {
-  mergeIntoGroup: Group | null
+  mergeIntoGroup: string | null
   files: FileList | null
 }
 
@@ -34,19 +35,23 @@ export const ImportDbModal = ({
   visible,
   onImport,
   onCancel,
+  groupId,
 }: {
   visible: boolean
   onImport?: () => void
   onCancel?: () => void
+  groupId?: string
 }) => {
   const [values, setValues] = useState<ImportDbOptions>({
-    mergeIntoGroup: null,
+    mergeIntoGroup: dbRef.groupId,
     files: null,
   })
+  const [importing, setImporting] = useState<boolean>(false)
   const { hideModal } = useNavigationContext()
   const localGroupsRes = useAppState('localGroups')
+  const remoteDbInfoRes = useRemoteDbInfo(groupId)
 
-  console.log('[ImportDbModal] values', values)
+  // console.log('[ImportDbModal] values', values)
 
   const onDismiss = () => {
     if (onCancel) {
@@ -63,9 +68,11 @@ export const ImportDbModal = ({
   }
 
   const onSubmit = async () => {
+    setImporting(true)
     await eapi.file.importDatabyss(
-      values.files![0]!.path,
-      values.mergeIntoGroup?._id
+      values.files?.[0]?.path,
+      values.mergeIntoGroup,
+      groupId
     )
     if (onImport) {
       onImport()
@@ -83,26 +90,68 @@ export const ImportDbModal = ({
     _localGroupMenuItems = _localGroupMenuItems.concat(
       localGroupsRes.data.map((_group) => ({
         label: _group.name,
-        value: _group,
+        value: _group._id,
       }))
     )
   }
 
   const _confirmButtonsView = (
-    <>
-      <View flexDirection="row" justifyContent="flex-end" px="em">
+    <View flexDirection="row" justifyContent="space-between" px="em">
+      <View flexDirection="row" alignItems="center">
+        {importing && (
+          <>
+            <LoadingFallback />
+            <Text variant="uiTextNormal" color="text.3" ml="tiny">
+              Importing data…
+            </Text>
+          </>
+        )}
+      </View>
+      <View flexDirection="row" justifyContent="flex-end">
         <Button variant="uiTextButton" mr="small" onPress={onDismiss}>
           Cancel
         </Button>
-        <Button
-          variant="primaryUiSmall"
-          onPress={onSubmit}
-          disabled={!values.files?.[0]?.path}
-        >
-          Import
-        </Button>
+        {!importing && (
+          <Button
+            variant="primaryUiSmall"
+            onPress={onSubmit}
+            disabled={
+              !(
+                (groupId && remoteDbInfoRes.isSuccess) ||
+                values.files?.[0]?.path
+              )
+            }
+          >
+            Import
+          </Button>
+        )}
       </View>
-    </>
+    </View>
+  )
+
+  const _remoteDbView = (
+    <View>
+      <Text variant="uiTextNormal" color="text.3">
+        Import from published collection:
+      </Text>
+      {!!remoteDbInfoRes.data && (
+        <Button
+          mt="small"
+          pr={pxUnits(19)}
+          variant="uiLink"
+          textVariant="uiTextNormal"
+          textColor="text.2"
+          href={`${process.env.PUBLISHED_URL}/${groupId}`}
+          target="_blank"
+          title={`${process.env.PUBLISHED_URL}/${groupId}`}
+          flexDirection="row"
+          justifyContent="flex-end"
+          alignSelf="flex-end"
+        >
+          {remoteDbInfoRes.data.name}
+        </Button>
+      )}
+    </View>
   )
 
   const _openFileView = (
@@ -141,7 +190,7 @@ export const ImportDbModal = ({
       </View>
       {!values.files?.[0]?.name ? (
         <ValueListItem path="files">
-          <FileInput buttonVariant="secondaryUiSmall" />
+          <FileInput buttonVariant="secondaryUiSmall" accept=".zip" />
         </ValueListItem>
       ) : (
         <View mr="small" my="small" flexShrink={1}>
@@ -170,7 +219,11 @@ export const ImportDbModal = ({
         >
           <ValueListItem path="mergeIntoGroup">
             <DropdownMenu
-              renderLabel={(_group) => (_group ? _group.name : 'New Databyss')}
+              renderLabel={(_groupId) =>
+                _groupId
+                  ? localGroupsRes.data?.find((_id) => _id === _groupId)?.name
+                  : '[New Databyss]'
+              }
               menuItems={_localGroupMenuItems}
               // width="100%"
               menuViewProps={{ justifyContent: 'right' }}
@@ -202,7 +255,7 @@ export const ImportDbModal = ({
             width="100%"
           >
             <List horizontalItemPadding="em" verticalItemPadding="small">
-              {_openFileView}
+              {groupId ? _remoteDbView : _openFileView}
               {_importIntoView}
             </List>
             {_confirmButtonsView}

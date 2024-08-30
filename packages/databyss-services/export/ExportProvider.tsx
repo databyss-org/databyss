@@ -10,7 +10,7 @@ import JSZip from 'jszip'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { Text } from '@databyss-org/ui/primitives'
 import { getDocument, getDocuments } from '@databyss-org/data/pouchdb/utils'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { DbDocument, DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { useBlocksInPages, usePages } from '@databyss-org/data/pouchdb/hooks'
 import {
   backupDbToJson,
@@ -22,6 +22,7 @@ import { appCommands } from '@databyss-org/ui/lib/appCommands'
 import { bibliographyFromSources } from '@databyss-org/data/pouchdb/hooks/useBibliography'
 import { setGroup } from '@databyss-org/data/pouchdb/groups'
 import { useContextSelector, createContext } from 'use-context-selector'
+import { uid } from '@databyss-org/data/lib/uid'
 import {
   bibliographyToMarkdown,
   blockToMarkdown,
@@ -39,13 +40,14 @@ import {
   Block,
   BlockType,
   Group,
+  Embed,
 } from '../interfaces'
 import { getCitationStyle } from '../citations/lib'
 import { CitationStyle } from '../citations/constants'
 import { validUriRegex } from '../lib/util'
 import { loadPage } from '../editorPage'
 import { getAccountFromLocation, RemoteDbInfo } from '../session/utils'
-import { uid } from '@databyss-org/data/lib/uid'
+import { useNavigationContext } from '@databyss-org/ui/components'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
@@ -67,6 +69,7 @@ export interface ExportContextType {
   publishGroupDatabase: (group: Group) => Promise<PublishDatabaseResult>
   unpublishGroupDatabase: (group: Group) => Promise<void>
   cancelPublishGroupDatabase: (group: Group) => Promise<void>
+  exportDbToZip: () => Promise<void>
 }
 
 export const ExportContext = createContext<ExportContextType>(null!)
@@ -75,6 +78,7 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const { notifySticky, hideSticky } = useNotifyContext()
   const { getPreferredCitationStyle } = useUserPreferencesContext()
   const sourcesInPagesRes = useBlocksInPages<Source>(BlockType.Source)
+  const showModal = useNavigationContext((c) => c && c.showModal)
 
   const pageIdRef = useRef<string | null>(null)
 
@@ -306,24 +310,53 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     }
   }
 
+  const exportDbToZip = async () => {
+    const _dbRef = dbRef.current!
+    const _zip = new JSZip()!
+    const { rows } = await _dbRef.allDocs({ include_docs: true })
+    // collect rows and add media to zip
+    const _docs: DbDocument[] = []
+    for (const _row of rows) {
+      const _d: DbDocument = _row.doc
+      _docs.push(_d)
+      if (_d.type === BlockType.Embed) {
+        const _embed = (_d as unknown) as Embed
+        if (!_embed.detail.fileDetail) {
+          continue
+        }
+        // check that remote media exists
+        let _mediaRes = await fetch(_embed.detail.src, { method: 'HEAD' })
+        if (!_mediaRes.ok) {
+          continue
+        }
+        // fetch remote media and add to zip
+        _mediaRes = await fetch(_embed.detail.src)
+        const _buf = await _mediaRes.arrayBuffer()
+        const _filename = _embed.detail.fileDetail.filename
+        _zip.file(`media/${_embed._id}/${_filename}`, _buf, {
+          binary: true,
+        })
+        // rewrite src to indicate local media
+        _embed.detail.src = `dbdrive://${dbRef.groupId}/${_embed._id}/${_filename}`
+      }
+    }
+    _zip.file('db.json', JSON.stringify(_docs, null, 2))
+    const _zipContent = await _zip.generateAsync({ type: 'arraybuffer' })
+    return _zipContent
+  }
+
   const exportDatabase = async () => {
-    const groupId = getAccountFromLocation() as string
-    notifySticky({
-      visible: true,
-      children: (
-        <Text variant="uiTextSmall" color="text.2">
-          Your export is being prepared and will download when complete.
-        </Text>
-      ),
-    })
-    const name = makeBackupFilename(groupId)
-    const dbJson = await backupDbToJson(dbRef.current!)
-    // ZIPping the file doesn't seem to do much
-    // const zip = new JSZip()
-    // zip.file(name, dbJson)
-    // const zipContent = await zip.generateAsync({ type: 'arraybuffer' })
-    hideSticky()
-    fileDownload(dbJson, `${name}.json`)
+    const _groupId = getAccountFromLocation() as string
+
+    // get the group name
+    const _group = (await dbRef.current!.get(_groupId)) as Group
+
+    // generate zip of db
+    const _zipContent = await exportDbToZip()
+
+    // download the zip to client
+    const _filename = makeBackupFilename(_groupId, _group.name)
+    fileDownload(_zipContent, `${_filename}.zip`)
   }
 
   const cancelPublishGroupDatabase = useCallback(
@@ -363,16 +396,17 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     [setGroup]
   )
 
+  const showExportModal = useCallback(() => {
+    showModal({
+      component: 'EXPORTDB',
+      visible: true,
+    })
+  }, [showModal])
+
   useEffect(() => {
-    appCommands.addListener('exportAllAsMarkdown', exportAllPages)
-    appCommands.addListener('exportBibliography', exportBibliography)
-    appCommands.addListener('exportDatabase', exportDatabase)
-    appCommands.addListener('exportPageAsMarkdown', exportSinglePage)
+    appCommands.addListener('exportModal', showExportModal)
     return () => {
-      appCommands.removeListener('exportAllAsMarkdown', exportAllPages)
-      appCommands.removeListener('exportBibliography', exportBibliography)
-      appCommands.removeListener('exportDatabase', exportDatabase)
-      appCommands.removeListener('exportPageAsMarkdown', exportSinglePage)
+      appCommands.removeListener('exportModal', exportAllPages)
     }
   }, [])
 

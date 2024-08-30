@@ -34,7 +34,7 @@ export const PublicGroupMenu = ({ ...others }) => {
   if (path.type === 'pages') {
     _additionalMenuItems.push({
       icon: <SaveSvg />,
-      label: 'Export page',
+      label: 'Save page',
       subLabel: 'Including references',
       action: () => exportContext.exportSinglePage(path.params),
       actionType: 'exportPage',

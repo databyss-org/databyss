@@ -8,6 +8,7 @@ declare const eapi: typeof import('../../databyss-desktop/src/eapi').default
 export interface RemoteDbInfo {
   searchMd5: string
   publishedAt: string
+  name: string
 }
 
 export interface RemoteDbData {

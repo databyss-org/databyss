@@ -1,10 +1,16 @@
 import { BrowserWindow, Menu, app, MenuItem } from 'electron'
 import { createWindow } from './'
 import { CommandArgs, CommandName } from './eapi/cmd-api'
-import { closeDatabyss, onImportDatabyss } from './eapi/handlers/file-handlers'
+import { closeDatabyss, exportDbToZip } from './eapi/handlers/file-handlers'
 import { appState } from './eapi/handlers/state-handlers'
+import { nodeDbRefs } from './nodeDb'
 
 const fwc = () => BrowserWindow.getFocusedWindow()?.webContents
+const dbIsLoaded = () =>
+  !!(BrowserWindow.getFocusedWindow()
+    ? nodeDbRefs[BrowserWindow.getFocusedWindow().id]
+    : null
+  )?.current
 
 export function sendCommandToBrowser<K extends keyof CommandArgs>(
   command: K,
@@ -32,15 +38,19 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
     label: 'File',
     submenu: [
       {
-        label: 'New page',
+        label: 'New Page',
+        id: 'new-page',
+        enabled: dbIsLoaded(),
         accelerator: 'CmdOrCtrl+N',
         click: () => {
           fwc().send('cmd-command', 'newPage')
         },
       },
       {
-        label: 'New collection',
+        label: 'New Collection',
+        id: 'new-collection',
         accelerator: 'CmdOrCtrl+G',
+        enabled: dbIsLoaded(),
         click: () => {
           fwc().send('cmd-command', 'newGroup')
         },
@@ -54,35 +64,12 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
       },
       { type: 'separator' },
       {
-        label: 'Export',
-        submenu: [
-          {
-            id: 'export-page-as-markdown',
-            label: 'Page (Markdown)…',
-            click: () => {
-              fwc().send('cmd-command', 'exportPageAsMarkdown')
-            },
-            enabled: fwc()?.getURL().includes('/pages/'),
-          },
-          {
-            label: 'Bibliography (Markdown)…',
-            click: () => {
-              fwc().send('cmd-command', 'exportBibliography')
-            },
-          },
-          {
-            label: 'Everything (Markdown)…',
-            click: () => {
-              fwc().send('cmd-command', 'exportAllAsMarkdown')
-            },
-          },
-          {
-            label: 'Database…',
-            click: () => {
-              fwc().send('cmd-command', 'exportDatabase')
-            },
-          },
-        ],
+        label: 'Export…',
+        id: 'export-modal',
+        enabled: dbIsLoaded(),
+        click: () => {
+          fwc().send('cmd-command', 'exportModal')
+        },
       },
       {
         label: 'Import Databyss…',
@@ -92,6 +79,8 @@ const template: Parameters<typeof Menu.buildFromTemplate>[0] = [
       },
       {
         label: 'Close Databyss',
+        id: 'close-databyss',
+        enabled: dbIsLoaded(),
         click: closeDatabyss,
       },
     ],
@@ -241,9 +230,10 @@ if (process.platform === 'darwin') {
 function registerWindowEvents(win: BrowserWindow, menu: Menu) {
   win.webContents.addListener('did-navigate-in-page', (event, url) => {
     // console.log('[Main] did-navigate-in-page', url)
-    menu.getMenuItemById('export-page-as-markdown').enabled = url.includes(
-      '/pages/'
-    )
+    menu.getMenuItemById('export-modal').enabled = dbIsLoaded()
+    menu.getMenuItemById('new-page').enabled = dbIsLoaded()
+    menu.getMenuItemById('new-collection').enabled = dbIsLoaded()
+    menu.getMenuItemById('close-databyss').enabled = dbIsLoaded()
   })
   win.webContents.on('context-menu', (event, params) => {
     const menu = new Menu()

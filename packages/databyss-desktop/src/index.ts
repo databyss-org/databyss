@@ -73,7 +73,7 @@ export const createWindow = async () => {
   const lastActiveGroupId = appState.get('lastActiveGroupId')
   const localGroups = appState.get('localGroups')
   if (
-    lastActiveGroupId && 
+    lastActiveGroupId &&
     localGroups?.find((g) => g._id === lastActiveGroupId) &&
     !getWindowIdForGroup(lastActiveGroupId)
   ) {
@@ -104,11 +104,30 @@ export const createWindow = async () => {
     appState.set('lastWindowSize', window.getSize() as [number, number])
   })
 
+  // Protocol handler for win32
+  if (process.platform == 'win32') {
+    // Keep only command line / deep linked arguments
+    deeplinkingUrl = process.argv.slice(1)
+  }
+
   // and load the index.html of the app.
-  window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
+  await window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  // window.webContents.openDevTools()
+
+  // Retrieve the command-line arguments
+  // const args = process.argv
+  // setTimeout(() => {
+  //   logEverywhere(`[Main] args: ${args}`)
+  //   // Check if a deep link argument is present
+  //   const deepLinkArg = args.find((arg) => arg.startsWith('databyss://'))
+
+  //   if (deepLinkArg) {
+  //     // Handle the deep link
+  //     logEverywhere(`[Main] deeplink args: ${deepLinkArg}`)
+  //   }
+  // }, 3000)
 
   windows.add(window)
   return window
@@ -117,7 +136,7 @@ export const createWindow = async () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', () => {
+app.on('ready', async () => {
   protocol.handle('dbdrive', (request) => {
     const filePath = url.fileURLToPath(
       `file://${mediaPath()}/${request.url.slice('dbdrive://'.length)}`
@@ -129,6 +148,36 @@ app.on('ready', () => {
   createWindow()
 })
 
+// Deep linked url
+let deeplinkingUrl
+
+if (!app.isDefaultProtocolClient('databyss')) {
+  // Define custom protocol handler. Deep linking works on packaged versions of the application!
+  app.setAsDefaultProtocolClient('databyss')
+}
+
+function handleOpenUrl(url: string) {
+  const _path = url.slice('databyss://'.length)
+  const _pathParts = _path.split('/')
+  if (_pathParts[0] === 'import') {
+    getFirstWindow().webContents.send(
+      'cmd-command',
+      'importDatabase',
+      _pathParts[1]
+    )
+  }
+}
+
+// Protocol handler for osx
+app.on('open-url', function (event, url) {
+  event.preventDefault()
+  deeplinkingUrl = url
+  setTimeout(() => {
+    logEverywhere(`[Main] deeplinkingUrl: ${url}`)
+    handleOpenUrl(url)
+  }, 1000)
+})
+
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
@@ -137,18 +186,18 @@ app.on('window-all-closed', () => {
 })
 
 app.on('will-quit', async (evt) => {
-//   if (nodeDbRef.groupId && nodeDbRef.current) {
-//     console.log('[Main] shutting down the database...')
-//     evt.preventDefault()
-//     try {
-//       nodeDbRef.groupId = null
-//       await nodeDbRef.current.close()
-//     } catch (e) {
-//       console.warn('[Main] error shutting down', e)
-//     }
-//     app.quit()
-//     return
-//   }
+  //   if (nodeDbRef.groupId && nodeDbRef.current) {
+  //     console.log('[Main] shutting down the database...')
+  //     evt.preventDefault()
+  //     try {
+  //       nodeDbRef.groupId = null
+  //       await nodeDbRef.current.close()
+  //     } catch (e) {
+  //       console.warn('[Main] error shutting down', e)
+  //     }
+  //     app.quit()
+  //     return
+  //   }
   console.log('[Main] goodbye!')
 })
 
@@ -159,6 +208,19 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+function getFirstWindow() {
+  return Array.from(windows.values())[0]
+}
+
+// Log both at dev console and at running node console instance
+function logEverywhere(s: string) {
+  console.log(s)
+  const _win = getFirstWindow()
+  if (_win && _win.webContents) {
+    _win.webContents.executeJavaScript(`console.log("${s}")`)
+  }
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.

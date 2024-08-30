@@ -62,16 +62,13 @@ export const exportMenuItems = (
     actionType: 'exportAll',
   },
   {
-    separator: true,
-    label: 'Manage Database',
-  },
-  {
     icon: <DownloadSvg />,
-    label: 'Export database',
+    label: 'Export collection',
     subLabel: 'Download a backup of the whole database',
     action: () => {
       // setShowMenu(false)
       exportContext.exportDatabase()
+      return true
     },
     actionType: 'exportDb',
   },

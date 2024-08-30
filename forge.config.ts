@@ -35,6 +35,12 @@ const config: ForgeConfig = {
     },
     name: 'Databyss',
     icon: 'public/appIcon',
+    protocols: [
+      {
+        name: 'databyss',
+        schemes: ['databyss'],
+      },
+    ],
   },
   rebuildConfig: {},
   makers: [

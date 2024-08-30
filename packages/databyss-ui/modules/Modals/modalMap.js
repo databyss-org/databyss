@@ -4,6 +4,7 @@ import SourceModal from './SourceModal'
 import TopicModal from './TopicModal'
 import EmbedModal from './EmbedModal'
 import { ImportDbModal } from './ImportDbModal'
+import { ExportDbModal } from './ExportDbModal'
 
 export default {
   INFO: InfoModal,
@@ -12,4 +13,5 @@ export default {
   TOPIC: TopicModal,
   EMBED: EmbedModal,
   IMPORTDB: ImportDbModal,
+  EXPORTDB: ExportDbModal,
 }

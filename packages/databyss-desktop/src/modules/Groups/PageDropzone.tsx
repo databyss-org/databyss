@@ -44,6 +44,7 @@ import { urlSafeName } from '@databyss-org/services/lib/util'
 import { maxWidth } from 'styled-system'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { MenuItem } from '@databyss-org/ui/components/Menu/DropdownList'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 
 interface PageDropzoneProps extends ScrollViewProps {
   value?: string[]
@@ -51,6 +52,7 @@ interface PageDropzoneProps extends ScrollViewProps {
   onChange?: (value: string[]) => void
   group: Group
   defaultPageId: string
+  readOnly: boolean
 }
 
 export const PageDropzone = ({
@@ -59,12 +61,13 @@ export const PageDropzone = ({
   group,
   onChange,
   defaultPageId,
+  readOnly,
   ...others
 }: PageDropzoneProps) => {
   const _inTestEnv = process.env.NODE_ENV === 'test'
   const [showMenu, setShowMenu] = useState(false)
-  const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const navigate = useNavigationContext((c) => c.navigate)
+  const notifyConfirm = useNotifyContext((c) => c.notifyConfirm)
 
   let _pagesList
 
@@ -113,7 +116,12 @@ export const PageDropzone = ({
   // get most current group and page value
 
   const onDrop = (item: DraggableItem) => {
-    if (isReadOnly) {
+    if (readOnly) {
+      notifyConfirm({
+        message:
+          'Cannot add pages to or remove pages from an imported collection',
+        showCancelButton: false,
+      })
       return
     }
     if (!group) {
@@ -142,6 +150,14 @@ export const PageDropzone = ({
   }
 
   const onRemove = (_id: string) => {
+    if (readOnly) {
+      notifyConfirm({
+        message:
+          'Cannot add pages to or remove pages from an imported collection',
+        showCancelButton: false,
+      })
+      return
+    }
     if (!group || !pages) {
       return
     }
@@ -215,7 +231,7 @@ export const PageDropzone = ({
         <>
           {_sortedItems.map((page: PageHeader, idx) => (
             <SidebarListItem
-              contextMenu={pageMenuItems(page)}
+              contextMenu={readOnly ? undefined : pageMenuItems(page)}
               key={page._id}
               text={page.name}
               // isActive

@@ -1,37 +1,42 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { View, BaseControl, Icon } from '@databyss-org/ui/primitives'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
+import ShareSvg from '@databyss-org/ui/assets/share.svg'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import { DropdownList } from '@databyss-org/ui/components'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
-import { useExportContext } from '@databyss-org/services/export'
 import { useNavigationContext } from '../Navigation/NavigationProvider'
-import {
-  addMenuFooterItems,
-  exportMenuItems,
-  sourceExportMenuItems,
-} from '../../lib/menuItems'
+import { addMenuFooterItems } from '../../lib/menuItems'
 
 const IndexPageMenu = () => {
-  const { getTokensFromPath } = useNavigationContext()
   const [showMenu, setShowMenu] = useState(false)
-  const path = getTokensFromPath()
-  const exportContext = useExportContext()
+  const showModal = useNavigationContext((c) => c && c.showModal)
 
-  const handleEscKey = (e) => {
-    if (e.key === 'Escape') {
-      setShowMenu(false)
-    }
-  }
-
-  const menuItems = []
-  menuItems.push(
-    ...exportMenuItems(
-      exportContext,
-      path.type === 'sources' ? sourceExportMenuItems(exportContext, path) : []
-    )
+  const handleEscKey = useCallback(
+    (e) => {
+      if (e.key === 'Escape') {
+        setShowMenu(false)
+      }
+    },
+    [setShowMenu]
   )
+
+  const showExportModal = useCallback(() => {
+    showModal({
+      component: 'EXPORTDB',
+      visible: true,
+    })
+  }, [showModal])
+
+  const menuItems = [
+    {
+      icon: <ShareSvg />,
+      label: 'Export…',
+      action: showExportModal,
+      actionType: 'export',
+    },
+  ]
 
   addMenuFooterItems(menuItems)
 
