@@ -322,8 +322,13 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
           continue
         }
         // check that remote media exists
-        let _mediaRes = await fetch(_embed.detail.src, { method: 'HEAD' })
-        if (!_mediaRes.ok) {
+        let _mediaRes
+        try {
+          _mediaRes = await fetch(_embed.detail.src, { method: 'HEAD' })
+        } catch (err) {
+          console.warn('[exportDbToZip] error fetching media', _embed)
+        }
+        if (!_mediaRes || !_mediaRes.ok) {
           continue
         }
         // fetch remote media and add to zip

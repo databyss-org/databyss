@@ -78,6 +78,7 @@ export const ExportDbModal = ({
     if (values.format === 'databyss') {
       if (values.action === 'save') {
         await exportDatabase()
+        hideModal()
       } else {
         window.setTimeout(() => {
           hideModal()
