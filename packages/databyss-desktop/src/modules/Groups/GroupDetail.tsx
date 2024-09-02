@@ -38,6 +38,8 @@ import GroupMenu from './GroupMenu'
 import { GroupMetadata } from './GroupMetadata'
 import { PageDropzone } from './PageDropzone'
 import { pxUnits } from '@databyss-org/ui/theming/views'
+import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvider'
+import { selectors } from '@databyss-org/data/pouchdb/selectors'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -67,15 +69,15 @@ export const GroupFields = ({
   const [values, setValues] = useState(group)
   const groupValue = useRef(group)
   const queryClient = useQueryClient()
+  const setGroup = useDatabaseContext((c) => c && c.setGroup)
 
   const saveChanges = useCallback(
-    debounce((_values: Group) => saveGroup(_values), 500),
-    [saveGroup]
+    debounce((_values: Group) => setGroup(_values), 500),
+    [setGroup]
   )
 
   const onChange = useCallback(
     (_values: Group) => {
-      console.log('[GroupDetail] onChange')
       // if defaultPageId was set for this group, set it now
       if (!groupValue.current.defaultPageId) {
         _values.defaultPageId = _values.pages[0]
@@ -90,14 +92,34 @@ export const GroupFields = ({
 
       // update internal state
       setValues(_values)
-      // update query cache
+      // update query caches
       queryClient.setQueryData([`useDocument_${group._id}`], _values)
+      queryClient.setQueryData([selectors.GROUPS], (oldData: any) => ({
+        ...(oldData ?? {}),
+        [group._id]: group,
+      }))
       // update database
       saveChanges(_values)
       // update ref values
       groupValue.current = _values
     },
     [setValues, values]
+  )
+
+  const onSetDefaultPage = useCallback(
+    (_id: string) => {
+      // if (!group) {
+      //   return
+      // }
+      // const _nextGroup = { ...group }
+      // _nextGroup.defaultPageId = _id
+      // await setGroup(_nextGroup)
+      // onChange!(value)
+      const _nextValues = { ...values }
+      _nextValues.defaultPageId = _id
+      onChange(_nextValues)
+    },
+    [onChange, group, values]
   )
 
   useEffect(() => {
@@ -126,7 +148,7 @@ export const GroupFields = ({
             }
           />
         </ValueListItem>
-        {(values.subtitle.textValue || !readOnly) && (
+        {(_values.subtitle.textValue || !readOnly) && (
           <View
             borderVariant="thinLight"
             widthVariant="form"
@@ -142,7 +164,7 @@ export const GroupFields = ({
             </ValueListItem>
           </View>
         )}
-        {values.isImportedGroup && (
+        {_values.isImportedGroup && (
           <View flexDirection="row" alignItems="center" mt="small">
             <Text variant="uiTextSmall" color="text.3">
               Imported from:
@@ -152,10 +174,10 @@ export const GroupFields = ({
               textVariant="uiTextSmall"
               textColor="text.3"
               ml="tiny"
-              href={makePublicUrl(values)}
+              href={makePublicUrl(_values)}
               target="_blank"
             >
-              {makePublicUrl(values)}
+              {makePublicUrl(_values)}
             </Button>
           </View>
         )}
@@ -188,6 +210,7 @@ export const GroupFields = ({
                     flexGrow={1}
                     defaultPageId={_values.defaultPageId}
                     readOnly={readOnly}
+                    onSetDefaultPage={onSetDefaultPage}
                   />
                 </ValueListItem>
               </View>

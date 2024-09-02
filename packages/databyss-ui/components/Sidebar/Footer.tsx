@@ -14,9 +14,10 @@ import {
 import { sidebar } from '@databyss-org/ui/theming/components'
 import { Page, Group } from '@databyss-org/services/interfaces'
 import { savePage } from '@databyss-org/services/editorPage'
-import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
+import { UNTITLED_NAME } from '@databyss-org/services/groups'
 import { useQueryClient } from '@tanstack/react-query'
 import { selectors } from '@databyss-org/data/pouchdb/selectors'
+import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvider'
 import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 import { appCommands } from '../../lib/appCommands'
 // import { dbRef } from '@databyss-org/data/db'
@@ -29,12 +30,13 @@ const Footer = ({ collapsed }) => {
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
   const { navigate, navigateSidebar, getSidebarPath } = useNavigationContext()
   const queryClient = useQueryClient()
+  const setGroup = useDatabaseContext((c) => c && c.setGroup)
 
   const sidebarPath = getSidebarPath()
 
   const onNewGroup = () => {
     const _group = new Group(UNTITLED_NAME)
-    saveGroup(_group).then(() => navigate(`/collections/${_group._id}`))
+    setGroup(_group).then(() => navigate(`/collections/${_group._id}`))
   }
 
   const onNewPage = async () => {
@@ -52,8 +54,13 @@ const Footer = ({ collapsed }) => {
   }
 
   useEffect(() => {
+    if (collapsed) {
+      return () => null
+    }
     appCommands.addListener('newPage', onNewPage)
+    appCommands.addListener('newGroup', onNewGroup)
     return () => {
+      appCommands.removeListener('newGroup', onNewGroup)
       appCommands.removeListener('newPage', onNewPage)
     }
   }, [appCommands])

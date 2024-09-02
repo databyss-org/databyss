@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import {
   buildSearchIndexDb,
   createNodeDb,
@@ -22,11 +22,12 @@ import { getAtomicsFromFrag } from '@databyss-org/services/blocks/related'
 import { getR2Client, upload, remove } from '@databyss-org/services/lib/r2'
 import { Role } from '@databyss-org/data/interfaces/sysUser'
 import { RemoteDbInfo } from '@databyss-org/services/session/utils'
-import { createReadStream } from 'fs'
+import { createReadStream, writeFileSync, readFileSync, existsSync } from 'fs'
 import path from 'path'
 import { mediaPath } from './file-handlers'
 
 export class PublishingStatus {
+  isStarted: boolean
   isCancelled: boolean
   isComplete: boolean
   isSuccess: boolean
@@ -35,6 +36,7 @@ export class PublishingStatus {
   lastMessage: string
 
   constructor() {
+    this.isStarted = false
     this.isCancelled = false
     this.isComplete = false
     this.isSuccess = false
@@ -44,10 +46,28 @@ export class PublishingStatus {
   }
 }
 
-const publishingStatusDict: { [statusId: string]: PublishingStatus } = {}
+const statusFilePath = (statusId: string) =>
+  path.join(app.getPath('userData'), `${statusId}.json`)
+
+const _publishingStatusDict: { [statusId: string]: PublishingStatus } = {}
 
 function getStatus(statusId: string) {
-  return publishingStatusDict[statusId]
+  if (!_publishingStatusDict[statusId]) {
+    // try to load
+    // if (existsSync(statusFilePath(statusId))) {
+    //   _publishingStatusDict[statusId] = JSON.parse(
+    //     readFileSync(statusFilePath(statusId)).toString()
+    //   ) as PublishingStatus
+    // } else {
+    _publishingStatusDict[statusId] = new PublishingStatus()
+    // }
+  }
+  return _publishingStatusDict[statusId]
+}
+
+function setStatus(statusId: string, status: PublishingStatus) {
+  _publishingStatusDict[statusId] = status
+  // writeFileSync(statusFilePath(statusId), JSON.stringify(status))
 }
 
 async function docIdsRelatedToPage(page: PageDoc, blocks: Block[]) {
@@ -90,7 +110,8 @@ function updateStatusMessage({
   replaceLastLogEntry = false,
   notify = true,
 }: UpdateStatusMessageOptions) {
-  const _status = publishingStatusDict[statusId]
+  // console.log('[updateStatusMessage]', message)
+  const _status = getStatus(statusId)
   if (!_status) {
     return
   }
@@ -100,6 +121,7 @@ function updateStatusMessage({
   } else {
     _status.messageLog.push(message)
   }
+  setStatus(statusId, _status)
   if (notify) {
     notifyStatusUpdated(statusId)
   }
@@ -111,7 +133,7 @@ function notifyStatusUpdated(statusId: string) {
     _win.webContents.send(
       'publish-statusUpdated',
       statusId,
-      publishingStatusDict[statusId]
+      getStatus(statusId)
     )
   }
 }
@@ -148,8 +170,30 @@ async function publishGroup(
   groupId: string,
   statusId: string
 ): Promise<RemoteDbInfo | false> {
-  const _status = new PublishingStatus()
-  publishingStatusDict[statusId] = _status
+  let _status = getStatus(statusId)
+  // reset session if previous is completed
+  if (
+    _status.isCancelled ||
+    _status.isComplete ||
+    _status.isError ||
+    _status.isSuccess
+  ) {
+    _status = new PublishingStatus()
+  }
+  // otherwise make sure there isn't an active session
+  if (_status.isStarted) {
+    console.warn(
+      `[publishGroup] publishing session ${statusId} already in progress`
+    )
+    updateStatusMessage({
+      statusId,
+      message:
+        'There is a previous publish in progress, but it is unavailable to resume. Please restart the application and try again.',
+    })
+    return
+  }
+  _status.isStarted = true
+  setStatus(statusId, _status)
   notifyStatusUpdated(statusId)
 
   const _db = nodeDbRefs[windowId].current!
@@ -158,245 +202,273 @@ async function publishGroup(
   let _defaultPageId: string | null = null
   const _publishedAt = new Date().toJSON()
 
-  for (let i = 0; i < _group.pages.length; i++) {
+  try {
+    for (let i = 0; i < _group.pages.length; i++) {
+      if (_status.isCancelled) {
+        return false
+      }
+      const _pageId = _group.pages[i]
+      updateStatusMessage({
+        statusId,
+        message: `Processing page ${i + 1}/${_group.pages.length}`,
+        replaceLastLogEntry: true,
+      })
+
+      // init default page
+      if (!_defaultPageId) {
+        _defaultPageId = _pageId
+      }
+      // get page
+      const _page: PageDoc = await _db.get(_pageId)
+      // include page in docIds
+      _relatedDocIds.push(_pageId)
+      // populate the page blocks
+      const _blockIdsToGet = _page.blocks.map((_b) => ({ id: _b._id }))
+      const _getBlocksRes = await _db.bulkGet({ docs: _blockIdsToGet })
+      const _pageBlocks = _getBlocksRes.results
+        .map((_d) => (_d.docs[0] as any).ok)
+        .filter(Boolean)
+      // console.log('[publishGroup] pageBlocks', _pageBlocks)
+      // get docids for all related docs
+      const _pageRelated = await docIdsRelatedToPage(_page, _pageBlocks)
+      _relatedDocIds.push(..._pageRelated)
+    }
+    // console.log('[publishGroup] _relatedDocIds', _relatedDocIds)
+
+    if (_status.isCancelled) {
+      return
+    }
+    updateStatusMessage({ statusId, message: `Fetching data to publish...` })
+
+    const _docsToWrite = await _db.bulkGet({
+      docs: _relatedDocIds.map((d) => ({ id: d })),
+    })
+
     if (_status.isCancelled) {
       return false
     }
-    const _pageId = _group.pages[i]
-    updateStatusMessage({
-      statusId,
-      message: `Processing page ${i + 1}/${_group.pages.length}`,
-      replaceLastLogEntry: true,
-    })
+    updateStatusMessage({ statusId, message: `Generating data to publish...` })
 
-    // init default page
-    if (!_defaultPageId) {
-      _defaultPageId = _pageId
-    }
-    // get page
-    const _page: PageDoc = await _db.get(_pageId)
-    // include page in docIds
-    _relatedDocIds.push(_pageId)
-    // populate the page blocks
-    const _blockIdsToGet = _page.blocks.map((_b) => ({ id: _b._id }))
-    const _getBlocksRes = await _db.bulkGet({ docs: _blockIdsToGet })
-    const _pageBlocks = _getBlocksRes.results
+    let _dataToWrite: DbDocument[] = []
+    let _embedsToWrite: Embed[] = []
+    const _sourceMediaIds: string[] = []
+    _docsToWrite!.results
       .map((_d) => (_d.docs[0] as any).ok)
       .filter(Boolean)
-    // console.log('[publishGroup] pageBlocks', _pageBlocks)
-    // get docids for all related docs
-    const _pageRelated = await docIdsRelatedToPage(_page, _pageBlocks)
-    _relatedDocIds.push(..._pageRelated)
-  }
-  // console.log('[publishGroup] _relatedDocIds', _relatedDocIds)
-
-  if (_status.isCancelled) {
-    return
-  }
-  updateStatusMessage({ statusId, message: `Fetching data to publish...` })
-
-  const _docsToWrite = await _db.bulkGet({
-    docs: _relatedDocIds.map((d) => ({ id: d })),
-  })
-
-  if (_status.isCancelled) {
-    return false
-  }
-  updateStatusMessage({ statusId, message: `Generating data to publish...` })
-
-  let _dataToWrite: DbDocument[] = []
-  let _embedsToWrite: Embed[] = []
-  const _sourceMediaIds: string[] = []
-  _docsToWrite!.results
-    .map((_d) => (_d.docs[0] as any).ok)
-    .filter(Boolean)
-    .forEach((_d: DbDocument) => {
-      if (_d.type === BlockType.Source) {
-        _sourceMediaIds.push(...((_d as Source).media ?? []))
-        // remove the media field if we're not publishing it
-        if (!_group.publishSourceMedia) {
-          delete _d.media
-        }
-      }
-      if (_d.type === BlockType.Embed) {
-        _embedsToWrite.push(_d)
-      } else {
-        _dataToWrite.push(_d)
-      }
-    })
-  // get source media embeds (if necessary)
-  if (_group.publishSourceMedia) {
-    const _uniqueSourceMediaIds = Array.from(new Set(_sourceMediaIds))
-    const _sourceMediaDocs = await _db.bulkGet({
-      docs: _uniqueSourceMediaIds.map((d) => ({ id: d })),
-    })
-    _embedsToWrite = _embedsToWrite.concat(
-      _sourceMediaDocs!.results
-        .map((_d) => (_d.docs[0] as any).ok)
-        .filter(Boolean)
-    )
-  }
-  // rewrite embed src urls
-  const _embedSrcUrlBase = `${process.env.DBFILE_URL}${groupId}/media`
-  _dataToWrite = _dataToWrite.concat(
-    _embedsToWrite.map((_embed) =>
-      _embed.detail?.fileDetail
-        ? {
-            ..._embed,
-            detail: {
-              ..._embed.detail,
-              src: `${_embedSrcUrlBase}/${_embed._id}/${_embed.detail.fileDetail.filename}`,
-            },
+      .forEach((_d: DbDocument, idx: number) => {
+        updateStatusMessage({
+          statusId,
+          message: `Processing document ${idx + 1}/${
+            _docsToWrite.results.length
+          }`,
+          replaceLastLogEntry: true,
+        })
+        if (_d.type === BlockType.Source) {
+          _sourceMediaIds.push(...((_d as Source).media ?? []))
+          // remove the media field if we're not publishing it
+          if (!_group.publishSourceMedia) {
+            delete _d.media
           }
-        : _embed
-    ) as any[]
-  )
-
-  _group.lastPublishedAt = _publishedAt
-  _dataToWrite.push(_group)
-  // user preference doc
-  const _userPreferences = await _db.get<UserPreference>('user_preference')
-  _userPreferences.userId = 'local'
-  _userPreferences.belongsToGroup = groupId
-  _userPreferences.createdAt = Date.now()
-  _userPreferences.groups = [
-    {
-      groupId,
-      defaultPageId: _group.defaultPageId ?? _defaultPageId,
-      role: Role.ReadOnly,
-    },
-  ]
-  _dataToWrite.push(_userPreferences)
-
-  const _dbJson = JSON.stringify(_dataToWrite, null, 2)
-  // console.log('[publishGroup] _dbJson', _dbJson)
-
-  if (_status.isCancelled) {
-    return false
-  }
-  updateStatusMessage({
-    statusId,
-    message: `Exporting search index for ${groupId}`,
-  })
-  // group db must be imported temporarily to create the search intdex
-  console.log('[publishGroup] write temp db')
-  const _groupDb = createNodeDb(getDbDirPath(groupId))
-  const res = await _groupDb.bulkDocs(
-    _dataToWrite,
-    { new_edits: false } // not change revision
-  )
-
-  // build search index
-  await buildSearchIndexDb(_groupDb)
-  const _searchIndexDbPath = await findSearchIndexDb(groupId)
-  console.log('[publishGroup] search index db path', _searchIndexDbPath)
-  const _searchDb = createNodeDb(_searchIndexDbPath)
-  const _searchDbAllDocs = await _searchDb.allDocs({ include_docs: true })
-  const _searchDbData = _searchDbAllDocs.rows.map((row) => row.doc)
-  const _searchDbJson = JSON.stringify(_searchDbData, null, 2)
-
-  // remove temp dbs
-  await _searchDb.destroy()
-  await _groupDb.destroy()
-
-  if (_status.isCancelled) {
-    return false
-  }
-  updateStatusMessage({ statusId, message: `Uploading data...` })
-
-  // Initialize R2
-  const _r2creds = {
-    accountId: process.env.R2_ACCOUNT_ID,
-    accessKeyId: process.env.R2_ACCESS_KEY,
-    secretAccessKey: process.env.R2_SECRET_KEY,
-  }
-  console.log('[publishGroup] r2creds', _r2creds)
-  const r2 = getR2Client(_r2creds)
-
-  //upload the dbJson
-  const _uploadPathBase = `${groupId}/databyss-db-${groupId.replace('g_', '')}`
-  let _uploadRes = await upload({
-    client: r2,
-    bucketName: 'databyss-public',
-    contents: _dbJson,
-    destination: `${_uploadPathBase}.json`,
-    mimeType: 'application/json',
-  })
-
-  if (_status.isCancelled) {
-    return false
-  }
-  updateStatusMessage({ statusId, message: `Uploading search index...` })
-  _uploadRes = await upload({
-    client: r2,
-    bucketName: 'databyss-public',
-    contents: _searchDbJson,
-    destination: `${_uploadPathBase}-search.json`,
-    mimeType: 'application/json',
-  })
-
-  // generate and upload info obj
-  const _dbInfo: RemoteDbInfo = {
-    searchMd5: _searchIndexDbPath.split('-').slice(-1)[0],
-    publishedAt: _publishedAt,
-    name: _group.name,
-  }
-  console.log('[publishGroup] db info', _dbInfo)
-  _uploadRes = await upload({
-    client: r2,
-    bucketName: 'databyss-public',
-    contents: JSON.stringify(_dbInfo),
-    destination: `${_uploadPathBase}-info.json`,
-    mimeType: 'application/json',
-  })
-
-  if (_status.isCancelled) {
-    return false
-  }
-  updateStatusMessage({ statusId, message: `Uploading media...` })
-  const _mediaPathBase = `${groupId}/media`
-  for (const _embed of _embedsToWrite) {
-    if (!_embed.detail?.fileDetail) {
-      continue
+        }
+        if (_d.type === BlockType.Embed) {
+          _embedsToWrite.push(_d)
+        } else {
+          _dataToWrite.push(_d)
+        }
+      })
+    // get source media embeds (if necessary)
+    if (_group.publishSourceMedia && _sourceMediaIds.length) {
+      updateStatusMessage({ statusId, message: `Preparing source media...` })
+      const _uniqueSourceMediaIds = Array.from(new Set(_sourceMediaIds))
+      console.log('[publishGroup] sourceMediaIds', _uniqueSourceMediaIds)
+      const _sourceMediaDocs = await _db.bulkGet({
+        docs: _uniqueSourceMediaIds.map((d) => ({ id: d })),
+      })
+      console.log('[publishGroup] sourceMediaDocs', _sourceMediaDocs)
+      _embedsToWrite = _embedsToWrite.concat(
+        _sourceMediaDocs!.results
+          .map((_d) => (_d.docs[0] as any).ok)
+          .filter(Boolean)
+      )
     }
-    console.log(
-      mediaPath(),
-      nodeDbRefs[windowId].groupId,
-      _embed._id,
-      _embed.detail.fileDetail.filename
+    // rewrite embed src urls
+    const _embedSrcUrlBase = `${process.env.DBFILE_URL}${groupId}/media`
+    _dataToWrite = _dataToWrite.concat(
+      _embedsToWrite.map((_embed) =>
+        _embed.detail?.fileDetail
+          ? {
+              ..._embed,
+              detail: {
+                ..._embed.detail,
+                src: `${_embedSrcUrlBase}/${_embed._id}/${_embed.detail.fileDetail.filename}`,
+              },
+            }
+          : _embed
+      ) as any[]
     )
-    const _localPath = path.join(
-      mediaPath(),
-      nodeDbRefs[windowId].groupId,
-      _embed._id,
-      _embed.detail.fileDetail.filename
+
+    _group.lastPublishedAt = _publishedAt
+    _dataToWrite.push(_group)
+    // user preference doc
+    updateStatusMessage({ statusId, message: `Preparing preferences doc...` })
+    const _userPreferences = await _db.get<UserPreference>('user_preference')
+    _userPreferences.userId = 'local'
+    _userPreferences.belongsToGroup = groupId
+    _userPreferences.createdAt = Date.now()
+    _userPreferences.groups = [
+      {
+        groupId,
+        defaultPageId: _group.defaultPageId ?? _defaultPageId,
+        role: Role.ReadOnly,
+      },
+    ]
+    _dataToWrite.push(_userPreferences)
+
+    const _dbJson = JSON.stringify(_dataToWrite, null, 2)
+    // console.log('[publishGroup] _dbJson', _dbJson)
+
+    if (_status.isCancelled) {
+      return false
+    }
+    updateStatusMessage({
+      statusId,
+      message: `Exporting search index for ${groupId}`,
+    })
+    // group db must be imported temporarily to create the search intdex
+    console.log('[publishGroup] write temp db')
+    const _groupDb = createNodeDb(getDbDirPath(groupId))
+    console.log('[publishGroup] write docs to temp db')
+    const res = await _groupDb.bulkDocs(
+      _dataToWrite,
+      { new_edits: false } // not change revision
     )
-    console.log('[publishGroup] upload', _localPath)
-    const _fileStream = createReadStream(_localPath)
+
+    // build search index
+    console.log('[publishGroup] build search index')
+    await buildSearchIndexDb(_groupDb)
+    const _searchIndexDbPath = await findSearchIndexDb(groupId)
+    console.log('[publishGroup] search index db path', _searchIndexDbPath)
+    const _searchDb = createNodeDb(_searchIndexDbPath)
+    const _searchDbAllDocs = await _searchDb.allDocs({ include_docs: true })
+    const _searchDbData = _searchDbAllDocs.rows.map((row) => row.doc)
+    const _searchDbJson = JSON.stringify(_searchDbData, null, 2)
+
+    // remove temp dbs
+    console.log('[publishGroup] remove temp dbs')
+    await _searchDb.destroy()
+    await _groupDb.destroy()
+
+    if (_status.isCancelled) {
+      return false
+    }
+    updateStatusMessage({ statusId, message: `Uploading data...` })
+
+    // Initialize R2
+    const _r2creds = {
+      accountId: process.env.R2_ACCOUNT_ID,
+      accessKeyId: process.env.R2_ACCESS_KEY,
+      secretAccessKey: process.env.R2_SECRET_KEY,
+    }
+    console.log('[publishGroup] r2creds', _r2creds)
+    const r2 = getR2Client(_r2creds)
+
+    //upload the dbJson
+    const _uploadPathBase = `${groupId}/databyss-db-${groupId.replace(
+      'g_',
+      ''
+    )}`
+    let _uploadRes = await upload({
+      client: r2,
+      bucketName: 'databyss-public',
+      contents: _dbJson,
+      destination: `${_uploadPathBase}.json`,
+      mimeType: 'application/json',
+    })
+
+    if (_status.isCancelled) {
+      return false
+    }
+    updateStatusMessage({ statusId, message: `Uploading search index...` })
     _uploadRes = await upload({
       client: r2,
       bucketName: 'databyss-public',
-      contents: _fileStream,
-      destination: `${_mediaPathBase}/${_embed._id}/${_embed.detail.fileDetail.filename}`,
-      mimeType: _embed.detail.fileDetail.contentType,
+      contents: _searchDbJson,
+      destination: `${_uploadPathBase}-search.json`,
+      mimeType: 'application/json',
     })
-  }
+    if (_status.isCancelled) {
+      return false
+    }
+    updateStatusMessage({ statusId, message: `Uploading media...` })
+    const _mediaPathBase = `${groupId}/media`
+    for (const _embed of _embedsToWrite) {
+      if (!_embed.detail?.fileDetail) {
+        continue
+      }
+      console.log(
+        mediaPath(),
+        nodeDbRefs[windowId].groupId,
+        _embed._id,
+        _embed.detail.fileDetail.filename
+      )
+      const _localPath = path.join(
+        mediaPath(),
+        nodeDbRefs[windowId].groupId,
+        _embed._id,
+        _embed.detail.fileDetail.filename
+      )
+      console.log('[publishGroup] upload', _localPath)
+      const _fileStream = createReadStream(_localPath)
+      _uploadRes = await upload({
+        client: r2,
+        bucketName: 'databyss-public',
+        contents: _fileStream,
+        destination: `${_mediaPathBase}/${_embed._id}/${_embed.detail.fileDetail.filename}`,
+        mimeType: _embed.detail.fileDetail.contentType,
+      })
+    }
+    if (_status.isCancelled) {
+      return false
+    }
 
-  if (_status.isCancelled) {
+    // generate and upload info obj
+    const _dbInfo: RemoteDbInfo = {
+      searchMd5: _searchIndexDbPath.split('-').slice(-1)[0],
+      publishedAt: _publishedAt,
+      name: _group.name,
+    }
+    console.log('[publishGroup] db info', _dbInfo)
+    _uploadRes = await upload({
+      client: r2,
+      bucketName: 'databyss-public',
+      contents: JSON.stringify(_dbInfo),
+      destination: `${_uploadPathBase}-info.json`,
+      mimeType: 'application/json',
+    })
+
+    _status.isSuccess = true
+    _status.isComplete = true
+    setStatus(statusId, _status)
+    updateStatusMessage({ statusId, message: `Publish successful` })
+    return _dbInfo
+  } catch (err) {
+    console.error('[publishGroup] error', err.message)
+    _status.isError = true
+    _status.isComplete = true
+    setStatus(statusId, _status)
+    updateStatusMessage({
+      statusId,
+      message: `Error during publish: ${err.message}`,
+    })
     return false
   }
-
-  // console.log('[publishGroup] upload response', _uploadRes)
-  updateStatusMessage({ statusId, message: `Publish successful` })
-  return _dbInfo
 }
 
 async function cancelPublishGroup(statusId: string) {
-  const _status = publishingStatusDict[statusId]
-  if (!_status) {
-    return
-  }
+  const _status = getStatus(statusId)
   _status.isCancelled = true
+  _status.isComplete = true
+  setStatus(statusId, _status)
   updateStatusMessage({ statusId, message: 'Publishing cancelled by user' })
 }
 

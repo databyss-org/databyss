@@ -12,17 +12,13 @@ import { Text } from '@databyss-org/ui/primitives'
 import { getDocument, getDocuments } from '@databyss-org/data/pouchdb/utils'
 import { DbDocument, DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { useBlocksInPages, usePages } from '@databyss-org/data/pouchdb/hooks'
-import {
-  backupDbToJson,
-  makeBackupFilename,
-} from '@databyss-org/data/pouchdb/backup'
+import { makeBackupFilename } from '@databyss-org/data/pouchdb/backup'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { useUserPreferencesContext } from '@databyss-org/ui/hooks'
 import { appCommands } from '@databyss-org/ui/lib/appCommands'
 import { bibliographyFromSources } from '@databyss-org/data/pouchdb/hooks/useBibliography'
-import { setGroup } from '@databyss-org/data/pouchdb/groups'
 import { useContextSelector, createContext } from 'use-context-selector'
-import { uid } from '@databyss-org/data/lib/uid'
+import { useNavigationContext } from '@databyss-org/ui/components'
 import {
   bibliographyToMarkdown,
   blockToMarkdown,
@@ -47,7 +43,7 @@ import { CitationStyle } from '../citations/constants'
 import { validUriRegex } from '../lib/util'
 import { loadPage } from '../editorPage'
 import { getAccountFromLocation, RemoteDbInfo } from '../session/utils'
-import { useNavigationContext } from '@databyss-org/ui/components'
+import { useDatabaseContext } from '../lib/DatabaseProvider'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
@@ -79,6 +75,7 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const { getPreferredCitationStyle } = useUserPreferencesContext()
   const sourcesInPagesRes = useBlocksInPages<Source>(BlockType.Source)
   const showModal = useNavigationContext((c) => c && c.showModal)
+  const setGroup = useDatabaseContext((c) => c && c.setGroup)
 
   const pageIdRef = useRef<string | null>(null)
 
@@ -361,12 +358,7 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   const cancelPublishGroupDatabase = useCallback(
     async (group: Group) => {
-      if (!group.publishingStatusId) {
-        return
-      }
-      await eapi.publish.cancelPublishGroup(group.publishingStatusId)
-      group.isPublishing = false
-      await setGroup(group)
+      await eapi.publish.cancelPublishGroup(group._id)
     },
     [setGroup, eapi.publish?.cancelPublishGroup]
   )
@@ -377,21 +369,20 @@ export const ExportProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   const publishGroupDatabase = useCallback(
     async (group: Group) => {
-      group.isPublishing = true
-      group.publishingStatusId = uid()
-      await setGroup(group)
-      console.log('[publishGroupDatabase]', group)
-      const _publishRes: RemoteDbInfo = await eapi.publish.publishGroup(
-        group._id,
-        group.publishingStatusId
-      )
-      console.log('[publishGroupDatabase] result', _publishRes)
-
-      group.lastPublishedAt = _publishRes.publishedAt
-      group.isPublishing = false
-      // group.lastPublishResult = 'success'
-
-      await setGroup(group)
+      // console.log('[publishGroupDatabase]', group)
+      try {
+        const _publishRes: RemoteDbInfo = await eapi.publish.publishGroup(
+          group._id,
+          group._id
+        )
+        if (_publishRes) {
+          group.lastPublishedAt = _publishRes.publishedAt
+          await setGroup(group)
+        }
+      } catch (err) {
+        console.warn('[publishGroupDatabase] error', err)
+      }
+      // console.log('[publishGroupDatabase] result', _publishRes)
     },
     [setGroup]
   )

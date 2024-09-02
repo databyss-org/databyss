@@ -8,12 +8,13 @@ import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
-import { deleteCollection } from '@databyss-org/data/pouchdb/groups/index'
 import {
   DropdownListItem,
   DropdownContainer,
 } from '@databyss-org/ui/components'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
+import { useExportContext } from '@databyss-org/services/export'
+import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvider'
 
 interface GroupMenuProps extends ViewProps {
   groupId: string
@@ -22,6 +23,11 @@ interface GroupMenuProps extends ViewProps {
 const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
   const { navigate } = useNavigationContext()
   const isReadOnly = useSessionContext((c) => c && c.isReadOnly)
+  const unpublishGroupDatabase = useExportContext(
+    (c) => c && c.unpublishGroupDatabase
+  )
+  const removeGroup = useDatabaseContext((c) => c && c.removeGroup)
+
   const groupsRes = useGroups()
 
   const [showMenu, setShowMenu] = useState(false)
@@ -35,10 +41,15 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
   }
 
   const deleteGroup = async () => {
+    if (!groupsRes.data) {
+      return
+    }
     // first remove the group from all associated documents
-
-    await deleteCollection(groupId)
-    // setShowMenu(false)
+    const _group = groupsRes.data[groupId]
+    await removeGroup(_group)
+    if (_group.public) {
+      await unpublishGroupDatabase(_group)
+    }
     // navigate to next named group, if there is one
     const _namedGroups = Object.values(groupsRes.data!).filter(
       (group) => !!group.name
@@ -53,8 +64,7 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
       }
     }
     setTimeout(() => navigate('/', { replace: true }), 50)
-    // window does not refresh on navigation change
-    // setTimeout(() => window.location.reload(), 50)
+    setShowMenu(false)
   }
 
   const DropdownList = () => (

@@ -7,12 +7,12 @@ import {
   LoadingFallback,
   SidebarListItemData,
 } from '@databyss-org/ui/components'
-import { setGroup } from '@databyss-org/data/pouchdb/groups'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { pagesToListItemData } from '../transforms'
 import { MenuItem } from '../../../components/Menu/DropdownList'
 import { DraggableItem } from '../../..'
 import { useNotifyContext } from '../../../components/Notify/NotifyProvider'
+import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvider'
 
 export const groupsToListItemData = (groups: Group[]) =>
   groups
@@ -32,6 +32,7 @@ export const GroupList = (others) => {
   const groupsRes = useGroups()
   const pagesRes = usePages()
   const notifyConfirm = useNotifyContext((c) => c.notifyConfirm)
+  const setGroup = useDatabaseContext((c) => c && c.setGroup)
 
   const pageMenuItems = (group: Group) => {
     const _menuItems: MenuItem[] = [

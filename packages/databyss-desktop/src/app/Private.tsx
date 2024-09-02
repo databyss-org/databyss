@@ -46,13 +46,13 @@ import SidebarSvg from '@databyss-org/ui/assets/sidebar.svg'
 import ChevronSvg from '@databyss-org/ui/assets/chevron-right.svg'
 import DatabyssImg from '@databyss-org/ui/assets/logo-thick.png'
 import { DatabyssMenu } from '@databyss-org/ui/components/Menu/DatabyssMenu'
-import { setGroup } from '@databyss-org/data/pouchdb/groups'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import { sidebar } from '@databyss-org/ui/theming/components'
 import { debounce } from 'lodash'
 import { TitleBar } from '../components/TitleBar'
 import { useAppState } from '../hooks'
 import { GroupDetail } from '../modules/Groups/GroupDetail'
+import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvider'
 
 const GroupNameInput = ({
   groupName,
@@ -267,6 +267,7 @@ export const Private = () => {
     (c) => c && c.navigateToDefaultPage
   )
   const { provisionClientDatabase } = getSession()
+  const setGroup = useDatabaseContext((c) => c && c.setGroup)
   const groupRes = useDocument<Group>(dbRef.groupId, {
     enabled: dbRef.groupId !== null,
   })
@@ -276,7 +277,7 @@ export const Private = () => {
   const groupName = groupRes.data?.name ?? 'Databyss'
 
   const onGroupNameChanged = useCallback(
-    async (name: string) => {
+    debounce(async (name: string) => {
       setGroup({ ...groupRes.data, name })
       const _localGroups = await eapi.state.get('localGroups')
       await eapi.state.set(
@@ -291,7 +292,7 @@ export const Private = () => {
           return group
         })
       )
-    },
+    }, 500),
     [groupRes.data]
   )
 

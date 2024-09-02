@@ -9,7 +9,6 @@ import {
 } from '@databyss-org/services/session/clientStorage'
 import { sleep } from '@databyss-org/services/lib/util'
 import { Document } from '@databyss-org/services/interfaces'
-import { queryClient } from '@databyss-org/services/lib/queryClient'
 import { getAtomicsFromFrag } from '@databyss-org/services/blocks/related'
 import { DocumentType, PageDoc } from '../interfaces'
 import { upsertImmediate, getDocuments } from '../utils'
@@ -25,7 +24,6 @@ import {
   dbRef,
   MakePouchReplicationErrorHandler,
   REMOTE_CLOUDANT_URL,
-  selectors,
 } from '../db'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import {
@@ -40,7 +38,7 @@ import {
   validateGroupCredentials,
 } from '../../../databyss-services/editorPage/index'
 
-const removeDuplicatesFromArray = (array: string[]) =>
+export const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
 
 export const removeIdsFromSharedDb = ({
@@ -372,37 +370,6 @@ export const replicateGroup = async ({
   })
 }
 
-export const setGroup = async (group: Group) => {
-  // if pageId is passed, crawl pageId and append group id to all documents associated with the page
-  // if (pageId) {
-  //   addPageToGroup({ pageId, groupId: group._id })
-  // }
-
-  // prevent duplicates
-  if (group.pages) {
-    group.pages = removeDuplicatesFromArray(group.pages)
-  }
-
-  // append property in order for replicated group to get group metadata
-  await addGroupToDocument([group._id], {
-    ...group,
-    doctype: DocumentType.Group,
-  })
-
-  // update caches
-  queryClient.setQueryData([selectors.GROUPS], (oldData: any) => ({
-    ...(oldData ?? {}),
-    [group._id]: group,
-  }))
-  queryClient.setQueryData([`useDocument_${group._id}`], group)
-
-  await upsertImmediate({
-    doctype: DocumentType.Group,
-    _id: group._id,
-    doc: group,
-  })
-}
-
 /**
  * Returns a report of all docs in the page
  * @groupId If set, only include related docs (eg topic, source) where this page is the only page that it appears in, for this group
@@ -701,40 +668,6 @@ export const removeAllGroupsFromPage = async (pageId: string) => {
         // remove group from page documents
         setGroupPageAction(_groupId, _page._id, PageAction.REMOVE)
       }
-    }
-  }
-}
-
-/**
- * deletes a collection
- */
-export const deleteCollection = async (groupId: string) => {
-  // first remove the group from all associated documents
-  const _group: Group | null = await findOne({
-    doctype: DocumentType.Group,
-    query: { _id: groupId },
-  })
-
-  if (_group) {
-    const { public: isPublic, _id: groupId } = _group
-
-    // get all pages group is associated with
-    const _pageIds = _group.pages
-    for (const pageId of _pageIds) {
-      // remove group from all documents associated with pageId
-      await removeGroupFromPage({ pageId, groupId })
-    }
-
-    // delete group locally
-    await upsertImmediate({
-      doctype: DocumentType.Group,
-      _id: groupId,
-      doc: { ..._group, _deleted: true },
-    })
-
-    if (isPublic) {
-      // delete group from cloudant
-      setGroupAction(groupId, GroupAction.UNSHARED)
     }
   }
 }

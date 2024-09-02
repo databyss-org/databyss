@@ -1,4 +1,10 @@
-import React, { ReactNode, useCallback, useState } from 'react'
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import {
   View,
   List,
@@ -64,8 +70,10 @@ export const PublicSharingSettings = ({
   readOnly,
   ...others
 }: PublicSharingSettingsProps) => {
+  // console.log('[PublicSharingSettings]', group)
   const [linkCopied, setLinkCopied] = useState(false)
-  const [showPublishLog, setShowPublishLog] = useState(group.isPublishing)
+  const [isPublishing, setIsPublishing] = useState(false)
+  const [showPublishLog, setShowPublishLog] = useState(false)
   const publishGroupDatabase = useExportContext(
     (c) => c && c.publishGroupDatabase
   )
@@ -76,36 +84,20 @@ export const PublicSharingSettings = ({
     (c) => c && c.unpublishGroupDatabase
   )
   const pagesRes = usePages()
-  const publishingStatusRes = usePublishingStatus(group.publishingStatusId!, {
-    enabled: group.publishingStatusId !== null,
-  })
+  const publishingStatusRes = usePublishingStatus(group._id)
 
-  // setup publishing log ui
-  let _lastPublishedText = 'never'
-  if (group.lastPublishedAt) {
-    const _date = new Date(group.lastPublishedAt)
-    _lastPublishedText = _date.toLocaleString()
-  }
-  let _publishLog: string[] | null = null
-  if (publishingStatusRes.data) {
-    _publishLog = publishingStatusRes.data.messageLog
-  }
+  useEffect(() => {
+    if (publishingStatusRes.data?.isStarted) {
+      setIsPublishing(true)
+      setShowPublishLog(true)
+    }
+  }, [publishingStatusRes.data?.isStarted])
 
-  // setup default page ui
-  let _defaultPage: Page | null = null
-  let _defaultPageMenuItems: MenuItem[] = []
-  if (pagesRes.data) {
-    _defaultPage = pagesRes.data[group.defaultPageId]
-
-    _defaultPageMenuItems = group.pages.map((pid) => {
-      const _page = pagesRes.data[pid]
-      return {
-        label: _page.name,
-        icon: null,
-        value: _page._id,
-      }
-    })
-  }
+  useEffect(() => {
+    if (publishingStatusRes.data?.isComplete) {
+      setIsPublishing(false)
+    }
+  }, [publishingStatusRes.data?.isComplete])
 
   // setup public link
   let _publicUrl: string | null = null
@@ -127,215 +119,254 @@ export const PublicSharingSettings = ({
     [group, unpublishGroupDatabase]
   )
 
-  const _includeSourceMediaView = (
-    <ValueListItem path="publishSourceMedia" defaultValue={false}>
-      <SwitchControl
-        label="Include source media"
-        alignLabel="left"
-        textVariant="uiTextNormal"
-        labelTextProps={{
-          color: 'text.2',
-        }}
-        disabled={readOnly}
-      />
-    </ValueListItem>
-  )
+  return useMemo(() => {
+    console.log('[PublicSharingSettings] render')
+    // setup publishing log ui
+    let _lastPublishedText = 'never'
+    if (group.lastPublishedAt) {
+      const _date = new Date(group.lastPublishedAt)
+      _lastPublishedText = _date.toLocaleString()
+    }
+    let _publishLog: string[] | null = null
+    if (publishingStatusRes.data) {
+      _publishLog = publishingStatusRes.data.messageLog
+    }
 
-  const _defaultPageView = _defaultPage && (
-    <>
-      <View px="em">
-        <Separator spacing="none" color="text.3" />
-      </View>
-      <View flexDirection="row" alignItems="center">
-        <View flexShrink={0} mr="small">
-          <Text variant="uiTextNormal" color="text.2">
-            Default page
-          </Text>
-        </View>
-        <View flexGrow={1} flexShrink={1} overflow="hidden">
-          <View
-            alignSelf="flex-end"
-            justifyContent="right"
-            flexDirection="row"
-            alignItems="center"
-            maxWidth="80%"
-          >
-            <ValueListItem path="defaultPageId">
-              <DropdownMenu
-                renderLabel={(_pageId) =>
-                  (pagesRes.data && pagesRes.data[_pageId]?.name) ?? '?'
-                }
-                menuItems={_defaultPageMenuItems}
-                width="100%"
-                menuViewProps={{ justifyContent: 'right' }}
-                showFilter
-                ellipsis
-              />
-            </ValueListItem>
-          </View>
-        </View>
-      </View>
-    </>
-  )
+    // setup default page ui
+    let _defaultPage: Page | null = null
+    let _defaultPageMenuItems: MenuItem[] = []
+    if (pagesRes.data) {
+      _defaultPage = pagesRes.data[group.defaultPageId]
 
-  const _lastPublishedView = (
-    <>
-      <View px="em">
-        <Separator spacing="none" color="text.3" />
-      </View>
-      <View
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <View flexDirection="row" alignItems="center" pt={pxUnits(1)}>
-          <Text variant="uiTextNormal" color="text.2">
-            Published:
-          </Text>
-          <Text variant="uiTextNormal" color="text.3" ml="small">
-            {_lastPublishedText}
-          </Text>
+      _defaultPageMenuItems = group.pages.map((pid) => {
+        const _page = pagesRes.data[pid]
+        return {
+          label: _page.name,
+          icon: null,
+          value: _page._id,
+        }
+      })
+    }
+
+    const _includeSourceMediaView = (
+      <ValueListItem path="publishSourceMedia" defaultValue={false}>
+        <SwitchControl
+          label="Include source media"
+          alignLabel="left"
+          textVariant="uiTextNormal"
+          labelTextProps={{
+            color: 'text.2',
+          }}
+          disabled={readOnly}
+        />
+      </ValueListItem>
+    )
+
+    const _defaultPageView = _defaultPage && (
+      <>
+        <View px="em">
+          <Separator spacing="none" color="text.3" />
         </View>
         <View flexDirection="row" alignItems="center">
-          {group.isPublishing && <LoadingSvg width={25} height={25} />}
-          <Button
-            variant="uiLink"
-            p="tiny"
-            borderRadius="default"
-            onPress={() => {
-              if (group.isPublishing) {
-                cancelPublishGroupDatabase(group)
-              } else {
-                setShowPublishLog(true)
-                publishGroupDatabase(group)
-              }
-            }}
-          >
-            {group.isPublishing ? 'Cancel' : 'Publish now'}
-          </Button>
-        </View>
-      </View>
-      {showPublishLog && _publishLog && (
-        <View
-          bg="background.1"
-          ml="em"
-          mr="em"
-          p="tiny"
-          theme={darkContentTheme}
-        >
-          {_publishLog.map((_msg) => (
-            <Text variant="uiTextSmall" color="text.1">
-              {_msg}
+          <View flexShrink={0} mr="small">
+            <Text variant="uiTextNormal" color="text.2">
+              Default page
             </Text>
-          ))}
+          </View>
+          <View flexGrow={1} flexShrink={1} overflow="hidden">
+            <View
+              alignSelf="flex-end"
+              justifyContent="right"
+              flexDirection="row"
+              alignItems="center"
+              maxWidth="80%"
+            >
+              <ValueListItem path="defaultPageId">
+                <DropdownMenu
+                  renderLabel={(_pageId) =>
+                    (pagesRes.data && pagesRes.data[_pageId]?.name) ?? '?'
+                  }
+                  menuItems={_defaultPageMenuItems}
+                  width="100%"
+                  menuViewProps={{ justifyContent: 'right' }}
+                  showFilter
+                  ellipsis
+                />
+              </ValueListItem>
+            </View>
+          </View>
         </View>
-      )}
-    </>
-  )
+      </>
+    )
 
-  const _copyLinkView = group.lastPublishedAt && (
-    <>
-      <View
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-      >
+    const _lastPublishedView = (
+      <>
+        <View px="em">
+          <Separator spacing="none" color="text.3" />
+        </View>
         <View
           flexDirection="row"
           alignItems="center"
-          flexShrink={1}
-          overflow="hidden"
-          pr="small"
+          justifyContent="space-between"
         >
-          <Text
-            variant="uiTextNormal"
-            color="text.2"
-            pr="small"
-            css={{ whiteSpace: 'nowrap' }}
+          <View flexDirection="row" alignItems="center" pt={pxUnits(1)}>
+            <Text variant="uiTextNormal" color="text.2">
+              Published:
+            </Text>
+            <Text variant="uiTextNormal" color="text.3" ml="small">
+              {_lastPublishedText}
+            </Text>
+          </View>
+          <View flexDirection="row" alignItems="center">
+            {isPublishing && <LoadingSvg width={25} height={25} />}
+            <Button
+              variant="uiLink"
+              p="tiny"
+              borderRadius="default"
+              onPress={() => {
+                if (isPublishing) {
+                  cancelPublishGroupDatabase(group)
+                } else {
+                  setIsPublishing(true)
+                  publishGroupDatabase(group)
+                }
+              }}
+            >
+              {isPublishing ? 'Cancel' : 'Publish now'}
+            </Button>
+          </View>
+        </View>
+        {showPublishLog && _publishLog && (
+          <View
+            bg="background.1"
+            ml="em"
+            mr="em"
+            p="tiny"
+            theme={darkContentTheme}
           >
-            URL:
-          </Text>
-          <BaseControl
-            href={_publicUrl!}
-            target="_blank"
+            {_publishLog.map((_msg) => (
+              <Text variant="uiTextSmall" color="text.1">
+                {_msg}
+              </Text>
+            ))}
+          </View>
+        )}
+      </>
+    )
+
+    const _copyLinkView = group.lastPublishedAt && (
+      <>
+        <View
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <View
+            flexDirection="row"
+            alignItems="center"
             flexShrink={1}
             overflow="hidden"
-            title={_publicUrl}
+            pr="small"
           >
             <Text
               variant="uiTextNormal"
-              color="text.3"
-              css={{
-                textDecoration: 'underline',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-              overflow="hidden"
+              color="text.2"
+              pr="small"
+              css={{ whiteSpace: 'nowrap' }}
             >
-              {_publicUrl}
+              URL:
             </Text>
-          </BaseControl>
+            <BaseControl
+              href={_publicUrl!}
+              target="_blank"
+              flexShrink={1}
+              overflow="hidden"
+              title={_publicUrl}
+            >
+              <Text
+                variant="uiTextNormal"
+                color="text.3"
+                css={{
+                  textDecoration: 'underline',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+                overflow="hidden"
+              >
+                {_publicUrl}
+              </Text>
+            </BaseControl>
+          </View>
+          <IconControl
+            data-test-element="copy-link"
+            onClick={() => {
+              copyLink()
+              setLinkCopied(true)
+            }}
+            icon={linkCopied ? <CheckSvg /> : <LinkSvg />}
+            iconColor={linkCopied ? 'green.0' : 'text.2'}
+            color="text.2"
+            label={linkCopied ? 'Copied' : 'Copy'}
+          />
+          {/* <BaseControl
+            justifySelf="flex-end"
+            onClick={() => {
+              copyLink()
+              setLinkCopied(true)
+            }}
+          >
+            <Icon color={linkCopied ? 'green.0' : 'text.2'} sizeVariant="small">
+              {linkCopied ? <CheckSvg /> : <LinkSvg />}
+            </Icon>
+          </BaseControl> */}
         </View>
-        <IconControl
-          data-test-element="copy-link"
-          onClick={() => {
-            copyLink()
-            setLinkCopied(true)
+      </>
+    )
+
+    const _publicSwitchView = (
+      <ValueListItem path="public" onChange={onPublicChange}>
+        <SwitchControl
+          label="Publish collection as website"
+          data-test-element="group-public"
+          alignLabel="left"
+          textVariant="uiTextNormal"
+          labelTextProps={{
+            color: 'text.2',
           }}
-          icon={linkCopied ? <CheckSvg /> : <LinkSvg />}
-          iconColor={linkCopied ? 'green.0' : 'text.2'}
-          color="text.2"
-          label={linkCopied ? 'Copied' : 'Copy'}
+          disabled={readOnly}
         />
-        {/* <BaseControl
-          justifySelf="flex-end"
-          onClick={() => {
-            copyLink()
-            setLinkCopied(true)
-          }}
-        >
-          <Icon color={linkCopied ? 'green.0' : 'text.2'} sizeVariant="small">
-            {linkCopied ? <CheckSvg /> : <LinkSvg />}
-          </Icon>
-        </BaseControl> */}
-      </View>
-    </>
-  )
+      </ValueListItem>
+    )
 
-  const _publicSwitchView = (
-    <ValueListItem path="public" onChange={onPublicChange}>
-      <SwitchControl
-        label="Publish collection as website"
-        data-test-element="group-public"
-        alignLabel="left"
-        textVariant="uiTextNormal"
-        labelTextProps={{
-          color: 'text.2',
-        }}
-        disabled={readOnly}
-      />
-    </ValueListItem>
-  )
-
-  return (
-    <List
-      bg="background.2"
-      horizontalItemPadding="em"
-      verticalItemPadding="small"
-      borderRadius="default"
-      {...others}
-    >
-      {_publicSwitchView}
-      {group.public && (
-        <>
-          {_defaultPageView}
-          {_includeSourceMediaView}
-          {_lastPublishedView}
-          {_publicUrl && _copyLinkView}
-        </>
-      )}
-    </List>
-  )
+    return (
+      <List
+        bg="background.2"
+        horizontalItemPadding="em"
+        verticalItemPadding="small"
+        borderRadius="default"
+        {...others}
+      >
+        {_publicSwitchView}
+        {group.public && (
+          <>
+            {_defaultPageView}
+            {_includeSourceMediaView}
+            {_lastPublishedView}
+            {_publicUrl && _copyLinkView}
+          </>
+        )}
+      </List>
+    )
+  }, [
+    group.defaultPageId,
+    group.lastPublishedAt,
+    group.pages.join(','),
+    linkCopied,
+    isPublishing,
+    showPublishLog,
+    pagesRes.dataUpdatedAt,
+    JSON.stringify(publishingStatusRes.data),
+  ])
 }
 
 export function makePublicUrl(group: Group) {

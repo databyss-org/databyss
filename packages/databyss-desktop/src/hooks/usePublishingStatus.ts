@@ -5,19 +5,14 @@ import { PublishingStatus } from '../eapi/handlers/publish-handlers'
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('../../../databyss-desktop/src/eapi').default
 
-export interface UsePublishingStatusOptions {
-  enabled?: boolean
-}
-
-export const usePublishingStatus = (
-  statusId: string,
-  { enabled = true }: UsePublishingStatusOptions
-) => {
+export const usePublishingStatus = (statusId: string) => {
   return useQuery<PublishingStatus>({
     queryKey: [`publishingStatus_${statusId}`],
-    queryFn: () => eapi.publish.getPublishingStatus(statusId),
-    enabled,
-    refetchOnWindowFocus: 'always',
+    queryFn: async () => {
+      const _res = await eapi.publish.getPublishingStatus(statusId)
+      return _res ?? null
+    },
+    refetchInterval: 500,
   })
 }
 

@@ -228,13 +228,15 @@ if (process.platform === 'darwin') {
 }
 
 function registerWindowEvents(win: BrowserWindow, menu: Menu) {
-  win.webContents.addListener('did-navigate-in-page', (event, url) => {
-    // console.log('[Main] did-navigate-in-page', url)
+  function updateMenuItemsAvailable() {
     menu.getMenuItemById('export-modal').enabled = dbIsLoaded()
     menu.getMenuItemById('new-page').enabled = dbIsLoaded()
     menu.getMenuItemById('new-collection').enabled = dbIsLoaded()
     menu.getMenuItemById('close-databyss').enabled = dbIsLoaded()
-  })
+  }
+  win.webContents.addListener('did-navigate-in-page', updateMenuItemsAvailable)
+  win.webContents.addListener('did-create-window', updateMenuItemsAvailable)
+
   win.webContents.on('context-menu', (event, params) => {
     const menu = new Menu()
 

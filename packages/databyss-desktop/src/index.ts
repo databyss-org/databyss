@@ -175,7 +175,7 @@ app.on('open-url', function (event, url) {
   setTimeout(() => {
     logEverywhere(`[Main] deeplinkingUrl: ${url}`)
     handleOpenUrl(url)
-  }, 1000)
+  }, 750)
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

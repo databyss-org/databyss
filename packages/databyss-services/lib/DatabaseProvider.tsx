@@ -4,16 +4,12 @@ import {
   dbRef,
   initDbFromJson,
   initSearchDbFromJson,
+  selectors,
 } from '@databyss-org/data/pouchdb/db'
 import { useContextSelector, createContext } from 'use-context-selector'
 import { VouchDb, connect } from '@databyss-org/data/vouchdb/vouchdb'
 import { Viewport, Text, View, ModalManager } from '@databyss-org/ui'
-import {
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-  UseQueryResult,
-} from '@tanstack/react-query'
+import { useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query'
 import {
   LoadingFallback,
   useNavigationContext,
@@ -22,8 +18,12 @@ import { DatabyssMenuItems } from '@databyss-org/ui/components/Menu/DatabyssMenu
 import DatabyssLogo from '@databyss-org/ui/assets/logo-thick.png'
 import { darkTheme, pxUnits } from '@databyss-org/ui/theming/theme'
 import { appCommands } from '@databyss-org/ui/lib/appCommands'
+import { removeDuplicatesFromArray } from '@databyss-org/data/pouchdb/groups'
+import { upsertImmediate } from '@databyss-org/data/pouchdb/utils'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { version } from '../version'
 import { getAccountFromLocation, RemoteDbInfo } from '../session/utils'
+import { Group } from '../interfaces'
 
 // eslint-disable-next-line no-undef
 declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
@@ -35,6 +35,8 @@ interface ContextType {
   updateDatabaseStatus: () => void
   setCouchMode: (value: boolean) => void
   importDatabase: () => void
+  setGroup: (group: Group) => void
+  removeGroup: (group: Group) => void
 }
 
 export const DatabaseContext = createContext<ContextType>(null!)
@@ -142,6 +144,58 @@ export const DatabaseProvider = ({
     }
   }, [])
 
+  const setGroup = async (group: Group, skipCaches?: boolean) => {
+    console.log('[DatabaseProvider] setGroup')
+    // prevent duplicates
+    if (group.pages) {
+      group.pages = removeDuplicatesFromArray(group.pages)
+    }
+
+    // update caches
+    if (!skipCaches) {
+      queryClient.setQueryData([selectors.GROUPS], (oldData: any) => ({
+        ...(oldData ?? {}),
+        [group._id]: group,
+      }))
+      queryClient.setQueryData([`useDocument_${group._id}`], group)
+    }
+
+    await upsertImmediate({
+      doctype: DocumentType.Group,
+      _id: group._id,
+      doc: group,
+    })
+  }
+
+  const removeGroup = async (group: Group) => {
+    console.log('[removeGroup]', group._id)
+
+    // delete group locally
+    await upsertImmediate({
+      doctype: DocumentType.Group,
+      _id: group._id,
+      doc: { ...group, _deleted: true },
+    })
+
+    // remove from caches
+    queryClient.setQueryData([selectors.GROUPS], (oldData: any) => {
+      if (!oldData) {
+        return {}
+      }
+      const _next = { ...oldData }
+      delete _next[group._id]
+      return _next
+    })
+    queryClient.resetQueries({
+      queryKey: [`useDocument_${group._id}`],
+      exact: true,
+    })
+    queryClient.removeQueries({
+      queryKey: [`useDocument_${group._id}`],
+      exact: true,
+    })
+  }
+
   const { isCouchMode, isDesktopMode, groupId } = databaseStatus
 
   return (
@@ -153,6 +207,8 @@ export const DatabaseProvider = ({
         setCouchMode,
         updateDatabaseStatus,
         importDatabase,
+        setGroup,
+        removeGroup,
       }}
       key={databaseStatus.groupId ?? 'nogroup'}
     >

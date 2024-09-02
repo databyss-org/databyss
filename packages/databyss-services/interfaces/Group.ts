@@ -12,8 +12,6 @@ export class Group {
   notifications?: Partial<Notification>[]
   localGroup?: boolean
   lastPublishedAt: string | null
-  isPublishing: boolean
-  publishingStatusId: string | null
   subtitle: Text
   publishSourceMedia?: boolean
   isImportedGroup?: boolean
@@ -25,8 +23,6 @@ export class Group {
     this.public = false
     this.localGroup = false
     this.lastPublishedAt = null
-    this.isPublishing = false
-    this.publishingStatusId = null
     this.subtitle = { textValue: '', ranges: [] }
     this.publishSourceMedia = false
     this.isImportedGroup = false
