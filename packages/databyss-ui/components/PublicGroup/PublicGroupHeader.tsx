@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react'
 import DatabyssImg from '@databyss-org/ui/assets/logo-thick.png'
-import MoonSvg from '@databyss-org/ui/assets/moon.svg'
-import MoonFilledSvg from '@databyss-org/ui/assets/moon-filled.svg'
+// import MoonSvg from '@databyss-org/ui/assets/moon.svg'
+// import MoonFilledSvg from '@databyss-org/ui/assets/moon-filled.svg'
+import SunSvg from '@databyss-org/ui/assets/sun.svg'
 import ShareSvg from '@databyss-org/ui/assets/share.svg'
 import { Group } from '@databyss-org/services/interfaces'
 import { Text, View, Icon, BaseControl } from '../..'
@@ -66,7 +67,7 @@ export const PublicGroupHeader = ({
           hoverColor="background.2"
           p="tiny"
           borderRadius="default"
-          mr="small"
+          mr="em"
         >
           <Icon sizeVariant="small" color="text.2">
             <ShareSvg />
@@ -80,7 +81,7 @@ export const PublicGroupHeader = ({
           mr="small"
         >
           <Icon sizeVariant="small" color="text.2">
-            {darkMode ? <MoonFilledSvg /> : <MoonSvg />}
+            <SunSvg />
           </Icon>
         </BaseControl>
         {/* <PublicGroupMenu /> */}
