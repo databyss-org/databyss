@@ -4,6 +4,7 @@ import { BrowserWindow, app, ipcMain } from 'electron'
 import { EventEmitter } from 'events'
 import fs from 'fs'
 import path from 'path'
+import { windows } from '../../'
 
 const statePath = path.join(app.getPath('userData'), 'state.json')
 
@@ -41,14 +42,16 @@ class State extends EventEmitter {
     this.data[key] = value
     fs.writeFileSync(statePath, JSON.stringify(this.data, null, 2))
     this.emit('valueChanged', key)
-    const _win = BrowserWindow.getFocusedWindow()
-    if (_win) {
-      _win.webContents.send(
-        'state-updated',
-        key,
-        value
-      )
-    }
+    // const _win = BrowserWindow.getFocusedWindow()
+    windows.forEach((_win) => {
+      if (_win) {
+        _win.webContents.send(
+          'state-updated',
+          key,
+          value
+        )
+      }
+    })
   }
 
   constructor() {

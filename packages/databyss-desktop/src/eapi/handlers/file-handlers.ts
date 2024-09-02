@@ -46,7 +46,8 @@ export async function onChooseDataPath() {
 
 export async function closeDatabyss() {
   const windowId = BrowserWindow.getFocusedWindow().id
-  nodeDbRefs[windowId].groupId = null
+  await nodeDbRefs[windowId].current.close()
+  nodeDbRefs[windowId] = null
   appState.set('lastActiveGroupId', null)
   appState.set('lastRoute', null)
   appState.set('lastSidebarRoute', null)
@@ -63,15 +64,19 @@ async function archiveAndRemoveDatabyss(groupId: string) {
     _groups.filter((group) => group._id !== groupId)
   )
   // delete db files
-  const _ls = fs
-    .readdirSync(path.join(appState.get('dataPath'), 'pouchdb'))
-    .filter((dir) => dir.startsWith(groupId))
-    .forEach((dir) => {
-      fs.removeSync(path.join(appState.get('dataPath'), 'pouchdb', dir))
-    })
+  try {
+    const _ls = fs
+      .readdirSync(path.join(appState.get('dataPath'), 'pouchdb'))
+      .filter((dir) => dir.startsWith(groupId))
+      .forEach((dir) => {
+        fs.removeSync(path.join(appState.get('dataPath'), 'pouchdb', dir))
+      })
 
-  // delete media dir
-  fs.removeSync(path.join(mediaPath(), groupId))
+    // delete media dir
+    fs.removeSync(path.join(mediaPath(), groupId))
+  } catch (err) {
+    console.warn('[archiveAndRemoveDatabyss] failed to delete db files, queueing for deletion on exit', groupId)
+  }
 }
 
 export function registerFileHandlers() {

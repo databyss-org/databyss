@@ -8,10 +8,11 @@ declare const eapi: typeof import('../../../databyss-desktop/src/eapi').default
 export const useAppState = <K extends keyof StateData>(key: K) => {
   return useQuery<StateData[K]>({
     queryKey: [`appState_${key}`], 
-    queryFn: () => eapi.state.get(key)
+    queryFn: () => eapi.state.get(key),
   })
 }
 
 eapi.state.onStateUpdated((key, value) => {
+  console.log('[useAppState] onStateUpdated', key, value)
   queryClient.setQueryData([`appState_${key}`], value)
 })

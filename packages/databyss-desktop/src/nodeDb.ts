@@ -596,6 +596,7 @@ export async function archiveDatabyss(groupId: string) {
     dbPath: _dbPath,
   }
   await exportDbToZip(_dbRef)
+  await _dbRef.current.close()
 }
 
 export function getWindowIdForGroup(groupId: string) {
@@ -653,7 +654,11 @@ export async function initNodeDb(
   }
   // close existing db if necessary
   if (nodeDbRefs[windowId]?.current) {
-    await nodeDbRefs[windowId].current.close()
+    try {
+      await nodeDbRefs[windowId].current.close()
+    } catch (err) {
+      console.warn('[initNodeDb] last window db ref left closed')
+    }
   }
   const _dbDirPath = getDbDirPath()
   if (!fs.existsSync(_dbDirPath)) {
