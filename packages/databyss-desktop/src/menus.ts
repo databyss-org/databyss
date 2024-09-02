@@ -10,7 +10,7 @@ const dbIsLoaded = () =>
   !!(BrowserWindow.getFocusedWindow()
     ? nodeDbRefs[BrowserWindow.getFocusedWindow().id]
     : null
-  )?.current
+  )?.groupId
 
 export function sendCommandToBrowser<K extends keyof CommandArgs>(
   command: K,

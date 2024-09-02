@@ -358,6 +358,7 @@ export const PublicSharingSettings = ({
       </List>
     )
   }, [
+    group.public,
     group.defaultPageId,
     group.lastPublishedAt,
     group.pages.join(','),

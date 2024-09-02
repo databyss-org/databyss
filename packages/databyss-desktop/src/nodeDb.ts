@@ -39,7 +39,7 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 PouchDB.plugin(PouchDbQuickSearch)
 
-export interface NodeD_groupIdbRef {
+export interface NodeDbRef {
   current: PouchDB.Database<any> | null
   dbPath: string | null
   groupId: string | null
