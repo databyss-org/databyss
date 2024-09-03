@@ -77,6 +77,7 @@ const SearchInputContainer = React.forwardRef(
                 opacity: 0.6,
               },
               flexGrow: 1,
+              width: '100%'
             })(theme)}
           />
           {value && (

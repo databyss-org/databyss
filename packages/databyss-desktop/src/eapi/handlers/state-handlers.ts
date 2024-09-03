@@ -24,6 +24,7 @@ export interface StateData {
   lastWindowSize: [number, number]
   expandedGroups: string[]
   darkMode: boolean
+  dbsToDelete: string[]
 }
 
 const defaultData: Partial<StateData> = {

@@ -597,6 +597,7 @@ export async function archiveDatabyss(groupId: string) {
   }
   await exportDbToZip(_dbRef)
   await _dbRef.current.close()
+  // TODO: open and close search database to try to allow file deletion
 }
 
 export function getWindowIdForGroup(groupId: string) {

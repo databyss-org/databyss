@@ -236,6 +236,7 @@ function registerWindowEvents(win: BrowserWindow, menu: Menu) {
   }
   win.webContents.addListener('did-navigate-in-page', updateMenuItemsAvailable)
   win.webContents.addListener('did-create-window', updateMenuItemsAvailable)
+  win.webContents.addListener('did-navigate', updateMenuItemsAvailable)
 
   win.webContents.on('context-menu', (event, params) => {
     const menu = new Menu()
