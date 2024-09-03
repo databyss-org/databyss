@@ -2,6 +2,9 @@ import { View, ViewProps } from '@databyss-org/ui'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import React, { ReactNode } from 'react'
 
+// eslint-disable-next-line no-undef
+declare const eapi: typeof import('@databyss-org/desktop/src/eapi').default
+
 export interface TitleBarProps extends ViewProps {}
 
 export const TitleBar = ({ children, ...others }: TitleBarProps ) => (
@@ -15,7 +18,7 @@ export const TitleBar = ({ children, ...others }: TitleBarProps ) => (
     alignItems="center"
     justifyContent="left"
     flexDirection="row"
-    pl={pxUnits(74)}
+    pl={eapi.platform.isWindows ? pxUnits(8) : pxUnits(74)}
     css={{
       '-webkit-user-select': 'none',
       '-webkit-app-region': 'drag',
