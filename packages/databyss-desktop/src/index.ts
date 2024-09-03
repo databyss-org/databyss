@@ -109,7 +109,7 @@ export const createWindow = async () => {
   await window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
 
   // Open the DevTools.
-  window.webContents.openDevTools()
+  // window.webContents.openDevTools()
 
   windows.add(window)
   return window
@@ -195,7 +195,6 @@ if (gotTheLock) {
       createWindow()
     }
   })
-
 } else {
   app.quit()
 }
@@ -217,11 +216,7 @@ function handleOpenUrl(deeplinkArg: string, win: BrowserWindow) {
   const _path = deeplinkArg.slice('databyss://'.length)
   const _pathParts = _path.split('/')
   if (_pathParts[0] === 'import') {
-    win.webContents.send(
-      'cmd-command',
-      'importDatabase',
-      _pathParts[1]
-    )
+    win.webContents.send('cmd-command', 'importDatabase', _pathParts[1])
   }
 }
 

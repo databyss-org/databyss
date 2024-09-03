@@ -13,19 +13,22 @@
       "backgroundColor": "background.1",
       "logoSrc": "/homepage/logo-thick.png",
       "title": "Databyss",
-      "headline": "Databyss is a free application for taking notes, managing sources, and publishing your work online.",
+      "headline": "Databyss is a non-commercial, open source application for taking notes, managing bibliographical sources, and publishing your work online.",
       "ctaButtons": [
         {
-          "text": "Download for macOS (Apple Silicon)",
-          "href": "https://databyss.org/#"
+          "text": "macOS (Apple Silicon)",
+          "href": "https://public.databyss.cloud/Databyss-darwin-arm64-3.4.2.zip",
+          "icon": "download"
         },
         {
-          "text": "Download for macOS (Intel)",
-          "href": "https://databyss.org/#"
+          "text": "macOS (Intel)",
+          "href": "https://public.databyss.cloud/Databyss-darwin-x64-3.4.2.zip",
+          "icon": "download"
         },
         {
-          "text": "Download for Windows",
-          "href": "https://databyss.org/#"
+          "text": "Windows",
+          "href": "https://public.databyss.cloud/Databyss-3.4.2%20Setup.exe",
+          "icon": "download"
         }
       ],
       "navLinks": [

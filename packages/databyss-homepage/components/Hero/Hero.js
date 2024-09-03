@@ -2,12 +2,14 @@ import React from 'react'
 import View from '@databyss-org/ui/primitives/View/View'
 import Text from '@databyss-org/ui/primitives/Text/Text'
 import Button from '@databyss-org/ui/primitives/Button/Button'
-import Grid from '@databyss-org/ui/primitives/Grid/Grid'
+import Icon from '@databyss-org/ui/primitives/Icon/Icon'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import breakpoints from '@databyss-org/ui/theming/responsive'
 import { useMediaQuery } from 'react-responsive'
 import MobileOnly from '@databyss-org/ui/components/Responsive/MobileOnly'
 import TabletOnly from '@databyss-org/ui/components/Responsive/TabletOnly'
+import DownloadSvg from '@databyss-org/ui/assets/download.svg'
+import { version } from '@databyss-org/services/version'
 import Navbar from '../Navbar'
 import { HeroView } from './HeroView'
 
@@ -59,6 +61,9 @@ export const Hero = ({
         >
           {headline}
         </Text>
+        <Text variant="uiTextMedium" mb="small">
+          Download Databyss {version}
+        </Text>
         <View>
           {ctaButtons.map((button, index) => {
             if (button.mobileOnly && !isMobile) {
@@ -73,7 +78,10 @@ export const Hero = ({
                 key={index}
                 variant="pinkHighlighted"
                 href={button.href}
-                childViewProps={{ flexDirection: 'row' }}
+                childViewProps={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
                 css={{
                   textDecoration: 'none',
                   borderWidth: '1px',
@@ -82,7 +90,12 @@ export const Hero = ({
                 }}
                 mb="small"
               >
-                <Text variant="uiTextNormalSemibold" color="text.0">
+                {button.icon && (
+                  <Icon sizeVariant="tiny" color="text.0" mr="small">
+                    {button.icon === 'download' && <DownloadSvg />}
+                  </Icon>
+                )}
+                <Text variant="uiTextNormal" color="text.0">
                   {button.text}
                 </Text>
               </Button>
