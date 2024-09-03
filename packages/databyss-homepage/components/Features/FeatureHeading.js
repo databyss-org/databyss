@@ -1,5 +1,6 @@
 import React from 'react'
-import { Text, View } from '@databyss-org/ui/primitives'
+import View from '@databyss-org/ui/primitives/View/View'
+import Text from '@databyss-org/ui/primitives/Text/Text'
 import { featureHeadingMaxWidth } from './Feature'
 
 const FeatureHeading = ({

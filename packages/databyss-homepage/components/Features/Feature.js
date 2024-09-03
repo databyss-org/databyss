@@ -1,5 +1,5 @@
 import React from 'react'
-import { View } from '@databyss-org/ui/primitives'
+import View from '@databyss-org/ui/primitives/View/View'
 import { useMediaQuery } from 'react-responsive'
 import breakpoints from '@databyss-org/ui/theming/responsive'
 import { pxUnits, borderRadius } from '@databyss-org/ui/theming/views'

@@ -1,8 +1,7 @@
 import React, { forwardRef, useCallback, useMemo } from 'react'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import Control from './native/Control'
 import DraggableControl from './native/DraggableControl'
-import { View } from '../'
+import View from '../View/View'
 import { useNavigate } from 'react-router-dom'
 
 /**

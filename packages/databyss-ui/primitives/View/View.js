@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, forwardRef, useMemo } from 'react'
+import React, { forwardRef, useMemo } from 'react'
 import {
   space,
   layout,
@@ -15,7 +15,6 @@ import { zIndex } from '@databyss-org/ui/theming/system'
 import { ThemeProvider } from 'emotion-theming'
 import { ThemeContext } from '@emotion/core'
 import forkRef from '@databyss-org/ui/lib/forkRef'
-import fastCompare from 'react-fast-compare'
 import applyTheme from '@styled-system/css'
 import styled from '../styled'
 import IS_NATIVE from '../../lib/isNative'

@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text } from '@databyss-org/ui/primitives'
+import View from '@databyss-org/ui/primitives/View/View'
+import Text from '@databyss-org/ui/primitives/Text/Text'
 import { useMediaQuery } from 'react-responsive'
 import breakpoints from '@databyss-org/ui/theming/responsive'
 import Markdown from '@databyss-org/ui/components/Util/Markdown'

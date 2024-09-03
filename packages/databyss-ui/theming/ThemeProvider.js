@@ -4,7 +4,7 @@ import { ThemeProvider as EmotionThemeProvider } from 'emotion-theming'
 import jss from 'jss'
 import jssPreset from 'jss-preset-default'
 import { theme as defaultTheme } from '.'
-import { View } from '../primitives'
+import View from '../primitives/View/View'
 import makeGlobalStyles from './globalStyles'
 
 jss.setup(jssPreset())

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
-import { View } from '@databyss-org/ui/primitives'
+import View from '@databyss-org/ui/primitives/View/View'
 import { Hero } from './Hero/Hero'
 import { LongHero } from './Hero/LongHero'
 import HighlightedFeature from './Features/HighlightedFeature'

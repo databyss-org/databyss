@@ -53,6 +53,7 @@ module.exports = (webpackEnv) => {
   console.log('WEBPACK ENV', webpackEnv)
   console.log('APP SOURCE', paths.appSrc)
   console.log('TYPESCRIPT?', useTypeScript)
+  console.log('INDEXJS', paths.appIndexJs)
   const isEnvDevelopment = webpackEnv === 'development'
   const isEnvProduction = webpackEnv === 'production'
   const isEnvTest = process.env.NODE_ENV === 'test'

@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text } from '@databyss-org/ui/primitives'
+import View from '@databyss-org/ui/primitives/View/View'
+import Text from '@databyss-org/ui/primitives/Text/Text'
 
 export const Logo = ({
   logoSrc,

@@ -13,17 +13,19 @@
       "backgroundColor": "background.1",
       "logoSrc": "/homepage/logo-thick.png",
       "title": "Databyss",
-      "headline": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word processor.",
+      "headline": "Databyss is a free application for taking notes, managing sources, and publishing your work online.",
       "ctaButtons": [
         {
-          "text": "Get Started",
-          "href": "https://app.databyss.org/signup",
-          "tabletOnly": "true"
+          "text": "Download for macOS (Apple Silicon)",
+          "href": "https://databyss.org/#"
         },
         {
-          "text": "Login",
-          "href": "https://app.databyss.org/",
-          "mobileOnly": "true"
+          "text": "Download for macOS (Intel)",
+          "href": "https://databyss.org/#"
+        },
+        {
+          "text": "Download for Windows",
+          "href": "https://databyss.org/#"
         }
       ],
       "navLinks": [
@@ -45,11 +47,6 @@
         },
         {
           "separator": true,
-          "tabletOnly": true
-        },
-        {
-          "name": "Sign Up",
-          "route": "https://app.databyss.org/signup",
           "tabletOnly": true
         },
         {

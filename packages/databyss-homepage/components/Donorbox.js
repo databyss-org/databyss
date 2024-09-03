@@ -5,7 +5,9 @@
 /* eslint-disable react/self-closing-comp */
 import React from 'react'
 import { Helmet } from 'react-helmet'
-import { View, BaseControl, Icon } from '@databyss-org/ui/primitives'
+import View from '@databyss-org/ui/primitives/View/View'
+import BaseControl from '@databyss-org/ui/primitives/Control/BaseControl'
+import Icon from '@databyss-org/ui/primitives/Icon/Icon'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import breakpoints from '@databyss-org/ui/theming/responsive'

@@ -8,7 +8,7 @@ import {
   border,
 } from 'styled-system'
 import BaseControl from '../Control/BaseControl' // HACK: we can't import BaseControl from index.js for some reason
-import { Text } from '../'
+import Text from '../Text/Text'
 import { shadowVariant } from '../View/View'
 import styled from '../styled'
 import buttons from '../../theming/buttons'

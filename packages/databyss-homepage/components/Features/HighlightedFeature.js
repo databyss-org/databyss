@@ -1,5 +1,5 @@
 import React from 'react'
-import { View } from '@databyss-org/ui/primitives'
+import View from '@databyss-org/ui/primitives/View/View'
 import { borderRadius } from '@databyss-org/ui/theming/views'
 import Markdown from '@databyss-org/ui/components/Util/Markdown'
 import FeatureHeading from './FeatureHeading'

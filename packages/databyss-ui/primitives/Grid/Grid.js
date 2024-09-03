@@ -1,5 +1,5 @@
 import React from 'react'
-import { View } from '@databyss-org/ui/primitives'
+import View from '@databyss-org/ui/primitives/View/View'
 
 const Grid = ({
   children,

@@ -1,11 +1,9 @@
 import React from 'react'
-import {
-  BaseControl,
-  View,
-  Text,
-  Grid,
-  Icon,
-} from '@databyss-org/ui/primitives'
+import BaseControl from '@databyss-org/ui/primitives/Control/BaseControl'
+import View from '@databyss-org/ui/primitives/View/View'
+import Text from '@databyss-org/ui/primitives/Text/Text'
+import Grid from '@databyss-org/ui/primitives/Grid/Grid'
+import Icon from '@databyss-org/ui/primitives/Icon/Icon'
 import { darkTheme } from '@databyss-org/ui/theming/theme'
 import LogoSvg from '@databyss-org/ui/assets/logo-thick.svg'
 import breakpoints from '@databyss-org/ui/theming/responsive'

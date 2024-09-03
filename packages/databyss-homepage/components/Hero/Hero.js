@@ -1,5 +1,8 @@
 import React from 'react'
-import { View, Text, Button, Grid } from '@databyss-org/ui/primitives'
+import View from '@databyss-org/ui/primitives/View/View'
+import Text from '@databyss-org/ui/primitives/Text/Text'
+import Button from '@databyss-org/ui/primitives/Button/Button'
+import Grid from '@databyss-org/ui/primitives/Grid/Grid'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import breakpoints from '@databyss-org/ui/theming/responsive'
 import { useMediaQuery } from 'react-responsive'
@@ -56,7 +59,7 @@ export const Hero = ({
         >
           {headline}
         </Text>
-        <Grid singleRow>
+        <View>
           {ctaButtons.map((button, index) => {
             if (button.mobileOnly && !isMobile) {
               return null
@@ -73,7 +76,11 @@ export const Hero = ({
                 childViewProps={{ flexDirection: 'row' }}
                 css={{
                   textDecoration: 'none',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  borderColor: '#fff',
                 }}
+                mb="small"
               >
                 <Text variant="uiTextNormalSemibold" color="text.0">
                   {button.text}
@@ -81,7 +88,7 @@ export const Hero = ({
               </Button>
             )
           })}
-        </Grid>
+        </View>
         <MobileOnly>
           <Navbar navLinks={navLinks} />
         </MobileOnly>
