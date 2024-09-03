@@ -11,7 +11,7 @@ export function makeBackupFilename(groupId: string, groupName?: string) {
   if (groupName) {
     _name = groupName
       .toLocaleLowerCase()
-      .replaceAll(/[^a-z ]/g, '')
+      .replaceAll(/[^a-z0-9 ]/g, '')
       .replaceAll(' ', '-')
   }
   return `databyss-db-${_name}-${groupId.substring(
