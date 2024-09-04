@@ -17,12 +17,12 @@
       "ctaButtons": [
         {
           "text": "macOS (Apple Silicon)",
-          "href": "https://public.databyss.cloud/Databyss-darwin-arm64-3.4.2.zip",
+          "href": "https://public.databyss.cloud/Databyss-3.4.3-arm64.dmg",
           "icon": "download"
         },
         {
           "text": "macOS (Intel)",
-          "href": "https://public.databyss.cloud/Databyss-darwin-x64-3.4.2.zip",
+          "href": "https://public.databyss.cloud/Databyss-3.4.3-x64.dmg",
           "icon": "download"
         },
         {
