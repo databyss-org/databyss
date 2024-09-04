@@ -88,9 +88,8 @@ export const queryMetadataFromCatalog = async (metadata: Metadata) => {
   if (matches.length > 0) {
     if (matches.length > 1) {
       // TODO: show modal to select if more than one match?
-      console.warn(
-        'More than one item provided by Crossref matched the PDF. Using first one found.'
-      )
+      console.warn('More than one item provided by Crossref matched the PDF.')
+      return null
     }
     return sourceFromCatalogResult({
       result: matches[0],

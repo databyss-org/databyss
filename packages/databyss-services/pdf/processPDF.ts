@@ -38,7 +38,11 @@ export async function processPDF(file: File) {
   const response = await eapi.pdf.parse(_embed.detail?.src)
   const _title = response.metadata?.title?.text ?? file.name
   if (hasEnoughMetadata(response.metadata)) {
-    _source = await queryMetadataFromCatalog(response.metadata)
+    try {
+      _source = await queryMetadataFromCatalog(response.metadata)
+    } catch (err) {
+      console.log('[processPDF] error querying catalog', err)
+    }
   }
   if (_source) {
     _entryBlock = buildSourceBlock(formatSource(_source!), _embed)

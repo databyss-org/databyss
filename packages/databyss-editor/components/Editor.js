@@ -17,6 +17,7 @@ import { isSelectionCollapsed } from '../lib/clipboardUtils'
 import { convertSelectionToLink } from '../lib/inlineUtils/setPageLink'
 import { createHighlightRanges, createLinkRangesForUrls } from '../lib/util'
 import { flatOffsetToPoint } from '../lib/markup'
+import { uid } from '@databyss-org/data/lib/uid'
 
 const Editor = ({
   children,
@@ -72,7 +73,7 @@ const Editor = ({
       const block = state.blocks[blockIndex]
       return (
         <Element
-          key={`${blockIndex}-${block._id}`}
+          key={`${blockIndex}-${block._id ?? uid()}`}
           readOnly={readOnly}
           block={block}
           blockIndex={blockIndex}

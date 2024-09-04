@@ -51,10 +51,12 @@ export const MediaLinkItem = ({ menuItems, embed }) => {
   const controlRef = useRef() as MutableRefObject<HTMLElement>
   return (
     <BaseControl
-      {...(eapi.isWeb ? {
-        href: embed.detail.src,
-        target: "_blank"
-      }: {})}
+      {...(eapi.isWeb
+        ? {
+            href: embed.detail.src,
+            target: '_blank',
+          }
+        : {})}
       hoverColor="transparent"
       position="relative"
       childViewProps={{
@@ -62,12 +64,14 @@ export const MediaLinkItem = ({ menuItems, embed }) => {
       }}
       focusVisible
       focusActive
-      {...(eapi.isDesktop ? {
-        onPress: () => {
-          console.log('[SourceHeader] openNative', embed.detail.src)
-          eapi.file.openNative(embed.detail.src)
-        }
-      } : {})}
+      {...(eapi.isDesktop
+        ? {
+            onPress: () => {
+              console.log('[SourceHeader] openNative', embed.detail.src)
+              eapi.file.openNative(embed.detail.src)
+            },
+          }
+        : {})}
       ref={controlRef}
     >
       <ContextMenu
@@ -200,12 +204,20 @@ export const SourceHeader = ({
     // console.log('[SourceHeader] file', file)
     setIsBusy(true)
     let _filename = file.name
-    let _embed: Embed
+    let _embed: Embed | null = null
     if (fileIsPDF(file)) {
-      const _processResults = await processPDF(file)
-      _filename = _processResults.embed.detail.fileDetail!.filename
-      _embed = _processResults.embed
-    } else {
+      try {
+        const _processResults = await processPDF(file)
+        _filename = _processResults.embed.detail.fileDetail!.filename
+        _embed = _processResults.embed
+      } catch (err) {
+        console.warn(
+          '[SourceHeader] error processing PDF, treating as normal file',
+          err
+        )
+      }
+    }
+    if (!_embed) {
       _embed = await uploadEmbed(file, _filename)
     }
     console.log('[SourceHeader] filename', _filename)
