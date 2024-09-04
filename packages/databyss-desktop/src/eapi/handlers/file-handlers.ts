@@ -21,6 +21,7 @@ import { DbRef } from '@databyss-org/data/pouchdb/dbRef'
 import { DbDocument } from '@databyss-org/data/pouchdb/interfaces'
 import { BlockType, Embed, Group } from '@databyss-org/services/interfaces'
 import { makeBackupFilename } from '@databyss-org/data/pouchdb/backup'
+import eapi from '../'
 
 export interface IpcFile {
   buffer: ArrayBuffer
@@ -174,10 +175,10 @@ export function registerFileHandlers() {
   )
   ipcMain.on('file-openNative', (_, filePath: string) => {
     const _decodedPath = decodeURIComponent(
-      filePath.replace('dbdrive://', `${mediaPath()}/`)
+      filePath.replace('dbdrive://', '')
     )
-    const _fixedPath = path.join('/', ..._decodedPath.split(/[\/\\]/))
-    // console.log('[file] openNative', _fixedPath)
+    const _fixedPath =path.join(mediaPath(), ..._decodedPath.split(/[\/\\]/))
+    console.log('[file] openNative', _fixedPath)
     shell.openPath(_fixedPath)
   })
   ipcMain.handle('file-deleteMedia', (evt, fileId: string) => {

@@ -51,8 +51,10 @@ export const MediaLinkItem = ({ menuItems, embed }) => {
   const controlRef = useRef() as MutableRefObject<HTMLElement>
   return (
     <BaseControl
-      href={embed.detail.src}
-      target="_blank"
+      {...(eapi.isWeb ? {
+        href: embed.detail.src,
+        target: "_blank"
+      }: {})}
       hoverColor="transparent"
       position="relative"
       childViewProps={{
@@ -60,10 +62,12 @@ export const MediaLinkItem = ({ menuItems, embed }) => {
       }}
       focusVisible
       focusActive
-      onPress={() => {
-        console.log('[SourceHeader] openNative', embed.detail.src)
-        eapi.file.openNative(embed.detail.src)
-      }}
+      {...(eapi.isDesktop ? {
+        onPress: () => {
+          console.log('[SourceHeader] openNative', embed.detail.src)
+          eapi.file.openNative(embed.detail.src)
+        }
+      } : {})}
       ref={controlRef}
     >
       <ContextMenu
@@ -132,7 +136,9 @@ export const MediaLinks = ({ source }: { source: Source }) => {
       icon: <FolderSvg />,
       action: (embed: Embed) => {
         // const _embed = blocksRes.data[sourceRef.current.media![idx]] as Embed
-        eapi.file.openNative(embed.detail.src.split('/').slice(0, -1).join('/'))
+        const _path = embed.detail.src.split('/').slice(0, -1).join('/')
+        console.log('[SourceHeader] open', _path)
+        eapi.file.openNative(_path)
         return true
       },
     },
