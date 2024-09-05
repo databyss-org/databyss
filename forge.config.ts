@@ -47,7 +47,10 @@ const config: ForgeConfig = {
   makers: [
     new MakerSquirrel({}),
     // new MakerZIP({}, ['darwin']),
-    new MakerDMG({}),
+    new MakerDMG({
+      icon: 'public/appIcon.icns',
+      overwrite: true,
+    }),
     new MakerRpm({}),
     new MakerDeb({}),
   ],
