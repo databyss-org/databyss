@@ -67,6 +67,7 @@ import { useScrollMemory } from '../../hooks/scrollMemory/useScrollMemory'
 import { darkTheme } from '../../theming/theme'
 import ErrorFallback from '../../components/Notify/ErrorFallback'
 import { SourceHeader } from './SourceHeader'
+import CitationProvider from '@databyss-org/services/citations/CitationProvider'
 
 export interface IndexPageViewProps extends ScrollViewProps {
   path: string[]
@@ -317,11 +318,13 @@ export const IndexPageView = ({
               />
             )}
             {block?.type === BlockType.Source && (
-              <SourceHeader
-                source={block as Source}
-                onPressDetails={onPressDetails}
-                readOnly={isReadOnly}
-              />
+              <CitationProvider>
+                <SourceHeader
+                  source={block as Source}
+                  onPressDetails={onPressDetails}
+                  readOnly={isReadOnly}
+                />
+              </CitationProvider>
             )}
             {block?.type === BlockType.Embed && (
               <>

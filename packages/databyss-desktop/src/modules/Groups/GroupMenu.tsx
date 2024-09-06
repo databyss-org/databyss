@@ -15,6 +15,7 @@ import {
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import { useExportContext } from '@databyss-org/services/export'
 import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvider'
+import { dbRef } from '@databyss-org/data/pouchdb/dbRef'
 
 interface GroupMenuProps extends ViewProps {
   groupId: string
@@ -51,17 +52,16 @@ const GroupMenu = ({ groupId }: PropsWithChildren<GroupMenuProps>) => {
       await unpublishGroupDatabase(_group)
     }
     // navigate to next named group, if there is one
-    const _namedGroups = Object.values(groupsRes.data!).filter(
-      (group) => !!group.name
+    const _nextGroup = Object.values(groupsRes.data!).find(
+      (_group) =>
+        !!_group.name && _group._id !== groupId && _group._id !== dbRef.groupId
     )
-    for (const group of _namedGroups) {
-      if (group._id !== groupId) {
-        setTimeout(
-          () => navigate(`/collections/${group._id}`, { replace: true }),
-          50
-        )
-        return
-      }
+    if (_nextGroup) {
+      setTimeout(
+        () => navigate(`/collections/${_nextGroup._id}`, { replace: true }),
+        50
+      )
+      return
     }
     setTimeout(() => navigate('/', { replace: true }), 50)
     setShowMenu(false)

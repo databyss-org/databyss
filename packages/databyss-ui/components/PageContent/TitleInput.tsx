@@ -28,21 +28,17 @@ interface TitleInputProps {
 }
 
 export const TitleInput = forwardRef<HTMLElement, TitleInputProps>(
-  ({ 
-    placeholder, 
-    autoFocus, 
-    value, 
-    onChange, 
-    icon, 
-    onKeyDown, 
-    ...others 
-  }, ref) => {
+  (
+    { placeholder, autoFocus, value, onChange, icon, onKeyDown, ...others },
+    ref
+  ) => {
     const inputRef = useRef<HTMLElement>(null)
     useEffect(() => {
+      console.log('[TitleInput] autofocus?', value, placeholder)
       if (!autoFocus || !inputRef) {
         return
       }
-      if (value === placeholder) {
+      if (value === placeholder || !value) {
         setTimeout(() => {
           inputRef.current!.focus()
         }, 10)
@@ -63,7 +59,8 @@ export const TitleInput = forwardRef<HTMLElement, TitleInputProps>(
         if (onKeyDown) {
           onKeyDown(event)
         }
-      }, [onKeyDown]
+      },
+      [onKeyDown]
     )
 
     let _value = value

@@ -78,15 +78,17 @@ export const SourcesResults = ({ entries }) => {
             >
               <RawHtml
                 key={`${entry.source._id}-shortname`}
-                variant="uiTextSmall"
-                color="text.3"
+                variant="uiTextNormalSemibold"
+                color="text.0"
                 html={textToHtml(_nameText)}
                 userSelect="none"
+                mb="tiny"
               />
               <RawHtml
                 key={`${entry.source._id}-citation`}
                 html={_citationHtml}
-                color="text.0"
+                color="text.3"
+                variant="bodyTextSmall"
               />
             </BaseControl>
           )

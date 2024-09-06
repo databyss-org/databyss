@@ -11,11 +11,12 @@ import {
   SortOptions,
   splitOverlappingRanges,
 } from '@databyss-org/services/blocks/textRanges'
+import { useCitation } from '@databyss-org/services/citations/useCitation'
 import { Button, RawHtml, Text, View, Icon, List, BaseControl } from '../..'
 import { LoadingFallback } from '../../components'
 import { FileDropZone } from '../../components/DropZone/FileDropZone'
 import { MenuItem } from '../../components/Menu/DropdownList'
-import { useSearchContext } from '../../hooks'
+import { useSearchContext, useUserPreferencesContext } from '../../hooks'
 import { ContextMenu } from '../../components/Menu/ContextMenu'
 import TrashSvg from '../../assets/trash.svg'
 import FolderSvg from '../../assets/folder-open.svg'
@@ -186,6 +187,23 @@ export const MediaLinks = ({ source }: { source: Source }) => {
   )
 }
 
+const CitationView = ({ source }) => {
+  const { getPreferredCitationStyle } = useUserPreferencesContext()
+  const citationRes = useCitation(source.detail, {
+    styleId: getPreferredCitationStyle(),
+  })
+  return (
+    <View mt="small">
+      <Text variant="uiTextHeading" mb="small" mt="em">
+        Citation ({getPreferredCitationStyle()})
+      </Text>
+      <Text variant="uiTextNormal" mb="small" color="text.2">
+        <RawHtml html={citationRes.data} />
+      </Text>
+    </View>
+  )
+}
+
 export const SourceHeader = ({
   source,
   readOnly,
@@ -238,6 +256,7 @@ export const SourceHeader = ({
           <ReadOnlyMediaLinks source={source} />
         </>
       )}
+      <CitationView source={source} />
     </View>
   ) : (
     <View mt="em">

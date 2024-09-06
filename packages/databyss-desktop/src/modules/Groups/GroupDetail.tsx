@@ -35,11 +35,9 @@ import {
 } from '@databyss-org/ui/components'
 import { makePublicUrl, PublicSharingSettings } from './PublicSharingSettings'
 import GroupMenu from './GroupMenu'
-import { GroupMetadata } from './GroupMetadata'
 import { PageDropzone } from './PageDropzone'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { useDatabaseContext } from '@databyss-org/services/lib/DatabaseProvider'
-import { selectors } from '@databyss-org/data/pouchdb/selectors'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -67,12 +65,12 @@ export const GroupFields = ({
   readOnly: boolean
 }) => {
   const [values, setValues] = useState(group)
+  const valuesRef = useRef<Group>(group)
   const groupValue = useRef(group)
-  const queryClient = useQueryClient()
   const setGroup = useDatabaseContext((c) => c && c.setGroup)
 
   const saveChanges = useCallback(
-    debounce((_values: Group) => setGroup(_values), 500),
+    debounce(() => setGroup(valuesRef.current), 500),
     [setGroup]
   )
 
@@ -92,14 +90,10 @@ export const GroupFields = ({
 
       // update internal state
       setValues(_values)
-      // update query caches
-      queryClient.setQueryData([`useDocument_${group._id}`], _values)
-      queryClient.setQueryData([selectors.GROUPS], (oldData: any) => ({
-        ...(oldData ?? {}),
-        [group._id]: group,
-      }))
+      valuesRef.current = _values
+
       // update database
-      saveChanges(_values)
+      saveChanges()
       // update ref values
       groupValue.current = _values
     },
@@ -108,13 +102,6 @@ export const GroupFields = ({
 
   const onSetDefaultPage = useCallback(
     (_id: string) => {
-      // if (!group) {
-      //   return
-      // }
-      // const _nextGroup = { ...group }
-      // _nextGroup.defaultPageId = _id
-      // await setGroup(_nextGroup)
-      // onChange!(value)
       const _nextValues = { ...values }
       _nextValues.defaultPageId = _id
       onChange(_nextValues)
@@ -139,6 +126,7 @@ export const GroupFields = ({
       <View pl="medium" pr="medium" pt="none" flexGrow={1} width="100%">
         <ValueListItem path="name">
           <TitleInput
+            autoFocus
             readonly={readOnly}
             placeholder={UNTITLED_NAME}
             icon={

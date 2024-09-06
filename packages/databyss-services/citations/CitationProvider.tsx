@@ -1,6 +1,5 @@
 import { createContext, useContextSelector } from 'use-context-selector'
 import { debounce } from 'lodash'
-import MurmurHash3 from 'imurmurhash'
 import React, { useCallback } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 
@@ -8,6 +7,7 @@ import { CitationFormatOptions, SourceDetail } from '../interfaces'
 import { processCitation } from './actions'
 import reducer from './reducer'
 import { CitationDTO } from '../interfaces/Citation'
+import { generateHash } from './lib/generateHash'
 
 interface PropsType {
   children: JSX.Element
@@ -25,14 +25,6 @@ const useReducer = createReducer()
 
 export const CitationContext = createContext<ContextType>(null!)
 export const citationUpdateCooldown = 1500
-
-const generateHash = (source: SourceDetail, options: CitationFormatOptions) => {
-  const str = JSON.stringify({
-    source,
-    options,
-  })
-  return MurmurHash3(str).result()
-}
 
 const CitationProvider: React.FunctionComponent<PropsType> = (
   props: PropsType
@@ -84,7 +76,7 @@ const CitationProvider: React.FunctionComponent<PropsType> = (
   )
 }
 
-export const useCitationContext = (selector = (x: ContextType) => x) =>
+export const useCitationContext = (selector = (x) => x) =>
   useContextSelector(CitationContext, selector)
 
 export default CitationProvider

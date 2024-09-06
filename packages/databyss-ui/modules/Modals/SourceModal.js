@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { buildSourceDetail } from '@databyss-org/services/sources/lib'
 import { ModalWindow } from '@databyss-org/ui/primitives'
-import { useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { setSource } from '@databyss-org/services/sources'
 import CitationProvider from '@databyss-org/services/citations/CitationProvider'
