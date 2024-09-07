@@ -17,17 +17,17 @@
       "ctaButtons": [
         {
           "text": "macOS (Apple Silicon)",
-          "href": "https://public.databyss.cloud/Databyss-3.4.3-arm64.dmg",
+          "href": "https://public.databyss.cloud/Databyss-3.4.4-arm64.dmg",
           "icon": "download"
         },
         {
           "text": "macOS (Intel)",
-          "href": "https://public.databyss.cloud/Databyss-3.4.3-x64.dmg",
+          "href": "https://public.databyss.cloud/Databyss-3.4.4-x64.dmg",
           "icon": "download"
         },
         {
           "text": "Windows",
-          "href": "https://public.databyss.cloud/Databyss-3.4.3%20Setup.exe",
+          "href": "https://public.databyss.cloud/Databyss-3.4.4%20Setup.exe",
           "icon": "download"
         }
       ],
