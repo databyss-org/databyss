@@ -80,7 +80,10 @@ async function archiveAndRemoveDatabyss(groupId: string) {
   } catch (err) {
     const _dbsToDelete = appState.get('dbsToDelete') ?? []
     appState.set('dbsToDelete', _dbsToDelete.concat(groupId))
-    console.warn('[archiveAndRemoveDatabyss] failed to delete db files, queueing for deletion on exit', groupId)
+    console.warn(
+      '[archiveAndRemoveDatabyss] failed to delete db files, queueing for deletion on exit',
+      groupId
+    )
   }
 }
 
@@ -158,9 +161,16 @@ export function registerFileHandlers() {
       const _meta = JSON.parse(
         fs.readFileSync(path.join(_mediaItemDir, 'meta.json')).toString()
       ) as IpcFile
-      const _safeFilename = renameTo
+      const _ext = renameTo.split('.').slice(-1)[0]
+      const _filenameWithoutExt = renameTo.substring(
+        0,
+        renameTo.length - _ext.length - 1
+      )
+      const _safeFilename = _filenameWithoutExt
         .replace(/[/\\?%*:|"<>]/g, '')
-        .substring(0, 128)
+        .substring(0, 127 - _ext.length)
+        .concat('.')
+        .concat(_ext)
       fs.renameSync(
         path.join(_mediaItemDir, _meta.name),
         path.join(_mediaItemDir, _safeFilename)
@@ -174,10 +184,8 @@ export function registerFileHandlers() {
     }
   )
   ipcMain.on('file-openNative', (_, filePath: string) => {
-    const _decodedPath = decodeURIComponent(
-      filePath.replace('dbdrive://', '')
-    )
-    const _fixedPath =path.join(mediaPath(), ..._decodedPath.split(/[\/\\]/))
+    const _decodedPath = decodeURIComponent(filePath.replace('dbdrive://', ''))
+    const _fixedPath = path.join(mediaPath(), ..._decodedPath.split(/[\/\\]/))
     console.log('[file] openNative', _fixedPath)
     shell.openPath(_fixedPath)
   })

@@ -77,7 +77,7 @@ export const Hero = ({
                 minWidth={60}
                 key={index}
                 variant="pinkHighlighted"
-                href={button.href}
+                href={button.href?.replace('{version}', version)}
                 childViewProps={{
                   flexDirection: 'row',
                   alignItems: 'center',
