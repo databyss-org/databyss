@@ -17,15 +17,15 @@ async function parsePdf(pdfPath: string) {
     height: 600,
     width: 800,
     webPreferences: {
-      preload:PDFVIEW_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      preload: PDFVIEW_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: false,
     },
-    show: false
+    show: false,
   })
   // const viewPath = path.resolve(__pdfview, 'index.html')
   //`file://${path.join(app.getAppPath(), 'pdfview/index.html')}`
   // console.log('[PDF] open window', viewPath)
-  pdfWindow.webContents.openDevTools()
+  // pdfWindow.webContents.openDevTools()
   let viewUrl = PDFVIEW_WINDOW_WEBPACK_ENTRY
   if (!viewUrl.endsWith('.html')) {
     viewUrl += '/'

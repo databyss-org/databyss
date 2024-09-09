@@ -79,17 +79,17 @@ export const ExportDbModal = ({
       if (values.action === 'save') {
         await exportDatabase()
         hideModal()
-      } else {
-        window.setTimeout(() => {
-          hideModal()
-        }, 30000)
-        window.setTimeout(() => {
-          setStatusMessage('Launching Databyss…')
-          setShowAppLink(true)
-        }, 1000)
-
-        window.open(`databyss://import/${dbRef.groupId}`, '_self')
+        return
       }
+      window.setTimeout(() => {
+        hideModal()
+      }, 30000)
+      window.setTimeout(() => {
+        setStatusMessage('Launching Databyss…')
+        setShowAppLink(true)
+      }, 1000)
+
+      window.open(`databyss://import/${dbRef.groupId}`, '_self')
     } else {
       switch (values.include) {
         case 'everything':
@@ -117,6 +117,7 @@ export const ExportDbModal = ({
       onExportComplete()
     }
   }, [
+    values,
     setShowAppLink,
     setExporting,
     exportDatabase,
@@ -139,11 +140,11 @@ export const ExportDbModal = ({
 
   const _actionMenuItems: MenuItem[] = [
     {
-      label: 'Import into my Databyss',
+      label: 'My Databyss',
       value: 'open',
     },
     {
-      label: 'Download as ZIP file',
+      label: 'ZIP file',
       value: 'save',
     },
   ]
@@ -183,6 +184,11 @@ export const ExportDbModal = ({
     values.include = 'everything'
   }
 
+  let _actionButtonLabel = eapi.isWeb ? 'Download' : 'Save'
+  if (values.format === 'databyss' && values.action === 'open') {
+    _actionButtonLabel = 'Open in Databyss'
+  }
+
   const _appLinkView = (
     <View px="em" mb="medium">
       <Text variant="uiTextNormal" mb="small">
@@ -218,7 +224,7 @@ export const ExportDbModal = ({
           </Button>
           {!exporting && (
             <Button variant="primaryUiSmall" onPress={onSubmit}>
-              Export
+              {_actionButtonLabel}
             </Button>
           )}
         </View>
@@ -279,7 +285,7 @@ export const ExportDbModal = ({
   const _actionView = (
     <View flexDirection="row" alignItems="center">
       <Text variant="uiTextNormal" color="text.3">
-        After export
+        Share to
       </Text>
       <View flexGrow={1} flexShrink={1} overflow="hidden">
         <View
