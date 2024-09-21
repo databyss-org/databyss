@@ -1,7 +1,7 @@
 [
   {
     "content": "The Databyss Foundation, Inc. is a 501(c)(3) charitable organization committed to building and maintaining an open and equitable infrastructure for the advancement of those working in the humanities and digital humanities.",
-    "backgroundImgSrc": "/homepage/stone_bg.jpg",
+    "backgroundImgSrc": "/homepage/water_bg_footer.jpg",
     "sections": [
       {
         "title": "Databyss",
@@ -9,14 +9,6 @@
           {
             "name": "About Databyss",
             "route": "/"
-          },
-          {
-            "name": "Login",
-            "route": "https://app.databyss.org/"
-          },
-          {
-            "name": "Signup",
-            "route": "https://app.databyss.org/"
           },
           {
             "name": "User Guide",
@@ -53,12 +45,6 @@
           {
             "name": "Story",
             "route": "/foundation#story"
-          },
-          {
-            "name": "Donate",
-            "route": "https://donorbox.org/the-databyss-foundation",
-            "mobileRoute": "/donate",
-            "className": "custom-dbox-popup"
           }
         ]
       },

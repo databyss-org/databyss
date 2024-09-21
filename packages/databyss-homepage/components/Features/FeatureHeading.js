@@ -9,10 +9,17 @@ const FeatureHeading = ({
   description,
   descriptionColor,
   textAlign,
+  widthVariant,
+  ...others
 }) => (
-  <View maxWidth={featureHeadingMaxWidth}>
+  <View
+    {...(widthVariant
+      ? { widthVariant, width: '100%' }
+      : { maxWidth: featureHeadingMaxWidth })}
+    {...others}
+  >
     <a name={anchor ?? title}>
-      <Text variant="heading3" color="text.1" mb="medium" textAlign={textAlign}>
+      <Text variant="heading3" color="text.0" mb="medium" textAlign={textAlign}>
         {title}
       </Text>
     </a>

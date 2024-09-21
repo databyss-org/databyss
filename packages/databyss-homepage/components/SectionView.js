@@ -12,7 +12,7 @@ export const SectionView = ({
   const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
   const isDesktop = useMediaQuery({ minWidth: breakpoints.desktop })
 
-  let contentSpacing = defaultSpacing ?? 'none'
+  let contentSpacing = 'none'
   if (isDesktop) {
     contentSpacing = 'extraLarge'
   } else if (isTablet) {
@@ -22,7 +22,7 @@ export const SectionView = ({
   return (
     <View
       backgroundColor={backgroundColor}
-      m={contentSpacing}
+      m={defaultSpacing ?? contentSpacing}
       mb="none"
       alignItems="center"
       {...others}

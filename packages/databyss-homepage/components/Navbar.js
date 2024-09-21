@@ -17,10 +17,12 @@ const Navbar = ({ lightTheme, navLinks, fixed }) => {
       flexDirection="row"
       justifyContent={isMobile ? 'center' : 'flex-end'}
       position={isMobile ? 'static' : desktopPosition}
-      top="medium"
-      right="medium"
+      top={isMobile ? 'medium' : 'large'}
+      right={isMobile ? 'medium' : 'large'}
       mt={isMobile ? 'medium' : 'none'}
       zIndex={theme.zIndex.sticky + 1}
+      height={pxUnits(50)}
+      alignItems="center"
     >
       <Grid singleRow columnGap="em" alignItems="baseline">
         {navLinks.map((link, index) => {

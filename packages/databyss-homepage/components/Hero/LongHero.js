@@ -61,6 +61,7 @@ export const LongHero = ({
     <HeroView
       fixedHeader={isTablet && fixedHeader}
       scrollTop={scrollTop}
+      pb="largest"
       {...others}
     >
       <View

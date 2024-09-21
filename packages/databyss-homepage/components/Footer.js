@@ -11,25 +11,35 @@ import { useMediaQuery } from 'react-responsive'
 import { SectionView } from './SectionView'
 import footerContent from '../content/footerContent.json'
 
-export const Footer = () => {
+export const Footer = ({ backgroundImgSrc }) => {
   const isMobile = useMediaQuery({ maxWidth: breakpoints.mobile })
   return (
     <View
       theme={darkTheme}
+      px={isMobile ? 'none' : 'large'}
       backgroundColor="background.1"
       css={{
         background:
-          footerContent[0].backgroundImgSrc &&
-          `url(${footerContent[0].backgroundImgSrc})`,
-        backgroundSize: 'cover',
-        backgroundPositionY: 'bottom',
+          backgroundImgSrc ??
+          (footerContent[0].backgroundImgSrc &&
+            `url(${footerContent[0].backgroundImgSrc})`),
+        backgroundSize: '1800px 485px',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'bottom center',
+        minHeight: '485px',
       }}
     >
-      <SectionView mt="extraLarge" mb="extraLarge" defaultSpacing="medium">
+      <SectionView
+        mb="extraLarge"
+        pt="extraLarge"
+        defaultSpacing="medium"
+        borderTop="1px solid"
+        borderTopColor="text.4"
+      >
         <View
           alignSelf="flex-start"
           widthVariant="content"
-          mb="large"
+          mb="extraLarge"
           flexDirection="row"
           alignItems="center"
         >

@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from '@databyss-org/ui/theming'
+import theme, { darkTheme } from '@databyss-org/ui/theming/theme'
 import { Page } from './components/Page'
 import homepageContent from './content/homepageContent.json'
 import foundationContent from './content/foundationContent.json'
@@ -17,15 +18,18 @@ ReactDOM.render(
   <ThemeProvider globalStyles={globalStyles}>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Page content={homepageContent} />} />
+        <Route
+          path="/"
+          element={<Page content={homepageContent} theme={darkTheme} />}
+        />
         <Route
           path="/foundation"
-          element={<Page content={foundationContent} />}
+          element={<Page content={foundationContent} theme={theme} />}
         />
         <Route path="/donate" element={<EmbedDonorbox />} />
       </Routes>
     </BrowserRouter>
-    <DonorboxPopup />
+    {/* <DonorboxPopup /> */}
   </ThemeProvider>,
   document.getElementById('root')
 )

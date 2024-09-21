@@ -1,6 +1,6 @@
 import React from 'react'
 import View from '@databyss-org/ui/primitives/View/View'
-import { borderRadius } from '@databyss-org/ui/theming/views'
+import { borderRadius, pxUnits } from '@databyss-org/ui/theming/views'
 import Markdown from '@databyss-org/ui/components/Util/Markdown'
 import FeatureHeading from './FeatureHeading'
 import FeatureImg from './FeatureImg'
@@ -17,12 +17,13 @@ const HighlightedFeature = ({
   imgHeight,
   imgMaxHeight,
   videoSrc,
+  ...others
 }) => (
-  <SectionView>
+  <SectionView defaultSpacing="none" {...others}>
     <View
       backgroundColor={backgroundColor}
       p="large"
-      mb="extraLarge"
+      // mb="extraLarge"
       alignItems="center"
       maxWidth={featureContentMaxWidth}
       width="100%"
@@ -30,9 +31,15 @@ const HighlightedFeature = ({
     >
       <View widthVariant="modal" alignItems="center">
         <FeatureHeading
-          textAlign="center"
+          widthVariant="content"
+          textAlign="left"
           title={title}
           description={<Markdown source={description} />}
+          descriptionColor="text.0"
+          borderTop="1px solid"
+          borderTopColor="text.3"
+          pt={pxUnits(50)}
+          pb="small"
         />
         {imgSrc && (
           <FeatureImg
@@ -63,8 +70,7 @@ const HighlightedFeature = ({
 )
 
 HighlightedFeature.defaultProps = {
-  margin: 'large',
-  backgroundColor: 'background.2',
+  backgroundColor: 'transparent',
 }
 
 export default HighlightedFeature

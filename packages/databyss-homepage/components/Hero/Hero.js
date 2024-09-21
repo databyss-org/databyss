@@ -21,90 +21,119 @@ export const Hero = ({
   navLinks,
   ...others
 }) => {
-  const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
-  const isMobile = useMediaQuery({ maxWidth: breakpoints.mobile })
+  const isTablet = useMediaQuery({ maxWidth: breakpoints.tablet })
 
   return (
     <HeroView {...others}>
       <TabletOnly>
         <Navbar navLinks={navLinks} />
       </TabletOnly>
-      <View
-        alignItems="center"
-        mt={isMobile ? 'large' : 'largest'}
-        widthVariant="headline"
-      >
-        <View flexDirection="row" alignItems="center" mb="large">
+      {isTablet ? (
+        <View width="100%" alignItems="center" pt="largest">
+          <img src={logoSrc} width={pxUnits(200)} height="auto" alt={title} />
+        </View>
+      ) : (
+        <View
+          flexDirection="row"
+          alignItems="center"
+          position="absolute"
+          top="large"
+          left="large"
+        >
           {logoSrc && (
             <View mr="em">
               <img
                 src={logoSrc}
-                width={isTablet ? pxUnits(72) : pxUnits(64)}
+                width={pxUnits(50)}
                 height="auto"
                 alt={title}
               />
             </View>
           )}
+          <Text variant="heading3" color="text.0" textAlign="left">
+            Databyss
+          </Text>
+        </View>
+      )}
+      <View
+        alignItems="left"
+        mt={isTablet ? 'largest' : pxUnits(150)}
+        px={isTablet ? 'large' : 'none'}
+        widthVariant="content"
+        pb={pxUnits(20)}
+      >
+        <View flexDirection="row" alignItems="left" mb="large">
           <Text
-            variant={isTablet ? 'heading1' : 'heading2'}
+            variant={isTablet ? 'heading3' : 'heading2'}
             color="text.0"
-            textAlign="center"
+            textAlign="left"
           >
             {title}
           </Text>
         </View>
         <Text
-          variant="uiTextMedium"
+          variant="uiTextLarge"
           color="text.0"
-          textAlign="center"
-          mb={pxUnits(48)}
+          textAlign="left"
+          mb={isTablet ? 'none' : pxUnits(48)}
         >
           {headline}
         </Text>
-        <Text variant="uiTextMedium" mb="small">
-          Download Databyss {version}
-        </Text>
-        <View>
-          {ctaButtons.map((button, index) => {
-            if (button.mobileOnly && !isMobile) {
-              return null
-            }
-            if (button.tabletOnly && !isTablet) {
-              return null
-            }
-            return (
-              <Button
-                minWidth={60}
-                key={index}
-                variant="pinkHighlighted"
-                href={button.href?.replace('{version}', version)}
-                childViewProps={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}
-                css={{
-                  textDecoration: 'none',
-                  borderWidth: '1px',
-                  borderStyle: 'solid',
-                  borderColor: '#fff',
-                }}
-                mb="small"
-              >
-                {button.icon && (
-                  <Icon sizeVariant="tiny" color="text.0" mr="small">
-                    {button.icon === 'download' && <DownloadSvg />}
-                  </Icon>
-                )}
-                <Text variant="uiTextNormal" color="text.0">
-                  {button.text}
-                </Text>
-              </Button>
-            )
-          })}
-        </View>
-        <MobileOnly>
-          <Navbar navLinks={navLinks} />
-        </MobileOnly>
+        {isTablet ? (
+          <View mt="large" bg="pink" p="small" mr="large">
+            <Text variant="uiTextMedium" mb="small">
+              Databyss {version} is available for download on MacOS and Windows
+              10+.
+            </Text>
+          </View>
+        ) : (
+          <>
+            <Text variant="uiTextMedium" mb="small">
+              Download Databyss {version}
+            </Text>
+            <View flexDirection="row">
+              {ctaButtons.map((button, index) => {
+                if (button.mobileOnly && !isTablet) {
+                  return null
+                }
+                if (button.tabletOnly && !isTablet) {
+                  return null
+                }
+                return (
+                  <Button
+                    minWidth={60}
+                    key={index}
+                    variant="pinkHighlighted"
+                    href={button.href?.replace('{version}', version)}
+                    childViewProps={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}
+                    css={{
+                      textDecoration: 'none',
+                      borderWidth: '1px',
+                      borderStyle: 'solid',
+                      borderColor: '#fff',
+                    }}
+                    mr="small"
+                  >
+                    {button.icon && (
+                      <Icon sizeVariant="tiny" color="text.0" mr="small">
+                        {button.icon === 'download' && <DownloadSvg />}
+                      </Icon>
+                    )}
+                    <Text variant="uiTextNormal" color="text.0">
+                      {button.text}
+                    </Text>
+                  </Button>
+                )
+              })}
+            </View>
+            <MobileOnly>
+              <Navbar navLinks={navLinks} />
+            </MobileOnly>
+          </>
+        )}
       </View>
     </HeroView>
   )

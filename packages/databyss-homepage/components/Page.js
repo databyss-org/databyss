@@ -23,8 +23,20 @@ const componentMap = {
   DualBgFeature: Feature,
 }
 
-export const Page = ({ content }) => (
-  <View minHeight="100vh" width="100%" backgroundColor="background.1">
+export const Page = ({ content, theme }) => (
+  <View
+    minHeight="100vh"
+    width="100%"
+    backgroundColor="#000000"
+    theme={theme}
+    css={{
+      backgroundImage:
+        content.backgroundImgSrc && `url(${content.backgroundImgSrc})`,
+      backgroundSize: '1800px 1288px',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'top center',
+    }}
+  >
     {content.sections.map((section, idx) => {
       // console.log('[Page] component', section.component)
       const Component = componentMap[section.component]
@@ -36,7 +48,7 @@ export const Page = ({ content }) => (
         />
       )
     })}
-    <Footer />
+    <Footer backgroundImgSrc={content.footerBackgroundImgSrc} />
     <Helmet>
       <title>{content.title}</title>
       {(content.meta ?? []).map((metaJson) => (

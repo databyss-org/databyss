@@ -68,7 +68,7 @@ const Feature = ({
 
   return (
     <View
-      backgroundColor="background.1"
+      // backgroundColor="background.1"
       mx={marginX}
       alignItems="center"
       {...others}

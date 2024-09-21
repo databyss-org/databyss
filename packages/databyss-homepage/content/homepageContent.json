@@ -1,18 +1,17 @@
 {
-  "title": "Databyss | Note taking and citation management for everyone",
+  "title": "Databyss | Editor and citation manager",
   "meta": [
     {
       "name": "description",
-      "content": "Databyss is a free application for taking notes, managing citations, and linking them all together in one intuitive editor. With an interface that is familiar to anyone who has used a word processor, it allows users to build, navigate and search complex hypertextual relationships without leaving the document. Users can easily publish their notes as collections, which are disseminated to readers in the same, user-friendly interface for browsing, searching, and, soon, contributing."
+      "content": "Databyss is a non-commercial, open source application for taking notes, managing bibliographical sources, and publishing your work online."
     }
   ],
+  "backgroundImgSrc": "/homepage/water_bg.jpg",
   "sections": [
     {
       "component": "Hero",
-      "backgroundImgSrc": "/homepage/stone_bg.jpg",
-      "backgroundColor": "background.1",
       "logoSrc": "/homepage/logo-thick.png",
-      "title": "Databyss",
+      "title": "Plumb the depths.",
       "headline": "Databyss is a non-commercial, open source application for taking notes, managing bibliographical sources, and publishing your work online.",
       "ctaButtons": [
         {
@@ -26,7 +25,7 @@
           "icon": "download"
         },
         {
-          "text": "Windows",
+          "text": "Windows 10+",
           "href": "https://public.databyss.cloud/Databyss-{version}%20Setup.exe",
           "icon": "download"
         }
@@ -61,37 +60,22 @@
     },
     {
       "component": "HighlightedFeature",
-      "videoSrc": "/homepage/homepage_video.mp4",
-      "imgHasBoxShadow": true,
-      "title": "The Basics",
-      "description": "Databyss gives you the freedom to organize notes hierarchically (as a long stream of thought) or to build a network of associations by linking sections of your work to sources, topics, and authors."
+      "imgSrc": "https://public.databyss.cloud/_hineworks/media/databyss/databyss-photo-collections2.jpg",
+      "title": "Your words belong to you",
+      "description": "Databyss 3 is a native application that runs on MacOS and Windows. This means that your notes and data are truly yours, stored on your hard drive and never shared with us or the public."
     },
     {
-      "component": "DefaultFeature",
-      "videoSrc": "/homepage/pdf_annotations.mp4",
-      "title": "Import PDF Annotations",
-      "description": "Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them.",
-      "mb": "extraLarge"
+      "component": "HighlightedFeature",
+      "imgSrc": "https://public.databyss.cloud/_hineworks/media/databyss/databyss-photo-publish.jpg",
+      "title": "Share your work",
+      "description": "Publish collections of your work to sharable URLs with a single click. Other Databyss users can then import your notes, topics and sources into their own Databyss. With 3 clicks 😉."
     },
     {
-      "component": "DualBgFeature",
-      "leftBgColor": "purple.4",
-      "rightBgColor": "purple.5",
-      "imgSrc": "/homepage/sources_dropdown.png",
-      "imgAlt": "Dropdown menu when searching for sources",
-      "imgMaxHeight": "260px",
-      "title": "Add Sources",
-      "description": "To add a new source and find the bibliographical data of the text you are annotating, press @ on a new line to search using Open Library, Google Books, and Crossref.",
-      "mb": "extraLarge"
-    },
-    {
-      "component": "DefaultFeature",
-      "imgSrc": "/homepage/search_feature.jpg",
-      "imgAlt": "Example of a search result",
-      "imgHasBoxShadow": true,
-      "title": "Search Your Notes",
-      "description": "Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases.",
-      "mb": "extraLarge"
+      "component": "HighlightedFeature",
+      "imgSrc": "https://public.databyss.cloud/_hineworks/media/databyss/databyss-photo-biblio2.jpg",
+      "title": "Powerful reference management",
+      "description": "Keep track of all of your reference material and store your PDFs right in Databyss. Bibliographies and citations can be exported in all of the major styles.",
+      "mb": "large"
     }
   ]
 }

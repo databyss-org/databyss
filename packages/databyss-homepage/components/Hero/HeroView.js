@@ -17,8 +17,8 @@ export const HeroView = ({
 
   return (
     <View
-      p={isMobile ? 'medium' : 'large'}
-      pb={isMobile ? 'extraLarge' : 'largest'}
+      // p={isMobile ? 'medium' : 'large'}
+      // pb={isMobile ? 'extraLarge' : 'largest'}
       width="100%"
       alignItems="center"
       backgroundColor={backgroundColor}
