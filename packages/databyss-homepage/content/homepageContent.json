@@ -61,19 +61,19 @@
     {
       "component": "HighlightedFeature",
       "imgSrc": "https://public.databyss.cloud/_hineworks/media/databyss/databyss-photo-collections2.jpg",
-      "title": "Your words belong to you",
+      "title": "Your words belong to you.",
       "description": "Databyss 3 is a native application that runs on MacOS and Windows. This means that your notes and data are truly yours, stored on your hard drive and never shared with us or the public."
     },
     {
       "component": "HighlightedFeature",
       "imgSrc": "https://public.databyss.cloud/_hineworks/media/databyss/databyss-photo-publish.jpg",
-      "title": "Share your work",
+      "title": "Share your work.",
       "description": "Publish collections of your work to sharable URLs with a single click. Other Databyss users can then import your notes, topics and sources into their own Databyss. With 3 clicks 😉."
     },
     {
       "component": "HighlightedFeature",
       "imgSrc": "https://public.databyss.cloud/_hineworks/media/databyss/databyss-photo-biblio2.jpg",
-      "title": "Powerful reference management",
+      "title": "Manage and store your references.",
       "description": "Keep track of all of your reference material and store your PDFs right in Databyss. Bibliographies and citations can be exported in all of the major styles.",
       "mb": "large"
     }

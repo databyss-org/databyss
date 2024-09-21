@@ -11,8 +11,24 @@ import { useMediaQuery } from 'react-responsive'
 import { SectionView } from './SectionView'
 import footerContent from '../content/footerContent.json'
 
+const textShadowCss = {
+  textShadow: '#000000 1px 0 10px',
+}
+
 export const Footer = ({ backgroundImgSrc }) => {
   const isMobile = useMediaQuery({ maxWidth: breakpoints.mobile })
+
+  const is4k = useMediaQuery({ minWidth: breakpoints.largeDesktop })
+  const is2k = useMediaQuery({ minWidth: breakpoints.mediumDesktop })
+
+  let backgroundSize = '1800px 485px'
+  if (is2k) {
+    backgroundSize = '1920px 516px'
+  }
+  if (is4k) {
+    backgroundSize = '2800px 754px'
+  }
+
   return (
     <View
       theme={darkTheme}
@@ -23,7 +39,7 @@ export const Footer = ({ backgroundImgSrc }) => {
           backgroundImgSrc ??
           (footerContent[0].backgroundImgSrc &&
             `url(${footerContent[0].backgroundImgSrc})`),
-        backgroundSize: '1800px 485px',
+        backgroundSize,
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'bottom center',
         minHeight: '485px',
@@ -51,7 +67,7 @@ export const Footer = ({ backgroundImgSrc }) => {
           >
             <LogoSvg />
           </Icon>
-          <Text variant="uiTextSmall" color="text.1">
+          <Text variant="uiTextNormal" color="text.0" css={textShadowCss}>
             {footerContent[0].content}
           </Text>
         </View>
@@ -71,7 +87,12 @@ export const Footer = ({ backgroundImgSrc }) => {
               borderTop="1px solid"
               borderTopColor="text.4"
             >
-              <Text variant="uiTextHeading" color="text.0" mb="tiny">
+              <Text
+                variant="uiTextHeading"
+                color="text.0"
+                mb="tiny"
+                css={textShadowCss}
+              >
                 {section.title}
               </Text>
               {section.items.map((item) => (
@@ -84,7 +105,11 @@ export const Footer = ({ backgroundImgSrc }) => {
                   {...(item.className ? { className: item.className } : {})}
                   {...(item.target ? { target: item.target } : {})}
                 >
-                  <Text variant="uiTextSmall" color="text.1">
+                  <Text
+                    variant="uiTextNormal"
+                    color="text.0"
+                    css={textShadowCss}
+                  >
                     {item.name}
                   </Text>
                 </BaseControl>
