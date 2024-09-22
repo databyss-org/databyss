@@ -84,7 +84,7 @@ export const Hero = ({
           <View mt="large" bg="pink" p="small" mr="large">
             <RawHtml
               variant="uiTextMedium"
-              html={`Databyss ${version} is available for download on MacOS and Windows&nbsp;10&nbsp;and&nbsp;above.`}
+              html={`Please visit this site on your desktop computer to download Databyss&nbsp;${version} for MacOS or Windows&nbsp;10&nbsp;and&nbsp;above.`}
             />
           </View>
         ) : (

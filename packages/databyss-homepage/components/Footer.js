@@ -11,11 +11,7 @@ import { useMediaQuery } from 'react-responsive'
 import { SectionView } from './SectionView'
 import footerContent from '../content/footerContent.json'
 
-const textShadowCss = {
-  textShadow: '#000000 1px 0 10px',
-}
-
-export const Footer = ({ backgroundImgSrc }) => {
+export const Footer = ({ config }) => {
   const isMobile = useMediaQuery({ maxWidth: breakpoints.mobile })
 
   const is4k = useMediaQuery({ minWidth: breakpoints.largeDesktop })
@@ -29,16 +25,30 @@ export const Footer = ({ backgroundImgSrc }) => {
     backgroundSize = '2800px 754px'
   }
 
+  const textShadowCss =
+    config?.shadows === 'true'
+      ? {
+          textShadow: '#000000 1px 0 10px',
+        }
+      : {}
+
+  const borderProps =
+    config?.lines === 'true'
+      ? {
+          borderTop: '1px solid',
+          borderTopColor: 'text.4',
+        }
+      : {}
+
   return (
     <View
       theme={darkTheme}
       px={isMobile ? 'none' : 'large'}
-      backgroundColor="background.1"
+      backgroundColor="#191919"
       css={{
-        background:
-          backgroundImgSrc ??
-          (footerContent[0].backgroundImgSrc &&
-            `url(${footerContent[0].backgroundImgSrc})`),
+        background: `url(${
+          config?.backgroundImgSrc ?? footerContent[0].backgroundImgSrc
+        })`,
         backgroundSize,
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'bottom center',
@@ -49,8 +59,7 @@ export const Footer = ({ backgroundImgSrc }) => {
         mb="extraLarge"
         pt="extraLarge"
         defaultSpacing="medium"
-        borderTop="1px solid"
-        borderTopColor="text.4"
+        {...borderProps}
       >
         <View
           alignSelf="flex-start"
@@ -84,8 +93,7 @@ export const Footer = ({ backgroundImgSrc }) => {
               key={`footer_section_${section.title}`}
               minWidth="300px"
               pt="small"
-              borderTop="1px solid"
-              borderTopColor="text.4"
+              {...borderProps}
             >
               <Text
                 variant="uiTextHeading"

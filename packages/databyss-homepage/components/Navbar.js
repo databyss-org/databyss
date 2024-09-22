@@ -7,7 +7,7 @@ import theme, { timing } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { useMediaQuery } from 'react-responsive'
 
-const Navbar = ({ lightTheme, navLinks, fixed }) => {
+const Navbar = ({ lightTheme, navLinks, fixed, top }) => {
   const isTablet = useMediaQuery({ minWidth: theme.breakpoints.tablet })
   const isMobile = useMediaQuery({ maxWidth: theme.breakpoints.mobile })
   const isDesktop = useMediaQuery({ minWidth: theme.breakpoints.desktop })
@@ -17,7 +17,7 @@ const Navbar = ({ lightTheme, navLinks, fixed }) => {
       flexDirection="row"
       justifyContent={isMobile ? 'center' : 'flex-end'}
       position={isMobile ? 'static' : desktopPosition}
-      top={isMobile ? 'medium' : 'large'}
+      top={top ?? (isMobile ? 'medium' : 'large')}
       right={isMobile ? 'medium' : 'large'}
       mt={isMobile ? 'medium' : 'none'}
       zIndex={theme.zIndex.sticky + 1}

@@ -6,7 +6,6 @@
       "content": "The Databyss Foundation is a nonprofit organization committed to building and maintaining an open and equitable infrastructure for the advancement of those working in the humanities and digital humanities."
     }
   ],
-  "footerBackgroundImgSrc": "/homepage/stone_bg.jpg",
   "sections": [
     {
       "component": "LongHero",
@@ -15,14 +14,7 @@
       "backgroundColor": "background.1",
       "logoSrc": "/homepage/logo-thick.png",
       "headline": "**The Databyss Foundation** is a nonprofit organization committed to building and maintaining an open and equitable infrastructure for the advancement of those working in the humanities and digital humanities. We primarily develop [Databyss](/), a free application for writing scholarly notes and documents. We also host the growing library of indexed, cross-referenced collections that Databyss users have published. To keep our technology and services free of charge, all of this is funded by the generous donations of individuals and organizations. We encourage anyone to participate if they share our commitment to making humanities research accessible through innovative software and services.",
-      "ctaButtons": [
-        {
-          "text": "🔒 Donate now",
-          "href": "https://donorbox.org/the-databyss-foundation",
-          "mobileHref": "/donate",
-          "className": "custom-dbox-popup"
-        }
-      ],
+      "ctaButtons": [],
       "navLinks": [
         {
           "name": "Projects",
@@ -35,15 +27,6 @@
         {
           "name": "Story",
           "route": "#story"
-        },
-        {
-          "separator": true
-        },
-        {
-          "name": "🔒 Donate",
-          "route": "https://donorbox.org/the-databyss-foundation",
-          "mobileRoute": "/donate",
-          "className": "custom-dbox-popup"
         }
       ]
     },
@@ -116,5 +99,10 @@
         "To ensure the sustainability of the Databyss platform, and to foster the growth of the projects built on it, Jake formed the Databyss Foundation in 2021."
       ]
     }
-  ]
+  ],
+  "footer": {
+    "backgroundImgSrc": "/homepage/stone_bg.jpg",
+    "shadows": "false",
+    "lines": "false"
+  }
 }

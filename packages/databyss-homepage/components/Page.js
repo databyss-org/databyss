@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { useMediaQuery } from 'react-responsive'
 import View from '@databyss-org/ui/primitives/View/View'
@@ -12,6 +12,7 @@ import FAQ from './FAQ'
 import { Footer } from './Footer'
 import { SectionHeading } from './SectionHeading'
 import { SectionSeparator } from './SectionSeparator'
+import { useLocation } from 'react-router-dom'
 
 const componentMap = {
   Hero,
@@ -26,6 +27,22 @@ const componentMap = {
 }
 
 export const Page = ({ content, theme }) => {
+  const { pathname, hash } = useLocation()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+
+  useEffect(() => {
+    console.log('hash', hash)
+    const anchor = document.getElementsByName(hash.substring(1))?.[0]
+    if (anchor) {
+      setTimeout(() => {
+        anchor.scrollIntoView()
+      }, 250)
+    }
+  }, [hash])
+
   const is4k = useMediaQuery({ minWidth: breakpoints.largeDesktop })
   const is2k = useMediaQuery({ minWidth: breakpoints.mediumDesktop })
 
@@ -64,7 +81,7 @@ export const Page = ({ content, theme }) => {
           />
         )
       })}
-      <Footer backgroundImgSrc={content.footerBackgroundImgSrc} />
+      <Footer config={content.footer} />
       <Helmet>
         <title>{content.title}</title>
         {(content.meta ?? []).map((metaJson) => (

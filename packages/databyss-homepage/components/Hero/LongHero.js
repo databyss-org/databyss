@@ -38,7 +38,7 @@ export const LongHero = ({
 
   const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
   const isMobile = useMediaQuery({ maxWidth: breakpoints.mobile })
-  const button = ctaButtons[0]
+  const button = ctaButtons?.[0]
   const desktopHeaderPosition = fixedHeader ? 'fixed' : 'absolute'
   const tabletLogoSize = scrollTop > 25 ? pxUnits(40) : pxUnits(72)
   const tabletLogoVariant =
@@ -82,7 +82,7 @@ export const LongHero = ({
         <Logo {...logo} />
       </View>
       <TabletOnly>
-        <Navbar navLinks={navLinks} fixed={fixedHeader} />
+        <Navbar navLinks={navLinks} fixed={fixedHeader} top="em" />
       </TabletOnly>
       <View
         alignItems="center"
@@ -97,22 +97,26 @@ export const LongHero = ({
             </Text>
           </View>
           <View>
-            <Button
-              minWidth={60}
-              variant="pinkHighlighted"
-              href={
-                isMobile && button.mobileHref ? button.mobileHref : button.href
-              }
-              {...(button.className ? { className: button.className } : {})}
-              childViewProps={{ flexDirection: 'row' }}
-              css={{
-                textDecoration: 'none',
-              }}
-            >
-              <Text variant="uiTextNormalSemibold" color="text.1">
-                {button.text}
-              </Text>
-            </Button>
+            {button && (
+              <Button
+                minWidth={60}
+                variant="pinkHighlighted"
+                href={
+                  isMobile && button.mobileHref
+                    ? button.mobileHref
+                    : button.href
+                }
+                {...(button.className ? { className: button.className } : {})}
+                childViewProps={{ flexDirection: 'row' }}
+                css={{
+                  textDecoration: 'none',
+                }}
+              >
+                <Text variant="uiTextNormalSemibold" color="text.1">
+                  {button.text}
+                </Text>
+              </Button>
+            )}
           </View>
         </Grid>
       </View>

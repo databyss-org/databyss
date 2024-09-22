@@ -77,5 +77,10 @@
       "description": "Keep track of all of your reference material and store your PDFs right in Databyss. Bibliographies and citations can be exported in all of the major styles.",
       "mb": "large"
     }
-  ]
+  ],
+  "footer": {
+    "backgroundImgSrc": "/homepage/water_bg_footer.jpg",
+    "shadows": "true",
+    "lines": "true"
+  }
 }
