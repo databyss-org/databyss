@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { throttle } from 'lodash'
+import React from 'react'
+// import { throttle } from 'lodash'
 import View from '@databyss-org/ui/primitives/View/View'
 import Text from '@databyss-org/ui/primitives/Text/Text'
-import Grid from '@databyss-org/ui/primitives/Grid/Grid'
-import Button from '@databyss-org/ui/primitives/Button/Button'
+// import Grid from '@databyss-org/ui/primitives/Grid/Grid'
+// import Button from '@databyss-org/ui/primitives/Button/Button'
 import breakpoints from '@databyss-org/ui/theming/responsive'
 import { useMediaQuery } from 'react-responsive'
-import TabletOnly from '@databyss-org/ui/components/Responsive/TabletOnly'
+// import TabletOnly from '@databyss-org/ui/components/Responsive/TabletOnly'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import Markdown from '@databyss-org/ui/components/Util/Markdown'
 import theme, { darkTheme } from '@databyss-org/ui/theming/theme'
-import Navbar from '../Navbar'
+// import Navbar from '../Navbar'
 import { HeroView } from './HeroView'
 import { Logo } from '../Logo'
 
@@ -23,18 +23,19 @@ export const LongHero = ({
   fixedHeader,
   ...others
 }) => {
-  const [scrollTop, setScrollTop] = useState(0)
-  const onScroll = useCallback(
-    throttle(() => {
-      setScrollTop(window.scrollY)
-      // console.log(e.target.documentElement.scrollTop)
-    }, 100)
-  )
-  useEffect(() => {
-    window.addEventListener('scroll', onScroll)
-    onScroll()
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  const scrollTop = 0
+  // const [scrollTop, setScrollTop] = useState(0)
+  // const onScroll = useCallback(
+  //   throttle(() => {
+  //     setScrollTop(window.scrollY)
+  //     // console.log(e.target.documentElement.scrollTop)
+  //   }, 100)
+  // )
+  // useEffect(() => {
+  //   window.addEventListener('scroll', onScroll)
+  //   onScroll()
+  //   return () => window.removeEventListener('scroll', onScroll)
+  // }, [])
 
   const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
   const isMobile = useMediaQuery({ maxWidth: breakpoints.mobile })
@@ -61,10 +62,14 @@ export const LongHero = ({
     <HeroView
       fixedHeader={isTablet && fixedHeader}
       scrollTop={scrollTop}
-      pb="largest"
+      pb={isMobile ? 'large' : 'largest'}
+      pl={isMobile ? 'medium' : 'extraLarge'}
+      pr={isMobile ? 'large' : 'none'}
+      alignItems="left"
       {...others}
     >
       <View
+        mt={isMobile ? 'extraLarge' : 'none'}
         theme={darkTheme}
         alignSelf="flex-start"
         left="em"
@@ -81,44 +86,21 @@ export const LongHero = ({
       >
         <Logo {...logo} />
       </View>
-      <TabletOnly>
+      {/* <TabletOnly>
         <Navbar navLinks={navLinks} fixed={fixedHeader} top="em" />
-      </TabletOnly>
+      </TabletOnly> */}
       <View
-        alignItems="center"
-        mt={isMobile ? 'large' : 'largest'}
+        alignItems="left"
+        mt={isMobile ? 'extraLarge' : 'largest'}
         pt={isMobile ? 'none' : 'extraLarge'}
-        widthVariant="page"
+        mr="extraLarge"
+        widthVariant="wideContent"
       >
-        <Grid singleRow columnGap={isMobile ? 'tiny' : 'extraLarge'}>
-          <View flex="1" minWidth={pxUnits(300)} maxWidth="80%" pb="large">
-            <Text variant="uiTextMediumLong" color="text.1">
-              <Markdown source={headline} />
-            </Text>
-          </View>
-          <View>
-            {button && (
-              <Button
-                minWidth={60}
-                variant="pinkHighlighted"
-                href={
-                  isMobile && button.mobileHref
-                    ? button.mobileHref
-                    : button.href
-                }
-                {...(button.className ? { className: button.className } : {})}
-                childViewProps={{ flexDirection: 'row' }}
-                css={{
-                  textDecoration: 'none',
-                }}
-              >
-                <Text variant="uiTextNormalSemibold" color="text.1">
-                  {button.text}
-                </Text>
-              </Button>
-            )}
-          </View>
-        </Grid>
+        <View flex="1" minWidth={pxUnits(300)} pb="large">
+          <Text variant="uiTextMediumLong" color="text.1">
+            <Markdown source={headline} />
+          </Text>
+        </View>
       </View>
     </HeroView>
   )

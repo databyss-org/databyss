@@ -51,6 +51,9 @@ export const widthVariants = {
   content: {
     maxWidth: pxUnits(700),
   },
+  wideContent: {
+    maxWidth: pxUnits(800),
+  },
   form: {
     maxWidth: pxUnits(550),
   },
@@ -71,6 +74,9 @@ export const widthVariants = {
   },
   page: {
     maxWidth: pxUnits(950),
+  },
+  widePage: {
+    maxWidth: pxUnits(1440),
   },
 }
 

@@ -32,8 +32,11 @@ const Feature = ({
   reverseFlow,
   imgProps,
   columnBasis,
+  bgColor,
+  headingVariant,
   ...others
 }) => {
+  const isMobile = useMediaQuery({ maxWidth: breakpoints.mobile })
   const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
   const isDesktop = useMediaQuery({ minWidth: breakpoints.desktop })
   const isLargeDesktop = useMediaQuery({ minWidth: breakpoints.largeDesktop })
@@ -68,12 +71,13 @@ const Feature = ({
 
   return (
     <View
-      // backgroundColor="background.1"
+      backgroundColor={bgColor}
       mx={marginX}
-      alignItems="center"
+      // alignItems="center"
       {...others}
     >
       <View
+        widthVariant="widePage"
         flex="1"
         width="100%"
         flexDirection={
@@ -81,51 +85,54 @@ const Feature = ({
             ? `row${flexDirectionReverse}`
             : `column${flexDirectionReverse}`
         }
-        maxWidth={type === 'dualBg' ? 'none' : featureContentMaxWidth}
+        py={type === 'dualBg' ? 'none' : 'large'}
+        // maxWidth={type === 'dualBg' ? 'none' : featureContentMaxWidth}
       >
         <View
           backgroundColor={type === 'dualBg' ? rightBgColor : 'inherit'}
-          width={isTablet ? columnBasis : '100%'}
-          flex="1"
+          // width={isTablet ? columnBasis : '100%'}
+          flexBasis={isTablet ? columnBasis : '100%'}
+          // flex="1"
+          flexShrink={1}
+          flexGrow={1}
         >
           <View
             backgroundColor={type === 'dualBg' ? rightBgColor : 'inherit'}
             py={type === 'default' ? 'none' : 'large'}
-            flex="1"
             justifyContent={alignContent}
-            alignItems={
-              isLargeDesktop && type === 'default' ? 'flex-end' : 'flex-start'
-            }
+            // alignItems={
+            //   isLargeDesktop && type === 'default' ? 'flex-end' : 'flex-start'
+            // }
             maxHeight={featureContentMaxHeight}
-            maxWidth={`calc(${featureContentMaxWidth} / 2)`}
+            // maxWidth={`calc(${featureContentMaxWidth} / 2)`}
           >
             <View
               justifyContent="center"
-              px={isDesktop ? 'extraLarge' : 'medium'}
+              mx={isDesktop ? 'extraLarge' : 'medium'}
+              pr={isMobile ? 'small' : 'none'}
             >
               <FeatureHeading
+                headingVariant={headingVariant}
+                widthVariant="wideContent"
                 anchor={anchor}
                 title={title}
                 description={formatDescriptionText(description)}
-                descriptionColor={
-                  type === 'dualBg' ? 'text.2' : descriptionColor
-                }
+                descriptionColor="text.2"
               />
             </View>
           </View>
         </View>
         <View
           backgroundColor={type === 'dualBg' ? leftBgColor : 'inherit'}
-          width={isTablet ? columnBasis : '100%'}
-          alignItems={isTablet ? 'flex-end' : 'center'}
+          // width={isTablet ? columnBasis : '100%'}
+          alignItems="flex-start"
+          flexBasis="fit-content"
         >
           <View
-            flex="1"
             px={isDesktop ? 'extraLarge' : 'medium'}
             py={type === 'dualBg' ? 'large' : 'none'}
             alignItems="center"
             justifyContent="center"
-            flexBasis={isTablet ? columnBasis : 'auto'}
             maxHeight={featureContentMaxHeight}
             maxWidth={`calc(${featureContentMaxWidth} / 2)`}
           >
@@ -170,7 +177,7 @@ Feature.defaultProps = {
   leftBgColor: 'purple.4',
   rightBgColor: 'purple.5',
   imgProps: {},
-  columnBasis: '50%',
+  columnBasis: 'max-content',
 }
 
 export default Feature

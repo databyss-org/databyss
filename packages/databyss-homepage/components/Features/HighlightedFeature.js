@@ -6,6 +6,7 @@ import FeatureHeading from './FeatureHeading'
 import FeatureImg from './FeatureImg'
 import { featureContentMaxWidth } from './Feature'
 import { SectionView } from '../SectionView'
+import Text from '@databyss-org/ui/primitives/Text/Text'
 
 const HighlightedFeature = ({
   backgroundColor,
@@ -17,6 +18,7 @@ const HighlightedFeature = ({
   imgHeight,
   imgMaxHeight,
   videoSrc,
+  lowerContent,
   ...others
 }) => (
   <SectionView defaultSpacing="none" {...others}>
@@ -63,6 +65,13 @@ const HighlightedFeature = ({
               borderRadius,
             }}
           />
+        )}
+        {lowerContent && (
+          <View mt="medium" widthVariant="content" className="featured">
+            <Text variant="uiTextMedium" color="text.0">
+              <Markdown source={lowerContent} />
+            </Text>
+          </View>
         )}
       </View>
     </View>

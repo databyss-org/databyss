@@ -46,12 +46,16 @@ export const Footer = ({ config }) => {
       px={isMobile ? 'none' : 'large'}
       backgroundColor="#191919"
       css={{
-        background: `url(${
-          config?.backgroundImgSrc ?? footerContent[0].backgroundImgSrc
-        })`,
-        backgroundSize,
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'bottom center',
+        background: config?.backgroundImgSrc
+          ? `url(${config?.backgroundImgSrc})`
+          : 'none',
+        ...(!isMobile
+          ? {
+              backgroundSize,
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'bottom center',
+            }
+          : {}),
         minHeight: '485px',
       }}
     >
