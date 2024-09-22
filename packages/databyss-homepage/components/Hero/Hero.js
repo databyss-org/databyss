@@ -10,6 +10,7 @@ import MobileOnly from '@databyss-org/ui/components/Responsive/MobileOnly'
 import TabletOnly from '@databyss-org/ui/components/Responsive/TabletOnly'
 import DownloadSvg from '@databyss-org/ui/assets/download.svg'
 import { version } from '@databyss-org/services/version'
+import RawHtml from '@databyss-org/ui/primitives/Text/RawHtml'
 import Navbar from '../Navbar'
 import { HeroView } from './HeroView'
 
@@ -57,7 +58,7 @@ export const Hero = ({
       )}
       <View
         alignItems="left"
-        mt={isTablet ? 'largest' : pxUnits(150)}
+        mt={isTablet ? pxUnits(110) : pxUnits(150)}
         px={isTablet ? 'large' : 'none'}
         widthVariant="content"
         pb={pxUnits(20)}
@@ -81,10 +82,10 @@ export const Hero = ({
         </Text>
         {isTablet ? (
           <View mt="large" bg="pink" p="small" mr="large">
-            <Text variant="uiTextMedium" mb="small">
-              Databyss {version} is available for download on MacOS and Windows
-              10+.
-            </Text>
+            <RawHtml
+              variant="uiTextMedium"
+              html={`Databyss ${version} is available for download on MacOS and Windows&nbsp;10&nbsp;and&nbsp;above.`}
+            />
           </View>
         ) : (
           <>
