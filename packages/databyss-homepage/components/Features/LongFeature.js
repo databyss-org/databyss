@@ -4,15 +4,19 @@ import Text from '@databyss-org/ui/primitives/Text/Text'
 import Markdown from '@databyss-org/ui/components/Util/Markdown'
 import { useMediaQuery } from 'react-responsive'
 import breakpoints from '@databyss-org/ui/theming/responsive'
+import { darkTheme } from '@databyss-org/ui/theming/theme'
 
 export const LongFeature = ({ paragraphs, ...others }) => {
   const isDesktop = useMediaQuery({ minWidth: breakpoints.desktop })
+  const isMobile = useMediaQuery({ maxWidth: breakpoints.mobile })
+
   return (
-    <View bg="background.0">
+    <View bg="background.3">
       <View
-        px={isDesktop ? 'extraLarge' : 'medium'}
+        mx={isDesktop ? 'extraLarge' : 'medium'}
+        pr={isMobile ? 'small' : 'none'}
         {...others}
-        widthVariant="page"
+        widthVariant="wideContent"
         mb="extraLarge"
         pt="large"
       >

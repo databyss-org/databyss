@@ -109,6 +109,9 @@ export function registerFileHandlers() {
       } else {
         dbJson = await getDbJsonFromZip(zipFilePath)
       }
+      if (!dbJson) {
+        return false
+      }
       const sourceTables = groupDbIntoTables(dbJson)
       if (importIntoGroupId) {
         await handleMergeImport(sourceTables, importIntoGroupId, evt.sender.id)
@@ -124,6 +127,7 @@ export function registerFileHandlers() {
       setGroupLoaded(evt.sender.id)
       // rebuild the search index
       buildSearchIndexDb(nodeDbRefs[evt.sender.id].current)
+      return true
     }
   )
   ipcMain.handle('file-newDatabyss', (evt) => createDatabyss(evt.sender.id))

@@ -10,6 +10,7 @@ const FeatureHeading = ({
   descriptionColor,
   textAlign,
   widthVariant,
+  headingVariant,
   ...others
 }) => (
   <View
@@ -19,7 +20,12 @@ const FeatureHeading = ({
     {...others}
   >
     <a name={anchor ?? title}>
-      <Text variant="heading3" color="text.0" mb="medium" textAlign={textAlign}>
+      <Text
+        variant={headingVariant ?? 'heading3'}
+        color="text.0"
+        mb="medium"
+        textAlign={textAlign}
+      >
         {title}
       </Text>
     </a>

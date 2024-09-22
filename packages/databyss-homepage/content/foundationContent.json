@@ -6,14 +6,13 @@
       "content": "The Databyss Foundation is a nonprofit organization committed to building and maintaining an open and equitable infrastructure for the advancement of those working in the humanities and digital humanities."
     }
   ],
+  "backgroundImgSrc": "/homepage/stone_bg.jpg",
   "sections": [
     {
       "component": "LongHero",
-      "fixedHeader": true,
-      "backgroundImgSrc": "/homepage/stone_bg.jpg",
-      "backgroundColor": "background.1",
+      "fixedHeader": false,
       "logoSrc": "/homepage/logo-thick.png",
-      "headline": "**The Databyss Foundation** is a nonprofit organization committed to building and maintaining an open and equitable infrastructure for the advancement of those working in the humanities and digital humanities. We primarily develop [Databyss](/), a free application for writing scholarly notes and documents. We also host the growing library of indexed, cross-referenced collections that Databyss users have published. To keep our technology and services free of charge, all of this is funded by the generous donations of individuals and organizations. We encourage anyone to participate if they share our commitment to making humanities research accessible through innovative software and services.",
+      "headline": "**The Databyss Foundation** is a nonprofit organization committed to building and maintaining an open and equitable infrastructure for the advancement of those working in the humanities and digital humanities. We primarily develop [Databyss](/), a free application for writing scholarly notes and documents. We also host the growing library of indexed, cross-referenced collections that Databyss users have published.",
       "ctaButtons": [],
       "navLinks": [
         {
@@ -36,24 +35,30 @@
       "anchor": "projects"
     },
     {
-      "component": "DualBgFeature",
+      "component": "DefaultFeature",
       "reverseFlow": false,
-      "leftBgColor": "purple.4",
-      "rightBgColor": "purple.5",
-      "videoSrc": "/homepage/homepage_video.mp4",
+      "bgColor": "background.2",
+      "leftBgColor": "background.2",
+      "rightBgColor": "background.2",
+      "imgWidth": "400px",
+      "imgSrc": "/homepage/phil101.jpg",
       "title": "Databyss",
+      "headingVariant": "heading4",
       "description": "[Databyss](/) is a free, open-source application for taking notes and linking them together by topics and sources. Through a simple and intuitive interface that is familiar to anyone who has used a word processor, it allows users to build, navigate and search complex hypertextual relationships without leaving the document. Users can easily publish their notes as collections, which are disseminated to readers in the same, user-friendly interface for browsing, searching, and, soon, contributing."
     },
     {
       "component": "SectionSeparator"
     },
     {
-      "component": "DualBgFeature",
+      "component": "DefaultFeature",
       "reverseFlow": false,
-      "leftBgColor": "purple.4",
-      "rightBgColor": "purple.5",
+      "imgWidth": "400px",
+      "bgColor": "background.2",
+      "leftBgColor": "background.2",
+      "rightBgColor": "background.2",
       "imgSrc": "/homepage/r2c_home_sm.jpg",
       "title": "Return to Cinder",
+      "headingVariant": "heading4",
       "description": "[Return to Cinder](https://returntocinder.com) is a massive collection of notes on philosophical texts, compiled and edited by Dr. Jake Reeder. Since its publication in 2017, it has become a popular resource for researchers of critical race theory, philosophy, and the digital humanities. It served as an inspiration and guide for building the Databyss application, which allows any researcher - even if they have no programming or web publishing expertise - to compile and edit digital humanities resources like Return to Cinder."
     },
     {
@@ -62,11 +67,13 @@
       "anchor": "team"
     },
     {
-      "component": "DualBgFeature",
-      "leftBgColor": "purple.4",
-      "rightBgColor": "purple.5",
-      "imgProps": { "css": { "maxWidth": "350px" } },
-      "columnBasis": "auto",
+      "component": "DefaultFeature",
+      "reverseFlow": false,
+      "bgColor": "background.2",
+      "leftBgColor": "background.2",
+      "rightBgColor": "background.2",
+      "imgHeight": "200px",
+      "headingVariant": "heading4",
       "imgSrc": "/homepage/jreeder.jpg",
       "title": "Jake Reeder, Ph.D.",
       "description": "In addition to serving as director of the Databyss Foundation, Jake Reeder teaches psychoanalysis, deconstruction, the history of philosophy, and critical race theory at Marist College.  A student of deconstruction, the idea that the word itself is a technology inspired him to spearhead the two note-taking projects associated with the Databyss Foundation. Since words only survive through interaction, he continues to direct these projects, believing that accessibility and “user-friendliness” are essential to thinking and invention. A general lover of the word, he  writes both fiction and theory."
@@ -75,13 +82,14 @@
       "component": "SectionSeparator"
     },
     {
-      "component": "DualBgFeature",
-      "leftBgColor": "purple.4",
-      "rightBgColor": "purple.5",
-      "imgProps": { "css": { "maxWidth": "350px" } },
-      "columnBasis": "auto",
+      "component": "DefaultFeature",
+      "reverseFlow": false,
+      "descriptionWidthVariant": "content",
+      "imgHeight": "200px",
+      "bgColor": "background.2",
       "imgSrc": "/homepage/paulhine.jpg",
       "title": "Paul Hine",
+      "headingVariant": "heading4",
       "description": "Paul Hine is a software engineer who has worked for over a decade on commercial and non-commercial applications, mostly for web and mobile formats. He holds a BA in Computer Science and English Literature from Cornell University and an M.Sc. in Cognitive Systems and Interactive Media from Universitat Pompeu Fabra. Along with Dr. Reeder, he built Return to Cinder and was the principal engineer of the Databyss application. Paul is based in Barcelona, where he is a technical lead for the European Media and Immersion Lab."
     },
     {
@@ -93,15 +101,14 @@
       "component": "LongFeature",
       "paragraphs": [
         "In 2015, Dr. Jake Reeder began reading and annotating the work of the philosopher Jacques Derrida—commonly referred to as the father of deconstruction. He started filling so many blank pages that he realized, with dismay, that it was going to be extremely hard for him or anyone else to retrace his steps and find his notes useful.",
-        "He decided to transcribe his notes onto a word-processor so that they would be searchable. He soon (well, not _so_ soon) had written a 2500 page (single-spaced!) document. He was able to search it by pressing COMMAND+F, but this was very limiting. So, he began looking for software that would allow for deeper, more meaningful searches.",
-        "At the same time, he began adding more authors to his annotation project, so he now needed a precise bibliography for his notes. Apps like Zotero and Mendeley are great for this, and while they support notes, they force them into bibliographic buckets and are not the \"writing tool\" he was looking for. It seemed there was no suitable application, so he continued to use a word-processor in spite of its limitations.",
-        "He shared these limitations with Paul, who had helped build returntocinder.com, a web version of his Derrida notes. Together, they conceived of _Databyss_, a simple word-processor application with powerful organization and search features. Databyss was launched in the spring of 2020. Today, Dr. Reeder and many other researchers use _Databyss_ daily for their annotation projects, their class notes, assignments, articles, and more.",
-        "To ensure the sustainability of the Databyss platform, and to foster the growth of the projects built on it, Jake formed the Databyss Foundation in 2021."
+        "So, in 2017, he and Paul turned his notes into Return to Cinder, a website that would facilitate deep, meaningful searches across thousands of notes organized by topics and sources.",
+        "The popularity of Return to Cinder led them to conceive of an editor that would allow other researchers to write, tag, and publish their notes online. In 2019, they began building Databyss, a web-based text editor with powerful organization and search features.",
+        "Databyss was launched in the spring of 2020, and has since shipped two major version updates with hundreds of added features. Today, Dr. Reeder and many other researchers use Databyss daily for their annotation projects, class notes, assignments, articles, and more.",
+        "To ensure the sustainability of the Databyss platform, and to foster the growth of the projects built on it, Dr. Reeder formed the Databyss Foundation in 2021."
       ]
     }
   ],
   "footer": {
-    "backgroundImgSrc": "/homepage/stone_bg.jpg",
     "shadows": "false",
     "lines": "false"
   }

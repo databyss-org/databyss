@@ -60,21 +60,28 @@
     },
     {
       "component": "HighlightedFeature",
-      "imgSrc": "https://public.databyss.cloud/_hineworks/media/databyss/databyss-photo-collections2.jpg",
+      "imgSrc": "/homepage/phil101.jpg",
       "title": "Your words belong to you.",
       "description": "Databyss 3 is a native application that runs on MacOS and Windows. This means that your notes and data are truly yours, stored on your hard drive and 100% private."
     },
     {
       "component": "HighlightedFeature",
-      "imgSrc": "https://public.databyss.cloud/_hineworks/media/databyss/databyss-photo-publish.jpg",
+      "imgSrc": "/homepage/publish_collection.jpg",
       "title": "Share your work.",
-      "description": "Publish collections of your work to sharable URLs with a single click. Other Databyss users can then import your notes, topics and sources into their own Databyss. With 3 clicks 😉."
+      "description": "Publish collections of your work to sharable URLs with a single click. Other Databyss users can then import your notes, topics and sources into their own Databyss. With 3 clicks 😉.",
+      "lowerContent": "Explore [a published Databyss collection](https://pub.databyss.app/chi-2025-y5ce5hb0b1kumy) to see what's possible."
     },
     {
       "component": "HighlightedFeature",
-      "imgSrc": "https://public.databyss.cloud/_hineworks/media/databyss/databyss-photo-biblio2.jpg",
+      "imgSrc": "/homepage/bibliography.jpg",
       "title": "Manage and store your references.",
-      "description": "Keep track of all of your reference material and store your PDFs right in Databyss. Bibliographies and citations can be exported in all of the major styles.",
+      "description": "Keep track of all of your reference material and store your PDFs right in Databyss. Bibliographies and citations can be exported in all of the major styles."
+    },
+    {
+      "component": "HighlightedFeature",
+      "imgSrc": "/homepage/search_results.jpg",
+      "title": "Search and discover.",
+      "description": "Databyss search reveals the connections between all of your notes, topics, sources, authors and collections.",
       "mb": "large"
     }
   ],

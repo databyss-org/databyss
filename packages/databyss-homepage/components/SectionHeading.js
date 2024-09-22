@@ -18,19 +18,21 @@ export const SectionHeading = ({ title, anchor, ...others }) => {
       // top={pxUnits(68)}
       {...others}
     >
-      <a
-        name={anchor ?? title}
-        css={{
-          position: 'relative',
-          top: pxUnits(-70),
-          zIndex: -1,
-        }}
-      >
-        {title}
-      </a>
-      <Text variant="bodyHeading2" color="text.0">
-        {title}
-      </Text>
+      <View widthVariant="widePage" width="100%">
+        <a
+          name={anchor ?? title}
+          css={{
+            position: 'relative',
+            top: pxUnits(-70),
+            zIndex: -1,
+          }}
+        >
+          {title}
+        </a>
+        <Text variant="bodyHeading2" color="text.0">
+          {title}
+        </Text>
+      </View>
     </View>
   )
 }

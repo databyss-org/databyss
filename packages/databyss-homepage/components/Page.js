@@ -26,7 +26,7 @@ const componentMap = {
   DualBgFeature: Feature,
 }
 
-export const Page = ({ content, theme }) => {
+export const Page = ({ content, theme, props2k, css2k, css, ...others }) => {
   const { pathname, hash } = useLocation()
 
   useEffect(() => {
@@ -66,28 +66,43 @@ export const Page = ({ content, theme }) => {
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'top -50px center',
         transition: 'background-size 0.5s',
-      }}
-    >
-      {content.sections.map((section, idx) => {
-        // console.log('[Page] component', section.component)
-        const Component = componentMap[section.component]
-        return (
-          <Component
-            key={`${idx}-${section.title}`}
-            {...section}
-            type={
-              section.component === 'DualBgFeature' ? 'dualBg' : section.type
+        ...(is2k && css2k
+          ? {
+              ...css2k,
             }
-          />
-        )
-      })}
-      <Footer config={content.footer} />
-      <Helmet>
-        <title>{content.title}</title>
-        {(content.meta ?? []).map((metaJson) => (
-          <meta name={metaJson.name} content={metaJson.content} />
-        ))}
-      </Helmet>
+          : {}),
+        ...(css ?? {}),
+      }}
+      {...others}
+    >
+      <View
+        {...(is2k && props2k
+          ? {
+              ...props2k,
+            }
+          : {})}
+      >
+        {content.sections.map((section, idx) => {
+          // console.log('[Page] component', section.component)
+          const Component = componentMap[section.component]
+          return (
+            <Component
+              key={`${idx}-${section.title}`}
+              {...section}
+              type={
+                section.component === 'DualBgFeature' ? 'dualBg' : section.type
+              }
+            />
+          )
+        })}
+        <Footer config={content.footer} />
+        <Helmet>
+          <title>{content.title}</title>
+          {(content.meta ?? []).map((metaJson) => (
+            <meta name={metaJson.name} content={metaJson.content} />
+          ))}
+        </Helmet>
+      </View>
     </View>
   )
 }
