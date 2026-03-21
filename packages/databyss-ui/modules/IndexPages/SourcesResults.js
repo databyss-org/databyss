@@ -59,7 +59,10 @@ export const SourcesResults = ({ entries }) => {
                 SortOptions.Ascending
               )
               splitOverlappingRanges(_citationText.ranges)
-              _citationHtml = textToHtml(_citationText)
+              _citationHtml = textToHtml(_citationText).replace(
+                /^(\s*<br\s*\/?>\s*)+/i,
+                ''
+              )
             }
           }
 

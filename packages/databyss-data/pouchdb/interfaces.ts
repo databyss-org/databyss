@@ -30,6 +30,7 @@ export enum DocumentType {
   BlockRelation = 'BLOCK_RELATION',
   UserPreferences = 'USER_PREFERENCES',
   Group = 'GROUP',
+  Author = 'AUTHOR',
 }
 
 export interface DbDocument extends Document {

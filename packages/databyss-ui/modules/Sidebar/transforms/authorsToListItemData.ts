@@ -45,41 +45,46 @@ const maxOrUndefined = (a: number | undefined, b: number | undefined) => {
 }
 
 export const authorsToListItemData = (blocks: Source[]) =>
-  mapAuthorData(
-    Object.values(
-      blocks.reduce((dict: { [name: string]: AuthorWithStats }, block) => {
-        if (block.detail?.authors) {
-          block.detail.authors.forEach((author) => {
-            const _authorKey = `${author.firstName?.textValue || ''}${
-              author.lastName?.textValue || ''
-            }`
-            if (!dict[_authorKey]) {
-              dict[_authorKey] = {
-                ...author,
-                createdAt: (block as any).createdAt,
-                modifiedAt: (block as any).modifiedAt,
-                accessedAt: (block as any).accessedAt,
-              }
-            }
-            const _authorWithStats = dict[_authorKey]
-            dict[_authorKey] = {
-              ...author,
-              createdAt: maxOrUndefined(
-                _authorWithStats.createdAt,
-                (block as any).createdAt
-              ),
-              modifiedAt: maxOrUndefined(
-                _authorWithStats.modifiedAt,
-                (block as any).modifiedAt
-              ),
-              accessedAt: maxOrUndefined(
-                _authorWithStats.accessedAt,
-                (block as any).accessedAt
-              ),
-            }
-          })
+  mapAuthorData(Object.values(authorsFromSources(blocks)))
+
+/**
+ * Derives a keyed dict of AuthorWithStats from an array of Source blocks.
+ * Each author's timestamps are the max across all sources they appear in.
+ */
+export const authorsFromSources = (
+  blocks: Source[]
+): { [authorKey: string]: AuthorWithStats } =>
+  blocks.reduce((dict: { [name: string]: AuthorWithStats }, block) => {
+    if (block.detail?.authors) {
+      block.detail.authors.forEach((author) => {
+        const _authorKey = `${author.firstName?.textValue || ''}${
+          author.lastName?.textValue || ''
+        }`
+        if (!dict[_authorKey]) {
+          dict[_authorKey] = {
+            ...author,
+            createdAt: (block as any).createdAt,
+            modifiedAt: (block as any).modifiedAt,
+            accessedAt: (block as any).accessedAt,
+          }
         }
-        return dict
-      }, {})
-    )
-  )
+        const _authorWithStats = dict[_authorKey]
+        dict[_authorKey] = {
+          ...author,
+          createdAt: maxOrUndefined(
+            _authorWithStats.createdAt,
+            (block as any).createdAt
+          ),
+          modifiedAt: maxOrUndefined(
+            _authorWithStats.modifiedAt,
+            (block as any).modifiedAt
+          ),
+          accessedAt: maxOrUndefined(
+            _authorWithStats.accessedAt,
+            (block as any).accessedAt
+          ),
+        }
+      })
+    }
+    return dict
+  }, {})

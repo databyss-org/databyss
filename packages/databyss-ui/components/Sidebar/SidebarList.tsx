@@ -154,7 +154,7 @@ const SidebarList = ({
     if (onItemPressed) {
       onItemPressed(item, index)
     }
-    if (!showAll && scrollViewRef.current && item.type !== 'author') {
+    if (!showAll && scrollViewRef.current) {
       // scrollViewRef.current.scrollTop = 0
       // sorry for this jquery hack!
       setTimeout(() => event.target.closest('a').blur(), 50)
@@ -191,7 +191,7 @@ const SidebarList = ({
     }
     hasMountedRef.current = true
   }, [
-    _sortedMenuItems.find((item) => !startsWithEmoji(item.text))?.data?._id,
+    _sortedMenuItems.find((item) => !startsWithEmoji(item.text))?.route,
     showAll,
   ])
 

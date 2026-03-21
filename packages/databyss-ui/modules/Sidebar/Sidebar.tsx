@@ -8,7 +8,7 @@ import { BlockType } from '@databyss-org/services/interfaces'
 import { pxUnits } from '@databyss-org/ui/theming/theme'
 import { sidebar } from '@databyss-org/ui/theming/components'
 import SidebarCollapsed from './SidebarCollapsed'
-import { BlockList, PageList, GroupList } from './lists'
+import { BlockList, PageList, GroupList, AuthorList } from './lists'
 import { authorsToListItemData } from './transforms'
 import Search from './Search'
 import { ReferencesList } from './lists/ReferencesList'
@@ -87,9 +87,7 @@ export const Sidebar = ({
             {(menuItem === 'pages' || !menuItem) && <PageList />}
             {menuItem === 'references' && <ReferencesList />}
             {menuItem === 'sources' && (
-              <BlockList
-                blockType={BlockType.Source}
-                transform={authorsToListItemData}
+              <AuthorList
                 heading="Sources"
                 prependItems={[
                   {

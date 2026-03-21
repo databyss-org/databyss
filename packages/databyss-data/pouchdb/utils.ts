@@ -1,6 +1,6 @@
 import PouchDB from 'pouchdb'
 import { throttle, debounce } from 'lodash'
-import { Group } from '@databyss-org/services/interfaces'
+import { Author, Group } from '@databyss-org/services/interfaces'
 import { QueryClient } from '@tanstack/query-core'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { DocumentType, UserPreference } from './interfaces'
@@ -9,8 +9,8 @@ import { uid } from '../lib/uid'
 import { getGroupActionQ } from './groups/utils'
 import { CouchDb } from '../couchdb/couchdb'
 import { VouchDb } from '../vouchdb/vouchdb'
-import { addTimeStamp } from './docUtils'
 import { bulkUpsert, findOne, pouchDataValidation } from './crudUtils'
+import { addTimeStamp } from './docUtils'
 
 export { findOne, getDocument, bulkUpsert } from './crudUtils'
 
@@ -193,37 +193,34 @@ export const upsertPouch = (
   })
 }
 type ValueOf<T> = T[keyof T]
-const _debouncedAccessedAtUpdaters: Record<
-  string,
-  (...args: any[]) => void
-> = {}
+
+const _debouncedAccessedAtUpdate = debounce(
+  (
+    id: string,
+    queryClient: QueryClient,
+    selector: ValueOf<typeof selectors>
+  ) => {
+    const fds = { accessedAt: Date.now() }
+    upsertPouch(id, fds)
+    queryClient.setQueryData([selector], (oldData: any) =>
+      oldData
+        ? {
+            ...oldData,
+            [id]: { ...oldData[id], ...fds },
+          }
+        : oldData
+    )
+  },
+  2000,
+  { leading: false, trailing: true }
+)
 
 export const updateAccessedAt = (
   _id: string,
   queryClient: QueryClient,
   selector: ValueOf<typeof selectors>
 ) => {
-  const fds = {
-    accessedAt: Date.now(),
-  }
-  upsertPouch(_id, fds)
-  if (!_debouncedAccessedAtUpdaters[_id]) {
-    _debouncedAccessedAtUpdaters[_id] = debounce(
-      (id: string, fields: typeof fds) => {
-        queryClient.setQueryData([selector], (oldData: any) =>
-          oldData
-            ? {
-                ...oldData,
-                [id]: { ...oldData[id], ...fields },
-              }
-            : oldData
-        )
-      },
-      2000,
-      { leading: false, trailing: true }
-    )
-  }
-  _debouncedAccessedAtUpdaters[_id](_id, fds)
+  _debouncedAccessedAtUpdate(_id, queryClient, selector)
 }
 
 export const updateModifiedAt = (
@@ -305,6 +302,36 @@ export const updateGroupPreferences = async (
   })
   pouchDataValidation(_groupDoc)
   dbRef.current!.put(_groupDoc)
+}
+
+export const authorToId = (author: Author): string =>
+  `author_${(author.firstName?.textValue ?? '')
+    .toLowerCase()
+    .replace(/\s+/g, '_')}_${(author.lastName?.textValue ?? '')
+    .toLowerCase()
+    .replace(/\s+/g, '_')}`
+
+export const upsertAuthor = (
+  author: Author,
+  queryClient: QueryClient
+): void => {
+  const _id = authorToId(author)
+  const _doc = addTimeStamp({
+    doctype: DocumentType.Author,
+    _id,
+    firstName: author.firstName,
+    lastName: author.lastName,
+    belongsToGroup: getAccountFromLocation(),
+  })
+  upsertPouch(_id, _doc)
+  queryClient.setQueryData([selectors.AUTHORS], (oldData: any) => {
+    if (!oldData?.[_id]) {
+      return oldData
+        ? { ...oldData, [_id]: { ...(oldData[_id] ?? {}), ..._doc } }
+        : oldData
+    }
+    return oldData
+  })
 }
 
 export class QueueProcessor {
