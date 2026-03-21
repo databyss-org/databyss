@@ -58,7 +58,10 @@ export const sortEntriesByRecent = (entries, sortBy, pinning = true) =>
     if (pinning && startsWithEmoji(_txtA) && !startsWithEmoji(_txtB)) {
       return -1
     }
-    return (_b.modifiedAt ?? _b.createdAt) - (_a.modifiedAt ?? _a.createdAt)
+    return (
+      (_b.accessedAt ?? _b.modifiedAt ?? _b.createdAt) -
+      (_a.accessedAt ?? _a.modifiedAt ?? _a.createdAt)
+    )
   })
 
 export const filterEntries = (entries, filterQuery) => {

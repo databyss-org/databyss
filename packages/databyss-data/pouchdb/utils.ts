@@ -1,5 +1,5 @@
 import PouchDB from 'pouchdb'
-import { throttle } from 'lodash'
+import { throttle, debounce } from 'lodash'
 import { Group } from '@databyss-org/services/interfaces'
 import { QueryClient } from '@tanstack/query-core'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
@@ -193,6 +193,11 @@ export const upsertPouch = (
   })
 }
 type ValueOf<T> = T[keyof T]
+const _debouncedAccessedAtUpdaters: Record<
+  string,
+  (...args: any[]) => void
+> = {}
+
 export const updateAccessedAt = (
   _id: string,
   queryClient: QueryClient,
@@ -202,14 +207,23 @@ export const updateAccessedAt = (
     accessedAt: Date.now(),
   }
   upsertPouch(_id, fds)
-  // queryClient.setQueryData([selector], (oldData: any) =>
-  //   oldData
-  //     ? {
-  //         ...oldData,
-  //         [_id]: { ...oldData[_id], ...fds },
-  //       }
-  //     : oldData
-  // )
+  if (!_debouncedAccessedAtUpdaters[_id]) {
+    _debouncedAccessedAtUpdaters[_id] = debounce(
+      (id: string, fields: typeof fds) => {
+        queryClient.setQueryData([selector], (oldData: any) =>
+          oldData
+            ? {
+                ...oldData,
+                [id]: { ...oldData[id], ...fields },
+              }
+            : oldData
+        )
+      },
+      2000,
+      { leading: false, trailing: true }
+    )
+  }
+  _debouncedAccessedAtUpdaters[_id](_id, fds)
 }
 
 export const updateModifiedAt = (
