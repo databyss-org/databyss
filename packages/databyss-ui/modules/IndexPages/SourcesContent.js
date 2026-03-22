@@ -1,16 +1,23 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CitationStyleOptions } from '@databyss-org/services/citations/constants'
 import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
+import { useQueryClient } from '@tanstack/react-query'
+import { updateAccessedAt, authorToId } from '@databyss-org/data/pouchdb/utils'
+import { selectors } from '@databyss-org/data/pouchdb/selectors'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { DropDownControl } from '@databyss-org/ui/primitives'
 import { IndexPageView } from './IndexPageContent'
 import { SourcesResults } from './SourcesResults'
 import { pxUnits } from '../../theming/views'
 import styled from '../../primitives/styled'
-import { composeAuthorName, filterBibliographyByAuthor } from '../../../databyss-services/sources/lib'
+import {
+  composeAuthorName,
+  filterBibliographyByAuthor,
+} from '../../../databyss-services/sources/lib'
 import { useUserPreferencesContext } from '../../hooks'
 
 // styled components
@@ -20,6 +27,8 @@ const CitationStyleDropDown = styled(DropDownControl, () => ({
 
 export const SourcesContent = () => {
   const { isOnline } = useNotifyContext()
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+  const queryClient = useQueryClient()
   const getTokensFromPath = useNavigationContext((c) => c.getTokensFromPath)
   const {
     getPreferredCitationStyle,
@@ -34,6 +43,19 @@ export const SourcesContent = () => {
   if (_path.author) {
     filterByAuthor = [_path.author.firstName, _path.author.lastName]
   }
+
+  // Update accessedAt on the author doc when this author's page is opened
+  useEffect(() => {
+    if (!filterByAuthor || isPublicAccount()) {
+      return
+    }
+    const _authorId = authorToId({
+      firstName: { textValue: filterByAuthor[0] },
+      lastName: { textValue: filterByAuthor[1] },
+    })
+    updateAccessedAt(_authorId, queryClient, selectors.AUTHORS)
+  }, [filterByAuthor?.join('|')])
+
   const sourcesRes = useBibliography({
     formatOptions: {
       styleId: citationStyleOption.id,

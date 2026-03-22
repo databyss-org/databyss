@@ -30,6 +30,7 @@ export enum DocumentType {
   BlockRelation = 'BLOCK_RELATION',
   UserPreferences = 'USER_PREFERENCES',
   Group = 'GROUP',
+  Author = 'AUTHOR',
 }
 
 export interface DbDocument extends Document {
@@ -42,6 +43,7 @@ export interface DbDocument extends Document {
 export interface UserGroup {
   groupId: string
   defaultPageId: string
+  lastViewedPageId?: string
   role: Role
 }
 

@@ -8,7 +8,10 @@ import {
   useParams,
   useNavigationContext,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
-import { updateAccessedAt } from '@databyss-org/data/pouchdb/utils'
+import {
+  updateAccessedAt,
+  setLastViewedPageId,
+} from '@databyss-org/data/pouchdb/utils'
 import { uid } from '@databyss-org/data/lib/uid'
 import { useQueryClient } from '@tanstack/react-query'
 import { selectors } from '@databyss-org/data/pouchdb/selectors'
@@ -157,6 +160,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
       }
       if (!isPublicAccount()) {
         updateAccessedAt(id, queryClient, selectors.PAGES)
+        setLastViewedPageId(id)
       }
       dispatch(actions.fetchPage(id, firstBlockIsTitle))
 

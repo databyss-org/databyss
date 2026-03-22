@@ -3,6 +3,7 @@ import React, {
   ReactNode,
   Ref,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -14,6 +15,7 @@ import {
 import {
   sortEntriesAtoZ,
   sortEntriesByRecent,
+  startsWithEmoji,
 } from '@databyss-org/services/entries/util'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
@@ -94,6 +96,7 @@ const SidebarList = ({
   const [showAll, setShowAll] = useState<boolean>(!showRecentAllToggle)
   const [expandedGroups, setExpandedGroups] = useState<string[]>([])
   const scrollViewRef = useRef<any | null>(null)
+  const hasMountedRef = useRef(false)
   const getHref = (item: SidebarListItemData) => `/${account}${item.route}`
 
   const getActiveItem = (item: SidebarListItemData) => {
@@ -151,7 +154,7 @@ const SidebarList = ({
     if (onItemPressed) {
       onItemPressed(item, index)
     }
-    if (!showAll && scrollViewRef.current && item.type !== 'author') {
+    if (!showAll && scrollViewRef.current) {
       // scrollViewRef.current.scrollTop = 0
       // sorry for this jquery hack!
       setTimeout(() => event.target.closest('a').blur(), 50)
@@ -171,19 +174,30 @@ const SidebarList = ({
         }),
   })
 
-  let _menuItems = [...menuItems]
   const recentSidebarItemLimit = parseInt(process.env.RECENT_SIDEBAR_ITEMS!, 10)
-  if (!showAll && _menuItems.length > recentSidebarItemLimit) {
-    _menuItems = sortEntriesByRecent(menuItems, 'data')
-    _menuItems = _menuItems.slice(
-      0,
-      Math.min(recentSidebarItemLimit, _menuItems.length)
-    )
-  } else {
-    _menuItems = sortEntriesAtoZ(_menuItems, 'text')
-  }
+  const _sortedMenuItems = useMemo(() => {
+    if (!showAll && menuItems.length > recentSidebarItemLimit) {
+      return sortEntriesByRecent(menuItems, 'data').slice(
+        0,
+        Math.min(recentSidebarItemLimit, menuItems.length)
+      )
+    }
+    return sortEntriesAtoZ([...menuItems], 'text')
+  }, [menuItems, showAll])
+
+  useEffect(() => {
+    if (!showAll && hasMountedRef.current && scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+    hasMountedRef.current = true
+  }, [
+    _sortedMenuItems.find((item) => !startsWithEmoji(item.text))?.route,
+    showAll,
+  ])
+
+  let _menuItems = _sortedMenuItems
   if (prependItems) {
-    _menuItems = [...prependItems, ..._menuItems]
+    _menuItems = [...prependItems, ..._sortedMenuItems]
   }
 
   if (heading) {

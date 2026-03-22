@@ -116,10 +116,8 @@ export function onArchivePage(
       type: ARCHIVE_PAGE,
       payload: { id },
     })
-    const _page = { ...page, archive: bool }
     await services.savePageHeader({
-      _id: page._id,
-      name: page.name,
+      ...page,
       archive: bool,
     })
 
@@ -130,7 +128,7 @@ export function onArchivePage(
     }
     dispatch({
       type: CACHE_PAGE,
-      payload: { id, page: _page },
+      payload: { id, page: { ...page } },
     })
   }
 }

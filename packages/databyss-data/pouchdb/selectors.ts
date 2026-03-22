@@ -11,6 +11,9 @@ export const selectors = {
   GROUPS: {
     doctype: 'GROUP',
   },
+  AUTHORS: {
+    doctype: 'AUTHOR',
+  },
   SOURCES: {
     doctype: 'BLOCK',
     type: 'SOURCE',

@@ -6,7 +6,7 @@ const savePageHeader = async (data: Page | PageHeader) => {
   await upsertImmediate({
     doctype: DocumentType.Page,
     _id: data._id,
-    doc: data,
+    doc: { ...data, modifiedAt: Date.now() },
   })
 }
 
