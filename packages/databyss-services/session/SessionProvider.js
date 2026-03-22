@@ -402,7 +402,14 @@ const SessionProvider = ({
         _groupName = urlSafeName(_groupDoc.name)
       }
     }
-    defaultPage = pages[_group?.defaultPageId]
+    // In private/local mode, use the last explicitly viewed page if available,
+    // otherwise fall back to getDefaultPage (sorted by recent).
+    // defaultPageId is only used for public accounts where pinned ordering applies.
+    if (isPublicAccount()) {
+      defaultPage = pages[_group?.defaultPageId]
+    } else {
+      defaultPage = pages[_group?.lastViewedPageId]
+    }
     if (!defaultPage) {
       defaultPage = getDefaultPage(pages)
     }

@@ -43,6 +43,7 @@ export interface DbDocument extends Document {
 export interface UserGroup {
   groupId: string
   defaultPageId: string
+  lastViewedPageId?: string
   role: Role
 }
 

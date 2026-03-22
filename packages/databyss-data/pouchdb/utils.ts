@@ -288,6 +288,17 @@ export const upsertUserPreferences = (
   return upsertPouch('user_preference', _doc)
 }
 
+export const setLastViewedPageId = async (pageId: string): Promise<void> => {
+  const _groupId = getAccountFromLocation()
+  if (!_groupId || !dbRef.current) return
+  const _prefs = await getUserSession()
+  if (!_prefs?.groups) return
+  const _groups = _prefs.groups.map((g: any) =>
+    g.groupId === _groupId ? { ...g, lastViewedPageId: pageId } : g
+  )
+  upsertPouch('user_preference', { ..._prefs, groups: _groups })
+}
+
 export const updateGroupPreferences = async (
   cb: PouchDB.UpsertDiffCallback<Partial<Group>>
 ) => {
