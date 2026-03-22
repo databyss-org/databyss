@@ -31,6 +31,7 @@ const config: ForgeConfig = {
       appleApiIssuer,
     },
     osxSign: {},
+    appBundleId: 'org.databyss.databyss-app',
     asar: {
       unpack: '*.{node,dll}',
     },
