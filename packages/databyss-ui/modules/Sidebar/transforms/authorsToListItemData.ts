@@ -1,4 +1,5 @@
 import { Author, Source } from '@databyss-org/services/interfaces'
+import { authorToId } from '@databyss-org/data/pouchdb/utils'
 import { SidebarListItemData } from '@databyss-org/ui/components'
 
 export interface AuthorWithStats extends Author {
@@ -57,9 +58,7 @@ export const authorsFromSources = (
   blocks.reduce((dict: { [name: string]: AuthorWithStats }, block) => {
     if (block.detail?.authors) {
       block.detail.authors.forEach((author) => {
-        const _authorKey = `${author.firstName?.textValue || ''}${
-          author.lastName?.textValue || ''
-        }`
+        const _authorKey = authorToId(author)
         if (!dict[_authorKey]) {
           dict[_authorKey] = {
             ...author,

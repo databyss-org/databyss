@@ -50,16 +50,20 @@ export const AuthorList = ({
   // Derive the aggregated author list from sources
   const authorsFromSourcesDict = sources ? authorsFromSources(sources) : null
 
-  // Upsert any authors not yet in the authors collection
+  // Upsert any authors from sources that are not yet in the authors collection
   useEffect(() => {
-    if (!authorsFromSourcesDict) return
-    Object.values(authorsFromSourcesDict).forEach((author) => {
-      upsertAuthor(author, queryClient)
+    if (!authorsFromSourcesDict || !authorsRes.data) return
+    Object.values(authorsFromSourcesDict).forEach((authorFromSource) => {
+      const _id = authorToId(authorFromSource)
+      if (!authorsRes.data![_id]) {
+        upsertAuthor(authorFromSource, queryClient)
+      }
     })
   }, [
-    JSON.stringify(
-      authorsFromSourcesDict && Object.keys(authorsFromSourcesDict)
-    ),
+    authorsRes.data,
+    authorsFromSourcesDict &&
+      Object.keys(authorsFromSourcesDict).sort().join(','),
+    queryClient,
   ])
 
   if (queryRes.some((q) => !q.isSuccess)) {
