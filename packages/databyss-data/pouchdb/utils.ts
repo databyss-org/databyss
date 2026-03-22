@@ -1,6 +1,10 @@
 import PouchDB from 'pouchdb'
 import { throttle, debounce } from 'lodash'
-import { Author, Group } from '@databyss-org/services/interfaces'
+import {
+  Author,
+  BlockReference,
+  Group,
+} from '@databyss-org/services/interfaces'
 import { QueryClient } from '@tanstack/query-core'
 import { getAccountFromLocation } from '@databyss-org/services/session/utils'
 import { DocumentType, UserPreference } from './interfaces'
@@ -283,9 +287,9 @@ export const upsertImmediate = ({
  * PouchDB, bypassing the write queue. Use after synchronous state mutations that
  * must survive immediate navigation (e.g. PDF drop).
  */
-export const upsertPageImmediate = (
+export const updatePageImmediate = (
   pageId: string,
-  blocks: { _id: string; type: string }[]
+  blocks: BlockReference[]
 ): Promise<PouchDB.UpsertResponse> =>
   upsertPouch(pageId, {
     blocks: blocks.map((b) => ({ _id: b._id, type: b.type })),

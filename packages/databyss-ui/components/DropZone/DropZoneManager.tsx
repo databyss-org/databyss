@@ -6,7 +6,7 @@ import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { fileIsPDF, processPDF } from '@databyss-org/services/pdf'
 import { setSource } from '@databyss-org/data/pouchdb/sources'
-import { EM, upsertPageImmediate } from '@databyss-org/data/pouchdb/utils'
+import { EM, updatePageImmediate } from '@databyss-org/data/pouchdb/utils'
 import { formatSource } from '@databyss-org/services/sources/lib'
 import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
 import { FileDropZone } from './FileDropZone'
@@ -134,16 +134,16 @@ export const DropZoneManager = () => {
           // bulkDocs (used by EM.process) is a multi-step async operation in the
           // main process that can race with populatePage's get IPC on quick navigation.
           // upsertPageImmediate uses pouchdb-upsert's CAS loop, which is atomic.
-          // eslint-disable-next-line dot-notation
-          const _editorState = editorContext.stateRef?.['current']
+          const stateRef = editorContext.stateRef as React.MutableRefObject<
+            any
+          > | null
+          const _editorState = stateRef?.current
           if (_editorState?.pageHeader?._id) {
-            await upsertPageImmediate(
+            await updatePageImmediate(
               _editorState.pageHeader._id,
               _editorState.blocks
             )
           }
-          // Also flush individual block docs (annotations etc.) to the queue.
-          await EM.process()
         } catch (error) {
           console.error(error)
           showAlert(
@@ -152,6 +152,8 @@ export const DropZoneManager = () => {
             error as Error
           )
         }
+        // Also flush individual block docs (annotations etc.) to the queue.
+        await EM.process()
       } else {
         await processImage(file)
       }
