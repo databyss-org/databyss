@@ -278,6 +278,20 @@ export const upsertImmediate = ({
   return upsertPouch(_id, _doc)
 }
 
+/**
+ * Atomically persists a page's blocks array and modifiedAt timestamp directly to
+ * PouchDB, bypassing the write queue. Use after synchronous state mutations that
+ * must survive immediate navigation (e.g. PDF drop).
+ */
+export const upsertPageImmediate = (
+  pageId: string,
+  blocks: { _id: string; type: string }[]
+): Promise<PouchDB.UpsertResponse> =>
+  upsertPouch(pageId, {
+    blocks: blocks.map((b) => ({ _id: b._id, type: b.type })),
+    modifiedAt: Date.now(),
+  })
+
 export const upsertUserPreferences = (
   prefs: Partial<UserPreference>
 ): Promise<PouchDB.UpsertResponse> => {

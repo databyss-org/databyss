@@ -6,6 +6,7 @@ import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { fileIsPDF, processPDF } from '@databyss-org/services/pdf'
 import { setSource } from '@databyss-org/data/pouchdb/sources'
+import { EM, upsertPageImmediate } from '@databyss-org/data/pouchdb/utils'
 import { formatSource } from '@databyss-org/services/sources/lib'
 import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
 import { FileDropZone } from './FileDropZone'
@@ -129,6 +130,20 @@ export const DropZoneManager = () => {
             : _processResults.source
           const _blocks = toDatabyssBlocks(_source, _processResults.annotations)
           insert(_blocks)
+          // Atomically persist the updated page blocks, bypassing the write queue.
+          // bulkDocs (used by EM.process) is a multi-step async operation in the
+          // main process that can race with populatePage's get IPC on quick navigation.
+          // upsertPageImmediate uses pouchdb-upsert's CAS loop, which is atomic.
+          // eslint-disable-next-line dot-notation
+          const _editorState = editorContext.stateRef?.['current']
+          if (_editorState?.pageHeader?._id) {
+            await upsertPageImmediate(
+              _editorState.pageHeader._id,
+              _editorState.blocks
+            )
+          }
+          // Also flush individual block docs (annotations etc.) to the queue.
+          await EM.process()
         } catch (error) {
           console.error(error)
           showAlert(
