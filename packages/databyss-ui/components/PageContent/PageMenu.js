@@ -16,8 +16,8 @@ import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
+import ShareSvg from '@databyss-org/ui/assets/share.svg'
 import HelpSvg from '@databyss-org/ui/assets/help.svg'
-import SaveSvg from '@databyss-org/ui/assets/save.svg'
 import ExportAllSvg from '@databyss-org/ui/assets/export-all.svg'
 import DownloadSvg from '@databyss-org/ui/assets/download.svg'
 // import { saveGroup } from '@databyss-org/services/groups'
@@ -137,6 +137,7 @@ const PageMenu = React.memo(() => {
     getTokensFromPath,
     navigate,
     navigateSidebar,
+    showModal,
   } = useNavigationContext()
 
   const { params } = getTokensFromPath()
@@ -144,6 +145,7 @@ const PageMenu = React.memo(() => {
   const archivePage = useEditorPageContext((c) => c.archivePage)
   const deletePage = useEditorPageContext((c) => c.deletePage)
   const exportContext = useExportContext()
+  const { setCurrentPageId } = exportContext
 
   const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
 
@@ -166,6 +168,13 @@ const PageMenu = React.memo(() => {
       setPageInGroups(pageGroups)
     }
   }, [groupsRes.isSuccess])
+
+  useEffect(() => {
+    setCurrentPageId(params)
+    return () => {
+      setCurrentPageId(null)
+    }
+  }, [params, setCurrentPageId])
 
   const onArchivePress = (bool) => {
     archivePage(params, bool).then(() => {
@@ -204,6 +213,13 @@ const PageMenu = React.memo(() => {
     navigateSidebar('/pages')
 
     // delete page
+  }
+
+  const showExportModal = () => {
+    showModal({
+      component: 'EXPORTDB',
+      visible: true,
+    })
   }
 
   const menuItems = []
@@ -245,17 +261,12 @@ const PageMenu = React.memo(() => {
     }
   }
 
-  menuItems.push(
-    ...exportMenuItems(exportContext, [
-      {
-        icon: <SaveSvg />,
-        label: 'Export page',
-        subLabel: 'Including references',
-        action: () => exportContext.exportSinglePage(params),
-        actionType: 'exportPage',
-      },
-    ])
-  )
+  menuItems.push({
+    icon: <ShareSvg />,
+    label: 'Export...',
+    action: showExportModal,
+    actionType: 'export',
+  })
 
   addMenuFooterItems(menuItems)
 

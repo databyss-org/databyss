@@ -1,5 +1,9 @@
 import { cloudant } from '@databyss-org/data/cloudant/cloudant'
-import { ServerProcess, ServerProcessArgs } from '@databyss-org/scripts/lib'
+import {
+  ServerProcess,
+  ServerProcessArgs,
+  sleep,
+} from '@databyss-org/scripts/lib'
 
 export class ActiveUserReport extends ServerProcess {
   constructor(argv: ServerProcessArgs) {
@@ -77,6 +81,7 @@ export class ActiveUserReport extends ServerProcess {
           ].join(delim)
         )
       }
+      await sleep(500)
     }
     this.logSuccess('Total users:', users.total_rows)
   }
