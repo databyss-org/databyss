@@ -56,34 +56,37 @@ export const Footer = ({ config }) => {
               backgroundPosition: 'bottom center',
             }
           : {}),
-        minHeight: '485px',
+        minHeight: '300px',
       }}
     >
       <SectionView
         mb="extraLarge"
-        pt="extraLarge"
+        pt="medium"
         defaultSpacing="medium"
         {...borderProps}
       >
-        <View
-          alignSelf="flex-start"
-          widthVariant="content"
-          mb="extraLarge"
-          flexDirection="row"
-          alignItems="center"
-        >
-          <Icon
-            sizeVariant="extraLarge"
+        {footerContent[0].content ? (
+          <View
             alignSelf="flex-start"
-            color="text.2"
-            pr="small"
+            widthVariant="content"
+            mb="extraLarge"
+            pt="extraLarge"
+            flexDirection="row"
+            alignItems="center"
           >
-            <LogoSvg />
-          </Icon>
-          <Text variant="uiTextNormal" color="text.0" css={textShadowCss}>
-            {footerContent[0].content}
-          </Text>
-        </View>
+            <Icon
+              sizeVariant="extraLarge"
+              alignSelf="flex-start"
+              color="text.2"
+              pr="small"
+            >
+              <LogoSvg />
+            </Icon>
+            <Text variant="uiTextNormal" color="text.0" css={textShadowCss}>
+              {footerContent[0].content}
+            </Text>
+          </View>
+        ) : null}
         <Grid
           columnGap="medium"
           rowGap="large"
@@ -97,7 +100,6 @@ export const Footer = ({ config }) => {
               key={`footer_section_${section.title}`}
               minWidth="300px"
               pt="small"
-              {...borderProps}
             >
               <Text
                 variant="uiTextHeading"
