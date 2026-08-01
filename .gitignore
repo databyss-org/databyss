@@ -83,3 +83,6 @@ config.json
 
 # webpack
 .webpack
+
+# exports and bulids
+out/

@@ -40,6 +40,7 @@ const markToHtml: TagMapFnType = (mark) =>
 
 const markToMarkdown: TagMapFnType = (mark, linkedDocs) => {
   const _c = cleanFilename
+  const _markId = mark?.[1]
   switch (mark[0]) {
     case RangeType.Bold:
       return ['**', '**']
@@ -52,14 +53,22 @@ const markToMarkdown: TagMapFnType = (mark, linkedDocs) => {
         (_t: string) => _t.trim(),
       ]
     case InlineTypes.Link:
-      if (mark[1].match(validUriRegex)) {
-        return ['[', `](${mark[1]})`]
+      if (!_markId) {
+        return ['', '']
       }
-      const _pageName = (linkedDocs[mark[1]] as Page).name
+      if (_markId.match(validUriRegex)) {
+        return ['[', `](${_markId})`]
+      }
+      const _pageName = (linkedDocs[_markId] as Page | undefined)?.name
       return [
         '[[',
         `]]`,
-        (_t: string) => (_t === _pageName ? _c(_t) : `${_c(_pageName)}|${_t}`),
+        (_t: string) => {
+          if (!_pageName) {
+            return _c(_t)
+          }
+          return _t === _pageName ? _c(_t) : `${_c(_pageName)}|${_t}`
+        },
       ]
     case InlineTypes.InlineSource:
       return [
@@ -77,15 +86,24 @@ const markToMarkdown: TagMapFnType = (mark, linkedDocs) => {
       const trimCurlies =
         // remove leading and trailing curlies
         (_t: string) => _t.replaceAll(/^{/g, '').replaceAll(/}$/g, '')
-      const _embedBlock = linkedDocs[mark[1]] as Embed
+      const _embedBlock = _markId
+        ? ((linkedDocs[_markId] as unknown) as Embed | undefined)
+        : undefined
+      if (!_embedBlock?.detail?.src) {
+        return ['', '', trimCurlies]
+      }
       if (_embedBlock.detail.openGraphJson) {
-        const _og = JSON.parse(_embedBlock.detail.openGraphJson)
-        if (_og.ogImage?.url) {
-          return [
-            '[![',
-            `](${_og.ogImage.url})](${_embedBlock.detail.src})`,
-            trimCurlies,
-          ]
+        try {
+          const _og = JSON.parse(_embedBlock.detail.openGraphJson)
+          if (_og.ogImage?.url) {
+            return [
+              '[![',
+              `](${_og.ogImage.url})](${_embedBlock.detail.src})`,
+              trimCurlies,
+            ]
+          }
+        } catch {
+          // fall through to src-only markdown
         }
       }
       return ['![', `](${_embedBlock.detail.src})`, trimCurlies]

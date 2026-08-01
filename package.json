@@ -297,5 +297,6 @@
     "xmldom": "^0.6.0",
     "xss": "^1.0.6"
   },
-  "browserslist": {}
+  "browserslist": {},
+  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
 }
