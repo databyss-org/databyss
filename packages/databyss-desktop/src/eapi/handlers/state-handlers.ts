@@ -28,6 +28,10 @@ export interface StateData {
 }
 
 const defaultData: Partial<StateData> = {
+  localGroups: [],
+  darkMode: false,
+  expandedGroups: [],
+  dbsToDelete: [],
   sidebarWidth: sidebar.width,
   sidebarVisible: true,
   dataPath: app.getPath('userData'),
@@ -46,11 +50,7 @@ class State extends EventEmitter {
     // const _win = BrowserWindow.getFocusedWindow()
     windows.forEach((_win) => {
       if (_win) {
-        _win.webContents.send(
-          'state-updated',
-          key,
-          value
-        )
+        _win.webContents.send('state-updated', key, value)
       }
     })
   }
@@ -59,9 +59,17 @@ class State extends EventEmitter {
     super()
     if (fs.existsSync(statePath)) {
       const buf = fs.readFileSync(statePath)
-      this.data = JSON.parse(buf.toString())
+      this.data = {
+        ...defaultData,
+        ...JSON.parse(buf.toString()),
+      }
     } else {
       this.data = defaultData
+    }
+
+    const _dataPath = this.get('dataPath')
+    if (_dataPath && !fs.existsSync(_dataPath)) {
+      fs.mkdirSync(_dataPath, { recursive: true })
     }
   }
 }
