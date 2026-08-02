@@ -97,10 +97,11 @@ export class UserExports extends ServerProcess {
   }
 
   async run() {
-    const runDatabyss = !!(this.args.full || this.args.databyss)
-    const runMarkdown = !!(this.args.full || this.args.markdown)
-    const runUpload = !!(this.args.full || this.args.upload)
-    const runEmail = !!(this.args.full || this.args.email)
+    const runFull = !!this.args.full
+    const runDatabyss = !!(runFull || this.args.databyss)
+    const runMarkdown = !!(runFull || this.args.markdown)
+    const runUpload = !!(runFull || this.args.upload)
+    const runEmail = !!(runFull || this.args.email)
 
     if (!runDatabyss && !runMarkdown && !runUpload && !runEmail) {
       throw new Error(
@@ -109,100 +110,135 @@ export class UserExports extends ServerProcess {
     }
 
     const needsDocs = runDatabyss || runMarkdown
+    const progressFilePath = this.getUserExportProgressFilePath()
+    const shouldResumeFromProgress = !!this.args.resume && runEmail
+    const emailedUsers = shouldResumeFromProgress
+      ? this.readUserExportProgress(progressFilePath)
+      : new Set<string>()
 
     const outputRoot = path.join(process.cwd(), 'out', 'exports')
     fs.mkdirSync(outputRoot, { recursive: true })
+
+    if (shouldResumeFromProgress) {
+      this.logInfo(
+        `[export.users] resume enabled: loaded ${emailedUsers.size} emailed users from ${progressFilePath}`
+      )
+    }
 
     const users = await this.getUsers()
     this.logInfo('Users to export:', users.length)
 
     let exported = 0
+    let failed = 0
     for (const user of users) {
-      const groupId = user.defaultGroupId
-      if (needsDocs && !groupId) {
-        this.logWarning('Skipping user without defaultGroupId', user.email)
-        continue
-      }
+      try {
+        const normalizedUserEmail = this.normalizeEmail(user.email)
+        if (shouldResumeFromProgress && normalizedUserEmail) {
+          if (emailedUsers.has(normalizedUserEmail)) {
+            this.logInfo('Skipping already emailed user', normalizedUserEmail)
+            continue
+          }
+        }
 
-      const userOutputDir = path.join(outputRoot, userDirName(user))
-      fs.mkdirSync(userOutputDir, { recursive: true })
+        const groupId = user.defaultGroupId
+        if (needsDocs && !groupId) {
+          this.logWarning('Skipping user without defaultGroupId', user.email)
+          continue
+        }
 
-      if (needsDocs || runUpload) {
-        fs.writeFileSync(
-          path.join(userOutputDir, 'user.json'),
-          JSON.stringify(user, null, 2)
+        const userOutputDir = path.join(outputRoot, userDirName(user))
+        fs.mkdirSync(userOutputDir, { recursive: true })
+
+        if (needsDocs || runUpload) {
+          fs.writeFileSync(
+            path.join(userOutputDir, 'user.json'),
+            JSON.stringify(user, null, 2)
+          )
+        }
+
+        this.logInfo('Processing user', user.email ?? user._id, groupId)
+
+        let databyssZip: Buffer | undefined
+        let markdownZip: Buffer | undefined
+
+        if (needsDocs && groupId) {
+          let docs = await this.getGroupDocs(groupId)
+          docs = docs.filter((d) => !!d)
+
+          if (runDatabyss) {
+            databyssZip = await this.buildDatabyssZip({
+              docs,
+              defaultGroupId: groupId,
+            })
+            fs.writeFileSync(
+              path.join(userOutputDir, 'databyss.zip'),
+              databyssZip
+            )
+          }
+
+          if (runMarkdown) {
+            markdownZip = await this.buildMarkdownZip({
+              docs,
+              defaultGroupId: groupId,
+            })
+            fs.writeFileSync(
+              path.join(userOutputDir, 'markdown.zip'),
+              markdownZip
+            )
+          }
+        }
+
+        let rootUrl: string | null = null
+
+        if (runUpload) {
+          rootUrl = await this.uploadUserExports({
+            user,
+            userOutputDir,
+            databyssZip,
+            markdownZip,
+          })
+          this.logSuccess('Public export URL root:', rootUrl)
+        }
+
+        if (runEmail) {
+          if (!normalizedUserEmail) {
+            throw new Error(
+              `[export.users] cannot send email: missing user email for ${userDirName(
+                user
+              )}`
+            )
+          }
+
+          const emailRootUrl = rootUrl ?? this.getPublicExportRootUrl(user)
+          await this.sendMigrationEmail({
+            to: normalizedUserEmail,
+            databyssDataUrl: `${emailRootUrl}/databyss.zip`,
+            markdownDataUrl: `${emailRootUrl}/markdown.zip`,
+          })
+          this.appendUserExportProgress(progressFilePath, normalizedUserEmail)
+          emailedUsers.add(normalizedUserEmail)
+          this.logSuccess('Sent migration email to', normalizedUserEmail)
+        }
+
+        exported += 1
+      } catch (err) {
+        failed += 1
+        this.logFailure(
+          'User export failed, continuing',
+          user.email ?? user._id
         )
+        this.logError(err)
       }
 
-      this.logInfo('Processing user', user.email ?? user._id, groupId)
-
-      let databyssZip: Buffer | undefined
-      let markdownZip: Buffer | undefined
-
-      if (needsDocs && groupId) {
-        let docs = await this.getGroupDocs(groupId)
-        docs = docs.filter((d) => !!d)
-
-        if (runDatabyss) {
-          databyssZip = await this.buildDatabyssZip({
-            docs,
-            defaultGroupId: groupId,
-          })
-          fs.writeFileSync(
-            path.join(userOutputDir, 'databyss.zip'),
-            databyssZip
-          )
-        }
-
-        if (runMarkdown) {
-          markdownZip = await this.buildMarkdownZip({
-            docs,
-            defaultGroupId: groupId,
-          })
-          fs.writeFileSync(
-            path.join(userOutputDir, 'markdown.zip'),
-            markdownZip
-          )
-        }
-      }
-
-      let rootUrl: string | null = null
-
-      if (runUpload) {
-        rootUrl = await this.uploadUserExports({
-          user,
-          userOutputDir,
-          databyssZip,
-          markdownZip,
-        })
-        this.logSuccess('Public export URL root:', rootUrl)
-      }
-
-      if (runEmail) {
-        if (!user.email) {
-          throw new Error(
-            `[export.users] cannot send email: missing user email for ${userDirName(
-              user
-            )}`
-          )
-        }
-
-        const emailRootUrl = rootUrl ?? this.getPublicExportRootUrl(user)
-        await this.sendMigrationEmail({
-          to: user.email,
-          databyssDataUrl: `${emailRootUrl}/databyss.zip`,
-          markdownDataUrl: `${emailRootUrl}/markdown.zip`,
-        })
-        this.logSuccess('Sent migration email to', user.email)
-      }
-
-      exported += 1
       if (this.args.delay) {
         await sleep(Number(this.args.delay))
       }
     }
 
     this.logSuccess('Finished exports:', exported)
+    if (failed > 0) {
+      this.logWarning('Users failed:', failed)
+    }
     this.logSuccess('Output root:', outputRoot)
   }
 
@@ -258,6 +294,34 @@ export class UserExports extends ServerProcess {
       process.env.PUBLIC_EXPORT_BASE_URL ??
       'https://public.databyss.cloud'
     ).replace(/\/+$/, '')
+  }
+
+  private getUserExportProgressFilePath() {
+    return path.join(process.cwd(), 'out', 'user_export_progress.txt')
+  }
+
+  private normalizeEmail(email?: string) {
+    const _email = email?.trim().toLowerCase()
+    return _email?.length ? _email : null
+  }
+
+  private readUserExportProgress(filePath: string) {
+    if (!fs.existsSync(filePath)) {
+      return new Set<string>()
+    }
+
+    const lines = fs
+      .readFileSync(filePath, 'utf8')
+      .split('\n')
+      .map((line) => line.trim().toLowerCase())
+      .filter((line) => !!line)
+
+    return new Set(lines)
+  }
+
+  private appendUserExportProgress(filePath: string, email: string) {
+    fs.mkdirSync(path.dirname(filePath), { recursive: true })
+    fs.appendFileSync(filePath, `${email}\n`)
   }
 
   private getPostmarkConfig(): PostmarkConfig {
@@ -1082,7 +1146,16 @@ exports.builder = (yargs) =>
       type: 'boolean',
       default: false,
     })
+    .option('resume', {
+      describe:
+        'When used with --email or --full, skip users already listed in out/user_export_progress.txt',
+      type: 'boolean',
+      default: false,
+    })
 
 exports.handler = (argv: ServerProcessArgs) => {
+  if (argv.logs) {
+    argv.logs = path.join(process.cwd(), 'out', 'logs')
+  }
   new UserExports(argv).runCli()
 }

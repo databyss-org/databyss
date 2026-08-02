@@ -50,7 +50,8 @@ class ServerProcess extends EventEmitter {
     this._patchConsole()
   }
   initLogFiles = () => {
-    const logPath = path.join(this.args.logs, this.name.replace('.', '_'))
+    const logsRoot = path.join(process.cwd(), 'out', 'logs')
+    const logPath = path.join(logsRoot, this.name.replace('.', '_'))
     fs.mkdirSync(logPath, {
       recursive: true,
     })

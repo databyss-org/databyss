@@ -12,8 +12,8 @@ yargs(process.argv.slice(2))
   })
   .describe('env', 'environment name (e.g. production, development,...)')
   .demandOption(['env'])
-  .string('logs')
-  .describe('logs', 'create output and error logs in this directory')
+  .boolean('logs')
+  .describe('logs', 'create output and error logs in out/logs')
   .commandDir('cmds', {
     // recurse: true,
     extensions: ['js', 'ts'],
