@@ -20,6 +20,11 @@
           "icon": "download"
         },
         {
+          "text": "macOS (Intel)",
+          "href": "https://public.databyss.cloud/Databyss-{version}-x64.dmg",
+          "icon": "download"
+        },
+        {
           "text": "Windows 10+",
           "href": "https://public.databyss.cloud/Databyss-{version}%20Setup.exe",
           "icon": "download"
