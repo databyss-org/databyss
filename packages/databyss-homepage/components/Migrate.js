@@ -31,6 +31,7 @@ const Migrate = () => (
         variant="uiTextButton"
         borderRadius="default"
         href="/"
+        target="_top"
         childViewProps={{ flexDirection: 'row', alignItems: 'center' }}
         css={{ textDecoration: 'none' }}
         mb="medium"
@@ -52,7 +53,7 @@ const Migrate = () => (
         variant="uiTextNormal"
         color="text.2"
         mb="large"
-        html={`<div style="text-align:center;">We have retired the web-based version of Databyss and encourage you to move to the <a href="/" style="${linkStyle}">desktop version</a>. You should have received an email with links to download your data and instructions for moving to the <a href="/" style="${linkStyle}">desktop app</a>.</div>`}
+        html={`<div style="text-align:center;">We have retired the web-based version of Databyss and encourage you to move to the <a href="/" target="_top" style="${linkStyle}">desktop version</a>. You should have received an email with links to download your data and instructions for moving to the <a href="/" target="_top" style="${linkStyle}">desktop app</a>.</div>`}
       />
 
       <View
@@ -87,7 +88,7 @@ const Migrate = () => (
         variant="uiTextNormal"
         color="text.2"
         mb="small"
-        html={`<div style="text-align:center;">Questions or concerns?<br /><a href="mailto:migration@databyss.org" style="${linkStyle}">Email us</a> or <a href="https://discord.gg/jyQVawQM2Q" target="_blank" rel="noopener noreferrer" style="${linkStyle}">chat with us on Discord</a>.</div>`}
+        html={`<div style="text-align:center;">Questions or concerns?<br /><a href="mailto:migration@databyss.org" target="_top" style="${linkStyle}">Email us</a> or <a href="https://discord.gg/jyQVawQM2Q" target="_blank" rel="noopener noreferrer" style="${linkStyle}">chat with us on Discord</a>.</div>`}
       />
     </View>
   </View>
