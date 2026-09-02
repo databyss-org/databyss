@@ -15,18 +15,12 @@ const Migrate = () => (
     theme={darkTheme}
     backgroundColor="#191919"
     alignItems="center"
+    justifyContent="center"
   >
     <Helmet>
       <title>Databyss is now a desktop app!</title>
     </Helmet>
-    <View
-      widthVariant="form"
-      width="100%"
-      alignItems="center"
-      px="medium"
-      pt="largest"
-      pb="extraLarge"
-    >
+    <View widthVariant="form" width="100%" alignItems="center" px="medium">
       <Button
         variant="uiTextButton"
         borderRadius="default"
