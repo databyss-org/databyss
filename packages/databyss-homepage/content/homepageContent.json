@@ -53,7 +53,7 @@
         },
         {
           "name": "Log In (v2.0 users)",
-          "route": "https://app.databyss.org/",
+          "route": "/migrate",
           "tabletOnly": true
         }
       ]

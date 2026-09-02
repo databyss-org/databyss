@@ -2,8 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from '@databyss-org/ui/theming'
-import theme, { darkTheme, pxUnits } from '@databyss-org/ui/theming/theme'
+import theme, { darkTheme } from '@databyss-org/ui/theming/theme'
 import { Page } from './components/Page'
+import Migrate from './components/Migrate'
 import homepageContent from './content/homepageContent.json'
 import foundationContent from './content/foundationContent.json'
 // import { EmbedDonorbox, DonorboxPopup } from './components/Donorbox'
@@ -43,6 +44,7 @@ ReactDOM.render(
             />
           }
         />
+        <Route path="/migrate" element={<Migrate />} />
         {/* <Route path="/donate" element={<EmbedDonorbox />} /> */}
       </Routes>
     </BrowserRouter>
