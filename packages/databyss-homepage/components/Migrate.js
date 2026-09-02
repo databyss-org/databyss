@@ -17,7 +17,7 @@ const Migrate = () => (
     alignItems="center"
   >
     <Helmet>
-      <title>Databyss has moved offline</title>
+      <title>Databyss is now a desktop app!</title>
     </Helmet>
     <View
       widthVariant="form"
@@ -29,6 +29,7 @@ const Migrate = () => (
     >
       <Button
         variant="uiTextButton"
+        borderRadius="default"
         href="/"
         childViewProps={{ flexDirection: 'row', alignItems: 'center' }}
         css={{ textDecoration: 'none' }}
@@ -44,7 +45,7 @@ const Migrate = () => (
       </Button>
 
       <Text variant="heading3" color="text.0" textAlign="center" mb="medium">
-        Databyss has moved offline
+        Databyss is now a desktop app!
       </Text>
 
       <RawHtml
