@@ -2,7 +2,7 @@ import React from 'react'
 import { Viewport } from '@databyss-org/ui'
 import MobileWarning from '@databyss-org/ui/components/Notify/MobileWarning'
 import { View, Text, Grid, Button } from '@databyss-org/ui/primitives'
-import { Maintenance, Login } from '@databyss-org/ui/modules'
+import { Migrate } from '@databyss-org/ui/modules'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 
 const Public = (props) => {
@@ -37,11 +37,7 @@ const Public = (props) => {
           </Text>
         </Button>
       </Grid>
-      {process.env.MAINTENANCE_MODE?.toLowerCase() === 'true' ? (
-        <Maintenance />
-      ) : (
-        <Login {...props} />
-      )}
+      <Migrate />
     </View>
   )
   return process.env.FORCE_MOBILE ? (
