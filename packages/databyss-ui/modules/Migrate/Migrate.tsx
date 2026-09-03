@@ -18,6 +18,7 @@ export const Migrate = ({
     flexGrow={1}
     justifyContent="center"
     mb="extraLarge"
+    px="large"
   >
     <Text variant="heading2" color="gray.3" mb="medium">
       {content.title}
